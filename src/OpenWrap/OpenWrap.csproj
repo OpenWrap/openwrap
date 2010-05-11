@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6CE52051-0070-423D-96CB-8B16700A2251}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>OpenWrap</RootNamespace>
+    <AssemblyName>OpenWrap</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>debug.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\core\OpenRasta\EventHandlerExtensions.cs">
+      <Link>EventHandlerExtensions.cs</Link>
+    </Compile>
+    <Compile Include="Build\IWrapAssemblyClient.cs" />
+    <Compile Include="Commands\Error.cs" />
+    <Compile Include="Commands\ICommandDescriptor.cs" />
+    <Compile Include="Commands\InvalidCommandValue.cs" />
+    <Compile Include="Commands\NamesapceNotFound.cs" />
+    <Compile Include="Commands\UnknownCommandInput.cs" />
+    <Compile Include="InternalServices.cs" />
+    <Compile Include="Repositories\FolderRepository.cs" />
+    <Compile Include="Repositories\IWrapPackageInfo.cs" />
+    <Compile Include="Repositories\IWrapRepository.cs" />
+    <Compile Include="Repositories\RepositoryType.cs" />
+    <Compile Include="Services\IService.cs" />
+    <Compile Include="Services\IWrapDescriptorMonitoringService.cs" />
+    <Compile Include="Services\WrapDependencyResolver.cs" />
+    <Compile Include="Services\WrapDescriptorMonitor.cs" />
+    <Compile Include="Services\WrapServices.cs" />
+    <Compile Include="Commands\CommandList.cs" />
+    <Compile Include="Commands\CommandProcessor.cs" />
+    <Compile Include="Commands\HelpCommand.cs" />
+    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Commands\ICommandResult.cs" />
+    <Compile Include="Commands\NotEnoughParameters.cs" />
+    <Compile Include="Commands\QuitCommand.cs" />
+    <Compile Include="Commands\UnknownCommand.cs" />
+    <Compile Include="Commands\Wrap\ManageWrapCommand.cs" />
+    <Compile Include="Dependencies\AnyVersionVertice.cs" />
+    <Compile Include="Dependencies\AtLeastVersionVertice.cs" />
+    <Compile Include="Dependencies\ExactVersionVertice.cs" />
+    <Compile Include="Dependencies\LessThanVersionVertice.cs" />
+    <Compile Include="Dependencies\VersionVertice.cs" />
+    <Compile Include="Dependencies\WrapDependency.cs" />
+    <Compile Include="Dependencies\WrapDependencyParser.cs" />
+    <Compile Include="Dependencies\WrapDescriptor.cs" />
+    <Compile Include="Dependencies\WrapDescriptorParser.cs" />
+    <Compile Include="Dependencies\WrapRuntimeEnvironment.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\AssemblyReferenceExport.cs" />
+    <Compile Include="Repositories\AssemblyReferenceExportBuider.cs" />
+    <Compile Include="Repositories\AssemblyReferenceExportItem.cs" />
+    <Compile Include="Repositories\EnvironmentDependentFile.cs" />
+    <Compile Include="Repositories\FileExportItem.cs" />
+    <Compile Include="Repositories\FolderExport.cs" />
+    <Compile Include="Repositories\FolderWrapPackage.cs" />
+    <Compile Include="Repositories\IAssemblyReferenceExportItem.cs" />
+    <Compile Include="Repositories\IExportBuilder.cs" />
+    <Compile Include="Resources\Wrap.cs" />
+    <Compile Include="Resources\WrapCollection.cs" />
+    <Compile Include="Repositories\IWrapPackage.cs" />
+    <Compile Include="SharedReflectionExtensions.cs" />
+    <Compile Include="Strings.Designer.cs">
+      <DependentUpon>Strings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Strings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="debug.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

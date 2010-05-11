@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="_InitializePaths">
+
+  <!-- Default folder locations -->
+
+  
+  <PropertyGroup>
+    <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">true</OpenWrap-EnableVisualStudioIntegration>
+    <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == ''">false</OpenWrap-EnableVisualStudioIntegration>
+    <!-- We detect the root path based on the existence of a .wraps folder -->
+    <OpenWrap-WrapsDirectory>$(MSBuildProjectDirectory)\..\..\..\wraps</OpenWrap-WrapsDirectory>
+    <OpenWrap-BuildTasksDirectory>$(OpenWrap-WrapsDirectory)\openwrap-1.0\build</OpenWrap-BuildTasksDirectory>
+    
+    <RootSolutionDirectory>$(OpenWrap-WrapsDirectory)\..</RootSolutionDirectory>
+
+    <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v2.0'">net20</OpenWrap-TargetProfile>
+    <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v3.0'">net30</OpenWrap-TargetProfile>
+    <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v3.5'">net35</OpenWrap-TargetProfile>
+  </PropertyGroup>
+
+  
+  
+
+    <!-- MSBuild properties -->
+    <PropertyGroup>
+      <OutputPath>$(RootSolutionDirectory)\scratch\$(Configuration)\$(MSBuildProjectName)-$(Platform)-$(OpenWrap-TargetProfile)</OutputPath>
+    </PropertyGroup>
+
+
+  <ItemGroup>
+    <_WrapFile Include="$(MSBuildProjectDirectory)\..\**\*.wrapdesc" />
+  </ItemGroup>
+  <Target Name="_InitializePaths">
+    <!-- Default wrap properties -->
+
+    <!-- Sanity checks -->
+
+    <Error Condition="!Exists('%(_WrapFile.FullPath)')" Text="Could not locate the .wrapdesc file '%(FullPath)'." />
+    <Error Condition="'$(OutputType)' != 'winexe' and '$(OutputType)' != 'exe' and '$(OutputType)' != 'library'" Text="The project type '$(OutputType)' is not supported." />
+    
+
+    <PropertyGroup>
+      <OpenWrap-Name>@(_WrapFile->'%(Filename)')</OpenWrap-Name>
+      <OpenWrap-WrapDirectory>$(OpenWrap-WrapsDirectory)\$(OpenWrap-Name)</OpenWrap-WrapDirectory>
+
+      <OpenWrap-OutputDirectory Condition="
+                                '$(OutputType)' == 'winexe' or '$(OutputType)' == 'exe' or '$(OutputType)' == 'library'
+                                ">$(OpenWrap-WrapDirectory)\bin</OpenWrap-OutputDirectory>
+
+
+      <OpenWrap-OutputDirectory Condition="'$(Platform)' != 'AnyCpu'">$(OpenWrap-OutputDirectory)-$(Platform)</OpenWrap-OutputDirectory>
+
+      <OpenWrap-OutputDirectory>$(OpenWrap-OutputDirectory)-$(OpenWrap-TargetProfile)</OpenWrap-OutputDirectory>
+
+      <OutDir>$(OpenWrap-OutputDirectory)\</OutDir>
+    </PropertyGroup>
+    
+    
+
+    <!-- ensure output path exists -->
+    <MakeDir Condition="!Exists('$(OpenWrap-OutputDirectory)')" Directories="$(OpenWrap-OutputDirectory)" />
+  </Target>
+
+
+
+
+
+  <PropertyGroup>
+    
+  </PropertyGroup>
+
+  <Target Name="OpenWrap-ResolveReferences">
+    <ResolveWrapReferences
+      WrapDescriptor="@(_WrapFile)"
+      WrapsDirectory="$(OpenWrap-WrapsDirectory)"
+      Platform="$(Platform)"
+      Profile="$(OpenWrap-TargetProfile)"
+      ProjectFilePath="$(MSBuildProjectFullPath)"
+      CopyLocal="true"
+      EnableVisualStudioIntegration="">
+      <Output TaskParameter="References" ItemName="Reference" />
+    </ResolveWrapReferences>
+  </Target>
+  
+  <Target Name="_ViewPaths" DependsOnTargets="_InitializePaths;">
+    <Message Text="OpenWrap wraps directory at $(OpenWrap-WrapsDirectory)" />
+    <Message Text="OpenWrap current wrap name is $(OpenWrap-Name)" />
+    <Message Text="OpenWrap current wrap destination is $(OpenWrap-OutputDirectory)" />
+    <Message Text="Visual Studio output path is $(OutputPath)" />
+  </Target>
+
+  <Target Name="OpenWrap-BeforeBuild" DependsOnTargets="_InitializePaths">
+    <Message Importance="high" Text="Yo!" />
+  </Target>
+
+  <Target Name="OpenWrap-AfterBuild">
+    <Message Text="Copying output to the wrap folder" />
+    
+    <Copy SourceFiles="@(_WrapFile)" DestinationFolder="$(OpenWrap-WrapDirectory)" />
+    
+  </Target>
+
+
+  <Import Project="$(OpenWrap-BuildTasksDirectory)\OpenWrap.tasks" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  
+  <PropertyGroup>
+    <BuildDependsOn>
+      OpenWrap-BeforeBuild;
+      $(BuildDependsOn);
+      OpenWrap-AfterBuild;
+    </BuildDependsOn>
+    <ResolveAssemblyReferencesDependsOn>
+      OpenWrap-ResolveReferences;
+      $(ResolveAssemblyReferencesDependsOn);
+    </ResolveAssemblyReferencesDependsOn>
+  </PropertyGroup>
+</Project>
