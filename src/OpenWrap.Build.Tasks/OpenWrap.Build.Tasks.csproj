@@ -61,7 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenWrap.Resharper\ClassLibrary1\OpenWrap.Resharper.csproj">
+    <ProjectReference Include="..\OpenWrap.Resharper\OpenWrap.Resharper.csproj">
       <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
       <Name>OpenWrap.Resharper</Name>
     </ProjectReference>

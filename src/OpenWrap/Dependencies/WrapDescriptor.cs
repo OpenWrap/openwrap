@@ -15,6 +15,11 @@ namespace OpenRasta.Wrap.Dependencies
         public string Name { get; set; }
 
         public Version Version { get; set; }
+        public IWrapPackage Load()
+        {
+            return null;
+        }
+
         public bool IsCompatibleWith(Version version)
         {
             return false;

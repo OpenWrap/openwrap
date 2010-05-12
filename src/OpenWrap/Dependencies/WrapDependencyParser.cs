@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace OpenRasta.Wrap.Dependencies
@@ -21,26 +22,40 @@ namespace OpenRasta.Wrap.Dependencies
             // Versions are always in the format
             // comparator version ('and' comparator version)*
 
-            List<VersionVertice> vertices = new List<VersionVertice>();
-            if (bits.Length - 2 >= 2)
-            {
-                vertices.Add(GetVersionVertice(bits, 2));
-                for (int i = 0; i < (bits.Length - 4) / 3; i++)
-                    if (string.Compare(bits[4], "and", StringComparison.OrdinalIgnoreCase) == 0)
-                        vertices.Add(GetVersionVertice(bits, 5 + (i * 3)));
-            }
-            else
-            {
-                vertices.Add(new AnyVersionVertice(null));
-            }
+            //List<VersionVertice> vertices = new List<VersionVertice>();
+            //if (bits.Length - 2 >= 2)
+            //{
+            //    vertices.Add(GetVersionVertice(bits, 2));
+            //    for (int i = 0; i < (bits.Length - 4) / 3; i++)
+            //        if (string.Compare(bits[4], "and", StringComparison.OrdinalIgnoreCase) == 0)
+            //            vertices.Add(GetVersionVertice(bits, 5 + (i * 3)));
+            //}
+            //else
+            //{
+            //    vertices.Add(new AnyVersionVertice(null));
+            //}
             descriptor.Dependencies.Add(new WrapDependency
                        {
                            Name = packageName,
-                           VersionVertices = vertices
+                           VersionVertices = Parse(bits.Skip(2).ToArray()).ToList()
                        });
         }
+        public static IEnumerable<VersionVertice> Parse(string[] args)
+        {
 
-        private VersionVertice GetVersionVertice(string[] strings, int offset)
+            if (args.Length >= 2)
+            {
+                yield return GetVersionVertice(args, 0);
+                for (int i = 0; i < (args.Length - 2) / 3; i++)
+                    if (args[2+(i*3)].Equals("and", StringComparison.OrdinalIgnoreCase))
+                        yield return GetVersionVertice(args, 3 + (i * 3));
+            }
+            else
+            {
+                yield return new AnyVersionVertice(null);
+            }
+        }
+        private static VersionVertice GetVersionVertice(string[] strings, int offset)
         {
             var comparator = strings[offset];
             var version = strings[offset + 1];

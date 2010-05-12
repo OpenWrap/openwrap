@@ -10,15 +10,17 @@ namespace OpenRasta.Wrap.Repositories
 {
     public class FolderWrapPackage : IWrapPackage
     {
+        readonly FileInfo _originalWrapFile;
         readonly IEnumerable<IExportBuilder> _exporters;
 
-        public FolderWrapPackage(string folderPath, IEnumerable<IExportBuilder> exporters)
+        public FolderWrapPackage(FileInfo originalWrapFile, string folderPath, IEnumerable<IExportBuilder> exporters)
         {
+            _originalWrapFile = originalWrapFile;
             _exporters = exporters;
             BaseDirectory = new DirectoryInfo(folderPath);
             // get the descriptor file inside the package
             var descriptorName = BaseDirectory.Name;
-            Descriptor = new WrapDescriptorParser().Parse(Path.Combine(folderPath, descriptorName + ".wrapdesc"));
+            Descriptor = new WrapDescriptorParser().ParseFile(Path.Combine(folderPath, descriptorName + ".wrapdesc"));
         }
 
         protected DirectoryInfo BaseDirectory { get; set; }
@@ -27,8 +29,6 @@ namespace OpenRasta.Wrap.Repositories
         {
             get { return Descriptor.Dependencies; }
         }
-
-        public string FolderPath { get; set; }
 
         public string Name
         {
@@ -40,14 +40,18 @@ namespace OpenRasta.Wrap.Repositories
             get { return Descriptor.Version; }
         }
 
+        public IWrapPackage Load()
+        {
+            return this;
+        }
+
         protected WrapDescriptor Descriptor { get; set; }
 
         public IWrapExport GetExport(string exportName, WrapRuntimeEnvironment environment)
         {
             // get the list of exports in the 
             var exporter =
-                _exporters.SingleOrDefault(
-                    x => string.Compare(x.ExportName, exportName, StringComparison.OrdinalIgnoreCase) == 0);
+                _exporters.SingleOrDefault(x => x.ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase));
             if (exporter == null)
                 return null;
 
@@ -62,6 +66,11 @@ namespace OpenRasta.Wrap.Repositories
                           };
 
             return exporter.ProcessExports(exports, environment);
+        }
+
+        public void Persist(string folder)
+        {
+            File.Copy(_originalWrapFile.FullName, Path.Combine(folder, _originalWrapFile.Name),true);
         }
     }
 }

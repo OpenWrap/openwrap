@@ -46,7 +46,7 @@ namespace OpenRasta.Wrap.Build.Services
                 return;
             var d = _notificationClients[wrapPath];
 
-            var parsedDescriptor = new WrapDescriptorParser().Parse(wrapPath);
+            var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
 
             client.WrapAssembliesUpdated(_resolver.GetAssemblyReferences(parsedDescriptor, d.Repository, client));
         }
@@ -57,7 +57,7 @@ namespace OpenRasta.Wrap.Build.Services
                 return;
             var d = _notificationClients[wrapPath];
 
-            var parsedDescriptor = new WrapDescriptorParser().Parse(wrapPath);
+            var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
 
             foreach (var client in d.Clients)
             {

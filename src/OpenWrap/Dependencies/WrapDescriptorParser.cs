@@ -16,26 +16,19 @@ namespace OpenRasta.Wrap.Dependencies
                                                                                        new WrapDependencyParser()
                                                                                    };
 
-        public WrapDescriptor Parse(string filePath)
+        public WrapDescriptor ParseFile(string filePath)
         {
             int tries = 0;
             while (tries < FILE_READ_RETRIES)
             {
                 try
                 {
-                    var lines = File.ReadAllLines(filePath);
-
-                    var descriptor = new WrapDescriptor
+                    using (var fileStream = File.OpenRead(filePath))
                     {
-                        Name = WrapNameUtility.GetName(Path.GetFileNameWithoutExtension(filePath)),
-                        Version = WrapNameUtility.GetVersion(Path.GetFileNameWithoutExtension(filePath))
-                    };
-                    foreach (var line in lines)
-                        foreach (var parser in _lineParsers)
-                            parser.Parse(line, descriptor);
-                    return descriptor;
+                        return ParseFile(filePath, fileStream);
+                    }
                 }
-                catch(IOException)
+                catch (IOException)
                 {
                     tries++;
                     Thread.Sleep(FILE_READ_RETRIES_WAIT);
@@ -43,6 +36,28 @@ namespace OpenRasta.Wrap.Dependencies
                 }
             }
             return null;
+        }
+
+        public WrapDescriptor ParseFile(string filePath, Stream content)
+        {
+            var stringReader = new StreamReader(content, true);
+            string[] lines = SplitAndFold(stringReader.ReadToEnd());
+            
+            var descriptor = new WrapDescriptor
+            {
+                Name = WrapNameUtility.GetName(Path.GetFileNameWithoutExtension(filePath)),
+                Version = WrapNameUtility.GetVersion(Path.GetFileNameWithoutExtension(filePath))
+            };
+            foreach (var line in lines)
+                foreach (var parser in _lineParsers)
+                    parser.Parse(line, descriptor);
+            return descriptor;
+        }
+        static Regex _foldableLines = new Regex(@"\r\n\s+", RegexOptions.Multiline | RegexOptions.Compiled);
+        string[] SplitAndFold(string content)
+        {
+            content = _foldableLines.Replace(content, " ");
+            return content.Split(new[] { @"\r\n" }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
     public class WrapNameUtility
@@ -55,8 +70,8 @@ namespace OpenRasta.Wrap.Dependencies
         public static Version GetVersion(string name)
         {
             var versionMAtch = VersionRegex.Match(name);
-            if(versionMAtch.Success)
-                return new Version(name.Substring(name.LastIndexOf('-')+1));
+            if (versionMAtch.Success)
+                return new Version(name.Substring(name.LastIndexOf('-') + 1));
             return null;
         }
     }

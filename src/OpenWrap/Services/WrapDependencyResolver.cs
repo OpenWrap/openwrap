@@ -13,7 +13,7 @@ namespace OpenRasta.Wrap.Build.Services
             return (from dependency in descriptor.Dependencies
                     let package = repository.Find(dependency)
                     where package != null
-                    let items = package.GetExport("bin", client.Environment).Items.OfType<IAssemblyReferenceExportItem>()
+                    let items = package.Load().GetExport("bin", client.Environment).Items.OfType<IAssemblyReferenceExportItem>()
                     select items).SelectMany(x => x);
         }
     }

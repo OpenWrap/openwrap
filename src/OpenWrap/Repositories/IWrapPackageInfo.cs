@@ -9,5 +9,6 @@ namespace OpenRasta.Wrap.Sources
         ICollection<WrapDependency> Dependencies { get; }
         string Name { get; }
         Version Version { get; }
+        IWrapPackage Load();
     }
 }
