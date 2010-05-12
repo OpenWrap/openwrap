@@ -1,0 +1,1 @@
+Those dependencies are only temporary until openwrap is self-sustained.

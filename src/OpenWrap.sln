@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap", "OpenWrap\OpenWrap.csproj", "{6CE52051-0070-423D-96CB-8B16700A2251}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Build.Tasks", "OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj", "{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.ComShim", "OpenWrap.ComShim\OpenWrap.ComShim.csproj", "{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Console", "OpenWrap.Console\OpenWrap.Console.csproj", "{49E96F6C-C545-4826-BC35-666C76721B9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper", "OpenWrap.Resharper\OpenWrap.Resharper.csproj", "{05F146AE-9315-44B7-AF52-9B5925C90E27}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Tests", "OpenWrap.Tests\OpenWrap.Tests.csproj", "{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Vs2008", "OpenWrap.Vs2008\OpenWrap.Vs2008.csproj", "{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CE52051-0070-423D-96CB-8B16700A2251}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CE52051-0070-423D-96CB-8B16700A2251}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CE52051-0070-423D-96CB-8B16700A2251}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CE52051-0070-423D-96CB-8B16700A2251}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49E96F6C-C545-4826-BC35-666C76721B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49E96F6C-C545-4826-BC35-666C76721B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49E96F6C-C545-4826-BC35-666C76721B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49E96F6C-C545-4826-BC35-666C76721B9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05F146AE-9315-44B7-AF52-9B5925C90E27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05F146AE-9315-44B7-AF52-9B5925C90E27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05F146AE-9315-44B7-AF52-9B5925C90E27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05F146AE-9315-44B7-AF52-9B5925C90E27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
