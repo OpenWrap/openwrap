@@ -61,6 +61,7 @@
     <Compile Include="Commands\NamesapceNotFound.cs" />
     <Compile Include="Commands\UnknownCommandInput.cs" />
     <Compile Include="Commands\Wrap\AddWrapCommand.cs" />
+    <Compile Include="Commands\Wrap\GenericError.cs" />
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="InternalServices.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />

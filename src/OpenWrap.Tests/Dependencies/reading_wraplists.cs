@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using OpenRasta.Testing;
 using OpenRasta.Wrap.Dependencies;
+using OpenRasta.Wrap.Repositories;
 using OpenRasta.Wrap.Sources;
 using OpenWrap.Repositories;
 
@@ -64,7 +65,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         {
             protected void given_repository()
             {
-                Repository = new XmlRepository(new InMemoryNavigator());
+                Repository = new XmlRepository(new InMemoryNavigator(), new IExportBuilder[0]);
             }
             class InMemoryNavigator : IHttpNavigator
             {
