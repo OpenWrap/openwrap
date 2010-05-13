@@ -1,0 +1,2 @@
+﻿
+depends nhibernate-core = 2.1

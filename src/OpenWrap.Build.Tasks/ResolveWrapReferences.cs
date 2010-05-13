@@ -83,10 +83,18 @@ namespace OpenWrap.Build.Tasks
         void EnableVisualStudioIntegration()
         {
             if (!EnableVisualStudioInegration) return;
-
-            WrapServices.TryRegisterService(()=> new ResharperIntegrationService(Environment));
+            try
+            {
+                EnableResharperIntegration();
+            }
+            catch(Exception e){}
             WrapServices.GetService<ResharperIntegrationService>()
                 .TryAddNotifier(WrapDescriptorPath, WrapRepository, ProjectFilePath);
+        }
+
+        void EnableResharperIntegration()
+        {
+            WrapServices.TryRegisterService(()=> new ResharperIntegrationService(Environment));
         }
 
         bool DependencyNotFound(WrapDependency dependency)
