@@ -77,7 +77,7 @@ namespace OpenRasta.Wrap.Tests.Slow
         {
             protected DirectoryInfo RepositoryPath;
             protected FolderRepository Repository;
-            protected IWrapPackageInfo Descriptor;
+            protected IPackageInfo Descriptor;
             protected WrapDependency Dependency;
 
             protected void given_folder_repository()

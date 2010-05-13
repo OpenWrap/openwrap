@@ -5,7 +5,7 @@ namespace OpenRasta.Wrap.Sources
 {
     public interface IWrapRepository
     {
-        ILookup<string, IWrapPackageInfo> PackagesByName { get; }
-        IWrapPackageInfo Find(WrapDependency dependency);
+        ILookup<string, IPackageInfo> PackagesByName { get; }
+        IPackageInfo Find(WrapDependency dependency);
     }
 }

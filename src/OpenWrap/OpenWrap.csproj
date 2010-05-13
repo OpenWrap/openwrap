@@ -61,15 +61,17 @@
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="InternalServices.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
+    <Compile Include="Repositories\HttpNavigator.cs" />
     <Compile Include="Repositories\HttpRepository.cs" />
-    <Compile Include="Repositories\HttpWrapPackageInfo.cs" />
+    <Compile Include="Repositories\XmlPackageInfo.cs" />
     <Compile Include="Repositories\IHttpNavigator.cs" />
-    <Compile Include="Repositories\IWrapPackageInfo.cs" />
+    <Compile Include="Repositories\IPackageInfo.cs" />
     <Compile Include="Repositories\IWrapRepository.cs" />
     <Compile Include="Repositories\RepositoryType.cs" />
     <Compile Include="Exports\IWrapExport.cs" />
     <Compile Include="Exports\IWrapExportItem.cs" />
-    <Compile Include="Repositories\WrapListFileRepository.cs" />
+    <Compile Include="Repositories\XmlRepository.cs" />
+    <Compile Include="Repositories\ZipPackage.cs" />
     <Compile Include="Services\IService.cs" />
     <Compile Include="Services\IWrapDescriptorMonitoringService.cs" />
     <Compile Include="Services\WrapDependencyResolver.cs" />
@@ -105,8 +107,9 @@
     <Compile Include="Exports\IAssemblyReferenceExportItem.cs" />
     <Compile Include="Exports\IExportBuilder.cs" />
     <Compile Include="Resources\WrapCollection.cs" />
-    <Compile Include="Repositories\IWrapPackage.cs" />
+    <Compile Include="Repositories\IPackage.cs" />
     <Compile Include="SharedReflectionExtensions.cs" />
+    <Compile Include="StreamExtensions.cs" />
     <Compile Include="Strings.Designer.cs">
       <DependentUpon>Strings.resx</DependentUpon>
       <AutoGen>True</AutoGen>

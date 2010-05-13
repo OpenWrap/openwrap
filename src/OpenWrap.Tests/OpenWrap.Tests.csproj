@@ -72,6 +72,7 @@
     <EmbeddedResource Include="Slow\TestFiles.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TestFiles.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Slow\test-module-1.0.0.wrap" />
   </ItemGroup>

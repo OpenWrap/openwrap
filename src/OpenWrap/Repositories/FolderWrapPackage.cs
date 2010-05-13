@@ -8,7 +8,7 @@ using OpenRasta.Wrap.Sources;
 
 namespace OpenRasta.Wrap.Repositories
 {
-    public class FolderWrapPackage : IWrapPackage
+    public class FolderWrapPackage : IPackage
     {
         readonly FileInfo _originalWrapFile;
         readonly IEnumerable<IExportBuilder> _exporters;
@@ -40,7 +40,7 @@ namespace OpenRasta.Wrap.Repositories
             get { return Descriptor.Version; }
         }
 
-        public IWrapPackage Load()
+        public IPackage Load()
         {
             return this;
         }

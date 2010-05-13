@@ -4,7 +4,7 @@ using OpenRasta.Wrap.Sources;
 
 namespace OpenRasta.Wrap.Dependencies
 {
-    public class WrapDescriptor : IWrapPackageInfo
+    public class WrapDescriptor : IPackageInfo
     {
         public WrapDescriptor()
         {
@@ -15,7 +15,7 @@ namespace OpenRasta.Wrap.Dependencies
         public string Name { get; set; }
 
         public Version Version { get; set; }
-        public IWrapPackage Load()
+        public IPackage Load()
         {
             return null;
         }

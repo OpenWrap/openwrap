@@ -28,7 +28,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
     }
     public class reading_the_dynamicproxy_package : context.wrap_list
     {
-        IWrapPackageInfo castle_proxy;
+        IPackageInfo castle_proxy;
 
         public reading_the_dynamicproxy_package()
         {
@@ -64,7 +64,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         {
             protected void given_repository()
             {
-                Repository = new WrapListFileRepository(new InMemoryNavigator());
+                Repository = new XmlRepository(new InMemoryNavigator());
             }
             class InMemoryNavigator : IHttpNavigator
             {
@@ -73,7 +73,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     return XDocument.Parse(WrapListDocument);
                 }
 
-                public Stream LoadFile(string href)
+                public Stream LoadFile(Uri href)
                 {
                     throw new NotImplementedException();
                 }
