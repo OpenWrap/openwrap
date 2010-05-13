@@ -9,6 +9,7 @@ namespace OpenWrap.Console
     {
         static void Main(string[] args)
         {
+            var commandProcessor = new CommandProcessor()
         }
     }
 }

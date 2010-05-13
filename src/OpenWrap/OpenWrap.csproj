@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\IWrapAssemblyClient.cs" />
+    <Compile Include="Commands\CommandRepository.cs" />
     <Compile Include="Commands\Error.cs" />
     <Compile Include="Commands\ICommandDescriptor.cs" />
     <Compile Include="Commands\InvalidCommandValue.cs" />
@@ -78,7 +79,7 @@
     <Compile Include="Services\WrapDescriptorMonitor.cs" />
     <Compile Include="Services\WrapServices.cs" />
     <Compile Include="Commands\CommandList.cs" />
-    <Compile Include="Commands\CommandProcessor.cs" />
+    <Compile Include="Commands\CommandLineProcessor.cs" />
     <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandResult.cs" />
