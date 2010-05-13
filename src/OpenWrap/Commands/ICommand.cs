@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using OpenRasta.TypeSystem.ReflectionBased;
 using OpenRasta.Wrap.Console;
+using OpenWrap.Commands;
 
 namespace OpenRasta.Wrap.Commands
 {
@@ -25,7 +26,7 @@ namespace OpenRasta.Wrap.Commands
             _commandType = commandType;
             var attribute = commandType.GetAttribute<CommandAttribute>() ?? new CommandAttribute();
             Namespace = attribute.Namespace ?? commandType.Namespace;
-            Name = attribute.Name ?? commandType.Name;
+            Verb = attribute.Name ?? commandType.Name;
             DisplayName = attribute.DisplayName ?? commandType.Name.CamelToSpacedName();
             Description = attribute.Description ?? string.Empty;
 
@@ -44,7 +45,7 @@ namespace OpenRasta.Wrap.Commands
         }
 
         public string Namespace { get; set; }
-        public string Name { get; set; }
+        public string Verb { get; set; }
         public string DisplayName { get; set; }
         public string Description { get; set; }
         public IDictionary<string, ICommandInputDescriptor> Inputs { get; set; }

@@ -54,8 +54,10 @@
   <ItemGroup>
     <Compile Include="Build\IWrapAssemblyClient.cs" />
     <Compile Include="Commands\CommandRepository.cs" />
+    <Compile Include="Commands\Core\HelpCommand.cs" />
     <Compile Include="Commands\Error.cs" />
     <Compile Include="Commands\ICommandDescriptor.cs" />
+    <Compile Include="Commands\ICommandRepository.cs" />
     <Compile Include="Commands\InvalidCommandValue.cs" />
     <Compile Include="Commands\MissingCommandValue.cs" />
     <Compile Include="Commands\NamesapceNotFound.cs" />

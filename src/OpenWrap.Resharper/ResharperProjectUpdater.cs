@@ -70,9 +70,9 @@ namespace OpenWrap.Resharper
 
                                     });
             }
-            catch
+            catch(Exception e)
             {
-                //Debugger.Launch();
+                Debug.WriteLine("Exception when updating resharper: \r\n" + e);
             }
         }
 

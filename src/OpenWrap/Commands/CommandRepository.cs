@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.Wrap.Commands;
+using OpenWrap.Commands;
 
 namespace OpenRasta.Wrap.Console
 {
-    public class CommandRepository : ICollection<ICommandDescriptor>
+    public class CommandRepository : ICommandRepository
     {
         readonly ICollection<ICommandDescriptor> _commands = new List<ICommandDescriptor>();
         readonly HashSet<string> _commandVerbs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -26,8 +26,8 @@ namespace OpenRasta.Wrap.Console
         {
             if (!_namespaces.Contains(commandDescriptor.Namespace))
                 _namespaces.Add(commandDescriptor.Namespace);
-            if (!_commandVerbs.Contains(commandDescriptor.Name))
-                _commandVerbs.Add(commandDescriptor.Name);
+            if (!_commandVerbs.Contains(commandDescriptor.Verb))
+                _commandVerbs.Add(commandDescriptor.Verb);
 
             _commands.Add(commandDescriptor);
         }
@@ -35,7 +35,7 @@ namespace OpenRasta.Wrap.Console
         public ICommandDescriptor Get(string @namespace, string name)
         {
             return _commands.Single(x => string.Compare(x.Namespace, @namespace, StringComparison.OrdinalIgnoreCase) == 0
-                                         && string.Compare(x.Name, name, StringComparison.OrdinalIgnoreCase) == 0);
+                                         && string.Compare(x.Verb, name, StringComparison.OrdinalIgnoreCase) == 0);
         }
 
         IEnumerator<ICommandDescriptor> IEnumerable<ICommandDescriptor>.GetEnumerator()
@@ -76,6 +76,10 @@ namespace OpenRasta.Wrap.Console
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<ICommandDescriptor>)this).GetEnumerator();
+        }
+
+        public void Initialize()
+        {
         }
     }
 }

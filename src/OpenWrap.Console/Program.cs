@@ -6,6 +6,7 @@ using OpenRasta.Wrap.Build.Services;
 using OpenRasta.Wrap.Commands;
 using OpenRasta.Wrap.Console;
 using OpenRasta.Wrap.Sources;
+using OpenWrap.Commands.Core;
 using OpenWrap.Commands.Wrap;
 
 namespace OpenWrap.Console
@@ -17,8 +18,11 @@ namespace OpenWrap.Console
             WrapServices.RegisterService<IEnvironment>(new CurrentDirectoryEnvironment());
             var repo = new CommandRepository
             {
-                new AttributeBasedCommandDescriptor<AddWrapCommand>()
+                new AttributeBasedCommandDescriptor<AddWrapCommand>(),
+                new AttributeBasedCommandDescriptor<HelpCommand>(),
+                new AttributeBasedCommandDescriptor<SyncWrapCommand>()
             };
+            WrapServices.RegisterService<ICommandRepository>(repo);
             var processor = new CommandLineProcessor(repo);
             var backedupConsoleColor = System.Console.ForegroundColor;
             try

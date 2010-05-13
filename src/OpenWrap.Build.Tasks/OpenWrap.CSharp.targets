@@ -9,8 +9,10 @@
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">true</OpenWrap-EnableVisualStudioIntegration>
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == ''">false</OpenWrap-EnableVisualStudioIntegration>
     <!-- We detect the root path based on the existence of a .wraps folder -->
-    <OpenWrap-WrapsDirectory>$(MSBuildProjectDirectory)\..\..\..\wraps</OpenWrap-WrapsDirectory>
-    <OpenWrap-BuildTasksDirectory>$(OpenWrap-WrapsDirectory)\openwrap-1.0\build</OpenWrap-BuildTasksDirectory>
+    <OpenWrap-WrapsDirectory Condition="'$(OpenWrap-WrapsDirectory)' == ''">$(MSBuildProjectDirectory)\..\..\wraps</OpenWrap-WrapsDirectory>
+    <OpenWrap-WrapsDirectory Condition="!Exists('OpenWrap-WrapsDirectory')">$(MSBuildProjectDirectory)\..\..\..\wraps</OpenWrap-WrapsDirectory>
+    
+    <OpenWrap-BuildTasksDirectory>$(OpenWrap-WrapsDirectory)\openwrap-1.0.0\build</OpenWrap-BuildTasksDirectory>
     
     <RootSolutionDirectory>$(OpenWrap-WrapsDirectory)\..</RootSolutionDirectory>
 
