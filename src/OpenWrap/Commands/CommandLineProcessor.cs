@@ -37,7 +37,7 @@ namespace OpenRasta.Wrap.Console
 
             var unnamedCommandInputValues = commandInputValues[null].ToList();
 
-            var namedInputs = (from namedValues in commandInputValues
+            var assignedNamedInputValues = (from namedValues in commandInputValues
                          where namedValues.Key != null
                          let value = namedValues.LastOrDefault()
                          let commandInput = command.Inputs.ContainsKey(namedValues.Key) ? command.Inputs[namedValues.Key] : null
@@ -50,24 +50,25 @@ namespace OpenRasta.Wrap.Console
                              ParsedValue = parsedValue
                          }).ToList();
 
-            var namedInputsNameNotFound = namedInputs.FirstOrDefault(x => x.Input == null);
+            var namedInputsNameNotFound = assignedNamedInputValues.FirstOrDefault(x => x.Input == null);
             if (namedInputsNameNotFound != null) return new UnknownCommandInput(namedInputsNameNotFound.InputName);
 
-            var namedInputsValueNotParsed = namedInputs.FirstOrDefault(x => x.RawValue == null);
+            var namedInputsValueNotParsed = assignedNamedInputValues.FirstOrDefault(x => x.RawValue == null);
             if (namedInputsValueNotParsed != null) return new InvalidCommandValue(namedInputsValueNotParsed.InputName, namedInputsValueNotParsed.RawValue);
 
-            var inputNamesAlreadyFilled = namedInputs.Select(x => x.InputName).ToList();
+            var inputNamesAlreadyFilled = assignedNamedInputValues.Select(x => x.InputName).ToList();
             // now got a clean set of input names that pass. Now on to the unnamed ones.
 
-            var unfullfilledCommands = (from input in command.Inputs
+            var unfullfilledCommandInputs = (from input in command.Inputs
                                         where !inputNamesAlreadyFilled.Contains(input.Key, StringComparer.OrdinalIgnoreCase)
                                               && input.Value.Position >= 0
                                         orderby input.Value.Position ascending
                                         select input.Value).ToList();
-            if (unnamedCommandInputValues.Count > unfullfilledCommands.Count) return new InvalidCommandValue(unnamedCommandInputValues);
 
-            var unnamedCommandValues = (from unnamedValue in unnamedCommandInputValues
-                                        let input = unfullfilledCommands[unnamedCommandInputValues.IndexOf(unnamedValue)]
+            if (unnamedCommandInputValues.Count > unfullfilledCommandInputs.Count) return new InvalidCommandValue(unnamedCommandInputValues);
+
+            var assignedUnnamedInputValues = (from unnamedValue in unnamedCommandInputValues
+                                        let input = unfullfilledCommandInputs[unnamedCommandInputValues.IndexOf(unnamedValue)]
                                         let commandValue = input.ValidateValue(unnamedValue)
                                         select new ParsedInput()
                                         {
@@ -78,12 +79,18 @@ namespace OpenRasta.Wrap.Console
                                         }).ToList();
 
 
-            var unnamedFailed = unnamedCommandValues.Where(x => x.ParsedValue == null).ToList();
+            var unnamedFailed = assignedUnnamedInputValues.Where(x => x.ParsedValue == null).ToList();
             if (unnamedFailed.Count > 0) return new InvalidCommandValue(unnamedCommandInputValues);
 
+            var allAssignedInputs = assignedNamedInputValues.Concat(assignedUnnamedInputValues);
+
+            var missingInputs = command.Inputs.Select(x => x.Value).Where(x => !allAssignedInputs.Select(i => i.Input).Contains(x) && x.IsRequired).ToList();
+            if (missingInputs.Count > 0) return new MissingCommandValue(missingInputs);
+
+            var missingInputValues = allAssignedInputs.Select(x => x.Input);
             // all clear, assign and run
             var commandInstance = command.Create();
-            foreach (var namedInput in namedInputs.Concat(unnamedCommandValues))
+            foreach (var namedInput in allAssignedInputs)
                 namedInput.Input.SetValue(commandInstance, namedInput.ParsedValue);
 
             return commandInstance.Execute();

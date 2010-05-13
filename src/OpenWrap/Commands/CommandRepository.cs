@@ -1,13 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenRasta.Wrap.Commands;
 
 namespace OpenRasta.Wrap.Console
 {
-    public class CommandRepository
+    public class CommandRepository : ICollection<ICommandDescriptor>
     {
-        readonly List<ICommandDescriptor> _commands = new List<ICommandDescriptor>();
+        readonly ICollection<ICommandDescriptor> _commands = new List<ICommandDescriptor>();
         readonly HashSet<string> _commandVerbs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         readonly HashSet<string> _namespaces = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -35,6 +36,46 @@ namespace OpenRasta.Wrap.Console
         {
             return _commands.Single(x => string.Compare(x.Namespace, @namespace, StringComparison.OrdinalIgnoreCase) == 0
                                          && string.Compare(x.Name, name, StringComparison.OrdinalIgnoreCase) == 0);
+        }
+
+        IEnumerator<ICommandDescriptor> IEnumerable<ICommandDescriptor>.GetEnumerator()
+        {
+            return _commands.GetEnumerator();
+        }
+
+        public void Clear()
+        {
+            _commands.Clear();
+        }
+
+        public bool Contains(ICommandDescriptor item)
+        {
+            return _commands.Contains(item);
+        }
+
+        public void CopyTo(ICommandDescriptor[] array, int arrayIndex)
+        {
+            _commands.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(ICommandDescriptor item)
+        {
+            return _commands.Remove(item);
+        }
+
+        public int Count
+        {
+            get { return _commands.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return _commands.IsReadOnly; }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<ICommandDescriptor>)this).GetEnumerator();
         }
     }
 }

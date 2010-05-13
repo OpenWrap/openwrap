@@ -54,6 +54,13 @@ namespace OpenRasta.Wrap.Commands
             
         }
     }
+    public class AttributeBasedCommandDescriptor<T> : AttributeBasedCommandDescriptor
+        where T:ICommand
+    {
+        public AttributeBasedCommandDescriptor() : base(typeof(T))
+        {
+        }
+    }
     [AttributeUsage(AttributeTargets.Class)]
     public class CommandAttribute : Attribute
     {

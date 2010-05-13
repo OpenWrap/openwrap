@@ -57,8 +57,10 @@
     <Compile Include="Commands\Error.cs" />
     <Compile Include="Commands\ICommandDescriptor.cs" />
     <Compile Include="Commands\InvalidCommandValue.cs" />
+    <Compile Include="Commands\MissingCommandValue.cs" />
     <Compile Include="Commands\NamesapceNotFound.cs" />
     <Compile Include="Commands\UnknownCommandInput.cs" />
+    <Compile Include="Commands\Wrap\AddWrapCommand.cs" />
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="InternalServices.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
