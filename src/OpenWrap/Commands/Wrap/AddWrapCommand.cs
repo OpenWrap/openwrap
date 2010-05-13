@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using OpenRasta.Wrap.Build.Services;
 using OpenRasta.Wrap.Commands;
 using OpenRasta.Wrap.Console;
 
@@ -12,8 +13,7 @@ namespace OpenWrap.Commands.Wrap
     [Command(Name = "add", Namespace = "wrap")]
     public class AddWrapCommand : ICommand
     {
-        string _wrapFile;
-        DirectoryInfo _wrapDirectory;
+        IEnvironment _environment;
 
         [CommandInput(IsRequired = true, Position = 0)]
         public string Name { get; set; }
@@ -23,55 +23,46 @@ namespace OpenWrap.Commands.Wrap
 
         public ICommandResult Execute()
         {
-            Debugger.Launch();
-            return FindWrapFile()
-                    ?? FindWrapDirectory()
+            _environment = WrapServices.GetService<IEnvironment>();
+            return VerifyWrapFile()
+                    ?? VeryfyWrapRepository()
                     ?? AddInstructionToWrapFile()
                     ?? SyncWrapFileWithWrapDirectory();
         }
 
         ICommandResult AddInstructionToWrapFile()
         {
-            File.AppendAllText(_wrapFile, GetDependsLine(), Encoding.UTF8);
+            File.AppendAllText(_environment.WrapDescriptorPath, GetDependsLine(), Encoding.UTF8);
             return null;
         }
 
         string GetDependsLine()
         {
-            return "\r\ndepends " + Name + (Version == null ? string.Empty : Version);
+            return "\r\ndepends " + Name + " " + (Version ?? string.Empty);
         }
 
-        ICommandResult FindWrapDirectory()
+        ICommandResult VeryfyWrapRepository()
         {
-            _wrapDirectory = new DirectoryInfo(Path.GetDirectoryName(_wrapFile))
-                .SelfAndAncestors()
-                .SelectMany(x => x.Directories("wraps"))
-                .Where(x=>x != null)
-                .FirstOrDefault();
-
-            return _wrapDirectory != null
+           return _environment.Repository != null
                        ? null
                        : new GenericError
                        {
-                           Message = string.Format("Directory 'wraps' not found on the path above the wrap file '{0}'.", _wrapFile)
+                           Message = string.Format("Directory 'wraps' not found on the path above the wrap file '{0}'.", _environment.WrapDescriptorPath)
                        };
         }
 
-        ICommandResult FindWrapFile()
-        {
-            _wrapFile = new DirectoryInfo(Environment.CurrentDirectory)
-                .SelfAndAncestors()
-                .SelectMany(x => x.Files("*.wrapdesc"))
-                .FirstOrDefault();
-
-            return _wrapFile != null ? null : new GenericError { Message = "Could not find a wrap descriptor in your path." };
+        ICommandResult VerifyWrapFile()
+        {   
+            return _environment.WrapDescriptorPath != null ? null : new GenericError { Message = "Could not find a wrap descriptor in your path." };
         }
 
         ICommandResult SyncWrapFileWithWrapDirectory()
         {
+            return new SyncWrapCommand().Execute();
             return new Success();
         }
     }
+
     public static class IOExtensions
     {
         public static IEnumerable<DirectoryInfo> SelfAndAncestors(this DirectoryInfo di)

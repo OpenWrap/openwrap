@@ -15,7 +15,7 @@ namespace OpenRasta.Wrap.Build.Services
             var wrapFile = new WrapDescriptorMonitor();
 
             RegisterService<IWrapDescriptorMonitoringService>(wrapFile);
-
+            
         }
         public static void RegisterService<TService>(TService service) where TService : class, IService
         {
