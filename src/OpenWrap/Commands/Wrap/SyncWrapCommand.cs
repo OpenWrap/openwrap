@@ -3,7 +3,7 @@ using OpenRasta.Wrap.Console;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Name = "sync", Namespace = "wrap")]
+    [Command(Verb = "sync", Namespace = "wrap")]
     public class SyncWrapCommand : ICommand
     {
         public ICommandResult Execute()

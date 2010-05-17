@@ -6,7 +6,7 @@ using OpenRasta.Wrap.Console;
 
 namespace OpenRasta.Wrap.Commands.Wrap
 {
-    [Command(Name="manageui", DisplayName="Manage wraps", Namespace="wrap")]
+    [Command(Verb="manageui", DisplayName="Manage wraps", Namespace="wrap")]
     public class ManageWrapCommand : ICommand
     {
         public ICommandResult Execute()

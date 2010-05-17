@@ -30,7 +30,8 @@ tokenizers
 Tokenizer
 surrogated
 Templated
-Markup</UserWords>
+Markup
+Namespace</UserWords>
             </CustomDictionary>
             <CustomDictionary>
               <Name>en-GB</Name>

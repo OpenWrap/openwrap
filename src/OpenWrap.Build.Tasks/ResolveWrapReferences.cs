@@ -34,7 +34,7 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string ProjectFilePath { get; set; }
 
-        public bool EnableVisualStudioInegration { get; set; }
+        public bool EnableVisualStudioIntegration { get; set; }
 
         public bool CopyLocal { get; set;}
 
@@ -65,7 +65,7 @@ namespace OpenWrap.Build.Tasks
             {
                 EnsureWrapRepositoryIsInitialized();
 
-                EnableVisualStudioIntegration();
+                HookupToVisualStudio();
             }
             catch (FileNotFoundException e)
             {
@@ -80,9 +80,9 @@ namespace OpenWrap.Build.Tasks
             return RefreshWrapDependencies();
         }
 
-        void EnableVisualStudioIntegration()
+        void HookupToVisualStudio()
         {
-            if (!EnableVisualStudioInegration) return;
+            if (!EnableVisualStudioIntegration) return;
             try
             {
                 EnableResharperIntegration();

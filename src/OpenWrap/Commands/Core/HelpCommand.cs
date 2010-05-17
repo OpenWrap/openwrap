@@ -8,7 +8,7 @@ using OpenRasta.Wrap.Console;
 
 namespace OpenWrap.Commands.Core
 {
-    [Command(Name="get", Namespace="help")]
+    [Command(Verb="get", Namespace="help")]
     public class HelpCommand : ICommand
     {
         public ICommandResult Execute()

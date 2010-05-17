@@ -26,7 +26,7 @@ namespace OpenRasta.Wrap.Commands
             _commandType = commandType;
             var attribute = commandType.GetAttribute<CommandAttribute>() ?? new CommandAttribute();
             Namespace = attribute.Namespace ?? commandType.Namespace;
-            Verb = attribute.Name ?? commandType.Name;
+            Verb = attribute.Verb ?? commandType.Name;
             DisplayName = attribute.DisplayName ?? commandType.Name.CamelToSpacedName();
             Description = attribute.Description ?? string.Empty;
 
@@ -66,7 +66,7 @@ namespace OpenRasta.Wrap.Commands
     public class CommandAttribute : Attribute
     {
         public string Namespace { get; set; }
-        public string Name { get; set; }
+        public string Verb { get; set; }
         public string DisplayName { get; set; }
         public string Description { get; set; }
     }

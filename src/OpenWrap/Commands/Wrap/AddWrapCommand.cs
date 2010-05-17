@@ -10,7 +10,7 @@ using OpenRasta.Wrap.Console;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Name = "add", Namespace = "wrap")]
+    [Command(Verb = "add", Namespace = "wrap")]
     public class AddWrapCommand : ICommand
     {
         IEnvironment _environment;

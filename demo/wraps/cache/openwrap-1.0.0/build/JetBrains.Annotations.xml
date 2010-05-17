@@ -1,0 +1,192 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JetBrains.Annotations</name>
+    </assembly>
+    <members>
+        <member name="T:JetBrains.Annotations.StringFormatMethodAttribute">
+            <summary>
+            Indicates that marked method builds string by format pattern and (optional) arguments. 
+            Parameter, which contains format string, should be given in constructor.
+            The format string should be in <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])"/> -like form
+            </summary>
+        </member>
+        <member name="M:JetBrains.Annotations.StringFormatMethodAttribute.#ctor(System.String)">
+            <summary>
+            Initializes new instance of StringFormatMethodAttribute
+            </summary>
+            <param name="formatParameterName">Specifies which parameter of an annotated method should be treated as format-string</param>
+        </member>
+        <member name="P:JetBrains.Annotations.StringFormatMethodAttribute.FormatParameterName">
+            <summary>
+            Gets format parameter name
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.InvokerParameterNameAttribute">
+            <summary>
+            Indicates that the function argument should be string literal and match one  of the parameters of the caller function.
+            For example, <see cref="T:System.ArgumentNullException"/> has such parameter.
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.AssertionMethodAttribute">
+            <summary>
+            Indicates that the marked method is assertion method, i.e. it halts control flow if one of the conditions is satisfied. 
+            To set the condition, mark one of the parameters with <see cref="T:JetBrains.Annotations.AssertionConditionAttribute"/> attribute
+            </summary>
+            <seealso cref="T:JetBrains.Annotations.AssertionConditionAttribute"/>
+        </member>
+        <member name="T:JetBrains.Annotations.AssertionConditionAttribute">
+            <summary>
+            Indicates the condition parameter of the assertion method. 
+            The method itself should be marked by <see cref="T:JetBrains.Annotations.AssertionMethodAttribute"/> attribute.
+            The mandatory argument of the attribute is the assertion type.
+            </summary>
+            <seealso cref="T:JetBrains.Annotations.AssertionConditionType"/>
+        </member>
+        <member name="M:JetBrains.Annotations.AssertionConditionAttribute.#ctor(JetBrains.Annotations.AssertionConditionType)">
+            <summary>
+            Initializes new instance of AssertionConditionAttribute
+            </summary>
+            <param name="conditionType">Specifies condition type</param>
+        </member>
+        <member name="P:JetBrains.Annotations.AssertionConditionAttribute.ConditionType">
+            <summary>
+            Gets condition type
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.AssertionConditionType">
+            <summary>
+            Specifies assertion type. If the assertion method argument satisifes the condition, then the execution continues. 
+            Otherwise, execution is assumed to be halted
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.AssertionConditionType.IS_TRUE">
+            <summary>
+            Indicates that the marked parameter should be evaluated to true
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.AssertionConditionType.IS_FALSE">
+            <summary>
+            Indicates that the marked parameter should be evaluated to false
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.AssertionConditionType.IS_NULL">
+            <summary>
+            Indicates that the marked parameter should be evaluated to null value
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.AssertionConditionType.IS_NOT_NULL">
+            <summary>
+            Indicates that the marked parameter should be evaluated to not null value
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.TerminatesProgramAttribute">
+            <summary>
+            Indicates that the marked method unconditionally terminates control flow execution.
+            For example, it could unconditionally throw exception
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.CanBeNullAttribute">
+            <summary>
+            Indicates that the value of marked element could be <c>null</c> sometimes, so the check for <c>null</c> is necessary before its usage
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.NotNullAttribute">
+            <summary>
+            Indicates that the value of marked element could never be <c>null</c>
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.CannotApplyEqualityOperatorAttribute">
+            <summary>
+            Indicates that the value of marked type (or its derivatives) cannot be compared using '==' or '!=' operators.
+            There is only exception to compare with <c>null</c>, it is permitted
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.BaseTypeRequiredAttribute">
+            <summary>
+            When applied to target attribute, specifies a requirement for any type which is marked with 
+            target attribute to implement or inherit specific type or types
+            </summary>
+            <example>
+            <code>
+            [BaseTypeRequired(typeof(IComponent)] // Specify requirement
+            public class ComponentAttribute : Attribute 
+            {}
+            
+            [Component] // ComponentAttribute requires implementing IComponent interface
+            public class MyComponent : IComponent
+            {}
+            </code>
+            </example>
+        </member>
+        <member name="M:JetBrains.Annotations.BaseTypeRequiredAttribute.#ctor(System.Type[])">
+            <summary>
+            Initializes new instance of BaseTypeRequiredAttribute
+            </summary>
+            <param name="baseTypes">Specifies which types are required</param>
+        </member>
+        <member name="P:JetBrains.Annotations.BaseTypeRequiredAttribute.BaseTypes">
+            <summary>
+            Gets enumerations of specified base types
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.UsedImplicitlyAttribute">
+            <summary>
+            Indicates that the marked symbol is used implicitly (e.g. via reflection, in external library),
+            so this symbol will not be marked as unused (as well as by other usage inspections)
+            </summary>
+        </member>
+        <member name="M:JetBrains.Annotations.UsedImplicitlyAttribute.#ctor">
+            <summary>
+            Initializes new instance of UsedImplicitlyAttribute
+            </summary>
+        </member>
+        <member name="M:JetBrains.Annotations.UsedImplicitlyAttribute.#ctor(JetBrains.Annotations.ImplicitUseFlags)">
+            <summary>
+            Initializes new instance of UsedImplicitlyAttribute with specified flags
+            </summary>
+            <param name="flags">Value of type <see cref="T:JetBrains.Annotations.ImplicitUseFlags"/> indicating usage kind</param>
+        </member>
+        <member name="P:JetBrains.Annotations.UsedImplicitlyAttribute.Flags">
+            <summary>
+            Gets value indicating what is meant to be used
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.MeansImplicitUseAttribute">
+            <summary>
+            Should be used on attributes and causes ReSharper to not mark symbols marked with such attributes as unused (as well as by other usage inspections)
+            </summary>
+        </member>
+        <member name="M:JetBrains.Annotations.MeansImplicitUseAttribute.#ctor">
+            <summary>
+            Initializes new instance of MeansImplicitUseAttribute
+            </summary>
+        </member>
+        <member name="M:JetBrains.Annotations.MeansImplicitUseAttribute.#ctor(JetBrains.Annotations.ImplicitUseFlags)">
+            <summary>
+            Initializes new instance of MeansImplicitUseAttribute with specified flags
+            </summary>
+            <param name="flags">Value of type <see cref="T:JetBrains.Annotations.ImplicitUseFlags"/> indicating usage kind</param>
+        </member>
+        <member name="P:JetBrains.Annotations.MeansImplicitUseAttribute.Flags">
+            <summary>
+            Gets value indicating what is meant to be used
+            </summary>
+        </member>
+        <member name="T:JetBrains.Annotations.ImplicitUseFlags">
+            <summary>
+            Specify what is considered used implicitly when marked with <see cref="T:JetBrains.Annotations.MeansImplicitUseAttribute"/> or <see cref="T:JetBrains.Annotations.UsedImplicitlyAttribute"/>
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseFlags.Default">
+            <summary>
+            Only entity marked with attribute considered used
+            </summary>
+        </member>
+        <member name="F:JetBrains.Annotations.ImplicitUseFlags.IncludeMembers">
+            <summary>
+            Entity marked with attribute and all its members considered used
+            </summary>
+        </member>
+    </members>
+</doc>
