@@ -105,7 +105,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
   </wrap>
 </wraplist>";
 
-            protected IWrapRepository Repository;
+            protected IPackageRepository Repository;
         }
     }
 }

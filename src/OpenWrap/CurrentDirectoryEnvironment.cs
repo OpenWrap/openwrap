@@ -9,7 +9,7 @@ namespace OpenWrap
 {
     public class CurrentDirectoryEnvironment : IEnvironment
     {
-        public IWrapRepository Repository { get; set; }
+        public IPackageRepository Repository { get; set; }
         public string WrapDescriptorPath { get; set; }
 
         public void Initialize()

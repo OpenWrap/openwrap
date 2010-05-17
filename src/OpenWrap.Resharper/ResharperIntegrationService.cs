@@ -20,7 +20,7 @@ namespace OpenWrap.Resharper
         {
         }
 
-        public void TryAddNotifier(string descriptorPath, IWrapRepository repository, string projectFilePath)
+        public void TryAddNotifier(string descriptorPath, IPackageRepository repository, string projectFilePath)
         {
             if (_projectFiles.ContainsKey(projectFilePath))
                 return;

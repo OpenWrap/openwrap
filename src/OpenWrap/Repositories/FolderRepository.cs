@@ -9,17 +9,17 @@ namespace OpenRasta.Wrap.Sources
     /// <summary>
     /// Provides a repository that can read packages in a folder using the default structure.
     /// </summary>
-    public class FolderRepository : IWrapRepository
+    public class FolderRepository : IPackageRepository
     {
         /// <exception cref="DirectoryNotFoundException"><c>DirectoryNotFoundException</c>.</exception>
-        public FolderRepository(string basePath)
+        public FolderRepository(string packageBasePath)
         {
 
-            BasePath = basePath;
-            if (!Directory.Exists(basePath))
-                throw new DirectoryNotFoundException(string.Format("The directory '{0}' doesn't exist.", basePath));
+            BasePath = packageBasePath;
+            if (!Directory.Exists(packageBasePath))
+                throw new DirectoryNotFoundException(string.Format("The directory '{0}' doesn't exist.", packageBasePath));
 
-            var baseDirectory = new DirectoryInfo(basePath);
+            var baseDirectory = new DirectoryInfo(packageBasePath);
 
             PackagesByName = (from wrapFile in baseDirectory.GetFiles("*.wrap")
                               let wrapFileName = Path.GetFileNameWithoutExtension(wrapFile.Name)
@@ -27,7 +27,7 @@ namespace OpenRasta.Wrap.Sources
                               let packageVersion = WrapNameUtility.GetVersion(wrapFileName)
                               where packageVersion != null
                               select Directory.Exists(cacheDirectory)
-            ? (IPackageInfo)new FolderWrapPackage(wrapFile, cacheDirectory, new[] { new AssemblyReferenceExportBuider() })
+            ? (IPackageInfo)new UncompressedPackage(wrapFile, cacheDirectory, new[] { new AssemblyReferenceExportBuider() })
             : (IPackageInfo)new ZipPackage(wrapFile, cacheDirectory,  new[] { new AssemblyReferenceExportBuider() }))
                 .ToLookup(x => x.Name);
         }

@@ -16,18 +16,18 @@ namespace OpenWrap.Resharper
     public class ResharperProjectUpdater : IWrapAssemblyClient
     {
         readonly string _descriptorPath;
-        readonly IWrapRepository _wrapRepository;
+        readonly IPackageRepository _packageRepository;
         readonly string _projectFilePath;
         static readonly Key ISWRAP = new Key("FromOpenWrap");
 
-        public ResharperProjectUpdater(string descriptorPath, IWrapRepository wrapRepository, string projectFilePath, WrapRuntimeEnvironment environment)
+        public ResharperProjectUpdater(string descriptorPath, IPackageRepository packageRepository, string projectFilePath, WrapRuntimeEnvironment environment)
         {
             _descriptorPath = descriptorPath;
-            _wrapRepository = wrapRepository;
+            _packageRepository = packageRepository;
             _projectFilePath = projectFilePath;
             Environment = environment;
             WrapServices.GetService<IWrapDescriptorMonitoringService>()
-                .ProcessWrapDescriptor(_descriptorPath, _wrapRepository, this);
+                .ProcessWrapDescriptor(_descriptorPath, _packageRepository, this);
         }
 
 

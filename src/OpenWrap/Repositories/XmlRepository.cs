@@ -8,7 +8,7 @@ using OpenRasta.Wrap.Sources;
 
 namespace OpenWrap.Repositories
 {
-    public class XmlRepository : IWrapRepository
+    public class XmlRepository : IPackageRepository
     {
         public XmlRepository(IHttpNavigator navigator, IEnumerable<IExportBuilder> builders)
         {

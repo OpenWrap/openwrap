@@ -14,12 +14,12 @@ namespace OpenWrap.Repositories
         readonly IEnumerable<IExportBuilder> _builders;
         readonly string _cacheDirectory;
         readonly FileInfo _wrapFile;
-        FolderWrapPackage _cachedPackage;
+        UncompressedPackage _cachedPackage;
 
-        public ZipPackage(FileInfo wrapFile, string cacheDirectory, IEnumerable<IExportBuilder> builders)
+        public ZipPackage(FileInfo wrapFile, string wrapCacheDirectory, IEnumerable<IExportBuilder> builders)
         {
             _wrapFile = wrapFile;
-            _cacheDirectory = cacheDirectory;
+            _cacheDirectory = wrapCacheDirectory;
             _builders = builders;
 
             LoadDescriptor();
@@ -47,7 +47,7 @@ namespace OpenWrap.Repositories
             if (_cachedPackage == null)
             {
                 new FastZip().ExtractZip(_wrapFile.FullName, _cacheDirectory, FastZip.Overwrite.Always, x => true, null, null, true);
-                _cachedPackage = new FolderWrapPackage(_wrapFile, _cacheDirectory, _builders);
+                _cachedPackage = new UncompressedPackage(_wrapFile, _cacheDirectory, _builders);
             }
             return _cachedPackage;
         }

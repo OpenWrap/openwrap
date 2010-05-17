@@ -69,13 +69,14 @@
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="IEnvironment.cs" />
     <Compile Include="InternalServices.cs" />
+    <Compile Include="Repositories\AggregatePackageRepository.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\HttpNavigator.cs" />
     <Compile Include="Repositories\HttpRepository.cs" />
     <Compile Include="Repositories\XmlPackageInfo.cs" />
     <Compile Include="Repositories\IHttpNavigator.cs" />
     <Compile Include="Repositories\IPackageInfo.cs" />
-    <Compile Include="Repositories\IWrapRepository.cs" />
+    <Compile Include="Repositories\IPackageRepository.cs" />
     <Compile Include="Repositories\RepositoryType.cs" />
     <Compile Include="Exports\IWrapExport.cs" />
     <Compile Include="Exports\IWrapExportItem.cs" />
@@ -112,7 +113,7 @@
     <Compile Include="Repositories\EnvironmentDependentFile.cs" />
     <Compile Include="Exports\FileExportItem.cs" />
     <Compile Include="Exports\FolderExport.cs" />
-    <Compile Include="Repositories\FolderWrapPackage.cs" />
+    <Compile Include="Repositories\UncompressedPackage.cs" />
     <Compile Include="Exports\IAssemblyReferenceExportItem.cs" />
     <Compile Include="Exports\IExportBuilder.cs" />
     <Compile Include="Resources\WrapCollection.cs" />

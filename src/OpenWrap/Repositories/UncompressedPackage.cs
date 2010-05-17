@@ -8,19 +8,19 @@ using OpenRasta.Wrap.Sources;
 
 namespace OpenRasta.Wrap.Repositories
 {
-    public class FolderWrapPackage : IPackage
+    public class UncompressedPackage : IPackage
     {
         readonly FileInfo _originalWrapFile;
         readonly IEnumerable<IExportBuilder> _exporters;
 
-        public FolderWrapPackage(FileInfo originalWrapFile, string folderPath, IEnumerable<IExportBuilder> exporters)
+        public UncompressedPackage(FileInfo originalPackage, string wrapCacheDirectory, IEnumerable<IExportBuilder> exporters)
         {
-            _originalWrapFile = originalWrapFile;
+            _originalWrapFile = originalPackage;
             _exporters = exporters;
-            BaseDirectory = new DirectoryInfo(folderPath);
+            BaseDirectory = new DirectoryInfo(wrapCacheDirectory);
             // get the descriptor file inside the package
             var descriptorName = BaseDirectory.Name;
-            Descriptor = new WrapDescriptorParser().ParseFile(Path.Combine(folderPath, descriptorName + ".wrapdesc"));
+            Descriptor = new WrapDescriptorParser().ParseFile(Path.Combine(wrapCacheDirectory, descriptorName + ".wrapdesc"));
         }
 
         protected DirectoryInfo BaseDirectory { get; set; }

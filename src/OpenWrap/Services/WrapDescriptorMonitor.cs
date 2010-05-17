@@ -12,12 +12,12 @@ namespace OpenRasta.Wrap.Build.Services
 
 
 
-        public void ProcessWrapDescriptor(string wrapPath, IWrapRepository wrapsDirectory, IWrapAssemblyClient client)
+        public void ProcessWrapDescriptor(string wrapPath, IPackageRepository packageRepository, IWrapAssemblyClient client)
         {
             if (!File.Exists(wrapPath))
                 return;
 
-            var descriptor = GetDescriptor(wrapPath, wrapsDirectory);
+            var descriptor = GetDescriptor(wrapPath, packageRepository);
             if (client.IsLongRunning)
                 descriptor.Clients.Add(client);
 
@@ -28,11 +28,11 @@ namespace OpenRasta.Wrap.Build.Services
         {
         }
 
-        WrapFileDescriptor GetDescriptor(string wrapPath, IWrapRepository wrapsDirectory)
+        WrapFileDescriptor GetDescriptor(string wrapPath, IPackageRepository packageRepository)
         {
             WrapFileDescriptor descriptor;
             if (!_notificationClients.TryGetValue(wrapPath, out descriptor))
-                _notificationClients.Add(wrapPath, descriptor = new WrapFileDescriptor(wrapPath, wrapsDirectory, HandleWrapFileUpdate));
+                _notificationClients.Add(wrapPath, descriptor = new WrapFileDescriptor(wrapPath, packageRepository, HandleWrapFileUpdate));
             return descriptor;
         }
 
@@ -67,9 +67,9 @@ namespace OpenRasta.Wrap.Build.Services
 
         class WrapFileDescriptor
         {
-            public WrapFileDescriptor(string path, IWrapRepository wraps, FileSystemEventHandler handler)
+            public WrapFileDescriptor(string path, IPackageRepository repository, FileSystemEventHandler handler)
             {
-                Repository = wraps;
+                Repository = repository;
                 Clients = new List<IWrapAssemblyClient>();
                 FilePath = path;
                 FileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(path), Path.GetFileName(path))
@@ -83,7 +83,7 @@ namespace OpenRasta.Wrap.Build.Services
             public List<IWrapAssemblyClient> Clients { get; set; }
             public string FilePath { get; set; }
             public FileSystemWatcher FileSystemWatcher { get; set; }
-            public IWrapRepository Repository { get; set; }
+            public IPackageRepository Repository { get; set; }
         }
     }
 }

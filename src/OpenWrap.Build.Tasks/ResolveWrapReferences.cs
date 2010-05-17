@@ -47,7 +47,7 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string WrapsDirectory { get; set; }
 
-        protected IWrapRepository WrapRepository { get; set; }
+        protected IPackageRepository PackageRepository { get; set; }
 
         string WrapDescriptorPath
         {
@@ -89,7 +89,7 @@ namespace OpenWrap.Build.Tasks
             }
             catch(Exception e){}
             WrapServices.GetService<ResharperIntegrationService>()
-                .TryAddNotifier(WrapDescriptorPath, WrapRepository, ProjectFilePath);
+                .TryAddNotifier(WrapDescriptorPath, PackageRepository, ProjectFilePath);
         }
 
         void EnableResharperIntegration()
@@ -105,14 +105,14 @@ namespace OpenWrap.Build.Tasks
 
         void EnsureWrapRepositoryIsInitialized()
         {
-            if (WrapRepository != null) return;
-            WrapRepository = new FolderRepository(WrapsDirectoryPath);
+            if (PackageRepository != null) return;
+            PackageRepository = new FolderRepository(WrapsDirectoryPath);
         }
 
         bool RefreshWrapDependencies()
         {
             var monitoringService = WrapServices.GetService<IWrapDescriptorMonitoringService>();
-            monitoringService.ProcessWrapDescriptor(WrapDescriptorPath, WrapRepository, this);
+            monitoringService.ProcessWrapDescriptor(WrapDescriptorPath, PackageRepository, this);
             return true;
         }
 

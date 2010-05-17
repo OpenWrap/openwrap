@@ -5,7 +5,7 @@ namespace OpenWrap
 {
     public interface IEnvironment : IService
     {
-        IWrapRepository Repository { get; }
+        IPackageRepository Repository { get; }
         string WrapDescriptorPath { get; }
     }
 }

@@ -8,7 +8,7 @@ namespace OpenRasta.Wrap.Build.Services
 {
     public class WrapDependencyResolver
     {
-        public IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(WrapDescriptor descriptor, IWrapRepository repository, IWrapAssemblyClient client)
+        public IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(WrapDescriptor descriptor, IPackageRepository repository, IWrapAssemblyClient client)
         {
             return (from dependency in descriptor.Dependencies
                     let package = repository.Find(dependency)

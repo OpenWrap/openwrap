@@ -19,7 +19,7 @@ namespace OpenWrap.Repositories
             Current = new FolderRepository(_userWrapsPath);
         }
 
-        public static IWrapRepository Current
+        public static IPackageRepository Current
         {
             get; private set;
         }
