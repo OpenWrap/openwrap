@@ -1,6 +1,6 @@
 using System;
 
-namespace OpenRasta.Wrap.Dependencies
+namespace OpenWrap.Dependencies
 {
     public class LessThanVersionVertice : VersionVertice
     {

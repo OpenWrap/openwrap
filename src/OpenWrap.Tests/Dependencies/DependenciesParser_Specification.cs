@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using OpenRasta.Testing;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Repositories;
-using OpenRasta.Wrap.Resources;
-using OpenRasta.Wrap.Tests.Dependencies.contexts;
+using OpenWrap.Repositories.Testing;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
+using OpenWrap.Repositories.Wrap.Tests.Dependencies.contexts;
 
-namespace OpenRasta.Wrap.Tests.Dependencies
+namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
 {
     public class when_parsing_declaration_with_multiple_versions : dependency_parser_context
     {
@@ -189,7 +189,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
     [Ignore("Implementation expect existing dll. Need to update tests.")]
     public class AssemblyReferenceExportBuilder_context : Testing.context
     {
-        IWrapExport[] _exports;
+        IExport[] _exports;
         string _result;
 
         [Test]
@@ -216,7 +216,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             _result.ShouldBe(@"c:\bin-net20\Sauron.dll");
         }
 
-        protected IWrapExport Export(string folder, string assemblyName)
+        protected IExport Export(string folder, string assemblyName)
         {
             return new InMemExport
             {
@@ -228,7 +228,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             };
         }
 
-        protected void given(params IWrapExport[] exports)
+        protected void given(params IExport[] exports)
         {
             _exports = exports;
         }
@@ -271,7 +271,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
         protected void when_exporting_for(string platform, string targetProfile)
         {
-            IWrapExport processExports = new AssemblyReferenceExportBuider().ProcessExports(_exports,
+            IExport processExports = new AssemblyReferenceExportBuilder().ProcessExports(_exports,
                                                                                             new WrapRuntimeEnvironment
                                                                                             {
                                                                                                 Platform = platform,
@@ -300,19 +300,19 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         
     }
 
-    public class InMemItem : IWrapExportItem
+    public class InMemItem : IExportItem
     {
         public string FullPath { get; set; }
     }
 
-    public class InMemExport : IWrapExport
+    public class InMemExport : IExport
     {
         public InMemExport()
         {
-            Items = new List<IWrapExportItem>();
+            Items = new List<IExportItem>();
         }
 
-        public IEnumerable<IWrapExportItem> Items { get; set; }
+        public IEnumerable<IExportItem> Items { get; set; }
         public string Name { get; set; }
     }
 

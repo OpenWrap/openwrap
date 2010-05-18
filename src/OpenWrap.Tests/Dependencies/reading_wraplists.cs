@@ -6,13 +6,12 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
-using OpenRasta.Testing;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Repositories;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Exports;
+using OpenWrap.Repositories.Testing;
 using OpenWrap.Repositories;
+using OpenWrap.Dependencies;
 
-namespace OpenRasta.Wrap.Tests.Dependencies
+namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
 {
     public class reading_a_wrap_list : context.wrap_list
     {

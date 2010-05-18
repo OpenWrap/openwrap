@@ -5,7 +5,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace OpenRasta.Wrap.Dependencies
+namespace OpenWrap.Dependencies
 {
     public class WrapDescriptorParser
     {

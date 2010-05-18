@@ -1,11 +1,14 @@
-﻿using OpenRasta.Wrap.Build.Services;
-using OpenRasta.Wrap.Sources;
+﻿using System.Collections.Generic;
+using OpenWrap.Build.Services;
+using OpenWrap.Repositories;
 
 namespace OpenWrap
 {
     public interface IEnvironment : IService
     {
-        IPackageRepository Repository { get; }
-        string WrapDescriptorPath { get; }
+        IPackageRepository ProjectRepository { get; }
+        string DescriptorPath { get; }
+        IEnumerable<IPackageRepository> RemoteRepositories { get; set; }
+        IPackageRepository UserRepository { get; set; }
     }
 }

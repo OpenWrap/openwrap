@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Repositories;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
-namespace OpenRasta.Wrap.Build
+namespace OpenWrap.Build
 {
     public interface IWrapAssemblyClient
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using OpenRasta.Wrap.Build.Services;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Build.Services;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.Resharper
 {

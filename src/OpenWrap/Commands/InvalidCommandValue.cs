@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace OpenRasta.Wrap.Console
+namespace OpenWrap.Commands
 {
     public class InvalidCommandValue : Error
     {

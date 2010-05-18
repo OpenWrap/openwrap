@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Resources;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
-namespace OpenRasta.Wrap.Repositories
+namespace OpenWrap.Repositories
 {
     public class UncompressedPackage : IPackage
     {
         readonly FileInfo _originalWrapFile;
         readonly IEnumerable<IExportBuilder> _exporters;
 
-        public UncompressedPackage(FileInfo originalPackage, string wrapCacheDirectory, IEnumerable<IExportBuilder> exporters)
+        public UncompressedPackage(IPackageRepository source, FileInfo originalPackage, string wrapCacheDirectory, IEnumerable<IExportBuilder> exporters)
         {
             _originalWrapFile = originalPackage;
             _exporters = exporters;
@@ -45,9 +45,14 @@ namespace OpenRasta.Wrap.Repositories
             return this;
         }
 
+        public IPackageRepository Source
+        {
+            get; private set;
+        }
+
         protected WrapDescriptor Descriptor { get; set; }
 
-        public IWrapExport GetExport(string exportName, WrapRuntimeEnvironment environment)
+        public IExport GetExport(string exportName, WrapRuntimeEnvironment environment)
         {
             // get the list of exports in the 
             var exporter =
@@ -58,10 +63,10 @@ namespace OpenRasta.Wrap.Repositories
             var exports = from directory in BaseDirectory.GetDirectories()
                           where exporter.CanProcessExport(directory.Name)
                           let directoryPath = directory.FullName
-                          select (IWrapExport)new FolderExport(directory)
+                          select (IExport)new FolderExport(directory)
                           {
                               Items = directory.GetFiles()
-                                  .Select(x => (IWrapExportItem)new FileExportItem(x))
+                                  .Select(x => (IExportItem)new FileExportItem(x))
                                   .ToList()
                           };
 

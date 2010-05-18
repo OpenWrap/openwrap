@@ -1,4 +1,4 @@
-namespace OpenRasta.Wrap.Dependencies
+namespace OpenWrap.Dependencies
 {
     public class WrapRuntimeEnvironment
     {

@@ -16,7 +16,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 
-namespace OpenRasta.Testing
+namespace OpenWrap.Repositories.Testing
 {
     public static class SpecExtensions
     {

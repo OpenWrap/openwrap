@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OpenRasta.Wrap.Dependencies
+namespace OpenWrap.Dependencies
 {
     public class WrapDependency
     {

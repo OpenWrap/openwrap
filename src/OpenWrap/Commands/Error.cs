@@ -1,6 +1,6 @@
-using OpenRasta.Wrap.Commands;
+using OpenWrap.Commands;
 
-namespace OpenRasta.Wrap.Console
+namespace OpenWrap.Commands
 {
     public abstract class Error : ICommandResult
     {

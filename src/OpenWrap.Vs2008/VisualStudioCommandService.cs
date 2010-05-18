@@ -10,9 +10,9 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.CommandBars;
 using Microsoft.VisualStudio.Shell;
-using OpenRasta.Wrap.Build.Services;
-using OpenRasta.Wrap.Commands;
-using OpenRasta.Wrap.Commands.Wrap;
+using OpenWrap.Build.Services;
+using OpenWrap.Commands;
+using OpenWrap.Commands.Wrap;
 
 namespace OpenWrap.Vs2008
 {

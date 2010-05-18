@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using OpenRasta.IO;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Repositories;
-using OpenRasta.Wrap.Resources;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
 {
@@ -17,10 +14,11 @@ namespace OpenWrap.Repositories
         IEnumerable<IExportBuilder> _builders;
 
 
-        public XmlPackageInfo(IHttpNavigator httpNavigator, string name, string version, Uri link, IEnumerable<string> depends, IEnumerable<IExportBuilder> builders)
+        public XmlPackageInfo(IPackageRepository source, IHttpNavigator httpNavigator, string name, string version, Uri link, IEnumerable<string> depends, IEnumerable<IExportBuilder> builders)
         {
             Name = name;
             Version = new Version(version);
+            Source = source;
             _httpNavigator = httpNavigator;
             _builders = builders;
             _link = link;
@@ -43,56 +41,9 @@ namespace OpenWrap.Repositories
         public IPackage Load()
         {
             // get the file from the server
-            return new XmlPackage(_httpNavigator, _link, Name, Version, _builders);
-        }
-    }
-
-    public class XmlPackage : IPackage
-    {
-        readonly IHttpNavigator _httpNavigator;
-        Uri _link;
-        IPackage _loadedPackage;
-        IEnumerable<IExportBuilder> _builders;
-
-        public XmlPackage(IHttpNavigator httpNavigator, Uri link, string name, Version version, IEnumerable<IExportBuilder> builders)
-        {
-            _httpNavigator = httpNavigator;
-            _builders = builders;
-            Name = name;
-            Version = version;
-            _link = link;
+            return new XmlPackage(Source, _httpNavigator, _link, Name, Version, _builders);
         }
 
-        public ICollection<WrapDependency> Dependencies { get; set; }
-        public string Name { get; set; }
-        public Version Version { get; set; }
-        public IPackage Load()
-        {
-            return this;
-        }
-
-        public IWrapExport GetExport(string exportName, WrapRuntimeEnvironment environment)
-        {
-            VerifyLoaded();
-            return _loadedPackage.GetExport(exportName, environment);
-        }
-
-        void VerifyLoaded()
-        {
-            if (_loadedPackage != null) return;
-            string tempFileName = Path.GetTempFileName();
-
-            using (var stream = _httpNavigator.LoadFile(_link))
-            using (var fileStream = File.OpenWrite(tempFileName))
-                stream.CopyTo(fileStream);
-
-            _loadedPackage = new ZipPackage(new FileInfo(tempFileName), Path.GetTempPath(), _builders).Load();
-        }
-
-        public void Persist(string folder)
-        {
-            VerifyLoaded();
-            _loadedPackage.Persist(folder);
-        }
+        public IPackageRepository Source { get; set; }
     }
 }

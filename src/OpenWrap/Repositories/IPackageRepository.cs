@@ -1,7 +1,7 @@
 using System.Linq;
-using OpenRasta.Wrap.Dependencies;
+using OpenWrap.Dependencies;
 
-namespace OpenRasta.Wrap.Sources
+namespace OpenWrap.Repositories
 {
     public interface IPackageRepository
     {

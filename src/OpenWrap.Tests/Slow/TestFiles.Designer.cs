@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OpenRasta.Wrap.Tests.Slow {
+namespace OpenWrap.Repositories.Wrap.Tests.Slow {
     using System;
     
     

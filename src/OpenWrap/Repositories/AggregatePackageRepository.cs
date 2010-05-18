@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
 {
@@ -38,7 +38,14 @@ namespace OpenWrap.Repositories
 
         IPackageInfo LoadFromRemoteRepository(WrapDependency dependency)
         {
-            return null;
+            var remotePackageInfo = _remoteRepositories.Select(x => x.Find(dependency)).Where(x => x != null).FirstOrDefault();
+            if (remotePackageInfo == null)
+                return null;
+
+            // copy the package to the user repository first
+            var package = remotePackageInfo.Load();
+            throw new NotImplementedException();
+
         }
 
         IPackageInfo CopyFromUserToLocalRepository(WrapDependency dependency)

@@ -1,6 +1,6 @@
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Repositories;
 
-namespace OpenRasta.Wrap.Build.Services
+namespace OpenWrap.Build.Services
 {
     public interface IWrapDescriptorMonitoringService : IService
     {

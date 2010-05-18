@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenRasta.Wrap.Commands;
-using OpenRasta.Wrap.Console;
+using OpenWrap.Commands;
 
 namespace OpenWrap.Commands
 {

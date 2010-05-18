@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using OpenRasta.Wrap.Commands;
+using OpenWrap.Commands;
 using OpenWrap;
 
-namespace OpenRasta.Wrap.Console
+namespace OpenWrap.Commands
 {
     public class UnknownCommand : ICommandResult
     {

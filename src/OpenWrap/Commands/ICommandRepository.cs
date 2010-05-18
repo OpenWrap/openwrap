@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using OpenRasta.Wrap.Build.Services;
 using OpenWrap.Commands;
+using OpenWrap.Build.Services;
 
-namespace OpenRasta.Wrap.Console
+namespace OpenWrap.Commands
 {
     public interface ICommandRepository : ICollection<ICommandDescriptor>, IService
     {

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
-namespace OpenRasta.Wrap.Build.Services
+namespace OpenWrap.Build.Services
 {
     public class WrapDescriptorMonitor : IService, IWrapDescriptorMonitoringService
     {

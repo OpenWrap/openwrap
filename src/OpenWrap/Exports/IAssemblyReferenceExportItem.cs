@@ -1,9 +1,8 @@
 using System.Reflection;
-using OpenRasta.Wrap.Resources;
 
-namespace OpenRasta.Wrap.Repositories
+namespace OpenWrap.Exports
 {
-    public interface IAssemblyReferenceExportItem : IWrapExportItem
+    public interface IAssemblyReferenceExportItem : IExportItem
     {
         AssemblyName AssemblyName { get; set; }
     }

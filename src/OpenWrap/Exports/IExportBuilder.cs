@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Resources;
+using OpenWrap.Dependencies;
 
-namespace OpenRasta.Wrap.Repositories
+namespace OpenWrap.Exports
 {
     public interface IExportBuilder
     {
         string ExportName { get; }
         bool CanProcessExport(string exportName);
-        IWrapExport ProcessExports(IEnumerable<IWrapExport> exports, WrapRuntimeEnvironment environment);
+        IExport ProcessExports(IEnumerable<IExport> exports, WrapRuntimeEnvironment environment);
     }
 }

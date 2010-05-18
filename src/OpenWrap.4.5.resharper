@@ -1105,6 +1105,7 @@ Namespace</UserWords>
         <ExtraRule Prefix="_" Suffix="" Style="aaBb" />
       </PredefinedRule>
       <Abbreviation Text="OK" />
+      <Abbreviation Text="IO" />
     </Naming2>
   </CodeStyleSettings>
 </Configuration>

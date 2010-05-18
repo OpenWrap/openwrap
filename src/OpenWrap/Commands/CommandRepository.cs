@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Commands;
 
-namespace OpenRasta.Wrap.Console
+namespace OpenWrap.Commands
 {
     public class CommandRepository : ICommandRepository
     {

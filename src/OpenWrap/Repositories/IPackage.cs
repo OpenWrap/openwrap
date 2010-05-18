@@ -1,16 +1,16 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Resources;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
 
-namespace OpenRasta.Wrap.Sources
+namespace OpenWrap.Repositories
 {
     /// <summary>
     /// Represents a wrap package.
     /// </summary>
     public interface IPackage : IPackageInfo
     {
-        IWrapExport GetExport(string exportName, WrapRuntimeEnvironment environment);
+        IExport GetExport(string exportName, WrapRuntimeEnvironment environment);
         void Persist(string folder);
     }
 }

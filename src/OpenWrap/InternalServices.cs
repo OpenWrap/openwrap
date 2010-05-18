@@ -1,4 +1,4 @@
-namespace OpenRasta.Wrap.Build.Services
+namespace OpenWrap.Build.Services
 {
     public static class InternalServices
     {

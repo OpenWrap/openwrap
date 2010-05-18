@@ -1,10 +1,10 @@
 using System.IO;
 using System.Linq;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Repositories;
+using OpenWrap.Exports;
 using OpenWrap.Repositories;
+using OpenWrap.Dependencies;
 
-namespace OpenRasta.Wrap.Sources
+namespace OpenWrap.Repositories
 {
     /// <summary>
     /// Provides a repository that can read packages in a folder using the default structure.
@@ -27,8 +27,8 @@ namespace OpenRasta.Wrap.Sources
                               let packageVersion = WrapNameUtility.GetVersion(wrapFileName)
                               where packageVersion != null
                               select Directory.Exists(cacheDirectory)
-            ? (IPackageInfo)new UncompressedPackage(wrapFile, cacheDirectory, new[] { new AssemblyReferenceExportBuider() })
-            : (IPackageInfo)new ZipPackage(wrapFile, cacheDirectory,  new[] { new AssemblyReferenceExportBuider() }))
+            ? (IPackageInfo)new UncompressedPackage(this, wrapFile, cacheDirectory, new[] { new AssemblyReferenceExportBuilder() })
+            : (IPackageInfo)new ZipPackage(this, wrapFile, cacheDirectory,  new[] { new AssemblyReferenceExportBuilder() }))
                 .ToLookup(x => x.Name);
         }
 

@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenRasta.Testing;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Repositories.Testing;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
-namespace OpenRasta.Wrap.Tests.Slow
+namespace OpenWrap.Repositories.Wrap.Tests.Slow
 {
     public class when_accessing_repositories_with_zip_files : context.folder_based_repository
     {

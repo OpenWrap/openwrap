@@ -5,11 +5,11 @@ using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using OpenRasta.Wrap.Build;
-using OpenRasta.Wrap.Build.Services;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Repositories;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Exports;
+using OpenWrap.Build;
+using OpenWrap.Build.Services;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 using OpenWrap.Resharper;
 
 namespace OpenWrap.Build.Tasks

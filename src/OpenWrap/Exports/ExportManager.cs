@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace OpenWrap.Repositories.Wrap.Resources
+namespace OpenWrap.Exports
 {
-    
+    public interface IExportManager
+    {
+        
+    }
 }

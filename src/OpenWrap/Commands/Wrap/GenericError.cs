@@ -1,4 +1,4 @@
-using OpenRasta.Wrap.Console;
+using OpenWrap.Commands;
 
 namespace OpenWrap.Commands.Wrap
 {

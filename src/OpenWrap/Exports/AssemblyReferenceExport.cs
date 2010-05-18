@@ -1,25 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenRasta.Wrap.Resources;
 
-namespace OpenRasta.Wrap.Repositories
+namespace OpenWrap.Exports
 {
-    public class AssemblyReferenceExport : IWrapExport
+    public class AssemblyReferenceExport : IExport
     {
-        public AssemblyReferenceExport(IEnumerable<IWrapExportItem> assemblies)
+        public AssemblyReferenceExport(IEnumerable<IExportItem> assemblies)
         {
             Items = assemblies.Select(x => CreateAssemblyRef(x)).Where(x => x != null).ToList();
         }
 
-        public IEnumerable<IWrapExportItem> Items { get; private set; }
+        public IEnumerable<IExportItem> Items { get; private set; }
 
         public string Name
         {
             get { return "bin"; }
         }
 
-        static IWrapExportItem CreateAssemblyRef(IWrapExportItem item)
+        static IExportItem CreateAssemblyRef(IExportItem item)
         {
             try
             {

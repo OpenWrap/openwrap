@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenRasta.Wrap.Console;
+using OpenWrap.Commands;
 
-namespace OpenRasta.Wrap.Commands.Wrap
+namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb="manageui", DisplayName="Manage wraps", Namespace="wrap")]
     public class ManageWrapCommand : ICommand

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenRasta.Testing;
-using OpenRasta.Wrap.Commands;
-using OpenRasta.Wrap.Console;
+using OpenWrap.Repositories.Testing;
+using OpenWrap.Commands;
 
-namespace OpenRasta.Wrap.Tests.Commands
+namespace OpenWrap.Repositories.Wrap.Tests.Commands
 {
     public class when_finding_commands : context.command_processor
     {

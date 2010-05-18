@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Repositories;
 
-namespace OpenRasta.Wrap.Dependencies
+namespace OpenWrap.Dependencies
 {
     public class WrapDescriptor : IPackageInfo
     {
@@ -18,6 +18,11 @@ namespace OpenRasta.Wrap.Dependencies
         public IPackage Load()
         {
             return null;
+        }
+
+        public IPackageRepository Source
+        {
+            get { return null; }
         }
 
         public bool IsCompatibleWith(Version version)

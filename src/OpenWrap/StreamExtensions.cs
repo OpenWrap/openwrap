@@ -11,7 +11,7 @@
 using System;
 using System.IO;
 
-namespace OpenRasta.IO
+namespace OpenWrap
 {
     public static class StreamExtensions
     {

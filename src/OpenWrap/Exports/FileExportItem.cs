@@ -1,9 +1,8 @@
 using System.IO;
-using OpenRasta.Wrap.Resources;
 
-namespace OpenRasta.Wrap.Repositories
+namespace OpenWrap.Exports
 {
-    public class FileExportItem : IWrapExportItem
+    public class FileExportItem : IExportItem
     {
         public string FullPath { get; set; }
         public FileExportItem(FileInfo filePath)

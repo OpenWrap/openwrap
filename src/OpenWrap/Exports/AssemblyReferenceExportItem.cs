@@ -1,13 +1,12 @@
 using System.Reflection;
-using OpenRasta.Wrap.Resources;
 
-namespace OpenRasta.Wrap.Repositories
+namespace OpenWrap.Exports
 {
     public class AssemblyReferenceExportItem : IAssemblyReferenceExportItem
     {
-        private readonly IWrapExportItem _wrapped;
+        private readonly IExportItem _wrapped;
 
-        public AssemblyReferenceExportItem(IWrapExportItem item)
+        public AssemblyReferenceExportItem(IExportItem item)
         {
             _wrapped = item;
             AssemblyName = AssemblyName.GetAssemblyName(item.FullPath);

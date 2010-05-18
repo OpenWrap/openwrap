@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Repositories;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
 {
@@ -16,8 +16,9 @@ namespace OpenWrap.Repositories
         readonly FileInfo _wrapFile;
         UncompressedPackage _cachedPackage;
 
-        public ZipPackage(FileInfo wrapFile, string wrapCacheDirectory, IEnumerable<IExportBuilder> builders)
+        public ZipPackage(IPackageRepository source, FileInfo wrapFile, string wrapCacheDirectory, IEnumerable<IExportBuilder> builders)
         {
+            Source = source;
             _wrapFile = wrapFile;
             _cacheDirectory = wrapCacheDirectory;
             _builders = builders;
@@ -47,9 +48,14 @@ namespace OpenWrap.Repositories
             if (_cachedPackage == null)
             {
                 new FastZip().ExtractZip(_wrapFile.FullName, _cacheDirectory, FastZip.Overwrite.Always, x => true, null, null, true);
-                _cachedPackage = new UncompressedPackage(_wrapFile, _cacheDirectory, _builders);
+                _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectory, _builders);
             }
             return _cachedPackage;
+        }
+
+        public IPackageRepository Source
+        {
+            get; set;
         }
 
         void LoadDescriptor()

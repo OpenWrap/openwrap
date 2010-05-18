@@ -13,7 +13,7 @@
 using System;
 using NUnit.Framework;
 
-namespace OpenRasta.Testing
+namespace OpenWrap.Repositories.Testing
 {
     [TestFixture]
     public class context

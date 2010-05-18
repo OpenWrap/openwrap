@@ -1,4 +1,4 @@
-namespace OpenRasta.Wrap.Console
+namespace OpenWrap.Commands
 {
     public class UnknownCommandInput : Error
     {

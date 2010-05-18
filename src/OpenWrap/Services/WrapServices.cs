@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenRasta.Wrap.Build;
-using OpenRasta.Wrap.Build.Services;
+using OpenWrap.Build;
+using OpenWrap.Build.Services;
 
-namespace OpenRasta.Wrap.Build.Services
+namespace OpenWrap.Build.Services
 {
     public interface VSIService : IService {}
     public static class WrapServices
@@ -15,6 +15,7 @@ namespace OpenRasta.Wrap.Build.Services
             var wrapFile = new WrapDescriptorMonitor();
 
             RegisterService<IWrapDescriptorMonitoringService>(wrapFile);
+            
             
         }
         public static void RegisterService<TService>(TService service) where TService : class, IService

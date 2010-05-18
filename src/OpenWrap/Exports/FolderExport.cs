@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
-using OpenRasta.Wrap.Resources;
 
-namespace OpenRasta.Wrap.Repositories
+namespace OpenWrap.Exports
 {
-    public class FolderExport : IWrapExport
+    public class FolderExport : IExport
     {
         public FolderExport(DirectoryInfo folderPath)
         {
@@ -17,7 +16,7 @@ namespace OpenRasta.Wrap.Repositories
             set;
         }
 
-        public IEnumerable<IWrapExportItem> Items
+        public IEnumerable<IExportItem> Items
         {
             get;
             set;

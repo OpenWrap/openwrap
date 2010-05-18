@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenRasta.Wrap.Dependencies;
-using OpenRasta.Wrap.Repositories;
-using OpenRasta.Wrap.Sources;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
 {
@@ -23,7 +23,7 @@ namespace OpenWrap.Repositories
                                           select relAttribute).FirstOrDefault()
                               where name != null && version != null && link != null
                               let depends = wrapList.Elements("depends").Select(x => x.Value)
-                              select new XmlPackageInfo(navigator, name.Value, version.Value,new Uri(link.Value, UriKind.RelativeOrAbsolute), depends, builders))
+                              select new XmlPackageInfo(this, navigator, name.Value, version.Value,new Uri(link.Value, UriKind.RelativeOrAbsolute), depends, builders))
                 .Cast<IPackageInfo>().ToLookup(x => x.Name);
         }
         public ILookup<string, IPackageInfo> PackagesByName { get; private set; }

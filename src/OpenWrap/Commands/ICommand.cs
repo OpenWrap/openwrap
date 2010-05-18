@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using OpenRasta.TypeSystem.ReflectionBased;
-using OpenRasta.Wrap.Console;
+using OpenWrap.Reflection;
 using OpenWrap.Commands;
 
-namespace OpenRasta.Wrap.Commands
+namespace OpenWrap.Commands
 {
     public interface ICommand
     {

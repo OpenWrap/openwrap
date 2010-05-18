@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace OpenRasta.TypeSystem.ReflectionBased
+namespace OpenWrap.Reflection
 {
     public static class SharedReflectionExtensions
     {

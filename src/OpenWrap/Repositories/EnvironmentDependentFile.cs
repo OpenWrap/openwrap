@@ -1,13 +1,13 @@
 using System;
-using OpenRasta.Wrap.Resources;
+using OpenWrap.Exports;
 
-namespace OpenRasta.Wrap.Repositories
+namespace OpenWrap.Repositories
 {
     public class EnvironmentDependentFile : IComparable<EnvironmentDependentFile>
     {
         public string Profile;
         public string Platform;
-        public IWrapExportItem Item;
+        public IExportItem Item;
         public int CompareTo(EnvironmentDependentFile other)
         {
             if (this.Profile != other.Profile)

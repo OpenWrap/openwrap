@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenRasta
+namespace OpenWrap.Repositories
 {
     public static class EventHandlerExtensions
     {

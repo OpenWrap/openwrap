@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenRasta.Wrap.Build.Services;
-using OpenRasta.Wrap.Commands;
-using OpenRasta.Wrap.Console;
+using OpenWrap.Build.Services;
+using OpenWrap.Commands;
 
 namespace OpenWrap.Commands.Core
 {
