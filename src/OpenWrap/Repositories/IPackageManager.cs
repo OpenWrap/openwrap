@@ -10,13 +10,87 @@ namespace OpenWrap.Repositories
 {
     public interface IPackageManager : IService
     {
-        IEnumerable<PackageResolution> TryResolveDependencies(WrapDescriptor wrapDescriptor, IPackageRepository projectRepository, IPackageRepository userRepository, IEnumerable<IPackageRepository> remoteRepositories);
+        DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor, IPackageRepository projectRepository, IPackageRepository userRepository, IEnumerable<IPackageRepository> remoteRepositories);
     }
 
-    public class PackageResolution
+    public class ResolvedDependency
     {
-        public string Name { get; set; }
-        public IEnumerable<IPackageInfo> Versions { get; set; }
-        public bool HasConflicts { get { return Versions.Count() > 1; } }
+        public WrapDependency Dependency { get; set; }
+        public IPackageInfo Package { get; set; }
+        public IPackageInfo ParentPackage { get; set; }
+    }
+
+    public class PackageManager : IPackageManager
+    {
+        public void Initialize()
+        {
+
+        }
+
+        public DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor, IPackageRepository projectRepository, IPackageRepository userRepository, IEnumerable<IPackageRepository> remoteRepositories)
+        {
+            var repositories = new[] { projectRepository, userRepository }.Concat(remoteRepositories);
+
+            var packageOverrides = GetOverrides(wrapDescriptor);
+            var allDependencies = ResolveAllDependencies(wrapDescriptor.Dependencies, packageOverrides, repositories);
+
+            if (allDependencies.Any(x => x.Package == null))
+                return SomeDependenciesNotFound(allDependencies);
+            if (HasDependenciesConflict(allDependencies))
+                allDependencies = OverrideDependenciesWithLocalDeclarations(wrapDescriptor.Dependencies);
+            if (HasDependenciesConflict(allDependencies))
+                return ConflictingDependencies(allDependencies);
+
+
+            throw new NotImplementedException();
+        }
+
+        DependencyResolutionResult ConflictingDependencies(IEnumerable<ResolvedDependency> allDependencies)
+        {
+            return new DependencyResolutionResult { IsSuccess = false, Dependencies = allDependencies };
+        }
+
+        DependencyResolutionResult SomeDependenciesNotFound(IEnumerable<ResolvedDependency> dependencies)
+        {
+            throw new NotImplementedException();
+        }
+
+        Dictionary<string, string> GetOverrides(WrapDescriptor descriptor)
+        {
+            return new Dictionary<string, string>();
+        }
+
+        IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(ICollection<WrapDependency> rootDependencies)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool HasDependenciesConflict(IEnumerable<ResolvedDependency> resolutions)
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IDictionary<string,string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
+        {
+            return ResolveAllDependencies(null, dependencies, dependencyOverrides, repositories);
+        }
+
+        IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent, IEnumerable<WrapDependency> dependencies, IDictionary<string,string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
+        {
+            var packages = from dependency in dependencies
+                           let package = repositories.Select(x => x.Find(dependency)).FirstOrDefault()
+                           select new ResolvedDependency { Dependency = dependency, Package = package, ParentPackage = parent };
+            foreach (var package in packages)
+                packages = packages.Concat(ResolveAllDependencies(package.Package, package.Package.Dependencies, dependencyOverrides, repositories));
+
+            return packages.ToList();
+        }
+    }
+
+    public class DependencyResolutionResult
+    {
+        public IEnumerable<ResolvedDependency> Dependencies { get; set; }
+
+        public bool IsSuccess { get; set; }
     }
 }
