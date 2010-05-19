@@ -9,40 +9,33 @@ namespace OpenWrap.Dependencies
     {
         void Parse(string line, WrapDescriptor descriptor);
     }
+    public static class WrapDescriptorExtensions
+    {
+    }
     public class WrapDependencyParser : IWrapDescriptorLineParser
     {
         public void Parse(string line, WrapDescriptor descriptor)
         {
+            descriptor.Dependencies.Add(ParseDependency(line));
+        }
+
+        public static WrapDependency ParseDependency(string line)
+        {
             var bits = line.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-            if (bits == null || bits.Length < 2 || string.Compare(bits[0], "depends", StringComparison.OrdinalIgnoreCase) != 0)
-                return;
+            if (bits.Length < 2 || string.Compare(bits[0], "depends", StringComparison.OrdinalIgnoreCase) != 0)
+                return null;
 
-            var packageName = bits[1];
+            return new WrapDependency
+            {
+                Name = bits[1],
+                VersionVertices = ParseVersions(bits.Skip(2).ToArray()).ToList()
+            };
+        }
 
+        public static IEnumerable<VersionVertice> ParseVersions(string[] args)
+        {
             // Versions are always in the format
             // comparator version ('and' comparator version)*
-
-            //List<VersionVertice> vertices = new List<VersionVertice>();
-            //if (bits.Length - 2 >= 2)
-            //{
-            //    vertices.Add(GetVersionVertice(bits, 2));
-            //    for (int i = 0; i < (bits.Length - 4) / 3; i++)
-            //        if (string.Compare(bits[4], "and", StringComparison.OrdinalIgnoreCase) == 0)
-            //            vertices.Add(GetVersionVertice(bits, 5 + (i * 3)));
-            //}
-            //else
-            //{
-            //    vertices.Add(new AnyVersionVertice(null));
-            //}
-            descriptor.Dependencies.Add(new WrapDependency
-                       {
-                           Name = packageName,
-                           VersionVertices = Parse(bits.Skip(2).ToArray()).ToList()
-                       });
-        }
-        public static IEnumerable<VersionVertice> Parse(string[] args)
-        {
-
             if (args.Length >= 2)
             {
                 yield return GetVersionVertice(args, 0);

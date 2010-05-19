@@ -41,8 +41,12 @@ namespace OpenWrap.Repositories
             if (HasDependenciesConflict(allDependencies))
                 return ConflictingDependencies(allDependencies);
 
+            return Successful(allDependencies);
+        }
 
-            throw new NotImplementedException();
+        DependencyResolutionResult Successful(IEnumerable<ResolvedDependency> dependencies)
+        {
+            return new DependencyResolutionResult { IsSuccess = true, Dependencies = dependencies };
         }
 
         DependencyResolutionResult ConflictingDependencies(IEnumerable<ResolvedDependency> allDependencies)
@@ -52,7 +56,7 @@ namespace OpenWrap.Repositories
 
         DependencyResolutionResult SomeDependenciesNotFound(IEnumerable<ResolvedDependency> dependencies)
         {
-            throw new NotImplementedException();
+            return new DependencyResolutionResult { IsSuccess = false, Dependencies = dependencies };
         }
 
         Dictionary<string, string> GetOverrides(WrapDescriptor descriptor)
@@ -67,7 +71,7 @@ namespace OpenWrap.Repositories
 
         bool HasDependenciesConflict(IEnumerable<ResolvedDependency> resolutions)
         {
-            throw new NotImplementedException();
+            return resolutions.Any(x => x.Package == null);
         }
 
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IDictionary<string,string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
@@ -78,9 +82,9 @@ namespace OpenWrap.Repositories
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent, IEnumerable<WrapDependency> dependencies, IDictionary<string,string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
         {
             var packages = from dependency in dependencies
-                           let package = repositories.Select(x => x.Find(dependency)).FirstOrDefault()
+                           let package = repositories.Select(x => x.Find(dependency)).FirstOrDefault(x=>x != null)
                            select new ResolvedDependency { Dependency = dependency, Package = package, ParentPackage = parent };
-            foreach (var package in packages)
+            foreach (var package in packages.Where(p=>p.Package != null))
                 packages = packages.Concat(ResolveAllDependencies(package.Package, package.Package.Dependencies, dependencyOverrides, repositories));
 
             return packages.ToList();

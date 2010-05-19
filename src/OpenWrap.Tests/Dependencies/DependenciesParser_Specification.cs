@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Repositories.Testing;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Repositories.Wrap.Tests.Dependencies.contexts;
+using OpenWrap.Testing;
 
 namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
 {

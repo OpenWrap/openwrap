@@ -30,7 +30,7 @@ namespace OpenWrap.Repositories
                             select new WrapDependency
                             {
                                 Name = dependencyName,
-                                VersionVertices = WrapDependencyParser.Parse(strings.Skip(1).ToArray()).ToList()
+                                VersionVertices = WrapDependencyParser.ParseVersions(strings.Skip(1).ToArray()).ToList()
                             }).ToList();
         }
 

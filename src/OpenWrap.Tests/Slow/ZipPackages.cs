@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenWrap.Repositories.Testing;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
+using OpenWrap.Testing;
 
 namespace OpenWrap.Repositories.Wrap.Tests.Slow
 {

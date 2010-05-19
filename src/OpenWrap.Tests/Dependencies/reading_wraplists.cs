@@ -7,9 +7,9 @@ using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using OpenWrap.Exports;
-using OpenWrap.Repositories.Testing;
 using OpenWrap.Repositories;
 using OpenWrap.Dependencies;
+using OpenWrap.Testing;
 
 namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
 {
