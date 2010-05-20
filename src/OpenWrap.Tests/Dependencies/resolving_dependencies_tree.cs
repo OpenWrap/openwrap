@@ -10,7 +10,64 @@ using OpenWrap.Testing;
 
 namespace OpenRasta.Wrap.Tests.Dependencies
 {
-    public class resolving_dependencies_tree : context.dependency_manager_context
+    public class when_resolving_unavailable_dependencies : context.dependency_manager_context
+    {
+        [Test]
+        public void not_found_package_fails_resolution()
+        {
+            given_dependency("depends rings-of-power");
+
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeFalse();
+            Resolve.Dependencies.ShouldHaveCountOf(1);
+            Resolve.Dependencies.First().Package.ShouldBeNull();
+        }
+
+        
+    }
+    public class when_conflicting_dependencies : context.dependency_manager_context
+    {
+        [Test]
+        public void the_resolving_fails()
+        {
+            given_local_package("sauron-1.0.0");
+            given_local_package("sauron-1.1.0");
+            given_local_package("rings-of-power-1.0.0", "depends sauron = 1.0.0");
+            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends sauron = 1.1.0");
+            given_local_package("tolkien-1.0.0", "depends rings-of-power", "depends one-ring-to-rule-them-all");
+
+            given_dependency("depends tolkien");
+
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeFalse();
+            Resolve.Dependencies.Count().ShouldBe(5);
+            Resolve.Dependencies.ToLookup(x => x.Package.Name)["sauron"].Count().ShouldBe(2);
+        }
+
+        [Test]
+        public void local_declaration_overrides_packages()
+        {
+            given_local_package("sauron-1.0.0");
+            given_local_package("sauron-1.1.0");
+            given_local_package("rings-of-power-1.0.0", "depends sauron = 1.0.0");
+            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends sauron = 1.1.0");
+            given_local_package("tolkien-1.0.0", "depends rings-of-power", "depends one-ring-to-rule-them-all");
+
+            given_dependency("depends tolkien");
+            given_dependency("depends sauron = 1.0.0");
+
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeFalse();
+            Resolve.Dependencies.Count().ShouldBe(4);
+            Resolve.Dependencies.ToLookup(x => x.Package.Name)["sauron"]
+                .ShouldHaveCountOf(1)
+                .First().Package.Version.ShouldBe(new Version(1, 0, 0));
+        }
+    }
+    public class when_resolving_available_dependencies : context.dependency_manager_context
     {
         [Test]
         public void single_package_is_resolved()
@@ -25,18 +82,6 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
 
         [Test]
-        public void not_found_package_fails_resolution()
-        {
-            given_dependency("depends rings-of-power");
-
-            when_resolving_packages();
-
-            Resolve.IsSuccess.ShouldBeFalse();
-            Resolve.Dependencies.ShouldHaveCountOf(1);
-            Resolve.Dependencies.First().Package.ShouldBeNull();
-        }
-
-        [Test]
         public void dependency_on_user_package_is_resolved()
         {
             given_user_package("rings-of-power-1.0.0");
@@ -48,15 +93,46 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             Resolve.Dependencies.First().Package.ShouldNotBeNull()
                 .Source.ShouldBe(UserRepository);
         }
+
+        [Test]
+        public void dependency_on_remote_package_is_resolved()
+        {
+            given_remote1_package("rings-of-power-1.0.0");
+            given_dependency("depends rings-of-power");
+
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeTrue();
+            Resolve.Dependencies.First().Package.ShouldNotBeNull()
+                .Source.ShouldBe(RemoteRepository);
+        }
+
+
+        [Test]
+        public void local_package_found_before_user_package()
+        {
+            given_remote1_package("rings-of-power-1.1.0");
+            given_local_package("rings-of-power-1.0.0");
+            given_dependency("depends rings-of-power");
+
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeTrue();
+            var dependency = Resolve.Dependencies.First();
+
+            dependency.Package.ShouldNotBeNull()
+                .Source.ShouldBe(LocalRepository);
+            dependency.Package.Version.ShouldBe(new Version(1, 0,0));
+        }
     }
     namespace context
     {
         public class dependency_manager_context : OpenWrap.Testing.context
         {
             protected WrapDescriptor DependencyDescriptor;
-            protected InMemoryRepository LocalRepository = new InMemoryRepository();
-            protected InMemoryRepository UserRepository = new InMemoryRepository();
-            protected InMemoryRepository RemoteRepository = new InMemoryRepository();
+            protected InMemoryRepository LocalRepository;
+            protected InMemoryRepository UserRepository;
+            protected InMemoryRepository RemoteRepository;
             protected DependencyResolutionResult Resolve;
 
             protected override void SetUp()
@@ -67,6 +143,9 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     Name = "test",
                     Version = new Version(1, 0)
                 };
+                LocalRepository = new InMemoryRepository();
+                UserRepository = new InMemoryRepository();
+                RemoteRepository = new InMemoryRepository();
             }
             protected void given_dependency(string dependency)
             {

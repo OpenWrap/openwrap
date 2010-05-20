@@ -37,7 +37,7 @@ namespace OpenWrap.Repositories
             if (allDependencies.Any(x => x.Package == null))
                 return SomeDependenciesNotFound(allDependencies);
             if (HasDependenciesConflict(allDependencies))
-                allDependencies = OverrideDependenciesWithLocalDeclarations(wrapDescriptor.Dependencies);
+                allDependencies = OverrideDependenciesWithLocalDeclarations(allDependencies, wrapDescriptor.Dependencies);
             if (HasDependenciesConflict(allDependencies))
                 return ConflictingDependencies(allDependencies);
 
@@ -64,14 +64,29 @@ namespace OpenWrap.Repositories
             return new Dictionary<string, string>();
         }
 
-        IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(ICollection<WrapDependency> rootDependencies)
+        IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(IEnumerable<ResolvedDependency> dependencies, ICollection<WrapDependency> rootDependencies)
         {
-            throw new NotImplementedException();
+            var overriddenDependencies = dependencies.ToList();
+
+            foreach(var conflictingDependency in dependencies.ToLookup(x=>x.Package.Name).Where(x=>x.Count() > 1))
+            {
+                var dependencyName = conflictingDependency.Key;
+                var rootDependency = rootDependencies.FirstOrDefault(x => x.Name == dependencyName);
+                if (rootDependency == null)
+                    continue;
+                var rescuedDependency = conflictingDependency.OrderByDescending(x => x.Package.Version).FirstOrDefault(x => rootDependency.IsFulfilledBy(x.Package.Version));
+                if (rescuedDependency == null)
+                    continue;
+                foreach (var toRemove in conflictingDependency.Where(x=>x != rescuedDependency))
+                    overriddenDependencies.Remove(toRemove);
+
+            }
+            return overriddenDependencies;
         }
 
         bool HasDependenciesConflict(IEnumerable<ResolvedDependency> resolutions)
         {
-            return resolutions.Any(x => x.Package == null);
+            return resolutions.ToLookup(x => x.Package.Name).Any(x => x.Count() > 0);
         }
 
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IDictionary<string,string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
