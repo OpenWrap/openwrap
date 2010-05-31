@@ -58,7 +58,7 @@ namespace OpenWrap.Commands.Core
         }
         public override string ToString()
         {
-            return _command.Namespace + " " + _command.Verb;
+            return _command.Noun + " " + _command.Verb;
         }
     }
 }

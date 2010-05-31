@@ -16,7 +16,9 @@ namespace OpenWrap.Dependencies
     {
         public void Parse(string line, WrapDescriptor descriptor)
         {
-            descriptor.Dependencies.Add(ParseDependency(line));
+            var dependency = ParseDependency(line);
+            if (dependency != null)
+                descriptor.Dependencies.Add(dependency);
         }
 
         public static WrapDependency ParseDependency(string line)

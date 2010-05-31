@@ -116,7 +116,7 @@ namespace OpenWrap.Vs2008
     //        {
     //            //Add a command to the Commands collection:
     //            Command command = commands.AddNamedCommand2(AddIn,
-    //                                                        string.Format("{0}{1}", commandDescriptor.Namespace, commandDescriptor.Name),
+    //                                                        string.Format("{0}{1}", commandDescriptor.Noun, commandDescriptor.Name),
     //                                                        commandDescriptor.DisplayName,
     //                                                        "No description",
     //                                                        true,

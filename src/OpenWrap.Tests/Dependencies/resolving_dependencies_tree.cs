@@ -6,6 +6,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenWrap;
 using OpenWrap.Dependencies;
+using OpenWrap.Exports;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
@@ -188,17 +189,26 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                                                                       new[] { RemoteRepository });
             }
         }
-        public class InMemoryPackage : IPackageInfo
+        public class InMemoryPackage : IPackageInfo, IPackage
         {
             public ICollection<WrapDependency> Dependencies { get; set; }
             public string Name { get; set; }
             public Version Version { get; set; }
             public IPackage Load()
             {
-                throw new NotImplementedException();
+                return this;
             }
 
             public IPackageRepository Source { get; set; }
+            public IExport GetExport(string exportName, WrapRuntimeEnvironment environment)
+            {
+                return null;
+            }
+
+            public Stream OpenStream()
+            {
+                return new MemoryStream(0);
+            }
         }
 
         public class InMemoryRepository : IPackageRepository

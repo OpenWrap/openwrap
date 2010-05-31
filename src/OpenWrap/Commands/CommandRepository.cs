@@ -24,8 +24,8 @@ namespace OpenWrap.Commands
 
         public void Add(ICommandDescriptor commandDescriptor)
         {
-            if (!_namespaces.Contains(commandDescriptor.Namespace))
-                _namespaces.Add(commandDescriptor.Namespace);
+            if (!_namespaces.Contains(commandDescriptor.Noun))
+                _namespaces.Add(commandDescriptor.Noun);
             if (!_commandVerbs.Contains(commandDescriptor.Verb))
                 _commandVerbs.Add(commandDescriptor.Verb);
 
@@ -34,7 +34,7 @@ namespace OpenWrap.Commands
 
         public ICommandDescriptor Get(string @namespace, string name)
         {
-            return _commands.Single(x => string.Compare(x.Namespace, @namespace, StringComparison.OrdinalIgnoreCase) == 0
+            return _commands.Single(x => string.Compare(x.Noun, @namespace, StringComparison.OrdinalIgnoreCase) == 0
                                          && string.Compare(x.Verb, name, StringComparison.OrdinalIgnoreCase) == 0);
         }
 

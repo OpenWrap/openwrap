@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenWrap.Build.Services;
+using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 
 namespace OpenWrap
@@ -7,7 +8,7 @@ namespace OpenWrap
     public interface IEnvironment : IService
     {
         IPackageRepository ProjectRepository { get; }
-        string DescriptorPath { get; }
+        WrapDescriptor Descriptor { get; }
         IEnumerable<IPackageRepository> RemoteRepositories { get; }
         IPackageRepository UserRepository { get; }
     }

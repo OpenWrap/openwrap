@@ -20,7 +20,7 @@ namespace OpenWrap.Commands
         {
             _commandType = commandType;
             var attribute = commandType.GetAttribute<CommandAttribute>() ?? new CommandAttribute();
-            Namespace = attribute.Namespace ?? commandType.Namespace;
+            Noun = attribute.Namespace ?? commandType.Namespace;
             Verb = attribute.Verb ?? commandType.Name;
             DisplayName = attribute.DisplayName ?? commandType.Name.CamelToSpacedName();
             Description = attribute.Description ?? string.Empty;
@@ -39,7 +39,7 @@ namespace OpenWrap.Commands
                       }).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
         }
 
-        public string Namespace { get; set; }
+        public string Noun { get; set; }
         public string Verb { get; set; }
         public string DisplayName { get; set; }
         public string Description { get; set; }

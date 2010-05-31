@@ -47,7 +47,7 @@ namespace OpenWrap.Repositories
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            var filePath = Path.Combine(BasePath, packageFileName);
+            var filePath = Path.Combine(BasePath, packageFileName + ".wrap");
 
             if (File.Exists(filePath))
                 return null;
@@ -61,7 +61,7 @@ namespace OpenWrap.Repositories
 
         string GetCacheDirectory(string wrapFileName)
         {
-            return FileSystem.CombinePaths(BasePath, "cache", wrapFileName);
+            return FileSystem.CombinePaths(BasePath, "cache", Path.GetFileNameWithoutExtension(wrapFileName));
         }
     }
     public static class ExportBuilders

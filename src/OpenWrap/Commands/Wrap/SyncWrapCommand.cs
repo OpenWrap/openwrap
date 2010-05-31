@@ -18,7 +18,7 @@ namespace OpenWrap.Commands.Wrap
             var packageManager = WrapServices.GetService<IPackageManager>();
             var environment = WrapServices.GetService<IEnvironment>();
 
-            var descriptor = new WrapDescriptorParser().ParseFile(environment.DescriptorPath);
+            var descriptor = environment.Descriptor;
             var dependencyResolveResult = packageManager.TryResolveDependencies(descriptor, environment.ProjectRepository, environment.UserRepository, environment.RemoteRepositories);
 
             if (!dependencyResolveResult.IsSuccess)

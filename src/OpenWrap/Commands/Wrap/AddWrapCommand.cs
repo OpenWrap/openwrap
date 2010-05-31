@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using OpenWrap.Build.Services;
+using OpenWrap.Dependencies;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -29,13 +30,15 @@ namespace OpenWrap.Commands.Wrap
 
         ICommandResult AddInstructionToWrapFile()
         {
-            File.AppendAllText(_environment.DescriptorPath, GetDependsLine(), Encoding.UTF8);
+            var dependLine = GetDependsLine();
+            File.AppendAllText(_environment.Descriptor.Path,"\r\n" + dependLine, Encoding.UTF8);
+            new WrapDependencyParser().Parse(dependLine, _environment.Descriptor);
             return null;
         }
 
         string GetDependsLine()
         {
-            return "\r\ndepends " + Name + " " + (Version ?? string.Empty);
+            return "depends " + Name + " " + (Version ?? string.Empty);
         }
 
         IEnumerable<ICommandResult> SyncWrapFileWithWrapDirectory()
@@ -45,7 +48,7 @@ namespace OpenWrap.Commands.Wrap
 
         GenericError VerifyWrapFile()
         {
-            return _environment.DescriptorPath != null ? null : new GenericError { Message = "Could not find a wrap descriptor in your path." };
+            return _environment.Descriptor != null ? null : new GenericError { Message = "Could not find a wrap descriptor in your path." };
         }
 
         ICommandResult VeryfyWrapRepository()
@@ -54,7 +57,7 @@ namespace OpenWrap.Commands.Wrap
                        ? null
                        : new GenericError
                        {
-                           Message = string.Format("Directory 'wraps' not found on the path above the wrap file '{0}'.", _environment.DescriptorPath)
+                           Message = string.Format("Directory 'wraps' not found on the path above the wrap file '{0}'.", _environment.Descriptor)
                        };
         }
     }

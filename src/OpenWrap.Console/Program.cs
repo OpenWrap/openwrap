@@ -26,7 +26,7 @@ namespace OpenWrap.Console
             WrapServices.TryRegisterService<ICommandRepository>(()=> repo);
             var processor = new CommandLineProcessor(repo);
             var backedupConsoleColor = System.Console.ForegroundColor;
-            foreach (var commandResult in processor.Execute(args))
+            foreach (var commandResult in processor.Execute(args).Where(x => x != null))
             {
                 try
                 {
@@ -39,6 +39,7 @@ namespace OpenWrap.Console
                     System.Console.ForegroundColor = backedupConsoleColor;
                 }
             }
+            System.Console.ReadLine();
         }
     }
 

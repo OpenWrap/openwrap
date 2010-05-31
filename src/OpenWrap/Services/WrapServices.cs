@@ -12,9 +12,7 @@ namespace OpenWrap.Build.Services
 
         static WrapServices()
         {
-            var wrapFile = new WrapDescriptorMonitor();
-
-            RegisterService<IWrapDescriptorMonitoringService>(wrapFile);
+            Clear();
         }
         public static void RegisterService<TService>(TService service) where TService : class, IService
         {
@@ -35,6 +33,12 @@ namespace OpenWrap.Build.Services
         public static T GetService<T>() where T : class, IService
         {
             return _services.ContainsKey(typeof(T)) ? (T)_services[typeof(T)] : null;
+        }
+
+        public static void Clear()
+        {
+            _services.Clear();
+            RegisterService<IWrapDescriptorMonitoringService>(new WrapDescriptorMonitor());
         }
     }
 }

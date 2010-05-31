@@ -16,14 +16,14 @@ namespace OpenWrap.Repositories
         {
             _serverUri = serverUri;
 
-            _requestUri = new Uri(serverUri, new Uri("index.wraplist"));
+            _requestUri = new Uri(serverUri, new Uri("index.wraplist", UriKind.Relative));
 
         }
 
         public XDocument LoadFileList()
         {
             if (_fileList == null)
-                _fileList = XDocument.Load(_requestUri.ToString());
+                _fileList = XDocument.Load(_requestUri.ToString(), LoadOptions.SetBaseUri);
             return _fileList;
         }
 

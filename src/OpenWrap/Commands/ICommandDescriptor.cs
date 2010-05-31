@@ -5,7 +5,7 @@ namespace OpenWrap.Commands
 {
     public interface ICommandDescriptor
     {
-        string Namespace { get; }
+        string Noun { get; }
         string Verb { get; }
         string DisplayName { get; }
         string Description { get; }

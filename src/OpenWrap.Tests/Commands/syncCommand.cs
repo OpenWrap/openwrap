@@ -2,16 +2,53 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Build.Services;
 using OpenWrap.Commands;
+using OpenWrap.Commands.Wrap;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
+using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
-    class syncCommand
+    class when_synchronizing_dependencies : context.command_context<SyncWrapCommand>
     {
+        public when_synchronizing_dependencies()
+        {
+            given_dependency("depends rings-of-power");
+            given_remote_package("sauron", new Version(1, 0, 0));
+            given_remote_package("rings-of-power", new Version(1,0,0), "depends sauron");
+
+            when_executing_command();
+        }
+
+        [Test]
+        public void local_repository_has_new_packages()
+        {
+
+            Environment.ProjectRepository.PackagesByName["sauron"]
+                .ShouldHaveCountOf(1)
+                .First().Version.ShouldBe(new Version(1, 0, 0));
+
+            Environment.ProjectRepository.PackagesByName["rings-of-power"]
+                .ShouldHaveCountOf(1)
+                .First().Version.ShouldBe(new Version(1, 0, 0));
+        }
+
+        [Test]
+        public void user_repository_has_new_packages()
+        {
+            Environment.UserRepository.PackagesByName["sauron"]
+                .ShouldHaveCountOf(1)
+                .First().Version.ShouldBe(new Version(1, 0, 0));
+
+            Environment.UserRepository.PackagesByName["rings-of-power"]
+                .ShouldHaveCountOf(1)
+                .First().Version.ShouldBe(new Version(1, 0, 0));
+        
+        }
     }
     namespace context
     {
@@ -26,8 +63,18 @@ namespace OpenWrap.Tests.Commands
             public command_context()
             {
                 Command = new AttributeBasedCommandDescriptor<T>();
-                this.Commands = new CommandRepository() { Command };
+                Commands = new CommandRepository() { Command };
                 Environment = new InMemoryEnvironment();
+
+                WrapServices.Clear();
+                WrapServices.RegisterService<IEnvironment>(Environment);
+                WrapServices.RegisterService<IPackageManager>(new PackageManager());
+                WrapServices.RegisterService<ICommandRepository>(Commands);
+            }
+
+            protected void given_dependency(string dependency)
+            {
+                new WrapDependencyParser().Parse(dependency, Environment.Descriptor);
             }
             protected void given_remote_package(string name, Version version, params string[] dependencies)
             {
@@ -56,7 +103,7 @@ namespace OpenWrap.Tests.Commands
 
             protected virtual void when_executing_command(params string[] parameters)
             {
-                var allParams = new[] { Command.Namespace, Command.Namespace }.Concat(parameters);
+                var allParams = new[] { Command.Noun, Command.Verb }.Concat(parameters);
                 Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
             }
         }
@@ -73,6 +120,8 @@ namespace OpenWrap.Tests.Commands
                 UserRepository = new InMemoryRepository();
                 RemoteRepository = new InMemoryRepository();
                 RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };
+                Descriptor = new WrapDescriptor();
+
             }
 
             void IService.Initialize()
@@ -84,10 +133,7 @@ namespace OpenWrap.Tests.Commands
                 get { return ProjectRepository; }
             }
 
-            public string DescriptorPath
-            {
-                get; set;
-            }
+            public WrapDescriptor Descriptor { get; set; }
 
             IEnumerable<IPackageRepository> IEnvironment.RemoteRepositories
             {

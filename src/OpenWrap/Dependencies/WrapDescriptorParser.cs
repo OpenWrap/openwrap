@@ -46,7 +46,8 @@ namespace OpenWrap.Dependencies
             var descriptor = new WrapDescriptor
             {
                 Name = WrapNameUtility.GetName(Path.GetFileNameWithoutExtension(filePath)),
-                Version = WrapNameUtility.GetVersion(Path.GetFileNameWithoutExtension(filePath))
+                Version = WrapNameUtility.GetVersion(Path.GetFileNameWithoutExtension(filePath)),
+                Path = filePath
             };
             foreach (var line in lines)
                 foreach (var parser in _lineParsers)
@@ -57,7 +58,7 @@ namespace OpenWrap.Dependencies
         string[] SplitAndFold(string content)
         {
             content = _foldableLines.Replace(content, " ");
-            return content.Split(new[] { @"\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            return content.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
         }
     }
     public class WrapNameUtility

@@ -19,11 +19,13 @@ namespace OpenWrap.Repositories
                               let version = wrapList.Attribute("version")
                               let link = (from link in wrapList.Elements("link")
                                           let relAttribute = link.Attribute("rel")
-                                          where relAttribute != null && relAttribute.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
-                                          select relAttribute).FirstOrDefault()
+                                          let hrefAttribute = link.Attribute("href")
+                                          where hrefAttribute != null && relAttribute != null && relAttribute.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
+                                          select hrefAttribute).FirstOrDefault()
+                              let absoluteLink = new Uri(new Uri(document.BaseUri, UriKind.Absolute), new Uri(link.Value, UriKind.RelativeOrAbsolute))
                               where name != null && version != null && link != null
                               let depends = wrapList.Elements("depends").Select(x => x.Value)
-                              select new XmlPackageInfo(this, navigator, name.Value, version.Value,new Uri(link.Value, UriKind.RelativeOrAbsolute), depends, builders))
+                              select new XmlPackageInfo(this, navigator, name.Value, version.Value, absoluteLink, depends, builders))
                 .Cast<IPackageInfo>().ToLookup(x => x.Name);
         }
         public ILookup<string, IPackageInfo> PackagesByName { get; private set; }
