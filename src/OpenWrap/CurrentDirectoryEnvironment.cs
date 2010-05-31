@@ -20,7 +20,7 @@ namespace OpenWrap
         {
             DescriptorPath = new DirectoryInfo(Environment.CurrentDirectory)
                 .SelfAndAncestors()
-                .SelectMany(x => IOExtensions.Files(x, "*.wrapdesc"))
+                .SelectMany(x => x.Files("*.wrapdesc"))
                 .FirstOrDefault();
 
             var dir = new DirectoryInfo(Path.GetDirectoryName(DescriptorPath))

@@ -11,6 +11,6 @@ namespace OpenWrap.Repositories
     public interface IPackage : IPackageInfo
     {
         IExport GetExport(string exportName, WrapRuntimeEnvironment environment);
-        void Persist(string folder);
+        Stream OpenStream();
     }
 }

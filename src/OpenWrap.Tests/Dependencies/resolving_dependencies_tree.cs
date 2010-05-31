@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -60,7 +61,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             when_resolving_packages();
 
-            Resolve.IsSuccess.ShouldBeFalse();
+            Resolve.IsSuccess.ShouldBeTrue();
             Resolve.Dependencies.Count().ShouldBe(4);
             Resolve.Dependencies.ToLookup(x => x.Package.Name)["sauron"]
                 .ShouldHaveCountOf(1)
@@ -203,6 +204,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public class InMemoryRepository : IPackageRepository
         {
             public List<IPackageInfo> Packages = new List<IPackageInfo>();
+            
 
             public ILookup<string, IPackageInfo> PackagesByName
             {
@@ -212,6 +214,17 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             public IPackageInfo Find(WrapDependency dependency)
             {
                 return PackagesByName.Find(dependency);
+            }
+
+            public IPackageInfo Publish(string packageFileName, Stream packageStream)
+            {
+                var package = new InMemoryPackage
+                {
+                    Name = WrapNameUtility.GetName(packageFileName),
+                    Version = WrapNameUtility.GetVersion(packageFileName)
+                };
+                Packages.Add(package);
+                return package;
             }
         }
     }

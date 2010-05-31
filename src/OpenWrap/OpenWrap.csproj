@@ -72,11 +72,15 @@
     <Compile Include="IEnvironment.cs" />
     <Compile Include="InternalServices.cs" />
     <Compile Include="Repositories\AggregatePackageRepository.cs" />
+    <Compile Include="Repositories\DependencyResolutionResult.cs" />
+    <Compile Include="Repositories\FileSystem.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\HttpNavigator.cs" />
     <Compile Include="Repositories\HttpRepository.cs" />
     <Compile Include="Repositories\IPackageManager.cs" />
+    <Compile Include="Repositories\PackageManager.cs" />
     <Compile Include="Repositories\PackagesExtensions.cs" />
+    <Compile Include="Repositories\ResolvedDependency.cs" />
     <Compile Include="Repositories\XmlPackage.cs" />
     <Compile Include="Repositories\XmlPackageInfo.cs" />
     <Compile Include="Repositories\IHttpNavigator.cs" />
@@ -100,7 +104,6 @@
     <Compile Include="Commands\NotEnoughParameters.cs" />
     <Compile Include="Commands\QuitCommand.cs" />
     <Compile Include="Commands\UnknownCommand.cs" />
-    <Compile Include="Commands\Wrap\ManageWrapCommand.cs" />
     <Compile Include="Dependencies\AnyVersionVertice.cs" />
     <Compile Include="Dependencies\AtLeastVersionVertice.cs" />
     <Compile Include="Dependencies\ExactVersionVertice.cs" />

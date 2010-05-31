@@ -7,27 +7,33 @@ namespace OpenWrap.Commands
 {
     public class CommandLineProcessor
     {
-        readonly CommandRepository _commands;
+        readonly ICommandRepository _commands;
 
-        public CommandLineProcessor(CommandRepository commands)
+        public CommandLineProcessor(ICommandRepository commands)
         {
             _commands = commands;
         }
 
-        public ICommandResult Execute(string[] strings)
+        public IEnumerable<ICommandResult> Execute(IEnumerable<string> strings)
         {
-            if (strings == null || strings.Length < 2)
-                return new NotEnoughParameters();
+            if (strings == null || strings.Count() < 2)
+            {
+                yield return new NotEnoughParameters();
+                yield break;
+            }
 
-            var matchingNamespaces = _commands.Namespaces.Where(x => x.StartsWith(strings[0], StringComparison.OrdinalIgnoreCase)).ToList();
+            var matchingNamespaces = _commands.Namespaces.Where(x => x.StartsWith(strings.ElementAt(0), StringComparison.OrdinalIgnoreCase)).ToList();
             if (matchingNamespaces.Count != 1)
-                return new NamesapceNotFound(matchingNamespaces);
+            {yield return new NamesapceNotFound(matchingNamespaces);
+                yield break;
+            }
             var ns = matchingNamespaces[0];
 
-            var matchingVerbs = _commands.Verbs.Where(x => x.StartsWith(strings[1], StringComparison.OrdinalIgnoreCase)).ToList();
+            var matchingVerbs = _commands.Verbs.Where(x => x.StartsWith(strings.ElementAt(1), StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (matchingVerbs.Count != 1)
-                return new UnknownCommand(strings[1], matchingVerbs);
+            {yield return new UnknownCommand(strings.ElementAt(1), matchingVerbs);
+                yield break;}
 
             var verb = matchingVerbs[0];
 
@@ -51,10 +57,18 @@ namespace OpenWrap.Commands
                          }).ToList();
 
             var namedInputsNameNotFound = assignedNamedInputValues.FirstOrDefault(x => x.Input == null);
-            if (namedInputsNameNotFound != null) return new UnknownCommandInput(namedInputsNameNotFound.InputName);
+            if (namedInputsNameNotFound != null)
+            {
+                yield return new UnknownCommandInput(namedInputsNameNotFound.InputName);
+                yield break;
+            }
 
             var namedInputsValueNotParsed = assignedNamedInputValues.FirstOrDefault(x => x.RawValue == null);
-            if (namedInputsValueNotParsed != null) return new InvalidCommandValue(namedInputsValueNotParsed.InputName, namedInputsValueNotParsed.RawValue);
+            if (namedInputsValueNotParsed != null)
+            {
+                yield return new InvalidCommandValue(namedInputsValueNotParsed.InputName, namedInputsValueNotParsed.RawValue);
+                yield break;
+            }
 
             var inputNamesAlreadyFilled = assignedNamedInputValues.Select(x => x.InputName).ToList();
             // now got a clean set of input names that pass. Now on to the unnamed ones.
@@ -65,7 +79,8 @@ namespace OpenWrap.Commands
                                         orderby input.Value.Position ascending
                                         select input.Value).ToList();
 
-            if (unnamedCommandInputValues.Count > unfullfilledCommandInputs.Count) return new InvalidCommandValue(unnamedCommandInputValues);
+            if (unnamedCommandInputValues.Count > unfullfilledCommandInputs.Count) {yield return new InvalidCommandValue(unnamedCommandInputValues);
+                yield break;}
 
             var assignedUnnamedInputValues = (from unnamedValue in unnamedCommandInputValues
                                         let input = unfullfilledCommandInputs[unnamedCommandInputValues.IndexOf(unnamedValue)]
@@ -80,20 +95,28 @@ namespace OpenWrap.Commands
 
 
             var unnamedFailed = assignedUnnamedInputValues.Where(x => x.ParsedValue == null).ToList();
-            if (unnamedFailed.Count > 0) return new InvalidCommandValue(unnamedCommandInputValues);
+            if (unnamedFailed.Count > 0)
+            {
+                yield return new InvalidCommandValue(unnamedCommandInputValues);
+                yield break;
+            }
 
             var allAssignedInputs = assignedNamedInputValues.Concat(assignedUnnamedInputValues);
 
             var missingInputs = command.Inputs.Select(x => x.Value).Where(x => !allAssignedInputs.Select(i => i.Input).Contains(x) && x.IsRequired).ToList();
-            if (missingInputs.Count > 0) return new MissingCommandValue(missingInputs);
+            if (missingInputs.Count > 0)
+            {
+                yield return new MissingCommandValue(missingInputs);
+                yield break;
+            }
 
             var missingInputValues = allAssignedInputs.Select(x => x.Input);
             // all clear, assign and run
             var commandInstance = command.Create();
             foreach (var namedInput in allAssignedInputs)
                 namedInput.Input.SetValue(commandInstance, namedInput.ParsedValue);
-
-            return commandInstance.Execute();
+            foreach(var nestedResult in commandInstance.Execute())
+                yield return nestedResult;
         }
         class ParsedInput
         {

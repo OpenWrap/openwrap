@@ -106,9 +106,9 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
         [CommandInput(Position = 1)]
         public bool IsDangerous { get; set; }
 
-        public ICommandResult Execute()
+        public IEnumerable<ICommandResult> Execute()
         {
-            return new Success() { Command = this };
+            yield return new Success() { Command = this };
         }
     }
 
@@ -132,11 +132,12 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             {
                 commands.Add(new AttributeBasedCommandDescriptor(typeof(T)));
             }
-            protected ICommandResult result;
+            protected List<ICommandResult> results;
+            protected ICommandResult result { get { return results.Last(); } }
 
-            protected void when_parsing_input(params string[] command)
+                protected void when_parsing_input(params string[] command)
             {
-                result = processor.Execute(command);
+                results = processor.Execute(command).ToList();
             }
         }
     }

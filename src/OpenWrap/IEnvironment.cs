@@ -8,7 +8,7 @@ namespace OpenWrap
     {
         IPackageRepository ProjectRepository { get; }
         string DescriptorPath { get; }
-        IEnumerable<IPackageRepository> RemoteRepositories { get; set; }
-        IPackageRepository UserRepository { get; set; }
+        IEnumerable<IPackageRepository> RemoteRepositories { get; }
+        IPackageRepository UserRepository { get; }
     }
 }

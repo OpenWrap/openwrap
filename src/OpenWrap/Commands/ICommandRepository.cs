@@ -8,5 +8,6 @@ namespace OpenWrap.Commands
     {
         IEnumerable<string> Namespaces { get; }
         IEnumerable<string> Verbs { get; }
+        ICommandDescriptor Get(string @namespace, string name);
     }
 }

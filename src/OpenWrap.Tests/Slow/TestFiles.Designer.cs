@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OpenWrap.Repositories.Wrap.Tests.Slow {
+namespace OpenWrap.Tests.Slow {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OpenRasta.Wrap.Tests.Slow.TestFiles", typeof(TestFiles).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OpenWrap.Tests.Slow.TestFiles", typeof(TestFiles).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

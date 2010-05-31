@@ -43,6 +43,12 @@ namespace OpenWrap.Repositories
             return _loadedPackage.GetExport(exportName, environment);
         }
 
+        public Stream OpenStream()
+        {
+            VerifyLoaded();
+            return _loadedPackage.OpenStream();
+        }
+
         void VerifyLoaded()
         {
             if (_loadedPackage != null) return;
@@ -55,10 +61,5 @@ namespace OpenWrap.Repositories
             _loadedPackage = new ZipPackage(Source, new FileInfo(tempFileName), Path.GetTempPath(), _builders).Load();
         }
 
-        public void Persist(string folder)
-        {
-            VerifyLoaded();
-            _loadedPackage.Persist(folder);
-        }
     }
 }

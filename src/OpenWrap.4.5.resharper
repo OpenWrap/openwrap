@@ -31,7 +31,8 @@ Tokenizer
 surrogated
 Templated
 Markup
-Namespace</UserWords>
+Namespace
+sauron</UserWords>
             </CustomDictionary>
             <CustomDictionary>
               <Name>en-GB</Name>

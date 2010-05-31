@@ -7,6 +7,7 @@ using NUnit.Framework;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using OpenWrap.Tests.Slow;
 
 namespace OpenWrap.Repositories.Wrap.Tests.Slow
 {
@@ -26,7 +27,6 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
         public void name_is_correct()
         {
             Descriptor.Name.ShouldBe("test-module");
-
         }
         [Test]
         public void version_is_correct()

@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenWrap.Exports;
-using OpenWrap.Repositories;
 using OpenWrap.Dependencies;
+using OpenWrap.Exports;
 
 namespace OpenWrap.Repositories
 {
@@ -14,45 +15,61 @@ namespace OpenWrap.Repositories
         /// <exception cref="DirectoryNotFoundException"><c>DirectoryNotFoundException</c>.</exception>
         public FolderRepository(string packageBasePath)
         {
-
             BasePath = packageBasePath;
             if (!Directory.Exists(packageBasePath))
                 throw new DirectoryNotFoundException(string.Format("The directory '{0}' doesn't exist.", packageBasePath));
 
             var baseDirectory = new DirectoryInfo(packageBasePath);
 
-            PackagesByName = (from wrapFile in baseDirectory.GetFiles("*.wrap")
-                              let wrapFileName = Path.GetFileNameWithoutExtension(wrapFile.Name)
-                              let cacheDirectory = FileSystem.CombinePaths(baseDirectory.FullName, "cache", wrapFileName)
-                              let packageVersion = WrapNameUtility.GetVersion(wrapFileName)
-                              where packageVersion != null
-                              select Directory.Exists(cacheDirectory)
-            ? (IPackageInfo)new UncompressedPackage(this, wrapFile, cacheDirectory, new[] { new AssemblyReferenceExportBuilder() })
-            : (IPackageInfo)new ZipPackage(this, wrapFile, cacheDirectory,  new[] { new AssemblyReferenceExportBuilder() }))
-                .ToLookup(x => x.Name);
+            Packages = (from wrapFile in baseDirectory.GetFiles("*.wrap")
+                        let wrapFileName = Path.GetFileNameWithoutExtension(wrapFile.Name)
+                        let cacheDirectory = GetCacheDirectory(wrapFileName)
+                        let packageVersion = WrapNameUtility.GetVersion(wrapFileName)
+                        where packageVersion != null
+                        select Directory.Exists(cacheDirectory)
+                                   ? (IPackageInfo)new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All)
+                                   : (IPackageInfo)new ZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All)).ToList();
         }
 
         public string BasePath { get; set; }
 
-        public ILookup<string, IPackageInfo> PackagesByName { get; private set; }
+        public ILookup<string, IPackageInfo> PackagesByName
+        {
+            get { return Packages.ToLookup(x => x.Name); }
+        }
+
+        protected List<IPackageInfo> Packages { get; set; }
 
         public IPackageInfo Find(WrapDependency dependency)
         {
             return PackagesByName.Find(dependency);
         }
 
-    }
-
-    public static class FileSystem
-    {
-        public static string CombinePaths(params string[] paths)
+        public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            if (paths == null || paths.Length < 1) return null;
-            
-            var path = paths[0];
-            foreach (var pathToCombine in paths.Skip(1))
-                path = Path.Combine(path, pathToCombine);
-            return path;
+            var filePath = Path.Combine(BasePath, packageFileName);
+
+            if (File.Exists(filePath))
+                return null;
+            using (var file = File.OpenWrite(filePath))
+                packageStream.CopyTo(file);
+
+            var newPackage = new ZipPackage(this, new FileInfo(filePath), GetCacheDirectory(filePath), ExportBuilders.All);
+            Packages.Add(newPackage);
+            return newPackage;
         }
+
+        string GetCacheDirectory(string wrapFileName)
+        {
+            return FileSystem.CombinePaths(BasePath, "cache", wrapFileName);
+        }
+    }
+    public static class ExportBuilders
+    {
+        static readonly List<IExportBuilder> _exportBuilders = new List<IExportBuilder>
+        {
+            new AssemblyReferenceExportBuilder()
+        };
+        public static ICollection<IExportBuilder> All { get { return _exportBuilders; } }
     }
 }

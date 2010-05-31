@@ -73,6 +73,11 @@ namespace OpenWrap.Repositories
             return exporter.ProcessExports(exports, environment);
         }
 
+        public Stream OpenStream()
+        {
+            return _originalWrapFile.OpenRead();
+        }
+
         public void Persist(string folder)
         {
             File.Copy(_originalWrapFile.FullName, Path.Combine(folder, _originalWrapFile.Name),true);

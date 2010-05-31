@@ -10,24 +10,55 @@ namespace OpenWrap.Commands.Core
     [Command(Verb="get", Namespace="help")]
     public class HelpCommand : ICommand
     {
-        public ICommandResult Execute()
+        public IEnumerable<ICommandResult> Execute()
         {
-            return new CommandListResult(WrapServices.GetService<ICommandRepository>());
+            yield return new Result("List of commands");
+            foreach (var command in WrapServices.GetService<ICommandRepository>())
+            {
+                yield return new CommandListResult(command);
+            }
+        }
+    }
+    public class Result : ICommandResult
+    {
+        readonly string _value;
+
+        public Result(object value)
+        {
+            _value = value.ToString();
+            Success = true;
+        }
+        public Result(string str, params object[] parameters)
+        {
+            _value = string.Format(str, parameters);
+            Success = true;
+        }
+        public bool Success
+        {
+            get; set;
+        }
+
+        public ICommand Command
+        {
+            get { throw new NotImplementedException(); }
+        }
+        public override string ToString()
+        {
+            return _value;
         }
     }
 
     public class CommandListResult : Success
     {
-        readonly ICommandRepository _repository;
+        readonly ICommandDescriptor _command;
 
-        public CommandListResult(ICommandRepository repository)
+        public CommandListResult(ICommandDescriptor repository)
         {
-            _repository = repository;
+            _command = repository;
         }
         public override string ToString()
         {
-            return _repository.Aggregate("List of commands",
-                                         (s, c) => s += "\r\n- " + c.Namespace + " " + c.Verb);
+            return _command.Namespace + " " + _command.Verb;
         }
     }
 }

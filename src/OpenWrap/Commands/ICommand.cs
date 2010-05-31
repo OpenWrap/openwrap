@@ -9,9 +9,7 @@ namespace OpenWrap.Commands
 {
     public interface ICommand
     {
-        //ICommandResult WrapAssembliesUpdated(string command, IEnumerable<string> commandArguments);
-
-        ICommandResult Execute();
+        IEnumerable<ICommandResult> Execute();
     }
 
     public class AttributeBasedCommandDescriptor : ICommandDescriptor

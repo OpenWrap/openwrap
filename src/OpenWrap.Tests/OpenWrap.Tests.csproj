@@ -8,8 +8,8 @@
     <ProjectGuid>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenRasta.Wrap.Tests</RootNamespace>
-    <AssemblyName>OpenRasta.Wrap.Tests</AssemblyName>
+    <RootNamespace>OpenWrap.Tests</RootNamespace>
+    <AssemblyName>OpenWrap.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandProcessor.cs" />
+    <Compile Include="Commands\syncCommand.cs" />
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />

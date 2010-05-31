@@ -14,27 +14,30 @@ namespace OpenWrap.Console
     {
         static void Main(string[] args)
         {
-            WrapServices.RegisterService<IEnvironment>(new CurrentDirectoryEnvironment());
-            WrapServices.RegisterService<IPackageManager>(null);
+            WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
+            WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
+
             var repo = new CommandRepository
             {
                 new AttributeBasedCommandDescriptor<AddWrapCommand>(),
                 new AttributeBasedCommandDescriptor<HelpCommand>(),
                 new AttributeBasedCommandDescriptor<SyncWrapCommand>()
             };
-            WrapServices.RegisterService<ICommandRepository>(repo);
+            WrapServices.TryRegisterService<ICommandRepository>(()=> repo);
             var processor = new CommandLineProcessor(repo);
             var backedupConsoleColor = System.Console.ForegroundColor;
-            try
+            foreach (var commandResult in processor.Execute(args))
             {
-                var commandResult = processor.Execute(args);
-                if (!commandResult.Success)
-                    System.Console.ForegroundColor = ConsoleColor.Red;
-                System.Console.WriteLine(commandResult);
-            }
-            finally
-            {
-                System.Console.ForegroundColor = backedupConsoleColor;
+                try
+                {
+                    if (!commandResult.Success)
+                        System.Console.ForegroundColor = ConsoleColor.Red;
+                    System.Console.WriteLine(commandResult);
+                }
+                finally
+                {
+                    System.Console.ForegroundColor = backedupConsoleColor;
+                }
             }
         }
     }

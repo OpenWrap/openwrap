@@ -32,5 +32,10 @@ namespace OpenWrap.Repositories
         {
             return PackagesByName.Find(dependency);
         }
+
+        public IPackageInfo Publish(string packageFileName, Stream packageStream)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
