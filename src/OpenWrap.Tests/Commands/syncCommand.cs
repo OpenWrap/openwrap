@@ -86,6 +86,8 @@ namespace OpenWrap.Tests.Commands
             }
             protected void given_project_package(string name, Version version, params string[] dependencies)
             {
+                if (Environment.ProjectRepository == null)
+                    Environment.ProjectRepository = new InMemoryRepository();
                 AddPackage(Environment.ProjectRepository, name, version, dependencies);
             }
 
@@ -116,7 +118,6 @@ namespace OpenWrap.Tests.Commands
 
             public InMemoryEnvironment()
             {
-                ProjectRepository = new InMemoryRepository();
                 UserRepository = new InMemoryRepository();
                 RemoteRepository = new InMemoryRepository();
                 RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };

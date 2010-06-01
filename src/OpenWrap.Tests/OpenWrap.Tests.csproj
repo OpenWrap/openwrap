@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandProcessor.cs" />
+    <Compile Include="Commands\updateWrapCommand.cs" />
     <Compile Include="Commands\syncCommand.cs" />
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />

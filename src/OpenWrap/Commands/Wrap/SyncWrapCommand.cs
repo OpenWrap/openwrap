@@ -18,7 +18,10 @@ namespace OpenWrap.Commands.Wrap
             var packageManager = WrapServices.GetService<IPackageManager>();
             var environment = WrapServices.GetService<IEnvironment>();
 
+
+            // TODO: Check if not in project repository and fail nicely
             var descriptor = environment.Descriptor;
+
             var dependencyResolveResult = packageManager.TryResolveDependencies(descriptor, environment.ProjectRepository, environment.UserRepository, environment.RemoteRepositories);
 
             if (!dependencyResolveResult.IsSuccess)
@@ -32,11 +35,14 @@ namespace OpenWrap.Commands.Wrap
                 using (var packageStream = dependency.Package.Load().OpenStream())
                 {
                     var packageFileName = dependency.Package.Name + "-" + dependency.Package.Version;
-                    var package = environment.UserRepository.Publish(packageFileName, packageStream);
-                    using (var localPackageStream = package.Load().OpenStream())
+                    if (environment.ProjectRepository != null)
                     {
-                        yield return new Result("Copying {0} to project repository.", package.Name);
-                        environment.ProjectRepository.Publish(packageFileName, localPackageStream);
+                        var package = environment.UserRepository.Publish(packageFileName, packageStream);
+                        using (var localPackageStream = package.Load().OpenStream())
+                        {
+                            yield return new Result("Copying {0} to project repository.", package.Name);
+                            environment.ProjectRepository.Publish(packageFileName, localPackageStream);
+                        }
                     }
                 }
             }
