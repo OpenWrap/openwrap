@@ -50,6 +50,11 @@ namespace OpenWrap.Repositories
             get; private set;
         }
 
+        public string FullName
+        {
+            get { return Name + "-" + Version; }
+        }
+
         protected WrapDescriptor Descriptor { get; set; }
 
         public IExport GetExport(string exportName, WrapRuntimeEnvironment environment)

@@ -97,7 +97,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
         }
     }
 
-    [Command(Namespace="lotr")]
+    [Command(Noun="lotr")]
     public class TravelToMordor : ICommand
     {
         [CommandInput(Position = 0)]

@@ -66,6 +66,7 @@
     <Compile Include="Commands\InvalidCommandValue.cs" />
     <Compile Include="Commands\MissingCommandValue.cs" />
     <Compile Include="Commands\NamesapceNotFound.cs" />
+    <Compile Include="Commands\Wrap\SetupWrapCommand.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Commands\UnknownCommandInput.cs" />

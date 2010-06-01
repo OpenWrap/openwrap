@@ -7,7 +7,7 @@ using OpenWrap.Commands;
 
 namespace OpenWrap.Commands.Core
 {
-    [Command(Verb="get", Namespace="help")]
+    [Command(Verb="get", Noun="help")]
     public class HelpCommand : ICommand
     {
         public IEnumerable<ICommandResult> Execute()

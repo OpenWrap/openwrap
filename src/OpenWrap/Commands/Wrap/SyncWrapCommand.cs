@@ -9,51 +9,56 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Verb = "sync", Namespace = "wrap")]
+    [Command(Verb = "sync", Noun = "wrap")]
     public class SyncWrapCommand : ICommand
     {
+        protected IEnvironment Environment
+        {
+            get { return WrapServices.GetService<IEnvironment>(); }
+        }
+
+        protected IPackageManager PackageManager
+        {
+            get { return WrapServices.GetService<IPackageManager>(); }
+        }
+
         public IEnumerable<ICommandResult> Execute()
         {
             yield return new Result("Synchronizing all packages.");
-            var packageManager = WrapServices.GetService<IPackageManager>();
-            var environment = WrapServices.GetService<IEnvironment>();
-
 
             // TODO: Check if not in project repository and fail nicely
-            var descriptor = environment.Descriptor;
+            var descriptor = Environment.Descriptor;
 
-            var dependencyResolveResult = packageManager.TryResolveDependencies(descriptor, environment.ProjectRepository, environment.UserRepository, environment.RemoteRepositories);
+            var dependencyResolveResult = PackageManager.TryResolveDependencies(descriptor, Environment.ProjectRepository, Environment.UserRepository, Environment.RemoteRepositories);
 
             if (!dependencyResolveResult.IsSuccess)
             {
                 yield return DependencyResolutionFailed(dependencyResolveResult);
                 yield break;
             }
-            foreach(var dependency in dependencyResolveResult.Dependencies.Where(x => environment.RemoteRepositories.Any(rem => rem == x.Package.Source)))
+            foreach(var dependency in dependencyResolveResult.Dependencies.Where(x => Environment.RemoteRepositories.Any(rem => rem == x.Package.Source)))
             {
-                yield return new Result("Copying {0} to user repository.", dependency.Package.Name);
+                yield return new Result("Copying {0} to user repository.", dependency.Package.FullName);
                 using (var packageStream = dependency.Package.Load().OpenStream())
                 {
-                    var packageFileName = dependency.Package.Name + "-" + dependency.Package.Version;
-                    if (environment.ProjectRepository != null)
+                    if (Environment.ProjectRepository != null)
                     {
-                        var package = environment.UserRepository.Publish(packageFileName, packageStream);
+                        var package = Environment.UserRepository.Publish(dependency.Package.FullName, packageStream);
                         using (var localPackageStream = package.Load().OpenStream())
                         {
                             yield return new Result("Copying {0} to project repository.", package.Name);
-                            environment.ProjectRepository.Publish(packageFileName, localPackageStream);
+                            Environment.ProjectRepository.Publish(dependency.Package.FullName, localPackageStream);
                         }
                     }
                 }
             }
-            foreach (var localDependency in dependencyResolveResult.Dependencies.Where(x => x.Package.Source == environment.UserRepository))
+            foreach (var localDependency in dependencyResolveResult.Dependencies.Where(x => x.Package.Source == Environment.UserRepository))
             {
                 var package = localDependency.Package;
-                var packageFileName = package.Name + "-" + package.Version;
                 using (var packageStream = package.Load().OpenStream())
                 {
                     yield return new Result("Copying {0} to project repository.", package.Name);
-                    environment.ProjectRepository.Publish(packageFileName, packageStream);
+                    Environment.ProjectRepository.Publish(package.FullName, packageStream);
                 }
             }
         }

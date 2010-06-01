@@ -11,5 +11,6 @@ namespace OpenWrap.Repositories
         Version Version { get; }
         IPackage Load();
         IPackageRepository Source { get; }
+        string FullName { get; }
     }
 }

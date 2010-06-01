@@ -13,7 +13,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
-    class when_updating_wrap_in_project_folder : context.command_context<SyncWrapCommand>
+    public class when_updating_wrap_in_project_folder : context.command_context<UpdateWrapCommand>
     {
         public when_updating_wrap_in_project_folder()
         {

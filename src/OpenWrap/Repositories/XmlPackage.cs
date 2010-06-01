@@ -43,6 +43,10 @@ namespace OpenWrap.Repositories
             return _loadedPackage.GetExport(exportName, environment);
         }
 
+        public string FullName
+        {
+            get { return Name + "-" + Version; }
+        }
         public Stream OpenStream()
         {
             VerifyLoaded();

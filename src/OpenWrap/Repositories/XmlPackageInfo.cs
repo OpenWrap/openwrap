@@ -38,6 +38,10 @@ namespace OpenWrap.Repositories
         public string Name { get; set; }
         public Version Version { get; set; }
 
+        public string FullName
+        {
+            get { return Name + "-" + Version; }
+        }
         public IPackage Load()
         {
             // get the file from the server

@@ -6,6 +6,10 @@ namespace OpenWrap.Dependencies
 {
     public class WrapDependency
     {
+        public WrapDependency()
+        {
+            VersionVertices = new List<VersionVertice>();
+        }
         public string Name { get; set; }
         public ICollection<VersionVertice> VersionVertices { get; set; }
 

@@ -26,6 +26,11 @@ namespace OpenWrap.Dependencies
             get { return null; }
         }
 
+        public string FullName
+        {
+            get { return Name + "-" + Version; }
+        }
+
         public bool IsCompatibleWith(Version version)
         {
             return false;

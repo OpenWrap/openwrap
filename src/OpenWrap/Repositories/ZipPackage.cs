@@ -53,6 +53,10 @@ namespace OpenWrap.Repositories
             return _cachedPackage;
         }
 
+        public string FullName
+        {
+            get { return Name + "-" + Version; }
+        }
         public IPackageRepository Source
         {
             get; set;

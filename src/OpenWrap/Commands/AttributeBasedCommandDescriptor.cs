@@ -13,7 +13,7 @@ namespace OpenWrap.Commands
         {
             _commandType = commandType;
             var attribute = commandType.GetAttribute<CommandAttribute>() ?? new CommandAttribute();
-            Noun = attribute.Namespace ?? commandType.Namespace;
+            Noun = attribute.Noun ?? commandType.Namespace;
             Verb = attribute.Verb ?? commandType.Name;
             DisplayName = attribute.DisplayName ?? commandType.Name.CamelToSpacedName();
             Description = attribute.Description ?? string.Empty;

@@ -209,6 +209,10 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             {
                 return new MemoryStream(0);
             }
+            public string FullName
+            {
+                get { return Name + "-" + Version; }
+            }
         }
 
         public class InMemoryRepository : IPackageRepository

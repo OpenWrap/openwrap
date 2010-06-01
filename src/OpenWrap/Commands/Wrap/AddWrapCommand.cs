@@ -7,7 +7,7 @@ using OpenWrap.Dependencies;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Verb = "add", Namespace = "wrap")]
+    [Command(Verb = "add", Noun = "wrap")]
     public class AddWrapCommand : ICommand
     {
         IEnvironment _environment;
