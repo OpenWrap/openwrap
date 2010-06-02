@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CamelToSpacedNameTests.cs" />
     <Compile Include="Commands\CommandProcessor.cs" />
     <Compile Include="Commands\updateWrapCommand.cs" />
     <Compile Include="Commands\syncCommand.cs" />
