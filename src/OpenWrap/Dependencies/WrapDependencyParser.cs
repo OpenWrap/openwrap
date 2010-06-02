@@ -47,7 +47,7 @@ namespace OpenWrap.Dependencies
             }
             else
             {
-                yield return new AnyVersionVertice(null);
+                yield return new AnyVersionVertice();
             }
         }
         private static VersionVertice GetVersionVertice(string[] strings, int offset)
@@ -56,7 +56,7 @@ namespace OpenWrap.Dependencies
             var version = strings[offset + 1];
             switch (comparator)
             {
-                case ">=": return new AtLeastVersionVertice(new Version(version));
+                case ">=": return new GreaterThenOrEqualVersionVertice(new Version(version));
                 case "=": return new ExactVersionVertice(new Version(version));
                 case "<": return new LessThanVersionVertice(new Version(version));
                 default: return new AnyVersionVertice(new Version(version));

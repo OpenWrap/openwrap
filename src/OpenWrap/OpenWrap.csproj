@@ -114,7 +114,7 @@
     <Compile Include="Commands\Core\QuitCommand.cs" />
     <Compile Include="Commands\UnknownCommand.cs" />
     <Compile Include="Dependencies\AnyVersionVertice.cs" />
-    <Compile Include="Dependencies\AtLeastVersionVertice.cs" />
+    <Compile Include="Dependencies\GreaterThenOrEqualVersionVertice.cs" />
     <Compile Include="Dependencies\ExactVersionVertice.cs" />
     <Compile Include="Dependencies\LessThanVersionVertice.cs" />
     <Compile Include="Dependencies\VersionVertice.cs" />

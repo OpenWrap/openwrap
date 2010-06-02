@@ -70,7 +70,11 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             {
                 public XDocument LoadFileList()
                 {
-                    return XDocument.Parse(WrapListDocument);
+                    
+                    var doc =XDocument.Parse(WrapListDocument, LoadOptions.SetBaseUri);
+                    
+                    return doc;
+                    
                 }
 
                 public Stream LoadFile(Uri href)

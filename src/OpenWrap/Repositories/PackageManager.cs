@@ -93,7 +93,10 @@ namespace OpenWrap.Repositories
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent, IEnumerable<WrapDependency> dependencies, IDictionary<string,string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
         {
             var packages = from dependency in dependencies
-                           let package = repositories.Select(x => x.Find(dependency)).FirstOrDefault(x=>x != null)
+                           let package = repositories
+                                .Where(x=> x != null)
+                                .Select(x => x.Find(dependency))
+                                .FirstOrDefault(x=>x != null)
                            select new ResolvedDependency { Dependency = dependency, Package = package, ParentPackage = parent };
             foreach (var package in packages.Where(p=>p.Package != null))
                 packages = packages.Concat(ResolveAllDependencies(package.Package, package.Package.Dependencies, dependencyOverrides, repositories));

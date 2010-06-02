@@ -32,8 +32,32 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandResult> UpdateUserPackages()
         {
-            //TODO: Obvious sin't it :)
-            yield return new GenericError { Message = "Not supported" };
+            var installedPackages = Environment.UserRepository.PackagesByName.Select(x => x.Key);
+
+            var packagesToSearch = new WrapDescriptor
+            {
+                Dependencies = (from package in installedPackages
+                               let maxVersion = Environment.UserRepository.PackagesByName[package]
+                                .OrderByDescending(x=>x.Version)
+                                .Select(x=>x.Version)
+                                .First()
+                                select new WrapDependency
+                {
+                    Name = package,
+                    VersionVertices = { new GreaterThenVersionVertice(maxVersion) }
+                }).ToList()
+            };
+            yield return new Result("Searching for updated packages");
+            var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, null, null, Environment.RemoteRepositories);
+
+            
+            foreach(var packageToUpdate in resolveResult.Dependencies)
+            {
+                yield return new Result("Copying {0} to user repository.", packageToUpdate.Package.FullName);
+                using (var stream = packageToUpdate.Package.Load().OpenStream())
+                    Environment.UserRepository.Publish(packageToUpdate.Package.FullName, stream);
+            }
+            
         }
 
         IEnumerable<ICommandResult> UpdateProjectPackages()

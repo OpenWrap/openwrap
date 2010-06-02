@@ -13,9 +13,9 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
-    public class when_updating_wrap_in_project_folder : context.command_context<UpdateWrapCommand>
+    public class when_updating_packages_in_project_folder : context.command_context<UpdateWrapCommand>
     {
-        public when_updating_wrap_in_project_folder()
+        public when_updating_packages_in_project_folder()
         {
             given_dependency("depends goldberry >= 2.0");
 
@@ -41,5 +41,35 @@ namespace OpenWrap.Tests.Commands
             Environment.ProjectRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
         }
 
+    }
+    public class when_not_in_project_folder_and_package_can_be_updated : context.command_context<UpdateWrapCommand>
+    {
+        public when_not_in_project_folder_and_package_can_be_updated()
+        {
+            given_user_package("goldberry", new Version(2,0,0));
+            given_remote_package("goldberry", new Version(2, 1, 0));
+
+            when_executing_command();
+        }
+        [Test]
+        public void results_are_successful()
+        {
+            Results.All(x => x.Success).ShouldBeTrue();
+        }
+        [Test]
+        public void package_in_user_repository_is_updated()
+        {
+            Environment.UserRepository.ShouldHavePackage("goldberry", "2.1.0");
+        }
+    }
+    public static class RepositoryAssertions
+    {
+        public static T ShouldHavePackage<T>(this T repository, string name, string version)
+            where T:IPackageRepository
+        {
+            repository.PackagesByName[name].Count().ShouldBeGreaterThan(0);
+            repository.HasDependency(name, new Version(version)).ShouldBeTrue();
+            return repository;
+        }
     }
 }
