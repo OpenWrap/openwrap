@@ -37,7 +37,7 @@ namespace OpenWrap.Repositories
             get; private set;
         }
 
-        public IExport GetExport(string exportName, WrapRuntimeEnvironment environment)
+        public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
             VerifyLoaded();
             return _loadedPackage.GetExport(exportName, environment);

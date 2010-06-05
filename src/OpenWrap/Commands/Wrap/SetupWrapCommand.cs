@@ -7,6 +7,7 @@ namespace OpenWrap.Commands.Wrap
     {
         [CommandInput(Name="ProjectName", Position=0, IsRequired=true)]
         public string ProjectName { get; set; }
+
         public IEnumerable<ICommandResult> Execute()
         {
             yield break;

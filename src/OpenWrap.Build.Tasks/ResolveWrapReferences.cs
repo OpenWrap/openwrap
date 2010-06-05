@@ -131,11 +131,11 @@ namespace OpenWrap.Build.Tasks
             References = items.ToArray();
         }
 
-        public WrapRuntimeEnvironment Environment
+        public ExecutionEnvironment Environment
         {
             get
             {
-                return new WrapRuntimeEnvironment
+                return new ExecutionEnvironment
                 {
                     Platform = Platform,
                     Profile = Profile

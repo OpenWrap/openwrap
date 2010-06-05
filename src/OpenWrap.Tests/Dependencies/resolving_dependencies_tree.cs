@@ -200,7 +200,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             }
 
             public IPackageRepository Source { get; set; }
-            public IExport GetExport(string exportName, WrapRuntimeEnvironment environment)
+            public IExport GetExport(string exportName, ExecutionEnvironment environment)
             {
                 return null;
             }

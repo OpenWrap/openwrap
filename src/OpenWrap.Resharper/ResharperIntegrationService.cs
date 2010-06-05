@@ -9,12 +9,12 @@ namespace OpenWrap.Resharper
     {
         Dictionary<string, ResharperProjectUpdater> _projectFiles = new Dictionary<string, ResharperProjectUpdater>();
 
-        public ResharperIntegrationService(WrapRuntimeEnvironment environment)
+        public ResharperIntegrationService(ExecutionEnvironment environment)
         {
             this.Environment = environment;
         }
 
-        protected WrapRuntimeEnvironment Environment { get; set; }
+        protected ExecutionEnvironment Environment { get; set; }
 
         public void Initialize()
         {

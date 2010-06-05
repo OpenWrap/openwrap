@@ -50,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandProcessor.cs" />
+    <Compile Include="Commands\context\command_context.cs" />
+    <Compile Include="Commands\InMemoryEnvironment.cs" />
+    <Compile Include="Commands\setupWrapCommand.cs" />
     <Compile Include="Commands\updateWrapCommand.cs" />
     <Compile Include="Commands\syncWrapCommand.cs" />
     <Compile Include="context.cs" />

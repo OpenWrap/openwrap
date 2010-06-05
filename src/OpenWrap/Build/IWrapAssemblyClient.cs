@@ -11,7 +11,7 @@ namespace OpenWrap.Build
     public interface IWrapAssemblyClient
     {
         void WrapAssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths);
-        WrapRuntimeEnvironment Environment { get; }
+        ExecutionEnvironment Environment { get; }
         bool IsLongRunning { get; }
     }
 }

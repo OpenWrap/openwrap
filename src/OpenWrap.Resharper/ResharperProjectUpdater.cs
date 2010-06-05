@@ -20,7 +20,7 @@ namespace OpenWrap.Resharper
         readonly string _projectFilePath;
         static readonly Key ISWRAP = new Key("FromOpenWrap");
 
-        public ResharperProjectUpdater(string descriptorPath, IPackageRepository packageRepository, string projectFilePath, WrapRuntimeEnvironment environment)
+        public ResharperProjectUpdater(string descriptorPath, IPackageRepository packageRepository, string projectFilePath, ExecutionEnvironment environment)
         {
             _descriptorPath = descriptorPath;
             _packageRepository = packageRepository;
@@ -76,7 +76,7 @@ namespace OpenWrap.Resharper
             }
         }
 
-        public WrapRuntimeEnvironment Environment
+        public ExecutionEnvironment Environment
         {
             get;
             set;

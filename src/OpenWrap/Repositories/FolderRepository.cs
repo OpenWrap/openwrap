@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenWrap.Dependencies;
-using OpenWrap.Exports;
 
 namespace OpenWrap.Repositories
 {
@@ -63,13 +62,5 @@ namespace OpenWrap.Repositories
         {
             return FileSystem.CombinePaths(BasePath, "cache", wrapFullName);
         }
-    }
-    public static class ExportBuilders
-    {
-        static readonly List<IExportBuilder> _exportBuilders = new List<IExportBuilder>
-        {
-            new AssemblyReferenceExportBuilder()
-        };
-        public static ICollection<IExportBuilder> All { get { return _exportBuilders; } }
     }
 }

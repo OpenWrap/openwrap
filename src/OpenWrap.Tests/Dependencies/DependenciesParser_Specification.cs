@@ -272,7 +272,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         protected void when_exporting_for(string platform, string targetProfile)
         {
             IExport processExports = new AssemblyReferenceExportBuilder().ProcessExports(_exports,
-                                                                                            new WrapRuntimeEnvironment
+                                                                                            new ExecutionEnvironment
                                                                                             {
                                                                                                 Platform = platform,
                                                                                                 Profile =
