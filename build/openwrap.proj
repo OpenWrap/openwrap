@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="OpenWrap-Package">
+  <PropertyGroup>
+    <Root>$(MSBuildProjectDirectory)\..</Root>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    
+  </PropertyGroup>
+  <ItemGroup>
+    <WrapBinary Include="$(Root)\src\**\*.csproj" />
+  </ItemGroup>
+  <Target Name="Clean">
+    <Delete Files="$(Root)\scratch\build\**\*.*" ContinueOnError="true" />
+    <Delete Files="$(Root)\scratch\package\**\*.*" ContinueOnError="true" />
+    <RemoveDir Directories="$(Root)\scratch\build" ContinueOnError="true" />
+    <RemoveDir Directories="$(Root)\scratch\package" ContinueOnError="true" />
+  </Target>
+  <Target Name="OpenWrap-Package">
+    <MSBuild Targets="Build" Projects="@(WrapBinary)" Properties="OutDir=$(Root)\scratch\build\%(Filename)\;Configuration=$(Configuration)" />
+    <ItemGroup>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
+        <Export>net-35</Export>
+      </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
+        <Export>net-35</Export>
+      </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.dll">
+        <Export>build</Export>
+      </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Build.Tasks\OpenWrap.CSharp.targets">
+        <Export>build</Export>
+      </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Build.Tasks\OpenWrap.tasks">
+        <Export>build</Export>
+      </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Commands\OpenWrap.Commands.dll">
+        <Export>commands</Export>
+      </BinFile>
+    </ItemGroup>
+    <Copy SourceFiles="@(BinFile)" DestinationFolder="$(Root)\scratch\package\%(Export)" />
+  </Target>
+</Project>

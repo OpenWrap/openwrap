@@ -1,62 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using OpenWrap.Build.Services;
-using OpenWrap.Commands;
-using OpenWrap.Commands.Core;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using OpenWrap.Commands.Wrap;
-using OpenWrap.Repositories;
 
 namespace OpenWrap.Console
 {
     internal class Program
     {
-        static IEnumerable<IPackageInfo> GetLatestModules(IPackageRepository rep)
+        static int Main(string[] args)
         {
-            return from moduleName in rep.PackagesByName
-                   from module in moduleName
-                   orderby module.Version descending
-                   select module;
-        }
-
-        static void Main(string[] args)
-        {
-            WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
-            WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
-
-            var commands = ReadCommands(WrapServices.GetService<IEnvironment>());
-            var repo = new CommandRepository(commands);
-
-            WrapServices.TryRegisterService<ICommandRepository>(() => repo);
-            var processor = new CommandLineProcessor(repo);
-            var backedupConsoleColor = System.Console.ForegroundColor;
-            foreach (var commandResult in processor.Execute(args).Where(x => x != null))
+            try
             {
-                try
-                {
-                    if (!commandResult.Success)
-                        System.Console.ForegroundColor = ConsoleColor.Red;
-                    System.Console.WriteLine(commandResult);
-                }
-                finally
-                {
-                    System.Console.ForegroundColor = backedupConsoleColor;
-                }
+                var projectAssembly = GetProjectWrapAssembly() ??
+                                      GetUserWrapAssembly();
+                var assembly = Assembly.LoadFrom(Path.Combine(Path.Combine(projectAssembly, "bin-net35"), "OpenWrap.dll"));
+
+                var type = assembly.GetType("OpenWrap.ConsoleRunner");
+                
+                var method = type.GetMethod("Main", BindingFlags.Public | BindingFlags.Static);
+
+                return (int)method.Invoke(null, new object[]{args});
             }
-            System.Console.ReadLine();
+            catch
+            {
+                System.Console.WriteLine("OpenWrap not found. ");
+                return -1;
+            }
         }
 
-        static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
+        static string GetUserWrapAssembly()
         {
-            var packages = GetLatestModules(environment.UserRepository);
-            if (environment.ProjectRepository != null)
-                packages = packages.Concat(GetLatestModules(environment.ProjectRepository));
+            var folder = from uncompressedFolder in UncompressedUserDirectories()
+                         let match = _openwrapRegex.Match(uncompressedFolder.Name)
+                         where match.Success
+                         let version = new Version(match.Groups["version"].Value)
+                         select new { uncompressedFolder, version };
+            return folder.OrderBy(x => x.version).Select(x => x.uncompressedFolder.FullName).FirstOrDefault();
+        }
 
-            var results = packages.ToLookup(x => x.Name).Select(x => x.FirstOrDefault());
-            return results.SelectMany(x => x.Load().GetExport("commands", environment.ExecutionEnvironment).Items)
-                .OfType<ICommandExportItem>()
-                .Select(x => x.Descriptor)
-                .ToList();
+        static IEnumerable<DirectoryInfo> UncompressedUserDirectories()
+        {
+            
+            var di = new DirectoryInfo(Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "openwrap"), "wraps"), "cache"));
+            if (di.Exists)
+                return di.GetDirectories();
+            return Enumerable.Empty<DirectoryInfo>();
+        }
+
+        static Regex _openwrapRegex = new Regex(@"openwrap-(?<version>\d+\.\d+\.\d+)");
+        static string GetProjectWrapAssembly()
+        {
+            var folder = from directory in new DirectoryInfo(Environment.CurrentDirectory).SelfAndAncestors()
+                   let wrapDirectory = directory.Directory("wraps\\cache\\")
+                   where wrapDirectory != null && wrapDirectory.Exists
+                   from uncompressedFolder in wrapDirectory.GetDirectories()
+                         let match = _openwrapRegex.Match(uncompressedFolder.Name)
+                   where match.Success
+                   let version = new Version(match.Groups["version"].Value)
+                         select new { uncompressedFolder, version };
+            return folder.OrderBy(x => x.version).Select(x => x.uncompressedFolder.FullName).FirstOrDefault();
         }
     }
 }

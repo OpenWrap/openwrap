@@ -13,7 +13,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
-    class when_creating_new_folder_structure : context.command_context<SetupWrapCommand>
+    class when_creating_new_folder_structure : context.command_context<NewWrapCommand>
     {
         public when_creating_new_folder_structure()
         {

@@ -70,6 +70,10 @@
     <Compile Include="SpecExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenWrap.Commands\OpenWrap.Commands.csproj">
+      <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>
+      <Name>OpenWrap.Commands</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
       <Name>OpenWrap</Name>

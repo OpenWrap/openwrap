@@ -58,7 +58,7 @@
     <Compile Include="Commands\CommandInputAttribute.cs" />
     <Compile Include="Commands\CommandInputDescriptor.cs" />
     <Compile Include="Commands\CommandRepository.cs" />
-    <Compile Include="Commands\Core\HelpCommand.cs" />
+    <Compile Include="Commands\Result.cs" />
     <Compile Include="Commands\Error.cs" />
     <Compile Include="Commands\ICommandDescriptor.cs" />
     <Compile Include="Commands\ICommandInputDescriptor.cs" />
@@ -66,16 +66,12 @@
     <Compile Include="Commands\InvalidCommandValue.cs" />
     <Compile Include="Commands\MissingCommandValue.cs" />
     <Compile Include="Commands\NamesapceNotFound.cs" />
-    <Compile Include="Commands\Wrap\SetupWrapCommand.cs" />
+    <Compile Include="ConsoleRunner.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Commands\UnknownCommandInput.cs" />
-    <Compile Include="Commands\Wrap\AddWrapCommand.cs" />
-    <Compile Include="Commands\Wrap\GenericError.cs" />
-    <Compile Include="Commands\Wrap\IOExtensions.cs" />
-    <Compile Include="Commands\Wrap\SyncWrapCommand.cs" />
-    <Compile Include="Commands\Wrap\UpdateWrapCommand.cs" />
+    <Compile Include="IO\IOExtensions.cs" />
     <Compile Include="CurrentDirectoryEnvironment.cs" />
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="Exports\ExportManager.cs" />
@@ -108,11 +104,9 @@
     <Compile Include="Services\WrapServices.cs" />
     <Compile Include="Commands\CommandList.cs" />
     <Compile Include="Commands\CommandLineProcessor.cs" />
-    <Compile Include="Commands\HelpCommand.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandResult.cs" />
     <Compile Include="Commands\NotEnoughParameters.cs" />
-    <Compile Include="Commands\Core\QuitCommand.cs" />
     <Compile Include="Commands\UnknownCommand.cs" />
     <Compile Include="Dependencies\AnyVersionVertice.cs" />
     <Compile Include="Dependencies\GreaterThenOrEqualVersionVertice.cs" />
@@ -143,15 +137,13 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="UserSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="IO\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
