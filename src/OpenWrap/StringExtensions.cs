@@ -1,11 +1,31 @@
+using System.Text;
+
 namespace OpenWrap
 {
     public static class StringExtensions
     {
         public static string CamelToSpacedName(this string str)
         {
-            //TODO: Evil not implemented yet.
-            return str;
+            var builder = new StringBuilder();
+
+            for(var i = 0 ; i <str.Length;i++)
+            {
+                var chr = str[i];
+
+                if (str[i] >= 65 && str[i] <= 90)
+                {
+                    if(i > 0)
+                    {
+                        builder.Append(' ');
+                        chr = (char)(chr + 32);
+                    }
+                }
+
+                builder.Append(chr);
+                
+            }
+
+            return builder.ToString();
         }
     }
 }

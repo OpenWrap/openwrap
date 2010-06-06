@@ -59,6 +59,7 @@
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
+    <Compile Include="Extensions\CamelToSpacedName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Slow\TestFiles.Designer.cs">
       <AutoGen>True</AutoGen>
