@@ -3,9 +3,11 @@
   <PropertyGroup>
     <Root>$(MSBuildProjectDirectory)\..</Root>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
-    
+    <OpenWrap-PackageName>openwrap-1.0.0</OpenWrap-PackageName>
+    <OpenWrap-BuildTasksDirectory>$(Root)\wraps\cache\$(OpenWrap-PackageName)\build</OpenWrap-BuildTasksDirectory>
   </PropertyGroup>
-  <ItemGroup>
+  
+  <ItemGroup> 
     <WrapBinary Include="$(Root)\src\**\*.csproj" />
   </ItemGroup>
   <Target Name="Clean">
@@ -18,10 +20,10 @@
     <MSBuild Targets="Build" Projects="@(WrapBinary)" Properties="OutDir=$(Root)\scratch\build\%(Filename)\;Configuration=$(Configuration)" />
     <ItemGroup>
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
-        <Export>net-35</Export>
+        <Export>bin-net35</Export>
       </BinFile>
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
-        <Export>net-35</Export>
+        <Export>bin-net35</Export>
       </BinFile>
       <BinFile Include="$(Root)\scratch\build\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.dll">
         <Export>build</Export>
@@ -35,7 +37,13 @@
       <BinFile Include="$(Root)\scratch\build\OpenWrap.Commands\OpenWrap.Commands.dll">
         <Export>commands</Export>
       </BinFile>
+      <BinFile Include="$(Root)\$(OpenWrap-PackageName).wrapdesc" />
     </ItemGroup>
-    <Copy SourceFiles="@(BinFile)" DestinationFolder="$(Root)\scratch\package\%(Export)" />
+
+    <PackageWrap
+      Files="@(BinFile)"
+      Destination="$(Root)\bin\$(OpenWrap-PackageName).wrap" />
   </Target>
+  <Import Project="$(OpenWrap-BuildTasksDirectory)\OpenWrap.tasks" />
+          
 </Project>
