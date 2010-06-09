@@ -1,0 +1,34 @@
+<<<<<<< HEAD
+﻿using System.Diagnostics;
+using System.IO;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
+
+namespace OpenWrap.Repositories
+{
+    /// <summary>
+    /// Represents a wrap package.
+    /// </summary>
+    public interface IPackage : IPackageInfo
+    {
+        IExport GetExport(string exportName, WrapRuntimeEnvironment environment);
+        Stream OpenStream();
+    }
+=======
+﻿using System.Diagnostics;
+using System.IO;
+using OpenWrap.Exports;
+using OpenWrap.Dependencies;
+
+namespace OpenWrap.Repositories
+{
+    /// <summary>
+    /// Represents a wrap package.
+    /// </summary>
+    public interface IPackage : IPackageInfo
+    {
+        IExport GetExport(string exportName, ExecutionEnvironment environment);
+        Stream OpenStream();
+    }
+>>>>>>> 2020d455c5c4be4be8601f194343e025584fb101
+}

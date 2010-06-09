@@ -67,7 +67,7 @@
     <Compile Include="Commands\ICommandRepository.cs" />
     <Compile Include="Commands\InvalidCommandValue.cs" />
     <Compile Include="Commands\MissingCommandValue.cs" />
-    <Compile Include="Commands\NamesapceNotFound.cs" />
+    <Compile Include="Commands\NamespaceNotFound.cs" />
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
