@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CamelToSpacedNameTests.cs" />
+    <Compile Include="Commands\CommandLineParserTests.cs" />
     <Compile Include="Commands\CommandProcessor.cs" />
     <Compile Include="Commands\context\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
