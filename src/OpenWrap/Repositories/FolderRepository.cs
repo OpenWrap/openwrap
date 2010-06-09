@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenWrap.Dependencies;
-using OpenWrap.Exports;
 
 namespace OpenWrap.Repositories
 {
@@ -22,9 +21,9 @@ namespace OpenWrap.Repositories
             var baseDirectory = new DirectoryInfo(packageBasePath);
 
             Packages = (from wrapFile in baseDirectory.GetFiles("*.wrap")
-                        let wrapFileName = Path.GetFileNameWithoutExtension(wrapFile.Name)
-                        let cacheDirectory = GetCacheDirectory(wrapFileName)
-                        let packageVersion = WrapNameUtility.GetVersion(wrapFileName)
+                        let wrapFullName = Path.GetFileNameWithoutExtension(wrapFile.Name)
+                        let cacheDirectory = GetCacheDirectory(wrapFullName)
+                        let packageVersion = WrapNameUtility.GetVersion(wrapFullName)
                         where packageVersion != null
                         select Directory.Exists(cacheDirectory)
                                    ? (IPackageInfo)new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All)
@@ -59,17 +58,9 @@ namespace OpenWrap.Repositories
             return newPackage;
         }
 
-        string GetCacheDirectory(string wrapFileName)
+        string GetCacheDirectory(string wrapFullName)
         {
-            return FileSystem.CombinePaths(BasePath, "cache", Path.GetFileNameWithoutExtension(wrapFileName));
+            return FileSystem.CombinePaths(BasePath, "cache", wrapFullName);
         }
-    }
-    public static class ExportBuilders
-    {
-        static readonly List<IExportBuilder> _exportBuilders = new List<IExportBuilder>
-        {
-            new AssemblyReferenceExportBuilder()
-        };
-        public static ICollection<IExportBuilder> All { get { return _exportBuilders; } }
     }
 }

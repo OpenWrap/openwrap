@@ -21,7 +21,7 @@ namespace OpenWrap.Exports
             return exportName.StartsWith("bin", StringComparison.OrdinalIgnoreCase);
         }
 
-        public IExport ProcessExports(IEnumerable<IExport> exports, WrapRuntimeEnvironment environment)
+        public IExport ProcessExports(IEnumerable<IExport> exports, ExecutionEnvironment environment)
         {
             var parsedExports = (from export in exports
                                  let exportSegments =

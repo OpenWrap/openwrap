@@ -10,7 +10,7 @@ namespace OpenWrap.Repositories
     /// </summary>
     public interface IPackage : IPackageInfo
     {
-        IExport GetExport(string exportName, WrapRuntimeEnvironment environment);
+        IExport GetExport(string exportName, ExecutionEnvironment environment);
         Stream OpenStream();
     }
 }

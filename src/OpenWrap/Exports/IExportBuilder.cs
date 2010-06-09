@@ -7,6 +7,6 @@ namespace OpenWrap.Exports
     {
         string ExportName { get; }
         bool CanProcessExport(string exportName);
-        IExport ProcessExports(IEnumerable<IExport> exports, WrapRuntimeEnvironment environment);
+        IExport ProcessExports(IEnumerable<IExport> exports, ExecutionEnvironment environment);
     }
 }

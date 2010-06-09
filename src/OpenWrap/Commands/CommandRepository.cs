@@ -8,9 +8,19 @@ namespace OpenWrap.Commands
 {
     public class CommandRepository : ICommandRepository
     {
-        readonly ICollection<ICommandDescriptor> _commands = new List<ICommandDescriptor>();
+        readonly ICollection<ICommandDescriptor> _commands;
         readonly HashSet<string> _commandVerbs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         readonly HashSet<string> _namespaces = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        public CommandRepository(IEnumerable<ICommandDescriptor> commands)
+        {
+            _commands = new List<ICommandDescriptor>(commands);
+        }
+
+        public CommandRepository()
+        {
+            _commands = new List<ICommandDescriptor>();
+        }
 
         public IEnumerable<string> Namespaces
         {

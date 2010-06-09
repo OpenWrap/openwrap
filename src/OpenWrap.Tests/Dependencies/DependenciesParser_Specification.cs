@@ -66,7 +66,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         public void the_version_vertice_is_of_correct_type()
         {
             Declaration.VersionVertices
-                .First().ShouldBeOfType<AtLeastVersionVertice>()
+                .First().ShouldBeOfType<GreaterThenOrEqualVersionVertice>()
                 .ShouldAccept("2.1.0.0")
                 .ShouldAccept("3.0");
         }
@@ -272,7 +272,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         protected void when_exporting_for(string platform, string targetProfile)
         {
             IExport processExports = new AssemblyReferenceExportBuilder().ProcessExports(_exports,
-                                                                                            new WrapRuntimeEnvironment
+                                                                                            new ExecutionEnvironment
                                                                                             {
                                                                                                 Platform = platform,
                                                                                                 Profile =
@@ -320,7 +320,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public static VersionVertice AtLeast(this string version)
         {
-            return new AtLeastVersionVertice(new Version(version));
+            return new GreaterThenOrEqualVersionVertice(new Version(version));
         }
 
         public static VersionVertice Exact(this string version)

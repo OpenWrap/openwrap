@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
@@ -16,6 +17,16 @@ namespace OpenWrap
         public WrapDescriptor Descriptor { get; set; }
         public IEnumerable<IPackageRepository> RemoteRepositories { get; set; }
         public IPackageRepository UserRepository { get; set; }
+
+        public DirectoryInfo CurrentDirectory
+        {
+            get { return new DirectoryInfo(Environment.CurrentDirectory); }
+        }
+
+        public ExecutionEnvironment ExecutionEnvironment
+        {
+            get; private set;
+        }
 
         public void Initialize()
         {
@@ -33,25 +44,18 @@ namespace OpenWrap
             if (dir != null)
                 ProjectRepository = new FolderRepository(dir.FullName);
 
-            UserRepository = OpenWrap.Repositories.UserRepository.Current;
+            UserRepository = Repositories.UserRepository.Current;
 
             RemoteRepositories = UserSettings.RemoteRepositories
                 .Select(x => new XmlRepository(new HttpNavigator(x), Enumerable.Empty<IExportBuilder>()))
                 .Cast<IPackageRepository>()
                 .ToList();
-        }
-    }
-    public static class UserSettings
-    {
-        static IEnumerable<Uri> _remoteRepositoriesPaths = new[]{ new Uri("http://localhost:42",UriKind.Absolute) };
 
-
-        public static string UserRepositoryPath { get { return FileSystem.CombinePaths(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "openwrap", "wraps"); } }
-
-        public static IEnumerable<Uri> RemoteRepositories
-        {
-            get { return _remoteRepositoriesPaths; }
-            set { _remoteRepositoriesPaths = value; }
+            ExecutionEnvironment = new ExecutionEnvironment
+            {
+                Platform = IntPtr.Size == 4 ? "x86" : "x64",
+                Profile = "net35"
+            };
         }
     }
 }

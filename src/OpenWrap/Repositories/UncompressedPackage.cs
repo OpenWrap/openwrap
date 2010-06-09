@@ -57,7 +57,7 @@ namespace OpenWrap.Repositories
 
         protected WrapDescriptor Descriptor { get; set; }
 
-        public IExport GetExport(string exportName, WrapRuntimeEnvironment environment)
+        public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
             // get the list of exports in the 
             var exporter =

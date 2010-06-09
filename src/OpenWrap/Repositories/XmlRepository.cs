@@ -22,7 +22,8 @@ namespace OpenWrap.Repositories
                                           let hrefAttribute = link.Attribute("href")
                                           where hrefAttribute != null && relAttribute != null && relAttribute.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
                                           select hrefAttribute).FirstOrDefault()
-                              let absoluteLink = new Uri(new Uri(document.BaseUri, UriKind.Absolute), new Uri(link.Value, UriKind.RelativeOrAbsolute))
+                              let baseUri = !string.IsNullOrEmpty(document.BaseUri) ? new Uri(document.BaseUri, UriKind.Absolute) : null
+                              let absoluteLink = baseUri == null ? new Uri(link.Value, UriKind.RelativeOrAbsolute) : new Uri(baseUri, new Uri(link.Value, UriKind.RelativeOrAbsolute))
                               where name != null && version != null && link != null
                               let depends = wrapList.Elements("depends").Select(x => x.Value)
                               select new XmlPackageInfo(this, navigator, name.Value, version.Value, absoluteLink, depends, builders))

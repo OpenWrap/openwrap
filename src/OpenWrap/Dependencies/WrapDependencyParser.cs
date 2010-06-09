@@ -47,19 +47,22 @@ namespace OpenWrap.Dependencies
             }
             else
             {
-                yield return new AnyVersionVertice(null);
+                yield return new AnyVersionVertice();
             }
         }
         private static VersionVertice GetVersionVertice(string[] strings, int offset)
         {
             var comparator = strings[offset];
-            var version = strings[offset + 1];
+            var versionString = strings[offset + 1];
+            var version = new Version(versionString);
             switch (comparator)
             {
-                case ">=": return new AtLeastVersionVertice(new Version(version));
-                case "=": return new ExactVersionVertice(new Version(version));
-                case "<": return new LessThanVersionVertice(new Version(version));
-                default: return new AnyVersionVertice(new Version(version));
+                case ">":
+                    return new GreaterThenVersionVertice(version);
+                case ">=": return new GreaterThenOrEqualVersionVertice(version);
+                case "=": return new ExactVersionVertice(version);
+                case "<": return new LessThanVersionVertice(version);
+                default: return new AnyVersionVertice(version);
             }
         }
     }

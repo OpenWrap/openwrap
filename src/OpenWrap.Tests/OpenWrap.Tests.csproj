@@ -51,12 +51,16 @@
   <ItemGroup>
     <Compile Include="CamelToSpacedNameTests.cs" />
     <Compile Include="Commands\CommandProcessor.cs" />
+    <Compile Include="Commands\context\command_context.cs" />
+    <Compile Include="Commands\InMemoryEnvironment.cs" />
+    <Compile Include="Commands\setupWrapCommand.cs" />
     <Compile Include="Commands\updateWrapCommand.cs" />
-    <Compile Include="Commands\syncCommand.cs" />
+    <Compile Include="Commands\syncWrapCommand.cs" />
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
+    <Compile Include="Extensions\CamelToSpacedName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Slow\TestFiles.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -67,6 +71,10 @@
     <Compile Include="SpecExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenWrap.Commands\OpenWrap.Commands.csproj">
+      <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>
+      <Name>OpenWrap.Commands</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
       <Name>OpenWrap</Name>

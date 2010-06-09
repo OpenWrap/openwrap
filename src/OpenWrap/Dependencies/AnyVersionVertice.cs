@@ -7,6 +7,9 @@ namespace OpenWrap.Dependencies
         public AnyVersionVertice(Version version) : base(version)
         {
         }
+        public AnyVersionVertice() : base(new Version())
+        {
+        }
         public override bool IsCompatibleWith(Version version)
         {
             return true;

@@ -15,6 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Tests", "OpenWrap.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Vs2008", "OpenWrap.Vs2008\OpenWrap.Vs2008.csproj", "{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\openwrap.proj = ..\build\openwrap.proj
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Commands", "OpenWrap.Commands\OpenWrap.Commands.csproj", "{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +56,10 @@ Global
 		{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
