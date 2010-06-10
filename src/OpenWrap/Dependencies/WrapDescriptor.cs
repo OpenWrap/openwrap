@@ -9,6 +9,7 @@ namespace OpenWrap.Dependencies
         public WrapDescriptor()
         {
             Dependencies = new List<WrapDependency>();
+            Description = "";
         }
         public ICollection<WrapDependency> Dependencies { get; set; }
 
@@ -16,6 +17,8 @@ namespace OpenWrap.Dependencies
 
         public Version Version { get; set; }
         public string Path { get; set; }
+        public string Description { get; set; }
+
         public IPackage Load()
         {
             return null;

@@ -69,6 +69,7 @@
     <Compile Include="Commands\MissingCommandValue.cs" />
     <Compile Include="Commands\NamespaceNotFound.cs" />
     <Compile Include="ConsoleRunner.cs" />
+    <Compile Include="Dependencies\WrapDescriptionParser.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="StringExtensions.cs" />

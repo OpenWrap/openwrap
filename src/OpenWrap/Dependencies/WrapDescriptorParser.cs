@@ -13,7 +13,8 @@ namespace OpenWrap.Dependencies
         const int FILE_READ_RETRIES_WAIT = 500;
         private readonly IEnumerable<IWrapDescriptorLineParser> _lineParsers = new List<IWrapDescriptorLineParser>
                                                                                    {
-                                                                                       new WrapDependencyParser()
+                                                                                       new WrapDependencyParser(),
+                                                                                       new WrapDescriptionParser()
                                                                                    };
 
         public WrapDescriptor ParseFile(string filePath)
