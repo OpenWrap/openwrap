@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 
 namespace OpenWrap
@@ -26,6 +27,11 @@ namespace OpenWrap
             }
 
             return builder.ToString();
+        }
+
+        public static string GetCamelCaseInitials(this string str)
+        {
+            return new string(str.Where(char.IsUpper).ToArray());
         }
     }
 }
