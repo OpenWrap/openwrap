@@ -95,6 +95,17 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             command.HasRing.ShouldBeFalse();
             command.IsDangerous.ShouldBeTrue();
         }
+        [Test]
+        public void parameter_is_assigned_using_camel_case_initials()
+        {
+            given_command<TravelToMordor>();
+
+            when_parsing_input("lotr", "travel", "-hr", "true");
+
+            result.ShouldBeOfType<Success>()
+                .Command.ShouldBeOfType<TravelToMordor>()
+                    .HasRing.ShouldBeTrue();
+        }
     }
 
     [Command(Noun="lotr")]

@@ -46,7 +46,7 @@ namespace OpenWrap.Commands
             var assignedNamedInputValues = (from namedValues in commandInputValues
                          where namedValues.Key != null
                          let value = namedValues.LastOrDefault()
-                         let commandInput = command.Inputs.ContainsKey(namedValues.Key) ? command.Inputs[namedValues.Key] : null
+                         let commandInput = FindCommandInputDescriptor(command, namedValues.Key)
                          let parsedValue = commandInput != null ? commandInput.ValidateValue(value) : null
                          select new ParsedInput
                          {
@@ -118,6 +118,28 @@ namespace OpenWrap.Commands
             foreach(var nestedResult in commandInstance.Execute())
                 yield return nestedResult;
         }
+
+        ICommandInputDescriptor FindCommandInputDescriptor(ICommandDescriptor command, string name)
+        {
+            ICommandInputDescriptor descriptor;
+            // Try to find by full name match first.
+            if (command.Inputs.TryGetValue(name, out descriptor))
+            {
+                return descriptor;
+            }
+            else // Try to match by camel case initials
+            {
+                var potentialInputs =
+                    from input in command.Inputs
+                    where input.Key.GetCamelCaseInitials().Equals(name, StringComparison.OrdinalIgnoreCase)
+                    select input.Value;
+
+                // TODO: What happens if the name matches more than one input? Should this throw?
+                // For now, just return the first input found.
+                return potentialInputs.FirstOrDefault();
+            }
+        }
+
         class ParsedInput
         {
             public string InputName;
