@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using OpenWrap.Exports;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Dependencies;
 using OpenWrap.Testing;
@@ -64,7 +65,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         {
             protected void given_repository()
             {
-                Repository = new XmlRepository(new InMemoryNavigator(), new IExportBuilder[0]);
+                Repository = new XmlRepository(FileSystem.Local, new InMemoryNavigator(), new IExportBuilder[0]);
             }
             class InMemoryNavigator : IHttpNavigator
             {

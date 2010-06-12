@@ -5,6 +5,7 @@ using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
@@ -12,15 +13,15 @@ namespace OpenWrap.Repositories
     public class ZipPackage : IPackageInfo
     {
         readonly IEnumerable<IExportBuilder> _builders;
-        readonly string _cacheDirectory;
-        readonly FileInfo _wrapFile;
+        readonly IDirectory _cacheDirectoryPath;
+        readonly IFile _wrapFile;
         UncompressedPackage _cachedPackage;
 
-        public ZipPackage(IPackageRepository source, FileInfo wrapFile, string wrapCacheDirectory, IEnumerable<IExportBuilder> builders)
+        public ZipPackage(IPackageRepository source, IFile wrapFile, IDirectory wrapCacheDirectory, IEnumerable<IExportBuilder> builders)
         {
             Source = source;
             _wrapFile = wrapFile;
-            _cacheDirectory = wrapCacheDirectory;
+            _cacheDirectoryPath = wrapCacheDirectory;
             _builders = builders;
 
             LoadDescriptor();
@@ -47,8 +48,8 @@ namespace OpenWrap.Repositories
         {
             if (_cachedPackage == null)
             {
-                new FastZip().ExtractZip(_wrapFile.FullName, _cacheDirectory, FastZip.Overwrite.Always, x => true, null, null, true);
-                _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectory, _builders);
+                new FastZip().ExtractZip(_wrapFile.Path.FullPath, _cacheDirectoryPath.EnsureExists().Path.FullPath, FastZip.Overwrite.Always, x => true, null, null, true);
+                _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectoryPath, _builders);
             }
             return _cachedPackage;
         }
@@ -64,14 +65,70 @@ namespace OpenWrap.Repositories
 
         void LoadDescriptor()
         {
-            using (var zip = new ZipFile(_wrapFile.FullName))
+            using (var zip = new ZipFile(_wrapFile.Path.FullPath))
             {
                 var descriptor = zip.Cast<ZipEntry>().FirstOrDefault(x => x.Name.EndsWith(".wrapdesc"));
                 if (descriptor == null)
                     throw new InvalidOperationException("The package '{0}' doesn't contain a valid .wrapdesc file.");
                 using (var stream = zip.GetInputStream(descriptor))
-                    Descriptor = new WrapDescriptorParser().ParseFile(descriptor.Name, stream);
+                    Descriptor = new WrapDescriptorParser().ParseFile(new ZipWrapperFile(zip, descriptor), stream);
             }
+        }
+    }
+
+    internal class ZipWrapperFile : IFile
+    {
+        readonly ZipFile _zip;
+        readonly ZipEntry _entry;
+
+        public ZipWrapperFile(ZipFile zip, ZipEntry entry)
+        {
+            _zip = zip;
+            _entry = entry;
+        }
+
+        public IFile Create()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IPath Path
+        {
+            get { return new LocalPath("/"); }
+        }
+
+        public IDirectory Parent
+        {
+            get { return null; }
+        }
+
+        public IFileSystem FileSystem
+        {
+            get { return IO.FileSystem.Local; }
+        }
+
+        public bool Exists
+        {
+            get { return true; }
+        }
+
+        public string Name
+        {
+            get { return _entry.Name; }
+        }
+
+        public void Delete()
+        {
+        }
+
+        public string NameWithoutExtension
+        {
+            get{ return System.IO.Path.GetFileNameWithoutExtension(_entry.Name); }
+        }
+
+        public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
+        {
+            return _zip.GetInputStream(_entry);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Dependencies
@@ -15,7 +16,7 @@ namespace OpenWrap.Dependencies
         public string Name { get; set; }
 
         public Version Version { get; set; }
-        public string Path { get; set; }
+        public IFile File { get; set; }
         public IPackage Load()
         {
             return null;
@@ -35,5 +36,6 @@ namespace OpenWrap.Dependencies
         {
             return false;
         }
+
     }
 }

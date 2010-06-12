@@ -9,18 +9,19 @@ using OpenWrap.Exports;
 using OpenWrap.Build;
 using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Resharper
 {
     public class ResharperProjectUpdater : IWrapAssemblyClient
     {
-        readonly string _descriptorPath;
+        readonly IFile _descriptorPath;
         readonly IPackageRepository _packageRepository;
         readonly string _projectFilePath;
         static readonly Key ISWRAP = new Key("FromOpenWrap");
 
-        public ResharperProjectUpdater(string descriptorPath, IPackageRepository packageRepository, string projectFilePath, ExecutionEnvironment environment)
+        public ResharperProjectUpdater(IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, ExecutionEnvironment environment)
         {
             _descriptorPath = descriptorPath;
             _packageRepository = packageRepository;

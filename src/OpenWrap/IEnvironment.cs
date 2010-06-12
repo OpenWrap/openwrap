@@ -2,6 +2,7 @@
 using System.IO;
 using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap
@@ -12,7 +13,7 @@ namespace OpenWrap
         WrapDescriptor Descriptor { get; }
         IEnumerable<IPackageRepository> RemoteRepositories { get; }
         IPackageRepository UserRepository { get; }
-        DirectoryInfo CurrentDirectory { get; }
+        IDirectory CurrentDirectory { get; }
         ExecutionEnvironment ExecutionEnvironment { get; }
     }
 }

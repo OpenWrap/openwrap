@@ -4,6 +4,7 @@ using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Tests.Commands
@@ -46,7 +47,7 @@ namespace OpenWrap.Tests.Commands
             get { return UserRepository; }
         }
 
-        public DirectoryInfo CurrentDirectory
+        public IDirectory CurrentDirectory
         {
             get; set;
         }

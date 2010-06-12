@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
 {
     public class XmlRepository : IPackageRepository
     {
-        public XmlRepository(IHttpNavigator navigator, IEnumerable<IExportBuilder> builders)
+        public XmlRepository(IFileSystem fileSystem, IHttpNavigator navigator, IEnumerable<IExportBuilder> builders)
         {
             var document = navigator.LoadFileList();
 
@@ -26,7 +27,7 @@ namespace OpenWrap.Repositories
                               let absoluteLink = baseUri == null ? new Uri(link.Value, UriKind.RelativeOrAbsolute) : new Uri(baseUri, new Uri(link.Value, UriKind.RelativeOrAbsolute))
                               where name != null && version != null && link != null
                               let depends = wrapList.Elements("depends").Select(x => x.Value)
-                              select new XmlPackageInfo(this, navigator, name.Value, version.Value, absoluteLink, depends, builders))
+                              select new XmlPackageInfo(fileSystem, this, navigator, name.Value, version.Value, absoluteLink, depends, builders))
                 .Cast<IPackageInfo>().ToLookup(x => x.Name);
         }
         public ILookup<string, IPackageInfo> PackagesByName { get; private set; }
