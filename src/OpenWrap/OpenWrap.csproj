@@ -85,6 +85,7 @@
     <Compile Include="IO\TemporaryLocalDirectory.cs" />
     <Compile Include="IO\TemporaryLocalFile.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
+    <Compile Include="Dependencies\WrapDescriptionParser.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="StringExtensions.cs" />

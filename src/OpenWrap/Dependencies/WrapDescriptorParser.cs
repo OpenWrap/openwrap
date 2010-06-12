@@ -11,11 +11,13 @@ namespace OpenWrap.Dependencies
     {
         const int FILE_READ_RETRIES = 5;
         const int FILE_READ_RETRIES_WAIT = 500;
+
         static readonly Regex _foldableLines = new Regex(@"\r\n\s+", RegexOptions.Multiline | RegexOptions.Compiled);
 
         readonly IEnumerable<IWrapDescriptorLineParser> _lineParsers = new List<IWrapDescriptorLineParser>
         {
-            new WrapDependencyParser()
+            new WrapDependencyParser(),
+            new WrapDescriptionParser()
         };
 
         public WrapDescriptor ParseFile(IFile filePath)
