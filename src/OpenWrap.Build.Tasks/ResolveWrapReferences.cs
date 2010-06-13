@@ -9,6 +9,7 @@ using OpenWrap.Exports;
 using OpenWrap.Build;
 using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Resharper;
 
@@ -19,10 +20,12 @@ namespace OpenWrap.Build.Tasks
         readonly List<IWrapAssemblyClient> _resolveHooks = new List<IWrapAssemblyClient>();
         static IWrapAssemblyClient _resharperIntegration;
         FileSystemWatcher _fsMonitor;
+        IFileSystem _fileSystem;
 
         public ResolveWrapReferences()
         {
             InternalServices.Initialize();
+            _fileSystem = FileSystem.Local;
         }
 
         [Required]
@@ -49,14 +52,14 @@ namespace OpenWrap.Build.Tasks
 
         protected IPackageRepository PackageRepository { get; set; }
 
-        string WrapDescriptorPath
+        IFile WrapDescriptorPath
         {
-            get { return Path.GetFullPath(WrapDescriptor.ItemSpec); }
+            get { return _fileSystem.GetFile(WrapDescriptor.ItemSpec); }
         }
 
-        string WrapsDirectoryPath
+        IDirectory WrapsDirectoryPath
         {
-            get { return Path.GetFullPath(WrapsDirectory); }
+            get { return _fileSystem.GetDirectory(WrapsDirectory); }
         }
 
         public override bool Execute()

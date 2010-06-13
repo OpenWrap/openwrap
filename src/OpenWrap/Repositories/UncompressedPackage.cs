@@ -4,26 +4,27 @@ using System.IO;
 using System.Linq;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
 {
     public class UncompressedPackage : IPackage
     {
-        readonly FileInfo _originalWrapFile;
+        readonly IFile _originalWrapFile;
         readonly IEnumerable<IExportBuilder> _exporters;
 
-        public UncompressedPackage(IPackageRepository source, FileInfo originalPackage, string wrapCacheDirectory, IEnumerable<IExportBuilder> exporters)
+        public UncompressedPackage(IPackageRepository source, IFile originalPackage, IDirectory wrapCacheDirectory, IEnumerable<IExportBuilder> exporters)
         {
             _originalWrapFile = originalPackage;
             _exporters = exporters;
-            BaseDirectory = new DirectoryInfo(wrapCacheDirectory);
+            BaseDirectory = wrapCacheDirectory;
             // get the descriptor file inside the package
             var descriptorName = BaseDirectory.Name;
-            Descriptor = new WrapDescriptorParser().ParseFile(Path.Combine(wrapCacheDirectory, descriptorName + ".wrapdesc"));
+            Descriptor = new WrapDescriptorParser().ParseFile(wrapCacheDirectory.GetFile(descriptorName + ".wrapdesc"));
         }
 
-        protected DirectoryInfo BaseDirectory { get; set; }
+        protected IDirectory BaseDirectory { get; set; }
 
         public ICollection<WrapDependency> Dependencies
         {
@@ -65,12 +66,11 @@ namespace OpenWrap.Repositories
             if (exporter == null)
                 return null;
 
-            var exports = from directory in BaseDirectory.GetDirectories()
+            var exports = from directory in BaseDirectory.Directories()
                           where exporter.CanProcessExport(directory.Name)
-                          let directoryPath = directory.FullName
-                          select (IExport)new FolderExport(directory)
+                          select (IExport)new FolderExport(directory.Name)
                           {
-                              Items = directory.GetFiles()
+                              Items = directory.Files()
                                   .Select(x => (IExportItem)new FileExportItem(x))
                                   .ToList()
                           };
@@ -81,11 +81,6 @@ namespace OpenWrap.Repositories
         public Stream OpenStream()
         {
             return _originalWrapFile.OpenRead();
-        }
-
-        public void Persist(string folder)
-        {
-            File.Copy(_originalWrapFile.FullName, Path.Combine(folder, _originalWrapFile.Name),true);
         }
     }
 }

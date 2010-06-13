@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
+using OpenWrap.IO;
 
 namespace OpenWrap.Exports
 {
     public class FolderExport : IExport
     {
-        public FolderExport(DirectoryInfo folderPath)
+        public FolderExport(string folderName)
         {
-            Name = folderPath.Name;
+            Name = folderName;
         }
 
         public string Name

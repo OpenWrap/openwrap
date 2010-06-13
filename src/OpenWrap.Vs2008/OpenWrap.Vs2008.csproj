@@ -68,7 +68,6 @@
     </Compile>
     <Compile Include="AddInInstaller.cs" />
     <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="VisualStudioCommandService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

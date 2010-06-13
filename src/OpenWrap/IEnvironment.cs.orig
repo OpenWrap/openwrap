@@ -1,5 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+<<<<<<< HEAD
+using OpenWrap.Build.Services;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
+
+namespace OpenWrap
+{
+    public interface IEnvironment : IService
+    {
+        IPackageRepository ProjectRepository { get; }
+        WrapDescriptor Descriptor { get; }
+        IEnumerable<IPackageRepository> RemoteRepositories { get; }
+        IPackageRepository UserRepository { get; }
+        DirectoryInfo CurrentDirectory { get; }
+=======
 using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
@@ -14,6 +29,7 @@ namespace OpenWrap
         IEnumerable<IPackageRepository> RemoteRepositories { get; }
         IPackageRepository UserRepository { get; }
         IDirectory CurrentDirectory { get; }
+>>>>>>> upstream/master
         ExecutionEnvironment ExecutionEnvironment { get; }
     }
 }

@@ -67,7 +67,12 @@
     <Compile Include="Commands\ICommandRepository.cs" />
     <Compile Include="Commands\InvalidCommandValue.cs" />
     <Compile Include="Commands\MissingCommandValue.cs" />
+<<<<<<< HEAD
     <Compile Include="Commands\NamespaceNotFound.cs" />
+    <Compile Include="ConsoleRunner.cs" />
+    <Compile Include="Dependencies\WrapDescriptionParser.cs" />
+=======
+    <Compile Include="Commands\NamesapceNotFound.cs" />
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\WrapNameUtility.cs" />
     <Compile Include="IO\AbstractFileSystem.cs" />
@@ -88,6 +93,7 @@
     <Compile Include="IO\TemporaryLocalFile.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
     <Compile Include="Dependencies\WrapDescriptionParser.cs" />
+>>>>>>> upstream/master
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="StringExtensions.cs" />

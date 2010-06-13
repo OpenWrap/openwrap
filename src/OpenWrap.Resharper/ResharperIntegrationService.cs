@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Resharper
@@ -20,7 +21,7 @@ namespace OpenWrap.Resharper
         {
         }
 
-        public void TryAddNotifier(string descriptorPath, IPackageRepository repository, string projectFilePath)
+        public void TryAddNotifier(IFile descriptorPath, IPackageRepository repository, string projectFilePath)
         {
             if (_projectFiles.ContainsKey(projectFilePath))
                 return;

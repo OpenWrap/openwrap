@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -18,6 +19,14 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput(Position = 1)]
         public string Version { get; set; }
 
+        [CommandInput]
+        public bool LocalOnly { get; set; }
+
+        [CommandInput]
+        public bool SystemOnly { get; set; }
+        
+        
+
         public IEnumerable<ICommandResult> Execute()
         {
             _environment = WrapServices.GetService<IEnvironment>();
@@ -30,8 +39,12 @@ namespace OpenWrap.Commands.Wrap
 
         ICommandResult AddInstructionToWrapFile()
         {
+            // TODO: Make the environment descriptor separate from reader/writer,
+            // and remove the File property on it.
             var dependLine = GetDependsLine();
-            File.AppendAllText(_environment.Descriptor.Path,"\r\n" + dependLine, Encoding.UTF8);
+            using(var fileStream = _environment.Descriptor.File.OpenWrite())
+            using (var textWriter = new StreamWriter(fileStream, Encoding.UTF8))
+                textWriter.WriteLine("\r\n" + dependLine);
             new WrapDependencyParser().Parse(dependLine, _environment.Descriptor);
             return null;
         }

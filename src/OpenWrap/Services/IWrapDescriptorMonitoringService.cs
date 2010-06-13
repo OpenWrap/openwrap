@@ -1,9 +1,10 @@
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Build.Services
 {
     public interface IWrapDescriptorMonitoringService : IService
     {
-        void ProcessWrapDescriptor(string wrapPath, IPackageRepository packageRepository, IWrapAssemblyClient client);
+        void ProcessWrapDescriptor(IFile wrapPath, IPackageRepository packageRepository, IWrapAssemblyClient client);
     }
 }

@@ -7,51 +7,68 @@ using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using OpenWrap.IO;
 
 namespace OpenWrap.Build.Tasks
 {
     public class PackageWrap : Task
     {
+        readonly IFileSystem _fileSystem;
+
+        public PackageWrap() : this(FileSystem.Local)
+        {
+            
+        }
+
+        public PackageWrap(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
         [Required]
         public string Destination { get; set; }
         [Required]
         public ITaskItem[] Files { get; set; }
+
         public override bool Execute()
         {
-            var tempFolder = Path.Combine(Path.GetTempPath(),Path.GetRandomFileName());
+            using(var tempDirectory = _fileSystem.CreateTempDirectory())
             try
             {
-                //Debugger.Launch();
-                Directory.CreateDirectory(tempFolder);
+                CopyFilesToTempDirectory(tempDirectory);
 
-                foreach (var export in Files.GroupBy(file => file.GetMetadata("Export")))
-                {
-                    var exportFolder = Path.Combine(tempFolder, export.Key);
-                    if (!Directory.Exists(exportFolder))
-                        Directory.CreateDirectory(exportFolder);
-                    foreach (var file in export)
-                    {
-                        var filePath = Path.GetFullPath(file.ItemSpec);
-                        File.Copy(filePath, Path.Combine(exportFolder, Path.GetFileName(filePath)), true);
-                        Log.LogMessage("Copying file '{0}' to '{1}'.", filePath, exportFolder);
-                    }
-                }
-                var packageFullPath = Path.GetFullPath(Destination);
-                if (File.Exists(packageFullPath))
-                    File.Delete(packageFullPath);
-                if (!Directory.Exists(Path.GetDirectoryName(packageFullPath)))
-                    Directory.CreateDirectory(Path.GetDirectoryName(packageFullPath));
-                new FastZip().CreateZip(packageFullPath, tempFolder, true, "");
+                var packageFullPath = _fileSystem.GetPath(Destination);
+                var zipFile = tempDirectory.ToZip(packageFullPath);
+
                 Log.LogMessage("Created package at {0}", packageFullPath);
             }
             catch(Exception e)
             {
-                Debugger.Launch();
-                Directory.Delete(tempFolder, true);
                 Log.LogErrorFromException(e);
                 return false;
             }
             return true;
+        }
+
+        void CopyFilesToTempDirectory(ITemporaryDirectory tempDirectory)
+        {
+            foreach (var export in Files.GroupBy(file => file.GetMetadata("Export")))
+            {
+                var exportFolder = tempDirectory.GetDirectory(export.Key).Create();
+                foreach (var file in export)
+                {
+                    var fileToCopy = _fileSystem.GetFile(file.ItemSpec);
+                    if (fileToCopy == null)
+                    {
+                        Log.LogWarning("File '{0}' not found.", file.ItemSpec);
+                    }
+                    else
+                    {
+                        fileToCopy.CopyTo(exportFolder);
+                        Log.LogMessage("Copying file '{0}' to '{1}'.", fileToCopy, exportFolder);
+                    }
+                }
+            }
         }
     }
 }

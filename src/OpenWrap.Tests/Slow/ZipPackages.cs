@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Slow;
@@ -43,8 +44,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
         [Test]
         public void cache_is_not_created_yet()
         {
-            Directory.Exists(FileSystem.CombinePaths(RepositoryPath.FullName, "cache", "test-module-1.0.0"))
-                .ShouldBeFalse();
+            RepositoryPath.GetDirectory("cache").GetDirectory("test-module-1.0.0")
+                .Exists.ShouldBeFalse();
         }
     }
     public class when_loading_zipped_package : context.folder_based_repository
@@ -60,8 +61,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
         [Test]
         public void cache_is_created()
         {
-            Directory.Exists(FileSystem.CombinePaths(RepositoryPath.FullName, "cache", "test-module-1.0.0"))
-                .ShouldBeTrue();
+            RepositoryPath.GetDirectory("cache").GetDirectory("test-module-1.0.0")
+                .Exists.ShouldBeTrue();
             
         }
         protected void when_reading_test_module()
@@ -75,23 +76,23 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
     {
         public class folder_based_repository : IDisposable
         {
-            protected DirectoryInfo RepositoryPath;
+            protected ITemporaryDirectory RepositoryPath;
             protected FolderRepository Repository;
             protected IPackageInfo Descriptor;
             protected WrapDependency Dependency;
+            protected IFileSystem FileSystem;
 
             protected void given_folder_repository()
             {
-                RepositoryPath = Directory.CreateDirectory(FileSystem.CombinePaths(
-                    Path.GetTempPath(),
-                    Path.GetRandomFileName()));
+                FileSystem = OpenWrap.IO.FileSystem.Local;
+                RepositoryPath = FileSystem.CreateTempDirectory();
                 var wrapFile = TestFiles.test_module_1_0_0;
-                using(var file = File.Create(Path.Combine(RepositoryPath.FullName,"test-module-1.0.0.wrap")))
+                using(var file = RepositoryPath.GetFile("test-module-1.0.0.wrap").OpenWrite())
                 {
                     file.Write(wrapFile,0, wrapFile.Length);
                     file.Flush();
                 }
-                Repository = new FolderRepository(RepositoryPath.FullName);
+                Repository = new FolderRepository(RepositoryPath);
             }
 
             protected void when_reading_test_module_descriptor()
@@ -102,7 +103,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
             }
             public void Dispose()
             {
-                RepositoryPath.Delete(true);
+                RepositoryPath.Dispose();
             }
         }
     }

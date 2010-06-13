@@ -1,61 +1,63 @@
 using System.Collections.Generic;
 using System.IO;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Build.Services
 {
-    public class WrapDescriptorMonitor : IService, IWrapDescriptorMonitoringService
+    // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
+    public class WrapDescriptorMonitor : IWrapDescriptorMonitoringService
     {
         readonly Dictionary<string, WrapFileDescriptor> _notificationClients = new Dictionary<string, WrapFileDescriptor>();
         readonly WrapDependencyResolver _resolver = new WrapDependencyResolver();
 
 
 
-        public void ProcessWrapDescriptor(string wrapPath, IPackageRepository packageRepository, IWrapAssemblyClient client)
+        public void ProcessWrapDescriptor(IFile wrapFile, IPackageRepository packageRepository, IWrapAssemblyClient client)
         {
-            if (!File.Exists(wrapPath))
+            if (!wrapFile.Exists)
                 return;
 
-            var descriptor = GetDescriptor(wrapPath, packageRepository);
+            var descriptor = GetDescriptor(wrapFile, packageRepository);
             if (client.IsLongRunning)
                 descriptor.Clients.Add(client);
 
-            NotifyClient(wrapPath, client);
+            NotifyClient(wrapFile, client);
         }
 
         public void Initialize()
         {
         }
 
-        WrapFileDescriptor GetDescriptor(string wrapPath, IPackageRepository packageRepository)
+        WrapFileDescriptor GetDescriptor(IFile wrapPath, IPackageRepository packageRepository)
         {
             WrapFileDescriptor descriptor;
-            if (!_notificationClients.TryGetValue(wrapPath, out descriptor))
-                _notificationClients.Add(wrapPath, descriptor = new WrapFileDescriptor(wrapPath, packageRepository, HandleWrapFileUpdate));
+            if (!_notificationClients.TryGetValue(wrapPath.Path.FullPath, out descriptor))
+                _notificationClients.Add(wrapPath.Path.FullPath, descriptor = new WrapFileDescriptor(wrapPath, packageRepository, HandleWrapFileUpdate));
             return descriptor;
         }
 
         void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
         {
-            NotifyAllClients(e.FullPath);
+            NotifyAllClients(FileSystem.Local.GetFile(e.FullPath));
         }
-        void NotifyClient(string wrapPath, IWrapAssemblyClient client)
+        void NotifyClient(IFile wrapPath, IWrapAssemblyClient client)
         {
-            if (!_notificationClients.ContainsKey(wrapPath))
+            if (!_notificationClients.ContainsKey(wrapPath.Path.FullPath))
                 return;
-            var d = _notificationClients[wrapPath];
+            var d = _notificationClients[wrapPath.Path.FullPath];
 
             var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
 
             client.WrapAssembliesUpdated(_resolver.GetAssemblyReferences(parsedDescriptor, d.Repository, client));
         }
 
-        void NotifyAllClients(string wrapPath)
+        void NotifyAllClients(IFile wrapPath)
         {
-            if (!_notificationClients.ContainsKey(wrapPath))
+            if (!_notificationClients.ContainsKey(wrapPath.Path.FullPath))
                 return;
-            var d = _notificationClients[wrapPath];
+            var d = _notificationClients[wrapPath.Path.FullPath];
 
             var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
 
@@ -67,12 +69,11 @@ namespace OpenWrap.Build.Services
 
         class WrapFileDescriptor
         {
-            public WrapFileDescriptor(string path, IPackageRepository repository, FileSystemEventHandler handler)
+            public WrapFileDescriptor(IFile path, IPackageRepository repository, FileSystemEventHandler handler)
             {
                 Repository = repository;
                 Clients = new List<IWrapAssemblyClient>();
-                FilePath = path;
-                FileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(path), Path.GetFileName(path))
+                FileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(path.Path.FullPath), Path.GetFileName(path.Path.FullPath))
                 {
                     NotifyFilter = NotifyFilters.LastWrite
                 };
@@ -81,7 +82,6 @@ namespace OpenWrap.Build.Services
             }
 
             public List<IWrapAssemblyClient> Clients { get; set; }
-            public string FilePath { get; set; }
             public FileSystemWatcher FileSystemWatcher { get; set; }
             public IPackageRepository Repository { get; set; }
         }

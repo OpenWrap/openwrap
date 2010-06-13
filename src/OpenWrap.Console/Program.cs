@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using OpenWrap.Commands.Wrap;
 
 namespace OpenWrap.Console
 {
@@ -53,15 +52,26 @@ namespace OpenWrap.Console
         static Regex _openwrapRegex = new Regex(@"openwrap-(?<version>\d+\.\d+\.\d+)");
         static string GetProjectWrapAssembly()
         {
-            var folder = from directory in new DirectoryInfo(Environment.CurrentDirectory).SelfAndAncestors()
-                   let wrapDirectory = directory.Directory("wraps\\cache\\")
-                   where wrapDirectory != null && wrapDirectory.Exists
-                   from uncompressedFolder in wrapDirectory.GetDirectories()
+            var folder = from directory in GetSelfAndParents(Environment.CurrentDirectory)
+                         let wrapDirectory = directory.GetDirectories("wraps\\cache\\", SearchOption.TopDirectoryOnly).FirstOrDefault()
+                         where wrapDirectory != null && wrapDirectory.Exists
+                         from uncompressedFolder in wrapDirectory.GetDirectories()
                          let match = _openwrapRegex.Match(uncompressedFolder.Name)
-                   where match.Success
-                   let version = new Version(match.Groups["version"].Value)
+                         where match.Success
+                         let version = new Version(match.Groups["version"].Value)
                          select new { uncompressedFolder, version };
+
             return folder.OrderBy(x => x.version).Select(x => x.uncompressedFolder.FullName).FirstOrDefault();
         }
+
+        static IEnumerable<DirectoryInfo> GetSelfAndParents(string directoryPath)
+        {
+            var directory = new DirectoryInfo(directoryPath);
+            do
+            {
+                yield return directory;
+                directory = directory.Parent;
+            } while (directory != null);
+            }
     }
 }

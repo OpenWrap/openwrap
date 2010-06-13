@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using OpenWrap.Commands.Wrap;
+
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
-using IOExtensions=OpenWrap.Commands.Wrap.IOExtensions;
 
 namespace OpenWrap
 {
@@ -17,10 +17,11 @@ namespace OpenWrap
         public WrapDescriptor Descriptor { get; set; }
         public IEnumerable<IPackageRepository> RemoteRepositories { get; set; }
         public IPackageRepository UserRepository { get; set; }
+        public IFileSystem FileSystem { get; set; }
 
-        public DirectoryInfo CurrentDirectory
+        public IDirectory CurrentDirectory
         {
-            get { return new DirectoryInfo(Environment.CurrentDirectory); }
+            get { return IO.FileSystem.Local.GetDirectory(Environment.CurrentDirectory); }
         }
 
         public ExecutionEnvironment ExecutionEnvironment
@@ -30,24 +31,26 @@ namespace OpenWrap
 
         public void Initialize()
         {
-            Descriptor = new DirectoryInfo(Environment.CurrentDirectory)
+            FileSystem = IO.FileSystem.Local;
+            Descriptor = CurrentDirectory
                 .SelfAndAncestors()
                 .SelectMany(x => x.Files("*.wrapdesc"))
                 .Select(x=>new WrapDescriptorParser().ParseFile(x))
                 .FirstOrDefault();
 
-            var dir = new DirectoryInfo(Path.GetDirectoryName(Descriptor.Path))
+            var dir = Descriptor.File.Parent
                 .SelfAndAncestors()
                 .SelectMany(x => x.Directories("wraps"))
                 .Where(x => x != null)
                 .FirstOrDefault();
-            if (dir != null)
-                ProjectRepository = new FolderRepository(dir.FullName);
 
-            UserRepository = Repositories.UserRepository.Current;
+            if (dir != null)
+                ProjectRepository = new FolderRepository(dir);
+
+            UserRepository = new FolderRepository(FileSystem.GetDirectory(UserSettings.UserRepositoryPath));
 
             RemoteRepositories = UserSettings.RemoteRepositories
-                .Select(x => new XmlRepository(new HttpNavigator(x), Enumerable.Empty<IExportBuilder>()))
+                .Select(x => new XmlRepository(FileSystem, new HttpNavigator(x), Enumerable.Empty<IExportBuilder>()))
                 .Cast<IPackageRepository>()
                 .ToList();
 

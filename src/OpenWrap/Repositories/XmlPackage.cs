@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Exports;
 
@@ -9,13 +10,15 @@ namespace OpenWrap.Repositories
 {
     public class XmlPackage : IPackage
     {
+        readonly IFileSystem _fileSystem;
         readonly IHttpNavigator _httpNavigator;
         Uri _link;
         IPackage _loadedPackage;
         IEnumerable<IExportBuilder> _builders;
 
-        public XmlPackage(IPackageRepository source, IHttpNavigator httpNavigator, Uri link, string name, Version version, IEnumerable<IExportBuilder> builders)
+        public XmlPackage(IFileSystem fileSystem, IPackageRepository source, IHttpNavigator httpNavigator, Uri link, string name, Version version, IEnumerable<IExportBuilder> builders)
         {
+            _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;
             _builders = builders;
             Source = source;
@@ -56,13 +59,16 @@ namespace OpenWrap.Repositories
         void VerifyLoaded()
         {
             if (_loadedPackage != null) return;
-            string tempFileName = Path.GetTempFileName();
 
+            IFile temporaryFile = _fileSystem.CreateTempFile();
             using (var stream = _httpNavigator.LoadFile(_link))
-            using (var fileStream = File.OpenWrite(tempFileName))
-                stream.CopyTo(fileStream);
+            {
+                
+                stream.CopyTo(temporaryFile.OpenWrite());
+                // we don't dispose here, the file will get disposed and deleted on exit if we're lucky.
+            }
 
-            _loadedPackage = new ZipPackage(Source, new FileInfo(tempFileName), Path.GetTempPath(), _builders).Load();
+            _loadedPackage = new ZipPackage(Source, temporaryFile, _fileSystem.GetTempDirectory(), _builders).Load();
         }
 
     }
