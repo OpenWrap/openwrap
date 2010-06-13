@@ -131,21 +131,16 @@ namespace OpenWrap.Commands
         {
             ICommandInputDescriptor descriptor;
             // Try to find by full name match first.
-            if (command.Inputs.TryGetValue(name, out descriptor))
-            {
-                return descriptor;
-            }
-            else // Try to match by camel case initials
-            {
-                var potentialInputs =
-                    from input in command.Inputs
-                    where input.Key.GetCamelCaseInitials().Equals(name, StringComparison.OrdinalIgnoreCase)
-                    select input.Value;
+            if (command.Inputs.TryGetValue(name, out descriptor)) return descriptor;
 
-                // TODO: What happens if the name matches more than one input? Should this throw?
-                // For now, just return the first input found.
-                return potentialInputs.FirstOrDefault();
-            }
+            var potentialInputs =
+                from input in command.Inputs
+                where input.Key.GetCamelCaseInitials().Equals(name, StringComparison.OrdinalIgnoreCase)
+                select input.Value;
+
+            // TODO: What happens if the name matches more than one input? Should this throw?
+            // For now, just return the first input found.
+            return potentialInputs.FirstOrDefault();
         }
 
         class ParsedInput
