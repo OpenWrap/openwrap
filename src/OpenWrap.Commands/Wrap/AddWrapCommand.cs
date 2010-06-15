@@ -32,9 +32,16 @@ namespace OpenWrap.Commands.Wrap
             _environment = WrapServices.GetService<IEnvironment>();
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
-            yield return AddInstructionToWrapFile();
-            foreach (var nestedResult in SyncWrapFileWithWrapDirectory())
-                yield return nestedResult;
+            if (_environment.Descriptor != null)
+            {
+                yield return AddInstructionToWrapFile();
+                foreach (var nestedResult in SyncWrapFileWithWrapDirectory())
+                    yield return nestedResult;
+            }
+            else
+            {
+                
+            }
         }
 
         ICommandResult AddInstructionToWrapFile()
@@ -59,19 +66,18 @@ namespace OpenWrap.Commands.Wrap
             return new SyncWrapCommand().Execute();
         }
 
-        GenericError VerifyWrapFile()
+        ICommandResult VerifyWrapFile()
         {
-            return _environment.Descriptor != null ? null : new GenericError { Message = "Could not find a wrap descriptor in your path." };
+            return _environment.Descriptor != null
+                ? new GenericMessage(@"No wrap descriptor found, not wrinting to it.") 
+                : new GenericMessage("Wrap descriptor found.");
         }
 
         ICommandResult VeryfyWrapRepository()
         {
             return _environment.ProjectRepository != null
-                       ? null
-                       : new GenericError
-                       {
-                           Message = string.Format("Directory 'wraps' not found on the path above the wrap file '{0}'.", _environment.Descriptor)
-                       };
+                       ? new GenericMessage("Project repository found.")
+                       : new GenericMessage("Project rep[ository not found, installing to system repository.");
         }
     }
 }

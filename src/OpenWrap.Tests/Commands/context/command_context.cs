@@ -1,29 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Build.Services;
 using OpenWrap.Commands;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Tests.Commands.context
 {
     public class command_context<T> : Testing.context
-        where T:ICommand
+        where T : ICommand
     {
-        protected CommandRepository Commands;
         protected AttributeBasedCommandDescriptor<T> Command;
-        protected List<ICommandResult> Results;
+        protected CommandRepository Commands;
         protected InMemoryEnvironment Environment;
+        protected List<ICommandResult> Results;
+        InMemoryFileSystem FileSystem;
 
         public command_context()
         {
             Command = new AttributeBasedCommandDescriptor<T>();
-            Commands = new CommandRepository() { Command };
+            Commands = new CommandRepository { Command };
             Environment = new InMemoryEnvironment();
 
             WrapServices.Clear();
+            FileSystem = new InMemoryFileSystem();
+            WrapServices.RegisterService<IFileSystem>(FileSystem);
             WrapServices.RegisterService<IEnvironment>(Environment);
             WrapServices.RegisterService<IPackageManager>(new PackageManager());
             WrapServices.RegisterService<ICommandRepository>(Commands);
@@ -33,19 +38,38 @@ namespace OpenWrap.Tests.Commands.context
         {
             new WrapDependencyParser().Parse(dependency, Environment.Descriptor);
         }
-        protected void given_remote_package(string name, Version version, params string[] dependencies)
+
+        protected void given_file(string filePath, Stream stream)
         {
-            AddPackage(Environment.RemoteRepository, name, version, dependencies);
+            
         }
-        protected void given_user_package(string name, Version version, params string[] dependencies)
-        {
-            AddPackage(Environment.UserRepository, name, version, dependencies);
-        }
+
         protected void given_project_package(string name, Version version, params string[] dependencies)
         {
             if (Environment.ProjectRepository == null)
                 Environment.ProjectRepository = new InMemoryRepository();
             AddPackage(Environment.ProjectRepository, name, version, dependencies);
+        }
+
+        protected void given_project_repository()
+        {
+            Environment.ProjectRepository = new InMemoryRepository();
+        }
+
+        protected void given_remote_package(string name, Version version, params string[] dependencies)
+        {
+            AddPackage(Environment.RemoteRepository, name, version, dependencies);
+        }
+
+        protected void given_user_package(string name, Version version, params string[] dependencies)
+        {
+            AddPackage(Environment.UserRepository, name, version, dependencies);
+        }
+
+        protected virtual void when_executing_command(params string[] parameters)
+        {
+            var allParams = new[] { Command.Noun, Command.Verb }.Concat(parameters);
+            Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
         }
 
         static void AddPackage(InMemoryRepository repository, string name, Version version, string[] dependencies)
@@ -58,17 +82,6 @@ namespace OpenWrap.Tests.Commands.context
                 Dependencies = dependencies.Select(x =>
                                                    WrapDependencyParser.ParseDependency(x)).ToList()
             });
-        }
-
-        protected virtual void when_executing_command(params string[] parameters)
-        {
-            var allParams = new[] { Command.Noun, Command.Verb }.Concat(parameters);
-            Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
-        }
-
-        protected void given_project_repository()
-        {
-            Environment.ProjectRepository = new InMemoryRepository();
         }
     }
 }

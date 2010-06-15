@@ -4,9 +4,9 @@ namespace OpenWrap.IO
 {
     public class LocalFileSystem : AbstractFileSystem
     {
-        public override IDirectory CreateDirectory(IPath path)
+        public override IDirectory CreateDirectory(string path)
         {
-            return new LocalDirectory(path.FullPath).Create();
+            return new LocalDirectory(path).Create();
         }
 
         public override ITemporaryDirectory CreateTempDirectory()

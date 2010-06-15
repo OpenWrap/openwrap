@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace OpenWrap.IO
 {
-    public class LocalDirectory : IDirectory
+    public class LocalDirectory : IDirectory, IEquatable<IDirectory>
     {
         readonly DirectoryInfo _di;
 
@@ -89,5 +91,25 @@ namespace OpenWrap.IO
             _di.Create();
             return this;
         }
+
+        public bool Equals(IDirectory other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            return other.Path.FullPath == Path.FullPath;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj as IDirectory == null) return false;
+            return Equals((IDirectory)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return 0;
+        }
+
     }
 }

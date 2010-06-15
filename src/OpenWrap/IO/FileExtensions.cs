@@ -46,7 +46,7 @@ namespace OpenWrap.IO
             return file.Open(FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
         }
 
-        public static IEnumerable<IDirectory> SelfAndAncestors(this IDirectory directory)
+        public static IEnumerable<IDirectory> AncestorsAndSelf(this IDirectory directory)
         {
             do
             {

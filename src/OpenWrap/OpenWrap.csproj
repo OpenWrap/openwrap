@@ -75,6 +75,11 @@
     <Compile Include="IO\IFile.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="IO\IFileSystemItem.cs" />
+    <Compile Include="IO\FileSystem\InMemoryDirectory.cs" />
+    <Compile Include="IO\FileSystem\InMemoryFile.cs" />
+    <Compile Include="IO\FileSystem\InMemoryFileSystem.cs" />
+    <Compile Include="IO\FileSystem\InMemoryTemporaryDirectory.cs" />
+    <Compile Include="IO\FileSystem\InMemoryTemporaryFile.cs" />
     <Compile Include="IO\IPath.cs" />
     <Compile Include="IO\ITemporaryDirectory.cs" />
     <Compile Include="IO\ITemporaryFile.cs" />
@@ -82,6 +87,7 @@
     <Compile Include="IO\LocalFile.cs" />
     <Compile Include="IO\LocalFileSystem.cs" />
     <Compile Include="IO\LocalPath.cs" />
+    <Compile Include="IO\StringExtensions.cs" />
     <Compile Include="IO\TemporaryLocalDirectory.cs" />
     <Compile Include="IO\TemporaryLocalFile.cs" />
     <Compile Include="IO\ZipExtensions.cs" />

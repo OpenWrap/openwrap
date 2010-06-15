@@ -33,13 +33,13 @@ namespace OpenWrap
         {
             FileSystem = IO.FileSystem.Local;
             Descriptor = CurrentDirectory
-                .SelfAndAncestors()
+                .AncestorsAndSelf()
                 .SelectMany(x => x.Files("*.wrapdesc"))
                 .Select(x=>new WrapDescriptorParser().ParseFile(x))
                 .FirstOrDefault();
 
             var dir = Descriptor.File.Parent
-                .SelfAndAncestors()
+                .AncestorsAndSelf()
                 .SelectMany(x => x.Directories("wraps"))
                 .Where(x => x != null)
                 .FirstOrDefault();
