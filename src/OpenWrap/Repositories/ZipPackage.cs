@@ -65,7 +65,8 @@ namespace OpenWrap.Repositories
 
         void LoadDescriptor()
         {
-            using (var zip = new ZipFile(_wrapFile.Path.FullPath))
+            using(var zipStream = _wrapFile.OpenRead())
+            using (var zip = new ZipFile(zipStream))
             {
                 var descriptor = zip.Cast<ZipEntry>().FirstOrDefault(x => x.Name.EndsWith(".wrapdesc"));
                 if (descriptor == null)

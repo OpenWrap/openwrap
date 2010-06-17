@@ -5,8 +5,10 @@ using System.Linq;
 
 namespace OpenWrap.IO
 {
-    public class LocalPath : IPath
+    public class LocalPath : IPath, IEquatable<IPath>
     {
+        string _normalizedPath;
+
         public LocalPath(string fullPath)
         {
             FullPath = fullPath;
@@ -15,7 +17,8 @@ namespace OpenWrap.IO
             
             
                 GenerateSegments();
-            
+            _normalizedPath = NormalizePath(fullPath);
+
         }
 
         public bool IsRooted { get; private set; }
@@ -49,6 +52,43 @@ namespace OpenWrap.IO
         public IEnumerable<string> Segments
         {
             get; private set;
+        }
+
+        public bool Equals(IPath other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return NormalizePath(other.FullPath).Equals(_normalizedPath, StringComparison.OrdinalIgnoreCase);
+        }
+
+        string NormalizePath(string fullPath)
+        {
+            return fullPath.EndsWith(Path.DirectorySeparatorChar.ToString()) || fullPath.EndsWith(Path.AltDirectorySeparatorChar.ToString())
+                ? fullPath.Substring(0, fullPath.Length - 1)
+                : fullPath;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (!(obj is IPath)) return false;
+            return Equals((IPath)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (_normalizedPath != null ? _normalizedPath.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(LocalPath left, LocalPath right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(LocalPath left, LocalPath right)
+        {
+            return !Equals(left, right);
         }
     }
 }

@@ -6,18 +6,19 @@ using System.Linq;
 
 namespace OpenWrap.IO
 {
-    public class LocalDirectory : IDirectory, IEquatable<IDirectory>
+    public class LocalDirectory : AbstractDirectory, IDirectory, IEquatable<IDirectory>
     {
         readonly DirectoryInfo _di;
 
         public LocalDirectory(DirectoryInfo directory)
         {
             _di = directory;
+            Path = new LocalPath(NormalizeDirectoryPath(_di.FullName));
         }
 
         public LocalDirectory(string directoryPath)
+            : this(new DirectoryInfo(directoryPath))
         {
-            _di = new DirectoryInfo(directoryPath);
         }
 
         public bool Exists
@@ -42,7 +43,7 @@ namespace OpenWrap.IO
 
         public IPath Path
         {
-            get { return new LocalPath(_di.FullName); }
+            get; private set;
         }
 
         public void Add(IFile file)
@@ -95,7 +96,7 @@ namespace OpenWrap.IO
         public bool Equals(IDirectory other)
         {
             if (ReferenceEquals(null, other)) return false;
-            return other.Path.FullPath == Path.FullPath;
+            return other.Path.Equals(Path);
         }
 
         public override bool Equals(object obj)

@@ -75,7 +75,7 @@ namespace OpenWrap.IO
 
         public ITemporaryDirectory CreateTempDirectory()
         {
-            return new InMemoryTemporaryDirectory(SysPath.Combine("c:\temporary", SysPath.GetRandomFileName()))
+            return new InMemoryTemporaryDirectory(SysPath.Combine(@"c:\temporary", SysPath.GetRandomFileName()))
             {
                 Exists = true,
                 FileSystem = this
@@ -93,7 +93,7 @@ namespace OpenWrap.IO
 
         public ITemporaryFile CreateTempFile()
         {
-            return new InMemoryTemporaryFile(SysPath.Combine("c:\temporary", SysPath.GetRandomFileName()))
+            return new InMemoryTemporaryFile(SysPath.Combine(@"c:\temporary", SysPath.GetRandomFileName()))
             {
                 Exists = true,
                 FileSystem = this

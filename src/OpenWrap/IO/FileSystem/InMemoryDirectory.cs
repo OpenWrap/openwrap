@@ -6,7 +6,18 @@ using SysPath = System.IO.Path;
 
 namespace OpenWrap.IO
 {
-    public class InMemoryDirectory : IDirectory, IEquatable<IDirectory>
+    public abstract class AbstractDirectory
+    {
+        protected string NormalizeDirectoryPath(string directoryPath)
+        {
+            if (!directoryPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())
+        && !directoryPath.EndsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()))
+                return directoryPath + System.IO.Path.DirectorySeparatorChar;
+            return directoryPath;
+        }
+    }
+
+    public class InMemoryDirectory : AbstractDirectory, IDirectory, IEquatable<IDirectory>
     {
 
 
@@ -14,7 +25,7 @@ namespace OpenWrap.IO
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Equals(other.Path.FullPath, Path.FullPath);
+            return Equals(other.Path, Path);
         }
 
         public override bool Equals(object obj)
@@ -27,11 +38,12 @@ namespace OpenWrap.IO
 
         public override int GetHashCode()
         {
-            return Path.FullPath.GetHashCode();
+            return Path.GetHashCode();
         }
 
         public InMemoryDirectory(string directoryPath, params IFileSystemItem[] children)
         {
+            directoryPath = NormalizeDirectoryPath(directoryPath);
             Path = new LocalPath(directoryPath);
 
             ChildDirectories = new List<InMemoryDirectory>();
@@ -86,7 +98,7 @@ namespace OpenWrap.IO
 
         public string Name
         {
-            get { return System.IO.Path.GetFileName(Path.FullPath); }
+            get { return new DirectoryInfo(Path.FullPath).Name; }
         }
 
         public void Delete()

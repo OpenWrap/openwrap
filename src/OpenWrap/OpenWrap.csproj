@@ -93,6 +93,7 @@
     <Compile Include="IO\ZipExtensions.cs" />
     <Compile Include="Dependencies\WrapDescriptionParser.cs" />
     <Compile Include="ReflectionExtensions.cs" />
+    <Compile Include="Repositories\CurrentDirectoryRepository.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Commands\UnknownCommandInput.cs" />
