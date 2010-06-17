@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace OpenWrap.IO
 {
@@ -30,6 +31,11 @@ namespace OpenWrap.IO
         public string NameWithoutExtension
         {
             get { return System.IO.Path.GetFileNameWithoutExtension(_filePath); }
+        }
+
+        public DateTime? LastModifiedTimeUtc
+        {
+            get { return Exists ? new FileInfo(_filePath).LastWriteTimeUtc : (DateTime?)null; }
         }
 
         public IDirectory Parent

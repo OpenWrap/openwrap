@@ -16,7 +16,7 @@ namespace OpenWrap.Repositories
         IPackage _loadedPackage;
         IEnumerable<IExportBuilder> _builders;
 
-        public XmlPackage(IFileSystem fileSystem, IPackageRepository source, IHttpNavigator httpNavigator, Uri link, string name, Version version, IEnumerable<IExportBuilder> builders)
+        public XmlPackage(IFileSystem fileSystem, IPackageRepository source, IHttpNavigator httpNavigator, Uri link, string name, Version version, IEnumerable<IExportBuilder> builders, DateTime? lastModifiedTimeUtc)
         {
             _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;
@@ -25,6 +25,7 @@ namespace OpenWrap.Repositories
             Name = name;
             Version = version;
             _link = link;
+            LastModifiedTimeUtc = lastModifiedTimeUtc;
         }
 
         public ICollection<WrapDependency> Dependencies { get; set; }
@@ -50,6 +51,12 @@ namespace OpenWrap.Repositories
         {
             get { return Name + "-" + Version; }
         }
+
+        public DateTime? LastModifiedTimeUtc
+        {
+            get; private set;
+        }
+
         public Stream OpenStream()
         {
             VerifyLoaded();

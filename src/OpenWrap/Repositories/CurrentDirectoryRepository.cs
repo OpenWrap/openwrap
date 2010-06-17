@@ -32,5 +32,10 @@ namespace OpenWrap.Repositories
         {
             throw new NotSupportedException();
         }
+
+        public bool CanPublish
+        {
+            get { return false; }
+        }
     }
 }

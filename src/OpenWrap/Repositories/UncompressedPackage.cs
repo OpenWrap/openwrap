@@ -56,6 +56,11 @@ namespace OpenWrap.Repositories
             get { return Name + "-" + Version; }
         }
 
+        public DateTime? LastModifiedTimeUtc
+        {
+            get { return _originalWrapFile.LastModifiedTimeUtc; }
+        }
+
         protected WrapDescriptor Descriptor { get; set; }
 
         public IExport GetExport(string exportName, ExecutionEnvironment environment)

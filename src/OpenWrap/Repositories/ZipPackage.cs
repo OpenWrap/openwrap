@@ -58,6 +58,12 @@ namespace OpenWrap.Repositories
         {
             get { return Name + "-" + Version; }
         }
+
+        public DateTime? LastModifiedTimeUtc
+        {
+            get { return _wrapFile.LastModifiedTimeUtc; }
+        }
+
         public IPackageRepository Source
         {
             get; set;
@@ -125,6 +131,11 @@ namespace OpenWrap.Repositories
         public string NameWithoutExtension
         {
             get{ return System.IO.Path.GetFileNameWithoutExtension(_entry.Name); }
+        }
+
+        public DateTime? LastModifiedTimeUtc
+        {
+            get { return _entry.DateTime; }
         }
 
         public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)

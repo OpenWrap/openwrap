@@ -35,6 +35,11 @@ namespace OpenWrap.Dependencies
             get { return Name + "-" + Version; }
         }
 
+        public DateTime? LastModifiedTimeUtc
+        {
+            get { return null; }
+        }
+
         public bool IsCompatibleWith(Version version)
         {
             return false;

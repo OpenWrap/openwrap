@@ -12,6 +12,7 @@ namespace OpenWrap.IO
             Name = System.IO.Path.GetFileName(filePath);
             NameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(filePath);
             Stream = new NonDisposableStream(new MemoryStream());
+            LastModifiedTimeUtc = DateTime.Now;
         }
         public Stream Stream { get; set; }
         public IFile Create()
@@ -35,6 +36,12 @@ namespace OpenWrap.IO
         }
 
         public string NameWithoutExtension { get; private set; }
+
+        public DateTime? LastModifiedTimeUtc
+        {
+            get; private set;
+        }
+
         public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {
             return Stream;

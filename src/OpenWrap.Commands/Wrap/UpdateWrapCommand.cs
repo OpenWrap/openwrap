@@ -47,7 +47,7 @@ namespace OpenWrap.Commands.Wrap
                 }).ToList()
             };
             yield return new Result("Searching for updated packages");
-            var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, null, null, Environment.RemoteRepositories);
+            var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, Environment.RemoteRepositories);
 
             
             foreach(var packageToUpdate in resolveResult.Dependencies)

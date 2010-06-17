@@ -14,9 +14,10 @@ namespace OpenWrap.Repositories
         readonly IHttpNavigator _httpNavigator;
         Uri _link;
         IEnumerable<IExportBuilder> _builders;
+        readonly DateTime? _lastModifiedTimeUtc;
 
 
-        public XmlPackageInfo(IFileSystem fileSystem, IPackageRepository source, IHttpNavigator httpNavigator, string name, string version, Uri link, IEnumerable<string> depends, IEnumerable<IExportBuilder> builders)
+        public XmlPackageInfo(IFileSystem fileSystem, IPackageRepository source, IHttpNavigator httpNavigator, string name, string version, Uri link, IEnumerable<string> depends, IEnumerable<IExportBuilder> builders, DateTime? lastModifiedTimeUtc)
         {
             Name = name;
             Version = new Version(version);
@@ -24,6 +25,7 @@ namespace OpenWrap.Repositories
             _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;
             _builders = builders;
+            _lastModifiedTimeUtc = lastModifiedTimeUtc;
             _link = link;
             Dependencies = (from dependency in depends
                             let strings = dependency.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
@@ -45,10 +47,16 @@ namespace OpenWrap.Repositories
         {
             get { return Name + "-" + Version; }
         }
+
+        public DateTime? LastModifiedTimeUtc
+        {
+            get; private set;
+        }
+
         public IPackage Load()
         {
             // get the file from the server
-            return new XmlPackage(_fileSystem, Source, _httpNavigator, _link, Name, Version, _builders);
+            return new XmlPackage(_fileSystem, Source, _httpNavigator, _link, Name, Version, _builders, _lastModifiedTimeUtc);
         }
 
         public IPackageRepository Source { get; set; }

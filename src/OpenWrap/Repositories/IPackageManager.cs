@@ -8,9 +8,7 @@ namespace OpenWrap.Repositories
     public interface IPackageManager : IService
     {
         DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor,
-                                                          IPackageRepository projectRepository,
-                                                          IPackageRepository userRepository,
-                                                          IEnumerable<IPackageRepository> remoteRepositories);
+                                                          IEnumerable<IPackageRepository> repositoriesToQuery);
 
         void UpdateDependency(ResolvedDependency dependency,
                               IPackageRepository destinationRepository);

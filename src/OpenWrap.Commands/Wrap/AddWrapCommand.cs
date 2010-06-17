@@ -48,7 +48,7 @@ namespace OpenWrap.Commands.Wrap
             }
             else
             {
-                var resolvedDependencies = _packageManager.TryResolveDependencies(GetDescriptor(), null, _environment.SystemRepository, _environment.RemoteRepositories);
+                var resolvedDependencies = _packageManager.TryResolveDependencies(GetDescriptor(), new[]{ _environment.SystemRepository}.Concat(_environment.RemoteRepositories));
 
                 if (!resolvedDependencies.IsSuccess)
                 {
@@ -57,7 +57,6 @@ namespace OpenWrap.Commands.Wrap
                 }
                 foreach (var dependency in resolvedDependencies.Dependencies)
                 {
-
                     yield return new Result("Copying {0} to user repository.", dependency.Package.FullName);
                     using (var packageStream = dependency.Package.Load().OpenStream())
                     {
@@ -77,7 +76,7 @@ namespace OpenWrap.Commands.Wrap
                         new WrapDependency
                         {
                             Name = Name,
-                            VersionVertices = WrapDependencyParser.ParseVersions(Version.Split(new[] { " "}, StringSplitOptions.RemoveEmptyEntries)).ToList()
+                            VersionVertices = WrapDependencyParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList()
                         }
                     }
             };
