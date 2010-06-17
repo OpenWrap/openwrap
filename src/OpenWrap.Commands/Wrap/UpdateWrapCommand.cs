@@ -31,12 +31,12 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandResult> UpdateUserPackages()
         {
-            var installedPackages = Environment.UserRepository.PackagesByName.Select(x => x.Key);
+            var installedPackages = Environment.SystemRepository.PackagesByName.Select(x => x.Key);
 
             var packagesToSearch = new WrapDescriptor
             {
                 Dependencies = (from package in installedPackages
-                               let maxVersion = Environment.UserRepository.PackagesByName[package]
+                               let maxVersion = Environment.SystemRepository.PackagesByName[package]
                                 .OrderByDescending(x=>x.Version)
                                 .Select(x=>x.Version)
                                 .First()
@@ -54,7 +54,7 @@ namespace OpenWrap.Commands.Wrap
             {
                 yield return new Result("Copying {0} to user repository.", packageToUpdate.Package.FullName);
                 using (var stream = packageToUpdate.Package.Load().OpenStream())
-                    Environment.UserRepository.Publish(packageToUpdate.Package.FullName, stream);
+                    Environment.SystemRepository.Publish(packageToUpdate.Package.FullName, stream);
             }
             
         }
@@ -68,11 +68,11 @@ namespace OpenWrap.Commands.Wrap
                                  select remotePackage;
             foreach(var packageToCopy in packagesToCopy)
             {
-                if (!Environment.UserRepository.HasDependency(packageToCopy.Name, packageToCopy.Version))
+                if (!Environment.SystemRepository.HasDependency(packageToCopy.Name, packageToCopy.Version))
                 {
                     yield return new Result("Copying {0} to user repository", packageToCopy.FullName);
                     using(var stream = packageToCopy.Load().OpenStream())
-                        Environment.UserRepository.Publish(packageToCopy.FullName, stream);
+                        Environment.SystemRepository.Publish(packageToCopy.FullName, stream);
                 }
                 if (!Environment.ProjectRepository.HasDependency(packageToCopy.Name, packageToCopy.Version))
                 {

@@ -50,7 +50,7 @@ namespace OpenWrap
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            var packages = GetLatestModules(environment.UserRepository);
+            var packages = GetLatestModules(environment.SystemRepository);
             if (environment.ProjectRepository != null)
                 packages = packages.Concat(GetLatestModules(environment.ProjectRepository));
 

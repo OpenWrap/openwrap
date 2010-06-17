@@ -31,6 +31,7 @@ namespace OpenWrap.Tests.IO
             FileSystem.GetDirectory(@"c:\mordor").GetDirectory(@"shire\galladrin")
                 .Path.FullPath.ShouldBe(@"c:\mordor\shire\galladrin");
         }
+
         [Test]
         public void directory_is_resolved_relative_to_current_directory()
         {
@@ -40,9 +41,21 @@ namespace OpenWrap.Tests.IO
             dir.Exists.ShouldBeFalse();
         }
         [Test]
+        public void files_are_resolved_relative_to_current_directory()
+        {
+            FileSystem.GetFile("rohan.html").Path.FullPath
+                .ShouldBe(Path.Combine(CurrentDirectory, "rohan.html"));
+        }
+    
+        [Test]
         public void two_directories_are_equal()
         {
             FileSystem.GetDirectory("shire").ShouldBe(FileSystem.GetDirectory("shire"));
+        }
+        [Test]
+        public void two_files_are_equal()
+        {
+            FileSystem.GetDirectory("rohan.html").ShouldBe(FileSystem.GetDirectory("rohan.html"));
         }
         protected T FileSystem { get; set; }
         protected string CurrentDirectory { get; set; }
@@ -54,15 +67,31 @@ namespace OpenWrap.Tests.IO
         {
             CurrentDirectory = @"c:\mordor";
             FileSystem = new InMemoryFileSystem(
-                //new InMemoryDirectory(@"c:\mordor",
-                //    new InMemoryFile("rings.txt")
-                //    )
+                new InMemoryDirectory(@"c:\mordor",
+                    new InMemoryFile("rings.txt")
                 )
+            )
             {
                 CurrentDirectory = CurrentDirectory
             };
         }
+        [Test]
+        public void can_add_folders_to_fs()
+        {
+            var fs = new InMemoryFileSystem(new InMemoryDirectory(@"c:\mordor"));
+            fs.Directories.ShouldHaveCountOf(1);
+        }
+        [Test]
+        public void can_add_sub_folders()
+        {
+            var fs = new InMemoryFileSystem(new InMemoryDirectory(@"c:\mordor\nurn"));
+            var mordor = fs.GetDirectory(@"c:\mordor");
+            mordor.Exists.ShouldBeTrue();
 
+            var nurn = mordor.GetDirectory("nurn");
+            nurn.Path.FullPath.ShouldBe(@"c:\mordor\nurn");
+            nurn.Exists.ShouldBeTrue();
+        }
     }
 
     public class local_fs : file_system<LocalFileSystem>
@@ -71,6 +100,15 @@ namespace OpenWrap.Tests.IO
             CurrentDirectory = Environment.CurrentDirectory;
 
             FileSystem = new LocalFileSystem();
+        }
+    }
+    public class path_specification : context
+    {
+        [Test]
+        public void path_has_segments()
+        {
+            var path = new LocalPath(@"c:\mordor\nurn");
+            path.Segments.ShouldHaveSameElementsAs(new[] { @"c:\", "mordor", "nurn" });
         }
     }
 }

@@ -63,7 +63,7 @@ namespace OpenWrap.Tests.Commands.context
 
         protected void given_user_package(string name, Version version, params string[] dependencies)
         {
-            AddPackage(Environment.UserRepository, name, version, dependencies);
+            AddPackage(Environment.SystemRepository, name, version, dependencies);
         }
 
         protected virtual void when_executing_command(params string[] parameters)

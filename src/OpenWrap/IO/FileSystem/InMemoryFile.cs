@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace OpenWrap.IO
 {
@@ -9,7 +10,7 @@ namespace OpenWrap.IO
             Path = new LocalPath(filePath);
             Name = System.IO.Path.GetFileName(filePath);
             NameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(filePath);
-
+            Stream = new MemoryStream();
         }
         public Stream Stream { get; set; }
         public IFile Create()
@@ -18,16 +19,10 @@ namespace OpenWrap.IO
             return this;
         }
 
-        public IPath Path { get; private set; }
+        public IPath Path { get; set; }
         public IDirectory Parent
         {
-            get
-            {
-                return new InMemoryDirectory(System.IO.Path.GetDirectoryName(Path.FullPath))
-                {
-                    FileSystem = this.FileSystem
-                };
-            }
+            get; set;
         }
 
         public IFileSystem FileSystem { get; set; }

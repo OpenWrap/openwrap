@@ -32,7 +32,7 @@ namespace OpenWrap.Build.Services
         {
             return _services.ContainsKey(typeof(T));
         }
-        public static T GetService<T>() where T : class, IService
+        public static T GetService<T>() where T : class
         {
             return _services.ContainsKey(typeof(T)) ? (T)_services[typeof(T)] : null;
         }

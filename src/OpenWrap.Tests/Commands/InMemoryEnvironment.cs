@@ -13,12 +13,12 @@ namespace OpenWrap.Tests.Commands
     {
         public InMemoryRepository ProjectRepository;
         public IList<InMemoryRepository> RemoteRepositories;
-        public InMemoryRepository UserRepository;
+        public InMemoryRepository SystemRepository;
         public InMemoryRepository RemoteRepository;
 
         public InMemoryEnvironment()
         {
-            UserRepository = new InMemoryRepository();
+            SystemRepository = new InMemoryRepository();
             RemoteRepository = new InMemoryRepository();
             RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };
             Descriptor = new WrapDescriptor();
@@ -42,9 +42,9 @@ namespace OpenWrap.Tests.Commands
              
         }
 
-        IPackageRepository IEnvironment.UserRepository
+        IPackageRepository IEnvironment.SystemRepository
         {
-            get { return UserRepository; }
+            get { return SystemRepository; }
         }
 
         public IDirectory CurrentDirectory

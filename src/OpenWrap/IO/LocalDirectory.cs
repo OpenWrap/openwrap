@@ -65,9 +65,9 @@ namespace OpenWrap.IO
             return _di.GetFiles(filter).Select(x => (IFile)new LocalFile(x.FullName));
         }
 
-        public IDirectory GetDirectory(string directoryPath)
+        public IDirectory GetDirectory(string directoryName)
         {
-            return new LocalDirectory(System.IO.Path.Combine(_di.FullName, directoryPath));
+            return new LocalDirectory(System.IO.Path.Combine(_di.FullName, directoryName));
         }
 
         public IFile GetFile(string fileName)

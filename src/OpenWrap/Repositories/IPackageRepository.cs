@@ -1,6 +1,9 @@
+using System;
 using System.IO;
 using System.Linq;
+using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
+using OpenWrap.IO;
 
 namespace OpenWrap.Repositories
 {

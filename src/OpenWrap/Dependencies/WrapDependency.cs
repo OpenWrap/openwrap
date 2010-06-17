@@ -13,6 +13,8 @@ namespace OpenWrap.Dependencies
         public string Name { get; set; }
         public ICollection<VersionVertice> VersionVertices { get; set; }
 
+        public bool Anchored { get; set; }
+
         public bool IsFulfilledBy(Version version)
         {
             return VersionVertices.All(x => x.IsCompatibleWith(version));

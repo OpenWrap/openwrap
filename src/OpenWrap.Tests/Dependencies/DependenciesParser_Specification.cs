@@ -27,7 +27,48 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             Declaration.IsFulfilledBy(new Version("3.0.0.0")).ShouldBeFalse();
         }
     }
+    public class when_parsing_anchored_dependency_without_version : dependency_parser_context
+    {
+        public when_parsing_anchored_dependency_without_version()
+        {
+            given_dependency("depends nhibernate anchored");
+        }
+        [Test]
+        public void the_anchor_is_found()
+        {
+            Declaration.Name.ShouldBe("nhibernate");
+            Declaration.Anchored.ShouldBeTrue();
+            
+        }
+    }
+    public class when_package_name_is_anchored : dependency_parser_context
+    {
+        public when_package_name_is_anchored()
+        {
+            given_dependency("depends anchored anchored");
+        }
+        [Test]
+        public void the_anchor_is_found()
+        {
+            Declaration.Name.ShouldBe("anchored");
+            Declaration.Anchored.ShouldBeTrue();
 
+        }
+    }
+    public class when_parsing_anchored_dependency_with_version : dependency_parser_context
+    {
+        public when_parsing_anchored_dependency_with_version()
+        {
+            given_dependency("depends nhibernate = 2.0 anchored");
+        }
+        [Test]
+        public void the_anchor_is_found()
+        {
+            Declaration.Name.ShouldBe("nhibernate");
+            Declaration.Anchored.ShouldBeTrue();
+            Declaration.IsFulfilledBy(new Version("2.0.0.0"));
+        }
+    }
     public class when_parsing_declaration_without_version : dependency_parser_context
     {
         public when_parsing_declaration_without_version()

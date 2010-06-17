@@ -29,7 +29,7 @@ namespace OpenWrap.Commands.Wrap
             // TODO: Check if not in project repository and fail nicely
             var descriptor = Environment.Descriptor;
 
-            var dependencyResolveResult = PackageManager.TryResolveDependencies(descriptor, Environment.ProjectRepository, Environment.UserRepository, Environment.RemoteRepositories);
+            var dependencyResolveResult = PackageManager.TryResolveDependencies(descriptor, Environment.ProjectRepository, Environment.SystemRepository, Environment.RemoteRepositories);
 
             if (!dependencyResolveResult.IsSuccess)
             {
@@ -41,9 +41,9 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Result("Copying {0} to user repository.", dependency.Package.FullName);
                 using (var packageStream = dependency.Package.Load().OpenStream())
                 {
+                    var package = Environment.SystemRepository.Publish(dependency.Package.FullName, packageStream);
                     if (Environment.ProjectRepository != null)
                     {
-                        var package = Environment.UserRepository.Publish(dependency.Package.FullName, packageStream);
                         using (var localPackageStream = package.Load().OpenStream())
                         {
                             yield return new Result("Copying {0} to project repository.", package.Name);
@@ -52,7 +52,7 @@ namespace OpenWrap.Commands.Wrap
                     }
                 }
             }
-            foreach (var localDependency in dependencyResolveResult.Dependencies.Where(x => x.Package.Source == Environment.UserRepository))
+            foreach (var localDependency in dependencyResolveResult.Dependencies.Where(x => x.Package.Source == Environment.SystemRepository))
             {
                 var package = localDependency.Package;
                 using (var packageStream = package.Load().OpenStream())

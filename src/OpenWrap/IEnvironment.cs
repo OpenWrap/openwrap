@@ -12,7 +12,7 @@ namespace OpenWrap
         IPackageRepository ProjectRepository { get; }
         WrapDescriptor Descriptor { get; }
         IEnumerable<IPackageRepository> RemoteRepositories { get; }
-        IPackageRepository UserRepository { get; }
+        IPackageRepository SystemRepository { get; }
         IDirectory CurrentDirectory { get; }
         ExecutionEnvironment ExecutionEnvironment { get; }
     }

@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
+using SysPath = System.IO.Path;
 namespace OpenWrap.IO
 {
     public class LocalFileSystem : AbstractFileSystem
@@ -21,12 +23,12 @@ namespace OpenWrap.IO
 
         public override IDirectory GetDirectory(string directoryPath)
         {
-            return new LocalDirectory(directoryPath);
+            return new LocalDirectory(SysPath.GetFullPath(SysPath.Combine(Environment.CurrentDirectory,directoryPath)));
         }
 
-        public override IFile GetFile(string itemSpec)
+        public override IFile GetFile(string filePath)
         {
-            return new LocalFile(itemSpec);
+            return new LocalFile(SysPath.GetFullPath(SysPath.Combine(Environment.CurrentDirectory, filePath)));
         }
 
         public override IPath GetPath(string path)

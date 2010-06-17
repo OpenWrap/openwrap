@@ -9,9 +9,6 @@ namespace OpenWrap.Dependencies
     {
         void Parse(string line, WrapDescriptor descriptor);
     }
-    public static class WrapDescriptorExtensions
-    {
-    }
     public class WrapDependencyParser : IWrapDescriptorLineParser
     {
         public void Parse(string line, WrapDescriptor descriptor)
@@ -30,7 +27,8 @@ namespace OpenWrap.Dependencies
             return new WrapDependency
             {
                 Name = bits[1],
-                VersionVertices = ParseVersions(bits.Skip(2).ToArray()).ToList()
+                VersionVertices = ParseVersions(bits.Skip(2).ToArray()).ToList(),
+                Anchored = bits.Last().Equals("anchored", StringComparison.OrdinalIgnoreCase)
             };
         }
 
@@ -40,7 +38,8 @@ namespace OpenWrap.Dependencies
             // comparator version ('and' comparator version)*
             if (args.Length >= 2)
             {
-                yield return GetVersionVertice(args, 0);
+                var firstVersion = GetVersionVertice(args, 0);
+                yield return firstVersion;
                 for (int i = 0; i < (args.Length - 2) / 3; i++)
                     if (args[2+(i*3)].Equals("and", StringComparison.OrdinalIgnoreCase))
                         yield return GetVersionVertice(args, 3 + (i * 3));
@@ -53,8 +52,7 @@ namespace OpenWrap.Dependencies
         private static VersionVertice GetVersionVertice(string[] strings, int offset)
         {
             var comparator = strings[offset];
-            var versionString = strings[offset + 1];
-            var version = new Version(versionString);
+            var version = new Version(strings[offset + 1]);
             switch (comparator)
             {
                 case ">":

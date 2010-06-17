@@ -16,7 +16,7 @@ namespace OpenWrap
         public IPackageRepository ProjectRepository { get; set; }
         public WrapDescriptor Descriptor { get; set; }
         public IEnumerable<IPackageRepository> RemoteRepositories { get; set; }
-        public IPackageRepository UserRepository { get; set; }
+        public IPackageRepository SystemRepository { get; set; }
         public IFileSystem FileSystem { get; set; }
 
         public IDirectory CurrentDirectory
@@ -47,7 +47,7 @@ namespace OpenWrap
             if (dir != null)
                 ProjectRepository = new FolderRepository(dir);
 
-            UserRepository = new FolderRepository(FileSystem.GetDirectory(UserSettings.UserRepositoryPath));
+            SystemRepository = new FolderRepository(FileSystem.GetDirectory(UserSettings.UserRepositoryPath));
 
             RemoteRepositories = UserSettings.RemoteRepositories
                 .Select(x => new XmlRepository(FileSystem, new HttpNavigator(x), Enumerable.Empty<IExportBuilder>()))

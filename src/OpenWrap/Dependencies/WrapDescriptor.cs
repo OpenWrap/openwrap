@@ -12,6 +12,7 @@ namespace OpenWrap.Dependencies
             Dependencies = new List<WrapDependency>();
             Description = "";
         }
+
         public ICollection<WrapDependency> Dependencies { get; set; }
 
         public string Name { get; set; }
