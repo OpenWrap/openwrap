@@ -18,12 +18,9 @@ namespace OpenWrap.Commands
             {
                 return ParseVerbNounFormat(array, dashIndex);
             }
-            else
-            {
-                if (array.Length < 2) return new NotEnoughArgumentsFailure();
+            if (array.Length < 2) return new NotEnoughArgumentsFailure();
 
-                return ParseNounVerbFormat(array);
-            }
+            return ParseNounVerbFormat(array);
         }
 
         Result ParseNounVerbFormat(string[] array)

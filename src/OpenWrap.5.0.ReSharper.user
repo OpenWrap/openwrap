@@ -11,23 +11,13 @@
   </NAntValidationSettings>
   <RecentFiles>
     <RecentFiles>
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:CommandProcessor.cs" caret="0" fromTop="0" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:IPackageInfo.cs" caret="385" fromTop="13" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:UncompressedPackage.cs" caret="1523" fromTop="22" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:XmlPackage.cs" caret="1321" fromTop="44" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:XmlPackageInfo.cs" caret="1827" fromTop="43" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:ZipPackage.cs" caret="1834" fromTop="58" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Dependencies/f:resolving_dependencies_tree.cs" caret="8072" fromTop="48" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Dependencies/f:VersionVertice.cs" caret="229" fromTop="10" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:Error.cs" caret="223" fromTop="9" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Dependencies/f:WrapDescriptor.cs" caret="868" fromTop="30" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Dependencies/f:WrapDependency.cs" caret="249" fromTop="10" />
       <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:InMemoryEnvironment.cs" caret="1612" fromTop="57" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:HttpRepository.cs" caret="345" fromTop="12" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:CurrentDirectoryEnvironment.cs" caret="2123" fromTop="5" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:UserSettings.cs" caret="0" fromTop="0" />
       <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="915" fromTop="24" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:IO/f:IOExtensions.cs" caret="1131" fromTop="31" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:XmlRepository.cs" caret="388" fromTop="13" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Dependencies/f:WrapDescriptorParser.cs" caret="966" fromTop="24" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="525" fromTop="12" />
@@ -40,7 +30,17 @@
       <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="0" fromTop="0" />
       <File id="AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA/f:OpenWrap.CSharp.targets" caret="0" fromTop="0" />
       <File id="AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA/f:OpenWrap.tasks" caret="0" fromTop="0" />
-      <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:openwrap.proj/l:C!?src?caff?git?openwrap?build?openwrap.proj" caret="420" fromTop="8" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:NamespaceNotFound.cs" caret="387" fromTop="14" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLineParser.cs" caret="589" fromTop="16" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Dependencies/f:WrapDescriptionParser.cs" caret="444" fromTop="13" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLine.cs" caret="0" fromTop="0" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:AttributeBasedCommandDescriptor.cs" caret="0" fromTop="0" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:StreamExtensions.cs" caret="538" fromTop="7" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLineProcessor.cs" caret="70" fromTop="2" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:CommandLineParserTests.cs" caret="246" fromTop="0" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Dependencies/f:WrapDescriptionParserTests.cs" caret="169" fromTop="5" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:CommandProcessor.cs" caret="3763" fromTop="15" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:addWrapCommand.cs" caret="0" fromTop="0" />
     </RecentFiles>
     <RecentEdits>
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:Error.cs" caret="86" fromTop="4" />
@@ -61,7 +61,6 @@
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="1156" fromTop="25" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="1762" fromTop="39" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="1417" fromTop="32" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:IO/f:IOExtensions.cs" caret="1412" fromTop="36" />
       <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="2383" fromTop="38" />
       <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="1849" fromTop="27" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="544" fromTop="17" />
@@ -70,9 +69,9 @@
       <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Core/f:HelpCommand.cs" caret="193" fromTop="8" />
       <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:UpdateWrapCommand.cs" caret="3726" fromTop="43" />
       <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:NewWrapCommand.cs" caret="134" fromTop="4" />
-      <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:openwrap.proj/l:C!?src?caff?git?openwrap?build?openwrap.proj" caret="140" fromTop="0" />
-      <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:openwrap.proj/l:C!?src?caff?git?openwrap?build?openwrap.proj" caret="737" fromTop="16" />
-      <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:openwrap.proj/l:C!?src?caff?git?openwrap?build?openwrap.proj" caret="420" fromTop="8" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLineParser.cs" caret="589" fromTop="7" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLineProcessor.cs" caret="6243" fromTop="14" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Dependencies/f:WrapDescriptionParserTests.cs" caret="169" fromTop="5" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>

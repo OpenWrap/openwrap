@@ -4,7 +4,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Dependencies
 {
-    public class WrapDescriptionParserTests : Testing.context
+    public class WrapDescriptionParserTests : context
     {
         [Test]
         public void Parsing_description_sets_Description_property()
