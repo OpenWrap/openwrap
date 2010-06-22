@@ -43,9 +43,9 @@ namespace OpenWrap
 
             var destinationBytes = new byte[streamToReturn.Length - streamToReturn.Position];
             Buffer.BlockCopy(streamToReturn.GetBuffer(),
-                             (int)streamToReturn.Position, 
-                             destinationBytes, 
-                             0, 
+                             (int)streamToReturn.Position,
+                             destinationBytes,
+                             0,
                              (int)(streamToReturn.Length - streamToReturn.Position));
             return destinationBytes;
         }
@@ -57,9 +57,13 @@ namespace OpenWrap
     }
     public static class EnumerableExtensions
     {
-        public static IEnumerable<T> NotNull<T>(this IEnumerable<T> input) where T:class
+        public static IEnumerable<T> NotNull<T>(this IEnumerable<T> input) where T : class
         {
             return input.Where(x => x != null);
+        }
+        public static bool None<T>(this IEnumerable<T> input, Func<T, bool> condition) where T : class
+        {
+            return input.Any(x => !condition(x));
         }
     }
 }

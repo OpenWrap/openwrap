@@ -9,9 +9,9 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
-    class adding_wrap_from_local_package : context.command_context<AddWrapCommand>
+    class adding_wrap_from_local_package_in_project_path : context.command_context<AddWrapCommand>
     {
-        public adding_wrap_from_local_package()
+        public adding_wrap_from_local_package_in_project_path()
         {
             given_dependency("depends sauron");
             given_project_repository();
@@ -33,5 +33,39 @@ namespace OpenWrap.Tests.Commands
             Environment.SystemRepository.PackagesByName["sauron"].ShouldHaveCountOf(1);
         }
     }
+    class adding_wrap_from_local_package_outside_of_project_path : context.command_context<AddWrapCommand>
+    {
+        public adding_wrap_from_local_package_outside_of_project_path()
+        {
+            given_currentdirectory_package("sauron", new Version(1,0,0));
 
+            when_executing_command("-Name", "sauron");
+        }
+        [Test]
+        public void package_is_installed_in_system_repository()
+        {
+            Environment.SystemRepository.PackagesByName["sauron"]
+                .ShouldHaveCountOf(1)
+                .First().Version.ShouldBe(new Version(1, 0, 0));
+        }
+        [Test]
+        public void command_is_successful()
+        {
+            Results.ShouldHaveNone(x => x.Success);
+        }
+    }
+
+    class adding_non_existant_wrap : context.command_context<AddWrapCommand>
+    {
+        public adding_non_existant_wrap()
+        {
+            given_currentdirectory_package("sauron", new Version(1,0,0));
+            when_executing_command("-Name", "saruman");
+        }
+        [Test]
+        public void package_installation_is_unsuccessfull()
+        {
+            Results.ShouldHaveNone(x => x.Success);
+        }
+    }
 }
