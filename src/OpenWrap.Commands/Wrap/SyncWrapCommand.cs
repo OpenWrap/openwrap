@@ -28,50 +28,14 @@ namespace OpenWrap.Commands.Wrap
 
             // TODO: Check if not in project repository and fail nicely
             var descriptor = Environment.Descriptor;
-            var repositories = new[] { Environment.ProjectRepository, Environment.SystemRepository }
-                .Concat(Environment.RemoteRepositories);
 
-            var dependencyResolveResult = PackageManager.TryResolveDependencies(descriptor, repositories);
+            var dependencyResolveResult = PackageManager.TryResolveDependencies(descriptor, Environment.RepositoriesToReadFrom());
 
-            if (!dependencyResolveResult.IsSuccess)
-            {
-                yield return DependencyResolutionFailed(dependencyResolveResult);
-                yield break;
-            }
-            foreach(var dependency in dependencyResolveResult.Dependencies.Where(x => Environment.RemoteRepositories.Any(rem => rem == x.Package.Source)))
-            {
-                yield return new Result("Copying {0} to system repository.", dependency.Package.FullName);
-                using (var packageStream = dependency.Package.Load().OpenStream())
-                {
-                    var package = Environment.SystemRepository.Publish(dependency.Package.FullName, packageStream);
-                    if (Environment.ProjectRepository != null)
-                    {
-                        using (var localPackageStream = package.Load().OpenStream())
-                        {
-                            yield return new Result("Copying {0} to project repository.", package.Name);
-                            Environment.ProjectRepository.Publish(dependency.Package.FullName, localPackageStream);
-                        }
-                    }
-                }
-            }
-            foreach (var localDependency in dependencyResolveResult.Dependencies.Where(x => x.Package.Source == Environment.SystemRepository))
-            {
-                var package = localDependency.Package;
-                using (var packageStream = package.Load().OpenStream())
-                {
-                    yield return new Result("Copying {0} to project repository.", package.Name);
-                    Environment.ProjectRepository.Publish(package.FullName, packageStream);
-                }
-            }
+            foreach (var result in PackageManager
+                    .CopyResolvedDependenciesToRepositories(dependencyResolveResult,Environment.RepositoriesToWriteTo()))
+                yield return result;
         }
 
 
-        ICommandResult DependencyResolutionFailed(DependencyResolutionResult result)
-        {
-            return new Result("Dependency resolution failed.")
-            {
-                Success = false
-            };
-        }
     }
 }

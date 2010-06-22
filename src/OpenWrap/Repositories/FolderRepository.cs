@@ -63,5 +63,10 @@ namespace OpenWrap.Repositories
         {
             get { return true; }
         }
+
+        public string Name
+        {
+            get; set;
+        }
     }
 }

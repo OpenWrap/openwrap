@@ -37,7 +37,13 @@ namespace OpenWrap.Tests.Repositories
             given_current_folder_repository();
         }
         [Test]
-        public void publishing_is_not_supported()
+        public void publish_is_disabled()
+        {
+            Repository.CanPublish.ShouldBeFalse();
+
+        }
+        [Test]
+        public void attempting_publish_results_in_error()
         {
             Executing(() => Repository.Publish("isengard", new MemoryStream()))
                 .ShouldThrow<NotSupportedException>();
@@ -65,11 +71,6 @@ namespace OpenWrap.Tests.Repositories
     {
         public class current_directory_repository : Testing.context
         {
-            public current_directory_repository()
-            {
-
-            }
-
             protected CurrentDirectoryRepository Repository { get; set; }
             protected InMemoryEnvironment Environment { get; set; }
             protected InMemoryFileSystem FileSystem { get; set; }
@@ -89,10 +90,7 @@ namespace OpenWrap.Tests.Repositories
                 };
                 WrapServices.RegisterService<IFileSystem>(FileSystem);
 
-                Environment = new InMemoryEnvironment
-                {
-                    CurrentDirectory = FileSystem.GetDirectory(currentDirectory)
-                };
+                Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory));
                 WrapServices.RegisterService<IEnvironment>(Environment);
             }
 

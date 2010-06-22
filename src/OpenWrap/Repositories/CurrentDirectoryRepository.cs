@@ -37,5 +37,10 @@ namespace OpenWrap.Repositories
         {
             get { return false; }
         }
+
+        public string Name
+        {
+            get { return "Current directory"; }
+        }
     }
 }

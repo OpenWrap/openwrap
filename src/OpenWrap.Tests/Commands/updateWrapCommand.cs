@@ -25,22 +25,24 @@ namespace OpenWrap.Tests.Commands
 
             when_executing_command();
         }
+
         [Test]
         public void the_package_is_installed_alongside_previous_version_in_user_repo()
         {
             Environment.SystemRepository.PackagesByName["goldberry"].ShouldHaveCountOf(2);
         }
+
         [Test]
         public void the_package_is_installed_in_user_repo()
         {
             Environment.SystemRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
         }
+
         [Test]
         public void the_package_is_installed_in_project_repo()
         {
             Environment.ProjectRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
         }
-
     }
     public class when_not_in_project_folder_and_package_can_be_updated : context.command_context<UpdateWrapCommand>
     {

@@ -1,4 +1,1 @@
-﻿
-depends nhibernate-core = 2.1
-depends nhibernate-core 
-depends albacore 
+﻿depends nhibernate-cor

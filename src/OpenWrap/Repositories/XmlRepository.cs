@@ -12,8 +12,11 @@ namespace OpenWrap.Repositories
 {
     public class XmlRepository : IPackageRepository
     {
+        readonly IHttpNavigator _navigator;
+
         public XmlRepository(IFileSystem fileSystem, IHttpNavigator navigator, IEnumerable<IExportBuilder> builders)
         {
+            _navigator = navigator;
             var document = navigator.LoadFileList();
 
             PackagesByName = (from wrapList in document.Descendants("wrap")
@@ -55,6 +58,11 @@ namespace OpenWrap.Repositories
         public bool CanPublish
         {
             get { return false; }
+        }
+
+        public string Name
+        {
+            get { return string.Format("Remote [{0}]", _navigator); }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace OpenWrap.IO
         public static Regex Wildcard(this string stringValue)
         {
             stringValue = Regex.Escape(stringValue).Replace("\\?", ".?").Replace("\\*", ".*");
-            return new Regex(stringValue);
+            return new Regex("^" + stringValue +"$");
         }
     }
 }

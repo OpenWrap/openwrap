@@ -14,8 +14,6 @@ namespace OpenWrap.Repositories
 
         public DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor, IEnumerable<IPackageRepository> repositoriesToQuery)
         {
-            
-
             var packageOverrides = GetOverrides(wrapDescriptor);
             var allDependencies = ResolveAllDependencies(wrapDescriptor.Dependencies, packageOverrides, repositoriesToQuery);
 
@@ -27,10 +25,6 @@ namespace OpenWrap.Repositories
                 return ConflictingDependencies(allDependencies);
 
             return Successful(allDependencies);
-        }
-        public void AddOrUpdateDependency(ResolvedDependency dependency, IEnumerable<IPackageRepository> repositoriesToWrite)
-        {
-            
         }
         public void UpdateDependency(ResolvedDependency dependency,
             IPackageRepository destinationRepository)

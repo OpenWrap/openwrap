@@ -76,7 +76,7 @@ namespace OpenWrap.Repositories
             {
                 var descriptor = zip.Cast<ZipEntry>().FirstOrDefault(x => x.Name.EndsWith(".wrapdesc"));
                 if (descriptor == null)
-                    throw new InvalidOperationException("The package '{0}' doesn't contain a valid .wrapdesc file.");
+                    throw new InvalidOperationException(string.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", _wrapFile.Name));
                 using (var stream = zip.GetInputStream(descriptor))
                     Descriptor = new WrapDescriptorParser().ParseFile(new ZipWrapperFile(zip, descriptor), stream);
             }

@@ -11,7 +11,7 @@ namespace OpenWrap.IO
             directory.Add(file);
         }
 
-        public static IDirectory EnsureExists(this IDirectory directory)
+        public static T EnsureExists<T>(this T directory) where T:IFileSystemItem<T>
         {
             if (!directory.Exists)
                 directory.Create();

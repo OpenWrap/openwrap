@@ -10,6 +10,7 @@ namespace OpenWrap
     public interface IEnvironment : IService
     {
         IPackageRepository ProjectRepository { get; }
+        IPackageRepository CurrentDirectoryRepository { get; }
         WrapDescriptor Descriptor { get; }
         IEnumerable<IPackageRepository> RemoteRepositories { get; }
         IPackageRepository SystemRepository { get; }

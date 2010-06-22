@@ -56,12 +56,12 @@ namespace OpenWrap.IO
 
         public Stream InnerStream { get; private set; }
 
-        public void Close()
+        public override void Close()
         {
             InnerStream.Position = 0;
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
             InnerStream.Position = 0;
         }

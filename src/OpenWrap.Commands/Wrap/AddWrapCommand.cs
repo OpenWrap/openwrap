@@ -42,7 +42,7 @@ namespace OpenWrap.Commands.Wrap
             yield return VeryfyWrapRepository();
             if (_environment.Descriptor != null)
             {
-                yield return AddInstructionToWrapFile();
+                AddInstructionToWrapFile();
                 foreach (var nestedResult in SyncWrapFileWithWrapDirectory())
                     yield return nestedResult;
             }
@@ -82,7 +82,7 @@ namespace OpenWrap.Commands.Wrap
             };
         }
 
-        ICommandResult AddInstructionToWrapFile()
+        void AddInstructionToWrapFile()
         {
             // TODO: Make the environment descriptor separate from reader/writer,
             // and remove the File property on it.
@@ -91,7 +91,7 @@ namespace OpenWrap.Commands.Wrap
             using (var textWriter = new StreamWriter(fileStream, Encoding.UTF8))
                 textWriter.WriteLine("\r\n" + dependLine);
             new WrapDependencyParser().Parse(dependLine, _environment.Descriptor);
-            return null;
+
         }
 
         string GetDependsLine()

@@ -5,6 +5,7 @@ using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Build.Services;
 using OpenWrap.Commands;
+using OpenWrap.Commands.Wrap;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
@@ -24,10 +25,11 @@ namespace OpenWrap.Tests.Commands.context
         {
             Command = new AttributeBasedCommandDescriptor<T>();
             Commands = new CommandRepository { Command };
-            Environment = new InMemoryEnvironment();
 
             WrapServices.Clear();
-            FileSystem = new InMemoryFileSystem();
+            var currentDirectory = "c:\\current";
+            FileSystem = new InMemoryFileSystem() { CurrentDirectory = currentDirectory};
+            Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory));
             WrapServices.RegisterService<IFileSystem>(FileSystem);
             WrapServices.RegisterService<IEnvironment>(Environment);
             WrapServices.RegisterService<IPackageManager>(new PackageManager());
@@ -46,14 +48,14 @@ namespace OpenWrap.Tests.Commands.context
 
         protected void given_project_package(string name, Version version, params string[] dependencies)
         {
-            if (Environment.ProjectRepository == null)
-                Environment.ProjectRepository = new InMemoryRepository();
+            given_project_repository();
             AddPackage(Environment.ProjectRepository, name, version, dependencies);
         }
 
         protected void given_project_repository()
         {
-            Environment.ProjectRepository = new InMemoryRepository();
+            if (Environment.ProjectRepository == null)
+                Environment.ProjectRepository = new InMemoryRepository("Project repository");
         }
 
         protected void given_remote_package(string name, Version version, params string[] dependencies)
@@ -72,7 +74,7 @@ namespace OpenWrap.Tests.Commands.context
             Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
         }
 
-        static void AddPackage(InMemoryRepository repository, string name, Version version, string[] dependencies)
+        protected static void AddPackage(InMemoryRepository repository, string name, Version version, string[] dependencies)
         {
             repository.Packages.Add(new InMemoryPackage
             {
@@ -82,6 +84,11 @@ namespace OpenWrap.Tests.Commands.context
                 Dependencies = dependencies.Select(x =>
                                                    WrapDependencyParser.ParseDependency(x)).ToList()
             });
+        }
+
+        protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
+        {
+            command_context<AddWrapCommand>.AddPackage(Environment.CurrentDirectoryRepository, packageName, version, dependencies);
         }
     }
 }

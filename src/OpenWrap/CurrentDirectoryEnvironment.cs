@@ -14,6 +14,9 @@ namespace OpenWrap
     public class CurrentDirectoryEnvironment : IEnvironment
     {
         public IPackageRepository ProjectRepository { get; set; }
+
+        public IPackageRepository CurrentDirectoryRepository{get; set;}
+
         public WrapDescriptor Descriptor { get; set; }
         public IEnumerable<IPackageRepository> RemoteRepositories { get; set; }
         public IPackageRepository SystemRepository { get; set; }
@@ -46,6 +49,8 @@ namespace OpenWrap
 
             if (dir != null)
                 ProjectRepository = new FolderRepository(dir);
+
+            CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
             SystemRepository = new FolderRepository(FileSystem.GetDirectory(UserSettings.UserRepositoryPath));
 

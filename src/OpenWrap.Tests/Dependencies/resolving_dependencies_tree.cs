@@ -93,7 +93,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             Resolve.IsSuccess.ShouldBeTrue();
             Resolve.Dependencies.First().Package.ShouldNotBeNull()
-                .Source.ShouldBe(UserRepository);
+                .Source.ShouldBe(SystemRepository);
         }
 
 
@@ -135,7 +135,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             protected InMemoryRepository LocalRepository;
             protected InMemoryRepository RemoteRepository;
             protected DependencyResolutionResult Resolve;
-            protected InMemoryRepository UserRepository;
+            protected InMemoryRepository SystemRepository;
 
             protected override void SetUp()
             {
@@ -145,9 +145,9 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     Name = "test",
                     Version = new Version(1, 0)
                 };
-                LocalRepository = new InMemoryRepository();
-                UserRepository = new InMemoryRepository();
-                RemoteRepository = new InMemoryRepository();
+                LocalRepository = new InMemoryRepository("Local repository");
+                SystemRepository = new InMemoryRepository("System repository");
+                RemoteRepository = new InMemoryRepository("Remote repository");
             }
 
             protected void given_dependency(string dependency)
@@ -167,7 +167,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             protected void given_user_package(string name, params string[] dependencies)
             {
-                Add(UserRepository, name, dependencies);
+                Add(SystemRepository, name, dependencies);
             }
 
             protected void when_resolving_packages()
@@ -176,7 +176,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                                                                       new[]
                                                                       {
                                                                           LocalRepository,
-                                                                          UserRepository,
+                                                                          SystemRepository,
                                                                           RemoteRepository
                                                                       });
             }
@@ -238,9 +238,19 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         {
             public List<IPackageInfo> Packages = new List<IPackageInfo>();
 
+            public InMemoryRepository(string name)
+            {
+                Name = name;
+            }
+
             public bool CanPublish
             {
                 get { return true; }
+            }
+
+            public string Name
+            {
+                get; set;
             }
 
 

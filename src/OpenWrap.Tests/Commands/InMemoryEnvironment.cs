@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
@@ -15,14 +16,16 @@ namespace OpenWrap.Tests.Commands
         public IList<InMemoryRepository> RemoteRepositories;
         public InMemoryRepository SystemRepository;
         public InMemoryRepository RemoteRepository;
+        public InMemoryRepository CurrentDirectoryRepository;
 
-        public InMemoryEnvironment()
+        public InMemoryEnvironment(IDirectory currentDirectory)
         {
-            SystemRepository = new InMemoryRepository();
-            RemoteRepository = new InMemoryRepository();
+            CurrentDirectory = currentDirectory;
+            SystemRepository = new InMemoryRepository("System repository");
+            RemoteRepository = new InMemoryRepository("Remote repository");
+            CurrentDirectoryRepository = new InMemoryRepository("Current directory repository"); 
             RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };
-            Descriptor = new WrapDescriptor();
-
+            Descriptor = new WrapDescriptor() { File = CurrentDirectory.GetFile("descriptor.wrapdesc").EnsureExists()};
         }
 
         void IService.Initialize()
@@ -32,6 +35,11 @@ namespace OpenWrap.Tests.Commands
         IPackageRepository IEnvironment.ProjectRepository
         {
             get { return ProjectRepository; }
+        }
+
+        IPackageRepository IEnvironment.CurrentDirectoryRepository
+        {
+            get { return CurrentDirectoryRepository; }
         }
 
         public WrapDescriptor Descriptor { get; set; }
