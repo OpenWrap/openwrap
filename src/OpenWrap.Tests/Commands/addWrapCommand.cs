@@ -33,6 +33,20 @@ namespace OpenWrap.Tests.Commands
             Environment.SystemRepository.PackagesByName["sauron"].ShouldHaveCountOf(1);
         }
     }
+
+    class adding_wrap_from_local_package_in_project_path_with_system_parameter : context.command_context<AddWrapCommand>
+    {
+        
+        public adding_wrap_from_local_package_in_project_path_with_system_parameter()
+        {
+            given_dependency("depends sauron");
+            given_project_repository();
+            given_currentdirectory_package("sauron", new Version(1, 0, 0));
+
+
+            when_executing_command("-Name","sauron", "-System");
+        }
+    }
     class adding_wrap_from_local_package_outside_of_project_path : context.command_context<AddWrapCommand>
     {
         public adding_wrap_from_local_package_outside_of_project_path()
@@ -42,7 +56,7 @@ namespace OpenWrap.Tests.Commands
             when_executing_command("-Name", "sauron");
         }
         [Test]
-        public void package_is_installed_in_system_repository()
+        public void installs_package_in_system_repository()
         {
             Environment.SystemRepository.PackagesByName["sauron"]
                 .ShouldHaveCountOf(1)
@@ -51,7 +65,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void command_is_successful()
         {
-            Results.ShouldHaveNone(x => x.Success);
+            Results.ShouldHaveAll(x => x.Success);
         }
     }
 
@@ -65,7 +79,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void package_installation_is_unsuccessfull()
         {
-            Results.ShouldHaveNone(x => x.Success);
+            Results.ShouldHaveAtLeastOne(x => x.Success == false);
         }
     }
 }

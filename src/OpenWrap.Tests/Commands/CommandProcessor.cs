@@ -96,6 +96,16 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             command.IsDangerous.ShouldBeTrue();
         }
         [Test]
+        public void bool_parameters_are_considered_switches()
+        {
+            given_command<TravelToMordor>();
+
+            when_parsing_input("lotr", "travel", "-IsDangerous");
+
+            result.Command.ShouldBeOfType<TravelToMordor>()
+                .IsDangerous.ShouldBeTrue();
+        }
+        [Test]
         public void parameter_is_assigned_using_camel_case_initials()
         {
             given_command<TravelToMordor>();
@@ -116,6 +126,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
         [CommandInput(Position = 1)]
         public bool IsDangerous { get; set; }
+
 
         public IEnumerable<ICommandResult> Execute()
         {

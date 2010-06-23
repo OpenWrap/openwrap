@@ -6,7 +6,7 @@ namespace OpenWrap.Commands
 {
     public interface ICommandRepository : ICollection<ICommandDescriptor>, IService
     {
-        IEnumerable<string> Namespaces { get; }
+        IEnumerable<string> Nouns { get; }
         IEnumerable<string> Verbs { get; }
         ICommandDescriptor Get(string @namespace, string name);
     }
