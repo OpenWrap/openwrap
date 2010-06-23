@@ -13,4 +13,5 @@ namespace OpenWrap.Repositories
         void UpdateDependency(ResolvedDependency dependency,
                               IPackageRepository destinationRepository);
     }
+    
 }

@@ -9,6 +9,7 @@ using OpenWrap.Commands.Wrap;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
+using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands.context
 {
@@ -28,7 +29,7 @@ namespace OpenWrap.Tests.Commands.context
 
             WrapServices.Clear();
             var currentDirectory = "c:\\current";
-            FileSystem = new InMemoryFileSystem() { CurrentDirectory = currentDirectory};
+            FileSystem = new InMemoryFileSystem() { CurrentDirectory = currentDirectory };
             Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory));
             WrapServices.RegisterService<IFileSystem>(FileSystem);
             WrapServices.RegisterService<IEnvironment>(Environment);
@@ -43,7 +44,7 @@ namespace OpenWrap.Tests.Commands.context
 
         protected void given_file(string filePath, Stream stream)
         {
-            
+
         }
 
         protected void given_project_package(string name, Version version, params string[] dependencies)
@@ -89,6 +90,21 @@ namespace OpenWrap.Tests.Commands.context
         protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
         {
             command_context<AddWrapCommand>.AddPackage(Environment.CurrentDirectoryRepository, packageName, version, dependencies);
+        }
+
+        protected void package_is_not_in_repository(InMemoryRepository repository, string packageName, Version packageVersion)
+        {
+            (repository.PackagesByName.Contains("packageName")
+                              ? repository.PackagesByName[packageName].FirstOrDefault(x => x.Version.Equals(packageVersion))
+                              : null).ShouldBeNull();
+
+
+        }
+        protected void package_is_in_repository(InMemoryRepository repository, string packageName, Version packageVersion)
+        {
+            repository.PackagesByName[packageName]
+                .ShouldHaveCountOf(1)
+                .First().Version.ShouldBe(packageVersion);
         }
     }
 }

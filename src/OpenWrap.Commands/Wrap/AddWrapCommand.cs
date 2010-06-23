@@ -25,7 +25,7 @@ namespace OpenWrap.Commands.Wrap
         public string Version { get; set; }
 
         [CommandInput]
-        public bool LocalOnly { get; set; }
+        public bool ProjectOnly { get; set; }
 
         [CommandInput]
         public bool SystemOnly { get; set; }
@@ -40,7 +40,7 @@ namespace OpenWrap.Commands.Wrap
 
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
-            if (_environment.Descriptor != null)
+            if (_environment.Descriptor != null && !SystemOnly)
             {
                 AddInstructionToWrapFile();
                 foreach (var nestedResult in SyncWrapFileWithWrapDirectory())
@@ -48,22 +48,21 @@ namespace OpenWrap.Commands.Wrap
             }
             else
             {
-                var resolvedDependencies = _packageManager.TryResolveDependencies(GetDescriptor(), new[]{ _environment.SystemRepository}.Concat(_environment.RemoteRepositories));
+                var resolvedDependencies = _packageManager.TryResolveDependencies(GetDescriptor(), _environment.RepositoriesToReadFrom());
 
                 if (!resolvedDependencies.IsSuccess)
                 {
                     yield return new GenericError("The dependency couldn't be found.");
                     yield break;
                 }
-                foreach (var dependency in resolvedDependencies.Dependencies)
+                var repositoriesToCopyTo = _environment.RemoteRepositories.Concat(new[]
                 {
-                    yield return new Result("Copying {0} to user repository.", dependency.Package.FullName);
-                    using (var packageStream = dependency.Package.Load().OpenStream())
-                    {
-                        _environment.SystemRepository.Publish(dependency.Package.FullName, packageStream);
-                        yield return new Result("Done.");
-                    }
-                }
+                    _environment.CurrentDirectoryRepository,
+                    ProjectOnly ? null : _environment.SystemRepository,
+                    _environment.ProjectRepository
+                });
+                foreach(var msg in _packageManager.CopyResolvedDependenciesToRepositories(resolvedDependencies, repositoriesToCopyTo))
+                    yield return msg;
             }
         }
 
@@ -76,7 +75,9 @@ namespace OpenWrap.Commands.Wrap
                         new WrapDependency
                         {
                             Name = Name,
-                            VersionVertices = WrapDependencyParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList()
+                            VersionVertices = Version != null 
+                                ? WrapDependencyParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList()
+                                : new List<VersionVertice>()
                         }
                     }
             };
@@ -84,6 +85,7 @@ namespace OpenWrap.Commands.Wrap
 
         void AddInstructionToWrapFile()
         {
+
             // TODO: Make the environment descriptor separate from reader/writer,
             // and remove the File property on it.
             var dependLine = GetDependsLine();
@@ -101,7 +103,8 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandResult> SyncWrapFileWithWrapDirectory()
         {
-            return new SyncWrapCommand().Execute();
+            return new SyncWrapCommand()
+                .Execute();
         }
 
         ICommandResult VerifyWrapFile()

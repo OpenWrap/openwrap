@@ -141,18 +141,21 @@ namespace OpenWrap.Commands
             {
                 return descriptor;
             }
-            else // Try to match by camel case initials
-            {
-                var potentialInputs =
-                    from input in command.Inputs
-                    where input.Key.GetCamelCaseInitials().Equals(name, StringComparison.OrdinalIgnoreCase)
-                    select input.Value;
+            var potentialInputs = from input in command.Inputs
+                                  where name.MatchesHumps(input.Key)
+                                  select input.Value;
 
-                // TODO: What happens if the name matches more than one input? Should this throw?
-                // For now, just return the first input found.
-                return potentialInputs.FirstOrDefault();
-            }
+            //var potentialInputs =
+            //    from input in command.Inputs
+            //    where input.Key.GetCamelCaseInitials().Equals(name, StringComparison.OrdinalIgnoreCase)
+            //    select input.Value;
+
+            // TODO: What happens if the name matches more than one input? Should this throw?
+            // For now, just return the first input found.
+            return potentialInputs.FirstOrDefault();
         }
+
+
 
         IEnumerable<KeyValuePair<string, string>> ParseInputsFromCommandLine(IEnumerable<string> strings)
         {

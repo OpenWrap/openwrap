@@ -36,7 +36,7 @@ namespace OpenWrap.Commands
 
         public void SetValue(object target, object value)
         {
-            Property.SetValue(target, value ?? true, null);
+            Property.SetValue(target, value ?? "true", null);
         }
 
         public PropertyInfo Property { get; set; }
