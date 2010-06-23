@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using NUnit.Framework;
-using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
+using OpenWrap.IO.FileSystem.InMemory;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
 

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap.Tests.Commands
 {

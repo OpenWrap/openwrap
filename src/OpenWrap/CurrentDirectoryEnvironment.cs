@@ -24,7 +24,7 @@ namespace OpenWrap
 
         public IDirectory CurrentDirectory
         {
-            get { return IO.FileSystem.Local.GetDirectory(Environment.CurrentDirectory); }
+            get { return IO.FileSystems.Local.GetDirectory(Environment.CurrentDirectory); }
         }
 
         public ExecutionEnvironment ExecutionEnvironment
@@ -34,7 +34,7 @@ namespace OpenWrap
 
         public void Initialize()
         {
-            FileSystem = IO.FileSystem.Local;
+            FileSystem = IO.FileSystems.Local;
             Descriptor = CurrentDirectory
                 .AncestorsAndSelf()
                 .SelectMany(x => x.Files("*.wrapdesc"))

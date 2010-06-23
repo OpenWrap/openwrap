@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Commands;
-using OpenWrap.Commands.Core;
 using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories
 {
     public static class PackageManagerExtensions
     {
-        public static IEnumerable<ICommandResult> CopyResolvedDependenciesToRepositories(this IPackageManager manager, DependencyResolutionResult dependencies, params IPackageRepository[] repositories)
+        public static IEnumerable<ICommandResult> CopyPackagesToRepositories(this IPackageManager manager, DependencyResolutionResult dependencies, params IPackageRepository[] repositories)
         {
-            return CopyResolvedDependenciesToRepositories(manager, dependencies, (IEnumerable<IPackageRepository>)repositories);
+            return CopyPackagesToRepositories(manager, dependencies, (IEnumerable<IPackageRepository>)repositories);
         }
 
-        public static IEnumerable<ICommandResult> CopyResolvedDependenciesToRepositories(this IPackageManager manager,
+        public static IEnumerable<ICommandResult> CopyPackagesToRepositories(this IPackageManager manager,
                                                                                          DependencyResolutionResult dependencies,
                                                                                          IEnumerable<IPackageRepository> repositoriesToWriteTo)
         {
@@ -50,7 +49,7 @@ namespace OpenWrap.Repositories
             }
         }
 
-        public static IEnumerable<IPackageRepository> RepositoriesToReadFrom(this IEnvironment environment)
+        public static IEnumerable<IPackageRepository> RepositoriesForRead(this IEnvironment environment)
         {
             return new[]
             {
@@ -60,14 +59,16 @@ namespace OpenWrap.Repositories
             }.Concat(environment.RemoteRepositories);
         }
 
-        public static IEnumerable<IPackageRepository> RepositoriesToWriteTo(this IEnvironment environment)
+        public static IEnumerable<IPackageRepository> RepositoriesForWrite(this IEnvironment environment)
         {
-            return environment.RemoteRepositories.Concat(new[]
+            var reps = environment.RemoteRepositories.Concat(new[]
             {
                 environment.CurrentDirectoryRepository,
-                environment.SystemRepository,
-                environment.ProjectRepository
-            });
+                environment.SystemRepository
+            }).ToList();
+            if (environment.ProjectRepository != null)
+                reps.Add(environment.ProjectRepository);
+            return reps;
         }
 
         static ICommandResult DependencyResolutionFailed(DependencyResolutionResult result)

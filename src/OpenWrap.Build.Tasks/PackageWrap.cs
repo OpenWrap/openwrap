@@ -15,7 +15,7 @@ namespace OpenWrap.Build.Tasks
     {
         readonly IFileSystem _fileSystem;
 
-        public PackageWrap() : this(FileSystem.Local)
+        public PackageWrap() : this(FileSystems.Local)
         {
             
         }

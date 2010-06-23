@@ -9,9 +9,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace OpenWrap
 {
@@ -53,17 +51,6 @@ namespace OpenWrap
         public static void Write(this Stream stream, byte[] buffer)
         {
             stream.Write(buffer, 0, buffer.Length);
-        }
-    }
-    public static class EnumerableExtensions
-    {
-        public static IEnumerable<T> NotNull<T>(this IEnumerable<T> input) where T : class
-        {
-            return input.Where(x => x != null);
-        }
-        public static bool None<T>(this IEnumerable<T> input, Func<T, bool> condition) where T : class
-        {
-            return input.Any(x => !condition(x));
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace OpenWrap.IO
+namespace OpenWrap.IO.FileSystem.Local
 {
     public class LocalPath : IPath, IEquatable<IPath>
     {
@@ -12,7 +12,7 @@ namespace OpenWrap.IO
         public LocalPath(string fullPath)
         {
             FullPath = fullPath;
-            FileSystem = IO.FileSystem.Local;
+            FileSystem = IO.FileSystems.Local;
             IsRooted = Path.IsPathRooted(fullPath);
             
             

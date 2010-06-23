@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.IO;
+using OpenWrap.Build;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
 
-namespace OpenWrap.Build.Services
+namespace OpenWrap.Services
 {
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
     public class WrapDescriptorMonitor : IWrapDescriptorMonitoringService
@@ -40,7 +41,7 @@ namespace OpenWrap.Build.Services
 
         void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
         {
-            NotifyAllClients(FileSystem.Local.GetFile(e.FullPath));
+            NotifyAllClients(FileSystems.Local.GetFile(e.FullPath));
         }
         void NotifyClient(IFile wrapPath, IWrapAssemblyClient client)
         {

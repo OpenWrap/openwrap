@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenWrap.Exports;
@@ -80,67 +79,6 @@ namespace OpenWrap.Repositories
                 using (var stream = zip.GetInputStream(descriptor))
                     Descriptor = new WrapDescriptorParser().ParseFile(new ZipWrapperFile(zip, descriptor), stream);
             }
-        }
-    }
-
-    internal class ZipWrapperFile : IFile
-    {
-        readonly ZipFile _zip;
-        readonly ZipEntry _entry;
-
-        public ZipWrapperFile(ZipFile zip, ZipEntry entry)
-        {
-            _zip = zip;
-            _entry = entry;
-        }
-
-        public IFile Create()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IPath Path
-        {
-            get { return new LocalPath("/"); }
-        }
-
-        public IDirectory Parent
-        {
-            get { return null; }
-        }
-
-        public IFileSystem FileSystem
-        {
-            get { return IO.FileSystem.Local; }
-        }
-
-        public bool Exists
-        {
-            get { return true; }
-        }
-
-        public string Name
-        {
-            get { return _entry.Name; }
-        }
-
-        public void Delete()
-        {
-        }
-
-        public string NameWithoutExtension
-        {
-            get{ return System.IO.Path.GetFileNameWithoutExtension(_entry.Name); }
-        }
-
-        public DateTime? LastModifiedTimeUtc
-        {
-            get { return _entry.DateTime; }
-        }
-
-        public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
-        {
-            return _zip.GetInputStream(_entry);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
+using OpenWrap.Services;
 
 namespace OpenWrap.Repositories
 {

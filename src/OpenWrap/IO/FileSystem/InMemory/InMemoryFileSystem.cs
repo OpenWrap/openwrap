@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Xml.Linq;
-using SysPath = System.IO.Path;
+using OpenWrap.IO.FileSystem.Local;
 
-namespace OpenWrap.IO
+namespace OpenWrap.IO.FileSystem.InMemory
 {
     public class InMemoryFileSystem : IFileSystem
     {
@@ -43,7 +42,7 @@ namespace OpenWrap.IO
         }
         public IDirectory GetDirectory(string directoryPath)
         {
-            var resolvedDirectoryPath = SysPath.GetFullPath(SysPath.Combine(CurrentDirectory,directoryPath));
+            var resolvedDirectoryPath = Path.GetFullPath(Path.Combine(CurrentDirectory,directoryPath));
             var pathSegments = new LocalPath(resolvedDirectoryPath).Segments;
             return pathSegments
                 .Skip(1)
@@ -53,7 +52,7 @@ namespace OpenWrap.IO
 
         public IFile GetFile(string filePath)
         {
-            var resolviedFilePath = SysPath.GetFullPath(SysPath.Combine(CurrentDirectory, filePath));
+            var resolviedFilePath = Path.GetFullPath(Path.Combine(CurrentDirectory, filePath));
             var pathSegments = new LocalPath(resolviedFilePath).Segments;
             var ownerFolder = pathSegments
                 .Skip(1).Take(pathSegments.Count()-2)
@@ -75,7 +74,7 @@ namespace OpenWrap.IO
 
         public ITemporaryDirectory CreateTempDirectory()
         {
-            return new InMemoryTemporaryDirectory(SysPath.Combine(@"c:\temporary", SysPath.GetRandomFileName()))
+            return new InMemoryTemporaryDirectory(Path.Combine(@"c:\temporary", Path.GetRandomFileName()))
             {
                 Exists = true,
                 FileSystem = this
@@ -93,7 +92,7 @@ namespace OpenWrap.IO
 
         public ITemporaryFile CreateTempFile()
         {
-            return new InMemoryTemporaryFile(SysPath.Combine(@"c:\temporary", SysPath.GetRandomFileName()))
+            return new InMemoryTemporaryFile(Path.Combine(@"c:\temporary", Path.GetRandomFileName()))
             {
                 Exists = true,
                 FileSystem = this
@@ -102,7 +101,7 @@ namespace OpenWrap.IO
 
         public IDirectory GetTempDirectory()
         {
-            return new InMemoryTemporaryDirectory(SysPath.GetTempPath())
+            return new InMemoryTemporaryDirectory(Path.GetTempPath())
             {
                 Exists = true,
                 FileSystem = this

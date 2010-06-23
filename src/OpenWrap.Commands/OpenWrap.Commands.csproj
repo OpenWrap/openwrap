@@ -50,9 +50,7 @@
     <Compile Include="Core\QuitCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wrap\AddWrapCommand.cs" />
-    <Compile Include="Wrap\GenericError.cs" />
     <Compile Include="Wrap\NewWrapCommand.cs" />
-    <Compile Include="Wrap\PackageManagerExtensions.cs" />
     <Compile Include="Wrap\PackageRepositoryExtensions.cs" />
     <Compile Include="Wrap\SyncWrapCommand.cs" />
     <Compile Include="Wrap\UpdateWrapCommand.cs" />

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap
 {

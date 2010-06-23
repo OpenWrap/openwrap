@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OpenWrap.IO
+﻿namespace OpenWrap.IO.FileSystem
 {
     public abstract class AbstractFileSystem : IFileSystem
     {

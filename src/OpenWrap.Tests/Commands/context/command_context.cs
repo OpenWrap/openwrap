@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap.Build.Services;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
+using OpenWrap.IO.FileSystem.InMemory;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands.context
@@ -94,7 +95,7 @@ namespace OpenWrap.Tests.Commands.context
 
         protected void package_is_not_in_repository(InMemoryRepository repository, string packageName, Version packageVersion)
         {
-            (repository.PackagesByName.Contains("packageName")
+            (repository.PackagesByName.Contains(packageName)
                               ? repository.PackagesByName[packageName].FirstOrDefault(x => x.Version.Equals(packageVersion))
                               : null).ShouldBeNull();
 

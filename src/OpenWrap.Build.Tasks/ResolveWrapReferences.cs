@@ -7,11 +7,11 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenWrap.Exports;
 using OpenWrap.Build;
-using OpenWrap.Build.Services;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Resharper;
+using OpenWrap.Services;
 
 namespace OpenWrap.Build.Tasks
 {
@@ -25,7 +25,7 @@ namespace OpenWrap.Build.Tasks
         public ResolveWrapReferences()
         {
             InternalServices.Initialize();
-            _fileSystem = FileSystem.Local;
+            _fileSystem = FileSystems.Local;
         }
 
         [Required]

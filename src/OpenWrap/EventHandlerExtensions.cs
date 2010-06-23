@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenWrap.Repositories
+namespace OpenWrap
 {
     public static class EventHandlerExtensions
     {

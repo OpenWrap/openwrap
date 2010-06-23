@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenWrap.Build;
-using OpenWrap.Build.Services;
 
-namespace OpenWrap.Build.Services
+namespace OpenWrap.Services
 {
-    public interface VSIService : IService {}
     public static class WrapServices
     {
         static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();

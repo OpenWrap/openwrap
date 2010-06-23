@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenWrap.Build.Services;
 using OpenWrap.Commands.Core;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -41,7 +41,7 @@ namespace OpenWrap.Commands.Wrap
 
             var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, Environment.RemoteRepositories);
 
-            foreach (var message in PackageManager.CopyResolvedDependenciesToRepositories(
+            foreach (var message in PackageManager.CopyPackagesToRepositories(
                 resolveResult, Environment.SystemRepository))
                 yield return message;
         }
@@ -69,9 +69,9 @@ namespace OpenWrap.Commands.Wrap
         {
             var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository }));
 
-            return PackageManager.CopyResolvedDependenciesToRepositories(
+            return PackageManager.CopyPackagesToRepositories(
                 resolvedPackages,
-                Environment.RepositoriesToWriteTo()
+                Environment.RepositoriesForWrite()
                 );
         }
     }

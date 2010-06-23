@@ -1,4 +1,4 @@
-﻿namespace OpenWrap.IO
+﻿namespace OpenWrap.IO.FileSystem.InMemory
 {
     public class InMemoryTemporaryDirectory : InMemoryDirectory, ITemporaryDirectory
     {

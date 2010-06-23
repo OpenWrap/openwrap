@@ -1,4 +1,6 @@
-namespace OpenWrap.Build.Services
+using OpenWrap.Services;
+
+namespace OpenWrap
 {
     public static class InternalServices
     {

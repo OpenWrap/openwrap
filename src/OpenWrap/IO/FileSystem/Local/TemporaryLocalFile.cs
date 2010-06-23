@@ -1,16 +1,15 @@
 ﻿using System;
 
-namespace OpenWrap.IO
+namespace OpenWrap.IO.FileSystem.Local
 {
-    public class TemporaryLocalDirectory : LocalDirectory, ITemporaryDirectory
+    public class TemporaryLocalFile : LocalFile, ITemporaryFile
     {
-        public TemporaryLocalDirectory(string path)
-            : base(path)
+        public TemporaryLocalFile(string filePath)
+            : base(filePath)
         {
-            Create();
         }
 
-        ~TemporaryLocalDirectory()
+        ~TemporaryLocalFile()
         {
             Dispose(false);
         }

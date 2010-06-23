@@ -9,6 +9,15 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
+    class adding_wrap_with_incompatible_arguments : context.command_context<AddWrapCommand>
+    {
+        public adding_wrap_with_incompatible_arguments()
+        {
+            given_project_repository();
+
+            when_executing_command("-System", "-Project");
+        }
+    }
     class adding_wrap_from_local_package_in_project_path : context.command_context<AddWrapCommand>
     {
         public adding_wrap_from_local_package_in_project_path()
@@ -66,7 +75,7 @@ namespace OpenWrap.Tests.Commands
         Version SAURON_VERSION = new Version(1, 0, 0);
         public adding_wrap_from_local_package_in_project_path_with_project_only_parameter()
         {
-            given_currentdirectory_package("sauron", new Version(1,0,0));
+            given_currentdirectory_package(SAURON_NAME, SAURON_VERSION);
             given_project_repository();
 
             when_executing_command("-Name", "sauron", "-Project");

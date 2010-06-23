@@ -15,6 +15,7 @@ namespace OpenWrap.Commands
 
         public IEnumerable<ICommandResult> Execute(IEnumerable<string> strings)
         {
+
             if (strings == null || strings.Count() < 2)
             {
                 yield return new NotEnoughParameters();
@@ -124,8 +125,20 @@ namespace OpenWrap.Commands
             var commandInstance = command.Create();
             foreach (var namedInput in allAssignedInputs)
                 namedInput.Input.SetValue(commandInstance, namedInput.ParsedValue);
-            foreach (var nestedResult in commandInstance.Execute())
-                yield return nestedResult;
+            var enumerator = commandInstance.Execute().GetEnumerator();
+            MoveNextResult result;
+            do
+            {
+                ICommandResult msg;
+                Exception error;
+                result = enumerator.TryMoveNext(out msg, out error);
+                if (result == MoveNextResult.Moved)
+                    yield return msg;
+                else if (result == MoveNextResult.End)
+                    yield break;
+                else if (result == MoveNextResult.Error)
+                    yield return new ExceptionError(error);
+            } while (result == MoveNextResult.Moved);
         }
 
         IEnumerable<ParsedInput> TryAssignSwitchParameters(IEnumerable<ParsedInput> allAssignedInputs, IDictionary<string, ICommandInputDescriptor> inputs)

@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace OpenWrap.IO
+namespace OpenWrap.IO.FileSystem.Local
 {
     public class LocalDirectory : AbstractDirectory, IDirectory, IEquatable<IDirectory>
     {
@@ -28,7 +27,7 @@ namespace OpenWrap.IO
 
         public IFileSystem FileSystem
         {
-            get { return IO.FileSystem.Local; }
+            get { return IO.FileSystems.Local; }
         }
 
         public string Name

@@ -2,21 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using SysPath = System.IO.Path;
+using OpenWrap.IO.FileSystem.Local;
 
-namespace OpenWrap.IO
+namespace OpenWrap.IO.FileSystem.InMemory
 {
-    public abstract class AbstractDirectory
-    {
-        protected string NormalizeDirectoryPath(string directoryPath)
-        {
-            if (!directoryPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())
-        && !directoryPath.EndsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()))
-                return directoryPath + System.IO.Path.DirectorySeparatorChar;
-            return directoryPath;
-        }
-    }
-
     public class InMemoryDirectory : AbstractDirectory, IDirectory, IEquatable<IDirectory>
     {
 
@@ -117,7 +106,7 @@ namespace OpenWrap.IO
 
             if (inMemoryDirectory == null)
             {
-                inMemoryDirectory = new InMemoryDirectory(SysPath.Combine(Path.FullPath, directoryName))
+                inMemoryDirectory = new InMemoryDirectory(System.IO.Path.Combine(Path.FullPath, directoryName))
                 {
                     Parent = this
                 };

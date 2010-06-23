@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace OpenWrap.IO
+namespace OpenWrap.IO.FileSystem.Local
 {
     public class LocalFile : IFile
     {
@@ -20,7 +20,7 @@ namespace OpenWrap.IO
 
         public IFileSystem FileSystem
         {
-            get { return IO.FileSystem.Local; }
+            get { return IO.FileSystems.Local; }
         }
 
         public string Name

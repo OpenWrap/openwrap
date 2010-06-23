@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using OpenWrap.Commands;
-using OpenWrap.Build.Services;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands
 {

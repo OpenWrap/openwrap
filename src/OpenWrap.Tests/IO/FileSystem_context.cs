@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.IO;
+using OpenWrap.IO.FileSystem.InMemory;
+using OpenWrap.IO.FileSystem.Local;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.IO

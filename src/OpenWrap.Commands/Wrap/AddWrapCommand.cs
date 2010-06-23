@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using OpenWrap.Build.Services;
-using OpenWrap.Commands.Core;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -15,7 +14,6 @@ namespace OpenWrap.Commands.Wrap
     public class AddWrapCommand : ICommand
     {
         IEnvironment _environment;
-        IFileSystem _fileSystem;
         IPackageManager _packageManager;
 
         [CommandInput(IsRequired = true, Position = 0)]
@@ -35,11 +33,12 @@ namespace OpenWrap.Commands.Wrap
         public IEnumerable<ICommandResult> Execute()
         {
             _environment = WrapServices.GetService<IEnvironment>();
-            _fileSystem = WrapServices.GetService<IFileSystem>();
+            WrapServices.GetService<IFileSystem>();
             _packageManager = WrapServices.GetService<IPackageManager>();
 
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
+
             if (_environment.Descriptor != null && !SystemOnly)
             {
                 AddInstructionToWrapFile();
@@ -48,7 +47,7 @@ namespace OpenWrap.Commands.Wrap
             }
             else
             {
-                var resolvedDependencies = _packageManager.TryResolveDependencies(GetDescriptor(), _environment.RepositoriesToReadFrom());
+                var resolvedDependencies = _packageManager.TryResolveDependencies(GetDescriptor(), _environment.RepositoriesForRead());
 
                 if (!resolvedDependencies.IsSuccess)
                 {
@@ -59,9 +58,9 @@ namespace OpenWrap.Commands.Wrap
                 {
                     _environment.CurrentDirectoryRepository,
                     ProjectOnly ? null : _environment.SystemRepository,
-                    _environment.ProjectRepository
+                    SystemOnly ? null : _environment.ProjectRepository
                 });
-                foreach(var msg in _packageManager.CopyResolvedDependenciesToRepositories(resolvedDependencies, repositoriesToCopyTo))
+                foreach(var msg in _packageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo))
                     yield return msg;
             }
         }
@@ -104,6 +103,10 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandResult> SyncWrapFileWithWrapDirectory()
         {
             return new SyncWrapCommand()
+            {
+                ProjectOnly = ProjectOnly,
+                SystemOnly = SystemOnly
+            }
                 .Execute();
         }
 
@@ -118,7 +121,7 @@ namespace OpenWrap.Commands.Wrap
         {
             return _environment.ProjectRepository != null
                        ? new GenericMessage("Project repository found.")
-                       : new GenericMessage("Project rep[ository not found, installing to system repository.");
+                       : new GenericMessage("Project repository not found, installing to system repository.");
         }
     }
 }

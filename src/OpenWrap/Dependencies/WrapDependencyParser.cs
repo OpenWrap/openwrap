@@ -5,10 +5,6 @@ using System.Text;
 
 namespace OpenWrap.Dependencies
 {
-    public interface IWrapDescriptorLineParser
-    {
-        void Parse(string line, WrapDescriptor descriptor);
-    }
     public class WrapDependencyParser : IWrapDescriptorLineParser
     {
         public void Parse(string line, WrapDescriptor descriptor)
