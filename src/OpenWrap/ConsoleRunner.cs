@@ -1,27 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OpenWrap.Commands;
+using OpenWrap.Exports;
+using OpenWrap.IO;
 using OpenWrap.Repositories;
+using OpenWrap.Resolvers;
 using OpenWrap.Services;
 
 namespace OpenWrap
 {
     public static class ConsoleRunner
     {
-        static IEnumerable<IPackageInfo> GetLatestModules(IPackageRepository rep)
-        {
-            return from moduleName in rep.PackagesByName
-                   from module in moduleName
-                   orderby module.Version descending
-                   select module;
-        }
 
         public static int Main(string[] args)
         {
             WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
             WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
-
+            WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
+            WrapServices.TryRegisterService<IFileSystem>(()=>FileSystems.Local);
             var commands = ReadCommands(WrapServices.GetService<IEnvironment>());
             var repo = new CommandRepository(commands);
 
@@ -50,15 +48,11 @@ namespace OpenWrap
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            var packages = GetLatestModules(environment.SystemRepository);
-            if (environment.ProjectRepository != null)
-                packages = packages.Concat(GetLatestModules(environment.ProjectRepository));
-
-            var results = packages.ToLookup(x => x.Name).Select(x => x.FirstOrDefault());
-            return results.SelectMany(x => x.Load().GetExport("commands", environment.ExecutionEnvironment).Items)
+            return WrapServices.GetService<IPackageManager>()
+                .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[]{ environment.ProjectRepository, environment.SystemRepository})
+                .SelectMany(x=>x.Items)
                 .OfType<ICommandExportItem>()
-                .Select(x => x.Descriptor)
-                .ToList();
+                .Select(x=>x.Descriptor).ToList();
         }
     }
 }

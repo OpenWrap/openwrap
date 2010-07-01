@@ -20,7 +20,6 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +27,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -50,6 +48,11 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonProperties.cs">
+      <Link>Properties\CommonProperties.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\IWrapAssemblyClient.cs" />
@@ -75,6 +78,7 @@
     <Compile Include="Dependencies\IWrapDescriptorLineParser.cs" />
     <Compile Include="Dependencies\WrapNameUtility.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />
     <Compile Include="IO\FileSystem\AbstractFileSystem.cs" />
     <Compile Include="IO\FileExtensions.cs" />
     <Compile Include="IO\FileSystems.cs" />
@@ -111,6 +115,7 @@
     <Compile Include="Repositories\ICommandExportItem.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
+    <Compile Include="Resolvers\RuntimeAssemblyResolver.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Commands\UnknownCommandInput.cs" />
     <Compile Include="CurrentDirectoryEnvironment.cs" />
@@ -184,6 +189,7 @@
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <Import Project="..\..\build\common.project.properties" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

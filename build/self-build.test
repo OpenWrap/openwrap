@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="OpenWrap-SelfBuild">
+  <PropertyGroup>
+    <Root>$(MSBuildProjectDirectory)\..</Root>
+  </PropertyGroup>
+  <Target Name="Build">
+    <MSBuild Projects="openwrap.proj" />
+  </Target>
+  <Target Name="OpenWrap-SelfBuild">
+    
+    <Message Importance="high" Text="Building OpenWrap from existing dependencies." />
+
+    <MSBuild Projects="openwrap.proj" Properties="OpenWrap-PackageName=openwrap-1.0.42; OpenWrap-BuildTasksDirectory=$(MSBuildProjectDirectory)\..\wraps\cache\openwrap-1.0.0\build; OpenWrap-DescriptorPath=..\openwrap-1.0.0.wrapdesc"  />
+    
+    
+                
+    <!-- Now attempt installing the package to the local repository-->
+    <PropertyGroup>
+      <OpenWrap-CommandLine>$(Root)\scratch\build\OpenWrap.Console\o.exe</OpenWrap-CommandLine>
+    </PropertyGroup>
+    
+    <Message Importance="high" Text="Installing openwrap to new location, from directory $(Root)\bin\" />
+    <Exec Command='"$(OpenWrap-CommandLine)" wrap add openwrap -ProjectOnly -NoDescriptorUpdate' WorkingDirectory="$(Root)\bin\" />
+
+    <Message Importance="high" Text="Building OpenWrap from new version of OpenWrap" />
+    <MSBuild Projects="openwrap.proj" Properties="OpenWrap-PackageName=openwrap-1.0.43; OpenWrap-BuildTasksDirectory=$(MSBuildProjectDirectory)\..\wraps\cache\openwrap-1.0.42\build; OpenWrap-DescriptorPath=..\openwrap-1.0.0.wrapdesc"  />
+
+    <Message Importance="high" Text="Cleaning OpenWrap results" />
+    <Delete Files="$(Root)\wraps\openwrap-1.0.42.wrap;$(Root)\wraps\openwrap-1.0.43.wrap;$(Root)\wraps\cache\openwrap-1.0.42\**\*;$(Root)\wraps\cache\openwrap-1.0.43\**\*;" />
+    <RemoveDir Directories="$(Root)\wraps\cache\openwrap-1.0.42;$(Root)\wraps\cache\openwrap-1.0.43" />
+    
+  </Target>
+</Project>

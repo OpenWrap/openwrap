@@ -48,11 +48,17 @@ namespace OpenWrap
                 .FirstOrDefault();
 
             if (dir != null)
-                ProjectRepository = new FolderRepository(dir);
+                ProjectRepository = new FolderRepository(dir)
+                {
+                    Name = "Project repository"
+                };
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
-            SystemRepository = new FolderRepository(FileSystem.GetDirectory(UserSettings.UserRepositoryPath));
+            SystemRepository = new FolderRepository(FileSystem.GetDirectory(UserSettings.UserRepositoryPath))
+            {
+                Name="System repository"
+            };
 
             RemoteRepositories = UserSettings.RemoteRepositories
                 .Select(x => new XmlRepository(FileSystem, new HttpNavigator(x), Enumerable.Empty<IExportBuilder>()))

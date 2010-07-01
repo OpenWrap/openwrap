@@ -3,8 +3,9 @@
   <PropertyGroup>
     <Root>$(MSBuildProjectDirectory)\..</Root>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
-    <OpenWrap-PackageName>openwrap-1.0.0</OpenWrap-PackageName>
-    <OpenWrap-BuildTasksDirectory>$(Root)\wraps\cache\$(OpenWrap-PackageName)\build</OpenWrap-BuildTasksDirectory>
+    <OpenWrap-PackageName Condition="'$(OpenWrap-PackageName)' == ''">openwrap-1.0.0</OpenWrap-PackageName>
+    <OpenWrap-DescriptorPath Condition="'$(OpenWrap-DescriptorPath)' == ''">$(Root)\$(OpenWrap-PackageName).wrapdes</OpenWrap-DescriptorPath>
+    <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(Root)\wraps\cache\$(OpenWrap-PackageName)\build</OpenWrap-BuildTasksDirectory>
   </PropertyGroup>
   
   <ItemGroup> 
@@ -19,11 +20,15 @@
   <Target Name="OpenWrap-Package">
     <MSBuild Targets="Build" Projects="@(WrapBinary)" Properties="OutDir=$(Root)\scratch\build\%(Filename)\;Configuration=$(Configuration)" />
     <ItemGroup>
+      <_DescriptorSource Include="$(OpenWrap-DescriptorPath)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_DescriptorSource)" DestinationFiles="$(Root)\scratch\build\$(OpenWrap-PackageName).wrapdesc" />
+    <ItemGroup>
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
         <Export>bin-net35</Export>
       </BinFile>
-      <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
-        <Export>bin-net35</Export>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper\OpenWrap.Resharper.dll">
+        <Export>build</Export>
       </BinFile>
       <BinFile Include="$(Root)\scratch\build\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.dll">
         <Export>build</Export>
@@ -37,7 +42,7 @@
       <BinFile Include="$(Root)\scratch\build\OpenWrap.Commands\OpenWrap.Commands.dll">
         <Export>commands</Export>
       </BinFile>
-      <BinFile Include="$(Root)\$(OpenWrap-PackageName).wrapdesc" />
+      <BinFile Include="$(Root)\scratch\build\$(OpenWrap-PackageName).wrapdesc" />
     </ItemGroup>
 
     <PackageWrap

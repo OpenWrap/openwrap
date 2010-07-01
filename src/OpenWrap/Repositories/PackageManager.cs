@@ -2,13 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Dependencies;
+using OpenWrap.Exports;
 
 namespace OpenWrap.Repositories
 {
     public class PackageManager : IPackageManager
     {
-        public void Initialize()
+        public IEnumerable<T> GetExports<T>(string exportName, ExecutionEnvironment environment, IEnumerable<IPackageRepository> repositories) where T : IExport
         {
+            var query = from repository in repositories
+                        from packageName in repository.PackagesByName
+                        let packageInfo = packageName.OrderByDescending(x => x.Version).FirstOrDefault()
+                        select new { packageName, packageInfo };
+            var latestPackages = from packageByName in query.ToLookup(x => x.packageName)
+                                 select packageByName.FirstOrDefault().packageInfo.Load();
+
+            return latestPackages.Select(x => x.GetExport(exportName, environment)).OfType<T>();
 
         }
 
@@ -26,27 +35,22 @@ namespace OpenWrap.Repositories
 
             return Successful(allDependencies);
         }
+
         public void UpdateDependency(ResolvedDependency dependency,
-            IPackageRepository destinationRepository)
+                                     IPackageRepository destinationRepository)
         {
             var source = dependency.Package.Load();
             using (var packageStream = source.OpenStream())
                 destinationRepository.Publish(dependency.Package.FullName, packageStream);
         }
 
-        DependencyResolutionResult Successful(IEnumerable<ResolvedDependency> dependencies)
+        public void Initialize()
         {
-            return new DependencyResolutionResult { IsSuccess = true, Dependencies = dependencies };
         }
 
         DependencyResolutionResult ConflictingDependencies(IEnumerable<ResolvedDependency> allDependencies)
         {
             return new DependencyResolutionResult { IsSuccess = false, Dependencies = allDependencies };
-        }
-
-        DependencyResolutionResult SomeDependenciesNotFound(IEnumerable<ResolvedDependency> dependencies)
-        {
-            return new DependencyResolutionResult { IsSuccess = false, Dependencies = dependencies };
         }
 
         Dictionary<string, string> GetOverrides(WrapDescriptor descriptor)
@@ -55,11 +59,16 @@ namespace OpenWrap.Repositories
             return new Dictionary<string, string>();
         }
 
+        bool HasDependenciesConflict(IEnumerable<ResolvedDependency> resolutions)
+        {
+            return resolutions.ToLookup(x => x.Package.Name).Any(x => x.Count() > 1);
+        }
+
         IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(IEnumerable<ResolvedDependency> dependencies, ICollection<WrapDependency> rootDependencies)
         {
             var overriddenDependencies = dependencies.ToList();
 
-            foreach(var conflictingDependency in dependencies.ToLookup(x=>x.Package.Name).Where(x=>x.Count() > 1))
+            foreach (var conflictingDependency in dependencies.ToLookup(x => x.Package.Name).Where(x => x.Count() > 1))
             {
                 var dependencyName = conflictingDependency.Key;
                 var rootDependency = rootDependencies.FirstOrDefault(x => x.Name == dependencyName);
@@ -68,35 +77,42 @@ namespace OpenWrap.Repositories
                 var rescuedDependency = conflictingDependency.OrderByDescending(x => x.Package.Version).FirstOrDefault(x => rootDependency.IsFulfilledBy(x.Package.Version));
                 if (rescuedDependency == null)
                     continue;
-                foreach (var toRemove in conflictingDependency.Where(x=>x != rescuedDependency))
+                foreach (var toRemove in conflictingDependency.Where(x => x != rescuedDependency))
                     overriddenDependencies.Remove(toRemove);
-
             }
             return overriddenDependencies;
         }
 
-        bool HasDependenciesConflict(IEnumerable<ResolvedDependency> resolutions)
-        {
-            return resolutions.ToLookup(x => x.Package.Name).Any(x => x.Count() > 1);
-        }
-
-        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IDictionary<string,string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
+        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IDictionary<string, string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
         {
             return ResolveAllDependencies(null, dependencies, dependencyOverrides, repositories);
         }
 
-        IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent, IEnumerable<WrapDependency> dependencies, IDictionary<string,string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
+        IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent,
+                                                               IEnumerable<WrapDependency> dependencies,
+                                                               IDictionary<string, string> dependencyOverrides,
+                                                               IEnumerable<IPackageRepository> repositories)
         {
             var packages = from dependency in dependencies
                            let package = repositories
-                                .Where(x=> x != null)
-                                .Select(x => x.Find(dependency))
-                                .FirstOrDefault(x=>x != null)
+                               .Where(x => x != null)
+                               .Select(x => x.Find(dependency))
+                               .FirstOrDefault(x => x != null)
                            select new ResolvedDependency { Dependency = dependency, Package = package, ParentPackage = parent };
-            foreach (var package in packages.Where(p=>p.Package != null))
+            foreach (var package in packages.Where(p => p.Package != null))
                 packages = packages.Concat(ResolveAllDependencies(package.Package, package.Package.Dependencies, dependencyOverrides, repositories));
 
             return packages.ToList();
+        }
+
+        DependencyResolutionResult SomeDependenciesNotFound(IEnumerable<ResolvedDependency> dependencies)
+        {
+            return new DependencyResolutionResult { IsSuccess = false, Dependencies = dependencies };
+        }
+
+        DependencyResolutionResult Successful(IEnumerable<ResolvedDependency> dependencies)
+        {
+            return new DependencyResolutionResult { IsSuccess = true, Dependencies = dependencies };
         }
     }
 }

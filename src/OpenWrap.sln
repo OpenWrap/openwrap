@@ -18,9 +18,15 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
 	ProjectSection(SolutionItems) = preProject
 		..\build\openwrap.proj = ..\build\openwrap.proj
+		..\build\self-build.test = ..\build\self-build.test
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Commands", "OpenWrap.Commands\OpenWrap.Commands.csproj", "{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FF7BA218-B2A1-462A-8F51-153337027853}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\common.project.properties = ..\build\common.project.properties
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

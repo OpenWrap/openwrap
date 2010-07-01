@@ -1,23 +1,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Exports;
 using OpenWrap.Dependencies;
+using OpenWrap.Exports;
 using OpenWrap.IO;
-using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
 {
     public class XmlPackageInfo : IPackageInfo
     {
+        readonly IEnumerable<IExportBuilder> _builders;
         readonly IFileSystem _fileSystem;
         readonly IHttpNavigator _httpNavigator;
-        Uri _link;
-        IEnumerable<IExportBuilder> _builders;
         readonly DateTime? _lastModifiedTimeUtc;
+        readonly Uri _link;
 
 
-        public XmlPackageInfo(IFileSystem fileSystem, IPackageRepository source, IHttpNavigator httpNavigator, string name, string version, Uri link, IEnumerable<string> depends, IEnumerable<IExportBuilder> builders, DateTime? lastModifiedTimeUtc)
+        public XmlPackageInfo(IFileSystem fileSystem,
+                              IPackageRepository source,
+                              IHttpNavigator httpNavigator,
+                              string name,
+                              string version,
+                              Uri link,
+                              IEnumerable<string> depends,
+                              IEnumerable<IExportBuilder> builders,
+                              DateTime? lastModifiedTimeUtc)
         {
             Name = name;
             Version = new Version(version);
@@ -40,25 +47,22 @@ namespace OpenWrap.Repositories
         }
 
         public ICollection<WrapDependency> Dependencies { get; set; }
-        public string Name { get; set; }
-        public Version Version { get; set; }
 
         public string FullName
         {
             get { return Name + "-" + Version; }
         }
 
-        public DateTime? LastModifiedTimeUtc
-        {
-            get; private set;
-        }
+        public DateTime? LastModifiedTimeUtc { get; private set; }
+        public string Name { get; set; }
+
+        public IPackageRepository Source { get; set; }
+        public Version Version { get; set; }
 
         public IPackage Load()
         {
             // get the file from the server
             return new XmlPackage(_fileSystem, Source, _httpNavigator, _link, Name, Version, _builders, _lastModifiedTimeUtc);
         }
-
-        public IPackageRepository Source { get; set; }
     }
 }

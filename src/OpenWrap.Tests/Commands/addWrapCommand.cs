@@ -18,6 +18,31 @@ namespace OpenWrap.Tests.Commands
             when_executing_command("-System", "-Project");
         }
     }
+    class adding_wrap_from_local_package_in_project_path_without_descriptor_update : context.command_context<AddWrapCommand>
+    {
+        
+        public adding_wrap_from_local_package_in_project_path_without_descriptor_update()
+        {
+            given_project_repository();
+            given_currentdirectory_package("sauron", new Version(1, 0, 0));
+
+
+            when_executing_command("-Name","sauron", "-nodesc");
+        }
+
+        [Test]
+        public void the_package_is_installed_on_project_repository()
+        {
+            Environment.ProjectRepository.PackagesByName["sauron"].ShouldHaveCountOf(1);
+        }
+
+        [Test]
+        public void descriptor_is_not_updated()
+        {
+            Environment.Descriptor.Dependencies.FirstOrDefault(x=>x.Name == "sauron")
+                .ShouldBeNull();
+        }
+    }
     class adding_wrap_from_local_package_in_project_path : context.command_context<AddWrapCommand>
     {
         public adding_wrap_from_local_package_in_project_path()

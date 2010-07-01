@@ -18,7 +18,7 @@ namespace OpenWrap.Services
             if (service != null)
                 service.Initialize();
         }
-        public static void TryRegisterService<TService>(Func<TService> service) where TService: class, IService
+        public static void TryRegisterService<TService>(Func<TService> service) where TService: class
         {
             if (!_services.ContainsKey(typeof(TService)))
             {
