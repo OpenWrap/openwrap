@@ -23,8 +23,7 @@ namespace OpenWrap.Repositories
 
         public DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor, IEnumerable<IPackageRepository> repositoriesToQuery)
         {
-            var packageOverrides = GetOverrides(wrapDescriptor);
-            var allDependencies = ResolveAllDependencies(wrapDescriptor.Dependencies, packageOverrides, repositoriesToQuery);
+            var allDependencies = ResolveAllDependencies(wrapDescriptor.Dependencies, wrapDescriptor.Overrides, repositoriesToQuery);
 
             if (allDependencies.Any(x => x.Package == null))
                 return SomeDependenciesNotFound(allDependencies);
@@ -53,12 +52,6 @@ namespace OpenWrap.Repositories
             return new DependencyResolutionResult { IsSuccess = false, Dependencies = allDependencies };
         }
 
-        Dictionary<string, string> GetOverrides(WrapDescriptor descriptor)
-        {
-            // TODO: Implement overrides
-            return new Dictionary<string, string>();
-        }
-
         bool HasDependenciesConflict(IEnumerable<ResolvedDependency> resolutions)
         {
             return resolutions.ToLookup(x => x.Package.Name).Any(x => x.Count() > 1);
@@ -83,26 +76,32 @@ namespace OpenWrap.Repositories
             return overriddenDependencies;
         }
 
-        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IDictionary<string, string> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
+        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IEnumerable<WrapOverride> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
         {
             return ResolveAllDependencies(null, dependencies, dependencyOverrides, repositories);
         }
 
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent,
                                                                IEnumerable<WrapDependency> dependencies,
-                                                               IDictionary<string, string> dependencyOverrides,
+                                                               IEnumerable<WrapOverride> dependencyOverrides,
                                                                IEnumerable<IPackageRepository> repositories)
         {
             var packages = from dependency in dependencies
+                           let modifiedDependency = ApplyAllWrapDependencyOverrides(dependencyOverrides, dependency)
                            let package = repositories
                                .Where(x => x != null)
-                               .Select(x => x.Find(dependency))
+                               .Select(x => x.Find(modifiedDependency))
                                .FirstOrDefault(x => x != null)
-                           select new ResolvedDependency { Dependency = dependency, Package = package, ParentPackage = parent };
+                           select new ResolvedDependency { Dependency = modifiedDependency, Package = package, ParentPackage = parent };
             foreach (var package in packages.Where(p => p.Package != null))
                 packages = packages.Concat(ResolveAllDependencies(package.Package, package.Package.Dependencies, dependencyOverrides, repositories));
 
             return packages.ToList();
+        }
+
+        WrapDependency ApplyAllWrapDependencyOverrides(IEnumerable<WrapOverride> dependencyOverrides, WrapDependency originalDependency)
+        {
+            return dependencyOverrides.Aggregate(originalDependency, (modifiedDependency, wrapOverride) => wrapOverride.Apply(modifiedDependency));
         }
 
         DependencyResolutionResult SomeDependenciesNotFound(IEnumerable<ResolvedDependency> dependencies)
