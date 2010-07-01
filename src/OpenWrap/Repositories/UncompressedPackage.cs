@@ -21,6 +21,7 @@ namespace OpenWrap.Repositories
             BaseDirectory = wrapCacheDirectory;
             // get the descriptor file inside the package
             var descriptorName = BaseDirectory.Name;
+            Source = source;
             Descriptor = new WrapDescriptorParser().ParseFile(wrapCacheDirectory.GetFile(descriptorName + ".wrapdesc"));
         }
 

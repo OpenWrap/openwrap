@@ -25,7 +25,7 @@ namespace OpenWrap.IO.FileSystem.Local
 
         public string Name
         {
-            get { return System.IO.Path.GetFileName(Name); }
+            get { return System.IO.Path.GetFileName(_filePath); }
         }
 
         public string NameWithoutExtension

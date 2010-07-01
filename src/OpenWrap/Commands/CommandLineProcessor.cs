@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace OpenWrap.Commands
@@ -15,7 +16,6 @@ namespace OpenWrap.Commands
 
         public IEnumerable<ICommandResult> Execute(IEnumerable<string> strings)
         {
-
             if (strings == null || strings.Count() < 2)
             {
                 yield return new NotEnoughParameters();
@@ -67,15 +67,10 @@ namespace OpenWrap.Commands
             }
 
             var namedInputsValueNotParsed = assignedNamedInputValues.FirstOrDefault(x => x.RawValue == null);
-            //if (namedInputsValueNotParsed != null)
-            //{
-            //    yield return new InvalidCommandValue(namedInputsValueNotParsed.InputName, namedInputsValueNotParsed.RawValue);
-            //    yield break;
-            //}
 
             var inputNamesAlreadyFilled = assignedNamedInputValues.Select(x => x.InputName).ToList();
-            // now got a clean set of input names that pass. Now on to the unnamed ones.
 
+            // now got a clean set of input names that pass. Now on to the unnamed ones.
             var unfullfilledCommandInputs = (from input in command.Inputs
                                              where !inputNamesAlreadyFilled.Contains(input.Key, StringComparer.OrdinalIgnoreCase)
                                                    && input.Value.Position >= 0

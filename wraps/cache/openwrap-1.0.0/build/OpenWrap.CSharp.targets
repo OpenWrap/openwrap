@@ -13,7 +13,7 @@
     <OpenWrap-ProjectRepositoryPath Condition="!Exists('$(OpenWrap-ProjectRepositoryPath)')">$(MSBuildProjectDirectory)\..\..\wraps</OpenWrap-ProjectRepositoryPath>
     <OpenWrap-ProjectRepositoryPath Condition="!Exists('$(OpenWrap-ProjectRepositoryPath)')">$(MSBuildProjectDirectory)\..\..\..\wraps</OpenWrap-ProjectRepositoryPath>
     
-    <OpenWrap-BuildTasksDirectory>$(OpenWrap-ProjectRepositoryPath)\cache\openwrap-1.0.0\build</OpenWrap-BuildTasksDirectory>
+    <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(OpenWrap-ProjectRepositoryPath)\cache\openwrap-1.0.0\build</OpenWrap-BuildTasksDirectory>
     
     <RootSolutionDirectory>$(OpenWrap-ProjectRepositoryPath)\..</RootSolutionDirectory>
 

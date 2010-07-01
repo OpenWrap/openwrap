@@ -65,7 +65,7 @@ namespace OpenWrap.Tests.Commands.context
             AddPackage(Environment.RemoteRepository, name, version, dependencies);
         }
 
-        protected void given_user_package(string name, Version version, params string[] dependencies)
+        protected void given_system_package(string name, Version version, params string[] dependencies)
         {
             AddPackage(Environment.SystemRepository, name, version, dependencies);
         }

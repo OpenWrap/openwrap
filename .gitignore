@@ -1,6 +1,8 @@
 obj
 bin
 bin/*
+scratch
+scratch/*
 deploy
 deploy/*
 _ReSharper.*

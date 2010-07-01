@@ -19,7 +19,7 @@ namespace OpenWrap.Tests.Commands
             given_dependency("depends goldberry >= 2.0");
 
             given_project_package("goldberry", new Version(2, 0, 0));
-            given_user_package("goldberry", new Version(2,1,0));
+            given_system_package("goldberry", new Version(2,1,0));
             given_remote_package("goldberry", new Version(2, 2, 0));
 
             when_executing_command();
@@ -47,7 +47,7 @@ namespace OpenWrap.Tests.Commands
     {
         public when_not_in_project_folder_and_package_can_be_updated()
         {
-            given_user_package("goldberry", new Version(2,0,0));
+            given_system_package("goldberry", new Version(2,0,0));
             given_remote_package("goldberry", new Version(2, 1, 0));
 
             when_executing_command();

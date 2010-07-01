@@ -136,6 +136,14 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
                 .Command.ShouldBeOfType<TravelToMordor>()
                     .HasRing.ShouldBeTrue();
         }
+        [Test]
+        public void name_is_parsed()
+        {
+            given_command<TravelToMordor>();
+
+            commands.Nouns.ShouldContain("lotr");
+            commands.Verbs.ShouldContain("TravelToMordor");
+        }
     }
 
     [Command(Noun="lotr")]
@@ -158,7 +166,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
     {
         public abstract class command_processor : Testing.context
         {
-            protected CommandRepository commands;
+            protected ICommandRepository commands;
             protected CommandLineProcessor processor;
 
             public command_processor()
@@ -172,6 +180,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             }
             protected void given_command<T>()
             {
+                
                 commands.Add(new AttributeBasedCommandDescriptor(typeof(T)));
             }
             protected List<ICommandResult> results;

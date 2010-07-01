@@ -14,7 +14,10 @@ namespace OpenWrap.Commands
 
         public CommandRepository(IEnumerable<ICommandDescriptor> commands)
         {
-            _commands = new List<ICommandDescriptor>(commands);
+            _commands = new List<ICommandDescriptor>();
+            foreach (var command in commands)
+                Add(command);
+            //_commands = new List<ICommandDescriptor>(commands);
         }
 
         public CommandRepository()

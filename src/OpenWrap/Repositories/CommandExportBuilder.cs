@@ -17,7 +17,7 @@ namespace OpenWrap.Repositories
 
         public bool CanProcessExport(string exportName)
         {
-            return exportName.Equals(exportName, StringComparison.OrdinalIgnoreCase);
+            return ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase);
         }
 
         public IExport ProcessExports(IEnumerable<IExport> exports, ExecutionEnvironment environment)
@@ -28,7 +28,7 @@ namespace OpenWrap.Repositories
                                let assembly = TryReflectionOnlyLoad(file)
                                where assembly != null
                                from type in assembly.GetExportedTypes()
-                               where type.GetInterface("OpenWrap.Commands.ICommand, OpenWrap") != null
+                               where type.GetInterface("ICommand") != null
                                let loadedAssembly = Assembly.LoadFrom(file.FullPath)
                                select loadedAssembly.GetType(type.FullName);
             return new CommandExport(commandTypes);
