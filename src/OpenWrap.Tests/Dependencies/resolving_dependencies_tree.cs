@@ -127,6 +127,21 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
+    public class when_resolving_with_overrides : dependency_manager_context
+    {
+        [Test]
+        public void overriden_dependency_is_found()
+        {
+            given_local_package("foobar-1.0.0");
+            given_dependency("depends foo");
+            DependencyDescriptor.Overrides.Add(new WrapOverride("foo", "foobar"));
+
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeTrue();
+        }
+    }
+
     namespace context
     {
         public class dependency_manager_context : OpenWrap.Testing.context
