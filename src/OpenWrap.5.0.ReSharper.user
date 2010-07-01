@@ -11,15 +11,9 @@
   </NAntValidationSettings>
   <RecentFiles>
     <RecentFiles>
-      <File id="FF7BA218-B2A1-462A-8F51-153337027853/f:common.project.properties/l:C!?src?caff?git?openwrap?build?common.project.properties" caret="472" fromTop="9" />
-      <File id="d:Miscellaneous Files/f:OpenWrap.csproj/l:C!?src?caff?git?openwrap?src?OpenWrap?OpenWrap.csproj" caret="2335" fromTop="15" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Properties/f:AssemblyInfo.cs" caret="26" fromTop="0" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Slow/f:building_openwrap.cs" caret="209" fromTop="8" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Properties/f:CommonProperties.cs/l:..?..?CommonProperties.cs" caret="374" fromTop="17" />
       <File id="AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA/f:OpenWrap.CSharp.targets" caret="2888" fromTop="58" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:ICommandRepository.cs" caret="152" fromTop="5" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandRepository.cs" caret="515" fromTop="13" />
-      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="552" fromTop="16" />
       <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:self-build.test/l:C!?src?caff?git?openwrap?build?self-build.test" caret="709" fromTop="14" />
       <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:openwrap.proj/l:C!?src?caff?git?openwrap?build?openwrap.proj" caret="1530" fromTop="23" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Services/f:WrapServices.cs" caret="1072" fromTop="32" />
@@ -41,25 +35,14 @@
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="697" fromTop="20" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:CommandExport.cs" caret="360" fromTop="11" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:CommandExportBuilder.cs" caret="1204" fromTop="31" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLineProcessor.cs" caret="6216" fromTop="0" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:EnumerableExtensions.cs" caret="972" fromTop="28" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/d:context/f:command_context.cs" caret="1530" fromTop="11" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandInputAttribute.cs" caret="115" fromTop="4" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="551" fromTop="0" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:addWrapCommand.cs" caret="4964" fromTop="20" />
     </RecentFiles>
     <RecentEdits>
-      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="869" fromTop="19" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="2133" fromTop="17" />
-      <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:openwrap.proj/l:C!?src?caff?git?openwrap?build?openwrap.proj" caret="2462" fromTop="32" />
-      <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:openwrap.proj/l:C!?src?caff?git?openwrap?build?openwrap.proj" caret="1530" fromTop="23" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="1220" fromTop="30" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="3654" fromTop="22" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="3869" fromTop="29" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="3983" fromTop="33" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="2214" fromTop="19" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="2693" fromTop="27" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="3405" fromTop="35" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="812" fromTop="20" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="313" fromTop="1" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:UncompressedPackage.cs" caret="834" fromTop="22" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:CommandExportBuilder.cs" caret="436" fromTop="17" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:IPackageManager.cs" caret="392" fromTop="10" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:PackageManager.cs" caret="161" fromTop="6" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="2133" fromTop="29" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:PackageManager.cs" caret="975" fromTop="14" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Exports/f:AssemblyReferenceExport.cs" caret="120" fromTop="5" />
@@ -73,6 +56,23 @@
       <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="3137" fromTop="29" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="674" fromTop="17" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:CommandExportBuilder.cs" caret="1102" fromTop="29" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="28" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="13" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:addWrapCommand.cs" caret="973" fromTop="30" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="27" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="31" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="26" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="14" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="15" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="11" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:addWrapCommand.cs" caret="1452" fromTop="21" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:addWrapCommand.cs" caret="788" fromTop="11" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="31" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="4395" fromTop="23" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="3557" fromTop="23" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:addWrapCommand.cs" caret="5139" fromTop="25" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:addWrapCommand.cs" caret="5715" fromTop="42" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:addWrapCommand.cs" caret="5500" fromTop="35" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>
@@ -81,34 +81,34 @@
   <CompletionStatisticsManager>
     <ItemStatistics item="Default">
       <Item value="Ignore" priority="0" />
-      <Item value="return" priority="115" />
-      <Item value="null" priority="50" />
+      <Item value="return" priority="117" />
+      <Item value="null" priority="51" />
       <Item value="IWrapPackage" priority="0" />
       <Item value="GetHashCode" priority="0" />
-      <Item value="this" priority="14" />
+      <Item value="this" priority="15" />
       <Item value="ctor" priority="19" />
       <Item value="namespace" priority="4" />
       <Item value="protected" priority="9" />
       <Item value="string" priority="49" />
-      <Item value="public" priority="76" />
-      <Item value="class" priority="26" />
+      <Item value="public" priority="80" />
+      <Item value="class" priority="28" />
       <Item value="IWrapRepository" priority="2" />
-      <Item value="void" priority="31" />
-      <Item value="new" priority="161" />
+      <Item value="void" priority="35" />
+      <Item value="new" priority="164" />
       <Item value="var" priority="93" />
       <Item value="using" priority="10" />
       <Item value="XmlTextReader" priority="1" />
       <Item value="xmlDocument" priority="1" />
       <Item value="WrapListDocument" priority="2" />
-      <Item value="context" priority="10" />
+      <Item value="context" priority="12" />
       <Item value="wrap_list" priority="1" />
       <Item value="Testing" priority="6" />
       <Item value="Repository" priority="3" />
       <Item value="entries" priority="0" />
       <Item value="castle_proxy" priority="4" />
-      <Item value="Version" priority="24" />
+      <Item value="Version" priority="26" />
       <Item value="given_repository" priority="0" />
-      <Item value="Test" priority="19" />
+      <Item value="Test" priority="23" />
       <Item value="core_dependency" priority="2" />
       <Item value="long" priority="0" />
       <Item value="LoadOptions" priority="3" />
@@ -120,7 +120,7 @@
       <Item value="into" priority="0" />
       <Item value="select" priority="14" />
       <Item value="WrapListFileRepository" priority="0" />
-      <Item value="x" priority="32" />
+      <Item value="x" priority="33" />
       <Item value="where" priority="15" />
       <Item value="link" priority="10" />
       <Item value="relAttribute" priority="2" />
@@ -168,10 +168,10 @@
       <Item value="Current" priority="0" />
       <Item value="FolderRepository" priority="2" />
       <Item value="Path" priority="14" />
-      <Item value="Environment" priority="24" />
+      <Item value="Environment" priority="26" />
       <Item value="params" priority="6" />
       <Item value="paths" priority="4" />
-      <Item value="if" priority="49" />
+      <Item value="if" priority="51" />
       <Item value="foreach" priority="19" />
       <Item value="in" priority="18" />
       <Item value="path" priority="4" />
@@ -262,7 +262,7 @@
       <Item value="processor" priority="2" />
       <Item value="try" priority="5" />
       <Item value="finally" priority="0" />
-      <Item value="bool" priority="1" />
+      <Item value="bool" priority="2" />
       <Item value="isSuccess" priority="0" />
       <Item value="commandResult" priority="0" />
       <Item value="Console" priority="4" />
@@ -299,7 +299,7 @@
       <Item value="dir" priority="0" />
       <Item value="WrapServices" priority="5" />
       <Item value="CurrentDirectoryEnvironment" priority="0" />
-      <Item value="_environment" priority="5" />
+      <Item value="_environment" priority="6" />
       <Item value="ICommandRepository" priority="2" />
       <Item value="_repository" priority="0" />
       <Item value="c" priority="1" />
@@ -379,7 +379,7 @@
       <Item value="NamesapceNotFound" priority="0" />
       <Item value="Source" priority="1" />
       <Item value="AddPackage" priority="0" />
-      <Item value="command_context" priority="0" />
+      <Item value="command_context" priority="2" />
       <Item value="given_remote_package" priority="2" />
       <Item value="WrapDescriptor" priority="2" />
       <Item value="when_executing_command" priority="0" />
@@ -433,7 +433,7 @@
       <Item value="Equals`0" priority="0" />
       <Item value="resolvedDirectoryPath" priority="1" />
       <Item value="prop" priority="0" />
-      <Item value="GenericMessage`0" priority="2" />
+      <Item value="GenericMessage`0" priority="3" />
       <Item value="else" priority="1" />
       <Item value="currentNode" priority="1" />
       <Item value="node" priority="1" />
@@ -512,9 +512,18 @@
       <Item value="_assemblyReferences" priority="1" />
       <Item value="RuntimeAssemblyResolver" priority="0" />
       <Item value="PackageManager`0" priority="0" />
-      <Item value="IPackageManager`0" priority="0" />
-      <Item value="IEnvironment`0" priority="0" />
+      <Item value="IPackageManager`0" priority="1" />
+      <Item value="IEnvironment`0" priority="1" />
       <Item value="ICommandExportItem`0" priority="0" />
+      <Item value="AddWrapCommand`0" priority="1" />
+      <Item value="NoDescriptorUpdate" priority="1" />
+      <Item value="ShouldUpdateDescriptor" priority="0" />
+      <Item value="AddInstructionToWrapFile`0" priority="0" />
+      <Item value="given_currentdirectory_package`0" priority="0" />
+      <Item value="given_user_package`0" priority="0" />
+      <Item value="when_executing_command`0" priority="0" />
+      <Item value="given_project_package`0" priority="0" />
+      <Item value="given_project_repository`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Xml.XmlDocument">
       <Item value="LoadXml" priority="0" />
@@ -555,6 +564,7 @@
       <Item value="Contains" priority="0" />
       <Item value="Add" priority="1" />
       <Item value="Add`0" priority="0" />
+      <Item value="FirstOrDefault`1" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Int32">
       <Item value="ShouldBe" priority="3" />
@@ -614,6 +624,7 @@
       <Item value="OfType`1" priority="2" />
       <Item value="ToList`1" priority="2" />
       <Item value="ToDictionary`3" priority="0" />
+      <Item value="ShouldHaveCountOf`1" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Xml.Linq.XAttribute">
       <Item value="Value" priority="4" />
@@ -833,7 +844,7 @@
       <Item value="RemoteRepositories" priority="1" />
       <Item value="UserRepository" priority="6" />
       <Item value="ProjectRepository" priority="7" />
-      <Item value="Descriptor" priority="3" />
+      <Item value="Descriptor" priority="4" />
       <Item value="ExecutionEnvironment" priority="1" />
       <Item value="SystemRepository" priority="1" />
     </ItemStatistics>
@@ -891,8 +902,9 @@
       <Item value="HasDependency" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Dependencies.WrapDependency">
-      <Item value="Name" priority="0" />
+      <Item value="Name" priority="1" />
       <Item value="IsFulfilledBy" priority="0" />
+      <Item value="ShouldBeNull`1" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Linq.IOrderedEnumerable`1">
       <Item value="FirstOrDefault" priority="0" />
@@ -931,11 +943,11 @@
       <Item value="Descriptor" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenRasta.Wrap.Tests.Dependencies.context.InMemoryRepository">
-      <Item value="Packages" priority="1" />
+      <Item value="Packages" priority="2" />
       <Item value="PackagesByName" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Dependencies.WrapDescriptor">
-      <Item value="Dependencies" priority="2" />
+      <Item value="Dependencies" priority="3" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Dependencies.WrapDescriptorParser">
       <Item value="ParseFile" priority="0" />
@@ -1059,6 +1071,13 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Repositories.ICommandExportItem">
       <Item value="Descriptor" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:OpenWrap.Tests.Commands.adding_wrap_from_local_package_in_project_path_without_descriptor_update">
+      <Item value="Results" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:OpenWrap.Tests.Commands.InMemoryEnvironment">
+      <Item value="Descriptor" priority="0" />
+      <Item value="ProjectRepository" priority="0" />
     </ItemStatistics>
   </CompletionStatisticsManager>
   <UnitTestRunnerNUnit>

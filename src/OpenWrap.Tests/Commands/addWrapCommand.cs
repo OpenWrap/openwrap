@@ -137,6 +137,32 @@ namespace OpenWrap.Tests.Commands
             Results.ShouldHaveAll(x => x.Success);
         }
     }
+    class adding_wrap_from_local_path_with_dependency : context.command_context<AddWrapCommand>
+    {
+        public adding_wrap_from_local_path_with_dependency()
+        {
+            given_project_repository();
+
+            given_currentdirectory_package("sauron", new Version(1,0,0), "depends one-ring");
+            given_system_package("one-ring", new Version(1,0,0));
+
+            when_executing_command("sauron");
+        }
+
+        [Test]
+        public void package_is_installed()
+        {
+            Environment.ProjectRepository.PackagesByName["sauron"].ShouldHaveCountOf(1);
+
+        }
+
+        [Test]
+        public void package_dependency_is_installed()
+        {
+            Environment.ProjectRepository.PackagesByName["one-ring"].ShouldHaveCountOf(1);
+
+        }
+    }
 
     class adding_non_existant_wrap : context.command_context<AddWrapCommand>
     {
