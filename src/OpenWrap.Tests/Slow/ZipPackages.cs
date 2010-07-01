@@ -84,7 +84,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
 
             protected void given_folder_repository()
             {
-                FileSystem = OpenWrap.IO.FileSystem.Local;
+                FileSystem = OpenWrap.IO.FileSystems.Local;
                 RepositoryPath = FileSystem.CreateTempDirectory();
                 var wrapFile = TestFiles.test_module_1_0_0;
                 using(var file = RepositoryPath.GetFile("test-module-1.0.0.wrap").OpenWrite())

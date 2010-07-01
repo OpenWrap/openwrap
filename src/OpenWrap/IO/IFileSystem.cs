@@ -6,7 +6,7 @@
         IPath GetPath(string path);
 
         ITemporaryDirectory CreateTempDirectory();
-        IDirectory CreateDirectory(IPath path);
+        IDirectory CreateDirectory(string path);
         IFile GetFile(string itemSpec);
         ITemporaryFile CreateTempFile();
         IDirectory GetTempDirectory();

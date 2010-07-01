@@ -12,12 +12,10 @@ namespace OpenWrap.Repositories
 
         }
 
-        public DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor, IPackageRepository projectRepository, IPackageRepository userRepository, IEnumerable<IPackageRepository> remoteRepositories)
+        public DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor, IEnumerable<IPackageRepository> repositoriesToQuery)
         {
-            var repositories = new[] { projectRepository, userRepository }.Concat(remoteRepositories);
-
             var packageOverrides = GetOverrides(wrapDescriptor);
-            var allDependencies = ResolveAllDependencies(wrapDescriptor.Dependencies, packageOverrides, repositories);
+            var allDependencies = ResolveAllDependencies(wrapDescriptor.Dependencies, packageOverrides, repositoriesToQuery);
 
             if (allDependencies.Any(x => x.Package == null))
                 return SomeDependenciesNotFound(allDependencies);
@@ -28,16 +26,12 @@ namespace OpenWrap.Repositories
 
             return Successful(allDependencies);
         }
-
         public void UpdateDependency(ResolvedDependency dependency,
             IPackageRepository destinationRepository)
         {
-            var sourceRepository = dependency.Package.Source;
             var source = dependency.Package.Load();
-            using(var packageStream = source.OpenStream())
-            {
-                destinationRepository.Publish(dependency.Package.Name + "-" + dependency.Package.Version, packageStream);
-            }
+            using (var packageStream = source.OpenStream())
+                destinationRepository.Publish(dependency.Package.FullName, packageStream);
         }
 
         DependencyResolutionResult Successful(IEnumerable<ResolvedDependency> dependencies)
@@ -57,6 +51,7 @@ namespace OpenWrap.Repositories
 
         Dictionary<string, string> GetOverrides(WrapDescriptor descriptor)
         {
+            // TODO: Implement overrides
             return new Dictionary<string, string>();
         }
 

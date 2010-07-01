@@ -35,11 +35,11 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void user_repository_has_new_packages()
         {
-            Environment.UserRepository.PackagesByName["sauron"]
+            Environment.SystemRepository.PackagesByName["sauron"]
                 .ShouldHaveCountOf(1)
                 .First().Version.ShouldBe(new Version(1, 0, 0));
 
-            Environment.UserRepository.PackagesByName["rings-of-power"]
+            Environment.SystemRepository.PackagesByName["rings-of-power"]
                 .ShouldHaveCountOf(1)
                 .First().Version.ShouldBe(new Version(1, 0, 0));
         

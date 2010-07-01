@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
+using OpenWrap.Build;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 
-namespace OpenWrap.Build.Services
+namespace OpenWrap.Services
 {
     public class WrapDependencyResolver
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenWrap.Commands.Core
+namespace OpenWrap.Commands
 {
     public class Result : ICommandResult
     {

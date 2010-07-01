@@ -1,6 +1,8 @@
-﻿namespace OpenWrap.IO
+﻿using OpenWrap.IO.FileSystem.Local;
+
+namespace OpenWrap.IO
 {
-    public static class FileSystem
+    public static class FileSystems
     {
         static readonly IFileSystem _local = new LocalFileSystem();
 

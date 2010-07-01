@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Build.Services;
+using OpenWrap;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Core;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -21,55 +22,44 @@ namespace OpenWrap.Commands.Wrap
         {
             get { return WrapServices.GetService<IPackageManager>(); }
         }
+        [CommandInput]
+        public bool SystemOnly { get; set; }
+
+        [CommandInput]
+        public bool ProjectOnly { get; set; }
 
         public IEnumerable<ICommandResult> Execute()
         {
+            if (SystemOnly && ProjectOnly)
+            {
+                yield return new GenericError("Cannot have both SystemOnly and ProjectOnly as parameters, they are mutually exclusive.");
+                yield break;
+            }
+            if (Environment.Descriptor == null)
+            {
+                yield return new GenericError("Cannot sync when no descriptor file is present.");
+                yield break;
+            }
             yield return new Result("Synchronizing all packages.");
 
             // TODO: Check if not in project repository and fail nicely
             var descriptor = Environment.Descriptor;
 
-            var dependencyResolveResult = PackageManager.TryResolveDependencies(descriptor, Environment.ProjectRepository, Environment.UserRepository, Environment.RemoteRepositories);
+            var dependencyResolveResult = PackageManager.TryResolveDependencies(descriptor, Environment.RepositoriesForRead());
+            var repositoriesToWriteTo = Environment.RemoteRepositories.Concat(Environment.CurrentDirectoryRepository);
 
-            if (!dependencyResolveResult.IsSuccess)
-            {
-                yield return DependencyResolutionFailed(dependencyResolveResult);
-                yield break;
-            }
-            foreach(var dependency in dependencyResolveResult.Dependencies.Where(x => Environment.RemoteRepositories.Any(rem => rem == x.Package.Source)))
-            {
-                yield return new Result("Copying {0} to user repository.", dependency.Package.FullName);
-                using (var packageStream = dependency.Package.Load().OpenStream())
-                {
-                    if (Environment.ProjectRepository != null)
-                    {
-                        var package = Environment.UserRepository.Publish(dependency.Package.FullName, packageStream);
-                        using (var localPackageStream = package.Load().OpenStream())
-                        {
-                            yield return new Result("Copying {0} to project repository.", package.Name);
-                            Environment.ProjectRepository.Publish(dependency.Package.FullName, localPackageStream);
-                        }
-                    }
-                }
-            }
-            foreach (var localDependency in dependencyResolveResult.Dependencies.Where(x => x.Package.Source == Environment.UserRepository))
-            {
-                var package = localDependency.Package;
-                using (var packageStream = package.Load().OpenStream())
-                {
-                    yield return new Result("Copying {0} to project repository.", package.Name);
-                    Environment.ProjectRepository.Publish(package.FullName, packageStream);
-                }
-            }
+            bool all = !SystemOnly && !ProjectOnly;
+            if (SystemOnly || all)
+                repositoriesToWriteTo = repositoriesToWriteTo.Concat(Environment.SystemRepository);
+            if (ProjectOnly || all)
+                repositoriesToWriteTo = repositoriesToWriteTo.Concat(Environment.ProjectRepository);
+
+
+            foreach (var result in PackageManager.CopyPackagesToRepositories(
+                dependencyResolveResult, repositoriesToWriteTo))
+                yield return result;
         }
 
 
-        ICommandResult DependencyResolutionFailed(DependencyResolutionResult result)
-        {
-            return new Result("Dependency resolution failed.")
-            {
-                Success = false
-            };
-        }
     }
 }

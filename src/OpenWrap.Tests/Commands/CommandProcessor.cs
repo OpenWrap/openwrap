@@ -26,7 +26,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("semarillon", "traveltomordor");
 
-            result.ShouldBeOfType<NamespaceNotFound>();
+            result.ShouldBeOfType<NamesapceNotFound>();
         }
         [Test]
         public void namespace_entered_partially_is_found()
@@ -71,6 +71,15 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
                     .HasRing.ShouldBeTrue();
         }
         [Test]
+        public void parameter_is_assigned_when_starting_with_correct_value()
+        {
+            given_command<TravelToMordor>();
+            when_parsing_input("lotr", "travel", "-has", "true");
+
+            result.Command.ShouldBeOfType<TravelToMordor>()
+                    .HasRing.ShouldBeTrue();
+        }
+        [Test]
         public void one_parameter_is_assigned_by_order()
         {
 
@@ -96,6 +105,27 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             command.IsDangerous.ShouldBeTrue();
         }
         [Test]
+        public void bool_parameters_are_considered_switches()
+        {
+            given_command<TravelToMordor>();
+
+            when_parsing_input("lotr", "travel", "-IsDangerous");
+
+            result.Command.ShouldBeOfType<TravelToMordor>()
+                .IsDangerous.ShouldBeTrue();
+        }
+        [Test]
+        public void parameter_is_assigned_using_beginning_of_input_name()
+        {
+            given_command<TravelToMordor>();
+
+            when_parsing_input("lotr", "travel", "-has", "true");
+
+            result.ShouldBeOfType<Success>()
+                .Command.ShouldBeOfType<TravelToMordor>()
+                    .HasRing.ShouldBeTrue();
+        }
+        [Test]
         public void parameter_is_assigned_using_camel_case_initials()
         {
             given_command<TravelToMordor>();
@@ -116,6 +146,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
         [CommandInput(Position = 1)]
         public bool IsDangerous { get; set; }
+
 
         public IEnumerable<ICommandResult> Execute()
         {

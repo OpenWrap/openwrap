@@ -10,7 +10,7 @@ namespace OpenWrap.Commands
     {
         readonly ICollection<ICommandDescriptor> _commands;
         readonly HashSet<string> _commandVerbs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        readonly HashSet<string> _namespaces = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        readonly HashSet<string> _nouns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public CommandRepository(IEnumerable<ICommandDescriptor> commands)
         {
@@ -22,9 +22,9 @@ namespace OpenWrap.Commands
             _commands = new List<ICommandDescriptor>();
         }
 
-        public IEnumerable<string> Namespaces
+        public IEnumerable<string> Nouns
         {
-            get { return _namespaces; }
+            get { return _nouns; }
         }
 
         public IEnumerable<string> Verbs
@@ -34,8 +34,8 @@ namespace OpenWrap.Commands
 
         public void Add(ICommandDescriptor commandDescriptor)
         {
-            if (!_namespaces.Contains(commandDescriptor.Noun))
-                _namespaces.Add(commandDescriptor.Noun);
+            if (!_nouns.Contains(commandDescriptor.Noun))
+                _nouns.Add(commandDescriptor.Noun);
             if (!_commandVerbs.Contains(commandDescriptor.Verb))
                 _commandVerbs.Add(commandDescriptor.Verb);
 

@@ -1,5 +1,4 @@
 using System.Reflection;
-using OpenWrap.Reflection;
 
 namespace OpenWrap.Commands
 {
@@ -14,10 +13,14 @@ namespace OpenWrap.Commands
         {
             try
             {
+                if (Property.PropertyType == typeof(bool))
+                {
+                    return value == null ? true : Property.PropertyType.CreateInstanceFrom(value as string);
+                }
+                    
                 if (value is string)
                 {
                     return Property.PropertyType.CreateInstanceFrom(value as string);
-                    
                 }
                 if (Property.PropertyType.IsAssignableFrom(value.GetType()))
                 {
@@ -32,7 +35,7 @@ namespace OpenWrap.Commands
 
         public void SetValue(object target, object value)
         {
-            Property.SetValue(target, value, null);
+            Property.SetValue(target, value ?? "true", null);
         }
 
         public PropertyInfo Property { get; set; }

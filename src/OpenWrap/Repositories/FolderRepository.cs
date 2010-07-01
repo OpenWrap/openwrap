@@ -58,5 +58,15 @@ namespace OpenWrap.Repositories
             Packages.Add(newPackage);
             return newPackage;
         }
+
+        public bool CanPublish
+        {
+            get { return true; }
+        }
+
+        public string Name
+        {
+            get; set;
+        }
     }
 }

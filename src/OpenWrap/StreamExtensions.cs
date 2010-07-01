@@ -41,9 +41,9 @@ namespace OpenWrap
 
             var destinationBytes = new byte[streamToReturn.Length - streamToReturn.Position];
             Buffer.BlockCopy(streamToReturn.GetBuffer(),
-                             (int)streamToReturn.Position, 
-                             destinationBytes, 
-                             0, 
+                             (int)streamToReturn.Position,
+                             destinationBytes,
+                             0,
                              (int)(streamToReturn.Length - streamToReturn.Position));
             return destinationBytes;
         }

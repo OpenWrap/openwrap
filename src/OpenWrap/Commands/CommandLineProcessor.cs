@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Commands;
 
 namespace OpenWrap.Commands
 {
@@ -16,53 +15,49 @@ namespace OpenWrap.Commands
 
         public IEnumerable<ICommandResult> Execute(IEnumerable<string> strings)
         {
-            var parser = new CommandLineParser();
-            var parseResult = parser.Parse(strings);
 
-            if (parseResult is CommandLineParser.NotEnoughArgumentsFailure)
+            if (strings == null || strings.Count() < 2)
             {
                 yield return new NotEnoughParameters();
                 yield break;
             }
 
-            var commandLine = ((CommandLineParser.Success)parseResult).CommandLine;
-
-            var matchingNamespaces = _commands.Namespaces.Where(x => x.StartsWith(commandLine.Noun, StringComparison.OrdinalIgnoreCase)).ToList();
-            if (matchingNamespaces.Count != 1)
+            var matchingNouns = _commands.Nouns.Where(x => x.StartsWith(strings.ElementAt(0), StringComparison.OrdinalIgnoreCase)).ToList();
+            if (matchingNouns.Count != 1)
             {
-                yield return new NamespaceNotFound(matchingNamespaces);
+                yield return new NamesapceNotFound(matchingNouns);
                 yield break;
             }
-            var ns = matchingNamespaces[0];
+            var noun = matchingNouns[0];
 
-            var matchingVerbs = _commands.Verbs.Where(x => x.StartsWith(commandLine.Verb, StringComparison.OrdinalIgnoreCase)).ToList();
+            var matchingVerbs = _commands.Verbs.Where(x => x.StartsWith(strings.ElementAt(1), StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (matchingVerbs.Count != 1)
             {
-                yield return new UnknownCommand(commandLine.Verb, matchingVerbs);
+                yield return new UnknownCommand(strings.ElementAt(1), matchingVerbs);
                 yield break;
             }
 
             var verb = matchingVerbs[0];
 
-            var command = _commands.Get(ns, verb);
+            var command = _commands.Get(noun, verb);
 
-            var commandInputValues = ParseCommandInputs(commandLine.Arguments).ToLookup(x => x.Key, x => x.Value);
+            var inputsFromCommandLine = ParseInputsFromCommandLine(strings.Skip(2)).ToLookup(x => x.Key, x => x.Value);
 
-            var unnamedCommandInputValues = commandInputValues[null].ToList();
+            var unnamedCommandInputsFromCommandLine = inputsFromCommandLine[null].ToList();
 
-            var assignedNamedInputValues = (from namedValues in commandInputValues
-                         where namedValues.Key != null
-                         let value = namedValues.LastOrDefault()
-                         let commandInput = FindCommandInputDescriptor(command, namedValues.Key)
-                         let parsedValue = commandInput != null ? commandInput.ValidateValue(value) : null
-                         select new ParsedInput
-                         {
-                             InputName = namedValues.Key,
-                             RawValue = value,
-                             Input = commandInput,
-                             ParsedValue = parsedValue
-                         }).ToList();
+            var assignedNamedInputValues = (from namedValues in inputsFromCommandLine
+                                            where namedValues.Key != null
+                                            let value = namedValues.LastOrDefault()
+                                            let commandInput = FindCommandInputDescriptor(command, namedValues.Key)
+                                            let parsedValue = commandInput != null ? commandInput.ValidateValue(value) : null
+                                            select new ParsedInput
+                                            {
+                                                InputName = namedValues.Key,
+                                                RawValue = value,
+                                                Input = commandInput,
+                                                ParsedValue = parsedValue
+                                            }).ToList();
 
             var namedInputsNameNotFound = assignedNamedInputValues.FirstOrDefault(x => x.Input == null);
             if (namedInputsNameNotFound != null)
@@ -72,49 +67,56 @@ namespace OpenWrap.Commands
             }
 
             var namedInputsValueNotParsed = assignedNamedInputValues.FirstOrDefault(x => x.RawValue == null);
-            if (namedInputsValueNotParsed != null)
-            {
-                yield return new InvalidCommandValue(namedInputsValueNotParsed.InputName, namedInputsValueNotParsed.RawValue);
-                yield break;
-            }
+            //if (namedInputsValueNotParsed != null)
+            //{
+            //    yield return new InvalidCommandValue(namedInputsValueNotParsed.InputName, namedInputsValueNotParsed.RawValue);
+            //    yield break;
+            //}
 
             var inputNamesAlreadyFilled = assignedNamedInputValues.Select(x => x.InputName).ToList();
             // now got a clean set of input names that pass. Now on to the unnamed ones.
 
             var unfullfilledCommandInputs = (from input in command.Inputs
-                                        where !inputNamesAlreadyFilled.Contains(input.Key, StringComparer.OrdinalIgnoreCase)
-                                              && input.Value.Position >= 0
-                                        orderby input.Value.Position ascending
-                                        select input.Value).ToList();
+                                             where !inputNamesAlreadyFilled.Contains(input.Key, StringComparer.OrdinalIgnoreCase)
+                                                   && input.Value.Position >= 0
+                                             orderby input.Value.Position ascending
+                                             select input.Value).ToList();
 
-            if (unnamedCommandInputValues.Count > unfullfilledCommandInputs.Count) {yield return new InvalidCommandValue(unnamedCommandInputValues);
-                yield break;}
+            if (unnamedCommandInputsFromCommandLine.Count > unfullfilledCommandInputs.Count)
+            {
+                yield return new InvalidCommandValue(unnamedCommandInputsFromCommandLine);
+                yield break;
+            }
 
-            var assignedUnnamedInputValues = (from unnamedValue in unnamedCommandInputValues
-                                        let input = unfullfilledCommandInputs[unnamedCommandInputValues.IndexOf(unnamedValue)]
-                                        let commandValue = input.ValidateValue(unnamedValue)
-                                        select new ParsedInput()
-                                        {
-                                            InputName = null,
-                                            RawValue = unnamedValue,
-                                            Input = input,
-                                            ParsedValue = commandValue
-                                        }).ToList();
+            var assignedUnnamedInputValues = (from unnamedValue in unnamedCommandInputsFromCommandLine
+                                              let input = unfullfilledCommandInputs[unnamedCommandInputsFromCommandLine.IndexOf(unnamedValue)]
+                                              let commandValue = input.ValidateValue(unnamedValue)
+                                              select new ParsedInput
+                                              {
+                                                  InputName = null,
+                                                  RawValue = unnamedValue,
+                                                  Input = input,
+                                                  ParsedValue = commandValue
+                                              }).ToList();
 
 
             var unnamedFailed = assignedUnnamedInputValues.Where(x => x.ParsedValue == null).ToList();
             if (unnamedFailed.Count > 0)
             {
-                yield return new InvalidCommandValue(unnamedCommandInputValues);
+                yield return new InvalidCommandValue(unnamedCommandInputsFromCommandLine);
                 yield break;
             }
 
             var allAssignedInputs = assignedNamedInputValues.Concat(assignedUnnamedInputValues);
 
-            var missingInputs = command.Inputs.Select(x => x.Value).Where(x => !allAssignedInputs.Select(i => i.Input).Contains(x) && x.IsRequired).ToList();
-            if (missingInputs.Count > 0)
+            allAssignedInputs = TryAssignSwitchParameters(allAssignedInputs, command.Inputs);
+
+            var missingRequiredInputs = command.Inputs.Select(x => x.Value)
+                                              .Where(x => !allAssignedInputs.Select(i => i.Input).Contains(x) && x.IsRequired)
+                                              .ToList();
+            if (missingRequiredInputs.Count > 0)
             {
-                yield return new MissingCommandValue(missingInputs);
+                yield return new MissingCommandValue(missingRequiredInputs);
                 yield break;
             }
 
@@ -123,34 +125,52 @@ namespace OpenWrap.Commands
             var commandInstance = command.Create();
             foreach (var namedInput in allAssignedInputs)
                 namedInput.Input.SetValue(commandInstance, namedInput.ParsedValue);
-            foreach(var nestedResult in commandInstance.Execute())
-                yield return nestedResult;
+            var enumerator = commandInstance.Execute().GetEnumerator();
+            MoveNextResult result;
+            do
+            {
+                ICommandResult msg;
+                Exception error;
+                result = enumerator.TryMoveNext(out msg, out error);
+                if (result == MoveNextResult.Moved)
+                    yield return msg;
+                else if (result == MoveNextResult.End)
+                    yield break;
+                else if (result == MoveNextResult.Error)
+                    yield return new ExceptionError(error);
+            } while (result == MoveNextResult.Moved);
+        }
+
+        IEnumerable<ParsedInput> TryAssignSwitchParameters(IEnumerable<ParsedInput> allAssignedInputs, IDictionary<string, ICommandInputDescriptor> inputs)
+        {
+            return allAssignedInputs;
         }
 
         ICommandInputDescriptor FindCommandInputDescriptor(ICommandDescriptor command, string name)
         {
             ICommandInputDescriptor descriptor;
             // Try to find by full name match first.
-            if (command.Inputs.TryGetValue(name, out descriptor)) return descriptor;
+            if (command.Inputs.TryGetValue(name, out descriptor))
+            {
+                return descriptor;
+            }
+            var potentialInputs = from input in command.Inputs
+                                  where name.MatchesHumps(input.Key)
+                                  select input.Value;
 
-            var potentialInputs =
-                from input in command.Inputs
-                where input.Key.GetCamelCaseInitials().Equals(name, StringComparison.OrdinalIgnoreCase)
-                select input.Value;
+            //var potentialInputs =
+            //    from input in command.Inputs
+            //    where input.Key.GetCamelCaseInitials().Equals(name, StringComparison.OrdinalIgnoreCase)
+            //    select input.Value;
 
             // TODO: What happens if the name matches more than one input? Should this throw?
             // For now, just return the first input found.
             return potentialInputs.FirstOrDefault();
         }
 
-        class ParsedInput
-        {
-            public string InputName;
-            public string RawValue;
-            public ICommandInputDescriptor Input;
-            public object ParsedValue;
-        }
-        IEnumerable<KeyValuePair<string, string>> ParseCommandInputs(IEnumerable<string> strings)
+
+
+        IEnumerable<KeyValuePair<string, string>> ParseInputsFromCommandLine(IEnumerable<string> strings)
         {
             string key = null;
             foreach (var component in strings)
@@ -170,6 +190,16 @@ namespace OpenWrap.Commands
                 }
                 yield return new KeyValuePair<string, string>(null, component);
             }
+            if (key != null)
+                yield return new KeyValuePair<string, string>(key, null);
+        }
+
+        class ParsedInput
+        {
+            public ICommandInputDescriptor Input;
+            public string InputName;
+            public object ParsedValue;
+            public string RawValue;
         }
     }
 }

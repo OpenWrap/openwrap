@@ -1,6 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
-namespace OpenWrap.IO
+namespace OpenWrap.IO.FileSystem.Local
 {
     public class LocalFile : IFile
     {
@@ -19,7 +20,7 @@ namespace OpenWrap.IO
 
         public IFileSystem FileSystem
         {
-            get { return IO.FileSystem.Local; }
+            get { return IO.FileSystems.Local; }
         }
 
         public string Name
@@ -30,6 +31,11 @@ namespace OpenWrap.IO
         public string NameWithoutExtension
         {
             get { return System.IO.Path.GetFileNameWithoutExtension(_filePath); }
+        }
+
+        public DateTime? LastModifiedTimeUtc
+        {
+            get { return Exists ? new FileInfo(_filePath).LastWriteTimeUtc : (DateTime?)null; }
         }
 
         public IDirectory Parent

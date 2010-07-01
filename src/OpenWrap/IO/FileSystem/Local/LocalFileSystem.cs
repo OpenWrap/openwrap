@@ -1,12 +1,13 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
-namespace OpenWrap.IO
+namespace OpenWrap.IO.FileSystem.Local
 {
     public class LocalFileSystem : AbstractFileSystem
     {
-        public override IDirectory CreateDirectory(IPath path)
+        public override IDirectory CreateDirectory(string path)
         {
-            return new LocalDirectory(path.FullPath).Create();
+            return new LocalDirectory(path).Create();
         }
 
         public override ITemporaryDirectory CreateTempDirectory()
@@ -21,12 +22,12 @@ namespace OpenWrap.IO
 
         public override IDirectory GetDirectory(string directoryPath)
         {
-            return new LocalDirectory(directoryPath);
+            return new LocalDirectory(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory,directoryPath)));
         }
 
-        public override IFile GetFile(string itemSpec)
+        public override IFile GetFile(string filePath)
         {
-            return new LocalFile(itemSpec);
+            return new LocalFile(Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, filePath)));
         }
 
         public override IPath GetPath(string path)

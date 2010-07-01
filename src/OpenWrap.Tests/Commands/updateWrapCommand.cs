@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap.Build.Services;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Dependencies;
@@ -25,22 +24,24 @@ namespace OpenWrap.Tests.Commands
 
             when_executing_command();
         }
+
         [Test]
         public void the_package_is_installed_alongside_previous_version_in_user_repo()
         {
-            Environment.UserRepository.PackagesByName["goldberry"].ShouldHaveCountOf(2);
+            Environment.SystemRepository.PackagesByName["goldberry"].ShouldHaveCountOf(2);
         }
+
         [Test]
         public void the_package_is_installed_in_user_repo()
         {
-            Environment.UserRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
+            Environment.SystemRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
         }
+
         [Test]
         public void the_package_is_installed_in_project_repo()
         {
             Environment.ProjectRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
         }
-
     }
     public class when_not_in_project_folder_and_package_can_be_updated : context.command_context<UpdateWrapCommand>
     {
@@ -59,7 +60,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void package_in_user_repository_is_updated()
         {
-            Environment.UserRepository.ShouldHavePackage("goldberry", "2.1.0");
+            Environment.SystemRepository.ShouldHavePackage("goldberry", "2.1.0");
         }
     }
     public static class RepositoryAssertions

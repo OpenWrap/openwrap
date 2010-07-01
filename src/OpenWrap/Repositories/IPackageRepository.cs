@@ -9,5 +9,7 @@ namespace OpenWrap.Repositories
         ILookup<string, IPackageInfo> PackagesByName { get; }
         IPackageInfo Find(WrapDependency dependency);
         IPackageInfo Publish(string packageFileName, Stream packageStream);
+        bool CanPublish { get; }
+        string Name { get; }
     }
 }

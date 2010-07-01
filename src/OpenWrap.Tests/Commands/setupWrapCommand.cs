@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap.Build.Services;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Dependencies;

@@ -1,4 +1,4 @@
-namespace OpenWrap.Build.Services
+namespace OpenWrap.Services
 {
     public interface IService
     {

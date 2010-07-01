@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Build.Services;
 using OpenWrap.Commands;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap
 {
@@ -50,7 +50,7 @@ namespace OpenWrap
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            var packages = GetLatestModules(environment.UserRepository);
+            var packages = GetLatestModules(environment.SystemRepository);
             if (environment.ProjectRepository != null)
                 packages = packages.Concat(GetLatestModules(environment.ProjectRepository));
 

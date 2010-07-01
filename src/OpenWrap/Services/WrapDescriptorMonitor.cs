@@ -1,15 +1,16 @@
 using System.Collections.Generic;
 using System.IO;
+using OpenWrap.Build;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
 
-namespace OpenWrap.Build.Services
+namespace OpenWrap.Services
 {
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
     public class WrapDescriptorMonitor : IWrapDescriptorMonitoringService
     {
-        readonly Dictionary<string, WrapFileDescriptor> _notificationClients = new Dictionary<string, WrapFileDescriptor>();
+        readonly Dictionary<IPath, WrapFileDescriptor> _notificationClients = new Dictionary<IPath, WrapFileDescriptor>();
         readonly WrapDependencyResolver _resolver = new WrapDependencyResolver();
 
 
@@ -33,20 +34,20 @@ namespace OpenWrap.Build.Services
         WrapFileDescriptor GetDescriptor(IFile wrapPath, IPackageRepository packageRepository)
         {
             WrapFileDescriptor descriptor;
-            if (!_notificationClients.TryGetValue(wrapPath.Path.FullPath, out descriptor))
-                _notificationClients.Add(wrapPath.Path.FullPath, descriptor = new WrapFileDescriptor(wrapPath, packageRepository, HandleWrapFileUpdate));
+            if (!_notificationClients.TryGetValue(wrapPath.Path, out descriptor))
+                _notificationClients.Add(wrapPath.Path, descriptor = new WrapFileDescriptor(wrapPath, packageRepository, HandleWrapFileUpdate));
             return descriptor;
         }
 
         void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
         {
-            NotifyAllClients(FileSystem.Local.GetFile(e.FullPath));
+            NotifyAllClients(FileSystems.Local.GetFile(e.FullPath));
         }
         void NotifyClient(IFile wrapPath, IWrapAssemblyClient client)
         {
-            if (!_notificationClients.ContainsKey(wrapPath.Path.FullPath))
+            if (!_notificationClients.ContainsKey(wrapPath.Path))
                 return;
-            var d = _notificationClients[wrapPath.Path.FullPath];
+            var d = _notificationClients[wrapPath.Path];
 
             var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
 
@@ -55,9 +56,9 @@ namespace OpenWrap.Build.Services
 
         void NotifyAllClients(IFile wrapPath)
         {
-            if (!_notificationClients.ContainsKey(wrapPath.Path.FullPath))
+            if (!_notificationClients.ContainsKey(wrapPath.Path))
                 return;
-            var d = _notificationClients[wrapPath.Path.FullPath];
+            var d = _notificationClients[wrapPath.Path];
 
             var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
 

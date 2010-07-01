@@ -12,6 +12,7 @@ namespace OpenWrap.Dependencies
             Dependencies = new List<WrapDependency>();
             Description = "";
         }
+
         public ICollection<WrapDependency> Dependencies { get; set; }
 
         public string Name { get; set; }
@@ -33,6 +34,11 @@ namespace OpenWrap.Dependencies
         public string FullName
         {
             get { return Name + "-" + Version; }
+        }
+
+        public DateTime? LastModifiedTimeUtc
+        {
+            get { return null; }
         }
 
         public bool IsCompatibleWith(Version version)

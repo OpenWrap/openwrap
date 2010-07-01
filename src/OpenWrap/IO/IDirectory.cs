@@ -4,7 +4,7 @@ namespace OpenWrap.IO
 {
     public interface IDirectory : IFileSystemItem<IDirectory>
     {
-        IDirectory GetDirectory(string directoryPath);
+        IDirectory GetDirectory(string directoryName);
         IFile GetFile(string fileName);
         IEnumerable<IFile> Files();
         IEnumerable<IDirectory> Directories();

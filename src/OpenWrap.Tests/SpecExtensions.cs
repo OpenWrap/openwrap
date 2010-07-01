@@ -295,6 +295,22 @@ namespace OpenWrap.Testing
             Assert.Fail("Expected an exception of type \"{0}\" but none were thrown.", typeof(T).Name);
             return null; // this never happens as Fail will throw...
         }
+        public static IEnumerable<T> ShouldHaveNo<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T : class
+        {
+            enumerable.None(predicate).ShouldBeTrue();
+            return enumerable;
+        }
+        
+        public static IEnumerable<T> ShouldHaveAtLeastOne<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T:class
+        {
+            enumerable.Any(predicate).ShouldBeTrue();
+            return enumerable;
+        }
+        public static IEnumerable<T> ShouldHaveAll<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T:class
+        {
+            enumerable.All(predicate).ShouldBeTrue();
+            return enumerable;
+        }
     }
 }
 

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenWrap.Build;
-using OpenWrap.Build.Services;
 
-namespace OpenWrap.Build.Services
+namespace OpenWrap.Services
 {
-    public interface VSIService : IService {}
     public static class WrapServices
     {
         static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
@@ -14,10 +11,12 @@ namespace OpenWrap.Build.Services
         {
             Clear();
         }
-        public static void RegisterService<TService>(TService service) where TService : class, IService
+        public static void RegisterService<TService>(TService instance) where TService : class
         {
-            _services[typeof(TService)] = service;
-            service.Initialize();
+            _services[typeof(TService)] = instance;
+            var service = instance as IService;
+            if (service != null)
+                service.Initialize();
         }
         public static void TryRegisterService<TService>(Func<TService> service) where TService: class, IService
         {
@@ -30,7 +29,7 @@ namespace OpenWrap.Build.Services
         {
             return _services.ContainsKey(typeof(T));
         }
-        public static T GetService<T>() where T : class, IService
+        public static T GetService<T>() where T : class
         {
             return _services.ContainsKey(typeof(T)) ? (T)_services[typeof(T)] : null;
         }

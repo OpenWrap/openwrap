@@ -11,7 +11,7 @@ namespace OpenWrap.IO
             directory.Add(file);
         }
 
-        public static IDirectory EnsureExists(this IDirectory directory)
+        public static T EnsureExists<T>(this T directory) where T:IFileSystemItem<T>
         {
             if (!directory.Exists)
                 directory.Create();
@@ -46,7 +46,7 @@ namespace OpenWrap.IO
             return file.Open(FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
         }
 
-        public static IEnumerable<IDirectory> SelfAndAncestors(this IDirectory directory)
+        public static IEnumerable<IDirectory> AncestorsAndSelf(this IDirectory directory)
         {
             do
             {

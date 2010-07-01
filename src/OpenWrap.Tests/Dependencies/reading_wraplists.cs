@@ -65,7 +65,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         {
             protected void given_repository()
             {
-                Repository = new XmlRepository(FileSystem.Local, new InMemoryNavigator(), new IExportBuilder[0]);
+                Repository = new XmlRepository(FileSystems.Local, new InMemoryNavigator(), new IExportBuilder[0]);
             }
             class InMemoryNavigator : IHttpNavigator
             {

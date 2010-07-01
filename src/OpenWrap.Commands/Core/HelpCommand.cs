@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenWrap.Build.Services;
 using OpenWrap.Commands;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Core
 {

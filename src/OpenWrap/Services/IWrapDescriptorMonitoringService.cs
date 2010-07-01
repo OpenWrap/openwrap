@@ -1,7 +1,8 @@
+using OpenWrap.Build;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
 
-namespace OpenWrap.Build.Services
+namespace OpenWrap.Services
 {
     public interface IWrapDescriptorMonitoringService : IService
     {

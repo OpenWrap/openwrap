@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using OpenWrap;
+using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
@@ -12,7 +11,7 @@ using OpenWrap.Testing;
 
 namespace OpenRasta.Wrap.Tests.Dependencies
 {
-    public class when_resolving_unavailable_dependencies : context.dependency_manager_context
+    public class when_resolving_unavailable_dependencies : dependency_manager_context
     {
         [Test]
         public void not_found_package_fails_resolution()
@@ -25,29 +24,10 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             Resolve.Dependencies.ShouldHaveCountOf(1);
             Resolve.Dependencies.First().Package.ShouldBeNull();
         }
-
-        
     }
-    public class when_conflicting_dependencies : context.dependency_manager_context
+
+    public class when_conflicting_dependencies : dependency_manager_context
     {
-        [Test]
-        public void the_resolving_fails()
-        {
-            given_local_package("sauron-1.0.0");
-            given_local_package("sauron-1.1.0");
-            given_local_package("rings-of-power-1.0.0", "depends sauron = 1.0.0");
-            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends sauron = 1.1.0");
-            given_local_package("tolkien-1.0.0", "depends rings-of-power", "depends one-ring-to-rule-them-all");
-
-            given_dependency("depends tolkien");
-
-            when_resolving_packages();
-
-            Resolve.IsSuccess.ShouldBeFalse();
-            Resolve.Dependencies.Count().ShouldBe(5);
-            Resolve.Dependencies.ToLookup(x => x.Package.Name)["sauron"].Count().ShouldBe(2);
-        }
-
         [Test]
         public void local_declaration_overrides_packages()
         {
@@ -68,19 +48,39 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 .ShouldHaveCountOf(1)
                 .First().Package.Version.ShouldBe(new Version(1, 0, 0));
         }
+
+        [Test]
+        public void the_resolving_fails()
+        {
+            given_local_package("sauron-1.0.0");
+            given_local_package("sauron-1.1.0");
+            given_local_package("rings-of-power-1.0.0", "depends sauron = 1.0.0");
+            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends sauron = 1.1.0");
+            given_local_package("tolkien-1.0.0", "depends rings-of-power", "depends one-ring-to-rule-them-all");
+
+            given_dependency("depends tolkien");
+
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeFalse();
+            Resolve.Dependencies.Count().ShouldBe(5);
+            Resolve.Dependencies.ToLookup(x => x.Package.Name)["sauron"].Count().ShouldBe(2);
+        }
     }
-    public class when_resolving_available_dependencies : context.dependency_manager_context
+
+    public class when_resolving_available_dependencies : dependency_manager_context
     {
         [Test]
-        public void single_package_is_resolved()
+        public void dependency_on_remote_package_is_resolved()
         {
-            given_local_package("rings-of-power-1.0.0");
+            given_remote1_package("rings-of-power-1.0.0");
             given_dependency("depends rings-of-power");
 
             when_resolving_packages();
 
             Resolve.IsSuccess.ShouldBeTrue();
-            Resolve.Dependencies.ShouldHaveCountOf(1);
+            Resolve.Dependencies.First().Package.ShouldNotBeNull()
+                .Source.ShouldBe(RemoteRepository);
         }
 
         [Test]
@@ -93,20 +93,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             Resolve.IsSuccess.ShouldBeTrue();
             Resolve.Dependencies.First().Package.ShouldNotBeNull()
-                .Source.ShouldBe(UserRepository);
-        }
-
-        [Test]
-        public void dependency_on_remote_package_is_resolved()
-        {
-            given_remote1_package("rings-of-power-1.0.0");
-            given_dependency("depends rings-of-power");
-
-            when_resolving_packages();
-
-            Resolve.IsSuccess.ShouldBeTrue();
-            Resolve.Dependencies.First().Package.ShouldNotBeNull()
-                .Source.ShouldBe(RemoteRepository);
+                .Source.ShouldBe(SystemRepository);
         }
 
 
@@ -124,18 +111,31 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             dependency.Package.ShouldNotBeNull()
                 .Source.ShouldBe(LocalRepository);
-            dependency.Package.Version.ShouldBe(new Version(1, 0,0));
+            dependency.Package.Version.ShouldBe(new Version(1, 0, 0));
+        }
+
+        [Test]
+        public void single_package_is_resolved()
+        {
+            given_local_package("rings-of-power-1.0.0");
+            given_dependency("depends rings-of-power");
+
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeTrue();
+            Resolve.Dependencies.ShouldHaveCountOf(1);
         }
     }
+
     namespace context
     {
         public class dependency_manager_context : OpenWrap.Testing.context
         {
             protected WrapDescriptor DependencyDescriptor;
             protected InMemoryRepository LocalRepository;
-            protected InMemoryRepository UserRepository;
             protected InMemoryRepository RemoteRepository;
             protected DependencyResolutionResult Resolve;
+            protected InMemoryRepository SystemRepository;
 
             protected override void SetUp()
             {
@@ -145,28 +145,40 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     Name = "test",
                     Version = new Version(1, 0)
                 };
-                LocalRepository = new InMemoryRepository();
-                UserRepository = new InMemoryRepository();
-                RemoteRepository = new InMemoryRepository();
+                LocalRepository = new InMemoryRepository("Local repository");
+                SystemRepository = new InMemoryRepository("System repository");
+                RemoteRepository = new InMemoryRepository("Remote repository");
             }
+
             protected void given_dependency(string dependency)
             {
                 new WrapDependencyParser().Parse(dependency, DependencyDescriptor);
             }
+
             protected void given_local_package(string name, params string[] dependencies)
             {
                 Add(LocalRepository, name, dependencies);
-
             }
-            protected void given_user_package(string name, params string[] dependencies)
-            {
-                Add(UserRepository, name, dependencies);
 
-            }
             protected void given_remote1_package(string name, params string[] dependencies)
             {
                 Add(RemoteRepository, name, dependencies);
+            }
 
+            protected void given_user_package(string name, params string[] dependencies)
+            {
+                Add(SystemRepository, name, dependencies);
+            }
+
+            protected void when_resolving_packages()
+            {
+                Resolve = new PackageManager().TryResolveDependencies(DependencyDescriptor,
+                                                                      new[]
+                                                                      {
+                                                                          LocalRepository,
+                                                                          SystemRepository,
+                                                                          RemoteRepository
+                                                                      });
             }
 
             void Add(InMemoryRepository repository, string name, string[] dependencies)
@@ -177,29 +189,35 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     Version = WrapNameUtility.GetVersion(name),
                     Source = repository,
                     Dependencies = dependencies.Select(x =>
-                        WrapDependencyParser.ParseDependency(x)).ToList()
+                                                       WrapDependencyParser.ParseDependency(x)).ToList()
                 };
                 repository.Packages.Add(package);
             }
-            protected void when_resolving_packages()
-            {
-                Resolve = new PackageManager().TryResolveDependencies(DependencyDescriptor,
-                                                                      LocalRepository,
-                                                                      UserRepository,
-                                                                      new[] { RemoteRepository });
-            }
         }
+
         public class InMemoryPackage : IPackageInfo, IPackage
         {
             public ICollection<WrapDependency> Dependencies { get; set; }
-            public string Name { get; set; }
-            public Version Version { get; set; }
-            public IPackage Load()
+
+            public InMemoryPackage()
             {
-                return this;
+                LastModifiedTimeUtc = DateTime.Now;
+            }
+            public string FullName
+            {
+                get { return Name + "-" + Version; }
             }
 
+            public DateTime? LastModifiedTimeUtc
+            {
+                get; private set;
+            }
+
+            public string Name { get; set; }
+
             public IPackageRepository Source { get; set; }
+            public Version Version { get; set; }
+
             public IExport GetExport(string exportName, ExecutionEnvironment environment)
             {
                 return null;
@@ -209,16 +227,32 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             {
                 return new MemoryStream(0);
             }
-            public string FullName
+
+            public IPackage Load()
             {
-                get { return Name + "-" + Version; }
+                return this;
             }
         }
 
         public class InMemoryRepository : IPackageRepository
         {
             public List<IPackageInfo> Packages = new List<IPackageInfo>();
-            
+
+            public InMemoryRepository(string name)
+            {
+                Name = name;
+            }
+
+            public bool CanPublish
+            {
+                get { return true; }
+            }
+
+            public string Name
+            {
+                get; set;
+            }
+
 
             public ILookup<string, IPackageInfo> PackagesByName
             {
