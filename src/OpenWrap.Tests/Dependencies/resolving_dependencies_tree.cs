@@ -134,11 +134,29 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         {
             given_local_package("foobar-1.0.0");
             given_dependency("depends foo");
-            DependencyDescriptor.Overrides.Add(new WrapOverride("foo", "foobar"));
+            given_override("foo", "foobar");
 
             when_resolving_packages();
 
             Resolve.IsSuccess.ShouldBeTrue();
+        }
+
+        [Test]
+        public void dependency_in_local_is_overriden()
+        {
+            given_remote1_package("one-ring-1.0.0");
+            given_local_package("sauron-1.0.0", "depends ring-of-power");
+            given_dependency("depends sauron");
+            given_override("ring-of-power", "one-ring");
+            
+            when_resolving_packages();
+
+            Resolve.IsSuccess.ShouldBeTrue();
+        }
+
+        void given_override(string from, string to)
+        {
+            DependencyDescriptor.Overrides.Add(new WrapOverride(from, to));            
         }
     }
 
