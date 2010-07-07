@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using OpenWrap.IO;
@@ -9,7 +10,7 @@ namespace OpenWrap.Configuration
 {
     public interface IConfigurationManager
     {
-        T Load<T>(Uri uri);
+        T Load<T>(Uri uri) where T:new();
         void Save<T>(Uri uri, T configEntry);
     }
 
@@ -23,7 +24,7 @@ namespace OpenWrap.Configuration
             BaseUri = ConfigurationEntries.BaseUri;
         }
 
-        public T Load<T>(Uri uri)
+        public T Load<T>(Uri uri) where T : new()
         {
             var relativeUri = ConfigurationEntries.BaseUri.MakeRelativeUri(uri).ToString();
             var file = _configurationDirectory.GetFile(relativeUri);
@@ -32,17 +33,45 @@ namespace OpenWrap.Configuration
             return ParseFile<T>(file);
         }
 
-        T ParseFile<T>(IFile file)
+        T ParseFile<T>(IFile file) where T : new()
         {
             string data;
             using (var fileStream = file.OpenRead())
                 data = Encoding.UTF8.GetString(fileStream.ReadToEnd());
 
-            if (typeof(T).GetInterfaces().Any(x=>x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>) && x.GetGenericArguments()[0] == typeof(string)))
+            var parsedConfig = new ConfigurationParser().Parse(data);
+            var configData = new T();
+
+            var dictionaryInterface = typeof(T).GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>) && x.GetGenericArguments()[0] == typeof(string));
+            if (dictionaryInterface != null)
             {
-                // index all sections by string
+                var dictionaryParameterType = dictionaryInterface.GetGenericArguments()[1];
+                var addMethod = dictionaryInterface.GetMethod("Add", new[] { typeof(string), dictionaryParameterType });
+                foreach (var section in parsedConfig.OfType<ConfigurationSection>().Where(x => x.Type.Equals(dictionaryParameterType.Name, StringComparison.OrdinalIgnoreCase)))
+                    addMethod.Invoke(configData, new[]{section.Name, AssignPropertiesFromLines(Activator.CreateInstance(dictionaryParameterType), section.Lines)});
             }
-            return default(T);
+            return configData;
+        }
+
+        object AssignPropertiesFromLines(object instance, IEnumerable<ConfigurationLine> lines)
+        {
+            var type = instance.GetType();
+
+            foreach(var line in lines)
+            {
+                var property = type.GetProperty(line.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                if (property == null)
+                    continue;
+                var propertyValue = ParseValue(line.Value, property.PropertyType);
+                               
+                property.SetValue(instance, propertyValue,null);
+            }
+            return instance;
+        }
+
+        object ParseValue(string value, Type propertyType)
+        {
+            return propertyType.CreateInstanceFrom(value);
         }
 
         public void Save<T>(Uri uri, T configEntry)

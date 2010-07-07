@@ -16,7 +16,7 @@ namespace OpenWrap.Tests.Configuration
 
         public when_reading_collection_of_values()
         {
-            given_configuration_text(ConfigurationEntries.RemoteRepositories, "[remoterepository \"openwrap\"]\r\nhref=http://wraps.openwrap.org");
+            given_configuration_text(ConfigurationEntries.RemoteRepositories, "[remoterepository openwrap]\r\nhref=http://wraps.openwrap.org");
 
             when_loading_configuration(ConfigurationEntries.RemoteRepositories);
         }
@@ -24,6 +24,7 @@ namespace OpenWrap.Tests.Configuration
         public void the_property_value_is_assigned()
         {
             Entry.ContainsKey("openwrap").ShouldBeTrue();
+            Entry["openwrap"].Href.ShouldBe("http://wraps.openwrap.org");
         }
 
     }
@@ -35,13 +36,14 @@ namespace OpenWrap.Tests.Configuration
     public class RemoteRepository
     {
         public string Name { get; set; }
-        public Uri Uri { get; set; }
+        public Uri Href { get; set; }
     }
 
     namespace context
     {
 
         public class configuration_entry<T> : Testing.context
+            where T:new()
         {
             protected T Entry;
             protected ConfigurationManager ConfigurationManager;
