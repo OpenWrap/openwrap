@@ -132,7 +132,11 @@ namespace OpenWrap.Testing
             Assert.That(obj, Is.InstanceOf<TExpected>());
             return obj == null ? default(TExpected) : (TExpected)obj;
         }
-
+        public static T Check<T>(this T obj, Action<T> assertion)
+        {
+            assertion(obj);
+            return obj;
+        }
         public static void ShouldBeTheSameInstanceAs(this object actual, object expected)
         {
             Assert.That(actual, Is.SameAs(expected));

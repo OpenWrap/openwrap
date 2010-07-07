@@ -27,14 +27,20 @@ namespace OpenWrap.Tests.IO
 
             directory.Exists.ShouldBeTrue();
         }
-        //TODO: complete sub-directory in-memory if needed.
-        [Test, Ignore]
+
+        [Test]
         public void can_get_subdirectory_of_non_existant_directory()
         {
             FileSystem.GetDirectory(@"c:\mordor").GetDirectory(@"shire\galladrin")
                 .Path.FullPath.ShouldBe(@"c:\mordor\shire\galladrin\");
         }
 
+        [Test]
+        public void can_get_file_with_directory_path()
+        {
+            FileSystem.GetDirectory(@"c:\mordor").GetFile(@"shire\frodo.txt")
+                .Path.FullPath.ShouldBe(@"c:\mordor\shire\frodo.txt");
+        }
         [Test]
         public void directory_is_resolved_relative_to_current_directory()
         {

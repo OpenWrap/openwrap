@@ -67,6 +67,8 @@
     <Compile Include="Commands\setupWrapCommand.cs" />
     <Compile Include="Commands\updateWrapCommand.cs" />
     <Compile Include="Commands\syncWrapCommand.cs" />
+    <Compile Include="Configuration\configuration_parser_spec.cs" />
+    <Compile Include="Configuration\configuration_specifications.cs" />
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />

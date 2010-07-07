@@ -73,6 +73,7 @@
     <Compile Include="Commands\MissingCommandValue.cs" />
     <Compile Include="Commands\NamesapceNotFound.cs" />
     <Compile Include="Commands\Success.cs" />
+    <Compile Include="Configuration\IConfigurationManager.cs" />
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\GreaterThenVersionVertice.cs" />
     <Compile Include="Dependencies\IWrapDescriptorLineParser.cs" />
