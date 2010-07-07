@@ -78,6 +78,8 @@
     <Compile Include="Dependencies\GreaterThenVersionVertice.cs" />
     <Compile Include="Dependencies\IWrapDescriptorLineParser.cs" />
     <Compile Include="Dependencies\WrapNameUtility.cs" />
+    <Compile Include="Dependencies\WrapOverride.cs" />
+    <Compile Include="Dependencies\WrapOverrideParser.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />
     <Compile Include="IO\FileSystem\AbstractFileSystem.cs" />
