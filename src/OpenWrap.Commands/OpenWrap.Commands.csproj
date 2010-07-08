@@ -28,7 +28,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
@@ -56,6 +55,7 @@
     <Compile Include="Wrap\AddWrapCommand.cs" />
     <Compile Include="Wrap\NewWrapCommand.cs" />
     <Compile Include="Wrap\PackageRepositoryExtensions.cs" />
+    <Compile Include="Wrap\RemoveWrapCommand.cs" />
     <Compile Include="Wrap\SyncWrapCommand.cs" />
     <Compile Include="Wrap\UpdateWrapCommand.cs" />
   </ItemGroup>
@@ -66,7 +66,7 @@
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
-  <Import Project ="..\..\build\common.project.properties" />
+  <Import Project="..\..\build\common.project.properties" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
