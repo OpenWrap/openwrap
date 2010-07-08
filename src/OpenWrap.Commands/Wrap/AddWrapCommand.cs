@@ -71,11 +71,12 @@ namespace OpenWrap.Commands.Wrap
                 ProjectOnly ? null : Environment.SystemRepository,
                 SystemOnly ? null : Environment.ProjectRepository
             });
-            foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo))
+            foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo.NotNull()))
                 yield return msg;
 
             yield return new GenericMessage("Updating cache...");
-            PackageManager.GetExports<IExport>("bin", Environment.ExecutionEnvironment, new[] { Environment.ProjectRepository }).All(x=>true);
+            var packageRepositories = new[] { Environment.ProjectRepository };
+            PackageManager.GetExports<IExport>("bin", Environment.ExecutionEnvironment, packageRepositories.NotNull()).All(x=>true);
         }
 
         void AddInstructionToDescriptor()

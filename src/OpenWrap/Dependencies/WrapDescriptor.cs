@@ -10,10 +10,12 @@ namespace OpenWrap.Dependencies
         public WrapDescriptor()
         {
             Dependencies = new List<WrapDependency>();
+            Overrides = new List<WrapOverride>();
             Description = "";
         }
 
         public ICollection<WrapDependency> Dependencies { get; set; }
+        public ICollection<WrapOverride> Overrides { get; set; }
 
         public string Name { get; set; }
 

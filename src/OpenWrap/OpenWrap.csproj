@@ -73,10 +73,13 @@
     <Compile Include="Commands\InvalidCommandValue.cs" />
     <Compile Include="Commands\MissingCommandValue.cs" />
     <Compile Include="Commands\Success.cs" />
+    <Compile Include="Configuration\IConfigurationManager.cs" />
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\GreaterThenVersionVertice.cs" />
     <Compile Include="Dependencies\IWrapDescriptorLineParser.cs" />
     <Compile Include="Dependencies\WrapNameUtility.cs" />
+    <Compile Include="Dependencies\WrapOverride.cs" />
+    <Compile Include="Dependencies\WrapOverrideParser.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />
     <Compile Include="IO\FileSystem\AbstractFileSystem.cs" />
