@@ -67,6 +67,16 @@ namespace OpenWrap.Tests.IO
             FileSystem.GetDirectory("rohan.html").ShouldBe(FileSystem.GetDirectory("rohan.html"));
         }
         [Test]
+        public void non_existant_file_opened_for_write_is_created_automatically()
+        {
+            var file = FileSystem.GetFile(@"c:\mordor\elves.txt");
+            file.Exists.ShouldBeFalse();
+            file.OpenWrite().Close();
+            file.Exists.ShouldBeTrue();
+            file.Delete();
+        }
+
+        [Test]
         public void trailing_slash_is_not_significant()
         {
             var first = FileSystem.GetDirectory(@"c:\mordor");

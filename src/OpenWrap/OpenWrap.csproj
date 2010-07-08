@@ -66,7 +66,7 @@
     <Compile Include="Commands\ExceptionError.cs" />
     <Compile Include="Commands\GenericError.cs" />
     <Compile Include="Commands\GenericMessage.cs" />
-    <Compile Include="Commands\NamesapceNotFound.cs" />
+    <Compile Include="Commands\NamespaceNotFound.cs" />
     <Compile Include="Commands\Result.cs" />
     <Compile Include="Commands\Error.cs" />
     <Compile Include="Commands\ICommandDescriptor.cs" />
@@ -75,7 +75,16 @@
     <Compile Include="Commands\InvalidCommandValue.cs" />
     <Compile Include="Commands\MissingCommandValue.cs" />
     <Compile Include="Commands\Success.cs" />
+    <Compile Include="Configuration\Configurations.cs" />
+    <Compile Include="Configuration\ConfigurationEntry.cs" />
+    <Compile Include="Configuration\ConfigurationLine.cs" />
+    <Compile Include="Configuration\ConfigurationManager.cs" />
+    <Compile Include="Configuration\ConfigurationParser.cs" />
+    <Compile Include="Configuration\ConfigurationSection.cs" />
     <Compile Include="Configuration\IConfigurationManager.cs" />
+    <Compile Include="Configuration\InvalidConfigurationException.cs" />
+    <Compile Include="Configuration\remote-repositories\RemoteRepositories.cs" />
+    <Compile Include="Configuration\remote-repositories\RemoteRepository.cs" />
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\GreaterThenVersionVertice.cs" />
     <Compile Include="Dependencies\IWrapDescriptorLineParser.cs" />

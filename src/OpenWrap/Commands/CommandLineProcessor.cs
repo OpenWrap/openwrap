@@ -28,7 +28,7 @@ namespace OpenWrap.Commands
             var matchingNouns = _commands.Nouns.Where(x => x.StartsWith(commandLine.Noun, StringComparison.OrdinalIgnoreCase)).ToList();
             if (matchingNouns.Count != 1)
             {
-                yield return new NamesapceNotFound(matchingNouns);
+                yield return new NamespaceNotFound(matchingNouns);
                 yield break;
             }
             var noun = matchingNouns[0];

@@ -14,42 +14,33 @@
       <File id="AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA/f:ResolveWrapReferences.cs" caret="2520" fromTop="0" />
       <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="3215" fromTop="25" />
       <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="2320" fromTop="17" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_parser_spec.cs" caret="0" fromTop="0" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:InvalidConfigurationException.cs" caret="549" fromTop="20" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:IConfigurationManager.cs" caret="0" fromTop="0" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationSection.cs" caret="0" fromTop="0" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepository.cs" caret="0" fromTop="0" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="135" fromTop="5" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="1999" fromTop="36" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:Configurations.cs" caret="555" fromTop="12" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="2520" fromTop="52" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLineProcessor.cs" caret="95" fromTop="2" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/f:CommandLineParserTests.cs" caret="862" fromTop="15" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLine.cs" caret="141" fromTop="6" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLineParser.cs" caret="815" fromTop="26" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="950" fromTop="13" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="0" fromTop="0" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="2571" fromTop="0" />
     </RecentFiles>
     <RecentEdits>
       <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="2624" fromTop="22" />
       <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="2319" fromTop="17" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="984" fromTop="22" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="1959" fromTop="42" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="1959" fromTop="43" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:InvalidConfigurationException.cs" caret="251" fromTop="9" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:InvalidConfigurationException.cs" caret="549" fromTop="20" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="3071" fromTop="43" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="3155" fromTop="47" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:IConfigurationManager.cs" caret="0" fromTop="0" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="1948" fromTop="39" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="3619" fromTop="44" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="2116" fromTop="38" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="224" fromTop="9" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="132" fromTop="4" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:Configurations.cs" caret="200" fromTop="6" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:Configurations.cs" caret="295" fromTop="8" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="402" fromTop="12" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="1918" fromTop="44" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="872" fromTop="20" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="3422" fromTop="11" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="542" fromTop="11" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="681" fromTop="11" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="2860" fromTop="49" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="2520" fromTop="17" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="539" fromTop="21" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="539" fromTop="21" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="539" fromTop="21" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="539" fromTop="8" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="4195" fromTop="29" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="876" fromTop="11" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:ConfigurationManager.cs" caret="1211" fromTop="20" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="539" fromTop="18" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="539" fromTop="10" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="512" fromTop="11" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="196" fromTop="4" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="54" fromTop="3" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/d:remote-repositories/f:RemoteRepositories.cs" caret="0" fromTop="0" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="4195" fromTop="61" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="4195" fromTop="72" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Configuration/f:configuration_specifications.cs" caret="2571" fromTop="0" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>
@@ -58,21 +49,21 @@
   <CompletionStatisticsManager>
     <ItemStatistics item="Default">
       <Item value="Ignore" priority="0" />
-      <Item value="return" priority="125" />
-      <Item value="null" priority="54" />
+      <Item value="return" priority="128" />
+      <Item value="null" priority="56" />
       <Item value="IWrapPackage" priority="0" />
       <Item value="GetHashCode" priority="0" />
       <Item value="this" priority="17" />
-      <Item value="ctor" priority="23" />
+      <Item value="ctor" priority="24" />
       <Item value="namespace" priority="5" />
       <Item value="protected" priority="10" />
       <Item value="string" priority="62" />
-      <Item value="public" priority="109" />
+      <Item value="public" priority="111" />
       <Item value="class" priority="36" />
       <Item value="IWrapRepository" priority="2" />
       <Item value="void" priority="44" />
-      <Item value="new" priority="186" />
-      <Item value="var" priority="113" />
+      <Item value="new" priority="189" />
+      <Item value="var" priority="114" />
       <Item value="using" priority="12" />
       <Item value="XmlTextReader" priority="1" />
       <Item value="xmlDocument" priority="1" />
@@ -109,7 +100,7 @@
       <Item value="parser" priority="0" />
       <Item value="name" priority="6" />
       <Item value="version" priority="6" />
-      <Item value="static" priority="27" />
+      <Item value="static" priority="28" />
       <Item value="IEnumerable" priority="8" />
       <Item value="VersionVertice" priority="2" />
       <Item value="args" priority="4" />
@@ -148,7 +139,7 @@
       <Item value="Environment" priority="28" />
       <Item value="params" priority="6" />
       <Item value="paths" priority="4" />
-      <Item value="if" priority="63" />
+      <Item value="if" priority="65" />
       <Item value="foreach" priority="22" />
       <Item value="in" priority="22" />
       <Item value="path" priority="4" />
@@ -234,7 +225,7 @@
       <Item value="item" priority="0" />
       <Item value="AttributeBasedCommandDescriptor" priority="3" />
       <Item value="ICommand" priority="1" />
-      <Item value="typeof" priority="5" />
+      <Item value="typeof" priority="6" />
       <Item value="CommandLineProcessor" priority="1" />
       <Item value="processor" priority="2" />
       <Item value="try" priority="8" />
@@ -351,7 +342,7 @@
       <Item value="ProjectRepository" priority="1" />
       <Item value="Repositories" priority="0" />
       <Item value="List" priority="4" />
-      <Item value="RemoteRepositories" priority="0" />
+      <Item value="RemoteRepositories" priority="1" />
       <Item value="InMemoryEnvironment" priority="1" />
       <Item value="NamesapceNotFound" priority="0" />
       <Item value="Source" priority="1" />
@@ -483,7 +474,7 @@
       <Item value="latestPackages" priority="1" />
       <Item value="packageByName" priority="0" />
       <Item value="packageInfo" priority="0" />
-      <Item value="T`0" priority="9" />
+      <Item value="T`0" priority="13" />
       <Item value="IAssemblyReferenceExportItem`0" priority="1" />
       <Item value="manager" priority="0" />
       <Item value="_assemblyReferences" priority="1" />
@@ -505,12 +496,12 @@
       <Item value="readonly" priority="1" />
       <Item value="Configuration" priority="1" />
       <Item value="DateTime`0" priority="1" />
-      <Item value="RemoteRepositories`0" priority="4" />
+      <Item value="RemoteRepositories`0" priority="6" />
       <Item value="ConfigurationEntries`0" priority="4" />
       <Item value="configuration_entry" priority="1" />
       <Item value="IConfigurationManager`0" priority="1" />
       <Item value="ConfigurationManager" priority="2" />
-      <Item value="Entry" priority="4" />
+      <Item value="Entry" priority="5" />
       <Item value="remoteRepositories" priority="0" />
       <Item value="BaseUri" priority="0" />
       <Item value="configurationUri" priority="0" />
@@ -576,6 +567,10 @@
       <Item value="configurationManager" priority="0" />
       <Item value="Addresses`0" priority="0" />
       <Item value="TargetInvocationException`0" priority="0" />
+      <Item value="Href" priority="0" />
+      <Item value="when_loading_configuration`0" priority="0" />
+      <Item value="Configurations`0" priority="0" />
+      <Item value="pi" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Xml.XmlDocument">
       <Item value="LoadXml" priority="0" />
@@ -1063,7 +1058,7 @@
       <Item value="GetGenericTypeDefinition`0" priority="0" />
       <Item value="GetGenericArguments`0" priority="1" />
       <Item value="Name" priority="0" />
-      <Item value="GetProperty`0" priority="0" />
+      <Item value="GetProperty`0" priority="1" />
       <Item value="IsEnum" priority="0" />
       <Item value="CreateInstanceFrom`0" priority="0" />
     </ItemStatistics>
@@ -1210,6 +1205,7 @@
     <ItemStatistics item="Qualified:System.Reflection.PropertyInfo">
       <Item value="PropertyType" priority="0" />
       <Item value="SetValue`0" priority="0" />
+      <Item value="GetValue`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Tests.Configuration.RemoteRepository">
       <Item value="Name" priority="0" />
@@ -1219,10 +1215,19 @@
       <Item value="Load`1" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@OpenWrap.Configuration.Configurations+Addresses">
-      <Item value="RemoteRepositories" priority="0" />
+      <Item value="RemoteRepositories" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Reflection.TargetInvocationException">
       <Item value="InnerException" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@OpenWrap.Configuration.Configurations">
+      <Item value="Addresses`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@OpenWrap.Configuration.remote_repositories.RemoteRepositories">
+      <Item value="Default" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:OpenWrap.Configuration.remote_repositories.RemoteRepositories">
+      <Item value="ShouldBeTheSameInstanceAs`0" priority="0" />
     </ItemStatistics>
   </CompletionStatisticsManager>
   <UnitTestRunnerNUnit>

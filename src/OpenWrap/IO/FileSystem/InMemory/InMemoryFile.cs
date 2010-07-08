@@ -44,6 +44,8 @@ namespace OpenWrap.IO.FileSystem.InMemory
 
         public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {
+            if (!Exists)
+                Exists = true;
             return Stream;
         }
     }

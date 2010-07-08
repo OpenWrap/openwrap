@@ -60,6 +60,8 @@ namespace OpenWrap.IO.FileSystem.Local
 
         public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {
+            if (!Exists)
+                Create();
             return File.Open(_filePath, fileMode, fileAccess, fileShare);
         }
 

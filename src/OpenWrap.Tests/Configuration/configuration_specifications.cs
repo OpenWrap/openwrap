@@ -4,41 +4,65 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.remote_repositories;
 using OpenWrap.IO;
 using OpenWrap.IO.FileSystem.InMemory;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Configuration
 {
-    class when_reading_collection_of_values : context.configuration_entry<RemoteRepositories>
+    class when_reading_dictionaries_of_values : context.configuration_entry<RemoteRepositories>
     {
         static readonly Uri repositoryUri = new Uri("http://configuration.openwrap.org/repository");
 
-        public when_reading_collection_of_values()
+        public when_reading_dictionaries_of_values()
         {
-            given_configuration_text(ConfigurationEntries.RemoteRepositories, "[remoterepository openwrap]\r\nhref=http://wraps.openwrap.org");
+            given_configuration_text(Configurations.Addresses.RemoteRepositories, "[remoterepository openwrap]\r\nhref=http://wraps.openwrap.org\r\n[remoterepository]\r\nhref=http://default.openwrap.org");
 
-            when_loading_configuration(ConfigurationEntries.RemoteRepositories);
+            when_loading_configuration(Configurations.Addresses.RemoteRepositories);
         }
         [Test]
-        public void the_property_value_is_assigned()
+        public void the_name_in_the_section_is_the_key_in_the_dictionary()
         {
             Entry.ContainsKey("openwrap").ShouldBeTrue();
+        }
+        [Test]
+        public void entries_in_dictionary_have_their_properties_set()
+        {
             Entry["openwrap"].Href.ShouldBe("http://wraps.openwrap.org");
         }
-
+        [Test]
+        public void sections_with_no_name_have_an_empty_key()
+        {
+            Entry.ContainsKey(string.Empty).ShouldBeTrue();
+        }
     }
-    public class RemoteRepositories : Dictionary<string, RemoteRepository>
+    class when_two_dictionary_values_with_same_name_are_present : context.configuration_entry<RemoteRepositories>
     {
-        
-    }
+        public when_two_dictionary_values_with_same_name_are_present()
+        {
+            given_configuration_text(Configurations.Addresses.RemoteRepositories, "[remoterepository openwrap]\r\nhref=http://wraps.openwrap.org\r\n[remoterepository openwrap]\r\nhref=http://default.openwrap.org");
 
-    public class RemoteRepository
+            when_loading_configuration(Configurations.Addresses.RemoteRepositories);
+        }
+        [Test]
+        public void an_error_is_triggered()
+        {
+            Error.ShouldBeOfType<InvalidConfigurationException>();
+        }
+    }
+    class when_configuration_file_is_not_present_and_there_is_a_default : context.configuration_entry<RemoteRepositories>
     {
-        public string Name { get; set; }
-        public Uri Href { get; set; }
+        public when_configuration_file_is_not_present_and_there_is_a_default()
+        {
+            when_loading_configuration(Configurations.Addresses.RemoteRepositories);
+        }
+        [Test]
+        public void a_default_value_is_returned()
+        {
+            Entry.ShouldBeTheSameInstanceAs(RemoteRepositories.Default);
+        }
     }
-
     namespace context
     {
 
@@ -60,13 +84,21 @@ namespace OpenWrap.Tests.Configuration
 
             protected void when_loading_configuration(Uri configurationUri)
             {
-                Entry = ConfigurationManager.Load<T>(configurationUri);
+                try
+                {
+                    Entry = ConfigurationManager.Load<T>(configurationUri);
+                }catch(Exception error)
+                {
+                    this.Error = error;
+                }
             }
+
+            protected Exception Error { get; set; }
 
             protected void given_configuration_text(Uri configurationUri, string textValue)
             {
                 // add file to virtual file system by getting relative URI 
-                var relativeUri = ConfigurationEntries.BaseUri.MakeRelativeUri(configurationUri).ToString();
+                var relativeUri = Configurations.Addresses.BaseUri.MakeRelativeUri(configurationUri).ToString();
                 var file = ConfigurationDirectory.GetFile(relativeUri);
                 using (var fs = file.OpenWrite())
                     fs.Write(Encoding.UTF8.GetBytes(textValue));

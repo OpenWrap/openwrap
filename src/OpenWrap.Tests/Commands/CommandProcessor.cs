@@ -26,7 +26,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("semarillon", "traveltomordor");
 
-            result.ShouldBeOfType<NamesapceNotFound>();
+            result.ShouldBeOfType<NamespaceNotFound>();
         }
         [Test]
         public void namespace_entered_partially_is_found()
