@@ -60,6 +60,8 @@
     <Compile Include="Commands\CommandAttribute.cs" />
     <Compile Include="Commands\CommandInputAttribute.cs" />
     <Compile Include="Commands\CommandInputDescriptor.cs" />
+    <Compile Include="Commands\CommandLine.cs" />
+    <Compile Include="Commands\CommandLineParser.cs" />
     <Compile Include="Commands\CommandRepository.cs" />
     <Compile Include="Commands\ExceptionError.cs" />
     <Compile Include="Commands\GenericError.cs" />

@@ -16,13 +16,16 @@ namespace OpenWrap.Commands
 
         public IEnumerable<ICommandResult> Execute(IEnumerable<string> strings)
         {
-            if (strings == null || strings.Count() < 2)
+            var parser = new CommandLineParser();
+            var parseResult = parser.Parse(strings);
+            if (parseResult is CommandLineParser.NotEnoughArgumentsFailure)
             {
                 yield return new NotEnoughParameters();
                 yield break;
             }
 
-            var matchingNouns = _commands.Nouns.Where(x => x.StartsWith(strings.ElementAt(0), StringComparison.OrdinalIgnoreCase)).ToList();
+            var commandLine = ((CommandLineParser.Success)parseResult).CommandLine;
+            var matchingNouns = _commands.Nouns.Where(x => x.StartsWith(commandLine.Noun, StringComparison.OrdinalIgnoreCase)).ToList();
             if (matchingNouns.Count != 1)
             {
                 yield return new NamesapceNotFound(matchingNouns);
@@ -30,11 +33,10 @@ namespace OpenWrap.Commands
             }
             var noun = matchingNouns[0];
 
-            var matchingVerbs = _commands.Verbs.Where(x => x.StartsWith(strings.ElementAt(1), StringComparison.OrdinalIgnoreCase)).ToList();
-
+            var matchingVerbs = _commands.Verbs.Where(x => x.StartsWith(commandLine.Verb, StringComparison.OrdinalIgnoreCase)).ToList();
             if (matchingVerbs.Count != 1)
             {
-                yield return new UnknownCommand(strings.ElementAt(1), matchingVerbs);
+                yield return new UnknownCommand(commandLine.Verb, matchingVerbs);
                 yield break;
             }
 
@@ -42,7 +44,7 @@ namespace OpenWrap.Commands
 
             var command = _commands.Get(noun, verb);
 
-            var inputsFromCommandLine = ParseInputsFromCommandLine(strings.Skip(2)).ToLookup(x => x.Key, x => x.Value);
+            var inputsFromCommandLine = ParseInputsFromCommandLine(commandLine.Arguments).ToLookup(x => x.Key, x => x.Value);
 
             var unnamedCommandInputsFromCommandLine = inputsFromCommandLine[null].ToList();
 
