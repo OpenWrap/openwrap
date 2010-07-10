@@ -15,6 +15,7 @@ namespace OpenWrap
         IEnumerable<IPackageRepository> RemoteRepositories { get; }
         IPackageRepository SystemRepository { get; }
         IDirectory CurrentDirectory { get; }
+        IDirectory ConfigurationDirectory { get; }
         ExecutionEnvironment ExecutionEnvironment { get; }
     }
 }

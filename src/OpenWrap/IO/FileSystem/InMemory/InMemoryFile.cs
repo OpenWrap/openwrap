@@ -11,9 +11,15 @@ namespace OpenWrap.IO.FileSystem.InMemory
             Path = new LocalPath(filePath);
             Name = System.IO.Path.GetFileName(filePath);
             NameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(filePath);
-            Stream = new NonDisposableStream(new MemoryStream());
+            CreateNewStream();
             LastModifiedTimeUtc = DateTime.Now;
         }
+
+        void CreateNewStream()
+        {
+            Stream = new NonDisposableStream(new MemoryStream());
+        }
+
         public Stream Stream { get; set; }
         public IFile Create()
         {
@@ -24,7 +30,8 @@ namespace OpenWrap.IO.FileSystem.InMemory
         public IPath Path { get; set; }
         public IDirectory Parent
         {
-            get; set;
+            get;
+            set;
         }
 
         public IFileSystem FileSystem { get; set; }
@@ -39,14 +46,49 @@ namespace OpenWrap.IO.FileSystem.InMemory
 
         public DateTime? LastModifiedTimeUtc
         {
-            get; private set;
+            get;
+            private set;
         }
 
         public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {
-            if (!Exists)
-                Exists = true;
+            ValidateFileMode(fileMode);
             return Stream;
+        }
+
+        void ValidateFileMode(FileMode fileMode)
+        {
+            if (Exists)
+            {
+                switch (fileMode)
+                {
+                    case FileMode.CreateNew:
+                        throw new IOException("File already exists.");
+                    case FileMode.Create:
+                    case FileMode.Truncate:
+                        CreateNewStream();
+                        break;
+                    case FileMode.Append:
+                        Stream.Position = Stream.Length;
+                        break;
+                }
+            }
+            else
+            {
+                switch (fileMode)
+                {
+                    case FileMode.Append:
+                    case FileMode.Create:
+                    case FileMode.CreateNew:
+                    case FileMode.OpenOrCreate:
+                        Exists = true;
+                        CreateNewStream();
+                        break;
+                    case FileMode.Open:
+                    case FileMode.Truncate:
+                        throw new FileNotFoundException();
+                }
+            }
         }
     }
 }

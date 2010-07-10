@@ -72,7 +72,7 @@ href = " + RemoteRepositories.Default["openwrap"].Href);
         void when_saving_configuration(Uri uri)
         {
             ConfigurationManager.Save(uri, Entry);
-            Entry = ConfigurationManager.RemoteRepositories();
+            Entry = ConfigurationManager.LoadRemoteRepositories();
         }
 
         void given_configuration_object(RemoteRepositories remoteRepositories)

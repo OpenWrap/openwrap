@@ -40,10 +40,13 @@ namespace OpenWrap.IO
         {
             return file.Open(FileMode.Open, FileAccess.Read, FileShare.Read);
         }
-
+        public static Stream OpenAppend(this IFile file)
+        {
+            return file.Open(FileMode.Append, FileAccess.Write, FileShare.Read);
+        }
         public static Stream OpenWrite(this IFile file)
         {
-            return file.Open(FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read);
+            return file.Open(FileMode.Create, FileAccess.Write, FileShare.Read);
         }
 
         public static IEnumerable<IDirectory> AncestorsAndSelf(this IDirectory directory)

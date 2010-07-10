@@ -22,10 +22,20 @@ namespace OpenWrap
                         "wraps");
             }
         }
-
+        public static string ConfigurationDirectory
+        {
+            get
+            {
+                return Path.Combine(
+                    Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                        "openwrap"),
+                        "config");
+            }
+        }
         public static RemoteRepositories RemoteRepositories
         {
-            get { return WrapServices.GetService<IConfigurationManager>().RemoteRepositories(); }
+            get { return WrapServices.GetService<IConfigurationManager>().LoadRemoteRepositories(); }
         }
     }
 }

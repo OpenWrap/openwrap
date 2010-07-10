@@ -18,7 +18,7 @@ namespace OpenWrap.Tests.Commands
         public InMemoryRepository RemoteRepository;
         public InMemoryRepository CurrentDirectoryRepository;
 
-        public InMemoryEnvironment(IDirectory currentDirectory)
+        public InMemoryEnvironment(IDirectory currentDirectory, IDirectory configDirectory)
         {
             CurrentDirectory = currentDirectory;
             SystemRepository = new InMemoryRepository("System repository");
@@ -26,6 +26,7 @@ namespace OpenWrap.Tests.Commands
             CurrentDirectoryRepository = new InMemoryRepository("Current directory repository"); 
             RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };
             Descriptor = new WrapDescriptor() { File = CurrentDirectory.GetFile("descriptor.wrapdesc").EnsureExists()};
+            ConfigurationDirectory = configDirectory;
         }
 
         void IService.Initialize()
@@ -64,5 +65,7 @@ namespace OpenWrap.Tests.Commands
         {
             get; set;
         }
+
+        public IDirectory ConfigurationDirectory { get; set; }
     }
 }

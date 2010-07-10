@@ -22,8 +22,8 @@
     <Message Importance="high" Text="Installing openwrap to new location, from directory $(Root)\bin\" />
     <Exec Command='"$(OpenWrap-CommandLine)" wrap add openwrap -ProjectOnly -NoDescriptorUpdate' WorkingDirectory="$(Root)\bin\" />
 
-    <Message Importance="high" Text="Building OpenWrap from new version of OpenWrap" />
-    <MSBuild Projects="openwrap.proj" Properties="OpenWrap-PackageName=openwrap-1.0.43; OpenWrap-BuildTasksDirectory=$(MSBuildProjectDirectory)\..\wraps\cache\openwrap-1.0.42\build; OpenWrap-DescriptorPath=..\openwrap-1.0.0.wrapdesc"  />
+    <Message Importance="high" Text="Building OpenWrap from newly built version of OpenWrap" />
+    <MSBuild Projects="openwrap.proj" Properties="OpenWrap-PackageName=openwrap-1.0.43; OpenWrap-BuildTasksDirectory=$(MSBuildProjectDirectory)\..\wraps\cache\openwrap-1.0.42\build; OpenWrap-DescriptorPath=..\openwrap-1.0.0.wrapdesc" ContinueOnError="true" />
 
     <Message Importance="high" Text="Cleaning OpenWrap results" />
     <Delete Files="$(Root)\wraps\openwrap-1.0.42.wrap;$(Root)\wraps\openwrap-1.0.43.wrap;$(Root)\wraps\cache\openwrap-1.0.42\**\*;$(Root)\wraps\cache\openwrap-1.0.43\**\*;" />

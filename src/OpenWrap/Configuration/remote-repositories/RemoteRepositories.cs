@@ -6,6 +6,10 @@ namespace OpenWrap.Configuration.remote_repositories
 {
     public class RemoteRepositories : Dictionary<string, RemoteRepository>
     {
+        public RemoteRepositories() : base(StringComparer.OrdinalIgnoreCase)
+        {
+            
+        }
         public static readonly RemoteRepositories Default =
                 new RemoteRepositories
                 {

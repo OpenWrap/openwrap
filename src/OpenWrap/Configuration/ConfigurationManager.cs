@@ -97,6 +97,8 @@ namespace OpenWrap.Configuration
 
         void WriteProperties(StreamWriter configFile, object value)
         {
+            if (value == null)
+                return;
             var properties = from pi in value.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                              where pi.GetIndexParameters().Length == 0
                              let propertyValue = pi.GetValue(value, null)

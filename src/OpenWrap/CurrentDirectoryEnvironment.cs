@@ -27,6 +27,8 @@ namespace OpenWrap
             get { return IO.FileSystems.Local.GetDirectory(Environment.CurrentDirectory); }
         }
 
+        public IDirectory ConfigurationDirectory { get; private set; }
+
         public ExecutionEnvironment ExecutionEnvironment
         {
             get; private set;
@@ -70,6 +72,8 @@ namespace OpenWrap
                 Platform = IntPtr.Size == 4 ? "x86" : "x64",
                 Profile = "net35"
             };
+
+
         }
     }
 }

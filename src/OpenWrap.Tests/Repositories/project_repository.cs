@@ -35,7 +35,8 @@ namespace OpenWrap.Tests.Repositories
                 };
                 WrapServices.RegisterService<IFileSystem>(FileSystem);
 
-                Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory));
+                Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory),
+                    FileSystem.GetDirectory(UserSettings.ConfigurationDirectory));
                 WrapServices.RegisterService<IEnvironment>(Environment);
             }
 

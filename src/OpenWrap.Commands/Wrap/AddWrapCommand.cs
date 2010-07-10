@@ -84,7 +84,7 @@ namespace OpenWrap.Commands.Wrap
             // TODO: Make the environment descriptor separate from reader/writer,
             // and remove the File property on it.
             var dependLine = GetDependsLine();
-            using (var fileStream = Environment.Descriptor.File.OpenWrite())
+            using (var fileStream = Environment.Descriptor.File.OpenAppend())
             using (var textWriter = new StreamWriter(fileStream, Encoding.UTF8))
                 textWriter.WriteLine("\r\n" + dependLine);
             new WrapDependencyParser().Parse(dependLine, Environment.Descriptor);

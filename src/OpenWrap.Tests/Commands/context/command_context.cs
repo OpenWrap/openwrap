@@ -5,6 +5,8 @@ using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.Configuration;
+using OpenWrap.Configuration.remote_repositories;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.IO.FileSystem.InMemory;
@@ -29,13 +31,16 @@ namespace OpenWrap.Tests.Commands.context
             Commands = new CommandRepository { Command };
 
             WrapServices.Clear();
-            var currentDirectory = "c:\\current";
+            var currentDirectory = System.Environment.CurrentDirectory;
             FileSystem = new InMemoryFileSystem() { CurrentDirectory = currentDirectory };
-            Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory));
+            Environment = new InMemoryEnvironment(
+                FileSystem.GetDirectory(currentDirectory),
+                FileSystem.GetDirectory(UserSettings.ConfigurationDirectory));
             WrapServices.RegisterService<IFileSystem>(FileSystem);
             WrapServices.RegisterService<IEnvironment>(Environment);
             WrapServices.RegisterService<IPackageManager>(new PackageManager());
             WrapServices.RegisterService<ICommandRepository>(Commands);
+            WrapServices.RegisterService<IConfigurationManager>(new ConfigurationManager(Environment.ConfigurationDirectory));
         }
 
         protected void given_dependency(string dependency)
@@ -106,6 +111,12 @@ namespace OpenWrap.Tests.Commands.context
             repository.PackagesByName[packageName]
                 .ShouldHaveCountOf(1)
                 .First().Version.ShouldBe(packageVersion);
+        }
+
+        protected void given_remote_configuration(RemoteRepositories remoteRepositories)
+        {
+            WrapServices.GetService<IConfigurationManager>()
+                    .Save(Configurations.Addresses.RemoteRepositories, remoteRepositories);
         }
     }
 }

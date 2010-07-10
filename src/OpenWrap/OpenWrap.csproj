@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\IWrapAssemblyClient.cs" />
+    <Compile Include="Commands\AbstractCommand.cs" />
     <Compile Include="Commands\AttributeBasedCommandDescriptor.cs" />
     <Compile Include="Commands\CommandAttribute.cs" />
     <Compile Include="Commands\CommandInputAttribute.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Commands\ExceptionError.cs" />
     <Compile Include="Commands\GenericError.cs" />
     <Compile Include="Commands\GenericMessage.cs" />
+    <Compile Include="Commands\ISequenceBuilder.cs" />
     <Compile Include="Commands\NamespaceNotFound.cs" />
     <Compile Include="Commands\Result.cs" />
     <Compile Include="Commands\Error.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Commands\ICommandRepository.cs" />
     <Compile Include="Commands\InvalidCommandValue.cs" />
     <Compile Include="Commands\MissingCommandValue.cs" />
+    <Compile Include="Commands\SequenceBuilder.cs" />
     <Compile Include="Commands\Success.cs" />
     <Compile Include="Configuration\Configurations.cs" />
     <Compile Include="Configuration\ConfigurationEntry.cs" />
@@ -93,6 +96,7 @@
     <Compile Include="Dependencies\WrapOverrideParser.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />
+    <Compile Include="FuncExtensions.cs" />
     <Compile Include="IO\FileSystem\AbstractFileSystem.cs" />
     <Compile Include="IO\FileExtensions.cs" />
     <Compile Include="IO\FileSystems.cs" />
