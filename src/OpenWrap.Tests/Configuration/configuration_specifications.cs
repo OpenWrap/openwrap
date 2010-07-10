@@ -51,6 +51,36 @@ namespace OpenWrap.Tests.Configuration
             Error.ShouldBeOfType<InvalidConfigurationException>();
         }
     }
+    class when_writing_configuration_files_back: context.configuration_entry<RemoteRepositories>
+    {
+        public when_writing_configuration_files_back()
+        {
+            given_configuration_object(RemoteRepositories.Default);
+            when_saving_configuration(Configurations.Addresses.RemoteRepositories);
+        }
+
+        [Test]
+        public void values_are_persisted()
+        {
+            ConfigurationDirectory.FindFile(
+                    Configurations.Addresses.BaseUri.MakeRelative(Configurations.Addresses.RemoteRepositories))
+                    .ShouldNotBeNull()
+                    .OpenRead().ReadString(Encoding.UTF8).ShouldContain(
+@"[remoterepository openwrap]
+href = " + RemoteRepositories.Default["openwrap"].Href);
+        }
+        void when_saving_configuration(Uri uri)
+        {
+            ConfigurationManager.Save(uri, Entry);
+            Entry = ConfigurationManager.RemoteRepositories();
+        }
+
+        void given_configuration_object(RemoteRepositories remoteRepositories)
+        {
+            Entry = remoteRepositories;
+
+        }
+    }
     class when_configuration_file_is_not_present_and_there_is_a_default : context.configuration_entry<RemoteRepositories>
     {
         public when_configuration_file_is_not_present_and_there_is_a_default()

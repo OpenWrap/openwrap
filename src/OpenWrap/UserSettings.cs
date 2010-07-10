@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using OpenWrap.Configuration;
+using OpenWrap.Configuration.remote_repositories;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap
 {
     public static class UserSettings
     {
-        static IEnumerable<Uri> _remoteRepositoriesPaths = new[]{ new Uri("http://localhost:42",UriKind.Absolute) };
-
-
         public static string UserRepositoryPath
         {
             get
@@ -23,10 +23,9 @@ namespace OpenWrap
             }
         }
 
-        public static IEnumerable<Uri> RemoteRepositories
+        public static RemoteRepositories RemoteRepositories
         {
-            get { return _remoteRepositoriesPaths; }
-            set { _remoteRepositoriesPaths = value; }
+            get { return WrapServices.GetService<IConfigurationManager>().RemoteRepositories(); }
         }
     }
 }

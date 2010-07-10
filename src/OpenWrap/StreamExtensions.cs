@@ -10,6 +10,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 
 namespace OpenWrap
 {
@@ -28,7 +29,11 @@ namespace OpenWrap
 
             return totalWritten;
         }
-
+        public static string ReadString(this Stream stream, Encoding encoding)
+        {
+            var stringReader = new StreamReader(stream, encoding);
+            return stringReader.ReadToEnd();
+        }
         public static byte[] ReadToEnd(this Stream stream)
         {
             var streamToReturn = stream as MemoryStream;

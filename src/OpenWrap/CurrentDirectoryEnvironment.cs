@@ -61,7 +61,7 @@ namespace OpenWrap
             };
 
             RemoteRepositories = UserSettings.RemoteRepositories
-                .Select(x => new XmlRepository(FileSystem, new HttpNavigator(x), Enumerable.Empty<IExportBuilder>()))
+                .Select(x => new XmlRepository(FileSystem, new HttpNavigator(x.Value.Href), Enumerable.Empty<IExportBuilder>()))
                 .Cast<IPackageRepository>()
                 .ToList();
 
