@@ -1,36 +1,37 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using OpenWrap.Dependencies;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Exports;
+using OpenWrap.Repositories.Http;
 
 namespace OpenWrap.Repositories
 {
-    public class XmlPackage : IPackage
+    public class HttpPackage : IPackage
     {
         readonly IFileSystem _fileSystem;
-        readonly IHttpNavigator _httpNavigator;
+        readonly IHttpRepositoryNavigator _httpNavigator;
+        readonly PackageItem _package;
         Uri _link;
         IPackage _loadedPackage;
-        IEnumerable<IExportBuilder> _builders;
 
-        public XmlPackage(IFileSystem fileSystem, IPackageRepository source, IHttpNavigator httpNavigator, Uri link, string name, Version version, IEnumerable<IExportBuilder> builders, DateTime? lastModifiedTimeUtc)
+        public HttpPackage(IFileSystem fileSystem,
+            IPackageRepository source, 
+            IHttpRepositoryNavigator httpNavigator, 
+            PackageItem package)
         {
             _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;
-            _builders = builders;
+            _package = package;
             Source = source;
-            Name = name;
-            Version = version;
-            _link = link;
-            LastModifiedTimeUtc = lastModifiedTimeUtc;
         }
 
         public ICollection<WrapDependency> Dependencies { get; set; }
-        public string Name { get; set; }
-        public Version Version { get; set; }
+        public string Name { get { return _package.Name; } }
+        public Version Version { get { return _package.Version; } }
         public IPackage Load()
         {
             return this;
@@ -54,7 +55,7 @@ namespace OpenWrap.Repositories
 
         public DateTime? LastModifiedTimeUtc
         {
-            get; private set;
+            get{ return _package.LastModifiedTimeUtc; }
         }
 
         public Stream OpenStream()
@@ -68,14 +69,14 @@ namespace OpenWrap.Repositories
             if (_loadedPackage != null) return;
 
             IFile temporaryFile = _fileSystem.CreateTempFile();
-            using (var stream = _httpNavigator.LoadFile(_link))
+            using (var stream = _httpNavigator.LoadPackage(_package))
             {
                 
                 stream.CopyTo(temporaryFile.OpenWrite());
                 // we don't dispose here, the file will get disposed and deleted on exit if we're lucky.
             }
 
-            _loadedPackage = new ZipPackage(Source, temporaryFile, _fileSystem.GetTempDirectory(), _builders).Load();
+            _loadedPackage = new ZipPackage(Source, temporaryFile, _fileSystem.GetTempDirectory(), Enumerable.Empty<IExportBuilder>()).Load();
         }
 
     }

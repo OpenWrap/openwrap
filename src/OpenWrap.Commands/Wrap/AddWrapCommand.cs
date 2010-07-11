@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using OpenWrap.Commands.Remote;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.IO;
@@ -12,7 +13,7 @@ using OpenWrap.Services;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb = "add", Noun = "wrap")]
-    public class AddWrapCommand : ICommand
+    public class AddWrapCommand : AbstractCommand
     {
         [CommandInput(IsRequired = true, Position = 0)]
         public string Name { get; set; }
@@ -29,12 +30,9 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput(Position = 1)]
         public string Version { get; set; }
 
-        IEnvironment Environment
-        {
-            get { return WrapServices.GetService<IEnvironment>(); }
-        }
+        public IEnvironment Environment { get; set; }
 
-        IPackageManager PackageManager
+        public IPackageManager PackageManager
         {
             get { return WrapServices.GetService<IPackageManager>(); }
         }
@@ -49,8 +47,16 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
+        public AddWrapCommand()
+            : this(WrapServices.GetService<IEnvironment>())
+        {
+        }
+        public AddWrapCommand(IEnvironment environment)
+        {
+            Environment = environment;
+        }
 
-        public IEnumerable<ICommandResult> Execute()
+        public override IEnumerable<ICommandResult> Execute()
         {
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
@@ -74,9 +80,9 @@ namespace OpenWrap.Commands.Wrap
             foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo.NotNull()))
                 yield return msg;
 
-            yield return new GenericMessage("Updating cache...");
+            yield return new GenericMessage("Expanding packages to cache...");
             var packageRepositories = new[] { Environment.ProjectRepository };
-            PackageManager.GetExports<IExport>("bin", Environment.ExecutionEnvironment, packageRepositories.NotNull()).All(x=>true);
+            PackageManager.GetExports<IExport>("bin", Environment.ExecutionEnvironment, packageRepositories.NotNull()).ToList();
         }
 
         void AddInstructionToDescriptor()

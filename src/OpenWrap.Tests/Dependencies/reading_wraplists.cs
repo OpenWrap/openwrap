@@ -10,6 +10,7 @@ using OpenWrap.Exports;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Dependencies;
+using OpenWrap.Repositories.Http;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
@@ -65,20 +66,17 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         {
             protected void given_repository()
             {
-                Repository = new XmlRepository(FileSystems.Local, new InMemoryNavigator(), new IExportBuilder[0]);
+                Repository = new HttpRepository(FileSystems.Local, new InMemoryNavigator());
             }
-            class InMemoryNavigator : IHttpNavigator
+            class InMemoryNavigator : IHttpRepositoryNavigator
             {
-                public XDocument LoadFileList()
+                public PackageDocument Index()
                 {
-                    
-                    var doc =XDocument.Parse(WrapListDocument, LoadOptions.SetBaseUri);
-                    
-                    return doc;
-                    
+                    var doc = XDocument.Parse(WrapListDocument, LoadOptions.SetBaseUri);
+                    return HttpRepositoryNavigator.ParseXDocument(doc);
                 }
 
-                public Stream LoadFile(Uri href)
+                public Stream LoadPackage(PackageItem packageItem)
                 {
                     throw new NotImplementedException();
                 }

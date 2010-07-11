@@ -4,37 +4,32 @@ using System.Linq;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.IO;
+using OpenWrap.Repositories.Http;
 
 namespace OpenWrap.Repositories
 {
-    public class XmlPackageInfo : IPackageInfo
+    public class HttpPackageInfo : IPackageInfo
     {
-        readonly IEnumerable<IExportBuilder> _builders;
         readonly IFileSystem _fileSystem;
-        readonly IHttpNavigator _httpNavigator;
+        readonly IHttpRepositoryNavigator _httpNavigator;
+        readonly PackageItem _package;
         readonly DateTime? _lastModifiedTimeUtc;
-        readonly Uri _link;
+        
 
 
-        public XmlPackageInfo(IFileSystem fileSystem,
+        public HttpPackageInfo(IFileSystem fileSystem,
                               IPackageRepository source,
-                              IHttpNavigator httpNavigator,
-                              string name,
-                              string version,
-                              Uri link,
-                              IEnumerable<string> depends,
-                              IEnumerable<IExportBuilder> builders,
-                              DateTime? lastModifiedTimeUtc)
+                              IHttpRepositoryNavigator httpNavigator,
+                              PackageItem package)
         {
-            Name = name;
-            Version = new Version(version);
             Source = source;
             _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;
-            _builders = builders;
-            _lastModifiedTimeUtc = lastModifiedTimeUtc;
-            _link = link;
-            Dependencies = (from dependency in depends
+            _package = package;
+
+            _lastModifiedTimeUtc = package.LastModifiedTimeUtc;
+            
+            Dependencies = (from dependency in _package.Dependencies
                             let strings = dependency.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                             where strings.Length >= 1
                             let dependencyName = strings[0]
@@ -53,16 +48,16 @@ namespace OpenWrap.Repositories
             get { return Name + "-" + Version; }
         }
 
-        public DateTime? LastModifiedTimeUtc { get; private set; }
-        public string Name { get; set; }
+        public DateTime? LastModifiedTimeUtc { get { return _package.LastModifiedTimeUtc; } }
+        public string Name { get{ return _package.Name;}}
 
-        public IPackageRepository Source { get; set; }
-        public Version Version { get; set; }
+        public IPackageRepository Source { get; private set; }
+        public Version Version { get{ return _package.Version;} }
 
         public IPackage Load()
         {
             // get the file from the server
-            return new XmlPackage(_fileSystem, Source, _httpNavigator, _link, Name, Version, _builders, _lastModifiedTimeUtc);
+            return new HttpPackage(_fileSystem, Source, _httpNavigator, _package);
         }
     }
 }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-
+using OpenWrap.Configuration;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
+using OpenWrap.Repositories.Http;
+using OpenWrap.Services;
 
 namespace OpenWrap
 {
@@ -62,8 +64,10 @@ namespace OpenWrap
                 Name="System repository"
             };
 
-            RemoteRepositories = UserSettings.RemoteRepositories
-                .Select(x => new XmlRepository(FileSystem, new HttpNavigator(x.Value.Href), Enumerable.Empty<IExportBuilder>()))
+            ConfigurationDirectory = FileSystem.GetDirectory(UserSettings.ConfigurationDirectory);
+
+            RemoteRepositories = WrapServices.GetService<IConfigurationManager>().LoadRemoteRepositories()
+                .Select(x => new HttpRepository(FileSystem, new HttpRepositoryNavigator(x.Value.Href)))
                 .Cast<IPackageRepository>()
                 .ToList();
 
@@ -72,7 +76,6 @@ namespace OpenWrap
                 Platform = IntPtr.Size == 4 ? "x86" : "x64",
                 Profile = "net35"
             };
-
 
         }
     }

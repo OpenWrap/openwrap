@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\Remote\addRemoteCommand.cs" />
+    <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
     <Compile Include="Commands\Wrap\addWrapCommand.cs" />
     <Compile Include="Commands\CommandLineParserTests.cs" />

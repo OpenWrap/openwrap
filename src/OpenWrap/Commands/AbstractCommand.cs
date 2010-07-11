@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using OpenWrap.Commands.Remote;
 
-namespace OpenWrap.Commands.Remote
+namespace OpenWrap.Commands
 {
     public abstract class AbstractCommand : ICommand
     {

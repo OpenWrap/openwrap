@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OpenWrap.Commands;
+using OpenWrap.Configuration;
 using OpenWrap.Exports;
 using OpenWrap.IO;
 using OpenWrap.Repositories;
@@ -16,10 +17,13 @@ namespace OpenWrap
 
         public static int Main(string[] args)
         {
+            WrapServices.TryRegisterService<IFileSystem>(()=>FileSystems.Local);
+            WrapServices.TryRegisterService<IConfigurationManager>(()=>new ConfigurationManager(WrapServices.GetService<IFileSystem>().GetDirectory(UserSettings.ConfigurationDirectory)));
             WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
+
             WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
             WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
-            WrapServices.TryRegisterService<IFileSystem>(()=>FileSystems.Local);
+
             var commands = ReadCommands(WrapServices.GetService<IEnvironment>());
             var repo = new CommandRepository(commands);
 

@@ -33,9 +33,5 @@ namespace OpenWrap
                         "config");
             }
         }
-        public static RemoteRepositories RemoteRepositories
-        {
-            get { return WrapServices.GetService<IConfigurationManager>().LoadRemoteRepositories(); }
-        }
     }
 }
