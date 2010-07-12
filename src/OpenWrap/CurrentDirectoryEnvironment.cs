@@ -59,12 +59,12 @@ namespace OpenWrap
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
-            SystemRepository = new FolderRepository(FileSystem.GetDirectory(UserSettings.UserRepositoryPath))
+            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath))
             {
                 Name="System repository"
             };
 
-            ConfigurationDirectory = FileSystem.GetDirectory(UserSettings.ConfigurationDirectory);
+            ConfigurationDirectory = FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory);
 
             RemoteRepositories = WrapServices.GetService<IConfigurationManager>().LoadRemoteRepositories()
                 .Select(x => new HttpRepository(FileSystem, new HttpRepositoryNavigator(x.Value.Href)))

@@ -18,7 +18,7 @@ namespace OpenWrap
         public static int Main(string[] args)
         {
             WrapServices.TryRegisterService<IFileSystem>(()=>FileSystems.Local);
-            WrapServices.TryRegisterService<IConfigurationManager>(()=>new ConfigurationManager(WrapServices.GetService<IFileSystem>().GetDirectory(UserSettings.ConfigurationDirectory)));
+            WrapServices.TryRegisterService<IConfigurationManager>(()=>new ConfigurationManager(WrapServices.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
             WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
             WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());

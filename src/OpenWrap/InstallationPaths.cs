@@ -9,28 +9,30 @@ using OpenWrap.Services;
 
 namespace OpenWrap
 {
-    public static class UserSettings
+    public static class InstallationPaths
     {
         public static string UserRepositoryPath
         {
             get
             {
-                return Path.Combine(
-                    Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), 
-                        "openwrap"),
-                        "wraps");
+                return Path.Combine(RootPath, "wraps");
             }
         }
         public static string ConfigurationDirectory
         {
             get
             {
-                return Path.Combine(
+                return Path.Combine(RootPath, "config");
+            }
+        }
+        public static string RootPath
+        {
+            get
+            {
+                return 
                     Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "openwrap"),
-                        "config");
+                        "openwrap");
             }
         }
     }
