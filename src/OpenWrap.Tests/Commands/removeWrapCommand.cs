@@ -50,4 +50,32 @@ namespace OpenWrap.Tests.Commands
         }
     }
 
+    public class when_removing_wrap_foo_across_multiple_lines : context.command_context<RemoveWrapCommand>
+    {
+        public when_removing_wrap_foo_across_multiple_lines()
+        {
+            using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").Open(FileMode.Create, FileAccess.Write, FileShare.Read))
+            using (var w = new StreamWriter(f))
+            {
+                w.Write("depends foo\r\n    = 1.0");
+            }
+
+            given_dependency("depends foo");
+            when_executing_command("foo");
+
+            using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").OpenRead())
+            using (var r = new StreamReader(f))
+            {
+                descriptorFileLinesAfterRemove = r.ReadToEnd().Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            }
+        }
+
+        string[] descriptorFileLinesAfterRemove;
+
+        [Test]
+        public void wrap_foo_is_removed()
+        {
+            Assert.AreEqual(0, descriptorFileLinesAfterRemove.Length);
+        }
+    }
 }
