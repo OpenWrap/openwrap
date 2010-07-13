@@ -11,65 +11,68 @@
   </NAntValidationSettings>
   <RecentFiles>
     <RecentFiles>
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Commands/d:Remote/f:addRemoteCommand.cs" caret="556" fromTop="14" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:IO/d:FileSystem/d:InMemory/f:InMemoryDirectory.cs" caret="941" fromTop="23" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:AbstractCommand.cs" caret="111" fromTop="3" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:SequenceBuilder.cs" caret="1022" fromTop="30" />
-      <File id="20503E9F-CA3D-496B-8842-B1FE7D39B1E7/f:self-build.test/l:C!?src?caff?git?openwrap?build?self-build.test" caret="1277" fromTop="26" />
-      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="1933" fromTop="9" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLine.cs" caret="106" fromTop="4" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Commands/f:CommandLineParser.cs" caret="0" fromTop="0" />
-      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:NewWrapCommand.cs" caret="0" fromTop="0" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Configuration/f:Configurations.cs" caret="559" fromTop="12" />
-      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="3380" fromTop="32" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:UserSettings.cs" caret="1028" fromTop="17" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Resolvers/f:RuntimeAssemblyResolver.cs" caret="945" fromTop="16" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:ConsoleRunner.cs" caret="977" fromTop="20" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Slow/f:building_openwrap.cs" caret="0" fromTop="0" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Dependencies/f:OverrideParser_Specification.cs" caret="449" fromTop="15" />
       <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Dependencies/f:WrapDescriptionParserTests.cs" caret="0" fromTop="0" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:InternalServices.cs" caret="0" fromTop="0" />
       <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Repositories/f:project_repository.cs" caret="346" fromTop="0" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Repositories/f:current_directory_repository.cs" caret="1909" fromTop="19" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/f:IPackageInfo.cs" caret="440" fromTop="14" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:PackageDocument.cs" caret="172" fromTop="7" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:IHttpRepositoryNavigator.cs" caret="261" fromTop="9" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackage.cs" caret="2269" fromTop="56" />
       <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackageInfo.cs" caret="1719" fromTop="43" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Dependencies/f:reading_wraplists.cs" caret="2743" fromTop="29" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepository.cs" caret="485" fromTop="10" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="419" fromTop="16" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:CurrentDirectoryEnvironment.cs" caret="2396" fromTop="11" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:CurrentDirectoryEnvironment.cs" caret="2658" fromTop="17" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:IO/f:IDirectory.cs" caret="84" fromTop="3" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:IO/f:FileExtensions.cs" caret="304" fromTop="11" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Services/f:WrapServices.cs" caret="1006" fromTop="30" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:NewWrapCommand.cs" caret="1667" fromTop="35" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="1159" fromTop="22" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Dependencies/f:reading_wraplists.cs" caret="2260" fromTop="20" />
+      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Repositories/f:current_directory_repository.cs" caret="0" fromTop="0" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Dependencies/f:WrapDescriptor.cs" caret="776" fromTop="26" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Wrap/f:AddWrapCommand.cs" caret="3529" fromTop="42" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:IEnvironment.cs" caret="601" fromTop="15" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepository.cs" caret="485" fromTop="16" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackage.cs" caret="2269" fromTop="57" />
+      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:InstallationPaths.cs" caret="280" fromTop="10" />
+      <File id="05F146AE-9315-44B7-AF52-9B5925C90E27/d:Properties/f:AssemblyInfo.cs" caret="296" fromTop="5" />
+      <File id="9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5/d:Properties/f:AssemblyInfo.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:Properties/f:AssemblyInfo.cs" caret="514" fromTop="10" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:Crc32.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipFileEntry.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipEntry.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipDirectoryEntry.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipArchive.cs" caret="8353" fromTop="176" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="5367" fromTop="26" />
     </RecentFiles>
     <RecentEdits>
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackageInfo.cs" caret="696" fromTop="16" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="2896" fromTop="54" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="3131" fromTop="60" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="2473" fromTop="37" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:PackageDocument.cs" caret="504" fromTop="18" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="2474" fromTop="48" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:PackageDocument.cs" caret="172" fromTop="7" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="2485" fromTop="52" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="620" fromTop="24" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:IHttpRepositoryNavigator.cs" caret="261" fromTop="9" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="2838" fromTop="46" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepository.cs" caret="436" fromTop="13" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackageInfo.cs" caret="272" fromTop="5" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackageInfo.cs" caret="474" fromTop="9" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackageInfo.cs" caret="1920" fromTop="46" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackageInfo.cs" caret="726" fromTop="17" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackageInfo.cs" caret="1024" fromTop="25" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackage.cs" caret="690" fromTop="17" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackage.cs" caret="508" fromTop="11" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackage.cs" caret="1060" fromTop="11" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackage.cs" caret="1673" fromTop="35" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackage.cs" caret="2052" fromTop="49" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackage.cs" caret="2401" fromTop="56" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpPackageInfo.cs" caret="2284" fromTop="53" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepository.cs" caret="485" fromTop="10" />
-      <File id="CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129/d:Dependencies/f:reading_wraplists.cs" caret="2178" fromTop="13" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/d:Repositories/d:Http/f:HttpRepositoryNavigator.cs" caret="455" fromTop="17" />
-      <File id="6CE52051-0070-423D-96CB-8B16700A2251/f:CurrentDirectoryEnvironment.cs" caret="2481" fromTop="11" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:Properties/f:AssemblyInfo.cs" caret="105" fromTop="2" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:Properties/f:AssemblyInfo.cs" caret="514" fromTop="10" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="8117" fromTop="42" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="8881" fromTop="12" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="9165" fromTop="18" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="9364" fromTop="25" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="8740" fromTop="23" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="9750" fromTop="34" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="4110" fromTop="11" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="7371" fromTop="28" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="3617" fromTop="30" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="4898" fromTop="49" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="6359" fromTop="38" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="6325" fromTop="32" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="6011" fromTop="30" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="5772" fromTop="24" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="6359" fromTop="33" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipArchive.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipArchive.cs" caret="544" fromTop="19" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipDirectoryEntry.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipEntry.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipFileEntry.cs" caret="0" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipArchive.cs" caret="555" fromTop="19" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipArchive.cs" caret="1141" fromTop="0" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/d:TinySharpZip/f:ZipArchive.cs" caret="6423" fromTop="8" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="10080" fromTop="13" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="813" fromTop="11" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="450" fromTop="3" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="5264" fromTop="23" />
+      <File id="49E96F6C-C545-4826-BC35-666C76721B9D/f:Program.cs" caret="5367" fromTop="26" />
     </RecentEdits>
   </RecentFiles>
   <UnitTestRunner>
@@ -78,21 +81,21 @@
   <CompletionStatisticsManager>
     <ItemStatistics item="Default">
       <Item value="Ignore" priority="0" />
-      <Item value="return" priority="149" />
-      <Item value="null" priority="58" />
+      <Item value="return" priority="155" />
+      <Item value="null" priority="61" />
       <Item value="IWrapPackage" priority="0" />
       <Item value="GetHashCode" priority="0" />
-      <Item value="this" priority="21" />
-      <Item value="ctor" priority="24" />
+      <Item value="this" priority="22" />
+      <Item value="ctor" priority="26" />
       <Item value="namespace" priority="5" />
       <Item value="protected" priority="11" />
-      <Item value="string" priority="65" />
-      <Item value="public" priority="120" />
-      <Item value="class" priority="37" />
+      <Item value="string" priority="66" />
+      <Item value="public" priority="122" />
+      <Item value="class" priority="38" />
       <Item value="IWrapRepository" priority="2" />
       <Item value="void" priority="44" />
-      <Item value="new" priority="198" />
-      <Item value="var" priority="115" />
+      <Item value="new" priority="211" />
+      <Item value="var" priority="138" />
       <Item value="using" priority="12" />
       <Item value="XmlTextReader" priority="1" />
       <Item value="xmlDocument" priority="1" />
@@ -117,7 +120,7 @@
       <Item value="into" priority="0" />
       <Item value="select" priority="14" />
       <Item value="WrapListFileRepository" priority="0" />
-      <Item value="x" priority="33" />
+      <Item value="x" priority="35" />
       <Item value="where" priority="18" />
       <Item value="link" priority="10" />
       <Item value="relAttribute" priority="2" />
@@ -130,10 +133,10 @@
       <Item value="name" priority="7" />
       <Item value="version" priority="6" />
       <Item value="static" priority="32" />
-      <Item value="IEnumerable" priority="13" />
+      <Item value="IEnumerable" priority="15" />
       <Item value="VersionVertice" priority="2" />
       <Item value="args" priority="4" />
-      <Item value="Length" priority="4" />
+      <Item value="Length" priority="5" />
       <Item value="i" priority="0" />
       <Item value="Equals" priority="0" />
       <Item value="Parse" priority="0" />
@@ -141,7 +144,7 @@
       <Item value="HttpNavigator" priority="0" />
       <Item value="XDocument" priority="3" />
       <Item value="navigator" priority="1" />
-      <Item value="Name" priority="17" />
+      <Item value="Name" priority="18" />
       <Item value="depends" priority="3" />
       <Item value="Dependencies" priority="3" />
       <Item value="Skip" priority="2" />
@@ -165,17 +168,17 @@
       <Item value="Current" priority="0" />
       <Item value="FolderRepository" priority="2" />
       <Item value="Path" priority="14" />
-      <Item value="Environment" priority="28" />
+      <Item value="Environment" priority="31" />
       <Item value="params" priority="6" />
       <Item value="paths" priority="4" />
-      <Item value="if" priority="73" />
-      <Item value="foreach" priority="23" />
-      <Item value="in" priority="24" />
-      <Item value="path" priority="4" />
+      <Item value="if" priority="82" />
+      <Item value="foreach" priority="25" />
+      <Item value="in" priority="25" />
+      <Item value="path" priority="9" />
       <Item value="pathToCombine" priority="0" />
       <Item value="Aggregate" priority="0" />
       <Item value="First" priority="0" />
-      <Item value="FileSystem" priority="14" />
+      <Item value="FileSystem" priority="15" />
       <Item value="Directory" priority="8" />
       <Item value="_userWrapsPath" priority="1" />
       <Item value="baseDirectory" priority="2" />
@@ -189,7 +192,7 @@
       <Item value="_wrapFile" priority="7" />
       <Item value="zip" priority="1" />
       <Item value="descriptor" priority="4" />
-      <Item value="throw" priority="9" />
+      <Item value="throw" priority="12" />
       <Item value="InvalidOperationException" priority="3" />
       <Item value="DescriptorData" priority="1" />
       <Item value="streamReader" priority="0" />
@@ -208,13 +211,13 @@
       <Item value="Descriptor" priority="12" />
       <Item value="FastZip" priority="0" />
       <Item value="_cacheDirectory" priority="1" />
-      <Item value="true" priority="7" />
+      <Item value="true" priority="8" />
       <Item value="FolderWrapPackage" priority="0" />
       <Item value="folderPackage" priority="0" />
       <Item value="_cachedPackage" priority="1" />
       <Item value="_originalWrapFile" priority="1" />
       <Item value="TempRepository" priority="0" />
-      <Item value="file" priority="10" />
+      <Item value="file" priority="15" />
       <Item value="TestFiles" priority="0" />
       <Item value="folder_based_repository" priority="1" />
       <Item value="given_folder_repository" priority="1" />
@@ -228,7 +231,7 @@
       <Item value="_link" priority="0" />
       <Item value="_folderBased" priority="0" />
       <Item value="exportName" priority="1" />
-      <Item value="environment" priority="8" />
+      <Item value="environment" priority="9" />
       <Item value="Uri" priority="11" />
       <Item value="UriKind" priority="3" />
       <Item value="WebRequest" priority="1" />
@@ -254,15 +257,15 @@
       <Item value="item" priority="0" />
       <Item value="AttributeBasedCommandDescriptor" priority="3" />
       <Item value="ICommand" priority="1" />
-      <Item value="typeof" priority="6" />
+      <Item value="typeof" priority="7" />
       <Item value="CommandLineProcessor" priority="1" />
       <Item value="processor" priority="2" />
-      <Item value="try" priority="8" />
-      <Item value="finally" priority="0" />
+      <Item value="try" priority="11" />
+      <Item value="finally" priority="1" />
       <Item value="bool" priority="2" />
       <Item value="isSuccess" priority="0" />
       <Item value="commandResult" priority="0" />
-      <Item value="Console" priority="6" />
+      <Item value="Console" priority="12" />
       <Item value="ConsoleColor" priority="0" />
       <Item value="backedupConsoleColor" priority="0" />
       <Item value="assignedNamedInputValues" priority="0" />
@@ -270,17 +273,17 @@
       <Item value="allAssignedInputs" priority="0" />
       <Item value="missingInputs" priority="0" />
       <Item value="Error" priority="2" />
-      <Item value="override" priority="4" />
+      <Item value="override" priority="6" />
       <Item value="_missingInputs" priority="0" />
       <Item value="s" priority="1" />
       <Item value="ICommandResult" priority="2" />
-      <Item value="yield return" priority="16" />
+      <Item value="yield return" priority="18" />
       <Item value="while" priority="6" />
       <Item value="FileStyleUriParser" priority="0" />
       <Item value="DirectoryInfo" priority="5" />
-      <Item value="currentDirectory" priority="6" />
+      <Item value="currentDirectory" priority="8" />
       <Item value="FirstOrDefault" priority="0" />
-      <Item value="break" priority="3" />
+      <Item value="break" priority="5" />
       <Item value="di" priority="13" />
       <Item value="filePattern" priority="1" />
       <Item value="SearchOption" priority="1" />
@@ -378,7 +381,7 @@
       <Item value="AddPackage" priority="0" />
       <Item value="command_context" priority="2" />
       <Item value="given_remote_package" priority="2" />
-      <Item value="WrapDescriptor" priority="2" />
+      <Item value="WrapDescriptor" priority="3" />
       <Item value="when_executing_command" priority="0" />
       <Item value="DependencyDescriptor" priority="0" />
       <Item value="_services" priority="0" />
@@ -395,7 +398,7 @@
       <Item value="UpdateWrapCommand" priority="0" />
       <Item value="FileStyleUriParser`0" priority="0" />
       <Item value="dictionary" priority="2" />
-      <Item value="Environment`0" priority="2" />
+      <Item value="Environment`0" priority="4" />
       <Item value="do" priority="1" />
       <Item value="XmlPackage`0" priority="1" />
       <Item value="directory" priority="12" />
@@ -406,39 +409,39 @@
       <Item value="descending" priority="0" />
       <Item value="folder" priority="0" />
       <Item value="DirectoryInfo`0" priority="3" />
-      <Item value="Path`0" priority="5" />
+      <Item value="Path`0" priority="11" />
       <Item value="Enumerable`0" priority="1" />
-      <Item value="projectAssembly" priority="1" />
+      <Item value="projectAssembly" priority="3" />
       <Item value="AssemblyLoadEventArgs`0" priority="0" />
-      <Item value="catch" priority="4" />
-      <Item value="Assembly`0" priority="1" />
+      <Item value="catch" priority="5" />
+      <Item value="Assembly`0" priority="3" />
       <Item value="returnCode" priority="1" />
       <Item value="BindingFlags`0" priority="3" />
       <Item value="DirectoryNotFoundException`0" priority="1" />
       <Item value="ParameterModifier`0" priority="1" />
-      <Item value="assembly" priority="1" />
+      <Item value="assembly" priority="2" />
       <Item value="InMemoryDirectory`0" priority="5" />
       <Item value="InMemoryFile`0" priority="2" />
       <Item value="IFileSystemItem`0" priority="1" />
       <Item value="childDirectories" priority="3" />
       <Item value="Exists" priority="2" />
       <Item value="GetDirectory`0" priority="0" />
-      <Item value="EnvironmentVariableTarget`0" priority="0" />
+      <Item value="EnvironmentVariableTarget`0" priority="1" />
       <Item value="localDirectory" priority="2" />
       <Item value="ascending" priority="0" />
       <Item value="ChildDirectories" priority="7" />
       <Item value="Equals`0" priority="0" />
       <Item value="resolvedDirectoryPath" priority="1" />
       <Item value="prop" priority="2" />
-      <Item value="GenericMessage`0" priority="5" />
-      <Item value="else" priority="4" />
+      <Item value="GenericMessage`0" priority="6" />
+      <Item value="else" priority="6" />
       <Item value="currentNode" priority="1" />
       <Item value="node" priority="1" />
       <Item value="parentNode" priority="2" />
       <Item value="as" priority="0" />
       <Item value="InMemoryFileSystem`0" priority="1" />
       <Item value="InMemoryDirectory" priority="2" />
-      <Item value="fs" priority="2" />
+      <Item value="fs" priority="3" />
       <Item value="List&lt;InMemoryDirectory&gt;" priority="0" />
       <Item value="ChildFiles" priority="2" />
       <Item value="List&lt;IFile&gt;" priority="0" />
@@ -455,11 +458,11 @@
       <Item value="_directories" priority="3" />
       <Item value="out" priority="1" />
       <Item value="Parent" priority="7" />
-      <Item value="IDirectory`0" priority="1" />
+      <Item value="IDirectory`0" priority="2" />
       <Item value="root" priority="8" />
       <Item value="child" priority="2" />
       <Item value="inMemoryDirectory" priority="2" />
-      <Item value="System" priority="4" />
+      <Item value="System" priority="12" />
       <Item value="directoryPath" priority="0" />
       <Item value="IOException" priority="2" />
       <Item value="Dictionary&lt;string,InMemoryDirectory&gt;" priority="0" />
@@ -482,17 +485,17 @@
       <Item value="BuildProject`0" priority="0" />
       <Item value="openwrapBuilt" priority="0" />
       <Item value="CodeDom" priority="0" />
-      <Item value="Exception`0" priority="1" />
-      <Item value="e" priority="1" />
+      <Item value="Exception`0" priority="2" />
+      <Item value="e" priority="6" />
       <Item value="IOException`0" priority="0" />
       <Item value="ConsoleRunner`0" priority="0" />
       <Item value="type" priority="2" />
       <Item value="AttributeBasedCommandDescriptor`0" priority="0" />
       <Item value="Debugger`0" priority="0" />
-      <Item value="Console`0" priority="0" />
+      <Item value="Console`0" priority="8" />
       <Item value="uncompressedFolder" priority="0" />
       <Item value="AppDomain`0" priority="1" />
-      <Item value="WrapServices`0" priority="5" />
+      <Item value="WrapServices`0" priority="7" />
       <Item value="ExecutionEnvironment`0" priority="1" />
       <Item value="IExport`0" priority="0" />
       <Item value="IPackageRepository`0" priority="1" />
@@ -510,9 +513,9 @@
       <Item value="RuntimeAssemblyResolver" priority="0" />
       <Item value="PackageManager`0" priority="0" />
       <Item value="IPackageManager`0" priority="1" />
-      <Item value="IEnvironment`0" priority="1" />
+      <Item value="IEnvironment`0" priority="3" />
       <Item value="ICommandExportItem`0" priority="0" />
-      <Item value="AddWrapCommand`0" priority="1" />
+      <Item value="AddWrapCommand`0" priority="2" />
       <Item value="NoDescriptorUpdate" priority="1" />
       <Item value="ShouldUpdateDescriptor" priority="0" />
       <Item value="AddInstructionToWrapFile`0" priority="0" />
@@ -536,14 +539,14 @@
       <Item value="configurationUri" priority="0" />
       <Item value="relativeUri" priority="5" />
       <Item value="Take`1" priority="1" />
-      <Item value="int" priority="0" />
+      <Item value="int" priority="1" />
       <Item value="seed" priority="1" />
       <Item value="IPath`0" priority="0" />
       <Item value="folderPath" priority="0" />
       <Item value="Last`1" priority="0" />
-      <Item value="Encoding`0" priority="1" />
+      <Item value="Encoding`0" priority="3" />
       <Item value="textValue" priority="0" />
-      <Item value="StringSplitOptions`0" priority="0" />
+      <Item value="StringSplitOptions`0" priority="1" />
       <Item value="const" priority="0" />
       <Item value="_configurationDirectory" priority="0" />
       <Item value="default" priority="1" />
@@ -586,7 +589,7 @@
       <Item value="instance" priority="0" />
       <Item value="propertyType" priority="2" />
       <Item value="value" priority="1" />
-      <Item value="Where`1" priority="0" />
+      <Item value="Where`1" priority="1" />
       <Item value="NotNull`1" priority="0" />
       <Item value="Executing`0" priority="0" />
       <Item value="error" priority="1" />
@@ -600,14 +603,14 @@
       <Item value="when_loading_configuration`0" priority="0" />
       <Item value="Configurations`0" priority="0" />
       <Item value="pi" priority="1" />
-      <Item value="base" priority="0" />
+      <Item value="base" priority="1" />
       <Item value="StringComparer`0" priority="0" />
       <Item value="fileMode" priority="4" />
       <Item value="FileMode`0" priority="13" />
       <Item value="switch" priority="1" />
-      <Item value="case" priority="10" />
+      <Item value="case" priority="14" />
       <Item value="MemoryStream`0" priority="1" />
-      <Item value="FileNotFoundException" priority="0" />
+      <Item value="FileNotFoundException" priority="2" />
       <Item value="CreateNewStream`0" priority="1" />
       <Item value="Stream`0" priority="0" />
       <Item value="FileAccess`0" priority="0" />
@@ -637,6 +640,47 @@
       <Item value="PackageDocument`0" priority="0" />
       <Item value="packageItem" priority="0" />
       <Item value="_package" priority="8" />
+      <Item value="ProjectName" priority="2" />
+      <Item value="projectDirectory" priority="3" />
+      <Item value="fileSystemItems" priority="0" />
+      <Item value="packageManager" priority="0" />
+      <Item value="openwrapPackage" priority="0" />
+      <Item value="msg" priority="0" />
+      <Item value="HttpRepositoryNavigator`0" priority="0" />
+      <Item value="doc" priority="0" />
+      <Item value="File`0" priority="6" />
+      <Item value="installPath" priority="0" />
+      <Item value="FileInfo`0" priority="1" />
+      <Item value="Program`0" priority="0" />
+      <Item value="_openWrapRootPath" priority="5" />
+      <Item value="env" priority="0" />
+      <Item value="openWrapRootPath" priority="2" />
+      <Item value="User" priority="1" />
+      <Item value="ErrorEventArgs`0" priority="0" />
+      <Item value="EntryPointNotFoundException" priority="0" />
+      <Item value="oPath" priority="1" />
+      <Item value="TryUpgrade`0" priority="0" />
+      <Item value="FileVersionInfo`0" priority="0" />
+      <Item value="_currentExecutable" priority="2" />
+      <Item value="currentVersion" priority="1" />
+      <Item value="existingVersion" priority="1" />
+      <Item value="consolePath" priority="1" />
+      <Item value="linkContent" priority="0" />
+      <Item value="WebClient`0" priority="1" />
+      <Item value="client" priority="2" />
+      <Item value="previousProgress" priority="1" />
+      <Item value="p" priority="0" />
+      <Item value="DownloadProgressChanged" priority="0" />
+      <Item value="_progress" priority="2" />
+      <Item value="progress" priority="1" />
+      <Item value="address" priority="0" />
+      <Item value="DownloadDataCompleted" priority="0" />
+      <Item value="HttpRequestHeader`0" priority="0" />
+      <Item value="Absolute" priority="0" />
+      <Item value="_wrapsrapsPath" priority="0" />
+      <Item value="ConsoleProgressWebClient`0" priority="0" />
+      <Item value="packageClient" priority="0" />
+      <Item value="packagesToDownload" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Xml.XmlDocument">
       <Item value="LoadXml" priority="0" />
@@ -697,6 +741,8 @@
       <Item value="PadLeft`0" priority="0" />
       <Item value="ShouldBeEmpty`1" priority="0" />
       <Item value="Equals`0" priority="0" />
+      <Item value="Contains`0" priority="0" />
+      <Item value="StartsWith`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Xml.Linq.XDocument">
       <Item value="Parse" priority="1" />
@@ -729,7 +775,7 @@
       <Item value="Count" priority="2" />
       <Item value="ElementAt" priority="2" />
       <Item value="Last" priority="1" />
-      <Item value="Select`2" priority="4" />
+      <Item value="Select`2" priority="5" />
       <Item value="Where`1" priority="2" />
       <Item value="FirstOrDefault`1" priority="0" />
       <Item value="Distinct`1" priority="0" />
@@ -762,7 +808,7 @@
       <Item value="Parse" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.StringSplitOptions">
-      <Item value="RemoveEmptyEntries" priority="4" />
+      <Item value="RemoveEmptyEntries" priority="5" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.String">
       <Item value="IsNullOrEmpty" priority="0" />
@@ -771,7 +817,7 @@
       <Item value="Format`0" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Text.Encoding">
-      <Item value="UTF8" priority="2" />
+      <Item value="UTF8" priority="3" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenRasta.Wrap.Dependencies.VersionVertice">
       <Item value="Version" priority="0" />
@@ -784,13 +830,15 @@
       <Item value="GetTempPath" priority="1" />
       <Item value="GetTempFileName" priority="0" />
       <Item value="GetDirectoryName" priority="0" />
-      <Item value="Combine`0" priority="4" />
+      <Item value="Combine`0" priority="6" />
       <Item value="IsPathRooted`0" priority="2" />
       <Item value="GetFullPath`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Environment">
       <Item value="GetFolderPath" priority="0" />
       <Item value="CurrentDirectory" priority="2" />
+      <Item value="GetEnvironmentVariable`0" priority="0" />
+      <Item value="SetEnvironmentVariable`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Environment+SpecialFolder">
       <Item value="LocalApplicationData" priority="0" />
@@ -807,7 +855,7 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.IO.DirectoryInfo">
       <Item value="GetFiles" priority="0" />
-      <Item value="FullName" priority="11" />
+      <Item value="FullName" priority="12" />
       <Item value="Delete" priority="0" />
       <Item value="Parent" priority="5" />
       <Item value="SelfAndAncestors" priority="1" />
@@ -821,9 +869,12 @@
       <Item value="GetDirectories`0" priority="2" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.IO.FileInfo">
-      <Item value="Name" priority="1" />
-      <Item value="FullName" priority="1" />
+      <Item value="Name" priority="2" />
+      <Item value="FullName" priority="3" />
       <Item value="OpenRead" priority="0" />
+      <Item value="Exists" priority="1" />
+      <Item value="CopyTo`0" priority="0" />
+      <Item value="Directory" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:ICSharpCode.SharpZipLib.Zip.ZipFile">
       <Item value="AsQueryable" priority="0" />
@@ -848,6 +899,10 @@
       <Item value="OpenWrite" priority="1" />
       <Item value="Exists" priority="2" />
       <Item value="AppendAllText" priority="0" />
+      <Item value="Exists`0" priority="1" />
+      <Item value="Create`0" priority="0" />
+      <Item value="ReadAllText`0" priority="0" />
+      <Item value="Copy`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Text.RegularExpressions.RegexOptions">
       <Item value="Multiline" priority="0" />
@@ -860,7 +915,7 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Text.Encoding">
       <Item value="GetBytes" priority="0" />
-      <Item value="GetBytes`0" priority="0" />
+      <Item value="GetBytes`0" priority="1" />
       <Item value="GetString`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenRasta.Wrap.Dependencies.WrapDescriptor">
@@ -880,6 +935,7 @@
     <ItemStatistics item="Qualified:System.IO.FileStream">
       <Item value="Write" priority="0" />
       <Item value="Flush" priority="0" />
+      <Item value="Write`0" priority="1" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@OpenRasta.Wrap.Tests.Slow.TestFiles">
       <Item value="test_module_1_0_0" priority="0" />
@@ -905,7 +961,7 @@
       <Item value="ToString" priority="0" />
       <Item value="MakeRelativeUri`0" priority="2" />
       <Item value="Segments" priority="2" />
-      <Item value="ToString`0" priority="1" />
+      <Item value="ToString`0" priority="2" />
       <Item value="IsAbsoluteUri" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Net.WebRequest">
@@ -928,7 +984,9 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Console">
       <Item value="ForegroundColor" priority="2" />
-      <Item value="WriteLine`0" priority="1" />
+      <Item value="WriteLine`0" priority="6" />
+      <Item value="ReadKey`0" priority="0" />
+      <Item value="Write`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.ConsoleColor">
       <Item value="Red" priority="0" />
@@ -976,7 +1034,8 @@
       <Item value="ProjectRepository" priority="9" />
       <Item value="Descriptor" priority="4" />
       <Item value="ExecutionEnvironment" priority="2" />
-      <Item value="SystemRepository" priority="1" />
+      <Item value="SystemRepository" priority="2" />
+      <Item value="CurrentDirectory" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenRasta.Wrap.Console.ICommandRepository">
       <Item value="Add" priority="0" />
@@ -1117,10 +1176,12 @@
     <ItemStatistics item="Qualified:System.Reflection.Assembly">
       <Item value="GetType`0" priority="0" />
       <Item value="GetTypes`0" priority="0" />
+      <Item value="Location" priority="1" />
+      <Item value="GetName`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Type">
       <Item value="GetMethod`0" priority="1" />
-      <Item value="Assembly" priority="0" />
+      <Item value="Assembly" priority="2" />
       <Item value="GetInterface`0" priority="0" />
       <Item value="FindInterfaces`0" priority="0" />
       <Item value="GetInterfaces`0" priority="0" />
@@ -1141,10 +1202,10 @@
       <Item value="Path" priority="3" />
       <Item value="AncestorsAndSelf`0" priority="0" />
       <Item value="Exists" priority="3" />
-      <Item value="GetDirectory`0" priority="2" />
+      <Item value="GetDirectory`0" priority="5" />
       <Item value="Create`0" priority="1" />
       <Item value="ShouldBe`1" priority="0" />
-      <Item value="GetFile`0" priority="2" />
+      <Item value="GetFile`0" priority="4" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.IO.IPath">
       <Item value="FullPath" priority="7" />
@@ -1183,7 +1244,7 @@
       <Item value="Copy" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Exception">
-      <Item value="ToString`0" priority="0" />
+      <Item value="ToString`0" priority="1" />
       <Item value="ShouldBeOfType`1" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@System.Diagnostics.Debugger">
@@ -1197,12 +1258,14 @@
       <Item value="ReflectionOnlyAssemblyResolve" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:@OpenWrap.Services.WrapServices">
-      <Item value="GetService`1" priority="5" />
+      <Item value="GetService`1" priority="7" />
       <Item value="RegisterService`1" priority="0" />
       <Item value="TryRegisterService`1" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Repositories.IPackageManager">
       <Item value="GetExports`1" priority="2" />
+      <Item value="TryResolveDependencies`0" priority="0" />
+      <Item value="CopyPackagesToRepositories`0" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Exports.IExport">
       <Item value="Items" priority="1" />
@@ -1216,6 +1279,8 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:System.Reflection.AssemblyName">
       <Item value="Name" priority="1" />
+      <Item value="Version" priority="0" />
+      <Item value="VersionCompatibility" priority="0" />
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Repositories.ICommandExportItem">
       <Item value="Descriptor" priority="0" />
@@ -1339,6 +1404,33 @@
     </ItemStatistics>
     <ItemStatistics item="Qualified:OpenWrap.Repositories.Http.PackageDocument">
       <Item value="Packages" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@OpenWrap.Repositories.HttpRepositoryNavigator">
+      <Item value="ParseXDocument`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.ConsoleKeyInfo">
+      <Item value="KeyChar" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Diagnostics.FileVersionInfo">
+      <Item value="GetVersionInfo`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Diagnostics.FileVersionInfo">
+      <Item value="FileVersion" priority="1" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Net.WebClient">
+      <Item value="DownloadProgressChanged" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:System.Net.DownloadProgressChangedEventArgs">
+      <Item value="ProgressPercentage" priority="3" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:OpenWrap.Console.Program+ConsoleProgressWebClient">
+      <Item value="Headers" priority="0" />
+      <Item value="OpenRead`0" priority="0" />
+      <Item value="DownloadString`0" priority="0" />
+      <Item value="DownloadFile`0" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:@System.Net.HttpRequestHeader">
+      <Item value="Accept" priority="0" />
     </ItemStatistics>
   </CompletionStatisticsManager>
   <UnitTestRunnerNUnit>

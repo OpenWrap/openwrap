@@ -4,7 +4,7 @@
     <Root>$(MSBuildProjectDirectory)\..</Root>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <OpenWrap-PackageName Condition="'$(OpenWrap-PackageName)' == ''">openwrap-1.0.0</OpenWrap-PackageName>
-    <OpenWrap-DescriptorPath Condition="'$(OpenWrap-DescriptorPath)' == ''">$(Root)\$(OpenWrap-PackageName).wrapdes</OpenWrap-DescriptorPath>
+    <OpenWrap-DescriptorPath Condition="'$(OpenWrap-DescriptorPath)' == ''">$(Root)\$(OpenWrap-PackageName).wrapdesc</OpenWrap-DescriptorPath>
     <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(Root)\wraps\cache\$(OpenWrap-PackageName)\build</OpenWrap-BuildTasksDirectory>
   </PropertyGroup>
   

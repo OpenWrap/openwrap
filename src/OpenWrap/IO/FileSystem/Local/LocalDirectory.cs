@@ -37,7 +37,7 @@ namespace OpenWrap.IO.FileSystem.Local
 
         public IDirectory Parent
         {
-            get { return new LocalDirectory(_di.Parent); }
+            get { return _di.Parent == null ? null : new LocalDirectory(_di.Parent); }
         }
 
         public IPath Path

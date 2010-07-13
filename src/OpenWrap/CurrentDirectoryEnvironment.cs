@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -38,6 +39,7 @@ namespace OpenWrap
 
         public void Initialize()
         {
+            
             FileSystem = IO.FileSystems.Local;
             Descriptor = CurrentDirectory
                 .AncestorsAndSelf()
@@ -45,14 +47,16 @@ namespace OpenWrap
                 .Select(x=>new WrapDescriptorParser().ParseFile(x))
                 .FirstOrDefault();
 
-            var dir = Descriptor.File.Parent
-                .AncestorsAndSelf()
-                .SelectMany(x => x.Directories("wraps"))
-                .Where(x => x != null)
-                .FirstOrDefault();
+            var projectRepositoryDirectory =  Descriptor == null
+                ? null
+                : Descriptor.File.Parent
+                    .AncestorsAndSelf()
+                    .SelectMany(x => x.Directories("wraps"))
+                    .Where(x => x != null)
+                    .FirstOrDefault();
 
-            if (dir != null)
-                ProjectRepository = new FolderRepository(dir)
+            if (projectRepositoryDirectory != null)
+                ProjectRepository = new FolderRepository(projectRepositoryDirectory)
                 {
                     Name = "Project repository"
                 };

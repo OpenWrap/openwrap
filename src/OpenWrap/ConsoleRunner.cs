@@ -47,13 +47,18 @@ namespace OpenWrap
                     Console.ForegroundColor = backedupConsoleColor;
                 }
             }
+            if (Debugger.IsAttached)
+            {
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
             return returnCode;
         }
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
             return WrapServices.GetService<IPackageManager>()
-                .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[]{ environment.ProjectRepository, environment.SystemRepository})
+                .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[]{ environment.ProjectRepository, environment.SystemRepository}.NotNull())
                 .SelectMany(x=>x.Items)
                 .OfType<ICommandExportItem>()
                 .Select(x=>x.Descriptor).ToList();

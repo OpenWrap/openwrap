@@ -11,7 +11,7 @@ namespace OpenWrap.Exports
     {
         public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageManager manager, ExecutionEnvironment environment, params IPackageRepository[] repositories)
         {
-            return manager.GetExports<IExport>("bin", environment, repositories).SelectMany(x => x.Items).OfType<IAssemblyReferenceExportItem>().ToList();
+            return manager.GetExports<IExport>("bin", environment, repositories.NotNull()).SelectMany(x => x.Items).OfType<IAssemblyReferenceExportItem>().ToList();
         }
     }
 }
