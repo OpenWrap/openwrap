@@ -27,6 +27,9 @@
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
         <Export>bin-net35</Export>
       </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap\ICSharpCode.SharpZipLib.dll">
+        <Export>bin-net35</Export>
+      </BinFile>
       <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper\OpenWrap.Resharper.dll">
         <Export>build</Export>
       </BinFile>
