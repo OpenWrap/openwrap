@@ -45,7 +45,7 @@ namespace OpenWrap.Commands.Wrap
                 }
             }
 
-            using (var fileStream = Environment.Descriptor.File.OpenWrite())
+            using (var fileStream = Environment.Descriptor.File.Open(FileMode.Create, FileAccess.Write, FileShare.Read))
             using (var writer = new StreamWriter(fileStream))
             {
                 writer.Write(builder.ToString());

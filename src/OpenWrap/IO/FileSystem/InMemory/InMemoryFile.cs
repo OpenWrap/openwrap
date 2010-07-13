@@ -44,6 +44,10 @@ namespace OpenWrap.IO.FileSystem.InMemory
 
         public Stream Open(FileMode fileMode, FileAccess fileAccess, FileShare fileShare)
         {
+            if (fileMode == FileMode.Create)
+            {
+                Stream = new NonDisposableStream(new MemoryStream());
+            }
             return Stream;
         }
     }
