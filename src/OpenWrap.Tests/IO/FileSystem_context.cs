@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenWrap.IO;
-using OpenWrap.IO.FileSystem.InMemory;
-using OpenWrap.IO.FileSystem.Local;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystem.InMemory;
+using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.IO
@@ -85,7 +85,7 @@ namespace OpenWrap.Tests.IO
             first.ShouldBe(second);
         }
 
-        protected T FileSystem { get; set; }
+        protected IFileSystem FileSystem { get; set; }
         protected string CurrentDirectory { get; set; }
     }
 
@@ -127,7 +127,7 @@ namespace OpenWrap.Tests.IO
         public local_fs(){
             CurrentDirectory = Environment.CurrentDirectory;
 
-            FileSystem = new LocalFileSystem();
+            FileSystem = LocalFileSystem.Instance;
         }
     }
     public class path_specification : context

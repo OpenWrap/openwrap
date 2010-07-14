@@ -5,10 +5,12 @@ using System.IO;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Exports;
 using OpenWrap.Build;
 using OpenWrap.Dependencies;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Resharper;
 using OpenWrap.Services;
@@ -25,7 +27,7 @@ namespace OpenWrap.Build.Tasks
         public ResolveWrapReferences()
         {
             InternalServices.Initialize();
-            _fileSystem = FileSystems.Local;
+            _fileSystem = LocalFileSystem.Instance;
         }
 
         [Required]

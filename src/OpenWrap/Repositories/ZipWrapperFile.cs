@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
-using OpenWrap.IO;
-using OpenWrap.IO.FileSystem.Local;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystem.Local;
 
 namespace OpenWrap.Repositories
 {
@@ -34,7 +34,7 @@ namespace OpenWrap.Repositories
 
         public IFileSystem FileSystem
         {
-            get { return IO.FileSystems.Local; }
+            get { return LocalFileSystem.Instance; }
         }
 
         public bool Exists

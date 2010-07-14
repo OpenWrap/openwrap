@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Configuration;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Repositories.Http;
 using OpenWrap.Services;
@@ -27,7 +28,7 @@ namespace OpenWrap
 
         public IDirectory CurrentDirectory
         {
-            get { return IO.FileSystems.Local.GetDirectory(Environment.CurrentDirectory); }
+            get { return LocalFileSystem.Instance.GetDirectory(Environment.CurrentDirectory); }
         }
 
         public IDirectory ConfigurationDirectory { get; private set; }
@@ -40,7 +41,7 @@ namespace OpenWrap
         public void Initialize()
         {
             
-            FileSystem = IO.FileSystems.Local;
+            FileSystem = LocalFileSystem.Instance;
             Descriptor = CurrentDirectory
                 .AncestorsAndSelf()
                 .SelectMany(x => x.Files("*.wrapdesc"))

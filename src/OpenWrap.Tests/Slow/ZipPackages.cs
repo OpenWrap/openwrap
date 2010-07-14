@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Dependencies;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Slow;
@@ -84,7 +85,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
 
             protected void given_folder_repository()
             {
-                FileSystem = OpenWrap.IO.FileSystems.Local;
+                FileSystem = LocalFileSystem.Instance;
                 RepositoryPath = FileSystem.CreateTempDirectory();
                 var wrapFile = TestFiles.test_module_1_0_0;
                 using(var file = RepositoryPath.GetFile("test-module-1.0.0.wrap").OpenWrite())

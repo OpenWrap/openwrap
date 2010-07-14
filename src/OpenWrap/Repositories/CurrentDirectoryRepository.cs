@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using OpenWrap.Dependencies;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Services;
 
 namespace OpenWrap.Repositories

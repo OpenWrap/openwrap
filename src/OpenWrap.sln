@@ -30,6 +30,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FF7BA2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Client", "OpenRasta.Client\OpenRasta.Client.csproj", "{42F90C40-827D-4CF6-B206-EB2315AACDDB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Externals (Temporarily)", "Externals (Temporarily)", "{41450CC7-8984-4460-B15A-EB4274347FB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFileSystem", "..\wraps\ext\openfilesystem\src\OpenFileSystem\OpenFileSystem.csproj", "{0174E0E7-B915-46A9-B3D8-D62007E55694}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,8 +76,15 @@ Global
 		{42F90C40-827D-4CF6-B206-EB2315AACDDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42F90C40-827D-4CF6-B206-EB2315AACDDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42F90C40-827D-4CF6-B206-EB2315AACDDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0174E0E7-B915-46A9-B3D8-D62007E55694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0174E0E7-B915-46A9-B3D8-D62007E55694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0174E0E7-B915-46A9-B3D8-D62007E55694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0174E0E7-B915-46A9-B3D8-D62007E55694}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0174E0E7-B915-46A9-B3D8-D62007E55694} = {41450CC7-8984-4460-B15A-EB4274347FB5}
 	EndGlobalSection
 EndGlobal

@@ -97,30 +97,6 @@
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />
     <Compile Include="FuncExtensions.cs" />
-    <Compile Include="IO\FileSystem\AbstractFileSystem.cs" />
-    <Compile Include="IO\FileExtensions.cs" />
-    <Compile Include="IO\FileSystems.cs" />
-    <Compile Include="IO\FileSystem\AbstractDirectory.cs" />
-    <Compile Include="IO\FileSystem\NonDisposableStream.cs" />
-    <Compile Include="IO\IDirectory.cs" />
-    <Compile Include="IO\IFile.cs" />
-    <Compile Include="IO\IFileSystem.cs" />
-    <Compile Include="IO\IFileSystemItem.cs" />
-    <Compile Include="IO\FileSystem\InMemory\InMemoryDirectory.cs" />
-    <Compile Include="IO\FileSystem\InMemory\InMemoryFile.cs" />
-    <Compile Include="IO\FileSystem\InMemory\InMemoryFileSystem.cs" />
-    <Compile Include="IO\FileSystem\InMemory\InMemoryTemporaryDirectory.cs" />
-    <Compile Include="IO\FileSystem\InMemory\InMemoryTemporaryFile.cs" />
-    <Compile Include="IO\IPath.cs" />
-    <Compile Include="IO\ITemporaryDirectory.cs" />
-    <Compile Include="IO\ITemporaryFile.cs" />
-    <Compile Include="IO\FileSystem\Local\LocalDirectory.cs" />
-    <Compile Include="IO\FileSystem\Local\LocalFile.cs" />
-    <Compile Include="IO\FileSystem\Local\LocalFileSystem.cs" />
-    <Compile Include="IO\FileSystem\Local\LocalPath.cs" />
-    <Compile Include="IO\StringExtensions.cs" />
-    <Compile Include="IO\FileSystem\Local\TemporaryLocalDirectory.cs" />
-    <Compile Include="IO\FileSystem\Local\TemporaryLocalFile.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
     <Compile Include="Dependencies\WrapDescriptionParser.cs" />
     <Compile Include="MoveNextResult.cs" />
@@ -206,6 +182,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\wraps\ext\openfilesystem\src\OpenFileSystem\OpenFileSystem.csproj">
+      <Project>{0174E0E7-B915-46A9-B3D8-D62007E55694}</Project>
+      <Name>OpenFileSystem</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

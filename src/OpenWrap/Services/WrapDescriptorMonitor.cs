@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
+using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Build;
 using OpenWrap.Dependencies;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Services
@@ -41,7 +42,7 @@ namespace OpenWrap.Services
 
         void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
         {
-            NotifyAllClients(FileSystems.Local.GetFile(e.FullPath));
+            NotifyAllClients(LocalFileSystem.Instance.GetFile(e.FullPath));
         }
         void NotifyClient(IFile wrapPath, IWrapAssemblyClient client)
         {

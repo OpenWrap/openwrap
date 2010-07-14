@@ -7,7 +7,9 @@ using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO;
 
 namespace OpenWrap.Build.Tasks
 {
@@ -15,7 +17,7 @@ namespace OpenWrap.Build.Tasks
     {
         readonly IFileSystem _fileSystem;
 
-        public PackageWrap() : this(FileSystems.Local)
+        public PackageWrap() : this(LocalFileSystem.Instance)
         {
             
         }

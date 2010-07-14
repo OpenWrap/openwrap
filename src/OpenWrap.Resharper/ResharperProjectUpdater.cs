@@ -8,7 +8,7 @@ using JetBrains.Util;
 using OpenWrap.Exports;
 using OpenWrap.Build;
 using OpenWrap.Dependencies;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
 

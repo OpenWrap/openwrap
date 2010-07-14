@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.remote_repositories;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
 

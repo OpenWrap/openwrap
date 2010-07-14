@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.Exports;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Resolvers;
 using OpenWrap.Services;
@@ -17,7 +18,7 @@ namespace OpenWrap
 
         public static int Main(string[] args)
         {
-            WrapServices.TryRegisterService<IFileSystem>(()=>FileSystems.Local);
+            WrapServices.TryRegisterService<IFileSystem>(()=>LocalFileSystem.Instance);
             WrapServices.TryRegisterService<IConfigurationManager>(()=>new ConfigurationManager(WrapServices.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
             WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 

@@ -5,8 +5,8 @@ using System.Text;
 using NUnit.Framework;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.remote_repositories;
-using OpenWrap.IO;
-using OpenWrap.IO.FileSystem.InMemory;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Configuration

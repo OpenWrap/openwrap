@@ -5,7 +5,7 @@ using System.Linq;
 using System.Xml.Linq;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 
 namespace OpenWrap.Repositories.Http
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories

@@ -6,8 +6,9 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
+using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Exports;
-using OpenWrap.IO;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories.Http;
@@ -66,7 +67,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         {
             protected void given_repository()
             {
-                Repository = new HttpRepository(FileSystems.Local, new InMemoryNavigator());
+                Repository = new HttpRepository(LocalFileSystem.Instance, new InMemoryNavigator());
             }
             class InMemoryNavigator : IHttpRepositoryNavigator
             {

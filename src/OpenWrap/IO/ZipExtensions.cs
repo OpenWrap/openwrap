@@ -1,6 +1,6 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 
-namespace OpenWrap.IO
+namespace OpenFileSystem.IO
 {
     public static class ZipExtensions
     {

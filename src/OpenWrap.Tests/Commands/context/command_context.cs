@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.remote_repositories;
 using OpenWrap.Dependencies;
-using OpenWrap.IO;
-using OpenWrap.IO.FileSystem.InMemory;
+using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
 using OpenWrap.Testing;
