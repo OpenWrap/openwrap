@@ -17,7 +17,7 @@ namespace OpenWrap.Commands.Wrap
         IFileSystem FileSystem { get { return WrapServices.GetService<IFileSystem>(); } }
         IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); }}
 
-        public IEnumerable<ICommandResult> Execute()
+        public IEnumerable<ICommandOutput> Execute()
         {
             var currentDirectory = Environment.CurrentDirectory;
             var projectDirectory = currentDirectory.GetDirectory(ProjectName);

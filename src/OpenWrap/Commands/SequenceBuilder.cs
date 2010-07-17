@@ -7,24 +7,24 @@ namespace OpenWrap.Commands
 {
     public class SequenceBuilder : ISequenceBuilder
     {
-        List<IEnumerable<ICommandResult>> results = new List<IEnumerable<ICommandResult>>();
+        List<IEnumerable<ICommandOutput>> results = new List<IEnumerable<ICommandOutput>>();
 
-        public SequenceBuilder(IEnumerable<ICommandResult> resultSets)
+        public SequenceBuilder(IEnumerable<ICommandOutput> resultSets)
         {
             results.Add(resultSets);
         }
 
-        public ISequenceBuilder Or(IEnumerable<ICommandResult> returnValue)
+        public ISequenceBuilder Or(IEnumerable<ICommandOutput> returnValue)
         {
             results.Add(returnValue);
             return this;
         }
-        public ISequenceBuilder Or(Func<ICommandResult> returnValue)
+        public ISequenceBuilder Or(Func<ICommandOutput> returnValue)
         {
             results.Add(returnValue.AsEnumerable());
             return this;
         }
-        IEnumerator<ICommandResult> IEnumerable<ICommandResult>.GetEnumerator()
+        IEnumerator<ICommandOutput> IEnumerable<ICommandOutput>.GetEnumerator()
         {
             foreach(var resultSet in results)
             {
@@ -44,7 +44,7 @@ namespace OpenWrap.Commands
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<ICommandResult>)this).GetEnumerator();
+            return ((IEnumerable<ICommandOutput>)this).GetEnumerator();
         }
     }
 }

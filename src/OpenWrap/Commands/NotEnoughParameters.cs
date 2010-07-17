@@ -4,7 +4,7 @@ using OpenWrap;
 
 namespace OpenWrap.Commands
 {
-    public class NotEnoughParameters : ICommandResult
+    public class NotEnoughParameters : Error
     {
         public bool Success
         {
@@ -14,6 +14,7 @@ namespace OpenWrap.Commands
         {
             return Strings.CMD_NOT_ENOUGH_ARGS;
         }
-        public ICommand Command { get; set; }
+        public ICommand Source { get; set; }
+
     }
 }

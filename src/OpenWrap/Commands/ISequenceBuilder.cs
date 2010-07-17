@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace OpenWrap.Commands.Remote
 {
-    public interface ISequenceBuilder : IEnumerable<ICommandResult>
+    public interface ISequenceBuilder : IEnumerable<ICommandOutput>
     {
-        ISequenceBuilder Or(IEnumerable<ICommandResult> returnValue);
-        ISequenceBuilder Or(Func<ICommandResult> returnValue);
+        ISequenceBuilder Or(IEnumerable<ICommandOutput> returnValue);
+        ISequenceBuilder Or(Func<ICommandOutput> returnValue);
     }
 }

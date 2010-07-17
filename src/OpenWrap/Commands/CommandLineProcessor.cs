@@ -14,7 +14,7 @@ namespace OpenWrap.Commands
             _commands = commands;
         }
 
-        public IEnumerable<ICommandResult> Execute(IEnumerable<string> strings)
+        public IEnumerable<ICommandOutput> Execute(IEnumerable<string> strings)
         {
             var parser = new CommandLineParser();
             var parseResult = parser.Parse(strings);
@@ -126,7 +126,7 @@ namespace OpenWrap.Commands
             MoveNextResult result;
             do
             {
-                ICommandResult msg;
+                ICommandOutput msg;
                 Exception error;
                 result = enumerator.TryMoveNext(out msg, out error);
                 if (result == MoveNextResult.Moved)

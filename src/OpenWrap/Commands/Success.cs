@@ -1,8 +1,15 @@
-﻿namespace OpenWrap.Commands
+﻿using System;
+
+namespace OpenWrap.Commands
 {
-    public class Success : ICommandResult
+    public class Success : ICommandOutput
     {
-        bool ICommandResult.Success
+        public Success()
+        {
+            Type = CommandResultType.Default;
+
+        }
+        bool ICommandOutput.Success
         {
             get { return true; }
         }
@@ -10,6 +17,8 @@
         {
             return "The command executed successfully.";
         }
-        public ICommand Command { get; set; }
+        public ICommand Source { get; set; }
+
+        public CommandResultType Type { get; protected set; }
     }
 }

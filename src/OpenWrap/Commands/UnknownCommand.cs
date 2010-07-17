@@ -4,7 +4,7 @@ using OpenWrap;
 
 namespace OpenWrap.Commands
 {
-    public class UnknownCommand : ICommandResult
+    public class UnknownCommand : Error
     {
         public string CommandName { get; set; }
 
@@ -21,6 +21,6 @@ namespace OpenWrap.Commands
         {
             return string.Format(Strings.CMD_UNKNOWN, CommandName);
         }
-        public ICommand Command { get; set; }
+        public ICommand Source { get; set; }
     }
 }

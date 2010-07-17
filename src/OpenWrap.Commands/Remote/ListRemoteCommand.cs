@@ -13,15 +13,15 @@ namespace OpenWrap.Commands.Remote
     {
         IConfigurationManager ConfigurationManager { get { return WrapServices.GetService<IConfigurationManager>(); } }
 
-        public override IEnumerable<ICommandResult> Execute()
+        public override IEnumerable<ICommandOutput> Execute()
         {
             return ConfigurationManager.LoadRemoteRepositories()
                     .Select(x => new RemoteRepositoryMessage(this, x.Key, x.Value))
-                    .Cast<ICommandResult>();
+                    .Cast<ICommandOutput>();
         }
     }
 
-    public class RemoteRepositoryMessage : ICommandResult
+    public class RemoteRepositoryMessage : ICommandOutput
     {
         public string Name { get; set; }
         public RemoteRepository RemoteRepository { get; set; }
@@ -30,7 +30,7 @@ namespace OpenWrap.Commands.Remote
         {
             Name = name;
             RemoteRepository = remoteRepository;
-            Command = sourceCommand;
+            Source = sourceCommand;
         }
         public override string ToString()
         {
@@ -42,6 +42,11 @@ namespace OpenWrap.Commands.Remote
             get { return true; }
         }
 
-        public ICommand Command { get; private set; }
+        public ICommand Source { get; private set; }
+
+        public CommandResultType Type
+        {
+            get { return CommandResultType.Default; }
+        }
     }
 }

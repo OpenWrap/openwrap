@@ -8,12 +8,12 @@ namespace OpenWrap.Repositories
 {
     public static class PackageManagerExtensions
     {
-        public static IEnumerable<ICommandResult> CopyPackagesToRepositories(this IPackageManager manager, DependencyResolutionResult dependencies, params IPackageRepository[] repositories)
+        public static IEnumerable<ICommandOutput> CopyPackagesToRepositories(this IPackageManager manager, DependencyResolutionResult dependencies, params IPackageRepository[] repositories)
         {
             return CopyPackagesToRepositories(manager, dependencies, (IEnumerable<IPackageRepository>)repositories);
         }
 
-        public static IEnumerable<ICommandResult> CopyPackagesToRepositories(this IPackageManager manager,
+        public static IEnumerable<ICommandOutput> CopyPackagesToRepositories(this IPackageManager manager,
                                                                                          DependencyResolutionResult dependencies,
                                                                                          IEnumerable<IPackageRepository> repositoriesToWriteTo)
         {
@@ -71,7 +71,7 @@ namespace OpenWrap.Repositories
             return reps;
         }
 
-        static ICommandResult DependencyResolutionFailed(DependencyResolutionResult result)
+        static ICommandOutput DependencyResolutionFailed(DependencyResolutionResult result)
         {
             return new Result("Dependency resolution failed.")
             {

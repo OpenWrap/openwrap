@@ -28,7 +28,7 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool ProjectOnly { get; set; }
 
-        public IEnumerable<ICommandResult> Execute()
+        public IEnumerable<ICommandOutput> Execute()
         {
             if (SystemOnly && ProjectOnly)
             {

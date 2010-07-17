@@ -6,7 +6,7 @@ using OpenWrap.Commands;
 
 namespace OpenWrap.Commands
 {
-    public class CommandList : ICommandResult
+    public class CommandList : ICommandOutput
     {
         public ICollection<string> Commands { get; set; }
 
@@ -20,7 +20,12 @@ namespace OpenWrap.Commands
             get { return true; }
         }
 
-        public ICommand Command{get; set;}
+        public ICommand Source{get; set;}
+
+        public CommandResultType Type
+        {
+            get { return CommandResultType.Default; }
+        }
 
         public override string ToString()
         {

@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\MultiThreaded_specs.cs" />
     <Compile Include="Commands\Remote\addRemoteCommand.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Commands\CommandProcessor.cs" />
     <Compile Include="Commands\context\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
+    <Compile Include="Commands\removeWrapCommand.cs" />
     <Compile Include="Commands\setupWrapCommand.cs" />
     <Compile Include="Commands\Wrap\updateWrapCommand.cs" />
     <Compile Include="Commands\Wrap\syncWrapCommand.cs" />

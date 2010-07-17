@@ -56,7 +56,7 @@ namespace OpenWrap.Commands.Wrap
             Environment = environment;
         }
 
-        public override IEnumerable<ICommandResult> Execute()
+        public override IEnumerable<ICommandOutput> Execute()
         {
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
@@ -118,7 +118,7 @@ namespace OpenWrap.Commands.Wrap
             return "depends " + Name + " " + (Version ?? string.Empty);
         }
 
-        ICommandResult VerifyWrapFile()
+        ICommandOutput VerifyWrapFile()
         {
             if (NoDescriptorUpdate)
                 new GenericMessage("Wrap descriptor ignored.");
@@ -127,7 +127,7 @@ namespace OpenWrap.Commands.Wrap
                        : new GenericMessage("Wrap descriptor found.");
         }
 
-        ICommandResult VeryfyWrapRepository()
+        ICommandOutput VeryfyWrapRepository()
         {
             return Environment.ProjectRepository != null
                        ? new GenericMessage("Project repository found.")

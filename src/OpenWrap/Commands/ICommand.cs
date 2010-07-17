@@ -5,6 +5,6 @@ namespace OpenWrap.Commands
 {
     public interface ICommand
     {
-        IEnumerable<ICommandResult> Execute();
+        IEnumerable<ICommandOutput> Execute();
     }
 }

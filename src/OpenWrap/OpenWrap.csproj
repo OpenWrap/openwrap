@@ -94,7 +94,7 @@
     <Compile Include="Dependencies\WrapNameUtility.cs" />
     <Compile Include="Dependencies\WrapOverride.cs" />
     <Compile Include="Dependencies\WrapOverrideParser.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Collections\EnumerableExtensions.cs" />
     <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />
     <Compile Include="FuncExtensions.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
@@ -143,7 +143,7 @@
     <Compile Include="Commands\CommandList.cs" />
     <Compile Include="Commands\CommandLineProcessor.cs" />
     <Compile Include="Commands\ICommand.cs" />
-    <Compile Include="Commands\ICommandResult.cs" />
+    <Compile Include="Commands\ICommandOutput.cs" />
     <Compile Include="Commands\NotEnoughParameters.cs" />
     <Compile Include="Commands\UnknownCommand.cs" />
     <Compile Include="Dependencies\AnyVersionVertice.cs" />
@@ -176,6 +176,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="InstallationPaths.cs" />
+    <Compile Include="Tasks\TaskManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">

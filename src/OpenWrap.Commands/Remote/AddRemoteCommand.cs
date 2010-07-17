@@ -19,14 +19,14 @@ namespace OpenWrap.Commands.Remote
         public Uri Href { get; set; }
 
         IConfigurationManager ConfigurationManager { get { return WrapServices.GetService<IConfigurationManager>(); } }
-        public override IEnumerable<ICommandResult> Execute()
+        public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(InvalidName())
                     .Or(NameAlreadyExists())
                     .Or(AddRemote());
         }
 
-        IEnumerable<ICommandResult> AddRemote()
+        IEnumerable<ICommandOutput> AddRemote()
         {
             var repositories = ConfigurationManager.LoadRemoteRepositories();
             repositories[Name] = new RemoteRepository
@@ -38,13 +38,13 @@ namespace OpenWrap.Commands.Remote
             yield return new GenericMessage(string.Format("Remote repository '{0}' added.", Name));
         }
 
-        IEnumerable<ICommandResult> NameAlreadyExists()
+        IEnumerable<ICommandOutput> NameAlreadyExists()
         {
             if (ConfigurationManager.LoadRemoteRepositories().ContainsKey(Name))
                 yield return new GenericError("A repository with the name '{0}' already exists.", Name);
         }
 
-        IEnumerable<ICommandResult> InvalidName()
+        IEnumerable<ICommandOutput> InvalidName()
         {
             if (!NameIsValid)
                 yield return new GenericError("The 'Name' parameter is invalid.");

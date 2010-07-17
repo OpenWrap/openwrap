@@ -2,7 +2,7 @@
 
 namespace OpenWrap.Commands
 {
-    public class Result : ICommandResult
+    public class Result : ICommandOutput
     {
         readonly string _value;
 
@@ -21,10 +21,16 @@ namespace OpenWrap.Commands
             get; set;
         }
 
-        public ICommand Command
+        public ICommand Source
         {
             get { throw new NotImplementedException(); }
         }
+
+        public CommandResultType Type
+        {
+            get { return CommandResultType.Data; }
+        }
+
         public override string ToString()
         {
             return _value;

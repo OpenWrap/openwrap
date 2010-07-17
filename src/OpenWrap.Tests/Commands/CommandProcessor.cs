@@ -17,7 +17,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lotr", "traveltomordor");
 
-            result.ShouldBeOfType<Success>();
+            Output.ShouldBeOfType<Success>();
         }
         [Test]
         public void an_unknown_namespace_is_not_found()
@@ -26,7 +26,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("semarillon", "traveltomordor");
 
-            result.ShouldBeOfType<NamespaceNotFound>();
+            Output.ShouldBeOfType<NamespaceNotFound>();
         }
         [Test]
         public void namespace_entered_partially_is_found()
@@ -35,7 +35,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lo", "traveltomordor");
 
-            result.ShouldBeOfType<Success>();
+            Output.ShouldBeOfType<Success>();
         }
         [Test]
         public void command_entered_partially_is_found()
@@ -44,7 +44,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("l", "t");
 
-            result.ShouldBeOfType<Success>();
+            Output.ShouldBeOfType<Success>();
         }
         [Test]
         public void unknown_command_is_not_found()
@@ -53,7 +53,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lotr", "traveltooxford");
 
-            result.ShouldBeOfType<UnknownCommand>();
+            Output.ShouldBeOfType<UnknownCommand>();
         }
 
     }
@@ -66,8 +66,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lotr", "travel", "-hasring", "true");
 
-            result.ShouldBeOfType<Success>()
-                .Command.ShouldBeOfType<TravelToMordor>()
+            Output.ShouldBeOfType<Success>()
+                .Source.ShouldBeOfType<TravelToMordor>()
                     .HasRing.ShouldBeTrue();
         }
         [Test]
@@ -76,7 +76,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             given_command<TravelToMordor>();
             when_parsing_input("lotr", "travel", "-has", "true");
 
-            result.Command.ShouldBeOfType<TravelToMordor>()
+            Output.Source.ShouldBeOfType<TravelToMordor>()
                     .HasRing.ShouldBeTrue();
         }
         [Test]
@@ -87,8 +87,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lotr", "travel", "true");
 
-            result.ShouldBeOfType<Success>()
-                .Command.ShouldBeOfType<TravelToMordor>()
+            Output.ShouldBeOfType<Success>()
+                .Source.ShouldBeOfType<TravelToMordor>()
                     .HasRing.ShouldBeTrue();
         }
         [Test]
@@ -99,8 +99,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lotr", "travel", "false", "true");
 
-            var command = result.ShouldBeOfType<Success>()
-                .Command.ShouldBeOfType<TravelToMordor>();
+            var command = Output.ShouldBeOfType<Success>()
+                .Source.ShouldBeOfType<TravelToMordor>();
             command.HasRing.ShouldBeFalse();
             command.IsDangerous.ShouldBeTrue();
         }
@@ -111,7 +111,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lotr", "travel", "-IsDangerous");
 
-            result.Command.ShouldBeOfType<TravelToMordor>()
+            Output.Source.ShouldBeOfType<TravelToMordor>()
                 .IsDangerous.ShouldBeTrue();
         }
         [Test]
@@ -121,8 +121,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lotr", "travel", "-has", "true");
 
-            result.ShouldBeOfType<Success>()
-                .Command.ShouldBeOfType<TravelToMordor>()
+            Output.ShouldBeOfType<Success>()
+                .Source.ShouldBeOfType<TravelToMordor>()
                     .HasRing.ShouldBeTrue();
         }
         [Test]
@@ -132,8 +132,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("lotr", "travel", "-hr", "true");
 
-            result.ShouldBeOfType<Success>()
-                .Command.ShouldBeOfType<TravelToMordor>()
+            Output.ShouldBeOfType<Success>()
+                .Source.ShouldBeOfType<TravelToMordor>()
                     .HasRing.ShouldBeTrue();
         }
         [Test]
@@ -156,9 +156,9 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
         public bool IsDangerous { get; set; }
 
 
-        public IEnumerable<ICommandResult> Execute()
+        public IEnumerable<ICommandOutput> Execute()
         {
-            yield return new Success() { Command = this };
+            yield return new Success() { Source = this };
         }
     }
 
@@ -183,8 +183,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
                 
                 commands.Add(new AttributeBasedCommandDescriptor(typeof(T)));
             }
-            protected List<ICommandResult> results;
-            protected ICommandResult result { get { return results.Last(); } }
+            protected List<ICommandOutput> results;
+            protected ICommandOutput Output { get { return results.Last(); } }
 
                 protected void when_parsing_input(params string[] command)
             {

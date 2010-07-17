@@ -25,14 +25,14 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput(DisplayName = "System", IsRequired = false, Name="System")]
         public bool System { get; set; }
 
-        public IEnumerable<ICommandResult> Execute()
+        public IEnumerable<ICommandOutput> Execute()
         {
             if (Environment.ProjectRepository != null)
                 return UpdateProjectPackages();
             return UpdateSystemPackages();
         }
 
-        IEnumerable<ICommandResult> UpdateSystemPackages()
+        IEnumerable<ICommandOutput> UpdateSystemPackages()
         {
             
             WrapDescriptor packagesToSearch = CreateDescriptorForInstalledPackages();
@@ -65,7 +65,7 @@ namespace OpenWrap.Commands.Wrap
             };
         }
 
-        IEnumerable<ICommandResult> UpdateProjectPackages()
+        IEnumerable<ICommandOutput> UpdateProjectPackages()
         {
             var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository }));
 

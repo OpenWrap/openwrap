@@ -22,7 +22,7 @@ namespace OpenWrap.Tests.Commands.context
         protected AttributeBasedCommandDescriptor<T> Command;
         protected CommandRepository Commands;
         protected InMemoryEnvironment Environment;
-        protected List<ICommandResult> Results;
+        protected List<ICommandOutput> Results;
         InMemoryFileSystem FileSystem;
 
         public command_context()
