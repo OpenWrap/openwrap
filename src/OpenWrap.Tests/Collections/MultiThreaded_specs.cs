@@ -19,7 +19,9 @@ namespace OpenWrap.Tests.Collections
             // and the results are queued
 
             enumerator.MoveNext().ShouldBeTrue();
-            Thread.Sleep(TimeSpan.FromMilliseconds(50));
+
+            Thread.Sleep(TimeSpan.FromSeconds(2));
+
             enumerator.Current.ShouldBe(0);
             enumerator.CachedItems.Count.ShouldBe(1);
             enumerator.CachedItems.Peek().ShouldBe(5);

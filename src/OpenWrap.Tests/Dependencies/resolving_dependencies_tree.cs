@@ -13,23 +13,28 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 {
     public class when_resolving_unavailable_dependencies : dependency_manager_context
     {
-        [Test]
-        public void not_found_package_fails_resolution()
+        public when_resolving_unavailable_dependencies()
         {
             given_dependency("depends rings-of-power");
 
             when_resolving_packages();
-
+        }
+        [Test]
+        public void resolution_fails()
+        {
             Resolve.IsSuccess.ShouldBeFalse();
+        }
+        [Test]
+        public void dependency_has_no_pacakge()
+        {
             Resolve.Dependencies.ShouldHaveCountOf(1);
             Resolve.Dependencies.First().Package.ShouldBeNull();
         }
     }
 
-    public class when_conflicting_dependencies : dependency_manager_context
+    public class versions_in_conflict_and_dependency_override : dependency_manager_context
     {
-        [Test]
-        public void local_declaration_overrides_packages()
+        public versions_in_conflict_and_dependency_override()
         {
             given_local_package("sauron-1.0.0");
             given_local_package("sauron-1.1.0");
@@ -41,16 +46,20 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             given_dependency("depends sauron = 1.0.0");
 
             when_resolving_packages();
-
+        }
+        [Test]
+        public void local_declaration_overrides_package_dependency()
+        {
             Resolve.IsSuccess.ShouldBeTrue();
             Resolve.Dependencies.Count().ShouldBe(4);
             Resolve.Dependencies.ToLookup(x => x.Package.Name)["sauron"]
                 .ShouldHaveCountOf(1)
                 .First().Package.Version.ShouldBe(new Version(1, 0, 0));
         }
-
-        [Test]
-        public void the_resolving_fails()
+    }
+    public class when_versions_are_in_conflict : dependency_manager_context
+    {
+        public when_versions_are_in_conflict()
         {
             given_local_package("sauron-1.0.0");
             given_local_package("sauron-1.1.0");
@@ -61,102 +70,141 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             given_dependency("depends tolkien");
 
             when_resolving_packages();
-
+        }
+        [Test]
+        public void the_resolving_fails()
+        {
             Resolve.IsSuccess.ShouldBeFalse();
             Resolve.Dependencies.Count().ShouldBe(5);
             Resolve.Dependencies.ToLookup(x => x.Package.Name)["sauron"].Count().ShouldBe(2);
         }
     }
 
-    public class when_resolving_available_dependencies : dependency_manager_context
+    public class resolving_package_from_remote_repository : dependency_manager_context
     {
-        [Test]
-        public void dependency_on_remote_package_is_resolved()
+        public resolving_package_from_remote_repository()
         {
             given_remote1_package("rings-of-power-1.0.0");
             given_dependency("depends rings-of-power");
 
             when_resolving_packages();
-
+        }
+        [Test]
+        public void dependency_on_remote_package_is_resolved()
+        {
             Resolve.IsSuccess.ShouldBeTrue();
             Resolve.Dependencies.First().Package.ShouldNotBeNull()
                 .Source.ShouldBe(RemoteRepository);
         }
-
-        [Test]
-        public void dependency_on_user_package_is_resolved()
+    }
+    public class resolving_package_from_system_repository : dependency_manager_context
+    {
+        public resolving_package_from_system_repository()
         {
-            given_user_package("rings-of-power-1.0.0");
+            given_system_package("rings-of-power-1.0.0");
             given_dependency("depends rings-of-power");
 
             when_resolving_packages();
-
+        }
+        [Test]
+        public void system_package_is_resolved()
+        {
             Resolve.IsSuccess.ShouldBeTrue();
             Resolve.Dependencies.First().Package.ShouldNotBeNull()
                 .Source.ShouldBe(SystemRepository);
         }
-
-
-        [Test]
-        public void local_package_found_before_user_package()
+    }
+    public class resolvig_package_existing_in_local_and_remote : dependency_manager_context
+    {
+        public resolvig_package_existing_in_local_and_remote()
         {
             given_remote1_package("rings-of-power-1.1.0");
             given_local_package("rings-of-power-1.0.0");
             given_dependency("depends rings-of-power");
 
             when_resolving_packages();
-
+        }
+        [Test]
+        public void local_package_found_before_user_package()
+        {
             Resolve.IsSuccess.ShouldBeTrue();
             var dependency = Resolve.Dependencies.First();
 
             dependency.Package.ShouldNotBeNull()
-                .Source.ShouldBe(LocalRepository);
+                .Source.ShouldBe(ProjectRepository);
             dependency.Package.Version.ShouldBe(new Version(1, 0, 0));
         }
-
-        [Test]
-        public void single_package_is_resolved()
+    }
+    public class resolving_pacakge_existing_in_local : dependency_manager_context
+    {
+        public resolving_pacakge_existing_in_local()
         {
             given_local_package("rings-of-power-1.0.0");
             given_dependency("depends rings-of-power");
 
             when_resolving_packages();
+        }
+        [Test]
+        public void package_is_resolved()
+        {
 
             Resolve.IsSuccess.ShouldBeTrue();
             Resolve.Dependencies.ShouldHaveCountOf(1);
         }
     }
 
-    public class when_resolving_with_overrides : dependency_manager_context
+    public class when_overriding_dependency : dependency_manager_context
     {
-        [Test]
-        public void overriden_dependency_is_found()
-        {
-            given_local_package("foobar-1.0.0");
-            given_dependency("depends foo");
-            given_override("foo", "foobar");
-
-            when_resolving_packages();
-
-            Resolve.IsSuccess.ShouldBeTrue();
-        }
-
-        [Test]
-        public void dependency_in_local_is_overriden()
+        public when_overriding_dependency()
         {
             given_remote1_package("one-ring-1.0.0");
-            given_local_package("sauron-1.0.0", "depends ring-of-power");
-            given_dependency("depends sauron");
-            given_override("ring-of-power", "one-ring");
-            
-            when_resolving_packages();
+            given_remote1_package("sauron-1.0.0", "depends ring-of-power");
 
+            given_local_package("minas-tirith-1.0.0");
+
+
+            given_dependency("depends sauron");
+            given_dependency("depends fangorn");
+
+
+            given_dependency_override("ring-of-power", "one-ring");
+            given_dependency_override("fangorn", "minas-tirith");
+
+            when_resolving_packages();
+        }
+        [Test]
+        public void resolution_is_successfull()
+        {
             Resolve.IsSuccess.ShouldBeTrue();
         }
-
-        void given_override(string from, string to)
+        [Test]
+        public void originally_locally_declared_dependency_is_not_resolved()
         {
-            DependencyDescriptor.Overrides.Add(new WrapOverride(from, to));            
+            Resolve.Dependencies.Where(x => x.Dependency.Name == "fangorn")
+                    .ShouldHaveCountOf(0);
+
+        }
+        [Test]
+        public void locally_declared_dependency_is_overrridden()
+        {
+            Resolve.Dependencies.Where(x => x.Dependency.Name == "minas-tirith").FirstOrDefault()
+                    .ShouldNotBeNull()
+                    .Package.Name.ShouldBe("minas-tirith");
+        }
+
+        [Test]
+        public void dependencies_in_dependency_chain_are_overridden()
+        {
+            Resolve.Dependencies.Where(x => x.Dependency.Name == "one-ring").FirstOrDefault()
+                    .ShouldNotBeNull()
+                    .Package.Name.ShouldBe("one-ring");
+        }
+        [Test]
+        public void originally_declared_dependency_in_dependency_chain_is_not_resolved()
+        {
+            Resolve.Dependencies.Where(x => x.Dependency.Name == "ring-of-power")
+                    .ShouldHaveCountOf(0);
+
         }
     }
 
@@ -165,20 +213,20 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public class dependency_manager_context : OpenWrap.Testing.context
         {
             protected WrapDescriptor DependencyDescriptor;
-            protected InMemoryRepository LocalRepository;
+            protected InMemoryRepository ProjectRepository;
             protected InMemoryRepository RemoteRepository;
             protected DependencyResolutionResult Resolve;
             protected InMemoryRepository SystemRepository;
 
-            protected override void SetUp()
+            public dependency_manager_context()
             {
-                base.SetUp();
+
                 DependencyDescriptor = new WrapDescriptor
                 {
                     Name = "test",
                     Version = new Version(1, 0)
                 };
-                LocalRepository = new InMemoryRepository("Local repository");
+                ProjectRepository = new InMemoryRepository("Local repository");
                 SystemRepository = new InMemoryRepository("System repository");
                 RemoteRepository = new InMemoryRepository("Remote repository");
             }
@@ -190,7 +238,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             protected void given_local_package(string name, params string[] dependencies)
             {
-                Add(LocalRepository, name, dependencies);
+                Add(ProjectRepository, name, dependencies);
             }
 
             protected void given_remote1_package(string name, params string[] dependencies)
@@ -198,7 +246,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 Add(RemoteRepository, name, dependencies);
             }
 
-            protected void given_user_package(string name, params string[] dependencies)
+            protected void given_system_package(string name, params string[] dependencies)
             {
                 Add(SystemRepository, name, dependencies);
             }
@@ -208,7 +256,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 Resolve = new PackageManager().TryResolveDependencies(DependencyDescriptor,
                                                                       new[]
                                                                       {
-                                                                          LocalRepository,
+                                                                          ProjectRepository,
                                                                           SystemRepository,
                                                                           RemoteRepository
                                                                       });
@@ -225,6 +273,11 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                                                        WrapDependencyParser.ParseDependency(x)).ToList()
                 };
                 repository.Packages.Add(package);
+            }
+
+            protected void given_dependency_override(string from, string to)
+            {
+                DependencyDescriptor.Overrides.Add(new WrapOverride(from, to));            
             }
         }
 

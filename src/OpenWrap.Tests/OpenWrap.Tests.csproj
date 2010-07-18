@@ -76,6 +76,7 @@
     <Compile Include="Configuration\configuration_parser_spec.cs" />
     <Compile Include="Configuration\configuration_specifications.cs" />
     <Compile Include="context.cs" />
+    <Compile Include="Dependencies\anchored_dependencies.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Dependencies\OverrideParser_Specification.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
