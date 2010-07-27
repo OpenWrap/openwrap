@@ -14,7 +14,5 @@ namespace OpenWrap.Commands
         {
             return Strings.CMD_NOT_ENOUGH_ARGS;
         }
-        public ICommand Source { get; set; }
-
     }
 }

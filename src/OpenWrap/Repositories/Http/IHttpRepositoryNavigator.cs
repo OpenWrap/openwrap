@@ -1,9 +1,6 @@
-using System;
 using System.IO;
-using System.Xml.Linq;
-using OpenWrap.Repositories.Http;
 
-namespace OpenWrap.Repositories
+namespace OpenWrap.Repositories.Http
 {
     public interface IHttpRepositoryNavigator
     {

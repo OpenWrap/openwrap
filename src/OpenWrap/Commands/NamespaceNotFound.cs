@@ -16,11 +16,6 @@ namespace OpenWrap.Commands
                 _message = "Ambiguous namespace. Possible matches: " + string.Join(", ", names);
         }
 
-        public bool Success
-        {
-            get { return false; }
-        }
-
         public override string ToString()
         {
             return _message;

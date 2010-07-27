@@ -11,10 +11,5 @@ namespace OpenWrap.Commands
         public InvalidCommandValue(List<string> unnamed)
         {
         }
-
-        public bool Success
-        {
-            get { return false; }
-        }
     }
 }

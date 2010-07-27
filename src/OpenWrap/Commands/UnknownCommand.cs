@@ -12,15 +12,9 @@ namespace OpenWrap.Commands
         {
             CommandName = commandName;
         }
-
-        public bool Success
-        {
-            get { return false; }
-        }
         public override string ToString()
         {
             return string.Format(Strings.CMD_UNKNOWN, CommandName);
         }
-        public ICommand Source { get; set; }
     }
 }

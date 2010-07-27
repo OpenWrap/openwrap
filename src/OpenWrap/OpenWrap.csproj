@@ -111,6 +111,7 @@
     <Compile Include="Repositories\CurrentDirectoryRepository.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="Repositories\Http\PackageDocument.cs" />
+    <Compile Include="Repositories\Http\PackageItem.cs" />
     <Compile Include="Repositories\ICommandExportItem.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />

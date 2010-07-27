@@ -88,11 +88,6 @@
     <Compile Include="Repositories\current_directory_repository.cs" />
     <Compile Include="Repositories\project_repository.cs" />
     <Compile Include="Slow\building_openwrap.cs" />
-    <Compile Include="Slow\TestFiles.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TestFiles.resx</DependentUpon>
-    </Compile>
     <Compile Include="Slow\ZipPackages.cs" />
     <Compile Include="SpecExtensions.cs" />
   </ItemGroup>
@@ -109,14 +104,6 @@
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
       <Name>OpenWrap</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Slow\TestFiles.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>TestFiles.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Slow\test-module-1.0.0.wrap" />
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

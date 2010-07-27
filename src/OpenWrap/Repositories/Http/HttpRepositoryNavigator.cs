@@ -3,27 +3,17 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml.Linq;
-using OpenWrap.Repositories.Http;
 
-namespace OpenWrap.Repositories
+namespace OpenWrap.Repositories.Http
 {
     public class HttpRepositoryNavigator : IHttpRepositoryNavigator
     {
-        readonly Uri _serverUri;
-        WebRequest _request;
-        Uri _requestUri;
+        readonly Uri _requestUri;
         XDocument _fileList;
 
         public HttpRepositoryNavigator(Uri serverUri)
         {
-            _serverUri = serverUri;
             _requestUri = new Uri(serverUri, new Uri("index.wraplist", UriKind.Relative));
-        }
-        public PackageDocument Index()
-        {
-            EnsureFileListLoaded();
-            XDocument file = _fileList;
-            return ParseXDocument(file);
         }
 
         public static PackageDocument ParseXDocument(XDocument file)
@@ -54,12 +44,11 @@ namespace OpenWrap.Repositories
             };
         }
 
-        void EnsureFileListLoaded()
+        public PackageDocument Index()
         {
-            if (_fileList == null)
-            {
-                _fileList = XDocument.Load(_requestUri.ToString(), LoadOptions.SetBaseUri);
-            }
+            EnsureFileListLoaded();
+            var file = _fileList;
+            return ParseXDocument(file);
         }
 
         public Stream LoadPackage(PackageItem packageItem)
@@ -72,6 +61,14 @@ namespace OpenWrap.Repositories
             if (attribute == null) return null;
             DateTime dt;
             return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
+        }
+
+        void EnsureFileListLoaded()
+        {
+            if (_fileList == null)
+            {
+                _fileList = XDocument.Load(_requestUri.ToString(), LoadOptions.SetBaseUri);
+            }
         }
     }
 }

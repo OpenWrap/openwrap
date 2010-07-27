@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Clean;OpenWrap-SelfBuild">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Clean;Build">
   <PropertyGroup>
     <Root>$(MSBuildProjectDirectory)\..</Root>
     <OpenWrap-Debug Condition="'$(OpenWrap-Debug)' == ''">false</OpenWrap-Debug>
-    <_DebugCommandLine Condition="'$(OpenWrap-Debug)' != ''"> -debug</_DebugCommandLine>
+    <_DebugCommandLine Condition="$(OpenWrap-Debug)"> -debug</_DebugCommandLine>
   </PropertyGroup>
-  <Target Name="Build">
-    <MSBuild Projects="openwrap.proj" />
-  </Target>
   <Target Name="Clean">
     <MSBuild Projects="openwrap.proj" Targets="Clean" />
   </Target>
-  <Target Name="OpenWrap-SelfBuild">
+  <Target Name="RemoveTemporaryPackages" Inputs="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;" Outputs="kjdsfjsdfljksdfjklflsdk">
+    <Message Importance="high" Text="Cleaning OpenWrap results" />
+    <Delete Files="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;" />
+    <RemoveDir Directories="$(Root)\wraps\cache\openwrap-42.0.0.1;$(Root)\wraps\cache\42.0.0.0" />
+  </Target>
+  <Target Name="OpenWrap-SelfBuild" DependsOnTargets="RemoveTemporaryPackages">
     
     <Message Importance="high" Text="Building OpenWrap from existing dependencies." />
 
@@ -28,10 +30,9 @@
     <Message Importance="high" Text="Building OpenWrap from newly built version of OpenWrap" />
     
     <MSBuild Projects="openwrap.proj" Properties="PackageVersion=42.0.0.1;" ContinueOnError="true" />
-
-    <Message Importance="high" Text="Cleaning OpenWrap results" />
-    <Delete Files="$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;" />
+  </Target>
+  <Target Name="Build" DependsOnTargets="RemoveTemporaryPackages; OpenWrap-SelfBuild">
+    <Delete Files="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;" />
     <RemoveDir Directories="$(Root)\wraps\cache\openwrap-42.0.0.1;$(Root)\wraps\cache\42.0.0.0" />
-    
   </Target>
 </Project>

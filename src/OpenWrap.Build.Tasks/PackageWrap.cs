@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
-using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.Local;
-using OpenFileSystem.IO;
 
 namespace OpenWrap.Build.Tasks
 {
@@ -19,7 +13,6 @@ namespace OpenWrap.Build.Tasks
 
         public PackageWrap() : this(LocalFileSystem.Instance)
         {
-            
         }
 
         public PackageWrap(IFileSystem fileSystem)
@@ -29,26 +22,27 @@ namespace OpenWrap.Build.Tasks
 
         [Required]
         public string Destination { get; set; }
+
         [Required]
         public ITaskItem[] Files { get; set; }
 
         public override bool Execute()
         {
-            using(var tempDirectory = _fileSystem.CreateTempDirectory())
-            try
-            {
-                CopyFilesToTempDirectory(tempDirectory);
+            using (var tempDirectory = _fileSystem.CreateTempDirectory())
+                try
+                {
+                    CopyFilesToTempDirectory(tempDirectory);
 
-                var packageFullPath = _fileSystem.GetPath(Destination);
-                var zipFile = tempDirectory.ToZip(packageFullPath);
+                    var packageFullPath = _fileSystem.GetPath(Destination);
+                    tempDirectory.ToZip(packageFullPath);
 
-                Log.LogMessage("Created package at {0}", packageFullPath);
-            }
-            catch(Exception e)
-            {
-                Log.LogErrorFromException(e);
-                return false;
-            }
+                    Log.LogMessage("Created package at {0}", packageFullPath);
+                }
+                catch (Exception e)
+                {
+                    Log.LogErrorFromException(e);
+                    return false;
+                }
             return true;
         }
 

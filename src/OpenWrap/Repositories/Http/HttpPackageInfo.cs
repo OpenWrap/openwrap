@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Dependencies;
-using OpenWrap.Exports;
 using OpenFileSystem.IO;
-using OpenWrap.Repositories.Http;
 
-namespace OpenWrap.Repositories
+namespace OpenWrap.Repositories.Http
 {
     public class HttpPackageInfo : IPackageInfo
     {

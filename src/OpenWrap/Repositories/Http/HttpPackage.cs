@@ -4,11 +4,9 @@ using System.IO;
 using System.Linq;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
-using OpenWrap.Repositories;
 using OpenWrap.Exports;
-using OpenWrap.Repositories.Http;
 
-namespace OpenWrap.Repositories
+namespace OpenWrap.Repositories.Http
 {
     public class HttpPackage : IPackage
     {
