@@ -43,6 +43,8 @@ namespace OpenWrap.Dependencies
             get { return null; }
         }
 
+        public bool IsAnchored { get; set; }
+
         public bool IsCompatibleWith(Version version)
         {
             return false;

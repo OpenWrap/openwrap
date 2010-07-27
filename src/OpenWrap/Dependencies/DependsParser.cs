@@ -5,25 +5,32 @@ using System.Text;
 
 namespace OpenWrap.Dependencies
 {
-    public class WrapDependencyParser : IWrapDescriptorLineParser
+    public class DependsParser : AbstractDescriptorParser
     {
-        public void Parse(string line, WrapDescriptor descriptor)
+        public DependsParser() : base("depends"){}
+        public override void ParseContent(string content, WrapDescriptor descriptor)
         {
-            var dependency = ParseDependency(line);
+            var dependency = ParseDependency(content);
             if (dependency != null)
                 descriptor.Dependencies.Add(dependency);
         }
 
-        public static WrapDependency ParseDependency(string line)
+        public static WrapDescriptor ParseDependsInstruction(string line)
+        {
+            WrapDescriptor descriptor = new WrapDescriptor();
+            new DependsParser().Parse(line, descriptor);
+            return descriptor;
+        }
+        static WrapDependency ParseDependency(string line)
         {
             var bits = line.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-            if (bits.Length < 2 || string.Compare(bits[0], "depends", StringComparison.OrdinalIgnoreCase) != 0)
+            if (bits.Length < 1)
                 return null;
 
             return new WrapDependency
             {
-                Name = bits[1],
-                VersionVertices = ParseVersions(bits.Skip(2).ToArray()).ToList(),
+                Name = bits[0],
+                VersionVertices = ParseVersions(bits.Skip(1).ToArray()).ToList(),
                 Anchored = bits.Last().Equals("anchored", StringComparison.OrdinalIgnoreCase)
             };
         }

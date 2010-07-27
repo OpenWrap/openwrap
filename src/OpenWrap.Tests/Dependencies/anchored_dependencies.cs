@@ -11,7 +11,7 @@ namespace OpenWrap.Tests.Dependencies
     {
         public when_dependency_is_anchored()
         {
-            given_dependency("depends one-ring anchored");
+            given_dependency("depends: one-ring anchored");
             given_system_package("one-ring-1.0.0");
 
             when_resolving_packages();

@@ -93,7 +93,7 @@ namespace OpenWrap.Commands.Wrap
             using (var fileStream = Environment.Descriptor.File.OpenAppend())
             using (var textWriter = new StreamWriter(fileStream, Encoding.UTF8))
                 textWriter.WriteLine("\r\n" + dependLine);
-            new WrapDependencyParser().Parse(dependLine, Environment.Descriptor);
+            new DependsParser().Parse(dependLine, Environment.Descriptor);
         }
 
         WrapDescriptor DescriptorFromCommand()
@@ -106,7 +106,7 @@ namespace OpenWrap.Commands.Wrap
                         {
                             Name = Name,
                             VersionVertices = Version != null
-                                                  ? WrapDependencyParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList()
+                                                  ? DependsParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList()
                                                   : new List<VersionVertice>()
                         }
                     }
@@ -115,7 +115,7 @@ namespace OpenWrap.Commands.Wrap
 
         string GetDependsLine()
         {
-            return "depends " + Name + " " + (Version ?? string.Empty);
+            return "depends: " + Name + " " + (Version ?? string.Empty);
         }
 
         ICommandOutput VerifyWrapFile()

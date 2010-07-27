@@ -111,7 +111,7 @@ namespace OpenWrap.Build.Tasks
         void EnsureWrapRepositoryIsInitialized()
         {
             if (PackageRepository != null) return;
-            PackageRepository = new FolderRepository(WrapsDirectoryPath);
+            PackageRepository = new FolderRepository(WrapsDirectoryPath, false);
         }
 
         bool RefreshWrapDependencies()

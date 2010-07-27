@@ -1,6 +1,6 @@
 ﻿namespace OpenWrap.Dependencies
 {
-    public interface IWrapDescriptorLineParser
+    public interface IDescriptorParser
     {
         void Parse(string line, WrapDescriptor descriptor);
     }

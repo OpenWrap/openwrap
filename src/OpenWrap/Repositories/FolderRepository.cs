@@ -12,20 +12,22 @@ namespace OpenWrap.Repositories
     /// </summary>
     public class FolderRepository : IPackageRepository
     {
+        readonly bool _anchorsEnabled;
         IDirectory _rootCacheDirectory;
 
-        public FolderRepository(IDirectory packageBasePath)
+        public FolderRepository(IDirectory packageBasePath, bool anchorsEnabled)
         {
             if (packageBasePath == null) throw new ArgumentNullException("packageBasePath");
 
             BasePath = packageBasePath;
+            _anchorsEnabled = anchorsEnabled;
 
             _rootCacheDirectory = BasePath.GetOrCreateDirectory("cache");
             Packages = (from wrapFile in BasePath.Files("*.wrap")
-                        let wrapName = wrapFile.NameWithoutExtension
-                        let packageVersion = WrapNameUtility.GetVersion(wrapName)
+                        let packageFullName = wrapFile.NameWithoutExtension
+                        let packageVersion = WrapNameUtility.GetVersion(packageFullName)
                         where packageVersion != null
-                        let cacheDirectory = _rootCacheDirectory.GetDirectory(wrapName)
+                        let cacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
                         select cacheDirectory.Exists
                                    ? (IPackageInfo)new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All)
                                    : (IPackageInfo)new ZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All)).ToList();

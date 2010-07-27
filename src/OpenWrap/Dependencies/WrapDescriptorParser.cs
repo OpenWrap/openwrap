@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using OpenFileSystem.IO;
@@ -14,10 +15,12 @@ namespace OpenWrap.Dependencies
         
         static readonly Regex _foldableLines = new Regex(@"\r\n\s+", RegexOptions.Multiline | RegexOptions.Compiled);
 
-        readonly IEnumerable<IWrapDescriptorLineParser> _lineParsers = new List<IWrapDescriptorLineParser>
+        readonly IEnumerable<IDescriptorParser> _lineParsers = new List<IDescriptorParser>
         {
-            new WrapDependencyParser(),
-            new WrapDescriptionParser()
+            new DependsParser(),
+            new DescriptionParser(),
+            new OverrideParser(),
+            new AnchorParser()
         };
 
         public WrapDescriptor ParseFile(IFile filePath)
@@ -46,7 +49,12 @@ namespace OpenWrap.Dependencies
         {
             var stringReader = new StreamReader(content, true);
             var lines = SplitAndFold(stringReader.ReadToEnd());
-
+            IFile versionFile;
+            if (filePath.Parent != null && (versionFile = filePath.Parent.GetFile("version")).Exists)
+            {
+                using(var versionStream = versionFile.OpenRead())
+                lines.Concat(new[] { "version: " } + versionStream.ReadString(Encoding.UTF8));
+            }
             var descriptor = new WrapDescriptor
             {
                 Name = WrapNameUtility.GetName(filePath.NameWithoutExtension),
@@ -56,6 +64,7 @@ namespace OpenWrap.Dependencies
             foreach (var line in lines)
                 foreach (var parser in _lineParsers)
                     parser.Parse(line, descriptor);
+            
             return descriptor;
         }
 

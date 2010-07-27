@@ -13,45 +13,84 @@ namespace OpenWrap.Tests.Collections
         [Test]
         public void the_outputs_are_returned_in_order()
         {
-            var merged = First().Merge(Second());
+            var first = new AutoResetEvent(false);
+            var second = new AutoResetEvent(false);
+
+            var merged = First(first).Merge(Second(second));
+
             var enumerator = merged.GetEnumerator() as MultiThreadedEnumerator<int>;
+
             // on first call, enumeration is triggered on both enumerables
             // and the results are queued
+            first.Set();
+
+            // trigger a read on first and second
 
             enumerator.MoveNext().ShouldBeTrue();
 
-            Thread.Sleep(TimeSpan.FromSeconds(2));
-
+            // first responds first
             enumerator.Current.ShouldBe(0);
-            enumerator.CachedItems.Count.ShouldBe(1);
-            enumerator.CachedItems.Peek().ShouldBe(5);
 
+            // then second
+            second.Set();
+
+            // read cached second value
             enumerator.MoveNext();
             enumerator.CachedItems.Count.ShouldBe(0);
             enumerator.Current.ShouldBe(5);
+
+            // trigger a read on first and second, let first respond
+            first.Set();
+            enumerator.MoveNext().ShouldBeTrue();
+            // first has responded
+            enumerator.Current.ShouldBe(1);
+
+            //second responds, value is cached
+            second.Set();
+
+            // value is read from the cache
+            enumerator.MoveNext().ShouldBeTrue();
+            enumerator.Current.ShouldBe(6);
+            
+            // end of both enumerations
+            enumerator.MoveNext().ShouldBeFalse();
 
         }
         [Test]
         public void multiple_reads_in_a_row_get_ordered_result()
         {
-            var merged = Second().Merge(new[] { 10, 11, 12 }).ToList();
-            merged.ShouldHaveSameElementsAs(new[]{ 10, 11, 12, 5, 6, 7});
+            var signal = new AutoResetEvent(false);
+            var merged = SecondWait(signal).Merge(FirstWait(signal));
+            merged.ShouldHaveSameElementsAs(new[]{0,1,42,43});
         }
-
-        public IEnumerable<int> First()
+        public IEnumerable<int> First(EventWaitHandle wait)
         {
+            wait.WaitOne();
             yield return 0;
-            Thread.Sleep(TimeSpan.FromMilliseconds(50));
+
+            wait.WaitOne();
             yield return 1;
         }
-        public IEnumerable<int> Second()
+        public IEnumerable<int> Second(EventWaitHandle wait)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(1));
+            wait.WaitOne();
             yield return 5;
-            Thread.Sleep(TimeSpan.FromMilliseconds(100));
+
+            wait.WaitOne();
             yield return 6;
-            Thread.Sleep(TimeSpan.FromMilliseconds(100));
-            yield return 7;
+        }
+
+        public IEnumerable<int> FirstWait(EventWaitHandle finished)
+        {
+            yield return 0;
+            yield return 1;
+            finished.Set();
+        }
+        public IEnumerable<int> SecondWait(EventWaitHandle waitFor)
+        {
+            waitFor.WaitOne();
+            yield return 42;
+            yield return 43;
         }
     }
 }

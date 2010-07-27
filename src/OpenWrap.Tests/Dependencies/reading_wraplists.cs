@@ -63,7 +63,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     }
     namespace context
     {
-        public class wrap_list : Testing.context
+        public abstract class wrap_list : Testing.context
         {
             protected void given_repository()
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -97,21 +98,17 @@ namespace OpenWrap
         bool FeedNewValues()
         {
             var inputs = _entries.Where(x => !x.IsFinished).ToList();
-            Console.WriteLine("Enumerator: {0}: Inputs count {1}", GetHashCode(), inputs.Count);
-
+            
             if (inputs.Count == 0)
                 return false;
             var syncPrimitives = inputs.Select(x => x.Done).ToArray();
             
             foreach (var input in inputs)
                 input.QueueRead();
-            Console.WriteLine("Enumerator: {0}: Waiting", GetHashCode());
-
+            
             do
             {
                 int notified = WaitHandle.WaitAny(syncPrimitives);
-
-                //syncPrimitives[notified].Reset();
 
                 if(TryTakeCachedValue()) return true;
 
@@ -127,13 +124,9 @@ namespace OpenWrap
                 if (CachedItems.Count > 0)
                 {
                     Current = CachedItems.Dequeue();
-                    Console.WriteLine("Enumerator: {0}: Cached value returned", GetHashCode());
-                    
                     return true;
                 }
             }
-            Console.WriteLine("Enumerator: {0}: No cache value", GetHashCode());
-
             return false;
         }
 
@@ -177,34 +170,23 @@ namespace OpenWrap
 
             public void QueueRead()
             {
-                Console.WriteLine("Enumerable: {0}: QueueRead", GetHashCode());
                 Pending++;
                 ThreadPool.QueueUserWorkItem(x =>
                 {
                     lock (Enumerator)
                     {
-                        Console.WriteLine("Enumerable: {0}: MoveNext", GetHashCode());
-
                         var hasValue = Enumerator.MoveNext();
-                        Console.WriteLine("Enumerable: {0}: MoveNext finsihed {1}", GetHashCode(), hasValue);
 
                         if (hasValue)
                         {
-                            Console.WriteLine("Enumerable: {0}: QueueCachedValue {1}", GetHashCode(), Enumerator.Current);
-
                             _parent.QueueCachedValue(Enumerator.Current);
                         }
                         else
                         {
-                            Console.WriteLine("Enumerable: {0}: Finished", GetHashCode());
-
                             IsFinished = true;
                         }
-                        Console.WriteLine("Enumerable: {0}: Done.Set", GetHashCode());
-
                         Done.Set();
                         Pending--;
-
                     }
                 });
             }

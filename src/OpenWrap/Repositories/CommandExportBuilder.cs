@@ -27,11 +27,22 @@ namespace OpenWrap.Repositories
                                where file.FullPath.EndsWith(".dll")
                                let assembly = TryReflectionOnlyLoad(file)
                                where assembly != null
-                               from type in assembly.GetExportedTypes()
+                               from type in TryGetExportedTypes(assembly)
                                where type.GetInterface("ICommand") != null
                                let loadedAssembly = Assembly.LoadFrom(file.FullPath)
                                select loadedAssembly.GetType(type.FullName);
             return new CommandExport(commandTypes);
+        }
+
+        static IEnumerable<Type> TryGetExportedTypes(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetExportedTypes();
+            }catch
+            {
+                return Enumerable.Empty<Type>();
+            }
         }
 
         Assembly TryReflectionOnlyLoad(IExportItem file)

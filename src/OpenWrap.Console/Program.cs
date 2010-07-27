@@ -16,11 +16,11 @@ namespace OpenWrap.Console
 {
     internal class Program
     {
-        static readonly Regex _openwrapRegex = new Regex(@"^openwrap-(?<version>\d+\.\d+\.\d+)$");
-        static string _rootPath;
+        static readonly Regex _openwrapRegex = new Regex(@"^openwrap-(?<version>\d+(\.\d+(\.\d+(\.\d+)?)?)?)$", RegexOptions.IgnoreCase);
+        static readonly string _rootPath;
         static FileInfo _currentExecutable;
-        static string _wrapsPath;
-        static string _cachePath;
+        static readonly string _wrapsPath;
+        static readonly string _cachePath;
 
         static Program()
         {
@@ -77,6 +77,11 @@ namespace OpenWrap.Console
 
         static int Main(string[] args)
         {
+            if (args.Contains("-debug", StringComparer.OrdinalIgnoreCase))
+            {
+                Debugger.Launch();
+                args = args.Where(x => x.IndexOf("-debug", StringComparison.OrdinalIgnoreCase) == -1).ToArray();
+            }
             try
             {
                 _currentExecutable = new FileInfo(typeof(Program).Assembly.Location);

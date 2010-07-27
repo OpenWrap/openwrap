@@ -14,11 +14,11 @@ namespace OpenWrap.Tests.Commands
             using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").Open(FileMode.Create, FileAccess.Write, FileShare.Read))
             using (var w = new StreamWriter(f))
             {
-                w.Write("depends bar\r\ndepends foo");
+                w.Write("depends: bar\r\ndepends: foo");
             }
 
-            given_dependency("depends bar");
-            given_dependency("depends foo");
+            given_dependency("depends: bar");
+            given_dependency("depends: foo");
             when_executing_command("foo");
 
             using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").OpenRead())
@@ -46,7 +46,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void wrap_bar_remains()
         {
-            Assert.AreEqual("depends bar", descriptorFileLinesAfterRemove[0]);
+            Assert.AreEqual("depends: bar", descriptorFileLinesAfterRemove[0]);
         }
     }
 
@@ -57,10 +57,10 @@ namespace OpenWrap.Tests.Commands
             using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").Open(FileMode.Create, FileAccess.Write, FileShare.Read))
             using (var w = new StreamWriter(f))
             {
-                w.Write("depends foo\r\n    = 1.0");
+                w.Write("depends: foo\r\n    = 1.0");
             }
 
-            given_dependency("depends foo");
+            given_dependency("depends: foo");
             when_executing_command("foo");
 
             using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").OpenRead())

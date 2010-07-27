@@ -16,7 +16,7 @@ namespace OpenWrap.Tests.Commands
     {
         public when_updating_packages_in_project_folder()
         {
-            given_dependency("depends goldberry >= 2.0");
+            given_dependency("depends: goldberry >= 2.0");
 
             given_project_package("goldberry", new Version(2, 0, 0));
             given_system_package("goldberry", new Version(2,1,0));

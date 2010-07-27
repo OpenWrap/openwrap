@@ -11,7 +11,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.IO
 {
-    public class file_system<T> : context where T : IFileSystem
+    public abstract class file_system<T> : context where T : IFileSystem
     {
         [Test]
         public void directories_always_created()

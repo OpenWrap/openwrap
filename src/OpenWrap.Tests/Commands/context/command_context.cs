@@ -16,7 +16,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands.context
 {
-    public class command_context<T> : Testing.context
+    public abstract class command_context<T> : Testing.context
         where T : ICommand
     {
         protected AttributeBasedCommandDescriptor<T> Command;
@@ -45,7 +45,7 @@ namespace OpenWrap.Tests.Commands.context
 
         protected void given_dependency(string dependency)
         {
-            new WrapDependencyParser().Parse(dependency, Environment.Descriptor);
+            new DependsParser().Parse(dependency, Environment.Descriptor);
         }
 
         protected void given_file(string filePath, Stream stream)
@@ -88,8 +88,8 @@ namespace OpenWrap.Tests.Commands.context
                 Name = name,
                 Version = version,
                 Source = repository,
-                Dependencies = dependencies.Select(x =>
-                                                   WrapDependencyParser.ParseDependency(x)).ToList()
+                Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
+                                           .ToList()
             });
         }
 

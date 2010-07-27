@@ -48,7 +48,7 @@ namespace OpenWrap
                 .Select(x=>new WrapDescriptorParser().ParseFile(x))
                 .FirstOrDefault();
 
-            var projectRepositoryDirectory =  Descriptor == null
+            var projectRepositoryDirectory = Descriptor == null
                 ? null
                 : Descriptor.File.Parent
                     .AncestorsAndSelf()
@@ -57,14 +57,14 @@ namespace OpenWrap
                     .FirstOrDefault();
 
             if (projectRepositoryDirectory != null)
-                ProjectRepository = new FolderRepository(projectRepositoryDirectory)
+                ProjectRepository = new FolderRepository(projectRepositoryDirectory, true)
                 {
                     Name = "Project repository"
                 };
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
-            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath))
+            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath), true)
             {
                 Name="System repository"
             };

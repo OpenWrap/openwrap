@@ -15,7 +15,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public when_parsing_declaration_with_multiple_versions()
         {
-            given_dependency("depends nhibernate >= 2.1 and < 3.0");
+            given_dependency("depends: nhibernate >= 2.1 and < 3.0");
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public when_parsing_anchored_dependency_without_version()
         {
-            given_dependency("depends nhibernate anchored");
+            given_dependency("depends: nhibernate anchored");
         }
         [Test]
         public void the_anchor_is_found()
@@ -45,7 +45,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public when_package_name_is_anchored()
         {
-            given_dependency("depends anchored anchored");
+            given_dependency("depends: anchored anchored");
         }
         [Test]
         public void the_anchor_is_found()
@@ -59,7 +59,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public when_parsing_anchored_dependency_with_version()
         {
-            given_dependency("depends nhibernate = 2.0 anchored");
+            given_dependency("depends: nhibernate = 2.0 anchored");
         }
         [Test]
         public void the_anchor_is_found()
@@ -73,7 +73,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public when_parsing_declaration_without_version()
         {
-            given_dependency("depends nhibernate");
+            given_dependency("depends: nhibernate");
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public when_parsing_simple_declaration_with_version()
         {
-            given_dependency("depends nhibernate >= 2.1");
+            given_dependency("depends: nhibernate >= 2.1");
         }
 
         [Test]
@@ -122,7 +122,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             public void given_dependency(string dependencyLine)
             {
                 var target = new WrapDescriptor();
-                new WrapDependencyParser().Parse(dependencyLine, target);
+                new DependsParser().Parse(dependencyLine, target);
                 Declaration = target.Dependencies.First();
             }
         }

@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using ICSharpCode.SharpZipLib.Zip;
 using NUnit.Framework;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
+using OpenWrap;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
@@ -15,7 +20,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
     {
         public when_resolving_unavailable_dependencies()
         {
-            given_dependency("depends rings-of-power");
+            given_dependency("depends: rings-of-power");
 
             when_resolving_packages();
         }
@@ -38,12 +43,12 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         {
             given_local_package("sauron-1.0.0");
             given_local_package("sauron-1.1.0");
-            given_local_package("rings-of-power-1.0.0", "depends sauron = 1.0.0");
-            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends sauron = 1.1.0");
-            given_local_package("tolkien-1.0.0", "depends rings-of-power", "depends one-ring-to-rule-them-all");
+            given_local_package("rings-of-power-1.0.0", "depends: sauron = 1.0.0");
+            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends: sauron = 1.1.0");
+            given_local_package("tolkien-1.0.0", "depends: rings-of-power", "depends: one-ring-to-rule-them-all");
 
-            given_dependency("depends tolkien");
-            given_dependency("depends sauron = 1.0.0");
+            given_dependency("depends: tolkien");
+            given_dependency("depends: sauron = 1.0.0");
 
             when_resolving_packages();
         }
@@ -63,11 +68,11 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         {
             given_local_package("sauron-1.0.0");
             given_local_package("sauron-1.1.0");
-            given_local_package("rings-of-power-1.0.0", "depends sauron = 1.0.0");
-            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends sauron = 1.1.0");
-            given_local_package("tolkien-1.0.0", "depends rings-of-power", "depends one-ring-to-rule-them-all");
+            given_local_package("rings-of-power-1.0.0", "depends: sauron = 1.0.0");
+            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends: sauron = 1.1.0");
+            given_local_package("tolkien-1.0.0", "depends: rings-of-power", "depends: one-ring-to-rule-them-all");
 
-            given_dependency("depends tolkien");
+            given_dependency("depends: tolkien");
 
             when_resolving_packages();
         }
@@ -85,7 +90,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public resolving_package_from_remote_repository()
         {
             given_remote1_package("rings-of-power-1.0.0");
-            given_dependency("depends rings-of-power");
+            given_dependency("depends: rings-of-power");
 
             when_resolving_packages();
         }
@@ -102,7 +107,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public resolving_package_from_system_repository()
         {
             given_system_package("rings-of-power-1.0.0");
-            given_dependency("depends rings-of-power");
+            given_dependency("depends: rings-of-power");
 
             when_resolving_packages();
         }
@@ -120,7 +125,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         {
             given_remote1_package("rings-of-power-1.1.0");
             given_local_package("rings-of-power-1.0.0");
-            given_dependency("depends rings-of-power");
+            given_dependency("depends: rings-of-power");
 
             when_resolving_packages();
         }
@@ -140,7 +145,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public resolving_pacakge_existing_in_local()
         {
             given_local_package("rings-of-power-1.0.0");
-            given_dependency("depends rings-of-power");
+            given_dependency("depends: rings-of-power");
 
             when_resolving_packages();
         }
@@ -158,13 +163,13 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public when_overriding_dependency()
         {
             given_remote1_package("one-ring-1.0.0");
-            given_remote1_package("sauron-1.0.0", "depends ring-of-power");
+            given_remote1_package("sauron-1.0.0", "depends: ring-of-power");
 
             given_local_package("minas-tirith-1.0.0");
 
 
-            given_dependency("depends sauron");
-            given_dependency("depends fangorn");
+            given_dependency("depends: sauron");
+            given_dependency("depends: fangorn");
 
 
             given_dependency_override("ring-of-power", "one-ring");
@@ -210,7 +215,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
     namespace context
     {
-        public class dependency_manager_context : OpenWrap.Testing.context
+        public abstract class dependency_manager_context : OpenWrap.Testing.context
         {
             protected WrapDescriptor DependencyDescriptor;
             protected InMemoryRepository ProjectRepository;
@@ -233,7 +238,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             protected void given_dependency(string dependency)
             {
-                new WrapDependencyParser().Parse(dependency, DependencyDescriptor);
+                new DependsParser().Parse(dependency, DependencyDescriptor);
             }
 
             protected void given_local_package(string name, params string[] dependencies)
@@ -269,8 +274,8 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     Name = WrapNameUtility.GetName(name),
                     Version = WrapNameUtility.GetVersion(name),
                     Source = repository,
-                    Dependencies = dependencies.Select(x =>
-                                                       WrapDependencyParser.ParseDependency(x)).ToList()
+                    Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
+                                               .ToList()
                 };
                 repository.Packages.Add(package);
             }
@@ -317,6 +322,36 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             public IPackage Load()
             {
                 return this;
+            }
+
+        }
+        public static class PackageBuilder
+        {
+
+            public static IFile New(IFile wrapFile, string name, string version, params string[] descriptorLines)
+            {
+                //var wrapFile = new InMemoryFile(name + "-" + version + ".wrap");
+                using (var wrapStream = wrapFile.OpenWrite())
+                using (var zipFile = new ZipOutputStream(wrapStream))
+                {
+                    var nameTransform = new ZipNameTransform();
+
+                    zipFile.PutNextEntry(new ZipEntry(name + ".wrapdesc"));
+
+                    var descriptorContent = descriptorLines.Any()
+                                                    ? string.Join("\r\n", descriptorLines)
+                                                    : " ";
+                    
+                    zipFile.Write(Encoding.UTF8.GetBytes(descriptorContent));
+
+                    var versionEntry = new ZipEntry("version");
+                    zipFile.PutNextEntry(versionEntry);
+
+                    var versionData = Encoding.UTF8.GetBytes(version);
+                    zipFile.Write(versionData);
+                    zipFile.Finish();
+                }
+                return wrapFile;
             }
         }
 

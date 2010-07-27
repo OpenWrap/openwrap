@@ -55,10 +55,10 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<string> RemoveDepends(IEnumerable<string> lines)
         {
-            // find start of the "depends ..." line
+            // find start of the "depends: ..." line
             var e = lines.GetEnumerator();
             var inDepends = false;
-            var dependsLineStart = new Regex(@"depends\s+" + Regex.Escape(Name));
+            var dependsLineStart = new Regex(@"\s*depends\s*:\s*" + Regex.Escape(Name));
             while (e.MoveNext())
             {
                 var line = e.Current;

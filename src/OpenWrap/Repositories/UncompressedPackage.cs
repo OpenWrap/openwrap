@@ -6,6 +6,7 @@ using OpenWrap.Exports;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenWrap.Repositories;
+using OpenWrap.Tasks;
 
 namespace OpenWrap.Repositories
 {
@@ -23,6 +24,35 @@ namespace OpenWrap.Repositories
             var descriptorName = BaseDirectory.Name;
             Source = source;
             Descriptor = new WrapDescriptorParser().ParseFile(wrapCacheDirectory.GetFile(descriptorName + ".wrapdesc"));
+            if (Descriptor.Version == null)
+
+            VerifyAnchoring();
+        }
+
+        void VerifyAnchoring()
+        {
+            if (Descriptor.IsAnchored)
+            {
+                var anchoredDirectory =
+                        BaseDirectory.Parent.GetDirectory("anchored")
+                                .MustExist()
+                                .GetDirectory(Descriptor.Name);
+                if (anchoredDirectory.Exists)
+                {
+                    if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(BaseDirectory))
+                        return;
+                    try
+                    {
+                        anchoredDirectory.Delete();
+                    }
+                    catch(Exception e)
+                    {
+                        throw new PackageException("The package '{0}' could not be anchored.", e);
+                    }
+                }
+                var anchoredPath = anchoredDirectory.Path;
+                BaseDirectory.LinkTo(anchoredPath.FullPath);
+            }
         }
 
         protected IDirectory BaseDirectory { get; set; }
@@ -66,7 +96,6 @@ namespace OpenWrap.Repositories
 
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
-            // get the list of exports in the 
             var exporter =
                 _exporters.SingleOrDefault(x => x.ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase));
             if (exporter == null)

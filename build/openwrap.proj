@@ -3,9 +3,9 @@
   <PropertyGroup>
     <Root>$(MSBuildProjectDirectory)\..</Root>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
-    <OpenWrap-PackageName Condition="'$(OpenWrap-PackageName)' == ''">openwrap-1.0.0</OpenWrap-PackageName>
-    <OpenWrap-DescriptorPath Condition="'$(OpenWrap-DescriptorPath)' == ''">$(Root)\$(OpenWrap-PackageName).wrapdesc</OpenWrap-DescriptorPath>
-    <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(Root)\wraps\cache\$(OpenWrap-PackageName)\build</OpenWrap-BuildTasksDirectory>
+    <PackageName Condition="'$(PackageName)' == ''">OpenWrap</PackageName>
+    <OpenWrap-DescriptorPath Condition="'$(OpenWrap-DescriptorPath)' == ''">$(Root)\$(PackageName).wrapdesc</OpenWrap-DescriptorPath>
+    <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(Root)\wraps\anchored\openwrap\build</OpenWrap-BuildTasksDirectory>
   </PropertyGroup>
   
   <ItemGroup> 
@@ -17,12 +17,26 @@
     <RemoveDir Directories="$(Root)\scratch\build" ContinueOnError="true" />
     <RemoveDir Directories="$(Root)\scratch\package" ContinueOnError="true" />
   </Target>
-  <Target Name="OpenWrap-Package">
+  <Target Name="_Initialize">
+    <ReadLinesFromFile File="$(Root)\version">
+      <Output
+    TaskParameter="Lines"
+    ItemName="_PackageVersionItem"/>
+
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <PackageVersion Condition="'$(PackageVersion)' == '' and '%(_PackageVersionItem.Identity)' != ''">%(_PackageVersionItem.Identity)</PackageVersion>
+      <PackageVersion Condition="'$(PackageVersion)' == ''">0.0.1.0</PackageVersion>
+      <PackageName>OpenWrap</PackageName>
+      <OpenWrap-PackageName Condition="'$(OpenWrap-PackageName)' == ''">openwrap-$(PackageVersion)</OpenWrap-PackageName>
+    </PropertyGroup>
+  </Target>
+  <Target Name="OpenWrap-Package" DependsOnTargets="_Initialize">
     <MSBuild Targets="Build" Projects="@(WrapBinary)" Properties="OutDir=$(Root)\scratch\build\%(Filename)\;Configuration=$(Configuration)" />
     <ItemGroup>
       <_DescriptorSource Include="$(OpenWrap-DescriptorPath)" />
     </ItemGroup>
-    <Copy SourceFiles="@(_DescriptorSource)" DestinationFiles="$(Root)\scratch\build\$(OpenWrap-PackageName).wrapdesc" />
+    <Copy SourceFiles="@(_DescriptorSource)" DestinationFiles="$(Root)\scratch\build\$(PackageName)-$(PackageVersion).wrapdesc" />
     <ItemGroup>
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
         <Export>bin-net35</Export>

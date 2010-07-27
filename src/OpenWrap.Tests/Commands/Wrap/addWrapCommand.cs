@@ -47,7 +47,7 @@ namespace OpenWrap.Tests.Commands
     {
         public adding_wrap_from_local_package_in_project_path()
         {
-            given_dependency("depends sauron");
+            given_dependency("depends: sauron");
             given_project_repository();
             given_currentdirectory_package("sauron", new Version(1, 0, 0));
 
@@ -75,7 +75,7 @@ namespace OpenWrap.Tests.Commands
 
         public adding_wrap_from_local_package_in_project_path_with_system_parameter()
         {
-            given_dependency("depends sauron");
+            given_dependency("depends: sauron");
             given_project_repository();
             given_currentdirectory_package(SAURON_NAME, SAURON_VERSION);
 
@@ -137,13 +137,30 @@ namespace OpenWrap.Tests.Commands
             Results.ShouldHaveAll(x => x.Success);
         }
     }
+    public class adding_anchored_dependency : context.command_context<AddWrapCommand>
+    {
+        public adding_anchored_dependency()
+        {
+            given_project_repository();
+
+            given_currentdirectory_package("sauron", new Version(1, 0, 0), "depends: one-ring");
+            given_system_package("one-ring", new Version(1, 0, 0));
+
+            when_executing_command("sauron", "-anchored");
+        }
+        [Test]
+        public void link_is_created_to_the_package()
+        {
+            
+        }
+    }
     class adding_wrap_from_local_path_with_dependency : context.command_context<AddWrapCommand>
     {
         public adding_wrap_from_local_path_with_dependency()
         {
             given_project_repository();
 
-            given_currentdirectory_package("sauron", new Version(1,0,0), "depends one-ring");
+            given_currentdirectory_package("sauron", new Version(1,0,0), "depends: one-ring");
             given_system_package("one-ring", new Version(1,0,0));
 
             when_executing_command("sauron");
@@ -164,7 +181,7 @@ namespace OpenWrap.Tests.Commands
         }
     }
 
-    class adding_non_existant_wrap : context.command_context<AddWrapCommand>
+    public class adding_non_existant_wrap : context.command_context<AddWrapCommand>
     {
         public adding_non_existant_wrap()
         {

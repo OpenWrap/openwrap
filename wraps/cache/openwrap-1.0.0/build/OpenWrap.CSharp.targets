@@ -13,7 +13,7 @@
     <OpenWrap-ProjectRepositoryPath Condition="!Exists('$(OpenWrap-ProjectRepositoryPath)')">$(MSBuildProjectDirectory)\..\..\wraps</OpenWrap-ProjectRepositoryPath>
     <OpenWrap-ProjectRepositoryPath Condition="!Exists('$(OpenWrap-ProjectRepositoryPath)')">$(MSBuildProjectDirectory)\..\..\..\wraps</OpenWrap-ProjectRepositoryPath>
     
-    <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(OpenWrap-ProjectRepositoryPath)\cache\openwrap-1.0.0\build</OpenWrap-BuildTasksDirectory>
+    <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(OpenWrap-ProjectRepositoryPath)\anchored\openwrap\build</OpenWrap-BuildTasksDirectory>
     
     <RootSolutionDirectory>$(OpenWrap-ProjectRepositoryPath)\..</RootSolutionDirectory>
 
@@ -32,8 +32,6 @@
     <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\*.wrapdesc" Condition="!Exists(@(_WrapFile->'%(FullPath)'))" />
   </ItemGroup>
   <Target Name="_InitializePaths">
-    <!-- Default wrap properties -->
-
     <!-- Sanity checks -->
 
     <Error Condition="!Exists('%(_WrapFile.FullPath)')" Text="Could not locate the .wrapdesc file '%(FullPath)'." />

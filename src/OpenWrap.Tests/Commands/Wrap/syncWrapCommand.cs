@@ -11,10 +11,10 @@ namespace OpenWrap.Tests.Commands
     {
         public when_synchronizing_dependencies()
         {
-            given_dependency("depends rings-of-power");
+            given_dependency("depends: rings-of-power");
             given_project_repository();
             given_remote_package("sauron", new Version(1, 0, 0));
-            given_remote_package("rings-of-power", new Version(1,0,0), "depends sauron");
+            given_remote_package("rings-of-power", new Version(1,0,0), "depends: sauron");
 
             when_executing_command();
         }

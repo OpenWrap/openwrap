@@ -96,7 +96,7 @@ href = " + RemoteRepositories.Default["openwrap"].Href);
     namespace context
     {
 
-        public class configuration_entry<T> : Testing.context
+        public abstract class configuration_entry<T> : Testing.context
             where T:new()
         {
             protected T Entry;
@@ -108,7 +108,7 @@ href = " + RemoteRepositories.Default["openwrap"].Href);
             {
                 FileSystem = new InMemoryFileSystem();
 
-                ConfigurationDirectory = FileSystem.GetDirectory(@"c:\data\config").EnsureExists();
+                ConfigurationDirectory = FileSystem.GetDirectory(@"c:\data\config").MustExist();
                 ConfigurationManager = new ConfigurationManager(ConfigurationDirectory);
             }
 

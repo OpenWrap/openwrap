@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using ICSharpCode.SharpZipLib.Zip;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.InMemory;
@@ -14,7 +12,7 @@ namespace OpenWrap.Tests.Repositories
 {
     namespace context
     {
-        public class project_repository : Testing.context
+        public abstract class project_repository : Testing.context
         {
             protected CurrentDirectoryRepository Repository { get; set; }
             protected InMemoryEnvironment Environment { get; set; }
@@ -45,22 +43,6 @@ namespace OpenWrap.Tests.Repositories
                 PackagesByName = Repository.PackagesByName;
             }
 
-            protected InMemoryFile Package(string wrapName)
-            {
-                var newFile = new InMemoryFile(wrapName + ".wrap");
-                using (var stream = newFile.OpenWrite())
-                using (var zipFile = new ZipFile(stream))
-                {
-                    zipFile.BeginUpdate();
-                    var fileName = wrapName + ".wrapdesc";
-                    zipFile.NameTransform = new ZipNameTransform(fileName);
-                    zipFile.Add(new ZipEntry(fileName) { Size = 0, CompressedSize = 0 });
-                    zipFile.CommitUpdate();
-
-                }
-                return newFile;
-            }
-
             protected void given_packages_in_directory(string currentDirectory, params InMemoryFile[] packages)
             {
                 given_file_system(
@@ -72,7 +54,7 @@ namespace OpenWrap.Tests.Repositories
             protected void when_finding_packages(string dependency)
             {
                 var dep = new WrapDescriptor();
-                new WrapDependencyParser().Parse(dependency, dep);
+                new DependsParser().Parse(dependency, dep);
 
                 FoundPackage = Repository.Find(dep.Dependencies.First());
             }

@@ -2,6 +2,8 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Clean;OpenWrap-SelfBuild">
   <PropertyGroup>
     <Root>$(MSBuildProjectDirectory)\..</Root>
+    <OpenWrap-Debug Condition="'$(OpenWrap-Debug)' == ''">false</OpenWrap-Debug>
+    <_DebugCommandLine Condition="'$(OpenWrap-Debug)' != ''"> -debug</_DebugCommandLine>
   </PropertyGroup>
   <Target Name="Build">
     <MSBuild Projects="openwrap.proj" />
@@ -13,9 +15,7 @@
     
     <Message Importance="high" Text="Building OpenWrap from existing dependencies." />
 
-    <MSBuild Projects="openwrap.proj" Properties="OpenWrap-PackageName=openwrap-1.0.42; OpenWrap-BuildTasksDirectory=$(MSBuildProjectDirectory)\..\wraps\cache\openwrap-1.0.0\build; OpenWrap-DescriptorPath=..\openwrap-1.0.0.wrapdesc"  />
-    
-    
+    <MSBuild Projects="openwrap.proj" Properties="PackageVersion=42.0.0.0;"  />
                 
     <!-- Now attempt installing the package to the local repository-->
     <PropertyGroup>
@@ -23,14 +23,15 @@
     </PropertyGroup>
     
     <Message Importance="high" Text="Installing openwrap to new location, from directory $(Root)\bin\" />
-    <Exec Command='"$(OpenWrap-CommandLine)" wrap add openwrap -ProjectOnly -NoDescriptorUpdate' WorkingDirectory="$(Root)\bin\" />
+    <Exec Command='"$(OpenWrap-CommandLine)" wrap add openwrap -ProjectOnly -NoDescriptorUpdate$(_DebugCommandLine)' WorkingDirectory="$(Root)\bin\" />
 
     <Message Importance="high" Text="Building OpenWrap from newly built version of OpenWrap" />
-    <MSBuild Projects="openwrap.proj" Properties="OpenWrap-PackageName=openwrap-1.0.43; OpenWrap-BuildTasksDirectory=$(MSBuildProjectDirectory)\..\wraps\cache\openwrap-1.0.42\build; OpenWrap-DescriptorPath=..\openwrap-1.0.0.wrapdesc" ContinueOnError="true" />
+    
+    <MSBuild Projects="openwrap.proj" Properties="PackageVersion=42.0.0.1;" ContinueOnError="true" />
 
     <Message Importance="high" Text="Cleaning OpenWrap results" />
-    <Delete Files="$(Root)\wraps\openwrap-1.0.42.wrap;$(Root)\wraps\openwrap-1.0.43.wrap;$(Root)\wraps\cache\openwrap-1.0.42\**\*;$(Root)\wraps\cache\openwrap-1.0.43\**\*;" />
-    <RemoveDir Directories="$(Root)\wraps\cache\openwrap-1.0.42;$(Root)\wraps\cache\openwrap-1.0.43" />
+    <Delete Files="$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;" />
+    <RemoveDir Directories="$(Root)\wraps\cache\openwrap-42.0.0.1;$(Root)\wraps\cache\42.0.0.0" />
     
   </Target>
 </Project>

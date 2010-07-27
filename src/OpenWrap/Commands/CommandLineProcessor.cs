@@ -5,6 +5,10 @@ using System.Linq;
 
 namespace OpenWrap.Commands
 {
+    /// <summary>
+    /// I publicly apologize to the procedural nature of this class. It is evil and
+    /// as with all things evil should be redesigned at some point.
+    /// </summary>
     public class CommandLineProcessor
     {
         readonly ICommandRepository _commands;

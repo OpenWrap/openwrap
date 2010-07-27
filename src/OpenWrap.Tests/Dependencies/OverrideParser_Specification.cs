@@ -12,7 +12,7 @@ namespace OpenWrap.Tests.Dependencies
     {
         public when_parsing_override_of_sonic()
         {
-            given_override("override sonic super-sonic");
+            given_override("override: sonic super-sonic");
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace OpenWrap.Tests.Dependencies
     {
         public when_parsing_invalid_override_with_single_argument()
         {
-            given_override("override single-argument");
+            given_override("override: single-argument");
         }
 
         [Test]
@@ -86,7 +86,7 @@ namespace OpenWrap.Tests.Dependencies
                 var target = new WrapDescriptor();
                 try
                 {
-                    new WrapOverrideParser().Parse(overrideLine, target);
+                    new OverrideParser().Parse(overrideLine, target);
                     wrapOverride = target.Overrides.First();
                 }
                 catch (Exception ex)

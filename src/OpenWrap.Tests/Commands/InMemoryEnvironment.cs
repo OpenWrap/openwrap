@@ -25,7 +25,7 @@ namespace OpenWrap.Tests.Commands
             RemoteRepository = new InMemoryRepository("Remote repository");
             CurrentDirectoryRepository = new InMemoryRepository("Current directory repository"); 
             RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };
-            Descriptor = new WrapDescriptor() { File = CurrentDirectory.GetFile("descriptor.wrapdesc").EnsureExists()};
+            Descriptor = new WrapDescriptor() { File = CurrentDirectory.GetFile("descriptor.wrapdesc").MustExist()};
             ConfigurationDirectory = configDirectory;
         }
 

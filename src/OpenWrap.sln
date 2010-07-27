@@ -26,6 +26,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FF7BA218-B2A1-462A-8F51-153337027853}"
 	ProjectSection(SolutionItems) = preProject
 		..\build\common.project.properties = ..\build\common.project.properties
+		CommonProperties.cs = CommonProperties.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Client", "OpenRasta.Client\OpenRasta.Client.csproj", "{42F90C40-827D-4CF6-B206-EB2315AACDDB}"
@@ -33,6 +34,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Externals (Temporarily)", "Externals (Temporarily)", "{41450CC7-8984-4460-B15A-EB4274347FB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFileSystem", "..\wraps\ext\openfilesystem\src\OpenFileSystem\OpenFileSystem.csproj", "{0174E0E7-B915-46A9-B3D8-D62007E55694}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFileSystem.Tests", "..\wraps\ext\openfilesystem\src\OpenFileSystem.Tests\OpenFileSystem.Tests.csproj", "{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,11 +83,17 @@ Global
 		{0174E0E7-B915-46A9-B3D8-D62007E55694}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0174E0E7-B915-46A9-B3D8-D62007E55694}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0174E0E7-B915-46A9-B3D8-D62007E55694}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0174E0E7-B915-46A9-B3D8-D62007E55694} = {41450CC7-8984-4460-B15A-EB4274347FB5}
+		{42F90C40-827D-4CF6-B206-EB2315AACDDB} = {41450CC7-8984-4460-B15A-EB4274347FB5}
+		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11} = {41450CC7-8984-4460-B15A-EB4274347FB5}
 	EndGlobalSection
 EndGlobal

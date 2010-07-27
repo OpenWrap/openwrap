@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenFileSystem.IO.FileSystem.Local;
+using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenWrap.Repositories;
@@ -17,7 +19,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
     {
         public when_accessing_repositories_with_zip_files()
         {
-            given_folder_repository();
+            given_folder_repository_with_module();
             when_reading_test_module_descriptor();
         }
         [Test]
@@ -54,7 +56,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
 
         public when_loading_zipped_package()
         {
-            given_folder_repository();
+            given_folder_repository_with_module();
             when_reading_test_module();
 
         }
@@ -83,17 +85,18 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
             protected WrapDependency Dependency;
             protected IFileSystem FileSystem;
 
-            protected void given_folder_repository()
+            protected void given_folder_repository_with_module()
             {
                 FileSystem = LocalFileSystem.Instance;
                 RepositoryPath = FileSystem.CreateTempDirectory();
-                var wrapFile = TestFiles.test_module_1_0_0;
-                using(var file = RepositoryPath.GetFile("test-module-1.0.0.wrap").OpenWrite())
-                {
-                    file.Write(wrapFile,0, wrapFile.Length);
-                    file.Flush();
-                }
-                Repository = new FolderRepository(RepositoryPath);
+                PackageBuilder.New(
+                    RepositoryPath.GetFile("test-module-1.0.0.wrap"), 
+                    "test-module",
+                    "1.0.0",
+                    "depends: nhibernate-core = 2.1"
+                    );
+
+                Repository = new FolderRepository(RepositoryPath, false);
             }
 
             protected void when_reading_test_module_descriptor()

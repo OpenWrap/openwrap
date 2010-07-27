@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using NUnit.Framework;
+using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.InMemory;
@@ -19,7 +20,7 @@ namespace OpenWrap.Tests.Repositories
     {
         public when_reading_packages_by_name()
         {
-            given_packages_in_directory(@"c:\mordor\", Package("isenmouthe-1.0.0"), Package("gorgoroth-2.0.0"));
+            given_packages_in_directory(@"c:\mordor\", Package("isenmouthe","1.0.0"), Package("gorgoroth","2.0.0"));
             given_current_folder_repository();
             when_getting_package_names();
         }
@@ -55,9 +56,9 @@ namespace OpenWrap.Tests.Repositories
     {
         public finding_a_package()
         {
-            given_packages_in_directory(@"c:\mordor\", Package("isenmouthe-1.0.0"));
+            given_packages_in_directory(@"c:\mordor\", Package("isenmouthe", "1.0.0"));
             given_current_folder_repository();
-            when_finding_packages("depends isenmouthe");
+            when_finding_packages("depends: isenmouthe");
         }
 
         [Test]
@@ -70,7 +71,7 @@ namespace OpenWrap.Tests.Repositories
 
     namespace context
     {
-        public class current_directory_repository : Testing.context
+        public abstract class current_directory_repository : Testing.context
         {
             protected CurrentDirectoryRepository Repository { get; set; }
             protected InMemoryEnvironment Environment { get; set; }
@@ -101,20 +102,11 @@ namespace OpenWrap.Tests.Repositories
                 PackagesByName = Repository.PackagesByName;
             }
 
-            protected InMemoryFile Package(string wrapName)
+            protected InMemoryFile Package(string wrapName, string version)
             {
-                var newFile = new InMemoryFile(wrapName + ".wrap");
-                using (var stream = newFile.OpenWrite())
-                using (var zipFile = new ZipFile(stream))
-                {
-                    zipFile.BeginUpdate();
-                    var fileName = wrapName + ".wrapdesc";
-                    zipFile.NameTransform = new ZipNameTransform(fileName);
-                    zipFile.Add(new ZipEntry(fileName) { Size = 0, CompressedSize = 0 });
-                    zipFile.CommitUpdate();
-
-                }
-                return newFile;
+                var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
+                PackageBuilder.New(file, wrapName, version);
+                return file;
             }
 
             protected void given_packages_in_directory(string currentDirectory, params InMemoryFile[] packages)
@@ -128,7 +120,7 @@ namespace OpenWrap.Tests.Repositories
             protected void when_finding_packages(string dependency)
             {
                 var dep = new WrapDescriptor();
-                new WrapDependencyParser().Parse(dependency, dep);
+                new DependsParser().Parse(dependency, dep);
 
                 FoundPackage = Repository.Find(dep.Dependencies.First());
             }
