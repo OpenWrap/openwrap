@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OpenFileSystem.IO.FileSystem.Local;
+using OpenRasta.Client;
 using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.Exports;
@@ -67,23 +68,35 @@ namespace OpenWrap
             if (commandOutput is IProgressOutput)
             {
                 var progress = (IProgressOutput)commandOutput;
-                var taskFinished = new ManualResetEvent(false);
+                var progressFinished = new ManualResetEvent(false);
                 int writtenDots = 0;
-                Console.Write("{0} [", commandOutput);
+                bool progressOpened = false;
+                Console.WriteLine(commandOutput);
+                progress.StatusChanged += (s, e) =>
+                {
+                    Console.WriteLine(e.Message);
+                };
                 progress.ProgressChanged += (s, e) =>
                 {
-                    var currentDots = e.ProgressPercentage / 10;
+                    if (!progressOpened)
+                    {
+                        Console.Write("[");
+                        progressOpened = true;
+                    }
+                    var currentDots = e.Progress / 10;
                     if (currentDots > writtenDots)
                     {
                         var dotsToWrite = currentDots - writtenDots;
-                        Console.Write(new string('.',dotsToWrite));
+                        Console.Write(new string('.', dotsToWrite));
                         writtenDots = currentDots;
                     }
-                    if (e.ProgressPercentage == 100)
-                        taskFinished.Set();
+                    if (e.Progress >= 100)
+                    {
+                        Console.WriteLine("]");
+                    }
                 };
-                taskFinished.WaitOne();
-                Console.WriteLine("]");
+                progress.Complete += (s, e) => progressFinished.Set();
+                progressFinished.WaitOne();
             }
             else
                 Console.WriteLine(commandOutput);
@@ -133,7 +146,7 @@ namespace OpenWrap
             return new TaskProgressMessage(task);
         }
 
-        static IEnumerable<ICommandOutput> Wrap(IEnumerable<ICommandOutput> execute, ITaskManagerListener eventListener)
+        static IEnumerable<ICommandOutput> Wrap(IEnumerable<ICommandOutput> execute, ITaskListener eventListener)
         {
             foreach (var value in execute)
                 yield return value;
@@ -159,12 +172,16 @@ namespace OpenWrap
     internal class TaskProgressMessage : ICommandOutput, IProgressOutput
     {
         readonly ITask _task;
-        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+        public event EventHandler<ProgressEventArgs> ProgressChanged;
+        public event EventHandler<StatusChangedEventArgs> StatusChanged;
+        public event EventHandler Complete;
 
         public TaskProgressMessage(ITask task)
         {
             _task = task;
-            _task.ProgressChanged += (s, e) => ProgressChanged.Raise(this, e);
+            _task.ProgressChanged += (s, e) => this.ProgressChanged.Raise(this, e);
+            _task.StatusChanged += (s, e) => StatusChanged.Raise(this, e);
+
         }
 
         public bool Success
@@ -185,6 +202,8 @@ namespace OpenWrap
 
     public interface IProgressOutput
     {
-        event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+        event EventHandler<ProgressEventArgs> ProgressChanged;
+        event EventHandler<StatusChangedEventArgs> StatusChanged;
+        event EventHandler Complete;
     }
 }

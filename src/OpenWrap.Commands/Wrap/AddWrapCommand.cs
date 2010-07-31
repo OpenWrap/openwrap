@@ -58,6 +58,16 @@ namespace OpenWrap.Commands.Wrap
 
         public override IEnumerable<ICommandOutput> Execute()
         {
+            if (Name.EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
+            {
+                var originalName = Name;
+                Name = WrapNameUtility.GetName(Name);
+                Version = "= " + WrapNameUtility.GetVersion(originalName);
+                yield return new GenericMessage(string.Format("The requested package contained '.wrap' in the name. Assuming you pointed to a file and meant a package named '{0}' with version qualifier '{1}'.", Name, Version))
+                {
+                        Type = CommandResultType.Warning
+                };
+            }
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
 
@@ -68,7 +78,7 @@ namespace OpenWrap.Commands.Wrap
 
             if (!resolvedDependencies.IsSuccess)
             {
-                yield return new GenericError("The dependency couldn't be found.");
+                yield return new GenericError("Could not find a package for dependency '{0}'.", Name);
                 yield break;
             }
             var repositoriesToCopyTo = Environment.RemoteRepositories.Concat(new[]

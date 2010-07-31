@@ -1,73 +1,79 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Xml.Linq;
+using System.Xml;
+using OpenRasta.Client;
+using OpenWrap.Tasks;
 
 namespace OpenWrap.Repositories.Http
 {
     public class HttpRepositoryNavigator : IHttpRepositoryNavigator
     {
         readonly Uri _requestUri;
-        XDocument _fileList;
+        PackageDocument _fileList;
+        IHttpClient _httpClient = new HttpWebRequestBasedClient();
 
         public HttpRepositoryNavigator(Uri serverUri)
         {
             _requestUri = new Uri(serverUri, new Uri("index.wraplist", UriKind.Relative));
+
         }
 
-        public static PackageDocument ParseXDocument(XDocument file)
-        {
-            return new PackageDocument
-            {
-                    Packages = from wrapList in file.Descendants("wrap")
-                               let name = wrapList.Attribute("name")
-                               let version = wrapList.Attribute("version")
-                               let lastModifiedTimeUtc = GetModifiedTimeUtc(wrapList.Attribute("last-modified-time-utc"))
-                               let link = (from link in wrapList.Elements("link")
-                                           let relAttribute = link.Attribute("rel")
-                                           let hrefAttribute = link.Attribute("href")
-                                           where hrefAttribute != null && relAttribute != null && relAttribute.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
-                                           select hrefAttribute).FirstOrDefault()
-                               let baseUri = !string.IsNullOrEmpty(file.BaseUri) ? new Uri(file.BaseUri, UriKind.Absolute) : null
-                               let absoluteLink = baseUri == null ? new Uri(link.Value, UriKind.RelativeOrAbsolute) : new Uri(baseUri, new Uri(link.Value, UriKind.RelativeOrAbsolute))
-                               where name != null && version != null && link != null
-                               let depends = wrapList.Elements("depends").Select(x => x.Value)
-                               select new PackageItem
-                               {
-                                       Name = name.Value,
-                                       Version = new Version(version.Value),
-                                       PackageHref = absoluteLink,
-                                       Dependencies = depends,
-                                       LastModifiedTimeUtc = lastModifiedTimeUtc
-                               }
-            };
-        }
+
 
         public PackageDocument Index()
         {
             EnsureFileListLoaded();
-            var file = _fileList;
-            return ParseXDocument(file);
+            return _fileList;
         }
 
         public Stream LoadPackage(PackageItem packageItem)
         {
-            return WebRequest.Create(packageItem.PackageHref).GetResponse().GetResponseStream();
+            return _httpClient.CreateRequest(packageItem.PackageHref).Get().Send().Entity.Stream;
         }
 
-        static DateTime? GetModifiedTimeUtc(XAttribute attribute)
+        public bool CanPublish
         {
-            if (attribute == null) return null;
-            DateTime dt;
-            return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
+            get
+            {
+                if (_fileList == null)
+                {
+                    return false;
+                }
+                return _fileList.CanPublish;
+            }
         }
+
+        public void PushPackage(string packageFileName, Stream packageStream)
+        {
+            if (!CanPublish)
+                throw new InvalidOperationException("The repository is read-only.");
+            TaskManager.Instance.Run(string.Format("Publishing package '{0}'...", packageFileName), request =>
+            {
+                var response = _httpClient.CreateRequest(_fileList.PublishHref)
+                        .Content(packageStream)
+                        .Notify(request)
+                        .Post()
+                        .Send();
+                request.Status(response.StatusCode == 201
+                                       ? string.Format("Package created at '{0}'.", response.Headers.Location)
+                                       : string.Format("Unexpected response ({0}) from server.", response.StatusCode));
+            });
+        }
+
 
         void EnsureFileListLoaded()
         {
             if (_fileList == null)
             {
-                _fileList = XDocument.Load(_requestUri.ToString(), LoadOptions.SetBaseUri);
+                TaskManager.Instance.Run("Loading wrap index file.",
+                                         x =>
+                                         {
+                                             _fileList = _httpClient.CreateRequest(_requestUri)
+                                                     .Get()
+                                                     .Notify(x)
+                                                     .AsPackageDocument();
+                                         });
             }
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace OpenWrap.Exports
@@ -8,7 +9,13 @@ namespace OpenWrap.Exports
     {
         public AssemblyReferenceExport(IEnumerable<IExportItem> assemblies)
         {
-            Items = assemblies.Select(x => CreateAssemblyRef(x)).Where(x => x != null).ToList();
+            Items = (from entry in assemblies
+                     let extension = Path.GetExtension(entry.FullPath)
+                     where "dll".Equals(extension, StringComparison.OrdinalIgnoreCase) ||
+                           "exe".Equals(extension, StringComparison.OrdinalIgnoreCase)
+                     let assemblyRef = CreateAssemblyRef(entry)
+                     where assemblyRef != null
+                     select assemblyRef).ToList();
         }
 
         public IEnumerable<IExportItem> Items { get; private set; }

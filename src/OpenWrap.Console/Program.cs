@@ -32,7 +32,11 @@ namespace OpenWrap.Console
         {
             try
             {
-                return directory.GetDirectories("wraps\\cache", SearchOption.TopDirectoryOnly).FirstOrDefault();
+                if (directory == null) return null;
+                var cacheDirectory = new DirectoryInfo(Path.Combine(Path.Combine(directory.FullName, "wraps"), "cache"));
+                if (cacheDirectory.Exists)
+                    return cacheDirectory;
+                return null;
             }
             catch (IOException)
             {
@@ -114,8 +118,8 @@ namespace OpenWrap.Console
             }
             catch (Exception e)
             {
-                System.Console.WriteLine("OpenWrap console code not found.");
-                System.Console.WriteLine(e.ToString());
+                System.Console.WriteLine("OpenWrap could not be started.");
+                System.Console.WriteLine(e.Message);
 
                 return -1;
             }
@@ -198,7 +202,7 @@ namespace OpenWrap.Console
             void DownloadProgressChanged(object src, DownloadProgressChangedEventArgs e)
             {
                 var progress = e.ProgressPercentage / 10;
-                //Debugger.Launch();
+
                 if (_progress < progress && progress <= 10)
                 {
                     System.Console.Write(new string('.', progress-_progress));

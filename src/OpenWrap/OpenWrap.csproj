@@ -112,6 +112,7 @@
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="Repositories\Http\PackageDocument.cs" />
     <Compile Include="Repositories\Http\PackageItem.cs" />
+    <Compile Include="Repositories\Http\RequestExtensions.cs" />
     <Compile Include="Repositories\ICommandExportItem.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
@@ -181,7 +182,15 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="InstallationPaths.cs" />
+    <Compile Include="Tasks\ITask.cs" />
+    <Compile Include="Tasks\ITaskChanges.cs" />
+    <Compile Include="Tasks\ITaskListener.cs" />
+    <Compile Include="Tasks\ITaskManager.cs" />
+    <Compile Include="Tasks\Task.cs" />
+    <Compile Include="Tasks\TaskEventArgs.cs" />
     <Compile Include="Tasks\TaskManager.cs" />
+    <Compile Include="Tasks\TaskListener.cs" />
+    <Compile Include="Tasks\TaskManagerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">
@@ -193,6 +202,10 @@
     <ProjectReference Include="..\..\wraps\ext\openfilesystem\src\OpenFileSystem\OpenFileSystem.csproj">
       <Project>{0174E0E7-B915-46A9-B3D8-D62007E55694}</Project>
       <Name>OpenFileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
+      <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
+      <Name>OpenRasta.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />

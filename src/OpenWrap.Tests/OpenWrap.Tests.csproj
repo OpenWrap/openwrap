@@ -96,6 +96,10 @@
       <Project>{0174E0E7-B915-46A9-B3D8-D62007E55694}</Project>
       <Name>OpenFileSystem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
+      <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
+      <Name>OpenRasta.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Commands\OpenWrap.Commands.csproj">
       <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>
       <Name>OpenWrap.Commands</Name>

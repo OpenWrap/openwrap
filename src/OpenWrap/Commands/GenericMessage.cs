@@ -22,7 +22,7 @@ namespace OpenWrap.Commands
             get {return null; }
         }
 
-        public CommandResultType Type { get; protected set; }
+        public CommandResultType Type { get; set; }
 
         public override string ToString()
         {

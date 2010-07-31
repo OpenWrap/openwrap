@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
+using OpenWrap.Tasks;
 
 namespace OpenWrap.Repositories.Http
 {
@@ -13,12 +14,12 @@ namespace OpenWrap.Repositories.Http
     {
         readonly IHttpRepositoryNavigator _navigator;
 
+
         public HttpRepository(IFileSystem fileSystem, IHttpRepositoryNavigator navigator)
         {
             _navigator = navigator;
-            PackagesByName = (from package in navigator.Index().Packages
-                              select new HttpPackageInfo(fileSystem, this, navigator, package))
-                .Cast<IPackageInfo>().ToLookup(x => x.Name);
+            _packagesQuery = from package in navigator.Index().Packages
+                              select new HttpPackageInfo(fileSystem, this, navigator, package);
         }
 
         DateTime? GetModifiedTimeUtc(XAttribute attribute)
@@ -28,7 +29,32 @@ namespace OpenWrap.Repositories.Http
             return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
         }
 
-        public ILookup<string, IPackageInfo> PackagesByName { get; private set; }
+        ILookup<string, IPackageInfo> _packagesByName;
+        IEnumerable<HttpPackageInfo> _packagesQuery;
+
+        public ILookup<string, IPackageInfo> PackagesByName
+        {
+            get
+            {
+                EnsureDataLoaded();
+                return _packagesByName;
+            }
+        }
+
+        void EnsureDataLoaded()
+        {
+            if (_packagesByName == null)
+            {
+                try
+                {
+                    _packagesByName = _packagesQuery.Cast<IPackageInfo>().ToLookup(x => x.Name);
+                    
+                }
+                catch
+                {
+                }
+            }
+        }
 
         public IPackageInfo Find(WrapDependency dependency)
         {
@@ -37,12 +63,18 @@ namespace OpenWrap.Repositories.Http
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            throw new NotImplementedException();
+            if (!_navigator.CanPublish)
+                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", _navigator));
+
+            _navigator.PushPackage(packageFileName, packageStream);
+            _packagesByName = null;
+            EnsureDataLoaded();
+            return PackagesByName[WrapNameUtility.GetName(packageFileName)].FirstOrDefault(x=>x.Version == WrapNameUtility.GetVersion(packageFileName));
         }
 
         public bool CanPublish
         {
-            get { return false; }
+            get { return _navigator.CanPublish; }
         }
 
         public string Name

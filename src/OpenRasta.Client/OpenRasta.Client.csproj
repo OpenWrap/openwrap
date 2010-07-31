@@ -45,7 +45,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventHandlerExtensions.cs" />
+    <Compile Include="HttpWebRequestBasedClient.cs" />
+    <Compile Include="HttpEntity.cs" />
+    <Compile Include="HttpWebRequestBasedRequest.cs" />
+    <Compile Include="HttpWebResponseBasedResponse.cs" />
+    <Compile Include="IClientRequest.cs" />
+    <Compile Include="IClientResponse.cs" />
+    <Compile Include="IEntity.cs" />
+    <Compile Include="IHttpClient.cs" />
+    <Compile Include="IMessage.cs" />
+    <Compile Include="IO\StreamExtensions.cs" />
+    <Compile Include="IO\WrapperStream.cs" />
+    <Compile Include="IRequest.cs" />
+    <Compile Include="IResponse.cs" />
+    <Compile Include="MediaType.cs" />
+    <Compile Include="ProgressEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestExtensions.cs" />
+    <Compile Include="StatusChangedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Caching\" />

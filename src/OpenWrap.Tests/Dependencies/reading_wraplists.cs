@@ -74,12 +74,22 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
                 public PackageDocument Index()
                 {
                     var doc = XDocument.Parse(WrapListDocument, LoadOptions.SetBaseUri);
-                    return HttpRepositoryNavigator.ParseXDocument(doc);
+                    return doc.ParsePackageDocument();
                 }
 
                 public Stream LoadPackage(PackageItem packageItem)
                 {
-                    throw new NotImplementedException();
+                    throw new NotSupportedException();
+                }
+
+                public bool CanPublish
+                {
+                    get { return false; }
+                }
+
+                public void PushPackage(string packageFileName, Stream packageStream)
+                {
+                    throw new NotSupportedException();
                 }
             }
             protected static string WrapListDocument =
