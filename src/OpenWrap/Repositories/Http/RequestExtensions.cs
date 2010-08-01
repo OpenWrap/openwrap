@@ -14,9 +14,9 @@ namespace OpenWrap.Repositories.Http
             request.Progress += (s, e) => task.Progress(e.Progress);
             return request;
         }
-        public static PackageDocument AsPackageDocument<T>(this T request) where T : IClientRequest
+        public static PackageDocument AsPackageDocument<T>(this T response) where T : IClientResponse
         {
-            return request.AsXDocument().ParsePackageDocument();
+            return response.AsXDocument().ParsePackageDocument();
         }
         public static PackageDocument ParsePackageDocument(this XDocument xmlDocument)
         {

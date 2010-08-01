@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -13,7 +14,6 @@ namespace OpenWrap.Dependencies
         const int FILE_READ_RETRIES = 5;
         const int FILE_READ_RETRIES_WAIT = 500;
         
-        static readonly Regex _foldableLines = new Regex(@"\r\n\s+", RegexOptions.Multiline | RegexOptions.Compiled);
 
         readonly IEnumerable<IDescriptorParser> _lineParsers = new List<IDescriptorParser>
         {
@@ -48,7 +48,7 @@ namespace OpenWrap.Dependencies
         public WrapDescriptor ParseFile(IFile filePath, Stream content)
         {
             var stringReader = new StreamReader(content, true);
-            var lines = SplitAndFold(stringReader.ReadToEnd());
+            var lines = stringReader.ReadToEnd().GetUnfoldedLines();
             IFile versionFile;
             if (filePath.Parent != null && (versionFile = filePath.Parent.GetFile("version")).Exists)
             {
@@ -67,11 +67,17 @@ namespace OpenWrap.Dependencies
             
             return descriptor;
         }
-
-        string[] SplitAndFold(string content)
+    }
+    public static class StringExtensions
+    {
+        static readonly Regex _foldableLines = new Regex(@"\r\n[\f\t\v\x85\p{Z}]+", RegexOptions.Multiline | RegexOptions.Compiled);
+        public static string[] GetUnfoldedLines(this string content)
         {
             content = _foldableLines.Replace(content, " ");
-            return content.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            return content.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(x => x.Trim())
+                    .Where(x => x != string.Empty)
+                    .ToArray();
         }
     }
 }

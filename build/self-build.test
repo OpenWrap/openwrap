@@ -11,7 +11,7 @@
   <Target Name="RemoveTemporaryPackages">
     <Message Importance="high" Text="Cleaning OpenWrap results" />
     <Delete Files="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;$(Root)\bin\openwrap-42.0.0.1.wrap;$(Root)\bin\openwrap-42.0.0.0.wrap" />
-    <RemoveDir Directories="$(Root)\wraps\cache\openwrap-42.0.0.1;$(Root)\wraps\cache\42.0.0.0" />
+    <RemoveDir Directories="$(Root)\wraps\cache\openwrap-42.0.0.1;$(Root)\wraps\cache\openwrap-42.0.0.0" />
   </Target>
   <Target Name="OpenWrap-SelfBuild" DependsOnTargets="RemoveTemporaryPackages">
     
@@ -33,6 +33,6 @@
   </Target>
   <Target Name="Build" DependsOnTargets="RemoveTemporaryPackages; OpenWrap-SelfBuild">
     <Delete Files="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;$(Root)\bin\openwrap-42.0.0.1.wrap;$(Root)\bin\openwrap-42.0.0.0.wrap" />
-    <RemoveDir Directories="$(Root)\wraps\cache\openwrap-42.0.0.1;$(Root)\wraps\cache\42.0.0.0" />
+    <RemoveDir Directories="$(Root)\wraps\cache\openwrap-42.0.0.1;$(Root)\wraps\cache\openwrap-42.0.0.0" />
   </Target>
 </Project>

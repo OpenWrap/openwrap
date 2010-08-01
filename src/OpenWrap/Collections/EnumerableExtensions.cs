@@ -20,7 +20,7 @@ namespace OpenWrap
 
         public static bool None<T>(this IEnumerable<T> input, Func<T, bool> condition) where T : class
         {
-            return input.Any(x => !condition(x));
+            return !input.Any(condition);
         }
 
         public static IEnumerable<T> NotNull<T>(this IEnumerable<T> input) where T : class

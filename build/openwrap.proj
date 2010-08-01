@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="OpenWrap-Package">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="OpenWrap-Package" ToolsVersion="3.5">
   <PropertyGroup>
     <Root>$(MSBuildProjectDirectory)\..</Root>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
@@ -18,6 +18,7 @@
     <RemoveDir Directories="$(Root)\scratch\package" ContinueOnError="true" />
   </Target>
   <Target Name="_Initialize">
+    <Bootstrapper />
     <ReadLinesFromFile File="$(Root)\version">
       <Output
     TaskParameter="Lines"
@@ -26,16 +27,23 @@
     </ReadLinesFromFile>
     <PropertyGroup>
       <PackageVersion Condition="'$(PackageVersion)' == '' and '%(_PackageVersionItem.Identity)' != ''">%(_PackageVersionItem.Identity)</PackageVersion>
-      <PackageVersion Condition="'$(PackageVersion)' == ''">0.0.1.0</PackageVersion>
+      <PackageVersion Condition="'$(PackageVersion)' == ''">0.0.1</PackageVersion>
       <PackageName>OpenWrap</PackageName>
+    </PropertyGroup>
+    <GenerateRevisionNumber Version="$(PackageVersion)">
+      <Output PropertyName="PackageVersion" TaskParameter="OutputVersion" />
+    </GenerateRevisionNumber>
+    <PropertyGroup>
       <OpenWrap-PackageName Condition="'$(OpenWrap-PackageName)' == ''">openwrap-$(PackageVersion)</OpenWrap-PackageName>
     </PropertyGroup>
   </Target>
-  <Target Name="OpenWrap-Package" DependsOnTargets="_Initialize">
+  <Target Name="OpenWrap-Package" DependsOnTargets="Clean;_Initialize">
     <MSBuild Targets="Build" Projects="@(WrapBinary)" Properties="OutDir=$(Root)\scratch\build\%(Filename)\;Configuration=$(Configuration)" />
     <ItemGroup>
       <_DescriptorSource Include="$(OpenWrap-DescriptorPath)" />
     </ItemGroup>
+    <Delete Files="$(Root)\scratch\build\version" Condition="Exists('$(Root)\scratch\build\version')" />
+    <WriteLinesToFile File="$(Root)\scratch\build\version" Lines="$(PackageVersion)" />
     <Copy SourceFiles="@(_DescriptorSource)" DestinationFiles="$(Root)\scratch\build\$(PackageName)-$(PackageVersion).wrapdesc" />
     <ItemGroup>
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
@@ -66,6 +74,7 @@
         <Export>commands</Export>
       </BinFile>
       <BinFile Include="$(Root)\scratch\build\$(OpenWrap-PackageName).wrapdesc" />
+      <BinFile Include="$(Root)\scratch\build\version" />
     </ItemGroup>
 
     <PackageWrap

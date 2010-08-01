@@ -90,6 +90,7 @@
     <Compile Include="Slow\building_openwrap.cs" />
     <Compile Include="Slow\ZipPackages.cs" />
     <Compile Include="SpecExtensions.cs" />
+    <Compile Include="string_specs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\wraps\ext\openfilesystem\src\OpenFileSystem\OpenFileSystem.csproj">

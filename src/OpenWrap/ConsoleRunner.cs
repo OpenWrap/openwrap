@@ -28,7 +28,7 @@ namespace OpenWrap
 
             WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
             WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
-            WrapServices.RegisterService(new TaskManager());
+            WrapServices.RegisterService<ITaskManager>(new TaskManager());
 
             var commands = ReadCommands(WrapServices.GetService<IEnvironment>());
             var repo = new CommandRepository(commands);
@@ -137,7 +137,7 @@ namespace OpenWrap
 
         static IEnumerable<ICommandOutput> AllOutputs(CommandLineProcessor processor, string[] args)
         {
-            var eventListener = WrapServices.GetService<TaskManager>().GetListener();
+            var eventListener = WrapServices.GetService<ITaskManager>().GetListener();
             return Wrap(processor.Execute(args), eventListener).Merge(eventListener.Start().Select(x => ProgressMessage(x)));
         }
 

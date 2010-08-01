@@ -34,9 +34,8 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> UpdateSystemPackages()
         {
-            
             WrapDescriptor packagesToSearch = CreateDescriptorForInstalledPackages();
-            yield return new Result("Searching for updated packages");
+            yield return new Result("Searching for updated packages...");
 
 
             var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, Environment.RemoteRepositories);
@@ -44,6 +43,8 @@ namespace OpenWrap.Commands.Wrap
             foreach (var message in PackageManager.CopyPackagesToRepositories(
                 resolveResult, Environment.SystemRepository))
                 yield return message;
+            PackageManager.ExpandPackages(Environment.SystemRepository);
+
         }
 
         WrapDescriptor CreateDescriptorForInstalledPackages()
@@ -69,10 +70,12 @@ namespace OpenWrap.Commands.Wrap
         {
             var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository }));
 
-            return PackageManager.CopyPackagesToRepositories(
+            foreach(var msg in PackageManager.CopyPackagesToRepositories(
                 resolvedPackages,
                 Environment.RepositoriesForWrite()
-                );
+                ))
+                yield return msg;
+            PackageManager.ExpandPackages(Environment.RepositoriesForWrite().ToArray());
         }
     }
 }

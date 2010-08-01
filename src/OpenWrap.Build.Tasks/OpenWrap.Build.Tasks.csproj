@@ -64,6 +64,7 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="GenerateRevisionNumber.cs" />
     <Compile Include="PackageWrap.cs" />
     <Compile Include="ResolveWrapReferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

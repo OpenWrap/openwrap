@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace OpenWrap.Commands
 {
@@ -51,20 +52,32 @@ namespace OpenWrap.Commands
             var inputsFromCommandLine = ParseInputsFromCommandLine(commandLine.Arguments).ToLookup(x => x.Key, x => x.Value);
 
             var unnamedCommandInputsFromCommandLine = inputsFromCommandLine[null].ToList();
-
-            var assignedNamedInputValues = (from namedValues in inputsFromCommandLine
+            List<ParsedInput> assignedNamedInputValues = null;
+            AmbiguousInputNameException exception = null;
+            try
+            {
+                assignedNamedInputValues = (from namedValues in inputsFromCommandLine
                                             where namedValues.Key != null
                                             let value = namedValues.LastOrDefault()
                                             let commandInput = FindCommandInputDescriptor(command, namedValues.Key)
                                             let parsedValue = commandInput != null ? commandInput.ValidateValue(value) : null
                                             select new ParsedInput
                                             {
-                                                InputName = namedValues.Key,
-                                                RawValue = value,
-                                                Input = commandInput,
-                                                ParsedValue = parsedValue
+                                                    InputName = namedValues.Key,
+                                                    RawValue = value,
+                                                    Input = commandInput,
+                                                    ParsedValue = parsedValue
                                             }).ToList();
-
+            }
+            catch(AmbiguousInputNameException e)
+            {
+                exception = e;
+            }
+            if (exception != null)
+            {
+                yield return exception;
+                yield break;
+            }
             var namedInputsNameNotFound = assignedNamedInputValues.FirstOrDefault(x => x.Input == null);
             if (namedInputsNameNotFound != null)
             {
@@ -155,18 +168,14 @@ namespace OpenWrap.Commands
             {
                 return descriptor;
             }
-            var potentialInputs = from input in command.Inputs
+            var potentialInputs = (from input in command.Inputs
                                   where name.MatchesHumps(input.Key)
-                                  select input.Value;
+                                  select input.Value).ToList();
 
-            //var potentialInputs =
-            //    from input in command.Inputs
-            //    where input.Key.GetCamelCaseInitials().Equals(name, StringComparison.OrdinalIgnoreCase)
-            //    select input.Value;
+            if (potentialInputs.Count > 1)
+                throw new AmbiguousInputNameException(name, potentialInputs.Select(x=>x.Name).ToArray());
 
-            // TODO: What happens if the name matches more than one input? Should this throw?
-            // For now, just return the first input found.
-            return potentialInputs.FirstOrDefault();
+            return potentialInputs.SingleOrDefault();
         }
 
 
@@ -201,6 +210,44 @@ namespace OpenWrap.Commands
             public string InputName;
             public object ParsedValue;
             public string RawValue;
+        }
+    }
+
+    [Serializable]
+    public class AmbiguousInputNameException : Exception, ICommandOutput
+    {
+        readonly string _input;
+        readonly string[] _potentialInputs;
+
+        public AmbiguousInputNameException(string input,string[] potentialInputs) : base("Ambiguous input name.")
+        {
+            _input = input;
+            _potentialInputs = potentialInputs;
+        }
+
+        protected AmbiguousInputNameException(
+                SerializationInfo info,
+                StreamingContext context) : base(info, context)
+        {
+        }
+
+        bool ICommandOutput.Success
+        {
+            get { return false; }
+        }
+
+        ICommand ICommandOutput.Source
+        {
+            get { return null; }
+        }
+
+        CommandResultType ICommandOutput.Type
+        {
+            get { return CommandResultType.Error; }
+        }
+        public override string ToString()
+        {
+            return string.Format("The input '{0}' was ambiguous. Possible inputs: {1}", _input, string.Join(", ", _potentialInputs));
         }
     }
 }

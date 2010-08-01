@@ -20,6 +20,7 @@ namespace OpenWrap.Repositories
             return ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase);
         }
 
+        // TODO: Make sure assemblies already loaded are loaded from normal reflection context
         public IExport ProcessExports(IEnumerable<IExport> exports, ExecutionEnvironment environment)
         {
             var commandTypes = from folder in exports
@@ -44,7 +45,6 @@ namespace OpenWrap.Repositories
                 return Enumerable.Empty<Type>();
             }
         }
-
         Assembly TryReflectionOnlyLoad(IExportItem file)
         {
             try

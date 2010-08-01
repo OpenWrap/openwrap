@@ -52,8 +52,8 @@ namespace OpenWrap.Repositories.Http
             {
                 var response = _httpClient.CreateRequest(_fileList.PublishHref)
                         .Content(packageStream)
-                        .Notify(request)
                         .Post()
+                        .Notify(request)
                         .Send();
                 request.Status(response.StatusCode == 201
                                        ? string.Format("Package created at '{0}'.", response.Headers.Location)
@@ -71,6 +71,8 @@ namespace OpenWrap.Repositories.Http
                                          {
                                              _fileList = _httpClient.CreateRequest(_requestUri)
                                                      .Get()
+                                                     .Notify(x)
+                                                     .Send()
                                                      .Notify(x)
                                                      .AsPackageDocument();
                                          });

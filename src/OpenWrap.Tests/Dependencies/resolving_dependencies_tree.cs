@@ -37,6 +37,31 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
+    public class cyclic_dependency_in_packages : dependency_manager_context
+    {
+        public cyclic_dependency_in_packages()
+        {
+            given_system_package("evil-1.0.0", "depends: evil");
+
+            given_dependency("depends: evil");
+
+            when_resolving_packages();
+
+        }
+        [Test]
+        public void resolve_is_successful()
+        {
+            Resolve.IsSuccess.ShouldBeTrue();
+        }
+        [Test]
+        public void package_is_present()
+        {
+            Resolve.Dependencies.Count().ShouldBe(1);
+            Resolve.Dependencies.First()
+                    .Check(x => x.Package.Name.ShouldBe("evil"))
+                    .Check(x => x.Package.Version.ShouldBe(new Version("1.0.0")));
+        }
+    }
     public class versions_in_conflict_and_dependency_override : dependency_manager_context
     {
         public versions_in_conflict_and_dependency_override()

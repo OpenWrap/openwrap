@@ -36,6 +36,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\sharpziplib-0.85.5\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v3.5">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -55,6 +59,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\Bootstrapper.cs" />
     <Compile Include="Build\IWrapAssemblyClient.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
     <Compile Include="Commands\AttributeBasedCommandDescriptor.cs" />

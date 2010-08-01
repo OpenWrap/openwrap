@@ -26,10 +26,7 @@ namespace OpenWrap
         public IPackageRepository SystemRepository { get; set; }
         public IFileSystem FileSystem { get; set; }
 
-        public IDirectory CurrentDirectory
-        {
-            get { return LocalFileSystem.Instance.GetDirectory(Environment.CurrentDirectory); }
-        }
+        public IDirectory CurrentDirectory { get; set; }
 
         public IDirectory ConfigurationDirectory { get; private set; }
 
@@ -38,6 +35,15 @@ namespace OpenWrap
             get; private set;
         }
 
+        public CurrentDirectoryEnvironment()
+        {
+            CurrentDirectory = LocalFileSystem.Instance.GetDirectory(Environment.CurrentDirectory);
+        }
+        public CurrentDirectoryEnvironment(string currentDirectory)
+        {
+            CurrentDirectory = LocalFileSystem.Instance.GetDirectory(currentDirectory);
+
+        }
         public void Initialize()
         {
             
@@ -64,7 +70,7 @@ namespace OpenWrap
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
-            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath), true)
+            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath), false)
             {
                 Name="System repository"
             };

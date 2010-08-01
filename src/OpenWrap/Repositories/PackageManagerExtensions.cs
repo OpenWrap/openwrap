@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Commands;
 using OpenWrap.Dependencies;
+using OpenWrap.Exports;
+using OpenWrap.Services;
 
 namespace OpenWrap.Repositories
 {
@@ -48,7 +50,12 @@ namespace OpenWrap.Repositories
                 }
             }
         }
-
+        public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, params IPackageRepository[] repositories)
+        {
+            yield return new GenericMessage("Expanding packages to cache...");
+            
+            packageManager.GetExports<IExport>("bin", WrapServices.GetService<IEnvironment>().ExecutionEnvironment, repositories.NotNull()).ToList();
+        }
         public static IEnumerable<IPackageRepository> RepositoriesForRead(this IEnvironment environment)
         {
             return new[]

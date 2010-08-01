@@ -18,7 +18,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
 	ProjectSection(SolutionItems) = preProject
 		..\build\openwrap.proj = ..\build\openwrap.proj
+		..\openwrap.wrapdesc = ..\openwrap.wrapdesc
 		..\build\self-build.test = ..\build\self-build.test
+		..\version = ..\version
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Commands", "OpenWrap.Commands\OpenWrap.Commands.csproj", "{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}"
@@ -92,8 +94,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0174E0E7-B915-46A9-B3D8-D62007E55694} = {41450CC7-8984-4460-B15A-EB4274347FB5}
 		{42F90C40-827D-4CF6-B206-EB2315AACDDB} = {41450CC7-8984-4460-B15A-EB4274347FB5}
+		{0174E0E7-B915-46A9-B3D8-D62007E55694} = {41450CC7-8984-4460-B15A-EB4274347FB5}
 		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11} = {41450CC7-8984-4460-B15A-EB4274347FB5}
 	EndGlobalSection
 EndGlobal

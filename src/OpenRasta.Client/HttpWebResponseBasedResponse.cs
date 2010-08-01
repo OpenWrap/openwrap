@@ -45,6 +45,11 @@ namespace OpenRasta.Client
             get { return _entity; }
         }
 
+        public Uri RequestUri
+        {
+            get { return _request.RequestUri; }
+        }
+
         protected void RaiseStatusChanged(string status, params object[] args)
         {
             StatusChanged.Raise(this, new StatusChangedEventArgs(string.Format(status, args)));

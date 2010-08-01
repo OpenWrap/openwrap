@@ -63,7 +63,7 @@ namespace OpenWrap.Tests.Configuration
         public void values_are_persisted()
         {
             ConfigurationDirectory.FindFile(
-                    Configurations.Addresses.BaseUri.MakeRelative(Configurations.Addresses.RemoteRepositories))
+                    Configurations.Addresses.BaseUri.MakeRelativeUri(Configurations.Addresses.RemoteRepositories).ToString())
                     .ShouldNotBeNull()
                     .OpenRead().ReadString(Encoding.UTF8).ShouldContain(
 @"[remoterepository openwrap]

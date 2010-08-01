@@ -56,7 +56,9 @@ namespace OpenWrap.Console
                          let version = new Version(match.Groups["version"].Value)
                          select new { uncompressedFolder, version };
 
-            return folder.OrderBy(x => x.version).Select(x => x.uncompressedFolder.FullName).FirstOrDefault();
+            return folder.OrderByDescending(x => x.version)
+                .Select(x => x.uncompressedFolder.FullName)
+                .FirstOrDefault();
         }
 
         static IEnumerable<DirectoryInfo> GetSelfAndParents(string directoryPath)
@@ -120,7 +122,16 @@ namespace OpenWrap.Console
             {
                 System.Console.WriteLine("OpenWrap could not be started.");
                 System.Console.WriteLine(e.Message);
-
+                var oldColor = System.Console.ForegroundColor;
+                try
+                {
+                    System.Console.ForegroundColor = ConsoleColor.Gray;
+                    System.Console.WriteLine(e.ToString());
+                }
+                finally
+                {
+                    System.Console.ForegroundColor = oldColor;
+                }
                 return -1;
             }
         }

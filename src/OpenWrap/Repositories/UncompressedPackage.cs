@@ -15,7 +15,11 @@ namespace OpenWrap.Repositories
         readonly IFile _originalWrapFile;
         readonly IEnumerable<IExportBuilder> _exporters;
 
-        public UncompressedPackage(IPackageRepository source, IFile originalPackage, IDirectory wrapCacheDirectory, IEnumerable<IExportBuilder> exporters)
+        public UncompressedPackage(IPackageRepository source,
+                                   IFile originalPackage,
+                        IDirectory wrapCacheDirectory,
+            IEnumerable<IExportBuilder> exporters,
+            bool allowAnchoring)
         {
             _originalWrapFile = originalPackage;
             _exporters = exporters;
@@ -24,17 +28,17 @@ namespace OpenWrap.Repositories
             var descriptorName = BaseDirectory.Name;
             Source = source;
             Descriptor = new WrapDescriptorParser().ParseFile(wrapCacheDirectory.GetFile(descriptorName + ".wrapdesc"));
-            if (Descriptor.Version == null)
-
-            VerifyAnchoring();
+            if (allowAnchoring)
+                VerifyAnchoring();
         }
 
         void VerifyAnchoring()
         {
             if (Descriptor.IsAnchored)
             {
-                var anchoredDirectory =
-                        BaseDirectory.Parent.GetDirectory("anchored")
+                var anchoredDirectory = BaseDirectory.Parent // cache folder
+                            .Parent // wraps folder
+                            .GetDirectory("anchored")
                                 .MustExist()
                                 .GetDirectory(Descriptor.Name);
                 if (anchoredDirectory.Exists)
@@ -45,7 +49,7 @@ namespace OpenWrap.Repositories
                     {
                         anchoredDirectory.Delete();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         throw new PackageException("The package '{0}' could not be anchored.", e);
                     }
@@ -79,7 +83,8 @@ namespace OpenWrap.Repositories
 
         public IPackageRepository Source
         {
-            get; private set;
+            get;
+            private set;
         }
 
         public string FullName

@@ -39,13 +39,13 @@ namespace OpenRasta.Client
 
             return request;
         }
-        public static XmlReader AsXmlReader<T>(this T request) where T: IClientRequest
+        public static XmlReader AsXmlReader<T>(this T response) where T: IClientResponse
         {
-            return new XmlTextReader(request.Uri.ToString(), request.Send().Entity.Stream);
+            return new XmlTextReader(response.RequestUri.ToString(), response.Entity.Stream);
         }
-        public static XDocument AsXDocument<T>(this T request) where T: IClientRequest
+        public static XDocument AsXDocument<T>(this T response) where T: IClientResponse
         {
-            return XDocument.Load(request.AsXmlReader());
+            return XDocument.Load(response.AsXmlReader());
         }
     }
 }

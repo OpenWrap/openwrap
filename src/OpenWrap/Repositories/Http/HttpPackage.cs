@@ -13,7 +13,6 @@ namespace OpenWrap.Repositories.Http
         readonly IFileSystem _fileSystem;
         readonly IHttpRepositoryNavigator _httpNavigator;
         readonly PackageItem _package;
-        Uri _link;
         IPackage _loadedPackage;
 
         public HttpPackage(IFileSystem fileSystem,
@@ -74,7 +73,7 @@ namespace OpenWrap.Repositories.Http
                 // we don't dispose here, the file will get disposed and deleted on exit if we're lucky.
             }
 
-            _loadedPackage = new ZipPackage(Source, temporaryFile, _fileSystem.GetTempDirectory(), Enumerable.Empty<IExportBuilder>()).Load();
+            _loadedPackage = new ZipPackage(Source, temporaryFile, _fileSystem.GetTempDirectory(), Enumerable.Empty<IExportBuilder>(), false).Load();
         }
 
     }

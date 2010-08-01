@@ -61,8 +61,8 @@ namespace OpenWrap.Commands.Wrap
             if (Name.EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
             {
                 var originalName = Name;
-                Name = WrapNameUtility.GetName(Name);
-                Version = "= " + WrapNameUtility.GetVersion(originalName);
+                Name = WrapNameUtility.GetName(Path.GetFileNameWithoutExtension(Name));
+                Version = "= " + WrapNameUtility.GetVersion(Path.GetFileNameWithoutExtension(originalName));
                 yield return new GenericMessage(string.Format("The requested package contained '.wrap' in the name. Assuming you pointed to a file and meant a package named '{0}' with version qualifier '{1}'.", Name, Version))
                 {
                         Type = CommandResultType.Warning
@@ -90,9 +90,8 @@ namespace OpenWrap.Commands.Wrap
             foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo.NotNull()))
                 yield return msg;
 
-            yield return new GenericMessage("Expanding packages to cache...");
-            var packageRepositories = new[] { Environment.ProjectRepository };
-            PackageManager.GetExports<IExport>("bin", Environment.ExecutionEnvironment, packageRepositories.NotNull()).ToList();
+            foreach(var msg in PackageManager.ExpandPackages(Environment.ProjectRepository))
+                yield return msg;
         }
 
         void AddInstructionToDescriptor()
