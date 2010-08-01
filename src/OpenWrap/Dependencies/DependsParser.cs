@@ -8,16 +8,22 @@ namespace OpenWrap.Dependencies
     public class DependsParser : AbstractDescriptorParser
     {
         public DependsParser() : base("depends"){}
-        public override void ParseContent(string content, WrapDescriptor descriptor)
+
+        protected override void ParseContent(string content, WrapDescriptor descriptor)
         {
             var dependency = ParseDependency(content);
             if (dependency != null)
                 descriptor.Dependencies.Add(dependency);
         }
+        protected override IEnumerable<string> WriteContent(WrapDescriptor descriptor)
+        {
+            foreach (var dependency in descriptor.Dependencies)
+                yield return dependency.ToString();
+        }
 
         public static WrapDescriptor ParseDependsInstruction(string line)
         {
-            WrapDescriptor descriptor = new WrapDescriptor();
+            var descriptor = new WrapDescriptor();
             new DependsParser().Parse(line, descriptor);
             return descriptor;
         }

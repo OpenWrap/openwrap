@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace OpenWrap.Dependencies
 {
@@ -20,7 +23,20 @@ namespace OpenWrap.Dependencies
                 return;
             ParseContent(match.Groups["content"].Value, descriptor);
         }
-        public virtual void ParseContent(string content, WrapDescriptor descriptor)
+
+        public IEnumerable<string> Write(WrapDescriptor descriptor)
+        {
+            var content = WriteContent(descriptor).ToList();
+            if (content.Count == 0) return content;
+            return content.Select(x=> Header + ": " + x);
+        }
+
+        protected virtual IEnumerable<string> WriteContent(WrapDescriptor descriptor)
+        {
+            yield break;
+        }
+
+        protected virtual void ParseContent(string content, WrapDescriptor descriptor)
         {
             
         }

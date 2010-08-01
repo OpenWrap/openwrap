@@ -20,6 +20,7 @@ namespace OpenWrap.Dependencies
         public string Name { get; set; }
 
         public Version Version { get; set; }
+        public bool IsVersionInDescriptor { get; set; }
         public IFile File { get; set; }
         public string Description { get; set; }
 

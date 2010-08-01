@@ -30,7 +30,10 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput(Position = 1)]
         public string Version { get; set; }
 
+        [CommandInput]
+        public bool Anchored { get; set; }
         public IEnvironment Environment { get; set; }
+
 
         public IPackageManager PackageManager
         {
@@ -42,8 +45,7 @@ namespace OpenWrap.Commands.Wrap
             get
             {
                 return Environment.Descriptor != null &&
-                       !NoDescriptorUpdate &&
-                       !SystemOnly;
+                       (NoDescriptorUpdate == false || SystemOnly == true);
             }
         }
 
@@ -72,7 +74,20 @@ namespace OpenWrap.Commands.Wrap
             yield return VeryfyWrapRepository();
 
             if (ShouldUpdateDescriptor)
-                AddInstructionToDescriptor();
+            {
+                var dependencyWithSameName = Environment.Descriptor.Dependencies.FirstOrDefault(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase));
+                if (dependencyWithSameName != null)
+                {
+                    yield return new GenericMessage("Dependency already found in descriptor, updating.");
+                    Environment.Descriptor.Dependencies.Remove(dependencyWithSameName);
+                }
+                else
+                {
+                    yield return new GenericMessage("Dependency added to descriptor.");
+                }
+                Environment.Descriptor.Dependencies.Add(new WrapDependency{Anchored = Anchored, Name = Name, VersionVertices = VersionVertices() });
+                new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
+            }
 
             var resolvedDependencies = PackageManager.TryResolveDependencies(DescriptorFromCommand(), Environment.RepositoriesForRead());
 
@@ -94,17 +109,6 @@ namespace OpenWrap.Commands.Wrap
                 yield return msg;
         }
 
-        void AddInstructionToDescriptor()
-        {
-            // TODO: Make the environment descriptor separate from reader/writer,
-            // and remove the File property on it.
-            var dependLine = GetDependsLine();
-            using (var fileStream = Environment.Descriptor.File.OpenAppend())
-            using (var textWriter = new StreamWriter(fileStream, Encoding.UTF8))
-                textWriter.WriteLine("\r\n" + dependLine);
-            new DependsParser().Parse(dependLine, Environment.Descriptor);
-        }
-
         WrapDescriptor DescriptorFromCommand()
         {
             return new WrapDescriptor
@@ -115,17 +119,20 @@ namespace OpenWrap.Commands.Wrap
                         {
                             Name = Name,
                             VersionVertices = Version != null
-                                                  ? DependsParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList()
+                                                  ? VersionVertices()
                                                   : new List<VersionVertice>()
                         }
                     }
             };
         }
 
-        string GetDependsLine()
+        List<VersionVertice> VersionVertices()
         {
-            return "depends: " + Name + " " + (Version ?? string.Empty);
+            if (Version == null)
+                return new List<VersionVertice>();
+            return DependsParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
         }
+
 
         ICommandOutput VerifyWrapFile()
         {
@@ -141,6 +148,13 @@ namespace OpenWrap.Commands.Wrap
             return Environment.ProjectRepository != null
                        ? new GenericMessage("Project repository found.")
                        : new GenericMessage("Project repository not found, installing to system repository.");
+        }
+    }
+    public static class DescriptorExtensions
+    {
+        public static void SaveDescriptor(this WrapDescriptor descriptor)
+        {
+            
         }
     }
 }

@@ -21,7 +21,11 @@ namespace OpenWrap.Dependencies
         }
         public override string ToString()
         {
-            return Name + " " + string.Join(" and ", VersionVertices.Select(x => x.ToString()).ToArray());
+            var versions = string.Join(" and ", VersionVertices.Select(x => x.ToString()).ToArray());
+            var returnValue = versions.Length == 0
+                ? Name
+                : Name + " " + versions;
+            return Anchored ? returnValue + " anchored" : returnValue;
         }
     }
 }

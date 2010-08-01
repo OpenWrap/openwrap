@@ -44,17 +44,12 @@ namespace OpenWrap.Dependencies
             }
             return null;
         }
-
+        // Version comes from the version file first, then the version: header in the descriptor, then from the filename if there is one
         public WrapDescriptor ParseFile(IFile filePath, Stream content)
         {
             var stringReader = new StreamReader(content, true);
             var lines = stringReader.ReadToEnd().GetUnfoldedLines();
             IFile versionFile;
-            if (filePath.Parent != null && (versionFile = filePath.Parent.GetFile("version")).Exists)
-            {
-                using(var versionStream = versionFile.OpenRead())
-                lines.Concat(new[] { "version: " } + versionStream.ReadString(Encoding.UTF8));
-            }
             var descriptor = new WrapDescriptor
             {
                 Name = WrapNameUtility.GetName(filePath.NameWithoutExtension),
@@ -65,7 +60,28 @@ namespace OpenWrap.Dependencies
                 foreach (var parser in _lineParsers)
                     parser.Parse(line, descriptor);
             
+            if (filePath.Parent != null && (versionFile = filePath.Parent.GetFile("version")).Exists)
+            {
+
+                using(var versionStream = versionFile.OpenRead())
+                {
+                    try
+                    {
+                        descriptor.Version = new Version(versionStream.ReadString(Encoding.UTF8));
+                        descriptor.IsVersionInDescriptor = false;
+                    }
+                    catch{}
+                }
+            }
             return descriptor;
+        }
+        public void SaveDescriptor(WrapDescriptor descriptor)
+        {
+            using (var descriptorStream = descriptor.File.OpenWrite())
+            using (var streamWriter = new StreamWriter(descriptorStream, Encoding.UTF8))
+            {
+                streamWriter.Write(string.Join("\r\n\r\n", _lineParsers.Select(x => string.Join("\r\n", x.Write(descriptor).ToArray())).ToArray()));
+            }
         }
     }
     public static class StringExtensions

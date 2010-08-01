@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace OpenWrap.Dependencies
@@ -7,9 +8,14 @@ namespace OpenWrap.Dependencies
     {
         public AnchorParser() : base("anchored"){}
 
-        public override void ParseContent(string content, WrapDescriptor descriptor)
+        protected override void ParseContent(string content, WrapDescriptor descriptor)
         {
             descriptor.IsAnchored = string.Compare(content.Trim(), "true", StringComparison.OrdinalIgnoreCase) == 0;
+        }
+        protected override IEnumerable<string> WriteContent(WrapDescriptor descriptor)
+        {
+            if (descriptor.IsAnchored)
+                yield return "true";
         }
     }
 }

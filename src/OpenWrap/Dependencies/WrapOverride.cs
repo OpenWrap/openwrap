@@ -8,23 +8,23 @@ namespace OpenWrap.Dependencies
         {
             if (string.IsNullOrEmpty(oldPackage)) throw new ArgumentException("oldPackage cannot be empty or null.", "oldPackage");
             if (string.IsNullOrEmpty(newPackage)) throw new ArgumentException("newPackage cannot be empty or null.", "newPackage");
-            _oldPackage = oldPackage;
-            _newPackage = newPackage;
+            OldPackage = oldPackage;
+            NewPackage = newPackage;
         }
 
-        readonly string _oldPackage;
-        readonly string _newPackage;
+        public string OldPackage { get; private set; }
+        public string NewPackage { get; private set; }
 
         /// <summary>
         /// Applies the override, if it's relevant to the dependency, to produce a modified dependency.
         /// </summary>
         public WrapDependency Apply(WrapDependency dependency)
         {
-            if (dependency.Name == _oldPackage)
+            if (dependency.Name == OldPackage)
             {
                 // TODO: Should we create a new WrapDependency instance instead?
                 // Might be a good idea to make these objects immutable...
-                dependency.Name = _newPackage;
+                dependency.Name = NewPackage;
             }
             return dependency;
         }
