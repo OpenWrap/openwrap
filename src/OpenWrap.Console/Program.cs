@@ -26,14 +26,14 @@ namespace OpenWrap.Console
         {
             _rootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "OpenWrap");
             _wrapsPath = Path.Combine(_rootPath, "wraps");
-            _cachePath = Path.Combine(_wrapsPath, "cache");
+            _cachePath = Path.Combine(_wrapsPath, "_cache");
         }
         static DirectoryInfo GetCacheDirectory(DirectoryInfo directory)
         {
             try
             {
                 if (directory == null) return null;
-                var cacheDirectory = new DirectoryInfo(Path.Combine(Path.Combine(directory.FullName, "wraps"), "cache"));
+                var cacheDirectory = new DirectoryInfo(Path.Combine(Path.Combine(directory.FullName, "wraps"), "_cache"));
                 if (cacheDirectory.Exists)
                     return cacheDirectory;
                 return null;
@@ -341,7 +341,7 @@ namespace OpenWrap.Console
 
         static IEnumerable<DirectoryInfo> UncompressedUserDirectories()
         {
-            var di = new DirectoryInfo(Path.Combine(_wrapsPath, "cache"));
+            var di = new DirectoryInfo(Path.Combine(_wrapsPath, "_cache"));
             if (di.Exists)
                 return di.GetDirectories();
             return Enumerable.Empty<DirectoryInfo>();

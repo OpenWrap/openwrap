@@ -38,9 +38,7 @@ namespace OpenWrap.Repositories
             {
                 var anchoredDirectory = BaseDirectory.Parent // cache folder
                             .Parent // wraps folder
-                            .GetDirectory("anchored")
-                                .MustExist()
-                                .GetDirectory(Descriptor.Name);
+                            .GetDirectory(Descriptor.Name);
                 if (anchoredDirectory.Exists)
                 {
                     if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(BaseDirectory))

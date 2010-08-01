@@ -22,7 +22,7 @@ namespace OpenWrap.Repositories
             BasePath = packageBasePath;
             _anchorsEnabled = anchorsEnabled;
 
-            _rootCacheDirectory = BasePath.GetOrCreateDirectory("cache");
+            _rootCacheDirectory = BasePath.GetOrCreateDirectory("_cache");
             Packages = (from wrapFile in BasePath.Files("*.wrap")
                         let packageFullName = wrapFile.NameWithoutExtension
                         let packageVersion = WrapNameUtility.GetVersion(packageFullName)

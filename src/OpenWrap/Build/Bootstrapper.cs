@@ -18,11 +18,6 @@ namespace OpenWrap.Build
     public class Bootstrapper : Task
     {
         RuntimeAssemblyResolver _resolver;
-        static Bootstrapper()
-        {
-            
-            Debugger.Launch();
-        }
         public override bool Execute()
         {
             WrapServices.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);

@@ -5,7 +5,7 @@
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <PackageName Condition="'$(PackageName)' == ''">OpenWrap</PackageName>
     <OpenWrap-DescriptorPath Condition="'$(OpenWrap-DescriptorPath)' == ''">$(Root)\$(PackageName).wrapdesc</OpenWrap-DescriptorPath>
-    <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(Root)\wraps\anchored\openwrap\build</OpenWrap-BuildTasksDirectory>
+    <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(Root)\wraps\openwrap\build</OpenWrap-BuildTasksDirectory>
   </PropertyGroup>
   
   <ItemGroup> 

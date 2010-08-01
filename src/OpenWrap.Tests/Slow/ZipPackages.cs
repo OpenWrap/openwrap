@@ -47,7 +47,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
         [Test]
         public void cache_is_not_created_yet()
         {
-            RepositoryPath.GetDirectory("cache").GetDirectory("test-module-1.0.0")
+            RepositoryPath.GetDirectory("_cache").GetDirectory("test-module-1.0.0")
                 .Exists.ShouldBeFalse();
         }
     }
@@ -64,7 +64,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
         [Test]
         public void cache_is_created()
         {
-            RepositoryPath.GetDirectory("cache").GetDirectory("test-module-1.0.0")
+            RepositoryPath.GetDirectory("_cache").GetDirectory("test-module-1.0.0")
                 .Exists.ShouldBeTrue();
             
         }

@@ -31,9 +31,9 @@ namespace OpenWrap.Build.Tasks
                 return true;
             }
             var now = DateTime.UtcNow;
-            var seconds = now.Second;
+            var seconds = (now.Hour * 3600) + (now.Minute * 60) + now.Second;
             var days = (now - _from).TotalDays;
-            var revision = ((int)days << 12) + seconds;
+            var revision = ((short)days << 16) + seconds;
             OutputVersion = match.Groups["version"] + "." + revision;
             return true;
         }
