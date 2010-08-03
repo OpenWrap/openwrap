@@ -31,7 +31,7 @@ namespace OpenWrap.Tests.Configuration
         [Test]
         public void lineis_parsed()
         {
-            new ConfigurationParser().Parse("name = value")
+            new ConfigurationParser().Parse("name: value")
                 .ShouldHaveCountOf(1)
                 .First().ShouldBeOfType<ConfigurationLine>()
                 .Check(x => x.Name.ShouldBe("name"))
@@ -41,7 +41,7 @@ namespace OpenWrap.Tests.Configuration
         public void line_is_parsed_within_section()
         {
 
-            new ConfigurationParser().Parse("[section mastaba]\r\nmaterial = bricks")
+            new ConfigurationParser().Parse("[section mastaba]\r\nmaterial: bricks")
                 .ShouldHaveCountOf(1)
                 .First().ShouldBeOfType<ConfigurationSection>()
                 .Check(x => x.Name.ShouldBe("mastaba"))

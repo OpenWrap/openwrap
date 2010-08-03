@@ -186,7 +186,7 @@ namespace OpenWrap.Configuration
         }
         public static void WriteProperty(this StreamWriter writer, string name, object value)
         {
-            writer.WriteLine("{0} = {1}", name, value);
+            writer.WriteLine("{0}: {1}", name, value);
         }
     }
 }
