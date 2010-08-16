@@ -44,8 +44,9 @@ namespace OpenWrap.Commands.Wrap
         {
             get
             {
-                return Environment.Descriptor != null &&
-                       (NoDescriptorUpdate == false || SystemOnly == false);
+                return NoDescriptorUpdate == false &&
+                       Environment.Descriptor != null &&
+                       SystemOnly == false;
             }
         }
 
