@@ -8,7 +8,7 @@ namespace OpenWrap.Configuration
     {
 
         static Regex _configurationSectionRegex = new Regex(@"^\s*\[(?<type>\w+?)(\s+(?<name>\S+)\s*)?]\s*$");
-        static Regex _configurationLineRegex = new Regex(@"^\s*(?<name>\S+)\s*=\s*(?<value>.*?)\s*$");
+        static Regex _configurationLineRegex = new Regex(@"^\s*(?<name>[^\s:]+)\s*:\s*(?<value>.*?)\s*$");
 
         public IEnumerable<ConfigurationEntry> Parse(string data)
         {

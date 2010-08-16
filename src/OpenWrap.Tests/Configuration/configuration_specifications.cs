@@ -17,7 +17,7 @@ namespace OpenWrap.Tests.Configuration
 
         public when_reading_dictionaries_of_values()
         {
-            given_configuration_text(Configurations.Addresses.RemoteRepositories, "[remoterepository openwrap]\r\nhref=http://wraps.openwrap.org\r\n[remoterepository]\r\nhref=http://default.openwrap.org");
+            given_configuration_text(Configurations.Addresses.RemoteRepositories, "[remoterepository openwrap]\r\nhref:http://wraps.openwrap.org\r\n[remoterepository]\r\nhref:http://default.openwrap.org");
 
             when_loading_configuration(Configurations.Addresses.RemoteRepositories);
         }
@@ -41,7 +41,7 @@ namespace OpenWrap.Tests.Configuration
     {
         public when_two_dictionary_values_with_same_name_are_present()
         {
-            given_configuration_text(Configurations.Addresses.RemoteRepositories, "[remoterepository openwrap]\r\nhref=http://wraps.openwrap.org\r\n[remoterepository openwrap]\r\nhref=http://default.openwrap.org");
+            given_configuration_text(Configurations.Addresses.RemoteRepositories, "[remoterepository openwrap]\r\nhref:http://wraps.openwrap.org\r\n[remoterepository openwrap]\r\nhref:http://default.openwrap.org");
 
             when_loading_configuration(Configurations.Addresses.RemoteRepositories);
         }
@@ -67,7 +67,7 @@ namespace OpenWrap.Tests.Configuration
                     .ShouldNotBeNull()
                     .OpenRead().ReadString(Encoding.UTF8).ShouldContain(
 @"[remoterepository openwrap]
-href = " + RemoteRepositories.Default["openwrap"].Href);
+href: " + RemoteRepositories.Default["openwrap"].Href);
         }
         void when_saving_configuration(Uri uri)
         {
