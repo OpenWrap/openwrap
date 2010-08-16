@@ -72,7 +72,6 @@
     <Compile Include="Commands\removeWrapCommand.cs" />
     <Compile Include="Commands\setupWrapCommand.cs" />
     <Compile Include="Commands\Wrap\updateWrapCommand.cs" />
-    <Compile Include="Commands\Wrap\syncWrapCommand.cs" />
     <Compile Include="Configuration\configuration_parser_spec.cs" />
     <Compile Include="Configuration\configuration_specifications.cs" />
     <Compile Include="context.cs" />

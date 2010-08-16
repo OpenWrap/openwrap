@@ -59,7 +59,6 @@
     <Compile Include="Wrap\PackageRepositoryExtensions.cs" />
     <Compile Include="Wrap\PublishWrapCommand.cs" />
     <Compile Include="Wrap\RemoveWrapCommand.cs" />
-    <Compile Include="Wrap\SyncWrapCommand.cs" />
     <Compile Include="Wrap\UpdateWrapCommand.cs" />
   </ItemGroup>
   <ItemGroup>

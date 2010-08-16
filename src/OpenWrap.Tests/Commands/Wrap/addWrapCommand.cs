@@ -17,6 +17,11 @@ namespace OpenWrap.Tests.Commands
 
             when_executing_command("-System", "-Project");
         }
+        [Test]
+        public void results_in_an_error()
+        {
+            Results.ShouldHaveAtLeastOne(x => x.Success == false);
+        }
     }
     class adding_wrap_from_local_package_in_project_path_without_descriptor_update : context.command_context<AddWrapCommand>
     {

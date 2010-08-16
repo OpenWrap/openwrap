@@ -35,7 +35,7 @@ namespace OpenWrap.Commands.Wrap
         public IEnvironment Environment { get; set; }
 
 
-        public IPackageManager PackageManager
+        protected IPackageManager PackageManager
         {
             get { return WrapServices.GetService<IPackageManager>(); }
         }
@@ -45,7 +45,7 @@ namespace OpenWrap.Commands.Wrap
             get
             {
                 return Environment.Descriptor != null &&
-                       (NoDescriptorUpdate == false || SystemOnly == true);
+                       (NoDescriptorUpdate == false || SystemOnly == false);
             }
         }
 
@@ -61,15 +61,8 @@ namespace OpenWrap.Commands.Wrap
         public override IEnumerable<ICommandOutput> Execute()
         {
             if (Name.EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
-            {
-                var originalName = Name;
-                Name = WrapNameUtility.GetName(Path.GetFileNameWithoutExtension(Name));
-                Version = "= " + WrapNameUtility.GetVersion(Path.GetFileNameWithoutExtension(originalName));
-                yield return new GenericMessage(string.Format("The requested package contained '.wrap' in the name. Assuming you pointed to a file and meant a package named '{0}' with version qualifier '{1}'.", Name, Version))
-                {
-                        Type = CommandResultType.Warning
-                };
-            }
+                yield return WrapFileToPackageDescriptor();
+
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
 
@@ -85,7 +78,7 @@ namespace OpenWrap.Commands.Wrap
                 {
                     yield return new GenericMessage("Dependency added to descriptor.");
                 }
-                Environment.Descriptor.Dependencies.Add(new WrapDependency{Anchored = Anchored, Name = Name, VersionVertices = VersionVertices() });
+                Environment.Descriptor.Dependencies.Add(new WrapDependency { Anchored = Anchored, Name = Name, VersionVertices = VersionVertices() });
                 new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
             }
 
@@ -105,8 +98,36 @@ namespace OpenWrap.Commands.Wrap
             foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo.NotNull()))
                 yield return msg;
 
-            foreach(var msg in PackageManager.ExpandPackages(Environment.ProjectRepository))
+            foreach (var msg in PackageManager.ExpandPackages(Environment.ProjectRepository))
                 yield return msg;
+        }
+
+        ICommandOutput WrapFileToPackageDescriptor()
+        {
+            if (Path.GetExtension(Name).Equals(".wrap", StringComparison.OrdinalIgnoreCase) && Environment.CurrentDirectory.GetFile(Path.GetFileName(Name)).Exists)
+            {
+                var originalName = Name;
+                Name = WrapNameUtility.GetName(Path.GetFileNameWithoutExtension(Name));
+                Version = "= " + WrapNameUtility.GetVersion(Path.GetFileNameWithoutExtension(originalName));
+                return
+                        new GenericMessage(
+                                string.Format("The requested package contained '.wrap' in the name. Assuming you pointed to the file in the current directory and meant a package named '{0}' with version qualifier '{1}'.",
+                                              Name,
+                                              Version))
+                        {
+                            Type = CommandResultType.Warning
+                        };
+            }
+            if (File.Exists(Name))
+            {
+                return
+                        new GenericMessage(
+                                "You seem to have given a path to a .wrap file that is not in the current directory but exists on disk. This is not currently supported. Go to the directory, and re-issue the command.")
+                        {
+                            Type = CommandResultType.Warning
+                        };
+            }
+            return null;
         }
 
         WrapDescriptor DescriptorFromCommand()
