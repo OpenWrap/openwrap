@@ -19,20 +19,20 @@ namespace OpenWrap.Tests.Commands
             given_dependency("depends: goldberry >= 2.0");
 
             given_project_package("goldberry", new Version(2, 0, 0));
-            given_system_package("goldberry", new Version(2,1,0));
+            given_system_package("goldberry", new Version(2, 1, 0));
             given_remote_package("goldberry", new Version(2, 2, 0));
 
             when_executing_command();
         }
 
         [Test]
-        public void the_package_is_installed_alongside_previous_version_in_user_repo()
+        public void the_package_is_installed_alongside_previous_version_in_system_repo()
         {
             Environment.SystemRepository.PackagesByName["goldberry"].ShouldHaveCountOf(2);
         }
 
         [Test]
-        public void the_package_is_installed_in_user_repo()
+        public void the_package_is_installed_in_system_repo()
         {
             Environment.SystemRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
         }
@@ -47,26 +47,69 @@ namespace OpenWrap.Tests.Commands
     {
         public when_not_in_project_folder_and_package_can_be_updated()
         {
-            given_system_package("goldberry", new Version(2,0,0));
+            given_system_package("goldberry", new Version(2, 0, 0));
             given_remote_package("goldberry", new Version(2, 1, 0));
 
             when_executing_command();
         }
         [Test]
-        public void results_are_successful()
+        public void error_message_is_generated()
         {
-            Results.All(x => x.Success).ShouldBeTrue();
+            Results.Any(x => x.Success == false).ShouldBeTrue();
         }
         [Test]
-        public void package_in_user_repository_is_updated()
+        public void package_in_system_repository_is_not_updated()
         {
-            Environment.SystemRepository.ShouldHavePackage("goldberry", "2.1.0");
+            Environment.SystemRepository.ShouldHavePackage("goldberry", "2.0.0");
+        }
+    }
+    public class system_flag_is_specified : context.command_context<UpdateWrapCommand>
+    {
+        public system_flag_is_specified()
+        {
+            given_project_package("goldberry", new Version(2, 0, 0));
+            given_system_package("goldberry", new Version(2, 1, 0));
+
+
+            when_executing_command("-system");
+        }
+        [Test]
+        public void project_repo_not_updated()
+        {
+            Environment.ProjectRepository.ShouldHavePackage("goldberry","2.0.0");
+        }
+    }
+    public class project_and_system_flags_specified : context.command_context<UpdateWrapCommand>
+    {
+        
+        public project_and_system_flags_specified()
+        {
+            given_dependency("depends: goldberry");
+
+
+            given_project_package("goldberry", new Version(2, 0, 0));
+            given_system_package("goldberry", new Version(2, 0, 0));
+            given_remote_package("goldberry", new Version(3, 0, 0));
+
+
+            when_executing_command("-system","-project");
+        }
+        [Test]
+        public void project_repo_updated()
+        {
+            Environment.ProjectRepository.ShouldHavePackage("goldberry", "3.0.0");
+        }
+        [Test]
+        public void system_repo_updated()
+        {
+            Environment.SystemRepository.ShouldHavePackage("goldberry", "3.0.0");
+            
         }
     }
     public static class RepositoryAssertions
     {
         public static T ShouldHavePackage<T>(this T repository, string name, string version)
-            where T:IPackageRepository
+            where T : IPackageRepository
         {
             repository.PackagesByName[name].Count().ShouldBeGreaterThan(0);
             repository.HasDependency(name, new Version(version)).ShouldBeTrue();

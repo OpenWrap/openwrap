@@ -9,7 +9,7 @@ using OpenWrap.Services;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb = "update", Noun = "wrap")]
-    public class UpdateWrapCommand : ICommand
+    public class UpdateWrapCommand : AbstractCommand
     {
 
         protected IEnvironment Environment
@@ -22,32 +22,77 @@ namespace OpenWrap.Commands.Wrap
             get { return WrapServices.GetService<IPackageManager>(); }
         }
 
-        [CommandInput(DisplayName = "System", IsRequired = false, Name="System")]
-        public bool System { get; set; }
+        bool? _system;
 
-        public IEnumerable<ICommandOutput> Execute()
+        [CommandInput(DisplayName = "System", IsRequired = false, Name="System")]
+        public bool System
         {
-            if (Environment.ProjectRepository != null)
-                return UpdateProjectPackages();
-            return UpdateSystemPackages();
+            get { return _system != null ? (bool)_system : false; }
+            set { _system = value; }
         }
 
+        bool? _project;
+
+        [CommandInput(IsRequired = false)]
+        public bool Project
+        {
+            get { return _project == true || (_project == null && _system != true); }
+            set { _project = value; }
+        }
+
+        public UpdateWrapCommand()
+        {
+        }
+        public override IEnumerable<ICommandOutput> Execute()
+        {
+            var update = Enumerable.Empty<ICommandOutput>();
+            if (Project)
+                update = update.Concat(UpdateProjectPackages());
+            if (System)
+                update = update.Concat(UpdateSystemPackages());
+            return Either(VerifyInputs)
+                    .Or(update);
+        }
+        ICommandOutput VerifyInputs()
+        {
+            if (Project && Environment.ProjectRepository == null)
+                return new GenericError("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
+            return null;
+        }
         IEnumerable<ICommandOutput> UpdateSystemPackages()
         {
-            WrapDescriptor packagesToSearch = CreateDescriptorForInstalledPackages();
+            if (!System) yield break;
+
+            var packagesToSearch = CreateDescriptorForSystemPackages();
             yield return new Result("Searching for updated packages...");
 
 
             var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, Environment.RemoteRepositories);
 
-            foreach (var message in PackageManager.CopyPackagesToRepositories(
-                resolveResult, Environment.SystemRepository))
-                yield return message;
+            foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
+                yield return m;
             foreach(var m in PackageManager.ExpandPackages(Environment.SystemRepository))
                 yield return m;
         }
 
-        WrapDescriptor CreateDescriptorForInstalledPackages()
+        IEnumerable<ICommandOutput> UpdateProjectPackages()
+        {
+            if (!Project)
+                yield break;
+
+            var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository }));
+
+            var copyResult = PackageManager.CopyPackagesToRepositories(
+                    resolvedPackages,
+                    Environment.RepositoriesForWrite()
+                    );
+            foreach(var m in copyResult) yield return m;
+
+            var expandResult = PackageManager.ExpandPackages(Environment.RepositoriesForWrite().ToArray());
+            foreach (var m in expandResult) yield return m;
+        }
+
+        WrapDescriptor CreateDescriptorForSystemPackages()
         {
             var installedPackages = Environment.SystemRepository.PackagesByName.Select(x => x.Key);
 
@@ -64,20 +109,6 @@ namespace OpenWrap.Commands.Wrap
                                     VersionVertices = { new GreaterThenVersionVertice(maxVersion) }
                                 }).ToList()
             };
-        }
-
-        IEnumerable<ICommandOutput> UpdateProjectPackages()
-        {
-            var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository }));
-
-            var copyResult = PackageManager.CopyPackagesToRepositories(
-                    resolvedPackages,
-                    Environment.RepositoriesForWrite()
-                    );
-
-            var expandResult = PackageManager.ExpandPackages(Environment.RepositoriesForWrite().ToArray());
-
-            return copyResult.Concat(expandResult);
         }
     }
 }
