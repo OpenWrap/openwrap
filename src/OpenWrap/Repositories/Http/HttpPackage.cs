@@ -41,8 +41,7 @@ namespace OpenWrap.Repositories.Http
 
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
-            VerifyLoaded();
-            return _loadedPackage.GetExport(exportName, environment);
+            return null;
         }
 
         public string FullName

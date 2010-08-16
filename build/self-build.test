@@ -10,8 +10,8 @@
   </Target>
   <Target Name="RemoveTemporaryPackages">
     <Message Importance="high" Text="Cleaning OpenWrap results" />
-    <Delete Files="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\_cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;$(Root)\bin\openwrap-42.0.0.1.wrap;$(Root)\bin\openwrap-42.0.0.0.wrap" />
-    <RemoveDir Directories="$(Root)\wraps\_cache\openwrap-42.0.0.1;$(Root)\wraps\cache\openwrap-42.0.0.0" />
+    <Delete Files="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\_cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\_cache\openwrap-42.0.0.1\**\*;$(Root)\bin\openwrap-42.0.0.1.wrap;$(Root)\bin\openwrap-42.0.0.0.wrap" />
+    <RemoveDir Directories="$(Root)\wraps\_cache\openwrap-42.0.0.1;$(Root)\wraps\_cache\openwrap-42.0.0.0" />
   </Target>
   <Target Name="OpenWrap-SelfBuild" DependsOnTargets="RemoveTemporaryPackages">
     
@@ -32,7 +32,7 @@
     <MSBuild Projects="openwrap.proj" Properties="PackageVersion=42.0.0.1;" ContinueOnError="true" />
   </Target>
   <Target Name="Build" DependsOnTargets="RemoveTemporaryPackages; OpenWrap-SelfBuild">
-    <Delete Files="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\_cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\cache\openwrap-42.0.0.1\**\*;$(Root)\bin\openwrap-42.0.0.1.wrap;$(Root)\bin\openwrap-42.0.0.0.wrap" />
-    <RemoveDir Directories="$(Root)\wraps\_cache\openwrap-42.0.0.1;$(Root)\wraps\cache\openwrap-42.0.0.0" />
+    <Delete Files="$(Root)\wraps\openwrap-42.0.0.0.wrap;$(Root)\wraps\openwrap-42.0.0.1.wrap;$(Root)\wraps\_cache\openwrap-42.0.0.0\**\*;$(Root)\wraps\_cache\openwrap-42.0.0.1\**\*;$(Root)\bin\openwrap-42.0.0.1.wrap;$(Root)\bin\openwrap-42.0.0.0.wrap" />
+    <RemoveDir Directories="$(Root)\wraps\_cache\openwrap-42.0.0.1;$(Root)\wraps\_cache\openwrap-42.0.0.0" />
   </Target>
 </Project>

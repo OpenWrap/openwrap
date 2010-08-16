@@ -162,7 +162,7 @@ namespace OpenWrap
         public class EnumerableEntry
         {
             readonly MultiThreadedEnumerator<T> _parent;
-
+            readonly object _syncRoot = new object();
             public EnumerableEntry(MultiThreadedEnumerator<T> parent, IEnumerable<T> entry)
             {
                 _parent = parent;
@@ -182,7 +182,7 @@ namespace OpenWrap
                 Pending++;
                 ThreadPool.QueueUserWorkItem(x =>
                 {
-                    lock (Enumerator)
+                    lock (_syncRoot)
                     {
                         var hasValue = Enumerator.MoveNext();
 

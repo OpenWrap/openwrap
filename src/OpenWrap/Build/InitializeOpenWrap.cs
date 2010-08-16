@@ -15,7 +15,7 @@ using Task = Microsoft.Build.Utilities.Task;
 
 namespace OpenWrap.Build
 {
-    public class Bootstrapper : Task
+    public class InitializeOpenWrap : Task
     {
         RuntimeAssemblyResolver _resolver;
         public override bool Execute()
@@ -35,7 +35,7 @@ namespace OpenWrap.Build
 
     public class MSBuildEnvironment : CurrentDirectoryEnvironment
     {
-        public MSBuildEnvironment(Bootstrapper bootstrapper) : base(Path.GetDirectoryName(bootstrapper.BuildEngine.ProjectFileOfTaskNode))
+        public MSBuildEnvironment(InitializeOpenWrap initializeOpenWrap) : base(Path.GetDirectoryName(initializeOpenWrap.BuildEngine.ProjectFileOfTaskNode))
         {
             
         }

@@ -98,7 +98,7 @@ namespace OpenWrap.Repositories
                                     .Select(x => x.Find(modifiedDependency))
                                     .FirstOrDefault(x => x != null)
                             where package == null ||
-                                  resolvedDependencies.None(x => x.Package.Name == package.Name && x.Package.Version == package.Version)
+                                  resolvedDependencies.None(x => x.Package != null && x.Package.Name == package.Name && x.Package.Version == package.Version)
                             select new ResolvedDependency { Dependency = modifiedDependency, Package = package, ParentPackage = parent })
                             .ToList();
             resolvedDependencies.AddRange(packages);

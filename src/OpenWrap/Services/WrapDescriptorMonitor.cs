@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Build;
@@ -20,7 +21,7 @@ namespace OpenWrap.Services
         {
             if (!wrapFile.Exists)
                 return;
-
+            
             var descriptor = GetDescriptor(wrapFile, packageRepository);
             if (client.IsLongRunning)
                 descriptor.Clients.Add(client);
@@ -51,10 +52,10 @@ namespace OpenWrap.Services
             var d = _notificationClients[wrapPath.Path];
 
             var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
+            
 
             client.WrapAssembliesUpdated(_resolver.GetAssemblyReferences(parsedDescriptor, d.Repository, client));
         }
-
         void NotifyAllClients(IFile wrapPath)
         {
             if (!_notificationClients.ContainsKey(wrapPath.Path))

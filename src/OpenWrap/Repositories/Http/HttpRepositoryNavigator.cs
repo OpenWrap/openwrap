@@ -9,16 +9,16 @@ namespace OpenWrap.Repositories.Http
 {
     public class HttpRepositoryNavigator : IHttpRepositoryNavigator
     {
+        readonly Uri _baseUri;
         readonly Uri _requestUri;
         PackageDocument _fileList;
         IHttpClient _httpClient = new HttpWebRequestBasedClient();
 
-        public HttpRepositoryNavigator(Uri serverUri)
+        public HttpRepositoryNavigator(Uri baseUri)
         {
-            _requestUri = new Uri(serverUri, new Uri("index.wraplist", UriKind.Relative));
-
+            _baseUri = baseUri;
+            _requestUri = new Uri(baseUri, new Uri("index.wraplist", UriKind.Relative));
         }
-
 
 
         public PackageDocument Index()
@@ -29,7 +29,11 @@ namespace OpenWrap.Repositories.Http
 
         public Stream LoadPackage(PackageItem packageItem)
         {
-            return _httpClient.CreateRequest(packageItem.PackageHref).Get().Send().Entity.Stream;
+            var response = _httpClient.CreateRequest(packageItem.PackageHref.BaseUri(_baseUri))
+                    .Get()
+                    .Send();
+
+            return response.Entity != null ? response.Entity.Stream : null;
         }
 
         public bool CanPublish

@@ -43,9 +43,9 @@ namespace OpenWrap.Repositories
                     repositoriesForDependency = repositoriesToWriteTo.ToList();
 
 
-                foreach (var repository in repositoriesForDependency.Where(x => x != null && x.CanPublish))
+                foreach (var repository in repositoriesForDependency.Where(x => x != null && x.CanPublish).ToList())
                 {
-                    yield return new Result("Copying '{0}' to '{1}'", dependency.Package.FullName, repository.Name);
+                    yield return new Result("Copying '{0}' from '{1}' to '{2}'", dependency.Package.FullName, dependency.Package.Source.Name, repository.Name);
                     manager.UpdateDependency(dependency, repository);
                 }
             }
@@ -80,10 +80,25 @@ namespace OpenWrap.Repositories
 
         static ICommandOutput DependencyResolutionFailed(DependencyResolutionResult result)
         {
-            return new Result("Dependency resolution failed.")
-            {
-                Success = false
-            };
+            return new DependencyResolutionFailedResult(result);
+        }
+    }
+
+    internal class DependencyResolutionFailedResult : Error
+    {
+        DependencyResolutionResult _result;
+
+        public DependencyResolutionFailedResult(DependencyResolutionResult result)
+        {
+            _result = result;
+        }
+        public override string ToString()
+        {
+            return "The following dependencies were not found:"
+                   + string.Join("\r\n\t",
+                                 _result.Dependencies.Where(x => x.Package == null)
+                                         .Select(x => x.Dependency.Name)
+                                         .ToArray());
         }
     }
 }

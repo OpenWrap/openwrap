@@ -5,7 +5,7 @@ namespace OpenWrap.Dependencies
 {
     public static class WrapNameUtility
     {
-        private static Regex VersionRegex = new Regex(@"\d+(\.\d+(\.\d+(\.\d+)?)?)?$", RegexOptions.Compiled);
+        private static Regex VersionRegex = new Regex(@"\-\d+(\.\d+(\.\d+(\.\d+)?)?)?$", RegexOptions.Compiled);
         public static string GetName(string name)
         {
             return GetVersion(name) == null ? name : name.Substring(0, name.LastIndexOf('-'));

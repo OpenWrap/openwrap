@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenWrap.Resharper</RootNamespace>
-    <AssemblyName>OpenWrap.Resharper</AssemblyName>
+    <AssemblyName>OpenWrap.Resharper.45</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkSubset>

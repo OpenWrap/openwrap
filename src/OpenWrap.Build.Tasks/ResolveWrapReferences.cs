@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -100,6 +101,7 @@ namespace OpenWrap.Build.Tasks
             var items = new List<ITaskItem>();
             foreach (var assemblyRef in assemblyPaths)
             {
+                Log.LogMessage("Adding OpenWrap reference to '{0}'", assemblyRef.FullPath);
                 var item = new TaskItem(assemblyRef.AssemblyName.FullName);
                 item.SetMetadata("HintPath", assemblyRef.FullPath);
                 item.SetMetadata("Private", CopyLocal ? "True" : "False");
@@ -116,7 +118,11 @@ namespace OpenWrap.Build.Tasks
 
         void EnsureWrapRepositoryIsInitialized()
         {
-            if (PackageRepository != null) return;
+            if (PackageRepository != null)
+            {
+                Log.LogMessage(MessageImportance.Low, "No project repository found.");
+                return;
+            }
             PackageRepository = new FolderRepository(WrapsDirectoryPath, false);
         }
 
@@ -125,6 +131,7 @@ namespace OpenWrap.Build.Tasks
             if (!EnableVisualStudioIntegration) return;
             try
             {
+                Debugger.Break();
                 EnableResharperIntegration();
             }
             catch

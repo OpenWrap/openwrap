@@ -78,7 +78,7 @@ namespace OpenWrap.Console
                          where match.Success
                          let version = new Version(match.Groups["version"].Value)
                          select new { uncompressedFolder, version };
-            return folder.OrderBy(x => x.version).Select(x => x.uncompressedFolder.FullName).FirstOrDefault();
+            return folder.OrderByDescending(x => x.version).Select(x => x.uncompressedFolder.FullName).FirstOrDefault();
         }
 
         static int Main(string[] args)

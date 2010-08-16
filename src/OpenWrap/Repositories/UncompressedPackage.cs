@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using OpenWrap.Exports;
@@ -25,9 +26,13 @@ namespace OpenWrap.Repositories
             _exporters = exporters;
             BaseDirectory = wrapCacheDirectory;
             // get the descriptor file inside the package
-            var descriptorName = BaseDirectory.Name;
+            var descriptorName = originalPackage.NameWithoutExtension;
             Source = source;
-            Descriptor = new WrapDescriptorParser().ParseFile(wrapCacheDirectory.GetFile(descriptorName + ".wrapdesc"));
+            var wrapDescriptor = wrapCacheDirectory.FindFile(descriptorName + ".wrapdesc")
+                ?? wrapCacheDirectory.FindFile(WrapNameUtility.GetName(descriptorName) + ".wrapdesc");
+            if (wrapDescriptor == null)
+                throw new InvalidOperationException("Could not find descriptor in wrap cache directory");
+            Descriptor = new WrapDescriptorParser().ParseFile(wrapDescriptor);
             if (allowAnchoring)
                 VerifyAnchoring();
         }

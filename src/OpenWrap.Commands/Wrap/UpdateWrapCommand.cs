@@ -43,8 +43,8 @@ namespace OpenWrap.Commands.Wrap
             foreach (var message in PackageManager.CopyPackagesToRepositories(
                 resolveResult, Environment.SystemRepository))
                 yield return message;
-            PackageManager.ExpandPackages(Environment.SystemRepository);
-
+            foreach(var m in PackageManager.ExpandPackages(Environment.SystemRepository))
+                yield return m;
         }
 
         WrapDescriptor CreateDescriptorForInstalledPackages()
@@ -70,12 +70,14 @@ namespace OpenWrap.Commands.Wrap
         {
             var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository }));
 
-            foreach(var msg in PackageManager.CopyPackagesToRepositories(
-                resolvedPackages,
-                Environment.RepositoriesForWrite()
-                ))
-                yield return msg;
-            PackageManager.ExpandPackages(Environment.RepositoriesForWrite().ToArray());
+            var copyResult = PackageManager.CopyPackagesToRepositories(
+                    resolvedPackages,
+                    Environment.RepositoriesForWrite()
+                    );
+
+            var expandResult = PackageManager.ExpandPackages(Environment.RepositoriesForWrite().ToArray());
+
+            return copyResult.Concat(expandResult);
         }
     }
 }

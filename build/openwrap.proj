@@ -18,7 +18,7 @@
     <RemoveDir Directories="$(Root)\scratch\package" ContinueOnError="true" />
   </Target>
   <Target Name="_Initialize">
-    <Bootstrapper />
+    <InitializeOpenWrap />
     <ReadLinesFromFile File="$(Root)\version">
       <Output
     TaskParameter="Lines"
@@ -58,7 +58,10 @@
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenFileSystem.dll">
         <Export>bin-net35</Export>
       </BinFile>
-      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper\OpenWrap.Resharper.dll">
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper.45\OpenWrap.Resharper.45.dll">
+        <Export>build</Export>
+      </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper.50\OpenWrap.Resharper.50.dll">
         <Export>build</Export>
       </BinFile>
       <BinFile Include="$(Root)\scratch\build\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.dll">

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.ComShim", "OpenWra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Console", "OpenWrap.Console\OpenWrap.Console.csproj", "{49E96F6C-C545-4826-BC35-666C76721B9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper", "OpenWrap.Resharper\OpenWrap.Resharper.csproj", "{05F146AE-9315-44B7-AF52-9B5925C90E27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.45", "OpenWrap.Resharper.45\OpenWrap.Resharper.45.csproj", "{05F146AE-9315-44B7-AF52-9B5925C90E27}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Tests", "OpenWrap.Tests\OpenWrap.Tests.csproj", "{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}"
 EndProject
@@ -38,6 +38,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFileSystem", "..\wraps\ext\openfilesystem\src\OpenFileSystem\OpenFileSystem.csproj", "{0174E0E7-B915-46A9-B3D8-D62007E55694}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFileSystem.Tests", "..\wraps\ext\openfilesystem\src\OpenFileSystem.Tests\OpenFileSystem.Tests.csproj", "{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.50", "OpenWrap.Resharper.50\OpenWrap.Resharper.50.csproj", "{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,10 @@ Global
 		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5EB0BFC-609D-46CB-8FFB-F8F3065ABB11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

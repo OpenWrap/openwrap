@@ -150,11 +150,4 @@ namespace OpenWrap.Commands.Wrap
                        : new GenericMessage("Project repository not found, installing to system repository.");
         }
     }
-    public static class DescriptorExtensions
-    {
-        public static void SaveDescriptor(this WrapDescriptor descriptor)
-        {
-            
-        }
-    }
 }
