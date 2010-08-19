@@ -39,10 +39,6 @@ namespace OpenWrap.Repositories
                     .Skip(1)
                     .ToList();
 
-                if (repositoriesForDependency.Count == 0)
-                    repositoriesForDependency = repositoriesToWriteTo.ToList();
-
-
                 foreach (var repository in repositoriesForDependency.Where(x => x != null && x.CanPublish).ToList())
                 {
                     yield return new Result("Copying '{0}' from '{1}' to '{2}'", dependency.Package.FullName, dependency.Package.Source.Name, repository.Name);
@@ -50,9 +46,10 @@ namespace OpenWrap.Repositories
                 }
             }
         }
+        // TODO: Expose at the pacakge manager / repository level, such as a VerifyCache() or something along those lines...
         public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, params IPackageRepository[] repositories)
         {
-            yield return new GenericMessage("Expanding packages to cache...");
+            yield return new GenericMessage("Making sure the cache is up-to-date...");
             
             packageManager.GetExports<IExport>("bin", WrapServices.GetService<IEnvironment>().ExecutionEnvironment, repositories.NotNull()).ToList();
         }
@@ -84,20 +81,28 @@ namespace OpenWrap.Repositories
         }
     }
 
-    internal class DependencyResolutionFailedResult : Error
+    public class DependencyResolutionFailedResult : Error
     {
+        readonly string _message;
         DependencyResolutionResult _result;
 
         public DependencyResolutionFailedResult(DependencyResolutionResult result)
+            : this("The following dependencies were not found:", result)
         {
+        }
+
+        public DependencyResolutionFailedResult(string message, DependencyResolutionResult result)
+        {
+            _message = message;
             _result = result;
         }
+
         public override string ToString()
         {
-            return "The following dependencies were not found:"
+            return _message + "\r\n\t"
                    + string.Join("\r\n\t",
                                  _result.Dependencies.Where(x => x.Package == null)
-                                         .Select(x => x.Dependency.Name)
+                                         .Select(x => "- '" + x.Dependency.Name + "'")
                                          .ToArray());
         }
     }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
-namespace OpenWrap.Dependencies
+namespace OpenWrap.Dependencies.Parsers
 {
     public class AnchorParser : AbstractDescriptorParser
     {

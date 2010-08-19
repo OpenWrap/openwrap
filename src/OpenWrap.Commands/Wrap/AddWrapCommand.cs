@@ -62,45 +62,69 @@ namespace OpenWrap.Commands.Wrap
         public override IEnumerable<ICommandOutput> Execute()
         {
             if (Name.EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
-                yield return WrapFileToPackageDescriptor();
+            {
+                var desc = WrapFileToPackageDescriptor();
+                yield return desc;
+                if (!desc.Success)
+                    yield break;
+            }
 
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
 
+            var commandDescriptor = DescriptorFromCommand();
             if (ShouldUpdateDescriptor)
             {
-                var dependencyWithSameName = Environment.Descriptor.Dependencies.FirstOrDefault(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase));
-                if (dependencyWithSameName != null)
-                {
-                    yield return new GenericMessage("Dependency already found in descriptor, updating.");
-                    Environment.Descriptor.Dependencies.Remove(dependencyWithSameName);
-                }
-                else
-                {
-                    yield return new GenericMessage("Dependency added to descriptor.");
-                }
-                Environment.Descriptor.Dependencies.Add(new WrapDependency { Anchored = Anchored, Name = Name, VersionVertices = VersionVertices() });
-                new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
+                yield return UpdateDescriptor(commandDescriptor);
             }
 
-            var resolvedDependencies = PackageManager.TryResolveDependencies(DescriptorFromCommand(), Environment.RepositoriesForRead());
+            var resolvedDependencies = PackageManager.TryResolveDependencies(commandDescriptor, Environment.RepositoriesForRead());
 
             if (!resolvedDependencies.IsSuccess)
             {
-                yield return new GenericError("Could not find a package for dependency '{0}'.", Name);
+                yield return new DependencyResolutionFailedResult(string.Format("Could not find a package for dependency '{0}'.", Name), resolvedDependencies);
                 yield break;
             }
+
             var repositoriesToCopyTo = Environment.RemoteRepositories.Concat(new[]
             {
                 Environment.CurrentDirectoryRepository,
                 ProjectOnly ? null : Environment.SystemRepository,
                 SystemOnly ? null : Environment.ProjectRepository
             });
+
             foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo.NotNull()))
                 yield return msg;
 
             foreach (var msg in PackageManager.ExpandPackages(Environment.ProjectRepository))
                 yield return msg;
+        }
+
+        ICommandOutput UpdateDescriptor(WrapDescriptor commandDescriptor)
+        {
+            ICommandOutput outputMessage;
+            var dependencyWithSameName = Environment.Descriptor.Dependencies.FirstOrDefault(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase));
+            if (dependencyWithSameName != null)
+            {
+                var requestedNormalizedVersionString = commandDescriptor.Dependencies.First().VersionVertices.Select(x => x.ToString()).OrderBy(x => x).Aggregate("", (x, e) => x + e);
+                var existingNormalizedVersionString = dependencyWithSameName.VersionVertices.Select(x => x.ToString()).OrderBy(x => x).Aggregate("", (x, e) => x + e);
+                if (requestedNormalizedVersionString == existingNormalizedVersionString)
+                {
+                    outputMessage = new GenericMessage("Dependency found with the same version requirements in the descriptor, nothing to do.");
+                }
+                else
+                {
+                    outputMessage = new GenericMessage("Dependency already found in descriptor, updating.");
+                    Environment.Descriptor.Dependencies.Remove(dependencyWithSameName);
+                }
+            }
+            else
+            {
+                outputMessage = new GenericMessage("Dependency added to descriptor.");
+            }
+            Environment.Descriptor.Dependencies.Add(new WrapDependency { Anchored = Anchored, Name = Name, VersionVertices = VersionVertices() });
+            new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
+            return outputMessage;
         }
 
         ICommandOutput WrapFileToPackageDescriptor()
@@ -121,12 +145,7 @@ namespace OpenWrap.Commands.Wrap
             }
             if (File.Exists(Name))
             {
-                return
-                        new GenericMessage(
-                                "You seem to have given a path to a .wrap file that is not in the current directory but exists on disk. This is not currently supported. Go to the directory, and re-issue the command.")
-                        {
-                            Type = CommandResultType.Warning
-                        };
+                return new GenericError("You have given a path to a .wrap file that is not in the current directory but exists on disk. This is not currently supported. Go to the directory, and re-issue the command.");
             }
             return null;
         }
@@ -142,7 +161,7 @@ namespace OpenWrap.Commands.Wrap
                             Name = Name,
                             VersionVertices = Version != null
                                                   ? VersionVertices()
-                                                  : new List<VersionVertice>()
+                                                  : new List<VersionVertice>{new AnyVersionVertice()}
                         }
                     }
             };

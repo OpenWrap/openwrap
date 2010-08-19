@@ -55,6 +55,7 @@
     <Compile Include="Remote\ListRemoteCommand.cs" />
     <Compile Include="Remote\RemoveRemoteCommand.cs" />
     <Compile Include="Wrap\AddWrapCommand.cs" />
+    <Compile Include="Wrap\BuildWrapCommand.cs" />
     <Compile Include="Wrap\NewWrapCommand.cs" />
     <Compile Include="Wrap\PackageRepositoryExtensions.cs" />
     <Compile Include="Wrap\PublishWrapCommand.cs" />

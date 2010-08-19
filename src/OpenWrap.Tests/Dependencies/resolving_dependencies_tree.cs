@@ -412,6 +412,9 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             public IPackageInfo Publish(string packageFileName, Stream packageStream)
             {
+                if (Packages.Any(x=>x.FullName == Path.GetFileNameWithoutExtension(packageFileName)))
+                    throw new InvalidOperationException("Package already exists in repository.");
+                
                 var package = new InMemoryPackage
                 {
                     Name = WrapNameUtility.GetName(packageFileName),

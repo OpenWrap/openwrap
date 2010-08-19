@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using OpenFileSystem.IO;
+using OpenWrap.Dependencies.Parsers;
 
 namespace OpenWrap.Dependencies
 {
@@ -20,7 +21,8 @@ namespace OpenWrap.Dependencies
             new DependsParser(),
             new DescriptionParser(),
             new OverrideParser(),
-            new AnchorParser()
+            new AnchorParser(),
+            new BuildParser()
         };
 
         public WrapDescriptor ParseFile(IFile filePath)

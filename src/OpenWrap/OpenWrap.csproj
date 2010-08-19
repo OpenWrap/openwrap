@@ -96,6 +96,7 @@
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\GreaterThenVersionVertice.cs" />
     <Compile Include="Dependencies\Parsers\AbstractDescriptorParser.cs" />
+    <Compile Include="Dependencies\Parsers\BuildParser.cs" />
     <Compile Include="Dependencies\Parsers\IDescriptorParser.cs" />
     <Compile Include="Dependencies\Parsers\AnchorParser.cs" />
     <Compile Include="Dependencies\WrapNameUtility.cs" />

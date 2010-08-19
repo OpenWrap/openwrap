@@ -186,7 +186,7 @@ namespace OpenWrap.Tests.Commands
         }
     }
 
-    public class adding_non_existant_wrap : context.command_context<AddWrapCommand>
+    class adding_non_existant_wrap : context.command_context<AddWrapCommand>
     {
         public adding_non_existant_wrap()
         {
@@ -197,6 +197,22 @@ namespace OpenWrap.Tests.Commands
         public void package_installation_is_unsuccessfull()
         {
             Results.ShouldHaveAtLeastOne(x => x.Success == false);
+        }
+    }
+    class adding_dependency_already_present : context.command_context<AddWrapCommand>
+    {
+        public adding_dependency_already_present()
+        {
+            given_dependency("depends: sauron >= 2.0");
+            given_project_package("sauron", new Version(1,0,0));
+            given_system_package("sauron", new Version(2,0,0));
+
+            when_executing_command("sauron");
+        }
+        [Test]
+        public void package_is_not_updated()
+        {
+            Environment.ProjectRepository.ShouldNotHavePackage("sauron", "2.0.0");
         }
     }
 }
