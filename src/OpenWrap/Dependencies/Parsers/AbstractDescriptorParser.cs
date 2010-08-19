@@ -31,15 +31,10 @@ namespace OpenWrap.Dependencies
             return content.Select(x=> Header + ": " + x);
         }
 
-        protected virtual IEnumerable<string> WriteContent(WrapDescriptor descriptor)
-        {
-            yield break;
-        }
+        protected abstract IEnumerable<string> WriteContent(WrapDescriptor descriptor);
 
-        protected virtual void ParseContent(string content, WrapDescriptor descriptor)
-        {
-            
-        }
+        protected abstract void ParseContent(string content, WrapDescriptor descriptor);
+
         public virtual string GetContentRegex()
         {
             return @".*";

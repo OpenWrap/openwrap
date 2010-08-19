@@ -46,6 +46,8 @@ namespace OpenWrap.Dependencies
 
         public bool IsAnchored { get; set; }
 
+        public string BuildCommand { get; set; }
+
         public bool IsCompatibleWith(Version version)
         {
             return false;

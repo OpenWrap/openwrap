@@ -59,6 +59,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\BuildEngines\ConventionMSBuildEngine.cs" />
     <Compile Include="Build\InitializeOpenWrap.cs" />
     <Compile Include="Build\IWrapAssemblyClient.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
