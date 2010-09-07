@@ -84,7 +84,7 @@ namespace OpenWrap.Build.BuildEngines
 
         string GetMSBuildFileName()
         {
-            return @"C:\windows\Microsoft.NET\Framework\v3.5\msbuild.exe";
+            return @"%windir%\Microsoft.NET\Framework\v3.5\msbuild.exe";
         }
     }
     public class BuildResult
