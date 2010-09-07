@@ -16,10 +16,14 @@ namespace OpenWrap.Repositories.Http
         }
         public static PackageDocument AsPackageDocument<T>(this T response) where T : IClientResponse
         {
+            if (response == null)
+                return null;
             return response.AsXDocument().ParsePackageDocument();
         }
         public static PackageDocument ParsePackageDocument(this XDocument xmlDocument)
         {
+            if (xmlDocument == null)
+                return null;
             return new PackageDocument
             {
                     CanPublish = GetCanPublish(xmlDocument),

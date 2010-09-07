@@ -7,12 +7,13 @@ using System.Text.RegularExpressions;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.Local;
 using OpenFileSystem.IO.FileSystems;
+using OpenWrap.Commands;
 
 namespace OpenWrap.Build.BuildEngines
 {
     public class BuiltInstructionParser
     {
-        static Regex _buildInstructionRegex = new Regex(@"\[built\((<?export>.+)(\,(?<fileSpec>.*)))]");
+        static Regex _buildInstructionRegex = new Regex(@"\[built\((<?export>.+)(\,(?<fileSpec>.*))\)\]");
         
         public IEnumerable<FileBuildResult> Parse(string line)
         {
@@ -61,24 +62,29 @@ namespace OpenWrap.Build.BuildEngines
                     StartInfo = new ProcessStartInfo
                     {
                             RedirectStandardOutput = true,
-                            FileName = GetMSBuildFileName()                            
+                            FileName = GetMSBuildFileName(),
+                            Arguments = project.Path.FullPath,
+                            UseShellExecute = false
                     }                    
                 };
+                msbuildProcess.Start();
                 var reader = msbuildProcess.StandardOutput;
-                
-                while (!reader.EndOfStream)
+                yield return new TextBuildResult(string.Format("Building '{0}'...", project.Path.FullPath));
+
+                var content = reader.ReadToEnd().Split(new[]{'\r','\n'}, StringSplitOptions.RemoveEmptyEntries);
+                foreach(var line in content)
                 {
-                    var line = reader.ReadLine();
-                    yield return new TextBuildResult(line);
+                    //yield return new TextBuildResult(line);
                     foreach(var m in _parser.Parse(line)) yield return m;
                 }
+                yield return new TextBuildResult("Built...");
             }
             
         }
 
         string GetMSBuildFileName()
         {
-            throw new NotImplementedException();
+            return @"C:\windows\Microsoft.NET\Framework\v3.5\msbuild.exe";
         }
     }
     public class BuildResult

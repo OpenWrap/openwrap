@@ -1,7 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Net;
-using OpenRasta.IO;
 
 namespace OpenRasta.Client
 {
@@ -23,10 +21,17 @@ namespace OpenRasta.Client
             {
                 _response = (HttpWebResponse)e.Response;
             }
-            RaiseStatusChanged("Connected.");
-            if (_response.ContentLength > 0)
+            if (_response != null)
             {
-                _entity = new HttpEntity(new ProgressStream(_response.ContentLength, RaiseProgress, _response.GetResponseStream()));
+                RaiseStatusChanged("Connected.");
+                if (_response.ContentLength > 0)
+                {
+                    _entity = new HttpEntity(new ProgressStream(_response.ContentLength, RaiseProgress, _response.GetResponseStream()));
+                }
+            }
+            else
+            {
+                RaiseStatusChanged("No response.");
             }
         }
         
@@ -61,39 +66,5 @@ namespace OpenRasta.Client
         }
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
         public event EventHandler<ProgressEventArgs> Progress;
-    }
-
-    public class ProgressStream : WrapperStream
-    {
-        readonly long _size;
-        long _total = 0;
-        Action<int> _progressNotifier;
-
-        public ProgressStream(long size,Action<int> progressNotifier, Stream underlyingStream)
-            : base(underlyingStream)
-        {
-            _size = size;
-            _progressNotifier = progressNotifier;
-        }
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            int read = base.Read(buffer, offset, count);
-            NotifyProgress(read);
-            return read;
-        }
-
-        void NotifyProgress(int amount)
-        {
-            _total += amount;
-
-            _progressNotifier((int)(((double)_total / _size) * 100));
-        }
-
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            base.Write(buffer, offset, count);
-            NotifyProgress(count);
-        }
     }
 }

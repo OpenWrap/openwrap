@@ -18,8 +18,13 @@ namespace OpenWrap.Repositories.Http
         public HttpRepository(IFileSystem fileSystem, IHttpRepositoryNavigator navigator)
         {
             _navigator = navigator;
-            _packagesQuery = from package in navigator.Index().Packages
-                              select new HttpPackageInfo(fileSystem, this, navigator, package);
+            var index = navigator.Index();
+            _packagesQuery = index == null
+                                     ? Enumerable.Empty<HttpPackageInfo>()
+                                     : (
+                                        from package in index.Packages
+                                        select new HttpPackageInfo(fileSystem, this, navigator, package)
+                                       );
         }
 
         DateTime? GetModifiedTimeUtc(XAttribute attribute)
