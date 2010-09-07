@@ -22,8 +22,8 @@ namespace OpenWrap.Repositories.Http
             _packagesQuery = index == null
                                      ? Enumerable.Empty<HttpPackageInfo>()
                                      : (
-                                        from package in index.Packages
-                                        select new HttpPackageInfo(fileSystem, this, navigator, package)
+                                            from package in index.Packages
+                                            select new HttpPackageInfo(fileSystem, this, navigator, package)
                                        );
         }
 

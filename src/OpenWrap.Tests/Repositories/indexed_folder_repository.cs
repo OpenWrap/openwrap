@@ -26,17 +26,17 @@ namespace OpenWrap.Tests.Repositories
         [Test]
         public void index_file_exists()
         {
-            Repository.IndexFile.ShouldNotBeNull();
+            Repository.IndexDocument.ShouldNotBeNull();
         }
         [Test]
         public void index_file_is_not_empty()
         {
-            Repository.IndexFile.Document.ShouldNotBeNull();
+            Repository.IndexDocument.Document.ShouldNotBeNull();
         }
         [Test]
         public void index_file_contains_package()
         {
-            var package = Repository.IndexFile.Document.Descendants("wrap").FirstOrDefault();
+            var package = Repository.IndexDocument.Document.Descendants("wrap").FirstOrDefault();
             package.ShouldNotBeNull();
             package.Attribute("name").ShouldNotBeNull().Value.ShouldBe("isengard");
             package.Attribute("version").ShouldNotBeNull().Value.ShouldBe("2.1");

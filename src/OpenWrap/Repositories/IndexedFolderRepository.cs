@@ -12,25 +12,34 @@ namespace OpenWrap.Repositories
     public class IndexedFolderRepository : IPackageRepository
     {
         readonly IDirectory _directory;
+        IFile _indexFile;
 
         public IndexedFolderRepository(IDirectory directory)
         {
             _directory = directory.MustExist();
+            _indexFile = _directory.GetFile("index.wraplist");
+
             LoadOrCreateIndexFile();
         }
 
         void LoadOrCreateIndexFile()
         {
-            var indexFile = _directory.GetFile("index.wraplist");
-            if (!indexFile.Exists)
+            if (!_indexFile.Exists)
             {
-                using(var stream = indexFile.OpenWrite())
-                    XDocument.Parse("<wraplist/>").Save(new StreamWriter(stream, Encoding.UTF8));
+                SaveIndex(XDocument.Parse("<wraplist/>"));
             }
 
 
-            using(var stream = indexFile.OpenRead())
-                IndexFile = XDocument.Load(new XmlTextReader(stream));
+            using(var stream = _indexFile.OpenRead())
+                IndexDocument = XDocument.Load(new XmlTextReader(stream));
+        }
+
+        void SaveIndex(XDocument xDocument)
+        {
+            using(var stream = _indexFile.OpenWrite())
+            {
+                xDocument.Save(new StreamWriter(stream, Encoding.UTF8));
+            }
         }
 
         public ILookup<string, IPackageInfo> PackagesByName
@@ -49,7 +58,19 @@ namespace OpenWrap.Repositories
             using (var destinationStream = packageFile.OpenWrite())
                 packageStream.CopyTo(destinationStream);
 
-            return new ZipPackage(this, packageFile, null, ExportBuilders.All, false);
+            var zipPackage = new ZipPackage(this, packageFile, null, ExportBuilders.All, false);
+            IndexDocument.Document.Root.Add(
+                new XElement("wrap",
+                    new XAttribute("name", zipPackage.Name),
+                    new XAttribute("version", zipPackage.Version),
+                    new XElement("link",
+                        new XAttribute("rel", "package"),
+                        new XAttribute("href", packageFile.Name))
+                    ));
+
+            SaveIndex(IndexDocument);
+            
+            return zipPackage;
         }
 
         public bool CanPublish
@@ -62,6 +83,6 @@ namespace OpenWrap.Repositories
             get { throw new NotImplementedException(); }
         }
 
-        public XDocument IndexFile { get; private set; }
+        public XDocument IndexDocument { get; private set; }
     }
 }

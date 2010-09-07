@@ -15,15 +15,15 @@ namespace OpenWrap.Repositories
     {
         readonly IEnumerable<IExportBuilder> _builders;
         readonly bool _anchorsEnabled;
-        readonly IDirectory _cacheDirectoryPath;
+        readonly IDirectory _cacheDirectoryPathPath;
         readonly IFile _wrapFile;
         UncompressedPackage _cachedPackage;
 
-        public ZipPackage(IPackageRepository source, IFile wrapFile, IDirectory wrapCacheDirectory, IEnumerable<IExportBuilder> builders, bool anchorsEnabled)
+        public ZipPackage(IPackageRepository source, IFile wrapFile, IDirectory cacheDirectoryPath, IEnumerable<IExportBuilder> builders, bool anchorsEnabled)
         {
             Source = source;
             _wrapFile = wrapFile;
-            _cacheDirectoryPath = wrapCacheDirectory;
+            _cacheDirectoryPathPath = cacheDirectoryPath;
             _builders = builders;
             _anchorsEnabled = anchorsEnabled;
 
@@ -51,8 +51,8 @@ namespace OpenWrap.Repositories
         {
             if (_cachedPackage == null)
             {
-                new FastZip().ExtractZip(_wrapFile.Path.FullPath, _cacheDirectoryPath.MustExist().Path.FullPath, FastZip.Overwrite.Always, x => true, null, null, true);
-                _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectoryPath, _builders, _anchorsEnabled);
+                new FastZip().ExtractZip(_wrapFile.Path.FullPath, _cacheDirectoryPathPath.MustExist().Path.FullPath, FastZip.Overwrite.Always, x => true, null, null, true);
+                _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectoryPathPath, _builders, _anchorsEnabled);
             }
             return _cachedPackage;
         }
