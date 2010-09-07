@@ -121,6 +121,7 @@
     <Compile Include="Repositories\Http\PackageItem.cs" />
     <Compile Include="Repositories\Http\RequestExtensions.cs" />
     <Compile Include="Repositories\ICommandExportItem.cs" />
+    <Compile Include="Repositories\IndexedFolderRepository.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
     <Compile Include="Repositories\PackagePackager.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
