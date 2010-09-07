@@ -58,7 +58,7 @@ namespace OpenWrap.Repositories
             using (var destinationStream = packageFile.OpenWrite())
                 packageStream.CopyTo(destinationStream);
 
-            var zipPackage = new ZipPackage(this, packageFile, null, ExportBuilders.All, false);
+            var zipPackage = new CachedZipPackage(this, packageFile, null, ExportBuilders.All, false);
             IndexDocument.Document.Root.Add(
                 new XElement("wrap",
                     new XAttribute("name", zipPackage.Name),

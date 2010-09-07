@@ -11,7 +11,7 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Repositories
 {
-    public class ZipPackage : IPackageInfo
+    public class CachedZipPackage : IPackageInfo
     {
         readonly IEnumerable<IExportBuilder> _builders;
         readonly bool _anchorsEnabled;
@@ -19,7 +19,7 @@ namespace OpenWrap.Repositories
         readonly IFile _wrapFile;
         UncompressedPackage _cachedPackage;
 
-        public ZipPackage(IPackageRepository source, IFile wrapFile, IDirectory cacheDirectoryPath, IEnumerable<IExportBuilder> builders, bool anchorsEnabled)
+        public CachedZipPackage(IPackageRepository source, IFile wrapFile, IDirectory cacheDirectoryPath, IEnumerable<IExportBuilder> builders, bool anchorsEnabled)
         {
             Source = source;
             _wrapFile = wrapFile;

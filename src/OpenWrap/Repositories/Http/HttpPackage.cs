@@ -72,7 +72,7 @@ namespace OpenWrap.Repositories.Http
                 // we don't dispose here, the file will get disposed and deleted on exit if we're lucky.
             }
 
-            _loadedPackage = new ZipPackage(Source, temporaryFile, _fileSystem.GetTempDirectory(), Enumerable.Empty<IExportBuilder>(), false).Load();
+            _loadedPackage = new CachedZipPackage(Source, temporaryFile, _fileSystem.GetTempDirectory(), Enumerable.Empty<IExportBuilder>(), false).Load();
         }
 
     }

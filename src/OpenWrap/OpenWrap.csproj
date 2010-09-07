@@ -149,7 +149,7 @@
     <Compile Include="Exports\IExport.cs" />
     <Compile Include="Exports\IExportItem.cs" />
     <Compile Include="Repositories\Http\HttpRepository.cs" />
-    <Compile Include="Repositories\ZipPackage.cs" />
+    <Compile Include="Repositories\CachedZipPackage.cs" />
     <Compile Include="Services\IService.cs" />
     <Compile Include="Services\IWrapDescriptorMonitoringService.cs" />
     <Compile Include="Services\WrapDependencyResolver.cs" />
