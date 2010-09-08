@@ -37,7 +37,11 @@ namespace OpenWrap.Commands.Wrap
                  if (t is TextBuildResult)
                      yield return new GenericMessage(((TextBuildResult)t).Text);
                  else if (t is FileBuildResult)
-                     buildFiles.Add((FileBuildResult)t);
+                 {
+                     var buildResult = (FileBuildResult)t;
+                     buildFiles.Add(buildResult);
+                     yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
+                 }
              }
             if (buildFiles.Count > 0)
             {

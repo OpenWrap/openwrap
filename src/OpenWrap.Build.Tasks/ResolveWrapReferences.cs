@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
@@ -54,6 +55,8 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string ProjectFilePath { get; set; }
 
+        public ITaskItem[] ExcludeAssemblies { get; set; }
+
         [Output]
         public ITaskItem[] References { get; set; }
 
@@ -99,7 +102,8 @@ namespace OpenWrap.Build.Tasks
         public void WrapAssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths)
         {
             var items = new List<ITaskItem>();
-            foreach (var assemblyRef in assemblyPaths)
+            var excludedAssemblies = ExcludeAssemblies != null ? ExcludeAssemblies.Select(x => x.ItemSpec).ToList() : new List<string>(0);
+            foreach (var assemblyRef in assemblyPaths.Where(x=> !excludedAssemblies.Contains(x.AssemblyName.Name)))
             {
                 Log.LogMessage("Adding OpenWrap reference to '{0}'", assemblyRef.FullPath);
                 var item = new TaskItem(assemblyRef.AssemblyName.FullName);

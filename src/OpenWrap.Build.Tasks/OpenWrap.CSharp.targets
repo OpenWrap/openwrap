@@ -9,7 +9,7 @@
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">true</OpenWrap-EnableVisualStudioIntegration>
     
     <!-- Emit output information post-build for OpenWrap to create packages -->
-    <OpenWrap-EmitOutputInstructions Condition="'$(OpenWrap-EmitOutputInstructions)' == ''">true</OpenWrap-EmitOutputInstructions>
+    <OpenWrap-EmitOutputInstructions Condition="'$(OpenWrap-EmitOutputInstructions)' == ''">false</OpenWrap-EmitOutputInstructions>
     
     
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == ''">false</OpenWrap-EnableVisualStudioIntegration>
@@ -61,6 +61,7 @@
       Platform="$(Platform)"
       Profile="$(OpenWrap-TargetProfile)"
       ProjectFilePath="$(MSBuildProjectFullPath)"
+      ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)"
       CopyLocal="true"
       EnableVisualStudioIntegration="$(BuildsInVisualStudio)">
       <Output TaskParameter="References" ItemName="Reference" />
@@ -79,15 +80,16 @@
   <Target Name="OpenWrap-AfterBuild" 
           Condition="$(OpenWrap-EmitOutputInstructions)">
     <!-- Assembly output -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(IntermediateAssembly.FullPath)')]" Importance="low" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(IntermediateAssembly.FullPath)')]" />
     <!-- Module outputs -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(AddModules.FullPath)')]" Condition="Exists('@(AddModules)')" Importance="low" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(AddModules.FullPath)')]" Condition="Exists('@(AddModules)')" />
     <!-- Serialization assemblies -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'$(OutDir)$(_SGenDllName)')]" Condition="'$(_SGenDllCreated)'=='true'" Importance="low" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'$(OutDir)$(_SGenDllName)')]" Condition="'$(_SGenDllCreated)'=='true'" />
     <!-- Xml documentation -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(DocFileItem.FullPath)')]" Condition="'$(_DocumentationFileProduced)'=='true'" Importance="low" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(DocFileItem.FullPath)')]" Condition="'$(_DocumentationFileProduced)'=='true'" />
     <!-- Satellite assemblies-->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]" Importance="low" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
+             Condition="Exists('@(IntermediateSatelliteAssembliesWithTargetPath)')"/>
   </Target>
   
 
