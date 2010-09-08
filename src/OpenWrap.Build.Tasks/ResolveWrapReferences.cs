@@ -27,6 +27,7 @@ namespace OpenWrap.Build.Tasks
 
         
         public bool CopyLocal { get; set; }
+
         public bool EnableVisualStudioIntegration { get; set; }
 
         public ExecutionEnvironment Environment
@@ -55,6 +56,7 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string ProjectFilePath { get; set; }
 
+        
         public ITaskItem[] ExcludeAssemblies { get; set; }
 
         [Output]

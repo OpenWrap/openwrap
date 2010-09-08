@@ -8,7 +8,7 @@ namespace OpenWrap.Build.BuildEngines
 {
     public class BuiltInstructionParser
     {
-        static readonly Regex _buildInstructionRegex = new Regex(@"\[built\((<?export>.+)(\,(?<fileSpec>.*))\)\]");
+        static readonly Regex _buildInstructionRegex = new Regex(@"\[built\((?<export>.+)(\,'(?<fileSpec>.*)')\)\]");
 
         public IEnumerable<FileBuildResult> Parse(string line)
         {

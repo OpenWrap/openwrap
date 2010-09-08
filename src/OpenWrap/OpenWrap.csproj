@@ -66,6 +66,7 @@
     <Compile Include="Build\BuildEngines\TextBuildResult.cs" />
     <Compile Include="Build\InitializeOpenWrap.cs" />
     <Compile Include="Build\IWrapAssemblyClient.cs" />
+    <Compile Include="Build\VersionNumberGenerator.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
     <Compile Include="Commands\AttributeBasedCommandDescriptor.cs" />
     <Compile Include="Commands\CommandAttribute.cs" />
@@ -212,17 +213,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\wraps\ext\openfilesystem\src\OpenFileSystem\OpenFileSystem.csproj">
-      <Project>{0174E0E7-B915-46A9-B3D8-D62007E55694}</Project>
-      <Name>OpenFileSystem</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
       <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
       <Name>OpenRasta.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+  <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -254,7 +254,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 DependencyDescriptor = new WrapDescriptor
                 {
                     Name = "test",
-                    Version = new Version(1, 0)
+                    Version = new Version("1.0")
                 };
                 ProjectRepository = new InMemoryRepository("Local repository");
                 SystemRepository = new InMemoryRepository("System repository");

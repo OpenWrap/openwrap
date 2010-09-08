@@ -79,6 +79,11 @@
 
   <Target Name="OpenWrap-AfterBuild" 
           Condition="$(OpenWrap-EmitOutputInstructions)">
+    <!-- Descriptor file -->
+    <Message Text="[built(.,'%(_WrapFile.FullPath)')]" />
+    <!-- Version file -->
+    <Message Text="[built(.,'@(_WrapFile->'%(RootDir)%(Directory)')version')]" />
+
     <!-- Assembly output -->
     <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(IntermediateAssembly.FullPath)')]" />
     <!-- Module outputs -->

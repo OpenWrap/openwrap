@@ -6,7 +6,7 @@ depends: openwrap
 depends: openwrap
 depends: openwrap
 depends: openwrap
-depends: openwrap
+depends: openfilesystem
 
 
 
