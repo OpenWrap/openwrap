@@ -1,4 +1,4 @@
-﻿depends: openwrap content
+﻿depends: openwrap
 depends: openfilesystem
 anchored: true
 

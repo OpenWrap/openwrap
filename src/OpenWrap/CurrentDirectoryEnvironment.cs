@@ -78,7 +78,8 @@ namespace OpenWrap
             ConfigurationDirectory = FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory);
 
             RemoteRepositories = WrapServices.GetService<IConfigurationManager>().LoadRemoteRepositories()
-                .Select(x => new HttpRepository(FileSystem, new HttpRepositoryNavigator(x.Value.Href)))
+                .Select(x => CreateRemoteRepository(x.Value.Href))
+                .Where(x=>x != null)
                 .Cast<IPackageRepository>()
                 .ToList();
 
@@ -88,6 +89,15 @@ namespace OpenWrap
                 Profile = "net35"
             };
 
+        }
+
+        HttpRepository CreateRemoteRepository(Uri repositoryHref)
+        {
+            if (repositoryHref.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase))
+                return new HttpRepository(FileSystem, new HttpRepositoryNavigator(repositoryHref));
+            if (repositoryHref.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
+                return new IndexedFolderRepository(FileSystem.GetDirectory(repositoryHref.LocalPath));
+            return null;
         }
     }
 }

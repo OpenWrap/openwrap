@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -11,9 +12,12 @@ namespace OpenWrap.Commands.Wrap
         public string RemoteRepository { get; set; }
 
         [CommandInput(IsRequired = true, Position = 1)]
-        public string Name { get; set; }
+        public string Path { get; set; }
+
+        
         public IEnumerable<ICommandOutput> Execute()
         {
+
             yield break;
         }
     }

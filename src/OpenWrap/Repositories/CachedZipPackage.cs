@@ -53,7 +53,6 @@ namespace OpenWrap.Repositories
             {
                 ExtractWrapFile(_wrapFile, _cacheDirectoryPathPath);
 
-                //new FastZip().ExtractZip(_wrapFile.Path.FullPath, _cacheDirectoryPathPath.MustExist().Path.FullPath, FastZip.Overwrite.Always, x => true, null, null, true);
                 _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectoryPathPath, _builders, _anchorsEnabled);
             }
             return _cachedPackage;

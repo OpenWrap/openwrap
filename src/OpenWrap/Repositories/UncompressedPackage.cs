@@ -28,10 +28,9 @@ namespace OpenWrap.Repositories
             // get the descriptor file inside the package
             var descriptorName = originalPackage.NameWithoutExtension;
             Source = source;
-            var wrapDescriptor = wrapCacheDirectory.FindFile(descriptorName + ".wrapdesc")
-                ?? wrapCacheDirectory.FindFile(WrapNameUtility.GetName(descriptorName) + ".wrapdesc");
+            var wrapDescriptor = wrapCacheDirectory.Files("*.wrapdesc").SingleOrDefault();
             if (wrapDescriptor == null)
-                throw new InvalidOperationException("Could not find descriptor in wrap cache directory");
+                throw new InvalidOperationException("Could not find descriptor in wrap cache directory, or there are multiple .wrapdesc files in the package.");
             Descriptor = new WrapDescriptorParser().ParseFile(wrapDescriptor);
             if (allowAnchoring)
                 VerifyAnchoring();
