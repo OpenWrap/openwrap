@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{05F146AE-9315-44B7-AF52-9B5925C90E27}</ProjectGuid>
+    <ProjectGuid>{9F5D9D90-DD43-45E9-BB70-B8EADE27FE82}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenWrap.Resharper</RootNamespace>
-    <AssemblyName>OpenWrap.Resharper.45</AssemblyName>
+    <AssemblyName>OpenWrap.Resharper.511</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -29,28 +29,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JetBrains.Platform.ReSharper.ProjectModel, Version=4.5.1288.2, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+    <Reference Include="JetBrains.Platform.ReSharper.ProjectModel, Version=5.1.1751.8, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\resharper-4.5.0\JetBrains.Platform.ReSharper.ProjectModel.dll</HintPath>
+      <HintPath>..\..\lib\resharper-5.1.1\JetBrains.Platform.ReSharper.ProjectModel.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Platform.ReSharper.Shell, Version=4.5.1288.2, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+    <Reference Include="JetBrains.Platform.ReSharper.Shell, Version=5.1.1751.8, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\resharper-4.5.0\JetBrains.Platform.ReSharper.Shell.dll</HintPath>
+      <HintPath>..\..\lib\resharper-5.1.1\JetBrains.Platform.ReSharper.Shell.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Platform.ReSharper.Util, Version=4.5.1288.2, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+    <Reference Include="JetBrains.Platform.ReSharper.Util, Version=5.1.1751.8, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\resharper-4.5.0\JetBrains.Platform.ReSharper.Util.dll</HintPath>
+      <HintPath>..\..\lib\resharper-5.1.1\JetBrains.Platform.ReSharper.Util.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonProperties.cs">
-      <Link>Properties\CommonProperties.cs</Link>
+    <Compile Include="..\OpenWrap.Resharper.v450\ResharperIntegrationService.cs">
+      <Link>ResharperIntegrationService.cs</Link>
     </Compile>
-    <Compile Include="ResharperIntegrationService.cs" />
-    <Compile Include="ResharperProjectUpdater.cs" />
+    <Compile Include="..\OpenWrap.Resharper.v450\ResharperProjectUpdater.cs">
+      <Link>ResharperProjectUpdater.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +61,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
-
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

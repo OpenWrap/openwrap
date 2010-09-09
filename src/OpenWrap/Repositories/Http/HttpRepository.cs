@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using OpenWrap.Exports;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
-using OpenWrap.Tasks;
 
 namespace OpenWrap.Repositories.Http
 {
@@ -15,27 +13,37 @@ namespace OpenWrap.Repositories.Http
         readonly IHttpRepositoryNavigator _navigator;
 
 
+        readonly IEnumerable<HttpPackageInfo> _packagesQuery;
+        ILookup<string, IPackageInfo> _packagesByName;
+
         public HttpRepository(IFileSystem fileSystem, IHttpRepositoryNavigator navigator)
         {
             _navigator = navigator;
-            var index = navigator.Index();
-            _packagesQuery = index == null
+            IndexDocument = navigator.Index();
+            _packagesQuery = IndexDocument == null
                                      ? Enumerable.Empty<HttpPackageInfo>()
                                      : (
-                                            from package in index.Packages
-                                            select new HttpPackageInfo(fileSystem, this, navigator, package)
+                                               from package in IndexDocument.Packages
+                                               select new HttpPackageInfo(fileSystem, this, navigator, package)
                                        );
         }
 
-        DateTime? GetModifiedTimeUtc(XAttribute attribute)
+        public bool CanPublish
         {
-            if (attribute == null) return null;
-            DateTime dt;
-            return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
+            get { return Navigator.CanPublish; }
         }
 
-        ILookup<string, IPackageInfo> _packagesByName;
-        IEnumerable<HttpPackageInfo> _packagesQuery;
+        public PackageDocument IndexDocument { get; private set; }
+
+        public string Name
+        {
+            get { return string.Format("Remote [{0}]", Navigator); }
+        }
+
+        public IHttpRepositoryNavigator Navigator
+        {
+            get { return _navigator; }
+        }
 
         public ILookup<string, IPackageInfo> PackagesByName
         {
@@ -46,21 +54,6 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
-        void EnsureDataLoaded()
-        {
-            if (_packagesByName == null)
-            {
-                try
-                {
-                    _packagesByName = _packagesQuery.Cast<IPackageInfo>().ToLookup(x => x.Name);
-                    
-                }
-                catch
-                {
-                }
-            }
-        }
-
         public IPackageInfo Find(WrapDependency dependency)
         {
             return PackagesByName.Find(dependency);
@@ -68,23 +61,34 @@ namespace OpenWrap.Repositories.Http
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            if (!_navigator.CanPublish)
-                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", _navigator));
+            if (!Navigator.CanPublish)
+                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));
 
-            _navigator.PushPackage(packageFileName, packageStream);
+            Navigator.PushPackage(packageFileName, packageStream);
             _packagesByName = null;
             EnsureDataLoaded();
-            return PackagesByName[WrapNameUtility.GetName(packageFileName)].FirstOrDefault(x=>x.Version == WrapNameUtility.GetVersion(packageFileName));
+            return PackagesByName[WrapNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == WrapNameUtility.GetVersion(packageFileName));
         }
 
-        public bool CanPublish
+        void EnsureDataLoaded()
         {
-            get { return _navigator.CanPublish; }
+            if (_packagesByName == null)
+            {
+                try
+                {
+                    _packagesByName = _packagesQuery.Cast<IPackageInfo>().ToLookup(x => x.Name);
+                }
+                catch
+                {
+                }
+            }
         }
 
-        public string Name
+        DateTime? GetModifiedTimeUtc(XAttribute attribute)
         {
-            get { return string.Format("Remote [{0}]", _navigator); }
+            if (attribute == null) return null;
+            DateTime dt;
+            return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
         }
     }
 }

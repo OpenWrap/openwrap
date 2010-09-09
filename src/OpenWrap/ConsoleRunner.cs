@@ -137,6 +137,7 @@ namespace OpenWrap
 
         static IEnumerable<ICommandOutput> AllOutputs(CommandLineProcessor processor, string[] args)
         {
+            return processor.Execute(args);
             var eventListener = WrapServices.GetService<ITaskManager>().GetListener();
             return Wrap(processor.Execute(args), eventListener).Merge(eventListener.Start().Select(x => ProgressMessage(x)));
         }

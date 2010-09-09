@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}</ProjectGuid>
+    <ProjectGuid>{A9FA9F17-3DBE-4848-9044-DD734FDF554B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenWrap.Resharper</RootNamespace>
-    <AssemblyName>OpenWrap.Resharper.50</AssemblyName>
+    <AssemblyName>OpenWrap.Resharper.510</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -46,10 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\OpenWrap.Resharper.45\ResharperIntegrationService.cs">
+    <Compile Include="..\OpenWrap.Resharper.v450\ResharperIntegrationService.cs">
       <Link>ResharperIntegrationService.cs</Link>
     </Compile>
-    <Compile Include="..\OpenWrap.Resharper.45\ResharperProjectUpdater.cs">
+    <Compile Include="..\OpenWrap.Resharper.v450\ResharperProjectUpdater.cs">
       <Link>ResharperProjectUpdater.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,7 +60,6 @@
       <Name>OpenWrap</Name>
     </ProjectReference>
   </ItemGroup>
-
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

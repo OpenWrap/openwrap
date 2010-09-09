@@ -36,7 +36,6 @@ namespace OpenWrap.Repositories
             if (allowAnchoring)
                 VerifyAnchoring();
         }
-
         void VerifyAnchoring()
         {
             if (Descriptor.IsAnchored)

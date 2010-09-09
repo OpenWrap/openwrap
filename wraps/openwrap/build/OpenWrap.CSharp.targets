@@ -39,7 +39,14 @@
   </ItemGroup>
   <Target Name="_Initialize">
     <InitializeOpenWrap />
-    
+
+    <InitializeVisualStudioIntegration
+      WrapDescriptor="@(_WrapFile)"
+      WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
+      Platform="$(Platform)"
+      Profile="$(OpenWrap-TargetProfile)"
+      ProjectFilePath="$(MSBuildProjectFullPath)"
+      EnableVisualStudioIntegration="$(OpenWrap-EnableVisualStudioIntegration)" />
     <!-- Sanity checks -->
     <Error Condition="!Exists('%(_WrapFile.FullPath)')" Text="Could not locate the .wrapdesc file '%(FullPath)'." />
     <Error Condition="'$(OutputType)' != 'winexe' and '$(OutputType)' != 'exe' and '$(OutputType)' != 'library'" Text="The project type '$(OutputType)' is not supported." />
@@ -62,8 +69,7 @@
       Profile="$(OpenWrap-TargetProfile)"
       ProjectFilePath="$(MSBuildProjectFullPath)"
       ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)"
-      CopyLocal="true"
-      EnableVisualStudioIntegration="$(BuildsInVisualStudio)">
+      CopyLocal="true">
       <Output TaskParameter="References" ItemName="Reference" />
     </ResolveWrapReferences>
   </Target>

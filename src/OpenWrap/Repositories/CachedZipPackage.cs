@@ -6,8 +6,8 @@ using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
-using OpenFileSystem.IO;
 using OpenWrap.Repositories;
+using OpenFileSystem.IO;
 
 namespace OpenWrap.Repositories
 {
@@ -51,10 +51,31 @@ namespace OpenWrap.Repositories
         {
             if (_cachedPackage == null)
             {
-                new FastZip().ExtractZip(_wrapFile.Path.FullPath, _cacheDirectoryPathPath.MustExist().Path.FullPath, FastZip.Overwrite.Always, x => true, null, null, true);
+                ExtractWrapFile(_wrapFile, _cacheDirectoryPathPath);
+
+                //new FastZip().ExtractZip(_wrapFile.Path.FullPath, _cacheDirectoryPathPath.MustExist().Path.FullPath, FastZip.Overwrite.Always, x => true, null, null, true);
                 _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectoryPathPath, _builders, _anchorsEnabled);
             }
             return _cachedPackage;
+        }
+        // TODO: Replace with clean OFS-based zip methods
+        void ExtractWrapFile(IFile wrapFile, IDirectory destinationDirectory)
+        {
+            var nt = new WindowsNameTransform(destinationDirectory.Path.FullPath);
+            using (var zipFile = new ZipFile(wrapFile.OpenRead()))
+            {
+                foreach (ZipEntry zipEntry in zipFile)
+                {
+                    if (zipEntry.IsFile)
+                    {
+                        var filePath = nt.TransformFile(zipEntry.Name);
+                        using (var targetFile = destinationDirectory.FileSystem.GetFile(filePath).MustExist().OpenWrite())
+                        using (var sourceFile = zipFile.GetInputStream(zipEntry))
+                            sourceFile.CopyTo(targetFile);
+                        // TODO: restore last write time here by adding it to OFS
+                    }
+                }
+            }
         }
 
         public string FullName

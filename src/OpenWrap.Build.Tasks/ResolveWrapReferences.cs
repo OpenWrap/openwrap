@@ -6,15 +6,15 @@ using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
-using OpenWrap.Resharper;
 using OpenWrap.Services;
+using OpenFileSystem.IO.FileSystem.Local;
 
 namespace OpenWrap.Build.Tasks
 {
+
     public class ResolveWrapReferences : Task, IWrapAssemblyClient
     {
         readonly IFileSystem _fileSystem;
@@ -85,8 +85,6 @@ namespace OpenWrap.Build.Tasks
             try
             {
                 EnsureWrapRepositoryIsInitialized();
-
-                HookupToVisualStudio();
             }
             catch (FileNotFoundException e)
             {
@@ -105,8 +103,14 @@ namespace OpenWrap.Build.Tasks
         {
             var items = new List<ITaskItem>();
             var excludedAssemblies = ExcludeAssemblies != null ? ExcludeAssemblies.Select(x => x.ItemSpec).ToList() : new List<string>(0);
-            foreach (var assemblyRef in assemblyPaths.Where(x=> !excludedAssemblies.Contains(x.AssemblyName.Name)))
+
+            foreach (var assemblyRef in assemblyPaths)
             {
+                if (excludedAssemblies.Contains(assemblyRef.AssemblyName.Name, StringComparer.OrdinalIgnoreCase))
+                {
+                    Log.LogMessage("Ignoring openWrap reference to '{0}'", assemblyRef.FullPath);
+                    continue;
+                }
                 Log.LogMessage("Adding OpenWrap reference to '{0}'", assemblyRef.FullPath);
                 var item = new TaskItem(assemblyRef.AssemblyName.FullName);
                 item.SetMetadata("HintPath", assemblyRef.FullPath);
@@ -115,11 +119,6 @@ namespace OpenWrap.Build.Tasks
                 items.Add(item);
             }
             References = items.ToArray();
-        }
-
-        void EnableResharperIntegration()
-        {
-            WrapServices.TryRegisterService(() => new ResharperIntegrationService(Environment));
         }
 
         void EnsureWrapRepositoryIsInitialized()
@@ -132,20 +131,6 @@ namespace OpenWrap.Build.Tasks
             PackageRepository = new FolderRepository(WrapsDirectoryPath, false);
         }
 
-        void HookupToVisualStudio()
-        {
-            if (!EnableVisualStudioIntegration) return;
-            try
-            {
-                Debugger.Break();
-                EnableResharperIntegration();
-            }
-            catch
-            {
-            }
-            WrapServices.GetService<ResharperIntegrationService>()
-                    .TryAddNotifier(WrapDescriptorPath, PackageRepository, ProjectFilePath);
-        }
 
         bool RefreshWrapDependencies()
         {

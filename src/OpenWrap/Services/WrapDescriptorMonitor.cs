@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -21,7 +22,10 @@ namespace OpenWrap.Services
         {
             if (!wrapFile.Exists)
                 return;
-            
+
+            if (packageRepository == null) throw new ArgumentNullException("packageRepository");
+            if (client == null) throw new ArgumentNullException("client");
+   
             var descriptor = GetDescriptor(wrapFile, packageRepository);
             if (client.IsLongRunning)
                 descriptor.Clients.Add(client);

@@ -121,12 +121,14 @@
     <Compile Include="Repositories\CommandExportBuilder.cs" />
     <Compile Include="Repositories\CommandExportItem.cs" />
     <Compile Include="Repositories\CurrentDirectoryRepository.cs" />
+    <Compile Include="Repositories\DependencyResolutionFailedResult.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
+    <Compile Include="Repositories\IndexedFolderRepository.cs" />
+    <Compile Include="Repositories\NetworkShareNavigator.cs" />
     <Compile Include="Repositories\Http\PackageDocument.cs" />
     <Compile Include="Repositories\Http\PackageItem.cs" />
     <Compile Include="Repositories\Http\RequestExtensions.cs" />
     <Compile Include="Repositories\ICommandExportItem.cs" />
-    <Compile Include="Repositories\IndexedFolderRepository.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
     <Compile Include="Repositories\PackagePackager.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
@@ -219,7 +221,6 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
-
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Dependencies;
@@ -31,12 +32,12 @@ namespace OpenWrap.Tests.Repositories
         [Test]
         public void index_file_is_not_empty()
         {
-            Repository.IndexDocument.Document.ShouldNotBeNull();
+            IndexDocument.Document.ShouldNotBeNull();
         }
         [Test]
         public void index_file_contains_package()
         {
-            var package = Repository.IndexDocument.Document.Descendants("wrap").FirstOrDefault();
+            var package = IndexDocument.Document.Descendants("wrap").FirstOrDefault();
             package.ShouldNotBeNull();
             package.Attribute("name").ShouldNotBeNull().Value.ShouldBe("isengard");
             package.Attribute("version").ShouldNotBeNull().Value.ShouldBe("2.1");
@@ -61,6 +62,7 @@ namespace OpenWrap.Tests.Repositories
             protected InMemoryFileSystem FileSystem { get; set; }
             protected ILookup<string, IPackageInfo> PackagesByName { get; set; }
             protected IPackageInfo FoundPackage { get; set; }
+            protected XDocument IndexDocument { get { return ((NetworkShareNavigator)Repository.Navigator).IndexDocument; } }
 
             protected void given_indexed_repository(string path)
             {
