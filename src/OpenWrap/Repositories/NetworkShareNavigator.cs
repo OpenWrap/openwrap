@@ -15,14 +15,14 @@ namespace OpenWrap.Repositories
         readonly IFile _indexFile;
         public NetworkShareNavigator(IDirectory directory)
         {
-            _directory = directory.MustExist();
+            _directory = directory;
             _indexFile = _directory.GetFile("index.wraplist");
-
-            LoadOrCreateIndexFile();
-            
         }
-        void LoadOrCreateIndexFile()
+        void EnsureIndexFileLoaded()
         {
+            if (_indexDocument != null)
+                return;
+            _directory.MustExist();
             if (!_indexFile.Exists)
             {
                 SaveIndex(XDocument.Parse("<wraplist/>"));
@@ -33,7 +33,12 @@ namespace OpenWrap.Repositories
                 IndexDocument = XDocument.Load(new XmlTextReader(stream));
         }
 
-        public XDocument IndexDocument { get; private set; }
+        XDocument _indexDocument;
+        public XDocument IndexDocument
+        {
+            get { EnsureIndexFileLoaded(); return _indexDocument; }
+            private set { _indexDocument = value; }
+        }
 
         void SaveIndex(XDocument xDocument)
         {
@@ -46,6 +51,7 @@ namespace OpenWrap.Repositories
 
         public PackageDocument Index()
         {
+            
             return IndexDocument.ParsePackageDocument();
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using OpenFileSystem.IO.FileSystem.Local;
@@ -22,12 +23,12 @@ namespace OpenWrap
 
         public static int Main(string[] args)
         {
+            WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
             WrapServices.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
             WrapServices.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(WrapServices.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
             WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
             WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
-            WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
             WrapServices.RegisterService<ITaskManager>(new TaskManager());
 
             var commands = ReadCommands(WrapServices.GetService<IEnvironment>());
@@ -61,6 +62,11 @@ namespace OpenWrap
                 Console.ReadKey();
             }
             return returnCode;
+        }
+
+        static void LoadBootstrapAssemblies()
+        {
+            
         }
 
         static void RenderOutput(ICommandOutput commandOutput)

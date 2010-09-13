@@ -9,7 +9,7 @@
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">true</OpenWrap-EnableVisualStudioIntegration>
     
     <!-- Emit output information post-build for OpenWrap to create packages -->
-    <OpenWrap-EmitOutputInstructions Condition="'$(OpenWrap-EmitOutputInstructions)' == ''">false</OpenWrap-EmitOutputInstructions>
+    <OpenWrap-EmitOutputInstructions Condition="'$(OpenWrap-EmitOutputInstructions)' == ''">true</OpenWrap-EmitOutputInstructions>
     
     
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == ''">false</OpenWrap-EnableVisualStudioIntegration>
@@ -39,14 +39,7 @@
   </ItemGroup>
   <Target Name="_Initialize">
     <InitializeOpenWrap />
-
-    <InitializeVisualStudioIntegration
-      WrapDescriptor="@(_WrapFile)"
-      WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
-      Platform="$(Platform)"
-      Profile="$(OpenWrap-TargetProfile)"
-      ProjectFilePath="$(MSBuildProjectFullPath)"
-      EnableVisualStudioIntegration="$(OpenWrap-EnableVisualStudioIntegration)" />
+    
     <!-- Sanity checks -->
     <Error Condition="!Exists('%(_WrapFile.FullPath)')" Text="Could not locate the .wrapdesc file '%(FullPath)'." />
     <Error Condition="'$(OutputType)' != 'winexe' and '$(OutputType)' != 'exe' and '$(OutputType)' != 'library'" Text="The project type '$(OutputType)' is not supported." />
@@ -68,8 +61,8 @@
       Platform="$(Platform)"
       Profile="$(OpenWrap-TargetProfile)"
       ProjectFilePath="$(MSBuildProjectFullPath)"
-      ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)"
-      CopyLocal="true">
+      CopyLocal="true"
+      EnableVisualStudioIntegration="$(BuildsInVisualStudio)">
       <Output TaskParameter="References" ItemName="Reference" />
     </ResolveWrapReferences>
   </Target>
@@ -85,22 +78,16 @@
 
   <Target Name="OpenWrap-AfterBuild" 
           Condition="$(OpenWrap-EmitOutputInstructions)">
-    <!-- Descriptor file -->
-    <Message Text="[built(.,'%(_WrapFile.FullPath)')]" />
-    <!-- Version file -->
-    <Message Text="[built(.,'@(_WrapFile->'%(RootDir)%(Directory)')version')]" />
-
     <!-- Assembly output -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(IntermediateAssembly.FullPath)')]" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(IntermediateAssembly.FullPath)')]" Importance="low" />
     <!-- Module outputs -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(AddModules.FullPath)')]" Condition="Exists('@(AddModules)')" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(AddModules.FullPath)')]" Condition="Exists('@(AddModules)')" Importance="low" />
     <!-- Serialization assemblies -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'$(OutDir)$(_SGenDllName)')]" Condition="'$(_SGenDllCreated)'=='true'" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'$(OutDir)$(_SGenDllName)')]" Condition="'$(_SGenDllCreated)'=='true'" Importance="low" />
     <!-- Xml documentation -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(DocFileItem.FullPath)')]" Condition="'$(_DocumentationFileProduced)'=='true'" />
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(DocFileItem.FullPath)')]" Condition="'$(_DocumentationFileProduced)'=='true'" Importance="low" />
     <!-- Satellite assemblies-->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
-             Condition="Exists('@(IntermediateSatelliteAssembliesWithTargetPath)')"/>
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]" Importance="low" />
   </Target>
   
 

@@ -10,7 +10,6 @@ using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap;
 using OpenWrap.Dependencies;
-using OpenWrap.Exports;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
@@ -311,45 +310,6 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             }
         }
 
-        public class InMemoryPackage : IPackageInfo, IPackage
-        {
-            public ICollection<WrapDependency> Dependencies { get; set; }
-
-            public InMemoryPackage()
-            {
-                LastModifiedTimeUtc = DateTime.Now;
-            }
-            public string FullName
-            {
-                get { return Name + "-" + Version; }
-            }
-
-            public DateTime? LastModifiedTimeUtc
-            {
-                get; private set;
-            }
-
-            public string Name { get; set; }
-
-            public IPackageRepository Source { get; set; }
-            public Version Version { get; set; }
-
-            public IExport GetExport(string exportName, ExecutionEnvironment environment)
-            {
-                return null;
-            }
-
-            public Stream OpenStream()
-            {
-                return new MemoryStream(0);
-            }
-
-            public IPackage Load()
-            {
-                return this;
-            }
-
-        }
         public static class PackageBuilder
         {
 

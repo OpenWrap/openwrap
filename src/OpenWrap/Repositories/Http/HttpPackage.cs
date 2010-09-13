@@ -65,11 +65,9 @@ namespace OpenWrap.Repositories.Http
             if (_loadedPackage != null) return;
 
             IFile temporaryFile = _fileSystem.CreateTempFile();
-            using (var stream = _httpNavigator.LoadPackage(_package))
-            {
-                stream.CopyTo(temporaryFile.OpenWrite());
-                // we don't dispose here, the file will get disposed and deleted on exit if we're lucky.
-            }
+            using (var sourceStream = _httpNavigator.LoadPackage(_package))
+            using (var destinationStream = temporaryFile.OpenWrite())
+                sourceStream.CopyTo(destinationStream);
 
             _loadedPackage = new CachedZipPackage(Source, temporaryFile, _fileSystem.CreateTempDirectory(), Enumerable.Empty<IExportBuilder>(), false).Load();
         }

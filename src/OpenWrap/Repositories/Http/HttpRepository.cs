@@ -20,13 +20,17 @@ namespace OpenWrap.Repositories.Http
         {
             _navigator = navigator;
             Name = repositoryName;
+            _packagesQuery = LoadPackages(navigator, fileSystem);
+        }
+
+        IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
+        {
             IndexDocument = navigator.Index();
-            _packagesQuery = IndexDocument == null
-                                     ? Enumerable.Empty<HttpPackageInfo>()
-                                     : (
-                                               from package in IndexDocument.Packages
-                                               select new HttpPackageInfo(fileSystem, this, navigator, package)
-                                       );
+
+            if (IndexDocument == null)
+                yield break;
+            foreach (var package in IndexDocument.Packages)
+                yield return new HttpPackageInfo(fileSystem, this, navigator, package);
         }
 
         public bool CanPublish
@@ -81,6 +85,10 @@ namespace OpenWrap.Repositories.Http
                 }
                 catch
                 {
+                }
+                finally
+                {
+                    _packagesByName = _packagesByName ?? Enumerable.Empty<IPackageInfo>().ToLookup(x=>string.Empty  );
                 }
             }
         }
