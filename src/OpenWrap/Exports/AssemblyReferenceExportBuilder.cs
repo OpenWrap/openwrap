@@ -54,6 +54,9 @@ namespace OpenWrap.Exports
 
         private bool ProfileMatches(string binProfile, string envProfile)
         {
+            if (envProfile == "net40")
+                return binProfile == "net40" || binProfile == "net35" || binProfile == "net30" || binProfile == "net20";
+
             if (envProfile == "net35")
                 return binProfile == "net35" || binProfile == "net30" || binProfile == "net20";
             if (envProfile == "net30")
