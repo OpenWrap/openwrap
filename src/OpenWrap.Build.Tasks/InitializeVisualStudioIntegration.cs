@@ -11,7 +11,7 @@ namespace OpenWrap.Build.Tasks
     public class InitializeVisualStudioIntegration : Task
     {
         public bool EnableVisualStudioIntegration { get; set; }
-        static object _resharperHook;
+        object _resharperHook;
 
         [Required]
         public string Platform { get; set; }

@@ -41,6 +41,7 @@ namespace OpenWrap.Resharper
                     .ExecuteOrQueue("Updating OpenWrap references",
                                     () =>
                                     {
+                                        //Debugger.Launch();
                                         using (WriteLockCookie.Create())
                                         {
                                             if (SolutionManager.Instance == null) return;

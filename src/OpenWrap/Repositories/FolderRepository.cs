@@ -49,7 +49,9 @@ namespace OpenWrap.Repositories
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            var wrapFile = BasePath.GetFile(packageFileName + ".wrap");
+            packageFileName = WrapNameUtility.NormalizeFileName(packageFileName);
+
+            var wrapFile = BasePath.GetFile(packageFileName);
             if (wrapFile.Exists)
                 return null;
 

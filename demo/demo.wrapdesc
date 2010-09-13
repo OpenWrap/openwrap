@@ -1,5 +1,6 @@
 ﻿depends: openwrap
 depends: nhibernate
+depends: castle.windsor
 
 
 

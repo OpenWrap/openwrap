@@ -66,7 +66,7 @@ namespace OpenWrap.Tests.Repositories
 
             protected void given_indexed_repository(string path)
             {
-                Repository = new IndexedFolderRepository(FileSystem.GetDirectory(path));
+                Repository = new IndexedFolderRepository("local", FileSystem.GetDirectory(path));
             }
 
 

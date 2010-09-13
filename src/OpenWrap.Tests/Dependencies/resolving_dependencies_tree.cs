@@ -412,13 +412,16 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             public IPackageInfo Publish(string packageFileName, Stream packageStream)
             {
-                if (Packages.Any(x=>x.FullName == Path.GetFileNameWithoutExtension(packageFileName)))
+                var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
+                                                   ? Path.GetFileNameWithoutExtension(packageFileName)
+                                                   : packageFileName;
+                if (Packages.Any(x=>x.FullName == fileWithoutExtension))
                     throw new InvalidOperationException("Package already exists in repository.");
                 
                 var package = new InMemoryPackage
                 {
-                    Name = WrapNameUtility.GetName(packageFileName),
-                    Version = WrapNameUtility.GetVersion(packageFileName)
+                    Name = WrapNameUtility.GetName(fileWithoutExtension),
+                    Version = WrapNameUtility.GetVersion(fileWithoutExtension)
                 };
                 Packages.Add(package);
                 return package;

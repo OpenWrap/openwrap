@@ -16,9 +16,10 @@ namespace OpenWrap.Repositories.Http
         readonly IEnumerable<HttpPackageInfo> _packagesQuery;
         ILookup<string, IPackageInfo> _packagesByName;
 
-        public HttpRepository(IFileSystem fileSystem, IHttpRepositoryNavigator navigator)
+        public HttpRepository(IFileSystem fileSystem, string repositoryName, IHttpRepositoryNavigator navigator)
         {
             _navigator = navigator;
+            Name = repositoryName;
             IndexDocument = navigator.Index();
             _packagesQuery = IndexDocument == null
                                      ? Enumerable.Empty<HttpPackageInfo>()
@@ -35,11 +36,11 @@ namespace OpenWrap.Repositories.Http
 
         public PackageDocument IndexDocument { get; private set; }
 
-        public string Name
+        public string Name { get; private set; }
+        public override string ToString()
         {
-            get { return string.Format("Remote [{0}]", Navigator); }
+            return string.Format("Remote {0} [{1}]", Name, Navigator);
         }
-
         public IHttpRepositoryNavigator Navigator
         {
             get { return _navigator; }

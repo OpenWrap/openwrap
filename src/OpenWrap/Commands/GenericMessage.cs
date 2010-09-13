@@ -4,12 +4,12 @@ namespace OpenWrap.Commands
 {
     public class GenericMessage : ICommandOutput
     {
-        public string Message { get; set; }
+        public string Message { get; private set; }
 
         public GenericMessage(string message)
         {
             Message = message;
-            Type = CommandResultType.Default;
+            Type = CommandResultType.Info;
         }
         
         public bool Success

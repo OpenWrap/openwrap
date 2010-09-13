@@ -17,5 +17,12 @@ namespace OpenWrap.Dependencies
                 return new Version(name.Substring(name.LastIndexOf('-') + 1));
             return null;
         }
+        public static string NormalizeFileName(string filename)
+        {
+
+            if (!filename.ToLowerInvariant().EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
+                filename += ".wrap";
+            return filename;
+        }
     }
 }

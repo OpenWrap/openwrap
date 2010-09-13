@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenWrap.Repositories;
@@ -23,6 +24,7 @@ namespace OpenWrap.Resharper
 
         public void TryAddNotifier(IFile descriptorPath, IPackageRepository repository, string projectFilePath)
         {
+            //Debugger.Launch();
             if (_projectFiles.ContainsKey(projectFilePath))
                 return;
             _projectFiles[projectFilePath] = new ResharperProjectUpdater(descriptorPath, repository, projectFilePath, Environment);

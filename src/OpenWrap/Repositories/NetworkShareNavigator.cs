@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using OpenWrap.Dependencies;
 using OpenWrap.Repositories.Http;
 using OpenFileSystem.IO;
 
@@ -61,6 +62,8 @@ namespace OpenWrap.Repositories
 
         public void PushPackage(string packageFileName, Stream packageStream)
         {
+            packageFileName = WrapNameUtility.NormalizeFileName(packageFileName);
+
             var packageFile = _directory.GetFile(packageFileName);
             using (var destinationStream = packageFile.OpenWrite())
                 packageStream.CopyTo(destinationStream);

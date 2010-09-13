@@ -46,7 +46,7 @@ namespace OpenWrap.Commands.Remote
 
         public CommandResultType Type
         {
-            get { return CommandResultType.Default; }
+            get { return CommandResultType.Info; }
         }
     }
 }

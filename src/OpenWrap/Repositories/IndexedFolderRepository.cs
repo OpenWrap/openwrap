@@ -6,8 +6,8 @@ namespace OpenWrap.Repositories
 {
     public class IndexedFolderRepository : HttpRepository
     {
-        public IndexedFolderRepository(IDirectory directory)
-            : base(directory.FileSystem, new NetworkShareNavigator(directory))
+        public IndexedFolderRepository(string repositoryName, IDirectory directory)
+            : base(directory.FileSystem, repositoryName, new NetworkShareNavigator(directory))
         {
         }
 
