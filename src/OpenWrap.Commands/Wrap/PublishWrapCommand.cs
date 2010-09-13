@@ -8,6 +8,7 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
+    [Command(Noun="wrap", Verb="publish", Description="Publishes a package to a remote reposiory.")]
     public class PublishWrapCommand : AbstractCommand
     {
         IPackageRepository _remoteRepository;
