@@ -19,18 +19,8 @@ namespace OpenWrap.Repositories.Http
         public HttpRepository(IFileSystem fileSystem, string repositoryName, IHttpRepositoryNavigator navigator)
         {
             _navigator = navigator;
-<<<<<<< HEAD
-            var index = navigator.Index();
-            _packagesQuery = index == null
-                                     ? Enumerable.Empty<HttpPackageInfo>()
-                                     : (
-                                        from package in index.Packages
-                                        select new HttpPackageInfo(fileSystem, this, navigator, package)
-                                       );
-=======
             Name = repositoryName;
             _packagesQuery = LoadPackages(navigator, fileSystem);
->>>>>>> f73f0dce227b51986ff52ba6fb3db3b2a48c748f
         }
 
         IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
