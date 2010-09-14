@@ -110,7 +110,7 @@ namespace OpenWrap.Console
             if (!path.Exists)
                 throw new FileNotFoundException("The console executable is not on a local file system.");
 
-            var linkContent = Encoding.UTF8.GetBytes(_rootPath);
+            var linkContent = Encoding.UTF8.GetBytes(path.FullName);
             using (var file = File.Create(Path.Combine(_rootPath, "o.exe.link")))
                 file.Write(linkContent, 0, linkContent.Length);
             AddPathToEnvironment(path.Directory.FullName);
