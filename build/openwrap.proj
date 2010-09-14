@@ -36,6 +36,7 @@
     <PropertyGroup>
       <OpenWrap-PackageName Condition="'$(OpenWrap-PackageName)' == ''">openwrap-$(PackageVersion)</OpenWrap-PackageName>
     </PropertyGroup>
+    <MakeDir Directories="$(Root)\bin"  Condition="!Exists('$(Root)\bin')" />
   </Target>
   <Target Name="OpenWrap-Package" DependsOnTargets="Clean;_Initialize">
     <MSBuild Targets="Build" Projects="@(WrapBinary)" Properties="OutDir=$(Root)\scratch\build\%(Filename)\;Configuration=$(Configuration)" />
