@@ -11,12 +11,13 @@ using OpenWrap.Repositories;
 using OpenWrap.Resolvers;
 using OpenWrap.Services;
 using OpenWrap.Tasks;
-using Task = Microsoft.Build.Utilities.Task;
+//using Task = Microsoft.Build.Utilities.Task;
 
 namespace OpenWrap.Build
 {
-    public class InitializeOpenWrap : Task
+    public class InitializeOpenWrap : Microsoft.Build.Utilities.Task
     {
+        
         RuntimeAssemblyResolver _resolver;
         public override bool Execute()
         {

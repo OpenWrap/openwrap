@@ -1,6 +1,7 @@
 ﻿depends: openwrap
 depends: openfilesystem
 depends: openwrap
+<<<<<<< HEAD
 depends: openwrap
 depends: openwrap
 depends: openwrap
@@ -17,9 +18,16 @@ depends: openwrap
 depends: openwrap
 depends: openwrap
 
+=======
+>>>>>>> f73f0dce227b51986ff52ba6fb3db3b2a48c748f
 
 
 
 
 anchored: true
 
+<<<<<<< HEAD
+=======
+anchored: true
+
+>>>>>>> f73f0dce227b51986ff52ba6fb3db3b2a48c748f
