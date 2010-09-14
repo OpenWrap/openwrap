@@ -24,7 +24,7 @@ namespace OpenWrap.Build.Tasks
             {new Version("5.1.1727.12"), typeof(resharper510::OpenWrap.Resharper.ResharperIntegrationService)},
             {new Version("5.1.1751.8"), typeof(resharper511::OpenWrap.Resharper.ResharperIntegrationService)}
         };
-        public static object TryRegisterResharper(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath)
+        public static object TryRegisterResharper(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, IEnumerable<string> excludedAssemblies)
         {
             var unimportantType = Type.GetType("JetBrains.Application.Shell, JetBrains.Platform.ReSharper.Shell");
             if (unimportantType == null) return null;
@@ -35,7 +35,7 @@ namespace OpenWrap.Build.Tasks
                 return null;
 
             var instance = Activator.CreateInstance(resharperIntegratorType, environment);
-            resharperIntegratorType.GetMethod("TryAddNotifier").Invoke(instance, new object[] { descriptorPath, packageRepository, projectFilePath });
+            resharperIntegratorType.GetMethod("TryAddNotifier").Invoke(instance, new object[] { descriptorPath, packageRepository, projectFilePath, excludedAssemblies });
             return instance;
         }
     }

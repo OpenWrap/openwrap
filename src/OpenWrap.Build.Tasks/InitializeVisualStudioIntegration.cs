@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenWrap.Dependencies;
@@ -42,6 +43,8 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string WrapsDirectory { get; set; }
 
+        public ITaskItem[] ExcludeAssemblies { get; set; }
+
         IDirectory WrapsDirectoryPath
         {
             get { return LocalFileSystem.Instance.GetDirectory(WrapsDirectory); }
@@ -69,7 +72,7 @@ namespace OpenWrap.Build.Tasks
             if (!EnableVisualStudioIntegration) return true;
             if (_resharperHook != null)
                 return true;
-            _resharperHook = ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository, ProjectFilePath);
+            _resharperHook = ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository, ProjectFilePath, ExcludeAssemblies.Select(x=>x.ItemSpec).ToList());
             return true;
         }
     }

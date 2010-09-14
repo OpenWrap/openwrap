@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
@@ -30,6 +31,7 @@ namespace OpenWrap.Build.Tasks
 
         public bool EnableVisualStudioIntegration { get; set; }
 
+        public ITaskItem[] InputReferences { get; set; }
         public ExecutionEnvironment Environment
         {
             get
@@ -60,7 +62,7 @@ namespace OpenWrap.Build.Tasks
         public ITaskItem[] ExcludeAssemblies { get; set; }
 
         [Output]
-        public ITaskItem[] References { get; set; }
+        public ITaskItem[] OutputReferences { get; set; }
 
         [Required]
         public ITaskItem WrapDescriptor { get; set; }
@@ -98,17 +100,26 @@ namespace OpenWrap.Build.Tasks
             }
             return RefreshWrapDependencies();
         }
-
+        
         public void WrapAssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths)
         {
+            
+
             var items = new List<ITaskItem>();
+            
             var excludedAssemblies = ExcludeAssemblies != null ? ExcludeAssemblies.Select(x => x.ItemSpec).ToList() : new List<string>(0);
 
-            foreach (var assemblyRef in assemblyPaths)
+            var assemblies = assemblyPaths.Distinct(new PathComparer()).ToList();
+            foreach (var assemblyRef in assemblies)
             {
                 if (excludedAssemblies.Contains(assemblyRef.AssemblyName.Name, StringComparer.OrdinalIgnoreCase))
                 {
-                    Log.LogMessage("Ignoring openWrap reference to '{0}'", assemblyRef.FullPath);
+                    Log.LogMessage("Ignoring OpenWrap reference to '{0}'", assemblyRef.FullPath);
+                    continue;
+                }
+                if (InputReferences.Any(x=>string.Equals(x.ItemSpec, assemblyRef.AssemblyName.Name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    Log.LogMessage("OpenWrap reference to '{0}' already added", assemblyRef.FullPath);
                     continue;
                 }
                 Log.LogMessage("Adding OpenWrap reference to '{0}'", assemblyRef.FullPath);
@@ -118,7 +129,24 @@ namespace OpenWrap.Build.Tasks
                 item.SetMetadata("FromOpenWrap", "True");
                 items.Add(item);
             }
-            References = items.ToArray();
+            OutputReferences = items.ToArray();
+        }
+
+        public class PathComparer : IEqualityComparer<IAssemblyReferenceExportItem>
+        {
+
+            public bool Equals(IAssemblyReferenceExportItem x, IAssemblyReferenceExportItem y)
+            {
+                return x != null && y != null && x.AssemblyName.Name == y.AssemblyName.Name;
+            }
+
+            public int GetHashCode(IAssemblyReferenceExportItem obj)
+            {
+
+                return obj == null || obj.AssemblyName == null || obj.AssemblyName.Name == null
+                    ? 0
+                    : obj.AssemblyName.Name.GetHashCode();
+            }
         }
 
         void EnsureWrapRepositoryIsInitialized()

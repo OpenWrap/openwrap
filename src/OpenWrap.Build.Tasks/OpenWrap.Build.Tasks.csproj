@@ -12,6 +12,7 @@
     <AssemblyName>OpenWrap.Build.Tasks</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <OpenWrap-ExcludeAssemblies>OpenWrap;OpenWrap.Resharper.v450;OpenWrap.Resharper.v500;OpenWrap.Resharper.v510;OpenWrap.Resharper.v511</OpenWrap-ExcludeAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
