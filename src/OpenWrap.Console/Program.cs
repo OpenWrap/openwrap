@@ -77,7 +77,7 @@ namespace OpenWrap.Console
                             group new { name, uncompressedFolder, version } by name
                             into tuplesByName
                             select tuplesByName.OrderByDescending(x => x.version).First().uncompressedFolder.FullName
-                    ).ToList();
+                    ).OrderByDescending(x=>x).ToList();
         }
 
         static IEnumerable<DirectoryInfo> GetSelfAndParents(string directoryPath)
@@ -183,10 +183,12 @@ namespace OpenWrap.Console
                 var assemblyFiles = from asm in bootstrapAssemblies
                                     let path = Path.Combine(asm, "bin-net35")
                                     from file in Directory.GetFiles(path, "*.dll")
+                                    
                                     select new { file, assembly = TryLoadAssembly(file) };
                 ;
 
-                var assembly = assemblyFiles.First();
+                var assembly = assemblyFiles.First(x => x.file.EndsWith("OpenWrap.dll", StringComparison.OrdinalIgnoreCase));
+
                 System.Console.WriteLine("# OpenWrap v{0} ['{1}']", assembly.assembly.GetName().Version, assembly.file);
 
                 var type = assemblyFiles.Select(x=>x.assembly.GetType("OpenWrap.ConsoleRunner", false)).Where(x=>x != null).First();

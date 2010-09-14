@@ -19,11 +19,11 @@ namespace OpenWrap.Resolvers
         {
             AppDomain.CurrentDomain.AssemblyResolve += TryResolveAssembly;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += TryResolveReflectionOnlyAssembly;
-            _assemblyReferences = PackageManager.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.ProjectRepository, Environment.SystemRepository).ToLookup(x=>x.AssemblyName.Name);
         }
 
         Assembly TryResolveReflectionOnlyAssembly(object sender, ResolveEventArgs args)
         {
+            EnsureAssemblyReferencesAreLoaded();
             // get the simple name of the assembly
             var simpleName = new AssemblyName(args.Name).Name;
             if (_assemblyReferences.Contains(simpleName))
@@ -34,11 +34,18 @@ namespace OpenWrap.Resolvers
 
         Assembly TryResolveAssembly(object sender, ResolveEventArgs args)
         {
+            EnsureAssemblyReferencesAreLoaded();
             var simpleName = new AssemblyName(args.Name).Name;
             if (_assemblyReferences.Contains(simpleName))
                 return Assembly.LoadFrom(_assemblyReferences[simpleName].First().FullPath);
             
             return null;
+        }
+        void EnsureAssemblyReferencesAreLoaded()
+        {
+            if (_assemblyReferences != null)
+                return;
+            _assemblyReferences = PackageManager.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.ProjectRepository, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name);
         }
     }
 }
