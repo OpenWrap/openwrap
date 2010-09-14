@@ -57,12 +57,16 @@
     <Compile Include="IMessage.cs" />
     <Compile Include="IO\StreamExtensions.cs" />
     <Compile Include="IO\WrapperStream.cs" />
+    <Compile Include="IProgressNotification.cs" />
     <Compile Include="IRequest.cs" />
     <Compile Include="IResponse.cs" />
+    <Compile Include="IResponseHeaders.cs" />
     <Compile Include="MediaType.cs" />
     <Compile Include="ProgressEventArgs.cs" />
+    <Compile Include="ProgressStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestExtensions.cs" />
+    <Compile Include="ResponseHeaders.cs" />
     <Compile Include="StatusChangedEventArgs.cs" />
     <Compile Include="UriExtensions.cs" />
   </ItemGroup>

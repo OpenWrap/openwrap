@@ -12,7 +12,7 @@ namespace OpenWrap.Repositories.Http
         readonly Uri _baseUri;
         readonly Uri _requestUri;
         PackageDocument _fileList;
-        IHttpClient _httpClient = new HttpWebRequestBasedClient();
+        readonly IHttpClient _httpClient = new HttpWebRequestBasedClient();
 
         public HttpRepositoryNavigator(Uri baseUri)
         {
