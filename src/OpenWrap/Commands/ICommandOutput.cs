@@ -11,7 +11,7 @@ namespace OpenWrap.Commands
     }
     public enum CommandResultType
     {
-        Default = 0,
+        Info = 0,
         Data,
         Verbose,
         Warning,

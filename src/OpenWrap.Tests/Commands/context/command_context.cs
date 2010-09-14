@@ -56,7 +56,7 @@ namespace OpenWrap.Tests.Commands.context
         protected void given_project_package(string name, Version version, params string[] dependencies)
         {
             given_project_repository();
-            AddPackage(Environment.ProjectRepository, name, version, dependencies);
+            AddInMemoryPackage(Environment.ProjectRepository, name, version, dependencies);
         }
 
         protected void given_project_repository()
@@ -64,15 +64,18 @@ namespace OpenWrap.Tests.Commands.context
             if (Environment.ProjectRepository == null)
                 Environment.ProjectRepository = new InMemoryRepository("Project repository");
         }
-
+        protected void given_current_directory_repository(CurrentDirectoryRepository repository)
+        {
+            Environment.CurrentDirectoryRepository = repository;
+        }
         protected void given_remote_package(string name, Version version, params string[] dependencies)
         {
-            AddPackage(Environment.RemoteRepository, name, version, dependencies);
+            AddInMemoryPackage(Environment.RemoteRepository, name, version, dependencies);
         }
 
         protected void given_system_package(string name, Version version, params string[] dependencies)
         {
-            AddPackage(Environment.SystemRepository, name, version, dependencies);
+            AddInMemoryPackage(Environment.SystemRepository, name, version, dependencies);
         }
 
         protected virtual void when_executing_command(params string[] parameters)
@@ -81,7 +84,7 @@ namespace OpenWrap.Tests.Commands.context
             Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
         }
 
-        protected static void AddPackage(InMemoryRepository repository, string name, Version version, string[] dependencies)
+        protected static void AddInMemoryPackage(InMemoryRepository repository, string name, Version version, string[] dependencies)
         {
             repository.Packages.Add(new InMemoryPackage
             {
@@ -93,12 +96,22 @@ namespace OpenWrap.Tests.Commands.context
             });
         }
 
+        protected void given_currentdirectory_package(string packageName, string version, params string[] dependencies)
+        {
+            given_currentdirectory_package(packageName, new Version(version), dependencies);
+        }
         protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
         {
-            command_context<AddWrapCommand>.AddPackage(Environment.CurrentDirectoryRepository, packageName, version, dependencies);
+            if (Environment.CurrentDirectoryRepository is InMemoryRepository)
+                command_context<AddWrapCommand>.AddInMemoryPackage((InMemoryRepository)Environment.CurrentDirectoryRepository, packageName, version, dependencies);
+            else
+            {
+                var packageFile = Environment.CurrentDirectory.GetFile(string.Format("{0}-{1}.wrap", packageName, version));
+                PackageBuilder.New(packageFile, packageName, version.ToString(), dependencies);
+            }
         }
 
-        protected void package_is_not_in_repository(InMemoryRepository repository, string packageName, Version packageVersion)
+        protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
         {
             (repository.PackagesByName.Contains(packageName)
                               ? repository.PackagesByName[packageName].FirstOrDefault(x => x.Version.Equals(packageVersion))
@@ -106,7 +119,7 @@ namespace OpenWrap.Tests.Commands.context
 
 
         }
-        protected void package_is_in_repository(InMemoryRepository repository, string packageName, Version packageVersion)
+        protected void package_is_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
         {
             repository.PackagesByName[packageName]
                 .ShouldHaveCountOf(1)
@@ -117,6 +130,11 @@ namespace OpenWrap.Tests.Commands.context
         {
             WrapServices.GetService<IConfigurationManager>()
                     .Save(Configurations.Addresses.RemoteRepositories, remoteRepositories);
+        }
+
+        protected void given_remote_repository(string remoteName)
+        {
+            Environment.RemoteRepositories.Add(new InMemoryRepository(remoteName));
         }
     }
 }

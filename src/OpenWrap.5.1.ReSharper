@@ -352,6 +352,7 @@
       </PredefinedRule>
       <Abbreviation Text="OK" />
       <Abbreviation Text="IO" />
+      <Abbreviation Text="MS" />
     </Naming2>
   </CodeStyleSettings>
 </Configuration>

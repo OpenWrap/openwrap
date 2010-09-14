@@ -18,23 +18,7 @@ namespace OpenWrap.Build.Tasks
         public string OutputVersion { get; set; }
         public override bool Execute()
         {
-            var match = Regex.Match(Version.Trim(), @"^(?<version>\d+\.\d+\.\d+)(?<revision>\..*$)?");
-            if (!match.Success)
-            {
-                OutputVersion = Version;
-                return true;
-            }
-            var revisionMatch = match.Groups["revision"];
-            if (revisionMatch.Success && revisionMatch.Value != ".*")
-            {
-                OutputVersion = Version;
-                return true;
-            }
-            var now = DateTime.UtcNow;
-            var seconds = (now.Hour * 3600) + (now.Minute * 60) + now.Second;
-            var days = (now - _from).TotalDays;
-            var revision = ((short)days << 16) + seconds;
-            OutputVersion = match.Groups["version"] + "." + revision;
+            OutputVersion = Version.GenerateVersionNumber();
             return true;
         }
     }

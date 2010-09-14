@@ -10,7 +10,6 @@ using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap;
 using OpenWrap.Dependencies;
-using OpenWrap.Exports;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
@@ -254,7 +253,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 DependencyDescriptor = new WrapDescriptor
                 {
                     Name = "test",
-                    Version = new Version(1, 0)
+                    Version = new Version("1.0")
                 };
                 ProjectRepository = new InMemoryRepository("Local repository");
                 SystemRepository = new InMemoryRepository("System repository");
@@ -311,45 +310,6 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             }
         }
 
-        public class InMemoryPackage : IPackageInfo, IPackage
-        {
-            public ICollection<WrapDependency> Dependencies { get; set; }
-
-            public InMemoryPackage()
-            {
-                LastModifiedTimeUtc = DateTime.Now;
-            }
-            public string FullName
-            {
-                get { return Name + "-" + Version; }
-            }
-
-            public DateTime? LastModifiedTimeUtc
-            {
-                get; private set;
-            }
-
-            public string Name { get; set; }
-
-            public IPackageRepository Source { get; set; }
-            public Version Version { get; set; }
-
-            public IExport GetExport(string exportName, ExecutionEnvironment environment)
-            {
-                return null;
-            }
-
-            public Stream OpenStream()
-            {
-                return new MemoryStream(0);
-            }
-
-            public IPackage Load()
-            {
-                return this;
-            }
-
-        }
         public static class PackageBuilder
         {
 
@@ -412,13 +372,16 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             public IPackageInfo Publish(string packageFileName, Stream packageStream)
             {
-                if (Packages.Any(x=>x.FullName == Path.GetFileNameWithoutExtension(packageFileName)))
+                var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
+                                                   ? Path.GetFileNameWithoutExtension(packageFileName)
+                                                   : packageFileName;
+                if (Packages.Any(x=>x.FullName == fileWithoutExtension))
                     throw new InvalidOperationException("Package already exists in repository.");
                 
                 var package = new InMemoryPackage
                 {
-                    Name = WrapNameUtility.GetName(packageFileName),
-                    Version = WrapNameUtility.GetVersion(packageFileName)
+                    Name = WrapNameUtility.GetName(fileWithoutExtension),
+                    Version = WrapNameUtility.GetVersion(fileWithoutExtension)
                 };
                 Packages.Add(package);
                 return package;

@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="OpenWrap-Package" ToolsVersion="3.5">
   <PropertyGroup>
     <Root>$(MSBuildProjectDirectory)\..</Root>
-    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <PackageName Condition="'$(PackageName)' == ''">OpenWrap</PackageName>
     <OpenWrap-DescriptorPath Condition="'$(OpenWrap-DescriptorPath)' == ''">$(Root)\$(PackageName).wrapdesc</OpenWrap-DescriptorPath>
     <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(Root)\wraps\openwrap\build</OpenWrap-BuildTasksDirectory>
@@ -36,6 +36,7 @@
     <PropertyGroup>
       <OpenWrap-PackageName Condition="'$(OpenWrap-PackageName)' == ''">openwrap-$(PackageVersion)</OpenWrap-PackageName>
     </PropertyGroup>
+    <MakeDir Directories="$(Root)\bin"  Condition="!Exists('$(Root)\bin')" />
   </Target>
   <Target Name="OpenWrap-Package" DependsOnTargets="Clean;_Initialize">
     <MSBuild Targets="Build" Projects="@(WrapBinary)" Properties="OutDir=$(Root)\scratch\build\%(Filename)\;Configuration=$(Configuration)" />
@@ -49,19 +50,25 @@
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
         <Export>bin-net35</Export>
       </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenFileSystem.dll">
+        <Export>bin-net35</Export>
+      </BinFile>
       <BinFile Include="$(Root)\scratch\build\OpenRasta.Client\OpenRasta.Client.dll">
         <Export>bin-net35</Export>
       </BinFile>
       <BinFile Include="$(Root)\scratch\build\OpenWrap\ICSharpCode.SharpZipLib.dll">
         <Export>bin-net35</Export>
       </BinFile>
-      <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenFileSystem.dll">
-        <Export>bin-net35</Export>
-      </BinFile>
-      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper.45\OpenWrap.Resharper.45.dll">
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper.v450\OpenWrap.Resharper.450.dll">
         <Export>build</Export>
       </BinFile>
-      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper.50\OpenWrap.Resharper.50.dll">
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper.v500\OpenWrap.Resharper.500.dll">
+        <Export>build</Export>
+      </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper.v510\OpenWrap.Resharper.510.dll">
+        <Export>build</Export>
+      </BinFile>
+      <BinFile Include="$(Root)\scratch\build\OpenWrap.Resharper.v511\OpenWrap.Resharper.511.dll">
         <Export>build</Export>
       </BinFile>
       <BinFile Include="$(Root)\scratch\build\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.dll">

@@ -15,6 +15,8 @@ namespace OpenWrap.Dependencies
 
         public bool Anchored { get; set; }
 
+        public bool ContentOnly { get; set; }
+
         public bool IsFulfilledBy(Version version)
         {
             return VersionVertices.All(x => x.IsCompatibleWith(version));

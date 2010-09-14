@@ -33,29 +33,34 @@ namespace OpenWrap.Dependencies
             if (bits.Length < 1)
                 return null;
 
+            var versions = ParseVersions(bits.Skip(1).ToArray()).ToList();
+            var tags = bits.Skip((versions.Count * 2) + versions.Count).ToArray();
             return new WrapDependency
             {
                 Name = bits[0],
-                VersionVertices = ParseVersions(bits.Skip(1).ToArray()).ToList(),
-                Anchored = bits.Last().Equals("anchored", StringComparison.OrdinalIgnoreCase)
+                VersionVertices = versions.Count > 0 ? versions : new List<VersionVertice>(){new AnyVersionVertice()},
+                Anchored = tags.Contains("anchored", StringComparer.OrdinalIgnoreCase),
+                ContentOnly = tags.Contains("content", StringComparer.OrdinalIgnoreCase)
             };
         }
 
         public static IEnumerable<VersionVertice> ParseVersions(string[] args)
         {
+            int consumedArgs = 0;
             // Versions are always in the format
             // comparator version ('and' comparator version)*
             if (args.Length >= 2)
             {
-                var firstVersion = GetVersionVertice(args, 0);
-                yield return firstVersion;
+                var version = GetVersionVertice(args, 0);
+                if (version == null)
+                    yield break;
+                yield return version;
                 for (int i = 0; i < (args.Length - 2) / 3; i++)
-                    if (args[2+(i*3)].Equals("and", StringComparison.OrdinalIgnoreCase))
-                        yield return GetVersionVertice(args, 3 + (i * 3));
-            }
-            else
-            {
-                yield return new AnyVersionVertice();
+                    if (args[2 + (i * 3)].Equals("and", StringComparison.OrdinalIgnoreCase))
+                        if ((version = GetVersionVertice(args, 3 + (i * 3))) != null)
+                            yield return version;
+                        else
+                            yield break;
             }
         }
         private static VersionVertice GetVersionVertice(string[] strings, int offset)
@@ -69,7 +74,7 @@ namespace OpenWrap.Dependencies
                 case ">=": return new GreaterThenOrEqualVersionVertice(version);
                 case "=": return new ExactVersionVertice(version);
                 case "<": return new LessThanVersionVertice(version);
-                default: return new AnyVersionVertice(version);
+                default: return null;
             }
         }
     }

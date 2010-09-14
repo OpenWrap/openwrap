@@ -16,7 +16,7 @@ namespace OpenWrap.Tests.Commands
         public IList<InMemoryRepository> RemoteRepositories;
         public InMemoryRepository SystemRepository;
         public InMemoryRepository RemoteRepository;
-        public InMemoryRepository CurrentDirectoryRepository;
+        public IPackageRepository CurrentDirectoryRepository;
 
         public InMemoryEnvironment(IDirectory currentDirectory, IDirectory configDirectory)
         {

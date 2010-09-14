@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using OpenWrap.Exports;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
-using OpenWrap.Tasks;
 
 namespace OpenWrap.Repositories.Http
 {
@@ -15,9 +13,13 @@ namespace OpenWrap.Repositories.Http
         readonly IHttpRepositoryNavigator _navigator;
 
 
-        public HttpRepository(IFileSystem fileSystem, IHttpRepositoryNavigator navigator)
+        readonly IEnumerable<HttpPackageInfo> _packagesQuery;
+        ILookup<string, IPackageInfo> _packagesByName;
+
+        public HttpRepository(IFileSystem fileSystem, string repositoryName, IHttpRepositoryNavigator navigator)
         {
             _navigator = navigator;
+<<<<<<< HEAD
             var index = navigator.Index();
             _packagesQuery = index == null
                                      ? Enumerable.Empty<HttpPackageInfo>()
@@ -25,17 +27,38 @@ namespace OpenWrap.Repositories.Http
                                         from package in index.Packages
                                         select new HttpPackageInfo(fileSystem, this, navigator, package)
                                        );
+=======
+            Name = repositoryName;
+            _packagesQuery = LoadPackages(navigator, fileSystem);
+>>>>>>> f73f0dce227b51986ff52ba6fb3db3b2a48c748f
         }
 
-        DateTime? GetModifiedTimeUtc(XAttribute attribute)
+        IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
         {
-            if (attribute == null) return null;
-            DateTime dt;
-            return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
+            IndexDocument = navigator.Index();
+
+            if (IndexDocument == null)
+                yield break;
+            foreach (var package in IndexDocument.Packages)
+                yield return new HttpPackageInfo(fileSystem, this, navigator, package);
         }
 
-        ILookup<string, IPackageInfo> _packagesByName;
-        IEnumerable<HttpPackageInfo> _packagesQuery;
+        public bool CanPublish
+        {
+            get { return Navigator.CanPublish; }
+        }
+
+        public PackageDocument IndexDocument { get; private set; }
+
+        public string Name { get; private set; }
+        public override string ToString()
+        {
+            return string.Format("Remote {0} [{1}]", Name, Navigator);
+        }
+        public IHttpRepositoryNavigator Navigator
+        {
+            get { return _navigator; }
+        }
 
         public ILookup<string, IPackageInfo> PackagesByName
         {
@@ -46,21 +69,6 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
-        void EnsureDataLoaded()
-        {
-            if (_packagesByName == null)
-            {
-                try
-                {
-                    _packagesByName = _packagesQuery.Cast<IPackageInfo>().ToLookup(x => x.Name);
-                    
-                }
-                catch
-                {
-                }
-            }
-        }
-
         public IPackageInfo Find(WrapDependency dependency)
         {
             return PackagesByName.Find(dependency);
@@ -68,23 +76,38 @@ namespace OpenWrap.Repositories.Http
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            if (!_navigator.CanPublish)
-                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", _navigator));
+            if (!Navigator.CanPublish)
+                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));
 
-            _navigator.PushPackage(packageFileName, packageStream);
+            Navigator.PushPackage(packageFileName, packageStream);
             _packagesByName = null;
             EnsureDataLoaded();
-            return PackagesByName[WrapNameUtility.GetName(packageFileName)].FirstOrDefault(x=>x.Version == WrapNameUtility.GetVersion(packageFileName));
+            return PackagesByName[WrapNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == WrapNameUtility.GetVersion(packageFileName));
         }
 
-        public bool CanPublish
+        void EnsureDataLoaded()
         {
-            get { return _navigator.CanPublish; }
+            if (_packagesByName == null)
+            {
+                try
+                {
+                    _packagesByName = _packagesQuery.Cast<IPackageInfo>().ToLookup(x => x.Name);
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    _packagesByName = _packagesByName ?? Enumerable.Empty<IPackageInfo>().ToLookup(x=>string.Empty  );
+                }
+            }
         }
 
-        public string Name
+        DateTime? GetModifiedTimeUtc(XAttribute attribute)
         {
-            get { return string.Format("Remote [{0}]", _navigator); }
+            if (attribute == null) return null;
+            DateTime dt;
+            return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
         }
     }
 }

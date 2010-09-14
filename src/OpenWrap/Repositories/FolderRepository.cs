@@ -30,7 +30,7 @@ namespace OpenWrap.Repositories
                         let cacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
                         select cacheDirectory.Exists
                                    ? (IPackageInfo)new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All, _anchorsEnabled)
-                                   : (IPackageInfo)new ZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All, _anchorsEnabled)).ToList();
+                                   : (IPackageInfo)new CachedZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All, _anchorsEnabled)).ToList();
         }
 
         public IDirectory BasePath { get; set; }
@@ -49,14 +49,16 @@ namespace OpenWrap.Repositories
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            var wrapFile = BasePath.GetFile(packageFileName + ".wrap");
+            packageFileName = WrapNameUtility.NormalizeFileName(packageFileName);
+
+            var wrapFile = BasePath.GetFile(packageFileName);
             if (wrapFile.Exists)
                 return null;
 
             using (var file = wrapFile.OpenWrite())
                 packageStream.CopyTo(file);
 
-            var newPackage = new ZipPackage(this, wrapFile, _rootCacheDirectory.GetDirectory(wrapFile.NameWithoutExtension), ExportBuilders.All, _anchorsEnabled);
+            var newPackage = new CachedZipPackage(this, wrapFile, _rootCacheDirectory.GetDirectory(wrapFile.NameWithoutExtension), ExportBuilders.All, _anchorsEnabled);
             Packages.Add(newPackage);
             return newPackage;
         }

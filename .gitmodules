@@ -1,3 +1,0 @@
-[submodule "wraps/ext/openfilesystem"]
-	path = wraps/ext/openfilesystem
-	url = git://github.com/openrasta/openfilesystem.git

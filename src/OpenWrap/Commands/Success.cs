@@ -6,7 +6,7 @@ namespace OpenWrap.Commands
     {
         public Success()
         {
-            Type = CommandResultType.Default;
+            Type = CommandResultType.Info;
 
         }
         bool ICommandOutput.Success

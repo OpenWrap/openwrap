@@ -24,7 +24,7 @@ namespace OpenWrap.Commands
 
         public CommandResultType Type
         {
-            get { return CommandResultType.Default; }
+            get { return CommandResultType.Info; }
         }
 
         public override string ToString()

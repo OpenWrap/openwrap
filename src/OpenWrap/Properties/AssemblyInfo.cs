@@ -1,4 +1,4 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyTitle("OpenRasta.Wrap")]
+[assembly: AssemblyTitle("OpenWrap package manager for .net")]
 [assembly: AssemblyDescription("")]

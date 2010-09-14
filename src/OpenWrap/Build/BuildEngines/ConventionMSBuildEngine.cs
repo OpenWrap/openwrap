@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
 using OpenFileSystem.IO.FileSystems;
 using OpenWrap.Commands;
 
 namespace OpenWrap.Build.BuildEngines
 {
+<<<<<<< HEAD
     public class BuiltInstructionParser
     {
         static Regex _buildInstructionRegex = new Regex(@"\[built\((<?export>.+)(\,(?<fileSpec>.*))\)\]");
@@ -35,6 +33,8 @@ namespace OpenWrap.Build.BuildEngines
             return Enumerable.Empty<FileBuildResult>();
         }
     }
+=======
+>>>>>>> f73f0dce227b51986ff52ba6fb3db3b2a48c748f
     public class ConventionMSBuildEngine
     {
         readonly IEnvironment _environment;
@@ -44,6 +44,7 @@ namespace OpenWrap.Build.BuildEngines
         {
             _environment = environment;
         }
+
         public IEnumerable<BuildResult> Build()
         {
             var currentDirectory = _environment.CurrentDirectory;
@@ -55,8 +56,9 @@ namespace OpenWrap.Build.BuildEngines
                                                           _environment.CurrentDirectory.Path.FullPath));
                 yield break;
             }
-            foreach(var project in sourceDirectory.Files("*.*proj", SearchScope.SubFolders))
+            foreach (var project in sourceDirectory.Files("*.*proj", SearchScope.SubFolders))
             {
+<<<<<<< HEAD
                 var msbuildProcess = new Process()
                 {
                     StartInfo = new ProcessStartInfo
@@ -77,13 +79,26 @@ namespace OpenWrap.Build.BuildEngines
                     //yield return new TextBuildResult(line);
                     foreach(var m in _parser.Parse(line)) yield return m;
                 }
+=======
+                var msbuildProcess = CreateMSBuildProcess(project);
+                msbuildProcess.Start();
+                var reader = msbuildProcess.StandardOutput;
+
+                yield return new TextBuildResult(string.Format("Building '{0}'...", project.Path.FullPath));
+
+                var content = reader.ReadToEnd().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var m in content.SelectMany(line => _parser.Parse(line)))
+                    yield return m;
+
+>>>>>>> f73f0dce227b51986ff52ba6fb3db3b2a48c748f
                 yield return new TextBuildResult("Built...");
             }
-            
         }
 
-        string GetMSBuildFileName()
+        Process CreateMSBuildProcess(IFile project)
         {
+<<<<<<< HEAD
             return @"C:\windows\Microsoft.NET\Framework\v3.5\msbuild.exe";
         }
     }
@@ -95,19 +110,23 @@ namespace OpenWrap.Build.BuildEngines
         public TextBuildResult(string text)
         {
             Text = text;
+=======
+            return new Process
+            {
+                    StartInfo = new ProcessStartInfo
+                    {
+                            RedirectStandardOutput = true,
+                            FileName = GetMSBuildExecutableName(),
+                            Arguments = project.Path.FullPath + " /p:OpenWrap-EmitOutputInstructions=true",
+                            UseShellExecute = false
+                    }
+            };
+>>>>>>> f73f0dce227b51986ff52ba6fb3db3b2a48c748f
         }
 
-        public string Text { get; set; }
-    }
-    public class FileBuildResult : BuildResult
-    {
-        public FileBuildResult(string exportName, LocalPath file)
+        string GetMSBuildExecutableName()
         {
-            ExportName = exportName;
-            Path = file;
+            return Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\v3.5\msbuild.exe");
         }
-
-        public string ExportName { get; private set; }
-        public LocalPath Path { get; private set; }
     }
 }

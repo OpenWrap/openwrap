@@ -12,6 +12,7 @@
     <AssemblyName>OpenWrap.Build.Tasks</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <OpenWrap-ExcludeAssemblies>OpenWrap;OpenWrap.Resharper.v450;OpenWrap.Resharper.v500;OpenWrap.Resharper.v510;OpenWrap.Resharper.v511</OpenWrap-ExcludeAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,18 +66,32 @@
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
     <Compile Include="GenerateRevisionNumber.cs" />
+    <Compile Include="InitializeVisualStudioIntegration.cs" />
     <Compile Include="PackageWrap.cs" />
+    <Compile Include="ResharperHook.cs" />
     <Compile Include="ResolveWrapReferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\wraps\ext\openfilesystem\src\OpenFileSystem\OpenFileSystem.csproj">
-      <Project>{0174E0E7-B915-46A9-B3D8-D62007E55694}</Project>
-      <Name>OpenFileSystem</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.Resharper.45\OpenWrap.Resharper.45.csproj">
+    <ProjectReference Include="..\OpenWrap.Resharper.v450\OpenWrap.Resharper.v450.csproj">
       <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
-      <Name>OpenWrap.Resharper</Name>
+      <Name>OpenWrap.Resharper.v450</Name>
+      <Aliases>resharper450</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.v500\OpenWrap.Resharper.v500.csproj">
+      <Project>{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}</Project>
+      <Name>OpenWrap.Resharper.v500</Name>
+      <Aliases>resharper500</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.v510\OpenWrap.Resharper.v510.csproj">
+      <Project>{A9FA9F17-3DBE-4848-9044-DD734FDF554B}</Project>
+      <Name>OpenWrap.Resharper.v510</Name>
+      <Aliases>resharper510</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.v511\OpenWrap.Resharper.v511.csproj">
+      <Project>{9F5D9D90-DD43-45E9-BB70-B8EADE27FE82}</Project>
+      <Name>OpenWrap.Resharper.v511</Name>
+      <Aliases>resharper511</Aliases>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
@@ -92,7 +107,7 @@
     </None>
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

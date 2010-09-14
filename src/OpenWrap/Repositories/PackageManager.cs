@@ -39,7 +39,7 @@ namespace OpenWrap.Repositories
         {
             var source = dependency.Package.Load();
             using (var packageStream = source.OpenStream())
-                destinationRepository.Publish(dependency.Package.FullName, packageStream);
+                destinationRepository.Publish(dependency.Package.FullName + ".wrap", packageStream);
         }
 
         public void Initialize()

@@ -15,6 +15,7 @@ namespace OpenWrap.Repositories
     {
         readonly IFile _originalWrapFile;
         readonly IEnumerable<IExportBuilder> _exporters;
+        static readonly TraceSource _log = new TraceSource("openwrap", SourceLevels.All);
 
         public UncompressedPackage(IPackageRepository source,
                                    IFile originalPackage,
@@ -28,15 +29,13 @@ namespace OpenWrap.Repositories
             // get the descriptor file inside the package
             var descriptorName = originalPackage.NameWithoutExtension;
             Source = source;
-            var wrapDescriptor = wrapCacheDirectory.FindFile(descriptorName + ".wrapdesc")
-                ?? wrapCacheDirectory.FindFile(WrapNameUtility.GetName(descriptorName) + ".wrapdesc");
+            var wrapDescriptor = wrapCacheDirectory.Files("*.wrapdesc").SingleOrDefault();
             if (wrapDescriptor == null)
-                throw new InvalidOperationException("Could not find descriptor in wrap cache directory");
+                throw new InvalidOperationException("Could not find descriptor in wrap cache directory, or there are multiple .wrapdesc files in the package.");
             Descriptor = new WrapDescriptorParser().ParseFile(wrapDescriptor);
             if (allowAnchoring)
                 VerifyAnchoring();
         }
-
         void VerifyAnchoring()
         {
             if (Descriptor.IsAnchored)
@@ -51,14 +50,14 @@ namespace OpenWrap.Repositories
                     try
                     {
                         anchoredDirectory.Delete();
+                        var anchoredPath = anchoredDirectory.Path;
+                        BaseDirectory.LinkTo(anchoredPath.FullPath);
                     }
                     catch (Exception e)
                     {
-                        throw new PackageException("The package '{0}' could not be anchored.", e);
+                        _log.TraceEvent(TraceEventType.Warning, 22, "The package '{0}' could not be anchored.", _originalWrapFile.NameWithoutExtension);
                     }
                 }
-                var anchoredPath = anchoredDirectory.Path;
-                BaseDirectory.LinkTo(anchoredPath.FullPath);
             }
         }
 

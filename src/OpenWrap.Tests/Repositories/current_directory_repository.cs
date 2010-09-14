@@ -1,26 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using ICSharpCode.SharpZipLib.Zip;
+using current_directory_specifications.context;
 using NUnit.Framework;
-using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.InMemory;
+using OpenRasta.Wrap.Tests.Dependencies.context;
+using OpenWrap;
+using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
 
-namespace OpenWrap.Tests.Repositories
+namespace current_directory_specifications
 {
-    public class when_reading_packages_by_name : context.current_directory_repository
+    public class when_reading_packages_by_name : current_directory_repository
     {
         public when_reading_packages_by_name()
         {
-            given_packages_in_directory(@"c:\mordor\", Package("isenmouthe","1.0.0"), Package("gorgoroth","2.0.0"));
+            given_packages_in_directory(@"c:\mordor\", Package("isenmouthe", "1.0.0"), Package("gorgoroth", "2.0.0"));
             given_current_folder_repository();
             when_getting_package_names();
         }
@@ -32,27 +31,29 @@ namespace OpenWrap.Tests.Repositories
             PackagesByName.Contains("gorgoroth").ShouldBeTrue();
         }
     }
-    public class publishing_package : context.current_directory_repository
+
+    public class publishing_package : current_directory_repository
     {
         public publishing_package()
         {
             given_current_folder_repository();
         }
-        [Test]
-        public void publish_is_disabled()
-        {
-            Repository.CanPublish.ShouldBeFalse();
 
-        }
         [Test]
         public void attempting_publish_results_in_error()
         {
             Executing(() => Repository.Publish("isengard", new MemoryStream()))
-                .ShouldThrow<NotSupportedException>();
+                    .ShouldThrow<NotSupportedException>();
+        }
 
+        [Test]
+        public void publish_is_disabled()
+        {
+            Repository.CanPublish.ShouldBeFalse();
         }
     }
-    public class finding_a_package : context.current_directory_repository
+
+    public class finding_a_package : current_directory_repository
     {
         public finding_a_package()
         {
@@ -65,19 +66,26 @@ namespace OpenWrap.Tests.Repositories
         public void the_package_is_found()
         {
             FoundPackage.ShouldNotBeNull()
-                .Name.ShouldBe("isenmouthe");
+                    .Name.ShouldBe("isenmouthe");
         }
     }
 
     namespace context
     {
-        public abstract class current_directory_repository : Testing.context
+        public abstract class current_directory_repository : OpenWrap.Testing.context
         {
-            protected CurrentDirectoryRepository Repository { get; set; }
             protected InMemoryEnvironment Environment { get; set; }
             protected InMemoryFileSystem FileSystem { get; set; }
-            protected ILookup<string, IPackageInfo> PackagesByName { get; set; }
             protected IPackageInfo FoundPackage { get; set; }
+            protected ILookup<string, IPackageInfo> PackagesByName { get; set; }
+            protected CurrentDirectoryRepository Repository { get; set; }
+
+            protected InMemoryFile Package(string wrapName, string version)
+            {
+                var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
+                PackageBuilder.New(file, wrapName, version);
+                return file;
+            }
 
             protected void given_current_folder_repository()
             {
@@ -88,33 +96,21 @@ namespace OpenWrap.Tests.Repositories
             {
                 FileSystem = new InMemoryFileSystem(directories)
                 {
-                    CurrentDirectory = currentDirectory
+                        CurrentDirectory = currentDirectory
                 };
                 WrapServices.RegisterService<IFileSystem>(FileSystem);
 
                 Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory),
-                    FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory));
+                                                      FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory));
                 WrapServices.RegisterService<IEnvironment>(Environment);
-            }
-
-            protected void when_getting_package_names()
-            {
-                PackagesByName = Repository.PackagesByName;
-            }
-
-            protected InMemoryFile Package(string wrapName, string version)
-            {
-                var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
-                PackageBuilder.New(file, wrapName, version);
-                return file;
             }
 
             protected void given_packages_in_directory(string currentDirectory, params InMemoryFile[] packages)
             {
                 given_file_system(
-                    currentDirectory,
-                    new InMemoryDirectory(currentDirectory,
-                                          packages));
+                        currentDirectory,
+                        new InMemoryDirectory(currentDirectory,
+                                              packages));
             }
 
             protected void when_finding_packages(string dependency)
@@ -123,6 +119,11 @@ namespace OpenWrap.Tests.Repositories
                 new DependsParser().Parse(dependency, dep);
 
                 FoundPackage = Repository.Find(dep.Dependencies.First());
+            }
+
+            protected void when_getting_package_names()
+            {
+                PackagesByName = Repository.PackagesByName;
             }
         }
     }
