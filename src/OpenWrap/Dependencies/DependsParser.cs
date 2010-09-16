@@ -35,12 +35,12 @@ namespace OpenWrap.Dependencies
 
             var versions = ParseVersions(bits.Skip(1).ToArray()).ToList();
             var tags = bits.Skip((versions.Count * 2) + versions.Count).ToArray();
+
             return new WrapDependency
             {
-                Name = bits[0],
-                VersionVertices = versions.Count > 0 ? versions : new List<VersionVertice>(){new AnyVersionVertice()},
-                Anchored = tags.Contains("anchored", StringComparer.OrdinalIgnoreCase),
-                ContentOnly = tags.Contains("content", StringComparer.OrdinalIgnoreCase)
+                    Name = bits[0],
+                    VersionVertices = versions.Count > 0 ? versions : new List<VersionVertice>() { new AnyVersionVertice() },
+                    Tags = tags,
             };
         }
 

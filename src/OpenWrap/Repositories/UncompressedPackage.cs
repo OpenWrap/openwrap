@@ -49,7 +49,7 @@ namespace OpenWrap.Repositories
                         return;
                     try
                     {
-                        System.IO.File.Move(anchoredDirectory.Path.FullPath, anchoredDirectory.Path.FullPath + ".old");
+                        System.IO.Directory.Move(anchoredDirectory.Path.FullPath, anchoredDirectory.Path.FullPath + ".old");
                         //anchoredDirectory.Delete();
                         var anchoredPath = anchoredDirectory.Path;
                         BaseDirectory.LinkTo(anchoredPath.FullPath);

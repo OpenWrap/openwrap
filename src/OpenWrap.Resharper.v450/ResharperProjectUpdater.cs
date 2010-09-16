@@ -44,7 +44,6 @@ namespace OpenWrap.Resharper
                     .ExecuteOrQueue("Updating OpenWrap references",
                                     () =>
                                     {
-                                        //Debugger.Launch();
                                         using (WriteLockCookie.Create())
                                         {
                                             if (SolutionManager.Instance == null) return;
@@ -64,7 +63,7 @@ namespace OpenWrap.Resharper
 
                                             foreach (var path in allAssemblyPaths
                                                 .Where(x => openwrapAssemblyPaths.Contains(x) == false &&
-                                                            _ignoredAssemblies.Any(i=>x.EndsWith(i + ".dll")) == false))
+                                                            _ignoredAssemblies.Any(i=>x.Contains(i + ".dll")) == false))
                                             {
                                                 var assembly = project.AddAssemblyReference(path);
                                                 assembly.SetProperty(ISWRAP, true);
