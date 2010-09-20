@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Build.Tasks", "Ope
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.ComShim", "OpenWrap.ComShim\OpenWrap.ComShim.csproj", "{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Console", "OpenWrap.Console\OpenWrap.Console.csproj", "{49E96F6C-C545-4826-BC35-666C76721B9D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.v450", "OpenWrap.Resharper.v450\OpenWrap.Resharper.v450.csproj", "{05F146AE-9315-44B7-AF52-9B5925C90E27}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Tests", "OpenWrap.Tests\OpenWrap.Tests.csproj", "{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}"
@@ -59,10 +57,6 @@ Global
 		{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CBD1755-D4CF-4A8D-8183-16AF4D9AB3FA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49E96F6C-C545-4826-BC35-666C76721B9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49E96F6C-C545-4826-BC35-666C76721B9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49E96F6C-C545-4826-BC35-666C76721B9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49E96F6C-C545-4826-BC35-666C76721B9D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{05F146AE-9315-44B7-AF52-9B5925C90E27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{05F146AE-9315-44B7-AF52-9B5925C90E27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05F146AE-9315-44B7-AF52-9B5925C90E27}.Release|Any CPU.ActiveCfg = Release|Any CPU
