@@ -24,7 +24,7 @@
         }
         public override string ToString()
         {
-            return "File '{0}' was not found. Check the file name and try again.";
+            return string.Format("File '{0}' was not found. Check the file name and try again.", _filePath);
         }
     }
 }
