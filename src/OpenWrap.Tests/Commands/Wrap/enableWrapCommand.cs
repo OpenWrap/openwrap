@@ -40,7 +40,7 @@ namespace enableWrap_specs
     }
     namespace context
     {
-        public abstract class enable_wrap : command_context<EnableWrapCommand>
+        public abstract class enable_wrap : command_context<InitWrapCommand>
         {
             protected const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
 

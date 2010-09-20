@@ -9,8 +9,8 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Noun="enable", Verb="wrap")]
-    public class EnableWrapCommand : AbstractCommand
+    [Command(Noun="wrap", Verb="init")]
+    public class InitWrapCommand : AbstractCommand
     {
         IEnumerable<IFile> _projectsToPatch;
         const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
@@ -27,7 +27,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<IFile> GetAllProjects()
         {
-            return Environment.CurrentDirectory.Files("*.*proj", SearchScope.SubFolders);
+            return Environment.CurrentDirectory.Files("*.csproj", SearchScope.SubFolders);
         }
 
         IEnumerable<ICommandOutput> ExecuteCore()
@@ -50,6 +50,7 @@ namespace OpenWrap.Commands.Wrap
                     importNode.Attributes["Project"].Value = OPENWRAP_BUILD;
                     using (var projectFileStream = project.OpenWrite())
                         xmlDoc.Save(projectFileStream);
+                    yield return new GenericMessage(string.Format("Project '{0}' updated to use OpenWrap.", project.Path.FullPath));
                 }
             }
         }

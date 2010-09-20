@@ -47,16 +47,30 @@ namespace OpenWrap.Repositories
                 {
                     if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(BaseDirectory))
                         return;
+                    bool success = true;
+                    var temporaryDirectoryPath = anchoredDirectory.Parent.Path.Combine(anchoredDirectory.Name + ".old").FullPath;
                     try
                     {
-                        System.IO.Directory.Move(anchoredDirectory.Path.FullPath, anchoredDirectory.Path.FullPath + ".old");
-                        //anchoredDirectory.Delete();
+                        System.IO.Directory.Move(anchoredDirectory.Path.FullPath, temporaryDirectoryPath);
                         var anchoredPath = anchoredDirectory.Path;
                         BaseDirectory.LinkTo(anchoredPath.FullPath);
+                        
                     }
                     catch (Exception e)
                     {
                         _log.TraceEvent(TraceEventType.Warning, 22, "The package '{0}' could not be anchored.", _originalWrapFile.NameWithoutExtension);
+                        success = false;
+                    }
+                    if (success)
+                    {
+                        try
+                        {
+                            anchoredDirectory.FileSystem.GetDirectory(temporaryDirectoryPath).Delete();
+                        }
+                        catch(Exception e)
+                        {
+                            _log.TraceEvent(TraceEventType.Warning, 23, "The old package folder '{0}' could not be deleted.", temporaryDirectoryPath);
+                        }
                     }
                 }
             }

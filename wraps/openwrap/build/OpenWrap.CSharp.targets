@@ -92,6 +92,9 @@
     <!-- Version file -->
     <Message Text="[built(.,'@(_WrapFile->'%(RootDir)%(Directory)')version')]" />
 
+    <!-- Content -->
+    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(Content.FullPath)')]" />
+    
     <!-- Assembly output -->
     <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(IntermediateAssembly.FullPath)')]" />
     <!-- Module outputs -->
