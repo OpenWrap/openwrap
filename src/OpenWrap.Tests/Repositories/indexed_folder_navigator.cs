@@ -21,7 +21,7 @@ namespace OpenWrap.Tests.Repositories
             given_file_system(@"c:\tmp");
             given_indexed_repository(@"c:\tmp\repository");
 
-            when_publishing_package(Package("isengard", "2.1"));
+            when_publishing_package(Package("isengard", "2.1", "depends: saruman"));
         }
 
         [Test]
@@ -43,6 +43,13 @@ namespace OpenWrap.Tests.Repositories
             package.Attribute("version").ShouldNotBeNull().Value.ShouldBe("2.1");
             var link = package.Descendants("link").FirstOrDefault().ShouldNotBeNull();
             link.Attribute("href").ShouldNotBeNull().Value.ShouldNotBeNull().ShouldContain("isengard-2.1.wrap");
+        }
+        [Test]
+        public void index_file_contains_package_dependencies()
+        {
+            Repository.PackagesByName["isengard"].First()
+                    .Dependencies.ShouldHaveCountOf(1)
+                    .First().Name.ShouldBe("saruman");
         }
         [Test]
         public void package_is_accessible()
@@ -105,10 +112,10 @@ namespace OpenWrap.Tests.Repositories
             
             }
 
-            protected InMemoryFile Package(string wrapName, string version)
+            protected InMemoryFile Package(string wrapName, string version, params string[] wrapdescLines)
             {
                 var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
-                PackageBuilder.New(file, wrapName, version);
+                PackageBuilder.New(file, wrapName, version, wrapdescLines);
                 return file;
             }
 

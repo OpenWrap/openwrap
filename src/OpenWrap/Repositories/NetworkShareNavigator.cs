@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -81,7 +82,8 @@ namespace OpenWrap.Repositories
                                  new XAttribute("version", zipPackage.Version),
                                  new XElement("link",
                                               new XAttribute("rel", "package"),
-                                              new XAttribute("href", packageFile.Name))
+                                              new XAttribute("href", packageFile.Name)),
+                                              zipPackage.Dependencies.Select(x=>new XElement("depends", x.ToString()))
                             ));
 
             SaveIndex(IndexDocument);
