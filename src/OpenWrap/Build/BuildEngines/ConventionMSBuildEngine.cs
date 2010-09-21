@@ -38,13 +38,22 @@ namespace OpenWrap.Build.BuildEngines
                 var reader = msbuildProcess.StandardOutput;
 
                 yield return new TextBuildResult(string.Format("Building '{0}'...", project.Path.FullPath));
+                while (!reader.EndOfStream)
+                {
+                    var line = reader.ReadLine();
+                    var parsed = _parser.Parse(line);
+                    if (parsed.Count() > 0)
+                        foreach(var m in parsed)
+                            yield return m;
+                    else
+                        yield return new TextBuildResult(line);
+                }
+                //var content = reader.ReadToEnd().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-                var content = reader.ReadToEnd().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                //foreach (var m in content.SelectMany(line => _parser.Parse(line)))
+                //    yield return m;
 
-                foreach (var m in content.SelectMany(line => _parser.Parse(line)))
-                    yield return m;
-
-                yield return new TextBuildResult("Built...");
+                yield return new TextBuildResult("Built.");
             }
         }
 
