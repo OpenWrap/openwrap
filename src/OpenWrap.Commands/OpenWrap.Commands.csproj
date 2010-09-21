@@ -58,7 +58,6 @@
     <Compile Include="Wrap\BuildWrapCommand.cs" />
     <Compile Include="Wrap\InitWrapCommand.cs" />
     <Compile Include="Wrap\NewWrapCommand.cs" />
-    <Compile Include="Wrap\PackageRepositoryExtensions.cs" />
     <Compile Include="Wrap\PublishWrapCommand.cs" />
     <Compile Include="Wrap\RemoveWrapCommand.cs" />
     <Compile Include="Errors\UnknownRemoteRepository.cs" />

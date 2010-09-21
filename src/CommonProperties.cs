@@ -1,7 +1,7 @@
 using System.Reflection;
 
 [assembly: AssemblyCompany("Caffeine IT / naughtyProd Limited")]
-[assembly: AssemblyProduct("OpenWrap pacakge management")]
+[assembly: AssemblyProduct("OpenWrap package management")]
 [assembly: AssemblyCopyright("Copyright © naughtyProd Limited 2009-2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

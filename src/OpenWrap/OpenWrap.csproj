@@ -128,6 +128,7 @@
     <Compile Include="Repositories\ICommandExportItem.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
     <Compile Include="Repositories\PackagePackager.cs" />
+    <Compile Include="Repositories\PackageRepositoryExtensions.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
     <Compile Include="Resolvers\RuntimeAssemblyResolver.cs" />
     <Compile Include="StringExtensions.cs" />

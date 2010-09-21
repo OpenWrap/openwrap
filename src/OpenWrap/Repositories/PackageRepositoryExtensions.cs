@@ -1,8 +1,7 @@
 ﻿using System;
 using OpenWrap.Dependencies;
-using OpenWrap.Repositories;
 
-namespace OpenWrap.Commands.Wrap
+namespace OpenWrap.Repositories
 {
     public static class PackageRepositoryExtensions
     {

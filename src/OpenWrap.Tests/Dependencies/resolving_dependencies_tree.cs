@@ -29,7 +29,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             Resolve.IsSuccess.ShouldBeFalse();
         }
         [Test]
-        public void dependency_has_no_pacakge()
+        public void dependency_has_no_package()
         {
             Resolve.Dependencies.ShouldHaveCountOf(1);
             Resolve.Dependencies.First().Package.ShouldBeNull();
@@ -164,9 +164,9 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             dependency.Package.Version.ShouldBe(new Version(1, 0, 0));
         }
     }
-    public class resolving_pacakge_existing_in_local : dependency_manager_context
+    public class resolving_package_existing_in_local : dependency_manager_context
     {
-        public resolving_pacakge_existing_in_local()
+        public resolving_package_existing_in_local()
         {
             given_local_package("rings-of-power-1.0.0");
             given_dependency("depends: rings-of-power");

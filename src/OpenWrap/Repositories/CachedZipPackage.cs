@@ -118,7 +118,7 @@ namespace OpenWrap.Repositories
                     }
                 }
                 if (Descriptor.Version == null)
-                    throw new InvalidOperationException("The pacakge '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.");
+                    throw new InvalidOperationException("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.");
             }
         }
     }

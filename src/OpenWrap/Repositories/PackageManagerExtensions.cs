@@ -41,8 +41,13 @@ namespace OpenWrap.Repositories
 
                 foreach (var repository in repositoriesForDependency.Where(x => x != null && x.CanPublish).ToList())
                 {
-                    yield return new Result("Copying '{0}' from '{1}' to '{2}'", dependency.Package.FullName, dependency.Package.Source.Name, repository.Name);
-                    manager.UpdateDependency(dependency, repository);
+                    if (repository.HasDependency(dependency.Package.Name, dependency.Package.Version))
+                        yield return new Result("Package '{0}' up to date in '{1}'.", dependency.Package.Name, repository.Name);
+                    else
+                    {
+                        yield return new Result("Copying '{0}' from '{1}' to '{2}'", dependency.Package.FullName, dependency.Package.Source.Name, repository.Name);
+                        manager.UpdateDependency(dependency, repository);
+                    }
                 }
             }
         }
