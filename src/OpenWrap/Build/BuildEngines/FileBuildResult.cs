@@ -13,4 +13,5 @@ namespace OpenWrap.Build.BuildEngines
         public string ExportName { get; private set; }
         public LocalPath Path { get; private set; }
     }
+    public class ErrorBuildResult : BuildResult{}
 }

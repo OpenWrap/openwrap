@@ -4,33 +4,33 @@
 
   <!-- Default folder locations -->
 
-  
+
   <PropertyGroup>
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">true</OpenWrap-EnableVisualStudioIntegration>
-    
+
     <!-- Emit output information post-build for OpenWrap to create packages -->
     <OpenWrap-EmitOutputInstructions Condition="'$(OpenWrap-EmitOutputInstructions)' == ''">false</OpenWrap-EmitOutputInstructions>
-    
-    
+
+
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == ''">false</OpenWrap-EnableVisualStudioIntegration>
     <!-- We detect the root path based on the existence of a .wraps folder -->
     <OpenWrap-ProjectRepositoryPath Condition="'$(OpenWrap-ProjectRepositoryPath)' == ''">$(MSBuildProjectDirectory)\..\wraps</OpenWrap-ProjectRepositoryPath>
     <OpenWrap-ProjectRepositoryPath Condition="!Exists('$(OpenWrap-ProjectRepositoryPath)')">$(MSBuildProjectDirectory)\..\..\wraps</OpenWrap-ProjectRepositoryPath>
     <OpenWrap-ProjectRepositoryPath Condition="!Exists('$(OpenWrap-ProjectRepositoryPath)')">$(MSBuildProjectDirectory)\..\..\..\wraps</OpenWrap-ProjectRepositoryPath>
-    
+
     <OpenWrap-BuildTasksDirectory Condition="'$(OpenWrap-BuildTasksDirectory)' == ''">$(OpenWrap-ProjectRepositoryPath)\openwrap\build</OpenWrap-BuildTasksDirectory>
-    
+
     <RootSolutionDirectory>$(OpenWrap-ProjectRepositoryPath)\..</RootSolutionDirectory>
 
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v2.0'">net20</OpenWrap-TargetProfile>
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v3.0'">net30</OpenWrap-TargetProfile>
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v3.5'">net35</OpenWrap-TargetProfile>
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v4.0'">net40</OpenWrap-TargetProfile>
-    
-    
+
+    <OpenWrap-ExportName Condition="'$(OpenWrap-ExportName)' == ''">bin-$(OpenWrap-TargetProfile)</OpenWrap-ExportName>
   </PropertyGroup>
 
-  
+
   <ItemGroup>
     <_WrapFile Include="$(OpenWrap-DescriptorPath)" Condition="'$(OpenWrap-DescriptorPath)' == ''" />
     <_WrapFile Include="$(MSBuildProjectDirectory)\*.wrapdesc" />
@@ -51,7 +51,7 @@
     <!-- Sanity checks -->
     <Error Condition="!Exists('%(_WrapFile.FullPath)')" Text="Could not locate the .wrapdesc file '%(FullPath)'." />
     <Error Condition="'$(OutputType)' != 'winexe' and '$(OutputType)' != 'exe' and '$(OutputType)' != 'library'" Text="The project type '$(OutputType)' is not supported." />
-    
+
   </Target>
 
 
@@ -59,7 +59,7 @@
 
 
   <PropertyGroup>
-    
+
   </PropertyGroup>
 
   <Target Name="OpenWrap-ResolveReferences">
@@ -73,46 +73,56 @@
       InputReferences="@(Reference)"
       CopyLocal="true">
       <Output TaskParameter="OutputReferences" ItemName="Reference" />
+
     </ResolveWrapReferences>
   </Target>
-  
+
   <Target Name="_ViewPaths" DependsOnTargets="_Initialize;">
     <Message Text="OpenWrap wraps directory at $(OpenWrap-ProjectRepositoryPath)" />
     <Message Text="Visual Studio output path is $(OutputPath)" />
   </Target>
 
   <Target Name="OpenWrap-BeforeBuild" DependsOnTargets="_Initialize">
-    
+
   </Target>
 
-  <Target Name="OpenWrap-AfterBuild" 
+  <Target Name="OpenWrap-AfterBuild"
           Condition="$(OpenWrap-EmitOutputInstructions)">
     <!-- Descriptor file -->
     <Message Text="[built(.,'%(_WrapFile.FullPath)')]" />
     <!-- Version file -->
     <Message Text="[built(.,'@(_WrapFile->'%(RootDir)%(Directory)')version')]" />
 
+    <!-- Referenced projects -->
+    <ItemGroup>
+      <_OpenWrap-AssemblyReferences Include="@(Reference->'%(HintPath)')" Condition="'%(Reference.FromOpenWrap)' == 'True'" />
+
+      <_OpenWrap-CopyLocal Include="@(ReferenceCopyLocalPaths)" Exclude="@(_OpenWrap-AssemblyReferences)" />
+    </ItemGroup>
+
+    <Message Text="[built($(OpenWrap-ExportName),'@(_OpenWrap-CopyLocal)')]" Condition="'@(_OpenWrap-CopyLocal)' != ''" />
+
     <!-- Content -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(Content.FullPath)')]" />
-    
+    <Message Text="[built($(OpenWrap-ExportName),'%(Content.FullPath)')]" Condition="Exists('@(Content)')" />
+
     <!-- Assembly output -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(IntermediateAssembly.FullPath)')]" />
+    <Message Text="[built($(OpenWrap-ExportName),'%(IntermediateAssembly.FullPath)')]" />
     <!-- Module outputs -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(AddModules.FullPath)')]" Condition="Exists('@(AddModules)')" />
+    <Message Text="[built($(OpenWrap-ExportName),'%(AddModules.FullPath)')]" Condition="Exists('@(AddModules)')" />
     <!-- Serialization assemblies -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'$(OutDir)$(_SGenDllName)')]" Condition="'$(_SGenDllCreated)'=='true'" />
+    <Message Text="[built($(OpenWrap-ExportName),'$(OutDir)$(_SGenDllName)')]" Condition="'$(_SGenDllCreated)'=='true'" />
     <!-- Xml documentation -->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),'%(DocFileItem.FullPath)')]" Condition="'$(_DocumentationFileProduced)'=='true'" />
+    <Message Text="[built($(OpenWrap-ExportName),'%(DocFileItem.FullPath)')]" Condition="'$(_DocumentationFileProduced)'=='true'" />
     <!-- Satellite assemblies-->
-    <Message Text="[built(bin-$(OpenWrap-TargetProfile),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
+    <Message Text="[built($(OpenWrap-ExportName),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
              Condition="Exists('@(IntermediateSatelliteAssembliesWithTargetPath)')"/>
   </Target>
-  
+
 
 
   <Import Project="$(OpenWrap-BuildTasksDirectory)\OpenWrap.tasks" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  
+
   <PropertyGroup>
     <BuildDependsOn>
       OpenWrap-BeforeBuild;

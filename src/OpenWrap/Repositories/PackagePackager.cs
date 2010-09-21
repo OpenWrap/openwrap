@@ -19,6 +19,10 @@ namespace OpenWrap.Repositories
                     var folder = export.Key != "." ? tempDirectory.GetDirectory(export.Key).MustExist() : tempDirectory;
                     foreach(var file in export.Distinct())
                     {
+                        var existingFile = folder.GetFile(file.Name);
+
+                        if (existingFile.Exists)
+                            existingFile.Delete();
                         file.CopyTo(folder);
                     }
                 }

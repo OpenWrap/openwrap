@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems;
-using OpenWrap.Commands;
 
 namespace OpenWrap.Build.BuildEngines
 {
@@ -43,21 +42,19 @@ namespace OpenWrap.Build.BuildEngines
                     var line = reader.ReadLine();
                     var parsed = _parser.Parse(line);
                     if (parsed.Count() > 0)
-                        foreach(var m in parsed)
+                        foreach (var m in parsed)
                             yield return m;
                     else
                         yield return new TextBuildResult(line);
                 }
-                //var content = reader.ReadToEnd().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-                //foreach (var m in content.SelectMany(line => _parser.Parse(line)))
-                //    yield return m;
-
+                msbuildProcess.WaitForExit();
+                if (msbuildProcess.ExitCode != 0)
+                    yield return new ErrorBuildResult();
                 yield return new TextBuildResult("Built.");
             }
         }
 
-        Process CreateMSBuildProcess(IFile project)
+        static Process CreateMSBuildProcess(IFile project)
         {
             return new Process
             {
@@ -71,7 +68,7 @@ namespace OpenWrap.Build.BuildEngines
             };
         }
 
-        string GetMSBuildExecutableName()
+        static string GetMSBuildExecutableName()
         {
             var versionedFolders = from version in Directory.GetDirectories(Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\"), "v*")
                                    orderby version descending

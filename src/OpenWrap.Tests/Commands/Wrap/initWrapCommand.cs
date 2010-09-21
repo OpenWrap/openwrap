@@ -13,6 +13,19 @@ using OpenWrap.Tests.Commands.context;
 
 namespace initWrap_specs
 {
+    public class init_without_parameters : init_wrap
+    {
+        public init_without_parameters()
+        {
+            given_csharp_project_file(@"project1.csproj");
+            when_executing_command();
+        }
+        [Test]
+        public void command_fails()
+        {
+            Results.ShouldHaveAtLeastOne(x => x.Success == false);
+        }
+    }
     public class init_for_all_projects : init_wrap
     {
         public init_for_all_projects()

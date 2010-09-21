@@ -56,10 +56,20 @@ namespace OpenWrap.Commands.Wrap
                         buildFiles.Add(buildResult);
                         yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
                     }
+                    else if (t is ErrorBuildResult)
+                    {
+                        yield return new GenericError("There was a problem building this project. Please review the build log. Stopping the build.");
+                        yield break;
+                    }
                 }
             if (buildFiles.Count > 0)
             {
                 var version = GetCurrentVersion().GenerateVersionNumber();
+                foreach(var file in buildFiles)
+                {
+                    yield return new GenericMessage(string.Format("Copying: {0} - {1}", file.ExportName, file.Path));
+
+                }
                 var packageFilePath = destinationPath.GetFile(packageName + "-" + version + ".wrap");
                 PackagePackager.CreatePackage(
                         packageFilePath,
