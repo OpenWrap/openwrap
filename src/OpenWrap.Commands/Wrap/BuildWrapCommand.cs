@@ -14,8 +14,13 @@ namespace OpenWrap.Commands.Wrap
     [Command(Noun = "Wrap", Verb = "Build")]
     public class BuildWrapCommand : AbstractCommand
     {
+        IDirectory _destinationPath;
+
         [CommandInput]
         public string Name { get; set; }
+
+        [CommandInput]
+        public string Path { get; set; }
 
         protected IEnvironment Environment
         {
@@ -29,7 +34,9 @@ namespace OpenWrap.Commands.Wrap
 
         public override IEnumerable<ICommandOutput> Execute()
         {
-            return Either(NoDescriptorFound).Or(Build());
+            return Either(NoDescriptorFound)
+                .Or(VerifyPath)
+                .Or(Build());
         }
 
         IEnumerable<ICommandOutput> Build()
@@ -37,6 +44,7 @@ namespace OpenWrap.Commands.Wrap
             var packageName = Name ?? Environment.Descriptor.Name;
             var buildFiles = new List<FileBuildResult>();
             var commandLine = Environment.Descriptor.BuildCommand;
+            var destinationPath = _destinationPath ?? Environment.CurrentDirectory;
             if (commandLine == null)
                 foreach (var t in new ConventionMSBuildEngine(Environment).Build())
                 {
@@ -53,7 +61,7 @@ namespace OpenWrap.Commands.Wrap
             {
                 var version = GetCurrentVersion().GenerateVersionNumber();
                 PackagePackager.CreatePackage(
-                        Environment.CurrentDirectory.GetFile(packageName + "-" + version + ".wrap"),
+                        destinationPath.GetFile(packageName + "-" + version + ".wrap"),
                         version,
                         buildFiles.GroupBy(x => x.ExportName, x => FileSystem.GetFile(x.Path.FullPath)));
             }
@@ -78,10 +86,21 @@ namespace OpenWrap.Commands.Wrap
                     return streamReader.ReadLine();
             return null;
         }
-
+        ICommandOutput VerifyPath()
+        {
+            if (Path != null)
+            {
+                _destinationPath = FileSystem.GetDirectory(Path);
+                if (_destinationPath.Exists == false)
+                    return new GenericError("Path '{0}' doesn't exist.", Path);
+            }
+            return null;
+        }
         ICommandOutput NoDescriptorFound()
         {
-            return Environment.Descriptor == null ? new GenericError("Could not find a wrap descriptor. Are you in a project directory?") : null;
+            return Environment.Descriptor == null 
+                ? new GenericError("Could not find a wrap descriptor. Are you in a project directory?")
+                : null;
         }
     }
 }
