@@ -49,9 +49,11 @@ namespace OpenWrap.Repositories
         // TODO: Expose at the pacakge manager / repository level, such as a VerifyCache() or something along those lines...
         public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, params IPackageRepository[] repositories)
         {
+            repositories = repositories.NotNull().ToArray();
             yield return new GenericMessage("Making sure the cache is up-to-date...");
-            
-            packageManager.GetExports<IExport>("bin", WrapServices.GetService<IEnvironment>().ExecutionEnvironment, repositories.NotNull()).ToList();
+            foreach (var repo in repositories)
+                repo.Refresh();
+            packageManager.GetExports<IExport>("bin", WrapServices.GetService<IEnvironment>().ExecutionEnvironment, repositories).ToList();
         }
         public static IEnumerable<IPackageRepository> RepositoriesForRead(this IEnvironment environment)
         {

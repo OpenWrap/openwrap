@@ -354,6 +354,10 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 get { return true; }
             }
 
+            public void Refresh()
+            {
+            }
+
             public string Name
             {
                 get; set;

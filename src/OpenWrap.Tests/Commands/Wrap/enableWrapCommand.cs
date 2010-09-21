@@ -33,7 +33,7 @@ namespace enableWrap_specs
             {
                 var doc = XDocument.Load(new XmlTextReader(stream));
                 doc.Document.Descendants(XName.Get("Import", MSBUILD_NS)).First().Attribute("Project").Value
-                    .ShouldContain("OpenWrap.CSharp.Target");
+                    .ShouldContain("OpenWrap.CSharp.targets");
             }
         }
 

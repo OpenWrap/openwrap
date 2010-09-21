@@ -38,6 +38,10 @@ namespace OpenWrap.Repositories
             get { return false; }
         }
 
+        public void Refresh()
+        {
+        }
+
         public string Name
         {
             get { return "Current directory"; }

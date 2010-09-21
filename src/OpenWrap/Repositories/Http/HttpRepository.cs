@@ -22,7 +22,10 @@ namespace OpenWrap.Repositories.Http
             Name = repositoryName;
             _packagesQuery = LoadPackages(navigator, fileSystem);
         }
-
+        public void Refresh()
+        {
+            _packagesByName = null;
+        }
         IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
         {
             IndexDocument = navigator.Index();

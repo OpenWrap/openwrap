@@ -10,7 +10,7 @@ namespace OpenWrap.Repositories
         IPackageInfo Find(WrapDependency dependency);
         IPackageInfo Publish(string packageFileName, Stream packageStream);
         bool CanPublish { get; }
-        
+        void Refresh();
         string Name { get; }
     }
 }

@@ -23,14 +23,20 @@ namespace OpenWrap.Repositories
             _anchorsEnabled = anchorsEnabled;
 
             _rootCacheDirectory = BasePath.GetOrCreateDirectory("_cache");
+            Refresh();
+
+        }
+
+        public void Refresh()
+        {
             Packages = (from wrapFile in BasePath.Files("*.wrap")
                         let packageFullName = wrapFile.NameWithoutExtension
                         let packageVersion = WrapNameUtility.GetVersion(packageFullName)
                         where packageVersion != null
                         let cacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
                         select cacheDirectory.Exists
-                                   ? (IPackageInfo)new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All, _anchorsEnabled)
-                                   : (IPackageInfo)new CachedZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All, _anchorsEnabled)).ToList();
+                                       ? (IPackageInfo)new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All, _anchorsEnabled)
+                                       : (IPackageInfo)new CachedZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All, _anchorsEnabled)).ToList();
         }
 
         public IDirectory BasePath { get; set; }

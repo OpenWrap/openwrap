@@ -132,7 +132,7 @@ namespace OpenWrap.Build.Tasks
             OutputReferences = items.ToArray();
         }
 
-        public class PathComparer : IEqualityComparer<IAssemblyReferenceExportItem>
+        class PathComparer : IEqualityComparer<IAssemblyReferenceExportItem>
         {
 
             public bool Equals(IAssemblyReferenceExportItem x, IAssemblyReferenceExportItem y)
@@ -143,7 +143,7 @@ namespace OpenWrap.Build.Tasks
             public int GetHashCode(IAssemblyReferenceExportItem obj)
             {
 
-                return obj == null || obj.AssemblyName == null || obj.AssemblyName.Name == null
+                return ReferenceEquals(obj, null) || obj.AssemblyName == null || obj.AssemblyName.Name == null
                     ? 0
                     : obj.AssemblyName.Name.GetHashCode();
             }
@@ -157,12 +157,14 @@ namespace OpenWrap.Build.Tasks
                 return;
             }
             PackageRepository = new FolderRepository(WrapsDirectoryPath, false);
+            PackageRepository.Refresh();
         }
 
 
         bool RefreshWrapDependencies()
         {
             var monitoringService = WrapServices.GetService<IWrapDescriptorMonitoringService>();
+            
             monitoringService.ProcessWrapDescriptor(WrapDescriptorPath, PackageRepository, this);
             return true;
         }
