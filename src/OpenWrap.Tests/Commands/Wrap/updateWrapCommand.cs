@@ -112,13 +112,13 @@ namespace OpenWrap.Tests.Commands
             where T : IPackageRepository
         {
             repository.PackagesByName[name].Count().ShouldBeGreaterThan(0);
-            repository.HasDependency(name, new Version(version)).ShouldBeTrue();
+            repository.HasPackage(name, version).ShouldBeTrue();
             return repository;
         }
         public static T ShouldNotHavePackage<T>(this T repository, string name, string version)
             where T : IPackageRepository
         {
-            repository.HasDependency(name, new Version(version)).ShouldBeFalse();
+            repository.HasPackage(name, version).ShouldBeFalse();
             return repository;
         }
     }

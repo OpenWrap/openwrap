@@ -90,7 +90,7 @@ href: " + RemoteRepositories.Default["openwrap"].Href);
         [Test]
         public void a_default_value_is_returned()
         {
-            Entry.ShouldBeTheSameInstanceAs(RemoteRepositories.Default);
+            Entry.ShouldBeSameInstanceAs(RemoteRepositories.Default);
         }
     }
     namespace context

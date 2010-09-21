@@ -92,19 +92,21 @@ namespace OpenWrap.Repositories
                                                                List<ResolvedDependency> resolvedDependencies)
         {
             IEnumerable<ResolvedDependency> packages = (from dependency in dependencies
-                            let modifiedDependency = ApplyAllWrapDependencyOverrides(dependencyOverrides, dependency)
-                            let package = repositories
-                                    .Where(x => x != null)
-                                    .Select(x => x.Find(modifiedDependency))
-                                    .FirstOrDefault(x => x != null)
-                            where package == null ||
-                                  resolvedDependencies.None(x => x.Package != null && x.Package.Name == package.Name && x.Package.Version == package.Version)
-                            select new ResolvedDependency { Dependency = modifiedDependency, Package = package, ParentPackage = parent })
+                                                        let modifiedDependency = ApplyAllWrapDependencyOverrides(dependencyOverrides, dependency)
+                                                        let package = repositories
+                                                                .Where(x => x != null)
+                                                                .Select(x => x.Find(modifiedDependency))
+                                                                .NotNull()
+                                                                .OrderByDescending(x=>x.Version)
+                                                                .FirstOrDefault(x => x != null)
+                                                        where package == null ||
+                                                              resolvedDependencies.None(x => x.Package != null && x.Package.Name == package.Name && x.Package.Version == package.Version)
+                                                        select new ResolvedDependency { Dependency = modifiedDependency, Package = package, ParentPackage = parent })
                             .ToList();
             resolvedDependencies.AddRange(packages);
 
 
-            foreach (var package in packages.Where(x=>x.Package != null))
+            foreach (var package in packages.Where(x => x.Package != null))
                 packages = packages.Concat(ResolveAllDependencies(
                     package.Package,
                     package.Package.Dependencies,

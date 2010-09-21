@@ -65,11 +65,11 @@ namespace OpenRasta.Wrap.Tests.Dependencies
     {
         public versions_in_conflict_and_dependency_override()
         {
-            given_local_package("sauron-1.0.0");
-            given_local_package("sauron-1.1.0");
-            given_local_package("rings-of-power-1.0.0", "depends: sauron = 1.0.0");
-            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends: sauron = 1.1.0");
-            given_local_package("tolkien-1.0.0", "depends: rings-of-power", "depends: one-ring-to-rule-them-all");
+            given_project_package("sauron-1.0.0");
+            given_project_package("sauron-1.1.0");
+            given_project_package("rings-of-power-1.0.0", "depends: sauron = 1.0.0");
+            given_project_package("one-ring-to-rule-them-all-1.0.0", "depends: sauron = 1.1.0");
+            given_project_package("tolkien-1.0.0", "depends: rings-of-power", "depends: one-ring-to-rule-them-all");
 
             given_dependency("depends: tolkien");
             given_dependency("depends: sauron = 1.0.0");
@@ -90,11 +90,11 @@ namespace OpenRasta.Wrap.Tests.Dependencies
     {
         public when_versions_are_in_conflict()
         {
-            given_local_package("sauron-1.0.0");
-            given_local_package("sauron-1.1.0");
-            given_local_package("rings-of-power-1.0.0", "depends: sauron = 1.0.0");
-            given_local_package("one-ring-to-rule-them-all-1.0.0", "depends: sauron = 1.1.0");
-            given_local_package("tolkien-1.0.0", "depends: rings-of-power", "depends: one-ring-to-rule-them-all");
+            given_project_package("sauron-1.0.0");
+            given_project_package("sauron-1.1.0");
+            given_project_package("rings-of-power-1.0.0", "depends: sauron = 1.0.0");
+            given_project_package("one-ring-to-rule-them-all-1.0.0", "depends: sauron = 1.1.0");
+            given_project_package("tolkien-1.0.0", "depends: rings-of-power", "depends: one-ring-to-rule-them-all");
 
             given_dependency("depends: tolkien");
 
@@ -148,27 +148,27 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public resolvig_package_existing_in_local_and_remote()
         {
             given_remote1_package("rings-of-power-1.1.0");
-            given_local_package("rings-of-power-1.0.0");
+            given_project_package("rings-of-power-1.0.0");
             given_dependency("depends: rings-of-power");
 
             when_resolving_packages();
         }
         [Test]
-        public void local_package_found_before_user_package()
+        public void finds_highest_version_number_across_repositories()
         {
             Resolve.IsSuccess.ShouldBeTrue();
             var dependency = Resolve.Dependencies.First();
 
             dependency.Package.ShouldNotBeNull()
-                .Source.ShouldBe(ProjectRepository);
-            dependency.Package.Version.ShouldBe(new Version(1, 0, 0));
+                .Source.ShouldBe(RemoteRepository);
+            dependency.Package.Version.ShouldBe(new Version(1, 1, 0));
         }
     }
     public class resolving_package_existing_in_local : dependency_manager_context
     {
         public resolving_package_existing_in_local()
         {
-            given_local_package("rings-of-power-1.0.0");
+            given_project_package("rings-of-power-1.0.0");
             given_dependency("depends: rings-of-power");
 
             when_resolving_packages();
@@ -182,6 +182,32 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
+    public class resolving_latest_package_in_system_with_outdated_remote_version : dependency_manager_context
+    {
+        public resolving_latest_package_in_system_with_outdated_remote_version()
+        {
+            given_system_package("one-ring-1.0.0.1");
+            given_remote1_package("one-ring-1.0.0.0");
+
+            given_dependency("depends: one-ring");
+
+            when_resolving_packages();
+        }
+        [Test]
+        public void resolve_is_successful()
+        {
+            Resolve.IsSuccess.ShouldBeTrue();
+
+        }
+        [Test]
+        public void the_package_is_installed_from_system()
+        {
+            Resolve.Dependencies.ShouldHaveCountOf(1)
+                    .First()
+                    .Check(x => x.Package.Source.ShouldBe(SystemRepository))
+                    .Check(x => x.Package.Version.ShouldBe(new Version("1.0.0.1")));
+        }
+    }
     public class when_overriding_dependency : dependency_manager_context
     {
         public when_overriding_dependency()
@@ -189,7 +215,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             given_remote1_package("one-ring-1.0.0");
             given_remote1_package("sauron-1.0.0", "depends: ring-of-power");
 
-            given_local_package("minas-tirith-1.0.0");
+            given_project_package("minas-tirith-1.0.0");
 
 
             given_dependency("depends: sauron");
@@ -265,7 +291,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 new DependsParser().Parse(dependency, DependencyDescriptor);
             }
 
-            protected void given_local_package(string name, params string[] dependencies)
+            protected void given_project_package(string name, params string[] dependencies)
             {
                 Add(ProjectRepository, name, dependencies);
             }

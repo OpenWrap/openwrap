@@ -23,6 +23,28 @@ namespace OpenWrap.Tests.Commands
             Results.ShouldHaveAtLeastOne(x => x.Success == false);
         }
     }
+    class adding_wrap_from_system_pacakge_with_outdated_version_in_remote : context.command_context<AddWrapCommand>
+    {
+        public adding_wrap_from_system_pacakge_with_outdated_version_in_remote()
+        {
+            given_project_repository();
+            given_project_package("sauron", new Version("1.0.0.0"));
+            given_system_package("sauron", new Version("1.0.0.2"));
+            given_remote_package("sauron", new Version("1.0.0.1"));
+
+            when_executing_command("sauron");
+        }
+        [Test]
+        public void latest_version_of_package_is_added()
+        {
+            Environment.ProjectRepository.ShouldHavePackage("sauron", "1.0.0.2");
+        }
+        [Test]
+        public void outdated_version_is_not_added()
+        {
+            Environment.ProjectRepository.ShouldNotHavePackage("sauron", "1.0.0.1");
+        }
+    }
     class adding_wrap_from_local_package_in_project_path_without_descriptor_update : context.command_context<AddWrapCommand>
     {
         
@@ -210,9 +232,9 @@ namespace OpenWrap.Tests.Commands
             when_executing_command("sauron");
         }
         [Test]
-        public void package_is_not_updated()
+        public void package_is_updated()
         {
-            Environment.ProjectRepository.ShouldNotHavePackage("sauron", "2.0.0");
+            Environment.ProjectRepository.ShouldHavePackage("sauron", "2.0.0");
         }
     }
 }

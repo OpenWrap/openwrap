@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Commands;
-using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Services;
 
@@ -16,8 +15,8 @@ namespace OpenWrap.Repositories
         }
 
         public static IEnumerable<ICommandOutput> CopyPackagesToRepositories(this IPackageManager manager,
-                                                                                         DependencyResolutionResult dependencies,
-                                                                                         IEnumerable<IPackageRepository> repositoriesToWriteTo)
+                                                                             DependencyResolutionResult dependencies,
+                                                                             IEnumerable<IPackageRepository> repositoriesToWriteTo)
         {
             if (manager == null) throw new ArgumentNullException("manager");
             if (dependencies == null) throw new ArgumentNullException("dependencies");
@@ -35,22 +34,31 @@ namespace OpenWrap.Repositories
                 // fast forward to the source repository
 
                 var repositoriesForDependency = repositoriesToWriteTo
-                    .SkipWhile(x => x != dependency.Package.Source)
-                    .Skip(1)
-                    .ToList();
+                        .SkipWhile(x => x != dependency.Package.Source)
+                        .Skip(1)
+                        .ToList();
 
                 foreach (var repository in repositoriesForDependency.Where(x => x != null && x.CanPublish).ToList())
                 {
-                    if (repository.HasDependency(dependency.Package.Name, dependency.Package.Version))
-                        yield return new Result("Package '{0}' up to date in '{1}'.", dependency.Package.Name, repository.Name);
-                    else
+                    var existingUpToDateVersion = repository.PackagesByName.Contains(dependency.Package.Name)
+                                                          ? repository.PackagesByName[dependency.Package.Name]
+                                                            .Where(x=>x.Version >= dependency.Package.Version)
+                                                            .OrderByDescending(x => x.Version)
+                                                            .FirstOrDefault()
+                                                          : null;
+                    if (existingUpToDateVersion == null)
                     {
                         yield return new Result("Copying '{0}' from '{1}' to '{2}'", dependency.Package.FullName, dependency.Package.Source.Name, repository.Name);
                         manager.UpdateDependency(dependency, repository);
                     }
+                    else
+                    {
+                        yield return new Result("'{0}' up-to-date as '{1}' <= '{2}'.", repository.Name, dependency.Package.FullName, existingUpToDateVersion.FullName);
+                    }
                 }
             }
         }
+
         // TODO: Expose at the pacakge manager / repository level, such as a VerifyCache() or something along those lines...
         public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, params IPackageRepository[] repositories)
         {
@@ -60,13 +68,14 @@ namespace OpenWrap.Repositories
                 repo.Refresh();
             packageManager.GetExports<IExport>("bin", WrapServices.GetService<IEnvironment>().ExecutionEnvironment, repositories).ToList();
         }
+
         public static IEnumerable<IPackageRepository> RepositoriesForRead(this IEnvironment environment)
         {
             return new[]
             {
-                environment.CurrentDirectoryRepository,
-                environment.ProjectRepository,
-                environment.SystemRepository
+                    environment.CurrentDirectoryRepository,
+                    environment.ProjectRepository,
+                    environment.SystemRepository
             }.Concat(environment.RemoteRepositories);
         }
 
@@ -74,8 +83,8 @@ namespace OpenWrap.Repositories
         {
             var reps = environment.RemoteRepositories.Concat(new[]
             {
-                environment.CurrentDirectoryRepository,
-                environment.SystemRepository
+                    environment.CurrentDirectoryRepository,
+                    environment.SystemRepository
             }).ToList();
             if (environment.ProjectRepository != null)
                 reps.Add(environment.ProjectRepository);

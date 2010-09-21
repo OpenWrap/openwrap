@@ -4,18 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using enableWrap_specs.context;
+using initWrap_specs.context;
 using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands.context;
 
-namespace enableWrap_specs
+namespace initWrap_specs
 {
-    public class enabling_for_all_projects : enable_wrap
+    public class init_for_all_projects : init_wrap
     {
-        public enabling_for_all_projects()
+        public init_for_all_projects()
         {
             given_csharp_project_file(@"project1.csproj");
             when_executing_command("-all");
@@ -32,6 +32,7 @@ namespace enableWrap_specs
             using (var stream = projectFIle.OpenRead())
             {
                 var doc = XDocument.Load(new XmlTextReader(stream));
+                
                 doc.Document.Descendants(XName.Get("Import", MSBUILD_NS)).First().Attribute("Project").Value
                     .ShouldContain("OpenWrap.CSharp.targets");
             }
@@ -40,7 +41,7 @@ namespace enableWrap_specs
     }
     namespace context
     {
-        public abstract class enable_wrap : command_context<InitWrapCommand>
+        public abstract class init_wrap : command_context<InitWrapCommand>
         {
             protected const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
 
