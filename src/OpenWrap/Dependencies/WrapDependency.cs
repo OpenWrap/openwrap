@@ -9,6 +9,7 @@ namespace OpenWrap.Dependencies
         public WrapDependency()
         {
             VersionVertices = new List<VersionVertice>();
+            Tags = new List<string>();
         }
         public string Name { get; set; }
         public ICollection<VersionVertice> VersionVertices { get; set; }
@@ -16,13 +17,13 @@ namespace OpenWrap.Dependencies
         public bool Anchored
         {
             get { return Tags.Contains("anchored", StringComparer.OrdinalIgnoreCase);}
-            set { if (!Tags.Contains("anchored")) Tags.Add("anchored"); }
+            set { SetTag("anchored", value); }
         }
 
         public bool ContentOnly
         {
             get { return Tags.Contains("content", StringComparer.OrdinalIgnoreCase); }
-            set { if (!Tags.Contains("content")) Tags.Add("content"); }
+            set { SetTag("content", value); }
 
         }
         void SetTag(string tag, bool isSet)
