@@ -60,10 +60,12 @@ namespace OpenWrap.Commands.Wrap
             if (buildFiles.Count > 0)
             {
                 var version = GetCurrentVersion().GenerateVersionNumber();
+                var packageFilePath = destinationPath.GetFile(packageName + "-" + version + ".wrap");
                 PackagePackager.CreatePackage(
-                        destinationPath.GetFile(packageName + "-" + version + ".wrap"),
+                        packageFilePath,
                         version,
                         buildFiles.GroupBy(x => x.ExportName, x => FileSystem.GetFile(x.Path.FullPath)));
+                yield return new GenericMessage(string.Format("Package built at '{0}'.", packageFilePath));
             }
         }
 
