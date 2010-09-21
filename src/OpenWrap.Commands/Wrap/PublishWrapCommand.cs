@@ -38,7 +38,7 @@ namespace OpenWrap.Commands.Wrap
         }
         IEnumerable<ICommandOutput> ExecuteCore()
         {
-            yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}", Path, RemoteRepository));
+            yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", Path, RemoteRepository));
             using (var packageStream = _packageFile.OpenRead())
                 _remoteRepository.Publish(_packageFile.Name, packageStream);
         }
