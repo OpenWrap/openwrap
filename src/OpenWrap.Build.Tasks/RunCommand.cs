@@ -28,7 +28,7 @@ namespace OpenWrap.Build.Tasks
             _fileSystem = fileSystem;
         }
 
-        [Required]
+        
         public string Args { get; set; }
 
         public string CurrentDirectory { get; set; }
