@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Build.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Configuration;
@@ -23,6 +24,9 @@ namespace OpenWrap.Build
         }
         public string CurrentDirectory { get; set; }
 
+        [Output]
+        public string Name { get; set; }
+
         RuntimeAssemblyResolver _resolver;
         public override bool Execute()
         {
@@ -30,6 +34,7 @@ namespace OpenWrap.Build
             RegisterServices(this, CurrentDirectory);
             _resolver = new RuntimeAssemblyResolver();
             _resolver.Initialize();
+            Name = WrapServices.GetService<IEnvironment>().Descriptor.Name;
             return true;
         }
 

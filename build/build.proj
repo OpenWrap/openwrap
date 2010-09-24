@@ -4,10 +4,13 @@
     <OpenWrap-BuildTasksDirectory>$(MSBuildProjectDirectory)\..\wraps\openwrap\build</OpenWrap-BuildTasksDirectory>
   </PropertyGroup>
 
-  <Target Name="Build">
+  <Target Name="_Initialize">
 
     <!-- Initializes the environment and remote repositories -->
-    <InitializeOpenWrap CurrentDirectory="$(MSBuildProjectDirectory)\.."  />
+    
+    <InitializeOpenWrap CurrentDirectory="$(MSBuildProjectDirectory)\..">
+      <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
+    </InitializeOpenWrap>
 
     <PropertyGroup>
       <RemoteRepository>
@@ -15,14 +18,17 @@
         <Href>file://glon12d10131/modules/</Href>
       </RemoteRepository>
     </PropertyGroup>
-    
+
     <RunCommand
       Verb="add"
       Noun="remote"
       Args="$(RemoteRepository)"
       ContinueOnError="true"
       />
-    
+
+  </Target>
+  <Target Name="Build" DependsOnTargets="_Initialize">
+
 
     <!-- Builds the package -->
 
@@ -30,12 +36,17 @@
       Verb="build"
       Noun="wrap" />
     
+    
+  </Target>
+
+  <Target Name="Publish" DependsOnTargets="Build">
+
     <!-- Deploys the package -->
-    
-    
+
+
     <PropertyGroup>
       <PublishArguments>
-        <Name>openwrap</Name>
+        <Name>$(OpenWrap-PackageName)</Name>
         <RemoteRepository>cs</RemoteRepository>
       </PublishArguments>
     </PropertyGroup>
@@ -45,7 +56,6 @@
       Verb="publish"
       Noun="wrap"
       Args="$(PublishArguments)" />
-    
   </Target>
   <Import Project="..\wraps\openwrap\build\OpenWrap.tasks"/>
 </Project>
