@@ -5,4 +5,5 @@
   <UsingTask TaskName="OpenWrap.Build.Tasks.PackageWrap" AssemblyFile="$(OpenWrap-BuildTasksDirectory)\OpenWrap.Build.Tasks.dll"/>
   <UsingTask TaskName="OpenWrap.Build.Tasks.GenerateRevisionNumber" AssemblyFile="$(OpenWrap-BuildTasksDirectory)\OpenWrap.Build.Tasks.dll"/>
   <UsingTask TaskName="OpenWrap.Build.Tasks.InitializeVisualStudioIntegration" AssemblyFile="$(OpenWrap-BuildTasksDirectory)\OpenWrap.Build.Tasks.dll"/>
+  <UsingTask TaskName="OpenWrap.Build.Tasks.RunCommand" AssemblyFile="$(OpenWrap-BuildTasksDirectory)\OpenWrap.Build.Tasks.dll" />
 </Project>

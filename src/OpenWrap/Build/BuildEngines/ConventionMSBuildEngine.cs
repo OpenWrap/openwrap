@@ -25,7 +25,7 @@ namespace OpenWrap.Build.BuildEngines
             if (!sourceDirectory.Exists)
             {
                 yield return
-                        new TextBuildResult(string.Format("Could not locate a /src folder in current directory '{0}'. Make sure you use the default layout for project code.",
+                        new ErrorBuildResult(string.Format("Could not locate a /src folder in current directory '{0}'. Make sure you use the default layout for project code.",
                                                           _environment.CurrentDirectory.Path.FullPath));
                 yield break;
             }
@@ -50,7 +50,8 @@ namespace OpenWrap.Build.BuildEngines
                 msbuildProcess.WaitForExit();
                 if (msbuildProcess.ExitCode != 0)
                     yield return new ErrorBuildResult();
-                yield return new TextBuildResult("Built.");
+
+                yield return new TextBuildResult("Build complete.");
             }
         }
 

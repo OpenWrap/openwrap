@@ -9,12 +9,4 @@ namespace OpenWrap.Commands
         ICommand Source { get; }
         CommandResultType Type { get; }
     }
-    public enum CommandResultType
-    {
-        Info = 0,
-        Data,
-        Verbose,
-        Warning,
-        Error
-    }
 }

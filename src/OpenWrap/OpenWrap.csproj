@@ -63,8 +63,10 @@
     <Compile Include="Build\BuildEngines\TextBuildResult.cs" />
     <Compile Include="Build\InitializeOpenWrap.cs" />
     <Compile Include="Build\IWrapAssemblyClient.cs" />
+    <Compile Include="Build\Preloader.cs" />
     <Compile Include="Build\VersionNumberGenerator.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
+    <Compile Include="Commands\AmbiguousInputNameException.cs" />
     <Compile Include="Commands\AttributeBasedCommandDescriptor.cs" />
     <Compile Include="Commands\CommandAttribute.cs" />
     <Compile Include="Commands\CommandInputAttribute.cs" />
@@ -72,6 +74,7 @@
     <Compile Include="Commands\CommandLine.cs" />
     <Compile Include="Commands\CommandLineParser.cs" />
     <Compile Include="Commands\CommandRepository.cs" />
+    <Compile Include="Commands\CommandResultType.cs" />
     <Compile Include="Commands\ExceptionError.cs" />
     <Compile Include="Commands\GenericError.cs" />
     <Compile Include="Commands\GenericMessage.cs" />
@@ -224,7 +227,10 @@
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
   -->
+
+  <Target Name="AfterBuild">
+
+    <Message Text="[built(bin-net35, '%(Reference.HintPath)')]" Condition="'%(Reference.Identity)' == 'OpenFileSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' or '%(Reference.Identity)' == 'ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73'" />
+  </Target>
 </Project>

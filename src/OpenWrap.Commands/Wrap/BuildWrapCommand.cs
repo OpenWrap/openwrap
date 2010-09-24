@@ -11,7 +11,7 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Noun = "Wrap", Verb = "Build")]
+    [Command(Noun = "wrap", Verb = "build", Description = "Builds all projects and creates a wrap package.")]
     public class BuildWrapCommand : AbstractCommand
     {
         IDirectory _destinationPath;
@@ -35,8 +35,8 @@ namespace OpenWrap.Commands.Wrap
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(NoDescriptorFound)
-                .Or(VerifyPath)
-                .Or(Build());
+                    .Or(VerifyPath)
+                    .Or(Build());
         }
 
         IEnumerable<ICommandOutput> Build()
@@ -46,10 +46,11 @@ namespace OpenWrap.Commands.Wrap
             var commandLine = Environment.Descriptor.BuildCommand;
             var destinationPath = _destinationPath ?? Environment.CurrentDirectory;
             if (commandLine == null)
+            {
                 foreach (var t in new ConventionMSBuildEngine(Environment).Build())
                 {
                     if (t is TextBuildResult)
-                        yield return new GenericMessage(((TextBuildResult)t).Text);
+                        yield return new GenericMessage(t.Message);
                     else if (t is FileBuildResult)
                     {
                         var buildResult = (FileBuildResult)t;
@@ -58,17 +59,18 @@ namespace OpenWrap.Commands.Wrap
                     }
                     else if (t is ErrorBuildResult)
                     {
-                        yield return new GenericError("There was a problem building this project. Please review the build log. Stopping the build.");
+                        yield return new GenericError(t.Message);
                         yield break;
                     }
                 }
+            }
+
             if (buildFiles.Count > 0)
             {
                 var version = GetCurrentVersion().GenerateVersionNumber();
-                foreach(var file in buildFiles)
+                foreach (var file in buildFiles)
                 {
                     yield return new GenericMessage(string.Format("Copying: {0} - {1}", file.ExportName, file.Path));
-
                 }
                 var packageFilePath = destinationPath.GetFile(packageName + "-" + version + ".wrap");
                 PackagePackager.CreatePackage(
@@ -81,12 +83,19 @@ namespace OpenWrap.Commands.Wrap
 
         string GetCurrentVersion()
         {
-            var version = ReadVersionFile() 
-                ?? (Environment.Descriptor.Version != null ? Environment.Descriptor.Version.ToString() : null);
-            
+            var version = ReadVersionFile()
+                          ?? (Environment.Descriptor.Version != null ? Environment.Descriptor.Version.ToString() : null);
+
             if (version == null)
-                throw new InvalidOperationException("No package version found either on the command line, in descriptor or version file");
+                throw new InvalidOperationException("No package version found either in the descriptor or version file.");
             return version;
+        }
+
+        ICommandOutput NoDescriptorFound()
+        {
+            return Environment.Descriptor == null
+                           ? new GenericError("Could not find a wrap descriptor. Are you in a project directory?")
+                           : null;
         }
 
         string ReadVersionFile()
@@ -98,6 +107,7 @@ namespace OpenWrap.Commands.Wrap
                     return streamReader.ReadLine();
             return null;
         }
+
         ICommandOutput VerifyPath()
         {
             if (Path != null)
@@ -107,12 +117,6 @@ namespace OpenWrap.Commands.Wrap
                     return new GenericError("Path '{0}' doesn't exist.", Path);
             }
             return null;
-        }
-        ICommandOutput NoDescriptorFound()
-        {
-            return Environment.Descriptor == null 
-                ? new GenericError("Could not find a wrap descriptor. Are you in a project directory?")
-                : null;
         }
     }
 }

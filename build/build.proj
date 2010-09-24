@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
+  <PropertyGroup>
+    <OpenWrap-BuildTasksDirectory>$(MSBuildProjectDirectory)\..\wraps\openwrap\build</OpenWrap-BuildTasksDirectory>
+  </PropertyGroup>
+  
+  <Target Name="Build">
+    <PropertyGroup>
+      <BuildArguments>
+        <Name>openwrap</Name>
+      </BuildArguments>
+    </PropertyGroup>
+    
+    
+    <InitializeOpenWrap CurrentDirectory="$(MSBuildProjectDirectory)\.." />
+    <RunCommand
+      Verb="build"
+      Noun="wrap"
+      Debug="true"
+      Args="$(BuildArguments)" />
+  </Target>
+  <Import Project="..\wraps\openwrap\build\OpenWrap.tasks"/>
+</Project>

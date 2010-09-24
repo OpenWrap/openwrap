@@ -15,6 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Vs2008", "OpenWrap
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
 	ProjectSection(SolutionItems) = preProject
+		..\build\build.proj = ..\build\build.proj
 		..\build\openwrap.proj = ..\build\openwrap.proj
 		..\openwrap.wrapdesc = ..\openwrap.wrapdesc
 		..\build\self-build.test = ..\build\self-build.test

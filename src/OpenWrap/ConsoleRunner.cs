@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using OpenFileSystem.IO.FileSystem.Local;
 using OpenRasta.Client;
+using OpenWrap.Build;
 using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.Exports;
@@ -20,7 +21,10 @@ namespace OpenWrap
 {
     public static class ConsoleRunner
     {
-
+        static ConsoleRunner()
+        {
+            Preloader.PreloadOpenWrapDependencies();
+        }
         public static int Main(string[] args)
         {
             WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());

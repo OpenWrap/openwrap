@@ -4,9 +4,7 @@
     {
         public TextBuildResult(string text)
         {
-            Text = text;
+            Message = text;
         }
-
-        public string Text { get; set; }
     }
 }
