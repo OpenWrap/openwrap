@@ -6,7 +6,7 @@ namespace OpenWrap.Repositories
 {
     public interface IPackageInfo
     {
-        ICollection<WrapDependency> Dependencies { get; }
+        ICollection<PackageDependency> Dependencies { get; }
         string Name { get; }
         Version Version { get; }
         IPackage Load();

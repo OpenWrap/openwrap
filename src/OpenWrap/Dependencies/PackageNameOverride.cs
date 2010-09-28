@@ -2,9 +2,9 @@
 
 namespace OpenWrap.Dependencies
 {
-    public class WrapOverride
+    public class PackageNameOverride
     {
-        public WrapOverride(string oldPackage, string newPackage)
+        public PackageNameOverride(string oldPackage, string newPackage)
         {
             if (string.IsNullOrEmpty(oldPackage)) throw new ArgumentException("oldPackage cannot be empty or null.", "oldPackage");
             if (string.IsNullOrEmpty(newPackage)) throw new ArgumentException("newPackage cannot be empty or null.", "newPackage");
@@ -18,11 +18,11 @@ namespace OpenWrap.Dependencies
         /// <summary>
         /// Applies the override, if it's relevant to the dependency, to produce a modified dependency.
         /// </summary>
-        public WrapDependency Apply(WrapDependency dependency)
+        public PackageDependency Apply(PackageDependency dependency)
         {
             if (dependency.Name == OldPackage)
             {
-                // TODO: Should we create a new WrapDependency instance instead?
+                // TODO: Should we create a new PackageDependency instance instead?
                 // Might be a good idea to make these objects immutable...
                 dependency.Name = NewPackage;
             }

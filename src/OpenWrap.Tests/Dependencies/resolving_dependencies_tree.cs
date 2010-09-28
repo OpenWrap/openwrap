@@ -321,8 +321,8 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             {
                 var package = new InMemoryPackage
                 {
-                    Name = WrapNameUtility.GetName(name),
-                    Version = WrapNameUtility.GetVersion(name),
+                    Name = PackageNameUtility.GetName(name),
+                    Version = PackageNameUtility.GetVersion(name),
                     Source = repository,
                     Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
                                                .ToList()
@@ -332,7 +332,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             protected void given_dependency_override(string from, string to)
             {
-                DependencyDescriptor.Overrides.Add(new WrapOverride(from, to));            
+                DependencyDescriptor.Overrides.Add(new PackageNameOverride(from, to));            
             }
         }
 
@@ -395,7 +395,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 get { return Packages.ToLookup(x => x.Name); }
             }
 
-            public IPackageInfo Find(WrapDependency dependency)
+            public IPackageInfo Find(PackageDependency dependency)
             {
                 return PackagesByName.Find(dependency);
             }
@@ -410,8 +410,8 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 
                 var package = new InMemoryPackage
                 {
-                    Name = WrapNameUtility.GetName(fileWithoutExtension),
-                    Version = WrapNameUtility.GetVersion(fileWithoutExtension)
+                    Name = PackageNameUtility.GetName(fileWithoutExtension),
+                    Version = PackageNameUtility.GetVersion(fileWithoutExtension)
                 };
                 Packages.Add(package);
                 return package;

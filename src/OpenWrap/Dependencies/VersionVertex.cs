@@ -2,11 +2,11 @@ using System;
 
 namespace OpenWrap.Dependencies
 {
-    public abstract class VersionVertice
+    public abstract class VersionVertex
     {
         public Version Version { get; set; }
 
-        public VersionVertice(Version version)
+        public VersionVertex(Version version)
         {
             Version = version;
         }

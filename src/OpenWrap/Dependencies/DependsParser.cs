@@ -27,7 +27,7 @@ namespace OpenWrap.Dependencies
             new DependsParser().Parse(line, descriptor);
             return descriptor;
         }
-        static WrapDependency ParseDependency(string line)
+        static PackageDependency ParseDependency(string line)
         {
             var bits = line.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             if (bits.Length < 1)
@@ -36,15 +36,15 @@ namespace OpenWrap.Dependencies
             var versions = ParseVersions(bits.Skip(1).ToArray()).ToList();
             var tags = bits.Skip((versions.Count * 2) + versions.Count).ToArray();
 
-            return new WrapDependency
+            return new PackageDependency
             {
                     Name = bits[0],
-                    VersionVertices = versions.Count > 0 ? versions : new List<VersionVertice>() { new AnyVersionVertice() },
+                    VersionVertices = versions.Count > 0 ? versions : new List<VersionVertex>() { new AnyVersionVertex() },
                     Tags = tags,
             };
         }
 
-        public static IEnumerable<VersionVertice> ParseVersions(string[] args)
+        public static IEnumerable<VersionVertex> ParseVersions(string[] args)
         {
             int consumedArgs = 0;
             // Versions are always in the format
@@ -63,17 +63,17 @@ namespace OpenWrap.Dependencies
                             yield break;
             }
         }
-        private static VersionVertice GetVersionVertice(string[] strings, int offset)
+        private static VersionVertex GetVersionVertice(string[] strings, int offset)
         {
             var comparator = strings[offset];
             var version = new Version(strings[offset + 1]);
             switch (comparator)
             {
                 case ">":
-                    return new GreaterThenVersionVertice(version);
-                case ">=": return new GreaterThenOrEqualVersionVertice(version);
-                case "=": return new ExactVersionVertice(version);
-                case "<": return new LessThanVersionVertice(version);
+                    return new GreaterThenVersionVertex(version);
+                case ">=": return new GreaterThenOrEqualVersionVertex(version);
+                case "=": return new ExactVersionVertex(version);
+                case "<": return new LessThanVersionVertex(version);
                 default: return null;
             }
         }

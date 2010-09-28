@@ -62,7 +62,7 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
-        public IPackageInfo Find(WrapDependency dependency)
+        public IPackageInfo Find(PackageDependency dependency)
         {
             return PackagesByName.Find(dependency);
         }
@@ -75,7 +75,7 @@ namespace OpenWrap.Repositories.Http
             Navigator.PushPackage(packageFileName, packageStream);
             _packagesByName = null;
             EnsureDataLoaded();
-            return PackagesByName[WrapNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == WrapNameUtility.GetVersion(packageFileName));
+            return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
         }
 
         void EnsureDataLoaded()

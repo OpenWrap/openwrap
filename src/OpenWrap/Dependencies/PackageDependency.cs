@@ -4,15 +4,15 @@ using System.Linq;
 
 namespace OpenWrap.Dependencies
 {
-    public class WrapDependency
+    public class PackageDependency
     {
-        public WrapDependency()
+        public PackageDependency()
         {
-            VersionVertices = new List<VersionVertice>();
+            VersionVertices = new List<VersionVertex>();
             Tags = new List<string>();
         }
         public string Name { get; set; }
-        public ICollection<VersionVertice> VersionVertices { get; set; }
+        public ICollection<VersionVertex> VersionVertices { get; set; }
 
         public bool Anchored
         {

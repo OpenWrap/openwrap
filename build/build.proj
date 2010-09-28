@@ -13,16 +13,25 @@
     </InitializeOpenWrap>
 
     <PropertyGroup>
-      <RemoteRepository>
+      <RemoveRemoteRepository>
         <Name>cs</Name>
-        <Href>file://glon12d10131/modules/</Href>
-      </RemoteRepository>
+      </RemoveRemoteRepository>
+      <AddRemoteRepository>
+        <Name>cs</Name>
+        <Href>file://glon12d10131.csfb.cs-group.com/modules/</Href>
+      </AddRemoteRepository>
     </PropertyGroup>
 
     <RunCommand
+      Verb="remove"
+      Noun="remote"
+      Args="$(RemoveRemoteRepository)"
+      ContinueOnError="true"
+      />
+    <RunCommand
       Verb="add"
       Noun="remote"
-      Args="$(RemoteRepository)"
+      Args="$(AddRemoteRepository)"
       ContinueOnError="true"
       />
 

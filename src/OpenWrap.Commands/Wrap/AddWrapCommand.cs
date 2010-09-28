@@ -122,7 +122,7 @@ namespace OpenWrap.Commands.Wrap
             {
                 outputMessage = new GenericMessage("Dependency added to descriptor.");
             }
-            Environment.Descriptor.Dependencies.Add(new WrapDependency { Anchored = Anchored, Name = Name, VersionVertices = VersionVertices() });
+            Environment.Descriptor.Dependencies.Add(new PackageDependency { Anchored = Anchored, Name = Name, VersionVertices = VersionVertices() });
             new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
             return outputMessage;
         }
@@ -132,8 +132,8 @@ namespace OpenWrap.Commands.Wrap
             if (Path.GetExtension(Name).Equals(".wrap", StringComparison.OrdinalIgnoreCase) && Environment.CurrentDirectory.GetFile(Path.GetFileName(Name)).Exists)
             {
                 var originalName = Name;
-                Name = WrapNameUtility.GetName(Path.GetFileNameWithoutExtension(Name));
-                Version = "= " + WrapNameUtility.GetVersion(Path.GetFileNameWithoutExtension(originalName));
+                Name = PackageNameUtility.GetName(Path.GetFileNameWithoutExtension(Name));
+                Version = "= " + PackageNameUtility.GetVersion(Path.GetFileNameWithoutExtension(originalName));
                 return
                         new GenericMessage(
                                 string.Format("The requested package contained '.wrap' in the name. Assuming you pointed to the file in the current directory and meant a package named '{0}' with version qualifier '{1}'.",
@@ -156,21 +156,21 @@ namespace OpenWrap.Commands.Wrap
             {
                 Dependencies =
                     {
-                        new WrapDependency
+                        new PackageDependency
                         {
                             Name = Name,
                             VersionVertices = Version != null
                                                   ? VersionVertices()
-                                                  : new List<VersionVertice>{new AnyVersionVertice()}
+                                                  : new List<VersionVertex>{new AnyVersionVertex()}
                         }
                     }
             };
         }
 
-        List<VersionVertice> VersionVertices()
+        List<VersionVertex> VersionVertices()
         {
             if (Version == null)
-                return new List<VersionVertice>();
+                return new List<VersionVertex>();
             return DependsParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
         }
 

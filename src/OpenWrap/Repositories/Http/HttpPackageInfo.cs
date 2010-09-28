@@ -32,14 +32,14 @@ namespace OpenWrap.Repositories.Http
                             where strings.Length >= 1
                             let dependencyName = strings[0]
                             where !string.IsNullOrEmpty(dependencyName)
-                            select new WrapDependency
+                            select new PackageDependency
                             {
                                 Name = dependencyName,
                                 VersionVertices = DependsParser.ParseVersions(strings.Skip(1).ToArray()).ToList()
                             }).ToList();
         }
 
-        public ICollection<WrapDependency> Dependencies { get; set; }
+        public ICollection<PackageDependency> Dependencies { get; set; }
 
         public string FullName
         {

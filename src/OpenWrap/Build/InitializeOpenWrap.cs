@@ -27,10 +27,13 @@ namespace OpenWrap.Build
         [Output]
         public string Name { get; set; }
 
+        public bool StartDebug { get; set; }
+
         RuntimeAssemblyResolver _resolver;
         public override bool Execute()
         {
-            
+            if (StartDebug)
+                Debugger.Launch();
             RegisterServices(this, CurrentDirectory);
             _resolver = new RuntimeAssemblyResolver();
             _resolver.Initialize();

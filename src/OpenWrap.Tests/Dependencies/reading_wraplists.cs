@@ -58,7 +58,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             core_dependency.Name.ShouldBe("castle-core");
             core_dependency.ToString().ShouldBe("castle-core = 1.1.0");
             core_dependency.VersionVertices.First().Version.ShouldBe(new Version("1.1.0"));
-            core_dependency.VersionVertices.First().ShouldBeOfType<ExactVersionVertice>();
+            core_dependency.VersionVertices.First().ShouldBeOfType<ExactVersionVertex>();
         }
     }
     namespace context

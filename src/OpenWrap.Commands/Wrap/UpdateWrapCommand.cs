@@ -103,10 +103,10 @@ namespace OpenWrap.Commands.Wrap
                                     .OrderByDescending(x => x.Version)
                                     .Select(x => x.Version)
                                     .First()
-                                select new WrapDependency
+                                select new PackageDependency
                                 {
                                     Name = package,
-                                    VersionVertices = { new GreaterThenVersionVertice(maxVersion) }
+                                    VersionVertices = { new GreaterThenVersionVertex(maxVersion) }
                                 }).ToList()
             };
         }

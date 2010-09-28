@@ -85,7 +85,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         [Test]
         public void the_version_is_any()
         {
-            Declaration.VersionVertices.First().ShouldBeOfType<AnyVersionVertice>()
+            Declaration.VersionVertices.First().ShouldBeOfType<AnyVersionVertex>()
                 .ShouldAccept("0.0.0.0");
         }
     }
@@ -107,7 +107,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         public void the_version_vertice_is_of_correct_type()
         {
             Declaration.VersionVertices
-                .First().ShouldBeOfType<GreaterThenOrEqualVersionVertice>()
+                .First().ShouldBeOfType<GreaterThenOrEqualVersionVertex>()
                 .ShouldAccept("2.1.0.0")
                 .ShouldAccept("3.0");
         }
@@ -117,7 +117,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public abstract class dependency_parser_context : Testing.context
         {
-            protected WrapDependency Declaration { get; set; }
+            protected PackageDependency Declaration { get; set; }
 
             public void given_dependency(string dependencyLine)
             {
@@ -328,15 +328,15 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public void version_is_parsed()
         {
-            WrapNameUtility.GetVersion("openrasta-2.0.0").ShouldBe(new Version("2.0.0"));
-            WrapNameUtility.GetName("openrasta-2.0.0").ShouldBe("openrasta");
+            PackageNameUtility.GetVersion("openrasta-2.0.0").ShouldBe(new Version("2.0.0"));
+            PackageNameUtility.GetName("openrasta-2.0.0").ShouldBe("openrasta");
 
         }
 
         public void invalid_version_is_ignored()
         {
-            WrapNameUtility.GetVersion("openrasta-2.0").ShouldBeNull();
-            WrapNameUtility.GetName("openrasta-2.0").ShouldBe("openrasta-2.0");
+            PackageNameUtility.GetVersion("openrasta-2.0").ShouldBeNull();
+            PackageNameUtility.GetName("openrasta-2.0").ShouldBe("openrasta-2.0");
         }
         
     }
@@ -359,21 +359,21 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
 
     public static class TestExtensions
     {
-        public static VersionVertice AtLeast(this string version)
+        public static VersionVertex AtLeast(this string version)
         {
-            return new GreaterThenOrEqualVersionVertice(new Version(version));
+            return new GreaterThenOrEqualVersionVertex(new Version(version));
         }
 
-        public static VersionVertice Exact(this string version)
+        public static VersionVertex Exact(this string version)
         {
-            return new ExactVersionVertice(new Version(version));
+            return new ExactVersionVertex(new Version(version));
         }
 
-        public static VersionVertice ShouldAccept(this VersionVertice vertice, string version)
+        public static VersionVertex ShouldAccept(this VersionVertex vertex, string version)
         {
-            vertice.IsCompatibleWith(new Version(version))
+            vertex.IsCompatibleWith(new Version(version))
                 .ShouldBeTrue();
-            return vertice;
+            return vertex;
         }
 
         public static EnvironmentDependentFile ShouldBeAfter(this EnvironmentDependentFile file,
@@ -394,11 +394,11 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             return file;
         }
 
-        public static VersionVertice ShouldNotAccept(this VersionVertice vertice, string version)
+        public static VersionVertex ShouldNotAccept(this VersionVertex vertex, string version)
         {
-            vertice.IsCompatibleWith(new Version(version))
+            vertex.IsCompatibleWith(new Version(version))
                 .ShouldBeFalse();
-            return vertice;
+            return vertex;
         }
     }
 }

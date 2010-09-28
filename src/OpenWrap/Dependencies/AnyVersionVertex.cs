@@ -2,12 +2,12 @@ using System;
 
 namespace OpenWrap.Dependencies
 {
-    public class AnyVersionVertice : VersionVertice
+    public class AnyVersionVertex : VersionVertex
     {
-        public AnyVersionVertice(Version version) : base(version)
+        public AnyVersionVertex(Version version) : base(version)
         {
         }
-        public AnyVersionVertice() : base(new Version())
+        public AnyVersionVertex() : base(new Version())
         {
         }
         public override bool IsCompatibleWith(Version version)

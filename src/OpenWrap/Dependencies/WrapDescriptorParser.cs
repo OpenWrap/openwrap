@@ -54,8 +54,8 @@ namespace OpenWrap.Dependencies
             IFile versionFile;
             var descriptor = new WrapDescriptor
             {
-                Name = WrapNameUtility.GetName(filePath.NameWithoutExtension),
-                Version = WrapNameUtility.GetVersion(filePath.NameWithoutExtension),
+                Name = PackageNameUtility.GetName(filePath.NameWithoutExtension),
+                Version = PackageNameUtility.GetVersion(filePath.NameWithoutExtension),
                 File = filePath
             };
             foreach (var line in lines)
@@ -82,7 +82,11 @@ namespace OpenWrap.Dependencies
             using (var descriptorStream = descriptor.File.OpenWrite())
             using (var streamWriter = new StreamWriter(descriptorStream, Encoding.UTF8))
             {
-                streamWriter.Write(string.Join("\r\n\r\n", _lineParsers.Select(x => string.Join("\r\n", x.Write(descriptor).ToArray())).ToArray()));
+                var lines = from parser in _lineParsers
+                            from parserLine in parser.Write(descriptor)
+                            select parserLine;
+                
+                streamWriter.Write(string.Join("\r\n", lines.ToArray()));
             }
         }
     }

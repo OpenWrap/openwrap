@@ -82,7 +82,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
             protected ITemporaryDirectory RepositoryPath;
             protected FolderRepository Repository;
             protected IPackageInfo Descriptor;
-            protected WrapDependency Dependency;
+            protected PackageDependency Dependency;
             protected IFileSystem FileSystem;
 
             protected void given_folder_repository_with_module()

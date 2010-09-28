@@ -2,9 +2,9 @@ using System;
 
 namespace OpenWrap.Dependencies
 {
-    public class ExactVersionVertice : VersionVertice
+    public class ExactVersionVertex : VersionVertex
     {
-        public ExactVersionVertice(Version version) : base(version)
+        public ExactVersionVertex(Version version) : base(version)
         {
             
         }

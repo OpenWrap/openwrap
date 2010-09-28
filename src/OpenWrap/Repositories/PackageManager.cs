@@ -46,7 +46,7 @@ namespace OpenWrap.Repositories
         {
         }
 
-        WrapDependency ApplyAllWrapDependencyOverrides(IEnumerable<WrapOverride> dependencyOverrides, WrapDependency originalDependency)
+        PackageDependency ApplyAllWrapDependencyOverrides(IEnumerable<PackageNameOverride> dependencyOverrides, PackageDependency originalDependency)
         {
             return dependencyOverrides.Aggregate(originalDependency, (modifiedDependency, wrapOverride) => wrapOverride.Apply(modifiedDependency));
         }
@@ -61,7 +61,7 @@ namespace OpenWrap.Repositories
             return resolutions.ToLookup(x => x.Package.Name).Any(x => x.Count() > 1);
         }
 
-        IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(IEnumerable<ResolvedDependency> dependencies, ICollection<WrapDependency> rootDependencies)
+        IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(IEnumerable<ResolvedDependency> dependencies, ICollection<PackageDependency> rootDependencies)
         {
             var overriddenDependencies = dependencies.ToList();
 
@@ -80,14 +80,14 @@ namespace OpenWrap.Repositories
             return overriddenDependencies;
         }
 
-        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IEnumerable<WrapOverride> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
+        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<PackageDependency> dependencies, IEnumerable<PackageNameOverride> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
         {
             return ResolveAllDependencies(null, dependencies, dependencyOverrides, repositories, new List<ResolvedDependency>());
         }
 
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent,
-                                                               IEnumerable<WrapDependency> dependencies,
-                                                               IEnumerable<WrapOverride> dependencyOverrides,
+                                                               IEnumerable<PackageDependency> dependencies,
+                                                               IEnumerable<PackageNameOverride> dependencyOverrides,
                                                                IEnumerable<IPackageRepository> repositories,
                                                                List<ResolvedDependency> resolvedDependencies)
         {

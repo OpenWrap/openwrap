@@ -30,7 +30,7 @@ namespace OpenWrap.Repositories
             LoadDescriptor();
         }
 
-        public ICollection<WrapDependency> Dependencies
+        public ICollection<PackageDependency> Dependencies
         {
             get { return Descriptor.Dependencies; }
         }
@@ -109,7 +109,7 @@ namespace OpenWrap.Repositories
                     var versionFile = entries.SingleOrDefault(x => string.Compare(x.Name, "version", StringComparison.OrdinalIgnoreCase) == 0);
                     if (versionFile == null)
                     {
-                        Descriptor.Version = WrapNameUtility.GetVersion(this._wrapFile.NameWithoutExtension);
+                        Descriptor.Version = PackageNameUtility.GetVersion(this._wrapFile.NameWithoutExtension);
                     }
                     else
                     {

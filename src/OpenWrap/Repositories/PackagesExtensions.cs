@@ -5,7 +5,7 @@ namespace OpenWrap.Repositories
 {
     public static class PackagesExtensions
     {
-        public static IPackageInfo Find(this ILookup<string, IPackageInfo> packages, WrapDependency dependency)
+        public static IPackageInfo Find(this ILookup<string, IPackageInfo> packages, PackageDependency dependency)
         {
             if (!packages.Contains(dependency.Name))
                 return null;

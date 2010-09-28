@@ -48,7 +48,7 @@ namespace OpenWrap.Build
         {
             var dir= (
                            from directory in rootWrapsPath.GetDirectories(dependencyName + "-*")
-                           let version = WrapNameUtility.GetVersion(directory.Name)
+                           let version = PackageNameUtility.GetVersion(directory.Name)
                            orderby version descending
                            select directory
                    )

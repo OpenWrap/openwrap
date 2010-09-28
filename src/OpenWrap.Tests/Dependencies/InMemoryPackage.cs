@@ -9,7 +9,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies.context
 {
     public class InMemoryPackage : IPackageInfo, IPackage
     {
-        public ICollection<WrapDependency> Dependencies { get; set; }
+        public ICollection<PackageDependency> Dependencies { get; set; }
 
         public InMemoryPackage()
         {

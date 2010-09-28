@@ -13,7 +13,7 @@ namespace OpenWrap.Services
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
     public class WrapDescriptorMonitor : IWrapDescriptorMonitoringService
     {
-        readonly Dictionary<IPath, WrapFileDescriptor> _notificationClients = new Dictionary<IPath, WrapFileDescriptor>();
+        readonly Dictionary<IPath, DescriptorSubscriptions> _notificationClients = new Dictionary<IPath, DescriptorSubscriptions>();
         readonly WrapDependencyResolver _resolver = new WrapDependencyResolver();
 
 
@@ -37,12 +37,12 @@ namespace OpenWrap.Services
         {
         }
 
-        WrapFileDescriptor GetDescriptor(IFile wrapPath, IPackageRepository packageRepository)
+        DescriptorSubscriptions GetDescriptor(IFile wrapPath, IPackageRepository packageRepository)
         {
-            WrapFileDescriptor descriptor;
-            if (!_notificationClients.TryGetValue(wrapPath.Path, out descriptor))
-                _notificationClients.Add(wrapPath.Path, descriptor = new WrapFileDescriptor(wrapPath, packageRepository, HandleWrapFileUpdate));
-            return descriptor;
+            DescriptorSubscriptions descriptorSubscriptions;
+            if (!_notificationClients.TryGetValue(wrapPath.Path, out descriptorSubscriptions))
+                _notificationClients.Add(wrapPath.Path, descriptorSubscriptions = new DescriptorSubscriptions(wrapPath, packageRepository, HandleWrapFileUpdate));
+            return descriptorSubscriptions;
         }
 
         void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
@@ -74,9 +74,9 @@ namespace OpenWrap.Services
             }
         }
 
-        class WrapFileDescriptor
+        class DescriptorSubscriptions
         {
-            public WrapFileDescriptor(IFile path, IPackageRepository repository, FileSystemEventHandler handler)
+            public DescriptorSubscriptions(IFile path, IPackageRepository repository, FileSystemEventHandler handler)
             {
                 Repository = repository;
                 Clients = new List<IWrapAssemblyClient>();

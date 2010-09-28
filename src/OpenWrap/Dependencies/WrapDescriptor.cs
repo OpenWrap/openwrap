@@ -9,13 +9,13 @@ namespace OpenWrap.Dependencies
     {
         public WrapDescriptor()
         {
-            Dependencies = new List<WrapDependency>();
-            Overrides = new List<WrapOverride>();
+            Dependencies = new List<PackageDependency>();
+            Overrides = new List<PackageNameOverride>();
             Description = "";
         }
 
-        public ICollection<WrapDependency> Dependencies { get; set; }
-        public ICollection<WrapOverride> Overrides { get; set; }
+        public ICollection<PackageDependency> Dependencies { get; set; }
+        public ICollection<PackageNameOverride> Overrides { get; set; }
 
         public string Name { get; set; }
 

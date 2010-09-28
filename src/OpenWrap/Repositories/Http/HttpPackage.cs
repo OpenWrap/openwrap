@@ -26,7 +26,7 @@ namespace OpenWrap.Repositories.Http
             Source = source;
         }
 
-        public ICollection<WrapDependency> Dependencies { get; set; }
+        public ICollection<PackageDependency> Dependencies { get; set; }
         public string Name { get { return _package.Name; } }
         public Version Version { get { return _package.Version; } }
         public IPackage Load()

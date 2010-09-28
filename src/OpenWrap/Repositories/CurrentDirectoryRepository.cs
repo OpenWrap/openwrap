@@ -23,7 +23,7 @@ namespace OpenWrap.Repositories
             }
         }
 
-        public IPackageInfo Find(WrapDependency dependency)
+        public IPackageInfo Find(PackageDependency dependency)
         {
             return PackagesByName.Find(dependency);
         }

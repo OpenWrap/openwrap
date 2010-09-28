@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">true</OpenWrap-EnableVisualStudioIntegration>
-
+    
     <!-- Emit output information post-build for OpenWrap to create packages -->
     <OpenWrap-EmitOutputInstructions Condition="'$(OpenWrap-EmitOutputInstructions)' == ''">false</OpenWrap-EmitOutputInstructions>
 
@@ -38,7 +38,7 @@
     <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\*.wrapdesc" Condition="!Exists(@(_WrapFile->'%(FullPath)'))" />
   </ItemGroup>
   <Target Name="_Initialize">
-    <InitializeOpenWrap />
+    <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" />
 
     <InitializeVisualStudioIntegration
       WrapDescriptor="@(_WrapFile)"

@@ -18,16 +18,16 @@ namespace OpenWrap.Tests.Dependencies
         [Test]
         public void sonic_is_changed_to_super_sonic()
         {
-            var sonic = new WrapDependency { Name = "sonic" };
-            wrapOverride.Apply(sonic);
+            var sonic = new PackageDependency { Name = "sonic" };
+            PackageNameOverride.Apply(sonic);
             sonic.Name.ShouldBe("super-sonic");
         }
 
         [Test]
         public void tails_is_still_tails()
         {
-            var tails = new WrapDependency { Name = "tails" };
-            wrapOverride.Apply(tails);
+            var tails = new PackageDependency { Name = "tails" };
+            PackageNameOverride.Apply(tails);
             tails.Name.ShouldBe("tails");
         }
     }
@@ -42,7 +42,7 @@ namespace OpenWrap.Tests.Dependencies
         [Test]
         public void no_override_is_created()
         {
-            wrapOverride.ShouldBeNull();
+            PackageNameOverride.ShouldBeNull();
         }
     }
 
@@ -78,7 +78,7 @@ namespace OpenWrap.Tests.Dependencies
     {
         public abstract class override_parser_context : context
         {
-            protected WrapOverride wrapOverride;
+            protected PackageNameOverride PackageNameOverride;
             protected Exception exception;
 
             protected void given_override(string overrideLine)
@@ -87,7 +87,7 @@ namespace OpenWrap.Tests.Dependencies
                 try
                 {
                     new OverrideParser().Parse(overrideLine, target);
-                    wrapOverride = target.Overrides.First();
+                    PackageNameOverride = target.Overrides.First();
                 }
                 catch (Exception ex)
                 {

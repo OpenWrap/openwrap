@@ -10,6 +10,7 @@ using OpenFileSystem.IO;
 
 namespace OpenWrap.Repositories
 {
+    // TODO: Add locking support
     public class NetworkShareNavigator : IHttpRepositoryNavigator
     {
         readonly IDirectory _directory;
@@ -69,7 +70,7 @@ namespace OpenWrap.Repositories
 
         public void PushPackage(string packageFileName, Stream packageStream)
         {
-            packageFileName = WrapNameUtility.NormalizeFileName(packageFileName);
+            packageFileName = PackageNameUtility.NormalizeFileName(packageFileName);
 
             var packageFile = _directory.GetFile(packageFileName);
             using (var destinationStream = packageFile.OpenWrite())

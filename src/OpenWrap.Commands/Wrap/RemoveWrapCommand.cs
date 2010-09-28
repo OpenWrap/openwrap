@@ -28,7 +28,7 @@ namespace OpenWrap.Commands.Wrap
 
         }
 
-        WrapDependency FindDependencyByName()
+        PackageDependency FindDependencyByName()
         {
             return Environment.Descriptor.Dependencies.FirstOrDefault(d => d.Name == Name);
         }

@@ -100,16 +100,17 @@
     <Compile Include="Configuration\remote-repositories\RemoteRepositories.cs" />
     <Compile Include="Configuration\remote-repositories\RemoteRepository.cs" />
     <Compile Include="ConsoleRunner.cs" />
-    <Compile Include="Dependencies\GreaterThenVersionVertice.cs" />
+    <Compile Include="Dependencies\GreaterThenVersionVertex.cs" />
     <Compile Include="Dependencies\Parsers\AbstractDescriptorParser.cs" />
     <Compile Include="Dependencies\Parsers\BuildParser.cs" />
     <Compile Include="Dependencies\Parsers\IDescriptorParser.cs" />
     <Compile Include="Dependencies\Parsers\AnchorParser.cs" />
-    <Compile Include="Dependencies\WrapNameUtility.cs" />
-    <Compile Include="Dependencies\WrapOverride.cs" />
+    <Compile Include="Dependencies\PackageNameUtility.cs" />
+    <Compile Include="Dependencies\PackageNameOverride.cs" />
     <Compile Include="Dependencies\Parsers\OverrideParser.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
     <Compile Include="Dependencies\Parsers\VersionParser.cs" />
+    <Compile Include="DescriptorExtensions.cs" />
     <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />
     <Compile Include="FuncExtensions.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
@@ -169,12 +170,12 @@
     <Compile Include="Commands\ICommandOutput.cs" />
     <Compile Include="Commands\NotEnoughParameters.cs" />
     <Compile Include="Commands\UnknownCommand.cs" />
-    <Compile Include="Dependencies\AnyVersionVertice.cs" />
-    <Compile Include="Dependencies\GreaterThenOrEqualVersionVertice.cs" />
-    <Compile Include="Dependencies\ExactVersionVertice.cs" />
-    <Compile Include="Dependencies\LessThanVersionVertice.cs" />
-    <Compile Include="Dependencies\VersionVertice.cs" />
-    <Compile Include="Dependencies\WrapDependency.cs" />
+    <Compile Include="Dependencies\AnyVersionVertex.cs" />
+    <Compile Include="Dependencies\GreaterThenOrEqualVersionVertex.cs" />
+    <Compile Include="Dependencies\ExactVersionVertex.cs" />
+    <Compile Include="Dependencies\LessThanVersionVertex.cs" />
+    <Compile Include="Dependencies\VersionVertex.cs" />
+    <Compile Include="Dependencies\PackageDependency.cs" />
     <Compile Include="Dependencies\DependsParser.cs" />
     <Compile Include="Dependencies\WrapDescriptor.cs" />
     <Compile Include="Dependencies\WrapDescriptorParser.cs" />
@@ -228,9 +229,7 @@
   <Target Name="BeforeBuild">
   </Target>
   -->
-
   <Target Name="AfterBuild">
-
     <Message Text="[built(bin-net35, '%(Reference.HintPath)')]" Condition="'%(Reference.Identity)' == 'OpenFileSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' or '%(Reference.Identity)' == 'ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73'" />
   </Target>
 </Project>

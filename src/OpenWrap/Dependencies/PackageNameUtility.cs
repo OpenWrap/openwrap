@@ -3,16 +3,16 @@ using System.Text.RegularExpressions;
 
 namespace OpenWrap.Dependencies
 {
-    public static class WrapNameUtility
+    public static class PackageNameUtility
     {
-        private static Regex VersionRegex = new Regex(@"\-\d+(\.\d+(\.\d+(\.\d+)?)?)?$", RegexOptions.Compiled);
+        private static readonly Regex VERSION_REGEX = new Regex(@"\-\d+(\.\d+(\.\d+(\.\d+)?)?)?$", RegexOptions.Compiled);
         public static string GetName(string name)
         {
             return GetVersion(name) == null ? name : name.Substring(0, name.LastIndexOf('-'));
         }
         public static Version GetVersion(string name)
         {
-            var versionMAtch = VersionRegex.Match(name);
+            var versionMAtch = VERSION_REGEX.Match(name);
             if (versionMAtch.Success)
                 return new Version(name.Substring(name.LastIndexOf('-') + 1));
             return null;

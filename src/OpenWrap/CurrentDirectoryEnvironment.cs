@@ -44,25 +44,20 @@ namespace OpenWrap
                     .Select(x => new WrapDescriptorParser().ParseFile(x))
                     .FirstOrDefault();
 
-            var projectRepositoryDirectory = Descriptor == null
-                                                     ? null
-                                                     : Descriptor.File.Parent
-                                                               .AncestorsAndSelf()
-                                                               .SelectMany(x => x.Directories("wraps"))
-                                                               .Where(x => x != null)
-                                                               .FirstOrDefault();
+            var projectRepositoryDirectory = Descriptor.File.Parent.FindProjectRepositoryDirectory();
+
 
             if (projectRepositoryDirectory != null)
                 ProjectRepository = new FolderRepository(projectRepositoryDirectory, true)
                 {
-                        Name = "Project repository"
+                    Name = "Project repository"
                 };
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
             SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath), false)
             {
-                    Name = "System repository"
+                Name = "System repository"
             };
 
             ConfigurationDirectory = FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory);
@@ -75,8 +70,8 @@ namespace OpenWrap
 
             ExecutionEnvironment = new ExecutionEnvironment
             {
-                    Platform = IntPtr.Size == 4 ? "x86" : "x64",
-                    Profile = "net35"
+                Platform = IntPtr.Size == 4 ? "x86" : "x64",
+                Profile = "net35"
             };
         }
 

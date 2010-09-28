@@ -31,7 +31,7 @@ namespace OpenWrap.Repositories
         {
             Packages = (from wrapFile in BasePath.Files("*.wrap")
                         let packageFullName = wrapFile.NameWithoutExtension
-                        let packageVersion = WrapNameUtility.GetVersion(packageFullName)
+                        let packageVersion = PackageNameUtility.GetVersion(packageFullName)
                         where packageVersion != null
                         let cacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
                         select cacheDirectory.Exists
@@ -48,14 +48,14 @@ namespace OpenWrap.Repositories
 
         protected List<IPackageInfo> Packages { get; set; }
 
-        public IPackageInfo Find(WrapDependency dependency)
+        public IPackageInfo Find(PackageDependency dependency)
         {
             return PackagesByName.Find(dependency);
         }
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            packageFileName = WrapNameUtility.NormalizeFileName(packageFileName);
+            packageFileName = PackageNameUtility.NormalizeFileName(packageFileName);
 
             var wrapFile = BasePath.GetFile(packageFileName);
             if (wrapFile.Exists)

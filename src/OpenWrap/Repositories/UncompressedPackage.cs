@@ -78,7 +78,7 @@ namespace OpenWrap.Repositories
 
         protected IDirectory BaseDirectory { get; set; }
 
-        public ICollection<WrapDependency> Dependencies
+        public ICollection<PackageDependency> Dependencies
         {
             get { return Descriptor.Dependencies; }
         }
