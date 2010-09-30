@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -8,9 +7,9 @@ namespace OpenWrap.Dependencies
     public abstract class AbstractDescriptorParser : IDescriptorParser
     {
         protected string Header { get; set; }
-        Regex _regex;
+        readonly Regex _regex;
 
-        public AbstractDescriptorParser(string header)
+        protected AbstractDescriptorParser(string header)
         {
             Header = header;
             _regex = new Regex(@"^\s*" + header + @"\s*:\s*(?<content>.*)$", RegexOptions.IgnoreCase);

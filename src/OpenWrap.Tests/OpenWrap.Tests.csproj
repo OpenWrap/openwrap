@@ -95,6 +95,7 @@
     <Compile Include="Commands\CommandProcessor.cs" />
     <Compile Include="Commands\context\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
+    <Compile Include="Commands\Wrap\buildWrapCommand.cs" />
     <Compile Include="Commands\Wrap\initWrapCommand.cs" />
     <Compile Include="Commands\Wrap\cleanWrapCommand.cs" />
     <Compile Include="Commands\Wrap\listWrapCommand.cs" />

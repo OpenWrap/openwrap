@@ -134,7 +134,15 @@ namespace OpenWrap.Tests.Commands.context
             WrapServices.GetService<IConfigurationManager>()
                     .Save(Configurations.Addresses.RemoteRepositories, remoteRepositories);
         }
+        protected void given_file(string filePath, Stream stream)
+         {
 
+            var file = FileSystem.GetFile(filePath);
+            using(var newFile = file.OpenWrite())
+            {
+                stream.CopyTo(newFile);
+            }
+         }
         protected void given_remote_repository(string remoteName)
         {
             Environment.RemoteRepositories.Add(new InMemoryRepository(remoteName));

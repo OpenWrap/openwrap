@@ -133,6 +133,7 @@
     <Compile Include="Dependencies\PackageNameOverride.cs" />
     <Compile Include="Dependencies\Parsers\OverrideParser.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
+    <Compile Include="Dependencies\Parsers\UseProjectRepositoryParser.cs" />
     <Compile Include="Dependencies\Parsers\VersionParser.cs" />
     <Compile Include="DescriptorExtensions.cs" />
     <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />

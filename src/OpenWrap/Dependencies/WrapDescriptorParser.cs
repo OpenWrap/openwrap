@@ -22,7 +22,8 @@ namespace OpenWrap.Dependencies
             new DescriptionParser(),
             new OverrideParser(),
             new AnchorParser(),
-            new BuildParser()
+            new BuildParser(),
+            new UseProjectRepositoryParser()
         };
 
         public WrapDescriptor ParseFile(IFile filePath)

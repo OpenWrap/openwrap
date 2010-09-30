@@ -12,6 +12,7 @@ namespace OpenWrap.Dependencies
             Dependencies = new List<PackageDependency>();
             Overrides = new List<PackageNameOverride>();
             Description = "";
+            UseProjectRepository = true;
         }
 
         public ICollection<PackageDependency> Dependencies { get; set; }
@@ -23,6 +24,7 @@ namespace OpenWrap.Dependencies
         public bool IsVersionInDescriptor { get; set; }
         public IFile File { get; set; }
         public string Description { get; set; }
+        public bool UseProjectRepository { get; set; }
 
         public IPackage Load()
         {
