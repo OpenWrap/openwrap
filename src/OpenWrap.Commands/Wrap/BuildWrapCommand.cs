@@ -45,23 +45,20 @@ namespace OpenWrap.Commands.Wrap
             var buildFiles = new List<FileBuildResult>();
             var commandLine = Environment.Descriptor.BuildCommand;
             var destinationPath = _destinationPath ?? Environment.CurrentDirectory;
-            if (commandLine == null)
+            foreach (var t in CreateBuilder(commandLine).Build())
             {
-                foreach (var t in new ConventionMSBuildEngine(Environment).Build())
+                if (t is TextBuildResult)
+                    yield return new GenericMessage(t.Message);
+                else if (t is FileBuildResult)
                 {
-                    if (t is TextBuildResult)
-                        yield return new GenericMessage(t.Message);
-                    else if (t is FileBuildResult)
-                    {
-                        var buildResult = (FileBuildResult)t;
-                        buildFiles.Add(buildResult);
-                        yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
-                    }
-                    else if (t is ErrorBuildResult)
-                    {
-                        yield return new GenericError(t.Message);
-                        yield break;
-                    }
+                    var buildResult = (FileBuildResult)t;
+                    buildFiles.Add(buildResult);
+                    yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
+                }
+                else if (t is ErrorBuildResult)
+                {
+                    yield return new GenericError(t.Message);
+                    yield break;
                 }
             }
 
@@ -79,6 +76,21 @@ namespace OpenWrap.Commands.Wrap
                         buildFiles.GroupBy(x => x.ExportName, x => FileSystem.GetFile(x.Path.FullPath)));
                 yield return new GenericMessage(string.Format("Package built at '{0}'.", packageFilePath));
             }
+        }
+
+        IPackageBuilder CreateBuilder(string commandLine)
+        {
+            IPackageBuilder builder;
+            switch(commandLine)
+            {
+                case "$meta":
+                    builder = new MetaPackageBuilder(Environment);
+                    break;
+                default:
+                    builder = new ConventionMSBuildEngine(Environment);
+                    break;
+            }
+            return builder;
         }
 
         string GetCurrentVersion()

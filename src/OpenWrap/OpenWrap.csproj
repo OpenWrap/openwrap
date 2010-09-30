@@ -80,6 +80,8 @@
     <Compile Include="Build\BuildEngines\BuiltInstructionParser.cs" />
     <Compile Include="Build\BuildEngines\ConventionMSBuildEngine.cs" />
     <Compile Include="Build\BuildEngines\FileBuildResult.cs" />
+    <Compile Include="Build\BuildEngines\IPackageBuilder.cs" />
+    <Compile Include="Build\BuildEngines\MetaPackageBuilder.cs" />
     <Compile Include="Build\BuildEngines\TextBuildResult.cs" />
     <Compile Include="Build\InitializeOpenWrap.cs" />
     <Compile Include="Build\IWrapAssemblyClient.cs" />

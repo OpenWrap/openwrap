@@ -8,7 +8,7 @@ using OpenFileSystem.IO.FileSystems;
 
 namespace OpenWrap.Build.BuildEngines
 {
-    public class ConventionMSBuildEngine
+    public class ConventionMSBuildEngine : IPackageBuilder
     {
         readonly IEnvironment _environment;
         readonly BuiltInstructionParser _parser = new BuiltInstructionParser();
