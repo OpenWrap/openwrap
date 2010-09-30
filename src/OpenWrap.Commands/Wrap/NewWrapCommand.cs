@@ -33,9 +33,10 @@ namespace OpenWrap.Commands.Wrap
             }
             CreateStructure(items);
 
-            yield return new GenericMessage("Created default project structure for '" + ProjectName + "'. Copying OpenWrap.");
+            yield return new GenericMessage("Created default project structure for '" + ProjectName + "'.");
             if (!Meta)
             {
+                yield return new GenericMessage("Copying OpenWrap.");
                 var packageManager = WrapServices.GetService<IPackageManager>();
                 var openwrapPackage = packageManager.TryResolveDependencies(new WrapDescriptor { Name = "openwrap" }, new[] { Environment.SystemRepository });
                 foreach(var msg in packageManager.CopyPackagesToRepositories(openwrapPackage, new FolderRepository(projectDirectory.GetDirectory("wraps"))))
