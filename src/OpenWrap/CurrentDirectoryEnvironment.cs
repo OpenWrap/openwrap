@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
@@ -72,15 +72,18 @@ namespace OpenWrap
         {
             if (Descriptor == null || Descriptor.File == null)
                 return;
-            var projectRepositoryDirectory = Descriptor.File.Parent.FindProjectRepositoryDirectory();
+            if (Descriptor.UseProjectRepository)
+            {
+                var projectRepositoryDirectory = Descriptor.File.Parent.FindProjectRepositoryDirectory();
 
 
-            if (projectRepositoryDirectory != null)
-                ProjectRepository = new FolderRepository(projectRepositoryDirectory)
-                {
-                        Name = "Project repository",
-                        EnableAnchoring=true
-                };
+                if (projectRepositoryDirectory != null)
+                    ProjectRepository = new FolderRepository(projectRepositoryDirectory)
+                    {
+                            Name = "Project repository",
+                            EnableAnchoring=true
+                    };
+            }
         }
 
         HttpRepository CreateRemoteRepository(string repositoryName, Uri repositoryHref)

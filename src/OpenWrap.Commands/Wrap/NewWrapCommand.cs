@@ -17,26 +17,33 @@ namespace OpenWrap.Commands.Wrap
         IFileSystem FileSystem { get { return WrapServices.GetService<IFileSystem>(); } }
         IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); }}
 
+        [CommandInput]
+        public bool Meta { get; set; }
+
         public IEnumerable<ICommandOutput> Execute()
         {
             var currentDirectory = Environment.CurrentDirectory;
             var projectDirectory = currentDirectory.GetDirectory(ProjectName);
-
-            CreateStructure(new IFileSystemItem[]
+            var items = new List<IFileSystemItem> {
+                        projectDirectory.GetFile(ProjectName + ".wrapdesc")};
+            if (!Meta)
             {
-                    projectDirectory.GetDirectory("src"),
-                    projectDirectory.GetDirectory("wraps"),
-                    projectDirectory.GetFile(ProjectName + ".wrapdesc")
-            });
-            yield return new GenericMessage("Created default project structure for '" + ProjectName + "'. Copying OpenWrap.");
+                items.Add(projectDirectory.GetDirectory("src"));
+                items.Add(projectDirectory.GetDirectory("wraps"));
+            }
+            CreateStructure(items);
 
-            var packageManager = WrapServices.GetService<IPackageManager>();
-            var openwrapPackage = packageManager.TryResolveDependencies(new WrapDescriptor { Name = "openwrap" }, new[] { Environment.SystemRepository });
-            foreach(var msg in packageManager.CopyPackagesToRepositories(openwrapPackage, new FolderRepository(projectDirectory.GetDirectory("wraps"))))
-                yield return msg;
+            yield return new GenericMessage("Created default project structure for '" + ProjectName + "'. Copying OpenWrap.");
+            if (!Meta)
+            {
+                var packageManager = WrapServices.GetService<IPackageManager>();
+                var openwrapPackage = packageManager.TryResolveDependencies(new WrapDescriptor { Name = "openwrap" }, new[] { Environment.SystemRepository });
+                foreach(var msg in packageManager.CopyPackagesToRepositories(openwrapPackage, new FolderRepository(projectDirectory.GetDirectory("wraps"))))
+                    yield return msg;
+            }
         }
 
-        void CreateStructure(IFileSystemItem[] fileSystemItems)
+        static void CreateStructure(IFileSystemItem[] fileSystemItems)
         {
             foreach (var fs in fileSystemItems.OfType<IDirectory>())
                 fs.MustExist();
