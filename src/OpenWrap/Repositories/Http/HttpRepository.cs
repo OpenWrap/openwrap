@@ -99,5 +99,9 @@ namespace OpenWrap.Repositories.Http
             DateTime dt;
             return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
         }
+
+        public bool CanDelete { get { return false; } }
+
+        public void Delete(IPackageInfo package) { }
     }
 }

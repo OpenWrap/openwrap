@@ -5,7 +5,15 @@ namespace OpenWrap.Commands
     public class GenericMessage : ICommandOutput
     {
         public string Message { get; private set; }
+        protected string MessageFormat { get; set; }
+        protected object[] MessageArguments { get; set; }
 
+        public GenericMessage(string message, params object[] args)
+        {
+            MessageFormat = message;
+            MessageArguments = args;
+        }
+        
         public GenericMessage(string message)
         {
             Message = message;
@@ -26,7 +34,7 @@ namespace OpenWrap.Commands
 
         public override string ToString()
         {
-            return Message;
+            return (Message ?? string.Format(MessageFormat, MessageArguments));
         }
     }
 }
