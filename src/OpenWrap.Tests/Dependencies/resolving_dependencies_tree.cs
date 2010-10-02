@@ -386,6 +386,16 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 Packages.Add(package);
                 return package;
             }
+
+            public bool CanDelete
+            {
+                get { return true; }
+            }
+
+            public void Delete(IPackageInfo packageInfo)
+            {
+                Packages.Remove(packageInfo);
+            }
         }
     }
 }
