@@ -67,7 +67,7 @@ namespace OpenWrap.Commands.Wrap
             yield return new Result("Searching for updated packages...");
 
 
-            var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, Environment.RemoteRepositories);
+            var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, Environment.RemoteRepositories.Concat(new[]{Environment.CurrentDirectoryRepository}));
 
             foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
                 yield return m;
@@ -80,7 +80,7 @@ namespace OpenWrap.Commands.Wrap
             if (!Project)
                 yield break;
 
-            var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository }));
+            var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository, Environment.CurrentDirectoryRepository }));
 
             var copyResult = PackageManager.CopyPackagesToRepositories(
                     resolvedPackages,
