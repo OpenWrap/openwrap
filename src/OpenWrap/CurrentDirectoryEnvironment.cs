@@ -44,14 +44,7 @@ namespace OpenWrap
                     .Select(x => new WrapDescriptorParser().ParseFile(x))
                     .FirstOrDefault();
 
-            var projectRepositoryDirectory = Descriptor.File.Parent.FindProjectRepositoryDirectory();
-
-
-            if (projectRepositoryDirectory != null)
-                ProjectRepository = new FolderRepository(projectRepositoryDirectory, true)
-                {
-                    Name = "Project repository"
-                };
+            TryInitializeProjectRepository();
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
@@ -73,6 +66,17 @@ namespace OpenWrap
                 Platform = IntPtr.Size == 4 ? "x86" : "x64",
                 Profile = "net35"
             };
+        }
+
+        void TryInitializeProjectRepository()
+        {
+            if (Descriptor == null || Descriptor.File == null)
+                return;
+            var projectRepositoryDirectory = Descriptor.File.Parent.FindProjectRepositoryDirectory();
+
+
+            if (projectRepositoryDirectory != null)
+                ProjectRepository = new FolderRepository(projectRepositoryDirectory, true) { Name = "Project repository" };
         }
 
         HttpRepository CreateRemoteRepository(string repositoryName, Uri repositoryHref)

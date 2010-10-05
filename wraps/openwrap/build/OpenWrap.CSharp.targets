@@ -100,7 +100,7 @@
       <_OpenWrap-CopyLocal Include="@(ReferenceCopyLocalPaths)" Exclude="@(_OpenWrap-AssemblyReferences)" />
     </ItemGroup>
 
-    <Message Text="[built($(OpenWrap-ExportName),'@(_OpenWrap-CopyLocal)')]" Condition="'@(_OpenWrap-CopyLocal)' != ''" />
+    <Message Text="[built($(OpenWrap-ExportName),'%(_OpenWrap-CopyLocal.FullPath)')]" Condition="'@(_OpenWrap-CopyLocal)' != ''" />
 
     <!-- Content -->
     <Message Text="[built($(OpenWrap-ExportName),'%(Content.FullPath)')]" Condition="Exists('@(Content)')" />

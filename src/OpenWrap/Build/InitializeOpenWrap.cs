@@ -12,7 +12,6 @@ using OpenWrap.Repositories;
 using OpenWrap.Resolvers;
 using OpenWrap.Services;
 using OpenWrap.Tasks;
-//using Task = Microsoft.Build.Utilities.Task;
 
 namespace OpenWrap.Build
 {
