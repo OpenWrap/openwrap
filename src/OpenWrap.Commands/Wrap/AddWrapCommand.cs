@@ -27,6 +27,9 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool SystemOnly { get; set; }
 
+        [CommandInput]
+        public bool Content { get; set; }
+
         [CommandInput(Position = 1)]
         public string Version { get; set; }
 
@@ -122,7 +125,13 @@ namespace OpenWrap.Commands.Wrap
             {
                 outputMessage = new GenericMessage("Dependency added to descriptor.");
             }
-            Environment.Descriptor.Dependencies.Add(new PackageDependency { Anchored = Anchored, Name = Name, VersionVertices = VersionVertices() });
+            Environment.Descriptor.Dependencies.Add(new PackageDependency
+            {
+                    Anchored = Anchored, 
+                    Name = Name, 
+                    VersionVertices = VersionVertices(),
+                    ContentOnly = Content
+            });
             new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
             return outputMessage;
         }
