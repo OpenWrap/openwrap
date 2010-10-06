@@ -12,5 +12,8 @@ namespace OpenWrap.Repositories
         bool CanPublish { get; }
         void Refresh();
         string Name { get; }
+
+        bool CanDelete { get; }
+        void Delete(IPackageInfo packageInfo);
     }
 }

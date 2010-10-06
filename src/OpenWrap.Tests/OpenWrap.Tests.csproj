@@ -74,6 +74,7 @@
     <Compile Include="Commands\context\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
     <Compile Include="Commands\Wrap\initWrapCommand.cs" />
+    <Compile Include="Commands\Wrap\cleanWrapCommand.cs" />
     <Compile Include="Commands\Wrap\publishWrapCommand.cs" />
     <Compile Include="Commands\Wrap\removeWrapCommand.cs" />
     <Compile Include="Commands\setupWrapCommand.cs" />
@@ -106,12 +107,12 @@
     <ProjectReference Include="..\OpenWrap.Commands\OpenWrap.Commands.csproj">
       <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>
       <Name>OpenWrap.Commands</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
       <Name>OpenWrap</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />

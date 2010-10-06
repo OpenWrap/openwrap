@@ -46,5 +46,9 @@ namespace OpenWrap.Repositories
         {
             get { return "Current directory"; }
         }
+
+        public bool CanDelete { get { return false; } }
+
+        public void Delete(IPackageInfo package) { }
     }
 }

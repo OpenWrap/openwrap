@@ -29,6 +29,15 @@ namespace OpenWrap.Repositories
             get; set;
         }
 
+        public bool CanDelete
+        {
+            get { return true; }
+        }
+
+        public void Delete(IPackageInfo packageInfo)
+        {
+            _packages.Remove(packageInfo);
+        }
 
         public ILookup<string, IPackageInfo> PackagesByName
         {

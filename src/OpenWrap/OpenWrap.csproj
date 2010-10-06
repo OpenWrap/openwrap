@@ -196,12 +196,12 @@
     <Compile Include="Repositories\IPackage.cs" />
     <Compile Include="SharedReflectionExtensions.cs" />
     <Compile Include="StreamExtensions.cs" />
+    <Compile Include="InstallationPaths.cs" />
     <Compile Include="Strings.Designer.cs">
-      <DependentUpon>Strings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="InstallationPaths.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\ITaskChanges.cs" />
     <Compile Include="Tasks\ITaskListener.cs" />
