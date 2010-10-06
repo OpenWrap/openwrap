@@ -75,6 +75,7 @@
     <Compile Include="Commands\InMemoryEnvironment.cs" />
     <Compile Include="Commands\Wrap\initWrapCommand.cs" />
     <Compile Include="Commands\Wrap\cleanWrapCommand.cs" />
+    <Compile Include="Commands\Wrap\listWrapCommand.cs" />
     <Compile Include="Commands\Wrap\publishWrapCommand.cs" />
     <Compile Include="Commands\Wrap\removeWrapCommand.cs" />
     <Compile Include="Commands\setupWrapCommand.cs" />
