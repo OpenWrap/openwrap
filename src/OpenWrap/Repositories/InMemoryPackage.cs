@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
-using OpenWrap.Repositories;
 
-namespace OpenRasta.Wrap.Tests.Dependencies.context
+namespace OpenWrap.Repositories
 {
     public class InMemoryPackage : IPackageInfo, IPackage
     {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <OpenWrap-ExportName>tests</OpenWrap-ExportName>
@@ -83,7 +83,6 @@
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\anchored_dependencies.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
-    <Compile Include="Dependencies\InMemoryPackage.cs" />
     <Compile Include="Dependencies\OverrideParser_Specification.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />

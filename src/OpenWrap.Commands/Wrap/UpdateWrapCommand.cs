@@ -63,16 +63,16 @@ namespace OpenWrap.Commands.Wrap
         {
             if (!System) yield break;
 
-            var packagesToSearch = CreateDescriptorForSystemPackages();
             yield return new Result("Searching for updated packages...");
+            foreach (var packageToSearch in CreateDescriptorForEachSystemPackage())
+            {
+                var resolveResult = PackageManager.TryResolveDependencies(packageToSearch, Environment.RemoteRepositories.Concat(new[] { Environment.CurrentDirectoryRepository }));
 
-
-            var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, Environment.RemoteRepositories.Concat(new[]{Environment.CurrentDirectoryRepository}));
-
-            foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
-                yield return m;
-            foreach(var m in PackageManager.ExpandPackages(Environment.SystemRepository))
-                yield return m;
+                foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
+                    yield return m;
+                foreach (var m in PackageManager.ExpandPackages(Environment.SystemRepository))
+                    yield return m;
+            }
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
@@ -92,23 +92,31 @@ namespace OpenWrap.Commands.Wrap
             foreach (var m in expandResult) yield return m;
         }
 
-        WrapDescriptor CreateDescriptorForSystemPackages()
+        IEnumerable<WrapDescriptor> CreateDescriptorForEachSystemPackage()
         {
+            
             var installedPackages = Environment.SystemRepository.PackagesByName.Select(x => x.Key);
 
-            return new WrapDescriptor
-            {
-                Dependencies = (from package in installedPackages
-                                let maxVersion = Environment.SystemRepository.PackagesByName[package]
-                                    .OrderByDescending(x => x.Version)
-                                    .Select(x => x.Version)
-                                    .First()
-                                select new PackageDependency
-                                {
-                                    Name = package,
-                                    VersionVertices = { new GreaterThenVersionVertex(maxVersion) }
-                                }).ToList()
-            };
+            return (
+                           from systemPackage in Environment.SystemRepository.PackagesByName
+                           let systemPackageName = systemPackage.Key
+                           let maxPackageVersion = (
+                                                           from versionedPackage in systemPackage
+                                                           orderby versionedPackage.Version descending
+                                                           select versionedPackage.Version
+                                                   ).First()
+                           select new WrapDescriptor
+                           {
+                                   Dependencies =
+                                           {
+                                                   new PackageDependency
+                                                   {
+                                                           Name = systemPackageName,
+                                                           VersionVertices = { new GreaterThenVersionVertex(maxPackageVersion) }
+                                                   }
+                                           }
+                           }
+                   ).ToList();
         }
     }
 }

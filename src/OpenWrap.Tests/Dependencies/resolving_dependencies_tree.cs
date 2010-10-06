@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
@@ -363,58 +361,6 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     zipFile.Finish();
                 }
                 return wrapFile;
-            }
-        }
-
-        public class InMemoryRepository : IPackageRepository
-        {
-            public List<IPackageInfo> Packages = new List<IPackageInfo>();
-
-            public InMemoryRepository(string name)
-            {
-                Name = name;
-            }
-
-            public bool CanPublish
-            {
-                get { return true; }
-            }
-
-            public void Refresh()
-            {
-            }
-
-            public string Name
-            {
-                get; set;
-            }
-
-
-            public ILookup<string, IPackageInfo> PackagesByName
-            {
-                get { return Packages.ToLookup(x => x.Name); }
-            }
-
-            public IPackageInfo Find(PackageDependency dependency)
-            {
-                return PackagesByName.Find(dependency);
-            }
-
-            public IPackageInfo Publish(string packageFileName, Stream packageStream)
-            {
-                var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
-                                                   ? Path.GetFileNameWithoutExtension(packageFileName)
-                                                   : packageFileName;
-                if (Packages.Any(x=>x.FullName == fileWithoutExtension))
-                    throw new InvalidOperationException("Package already exists in repository.");
-                
-                var package = new InMemoryPackage
-                {
-                    Name = PackageNameUtility.GetName(fileWithoutExtension),
-                    Version = PackageNameUtility.GetVersion(fileWithoutExtension)
-                };
-                Packages.Add(package);
-                return package;
             }
         }
     }

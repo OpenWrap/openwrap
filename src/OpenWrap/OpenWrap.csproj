@@ -125,6 +125,8 @@
     <Compile Include="Repositories\DependencyResolutionFailedResult.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="Repositories\IndexedFolderRepository.cs" />
+    <Compile Include="Repositories\InMemoryPackage.cs" />
+    <Compile Include="Repositories\InMemoryRepository.cs" />
     <Compile Include="Repositories\NetworkShareNavigator.cs" />
     <Compile Include="Repositories\Http\PackageDocument.cs" />
     <Compile Include="Repositories\Http\PackageItem.cs" />
