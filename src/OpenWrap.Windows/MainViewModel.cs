@@ -7,6 +7,7 @@ using System.Text;
 using OpenWrap;
 using OpenWrap.Commands;
 using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 using OpenWrap.Services;
 
 namespace OpenWrap.Windows
@@ -16,8 +17,16 @@ namespace OpenWrap.Windows
         public MainViewModel()
         {
             var commands = WrapServices.GetService<ICommandRepository>();
-            Nouns = commands != null ? commands.GroupBy(x => x.Noun).Select(x => new NounSlice(x.Key,x.Select(y=>new VerbSlice(y)))).ToList()
+            Nouns = commands != null 
+                ? commands.GroupBy(x => x.Noun).Select(x => CreateNounSlice(x)).ToList()
                 : MockCommands();
+        }
+
+        NounSlice CreateNounSlice(IGrouping<string, ICommandDescriptor> x)
+        {
+            if (x.Key.Equals("wrap", StringComparison.OrdinalIgnoreCase))
+                return new WrapSlice(x.Key, x.Select(y => new VerbSlice(y)));
+            return new NounSlice(x.Key,x.Select(y=>new VerbSlice(y)));
         }
 
         IEnumerable<NounSlice> MockCommands()
@@ -37,7 +46,7 @@ namespace OpenWrap.Windows
         public NounSlice SelectedNoun
         {
             get { return _selectedNoun; }
-            set { _selectedNoun = value; }
+            set { _selectedNoun = value; PropertyChanged(this, new PropertyChangedEventArgs("SelectedNoun")); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged = (s, e) => { };
@@ -56,7 +65,7 @@ namespace OpenWrap.Windows
         }
     }
 
-    public class NounSlice
+    public class NounSlice : INotifyPropertyChanged
     {
         public NounSlice(string noun, IEnumerable<VerbSlice> commandDescriptors)
         {
@@ -67,15 +76,38 @@ namespace OpenWrap.Windows
         public IEnumerable<VerbSlice> Commands { get; set; }
 
         public string Noun { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged = (s,e)=>{};
+        protected virtual void NotifyPropertyChanged(string propertyName) { PropertyChanged(this, new PropertyChangedEventArgs(propertyName));}
     }
     
     public class WrapSlice : NounSlice
     {
+        protected IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); } }
+        protected IPackageManager PackageManager { get { return WrapServices.GetService<IPackageManager>(); } }
+
+        DependencyResolutionResult _projectDependencies;
+        public DependencyResolutionResult ProjectDependencies
+        {
+            get { return _projectDependencies; }
+            set { _projectDependencies = value; NotifyPropertyChanged("ProjectDependencies"); }
+        }
+
+        //public IEnumerable<SystemPackage> SystemDependencies { get { return Environment.SystemRepository.PackagesByName.Select(x => new SystemPackage(x.Key, x)); } }
         public WrapSlice(string noun, IEnumerable<VerbSlice> commandDescriptors) : base(noun, commandDescriptors)
         {
+
+            if (Environment != null && Environment.ProjectRepository != null)
+            {
+                ProjectDependencies = PackageManager.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository });
+            }
         }
 
     }
+
+    public class LocalDependencyViewModel
+    {
+    }
+
     public class VerbSlice
     {
         public VerbSlice(ICommandDescriptor commandDescriptor)
@@ -90,13 +122,6 @@ namespace OpenWrap.Windows
     }
     public class DependenciesViewModel
     {
-        protected IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); } }
-
-        public IEnumerable<PackageDependency> ProjectDependencies { get { return Environment.Descriptor.Dependencies; } }
-        public IEnumerable<SystemPackage> SystemDependencies { get { return Environment.SystemRepository.PackagesByName; } }
     }
 
-    public class SystemPackage
-    {
-    }
 }

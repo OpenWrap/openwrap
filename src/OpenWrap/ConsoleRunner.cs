@@ -35,7 +35,7 @@ namespace OpenWrap
             WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
             WrapServices.RegisterService<ITaskManager>(new TaskManager());
 
-            var commands = ReadCommands(WrapServices.GetService<IEnvironment>());
+            var commands = WrapServices.GetService<IEnvironment>().Commands();
             var repo = new CommandRepository(commands);
 
             WrapServices.TryRegisterService<ICommandRepository>(() => repo);
@@ -169,8 +169,10 @@ namespace OpenWrap
         {
             return null;
         }
-
-        static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
+    }
+    public static class EnvironmentExtensions
+    {
+        public static IEnumerable<ICommandDescriptor> Commands(this IEnvironment environment)
         {
             return WrapServices.GetService<IPackageManager>()
                 .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
@@ -179,7 +181,6 @@ namespace OpenWrap
                 .Select(x => x.Descriptor).ToList();
         }
     }
-
     internal class TaskProgressMessage : ICommandOutput, IProgressOutput
     {
         readonly ITask _task;

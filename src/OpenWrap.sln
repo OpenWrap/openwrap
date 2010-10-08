@@ -1,6 +1,23 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\build.proj = ..\build\build.proj
+		..\build\openwrap.proj = ..\build\openwrap.proj
+		..\openwrap.wrapdesc = ..\openwrap.wrapdesc
+		..\build\self-build.test = ..\build\self-build.test
+		..\version = ..\version
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FF7BA218-B2A1-462A-8F51-153337027853}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\common.project.properties = ..\build\common.project.properties
+		CommonProperties.cs = CommonProperties.cs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Externals (Temporarily)", "Externals (Temporarily)", "{41450CC7-8984-4460-B15A-EB4274347FB5}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap", "OpenWrap\OpenWrap.csproj", "{6CE52051-0070-423D-96CB-8B16700A2251}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Build.Tasks", "OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj", "{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}"
@@ -13,26 +30,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Tests", "OpenWrap.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Vs2008", "OpenWrap.Vs2008\OpenWrap.Vs2008.csproj", "{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
-	ProjectSection(SolutionItems) = preProject
-		..\build\build.proj = ..\build\build.proj
-		..\build\openwrap.proj = ..\build\openwrap.proj
-		..\openwrap.wrapdesc = ..\openwrap.wrapdesc
-		..\build\self-build.test = ..\build\self-build.test
-		..\version = ..\version
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Commands", "OpenWrap.Commands\OpenWrap.Commands.csproj", "{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FF7BA218-B2A1-462A-8F51-153337027853}"
-	ProjectSection(SolutionItems) = preProject
-		..\build\common.project.properties = ..\build\common.project.properties
-		CommonProperties.cs = CommonProperties.cs
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenRasta.Client", "OpenRasta.Client\OpenRasta.Client.csproj", "{42F90C40-827D-4CF6-B206-EB2315AACDDB}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Externals (Temporarily)", "Externals (Temporarily)", "{41450CC7-8984-4460-B15A-EB4274347FB5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.v500", "OpenWrap.Resharper.v500\OpenWrap.Resharper.v500.csproj", "{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}"
 EndProject
