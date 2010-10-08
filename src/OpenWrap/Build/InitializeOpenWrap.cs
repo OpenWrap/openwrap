@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Build.Framework;
@@ -19,7 +18,7 @@ namespace OpenWrap.Build
     {
         static void IntializeOpenWrap()
         {
-            Preloader.PreloadOpenWrapDependencies();
+            Preloader.PreloadDependencies(new[] { "openfilesystem", "sharpziplib" });
         }
         public string CurrentDirectory { get; set; }
 
@@ -49,15 +48,6 @@ namespace OpenWrap.Build
             WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
             WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
             WrapServices.RegisterService<ITaskManager>(new TaskManager());
-        }
-    }
-
-    public class MSBuildEnvironment : CurrentDirectoryEnvironment
-    {
-        public MSBuildEnvironment(InitializeOpenWrap initializeOpenWrap, string currentDirectory) : base(Path.GetDirectoryName(initializeOpenWrap.BuildEngine.ProjectFileOfTaskNode))
-        {
-            if (currentDirectory != null)
-                CurrentDirectory = LocalFileSystem.Instance.GetDirectory(currentDirectory);
         }
     }
 }

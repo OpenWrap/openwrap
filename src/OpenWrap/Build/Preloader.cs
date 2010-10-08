@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,12 +10,11 @@ namespace OpenWrap.Build
     public static class Preloader
     {
         static bool _initialized = false;
-        public static void PreloadOpenWrapDependencies()
+        public static void PreloadDependencies(params string[] packageNames)
         {
             if (_initialized)
                 return;
             _initialized = true;
-            var dependencies = new[] { "openfilesystem", "sharpziplib" };
             var openwrapAssemblyPath = typeof(InitializeOpenWrap).Assembly.Location;
             // openwrap is in /wraps/openwrap/build/ or /wraps/_cache/openwrap-xx/build
             var path = new DirectoryInfo(Path.GetDirectoryName(openwrapAssemblyPath));
@@ -25,7 +25,7 @@ namespace OpenWrap.Build
             if (rootWrapsPath == null || !rootWrapsPath.Exists)
                 throw new DirectoryNotFoundException("Pacakge cache could not be found. Cannot start OpenWrap.");
 
-            var dependencyDirectories = dependencies.Select(x => GetDependencyDirectory(rootWrapsPath, x));
+            var dependencyDirectories = packageNames.Select(x => GetDependencyDirectory(rootWrapsPath, x));
             foreach (var dependencyDirectory in dependencyDirectories)
             {
                 if (dependencyDirectory == null || !dependencyDirectory.Exists)

@@ -1,5 +1,4 @@
 ﻿depends: openwrap content
 depends: openfilesystem
 depends: sharpziplib
-depends: openwrap
 anchored: true
