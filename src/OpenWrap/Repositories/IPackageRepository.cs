@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenWrap.Dependencies;
@@ -8,12 +9,21 @@ namespace OpenWrap.Repositories
     {
         ILookup<string, IPackageInfo> PackagesByName { get; }
         IPackageInfo Find(PackageDependency dependency);
-        IPackageInfo Publish(string packageFileName, Stream packageStream);
-        bool CanPublish { get; }
+        
         void Refresh();
         string Name { get; }
-
-        bool CanDelete { get; }
-        void Delete(IPackageInfo packageInfo);
+    }
+    public interface ISupportPublishing : IPackageRepository
+    {
+        IPackageInfo Publish(string packageFileName, Stream packageStream);
+    }
+    public interface ISupportCleaning : IPackageRepository
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packagesToKepp"></param>
+        /// <returns>The packages that were removed from the repository</returns>
+        IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKepp);
     }
 }

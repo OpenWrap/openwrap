@@ -6,9 +6,9 @@ using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories
 {
-    public class InMemoryRepository : IPackageRepository
+    public class InMemoryRepository : IPackageRepository, ISupportPublishing, ISupportCleaning
     {
-        readonly IList<IPackageInfo> _packages = new List<IPackageInfo>();
+        IList<IPackageInfo> _packages = new List<IPackageInfo>();
 
         public InMemoryRepository(string name)
         {
@@ -27,6 +27,13 @@ namespace OpenWrap.Repositories
         public string Name
         {
             get; set;
+        }
+
+        public IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKepp)
+        {
+            var packagesToRemove = _packages.Where(x => !packagesToKepp.Contains(x)).ToList();
+            _packages = packagesToKepp.ToList();
+            return packagesToRemove;
         }
 
         public bool CanDelete

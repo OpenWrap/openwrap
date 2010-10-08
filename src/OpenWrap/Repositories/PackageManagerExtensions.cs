@@ -38,7 +38,7 @@ namespace OpenWrap.Repositories
                         .Skip(1)
                         .ToList();
 
-                foreach (var repository in repositoriesForDependency.Where(x => x != null && x.CanPublish).ToList())
+                foreach (var repository in repositoriesForDependency.NotNull().OfType<ISupportPublishing>().ToList())
                 {
                     var existingUpToDateVersion = repository.PackagesByName.Contains(dependency.Package.Name)
                                                           ? repository.PackagesByName[dependency.Package.Name]

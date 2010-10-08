@@ -10,7 +10,7 @@ namespace OpenWrap.Repositories
     /// <summary>
     /// Provides a repository that can read packages from a directory using the default structure.
     /// </summary>
-    public class FolderRepository : IPackageRepository
+    public class FolderRepository : IPackageRepository, ISupportCleaning, ISupportPublishing
     {
         readonly bool _anchorsEnabled;
         IDirectory _rootCacheDirectory;
@@ -79,17 +79,22 @@ namespace OpenWrap.Repositories
             get; set;
         }
 
-        public bool CanDelete { get { return true; } }
-
-        public void Delete(IPackageInfo packageInfo)
+        public IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKepp)
         {
-            if (!Packages.Contains(packageInfo))
-                throw new ArgumentException("Supplied packageInfo must belong to the FolderRepository.", "packageInfo");
+            packagesToKepp = packagesToKepp.ToList();
+            foreach(var packageInfo in Packages.Where(x=>!packagesToKepp.Contains(x)))
+            {
+                if (!Packages.Contains(packageInfo))
+                    throw new ArgumentException("Supplied packageInfo must belong to the FolderRepository.", "packageInfo");
 
-            _rootCacheDirectory.GetDirectory(packageInfo.FullName).Delete();
-            BasePath.GetFile(packageInfo.FullName + ".wrap").Delete();
+                Packages.Remove(packageInfo);
 
-            Packages.Remove(packageInfo);
+                _rootCacheDirectory.GetDirectory(packageInfo.FullName).Delete();
+                BasePath.GetFile(packageInfo.FullName + ".wrap").Delete();
+
+                yield return packageInfo;
+            }
         }
+
     }
 }

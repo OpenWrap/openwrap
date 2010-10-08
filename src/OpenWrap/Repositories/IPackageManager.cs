@@ -14,7 +14,7 @@ namespace OpenWrap.Repositories
                                                           IEnumerable<IPackageRepository> repositoriesToQuery);
 
         void UpdateDependency(ResolvedDependency dependency,
-                              IPackageRepository destinationRepository);
+                              ISupportPublishing destinationRepository);
     }
     
 }

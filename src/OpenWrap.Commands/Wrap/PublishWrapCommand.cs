@@ -13,7 +13,7 @@ namespace OpenWrap.Commands.Wrap
     [Command(Noun="wrap", Verb="publish", Description="Publishes a package to a remote reposiory.")]
     public class PublishWrapCommand : AbstractCommand
     {
-        IPackageRepository _remoteRepository;
+        ISupportPublishing _remoteRepository;
 
         Func<Stream> _packageStream;
         string _packageFileName;
@@ -47,9 +47,15 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> ValidateInputs()
         {
-            _remoteRepository = Environment.RemoteRepositories.FirstOrDefault(x => x.Name.Equals(RemoteRepository, StringComparison.OrdinalIgnoreCase));
-            if (_remoteRepository == null)
+            var namedRepository = Environment.RemoteRepositories.FirstOrDefault(x => x.Name.Equals(RemoteRepository, StringComparison.OrdinalIgnoreCase));
+            if (namedRepository == null)
                 yield return new Errors.UnknownRemoteRepository(RemoteRepository);
+
+            _remoteRepository = namedRepository as ISupportPublishing;
+            
+            if (_remoteRepository == null)
+                yield return new GenericError("Cannot publish to repository '{0}'.", namedRepository.Name);
+
             if (Path != null)
             {
                 var packageFile = FileSystem.GetFile(Path);
@@ -90,5 +96,4 @@ namespace OpenWrap.Commands.Wrap
                 _remoteRepository.Publish(_packageFileName, packageStream);
         }
     }
-
 }

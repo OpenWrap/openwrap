@@ -35,7 +35,7 @@ namespace OpenWrap.Repositories
         }
 
         public void UpdateDependency(ResolvedDependency dependency,
-                                     IPackageRepository destinationRepository)
+                                     ISupportPublishing destinationRepository)
         {
             var source = dependency.Package.Load();
             using (var packageStream = source.OpenStream())

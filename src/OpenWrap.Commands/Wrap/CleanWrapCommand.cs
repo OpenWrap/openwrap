@@ -10,114 +10,108 @@ namespace OpenWrap.Commands.Wrap
     [Command(Noun = "wrap", Verb = "clean", Description = "Clean all but the latest version of a wrap from the repository.")]
     public class CleanWrapCommand : AbstractCommand
     {
-        [CommandInput(Position = 0)]
+        List<Func<IEnumerable<ICommandOutput>>> _cleanOperations = new List<Func<IEnumerable<ICommandOutput>>>();
+
+        [CommandInput(Position = 0, DisplayName="The name of the package to clean")]
         public string Name { get; set; }
 
-        [CommandInput(Name = "System", DisplayName = "System Only")]
-        public bool SystemOnly { get; set; }
+        [CommandInput(DisplayName = "Cleans the System repository")]
+        public bool System { get; set; }
 
-        [CommandInput(Name = "Project", DisplayName = "Project Only")]
-        public bool ProjectOnly { get; set; }
+        bool? _project;
 
-        [CommandInput(Name = "All", DisplayName = "All")]
-        public bool All { get; set; }
+        [CommandInput(DisplayName = "Cleans the current project's repository")]
+        public bool Project
+        {
+            get { return _project ?? false; }
+            set { _project = value; }
+        }
 
-        internal IEnvironment Environment { get; private set; }
+        protected IEnvironment Environment { get; private set; }
+        protected IPackageManager PackageManager { get; private set; }
 
         public CleanWrapCommand()
-            : this(WrapServices.GetService<IEnvironment>())
+            : this(WrapServices.GetService<IEnvironment>(),WrapServices.GetService<IPackageManager>())
         {
         }
 
-        public CleanWrapCommand(IEnvironment environment)
+        public CleanWrapCommand(IEnvironment environment, IPackageManager packageManager)
         {
             Environment = environment;
+            PackageManager = packageManager;
         }
 
         public override IEnumerable<ICommandOutput> Execute()
         {
-            if (String.IsNullOrEmpty(Name) && !All)
-            {
-                yield return new GenericError("You must specify either a wrap name or the -All switch to run this command.");
-                yield break;
-            }
-
-            if (SystemOnly && ProjectOnly)
-            {
-                yield return new GenericError("Cannot have both System and Project as parameters, they are mutually exclusive.");
-                yield break;
-            }
-
-            var repositories = new List<IPackageRepository>();
-            if (!SystemOnly) repositories.Add(Environment.ProjectRepository);
-            if (!ProjectOnly) repositories.Add(Environment.SystemRepository);
-
-            foreach (var message in RepositoriesCanBeCleaned(repositories))
-            {
-                yield return message;
-                if (message is GenericError) yield break;
-            }
-
-            Func<IPackageRepository, IEnumerable<ICommandOutput>> deleter;
-            if (All)
-                deleter = DeleteAllPackagesFromRepo;
-            else
-                deleter = DeleteNamedPackagesFromRepo;
-
-            foreach (var message in repositories.SelectMany(x => deleter(x)))
-            {
-                yield return message;
-                if (message is GenericError) yield break;
-            }
-
-            yield return new Success();
+            return Either(VerifyInputs()).Or(ExecuteCore());
         }
 
-        IEnumerable<ICommandOutput> DeleteNamedPackagesFromRepo(IPackageRepository repository)
+        IEnumerable<ICommandOutput> ExecuteCore()
         {
-            var packages = repository.PackagesByName[Name];
-
-            if (packages.FirstOrDefault() == null)
+            return _cleanOperations.SelectMany(x => x());
+        }
+        bool IncludeProject
+        {
+            get { return (_project == null && System == false) || (_project != null && _project.Value); }
+        }
+        IEnumerable<ICommandOutput> VerifyInputs()
+        {
+            int countWithMatchingName = 0;
+            if (IncludeProject)
             {
-                yield return new GenericError("Package '{0}' does not exist in the {1}.",
-                                              Name,
-                                              repository.Name);
-                yield break;
+                yield return TryAddRepository("Project repository", Environment.ProjectRepository, GetProjectPackages());
+                if (Name != null && Environment.ProjectRepository != null)
+                    countWithMatchingName = Environment.ProjectRepository.PackagesByName[Name].Count();
+            }
+            if (System)
+            {
+                countWithMatchingName += Environment.SystemRepository.PackagesByName[Name].Count();
+                yield return TryAddRepository("System repository", Environment.SystemRepository, GetLastVersionOfSystemRepository());
+            }
+            if (countWithMatchingName == 0)
+                yield return new GenericError("Cound not find a package called '{0}'.", Name);
+
+        }
+
+        IEnumerable<IPackageInfo> GetLastVersionOfSystemRepository()
+        {
+            return from packageByName in Environment.SystemRepository.PackagesByName
+                   select packageByName.OrderByDescending(x=>x.Version).First();
+        }
+
+        IEnumerable<IPackageInfo> GetProjectPackages()
+        {
+            return PackageManager.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository }).Dependencies.Select(x => x.Package);
+        }
+
+        ICommandOutput TryAddRepository(string repositoryName, IPackageRepository repository, IEnumerable<IPackageInfo> packagesToKeep)
+        {
+            if (repository == null)
+                return new GenericError("Repository '{0}' not found.", repositoryName);
+            var repo = repository as ISupportCleaning;
+            if (repo == null)
+                return new GenericError("Repository '{0}' does not support cleaning.", repositoryName);
+
+            if (Name != null)
+            {
+                packagesToKeep = (
+                                         from packageByName in repository.PackagesByName
+                                         where !packageByName.Key.Equals(Name, StringComparison.OrdinalIgnoreCase)
+                                         from package in packageByName
+                                         select package
+                                 )
+                                 .Concat(packagesToKeep.Where(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)))
+                                .ToList();
             }
 
-            foreach (var message in DeleteAllButLatestVersion(packages))
-                yield return message;
+            _cleanOperations.Add(()=>CleanRepository(repo, packagesToKeep));
+            return null;
         }
 
-        IEnumerable<ICommandOutput> DeleteAllPackagesFromRepo(IPackageRepository repository)
+        IEnumerable<ICommandOutput> CleanRepository(ISupportCleaning repository, IEnumerable<IPackageInfo> packagesToKeep)
         {
-            return repository.PackagesByName.SelectMany(x => DeleteAllButLatestVersion(x));
-        }
-
-        IEnumerable<ICommandOutput> RepositoriesCanBeCleaned(IEnumerable<IPackageRepository> repositories)
-        {
-            foreach (var repository in repositories)
-            {
-                if (!repository.CanDelete)
-                {
-                    yield return new GenericError("The {0} cannot be cleaned.",
-                                                  repository.Name);
-                    yield break;
-                }
-            }
-        }
-
-        IEnumerable<ICommandOutput> DeleteAllButLatestVersion(IEnumerable<IPackageInfo> packageList)
-        {
-            yield return new GenericMessage("Cleaning package {0} from {1}.",
-                packageList.First().Name,
-                packageList.First().Source.Name);
-
-            var latestPackage = packageList.OrderByDescending(x => x.Version).First();
-            foreach (var package in packageList.Where(x => x != latestPackage))
-                package.Source.Delete(package);
-
-            yield break;
+            foreach (var removedRepo in repository.Clean(packagesToKeep))
+                yield return new GenericMessage("Removed package '{0}'.", removedRepo.FullName);
         }
     }
 }
