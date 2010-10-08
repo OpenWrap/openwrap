@@ -1,0 +1,16 @@
+﻿<Application x:Class="OpenWrap.Windows.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windows="clr-namespace:OpenWrap.Windows" StartupUri="Main.xaml">
+    <Application.Resources>
+
+        <DataTemplate x:Key="PackagesTemplate" DataType="{x:Type Windows:NounSlice}">
+            
+            <Grid/>
+        </DataTemplate>
+        <DataTemplate x:Key="{x:Type Windows:WrapSlice}">
+            <DataTemplate.Resources>
+                <
+            </DataTemplate.Resources>
+        </DataTemplate>
+    </Application.Resources>
+</Application>
