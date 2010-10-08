@@ -169,7 +169,6 @@ namespace OpenWrap
         {
             return null;
         }
-
     }
     public static class EnvironmentExtensions
     {

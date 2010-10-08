@@ -1,16 +1,19 @@
-﻿using System;
+﻿extern alias resharper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using JetBrains.Application;
-using JetBrains.ProjectModel;
-using JetBrains.Util;
 using OpenWrap.Exports;
 using OpenWrap.Build;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
+using Shell = resharper::JetBrains.Application.Shell;
+using JetBrainsKey = resharper::JetBrains.Util.Key;
+using WriteLockCookie = resharper::JetBrains.Application.WriteLockCookie;
+using SolutionManager = resharper::JetBrains.ProjectModel.SolutionManager;
+using ISolution = resharper::JetBrains.ProjectModel.ISolution;
 
 namespace OpenWrap.Resharper
 {
@@ -20,7 +23,7 @@ namespace OpenWrap.Resharper
         
         readonly IPackageRepository _packageRepository;
         readonly string _projectFilePath;
-        static readonly Key ISWRAP = new Key("FromOpenWrap");
+        static readonly JetBrainsKey ISWRAP = new JetBrainsKey("FromOpenWrap");
         readonly List<string> _ignoredAssemblies;
 
         public ResharperProjectUpdater(IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, ExecutionEnvironment environment, IEnumerable<string> ignoredAssemblies)
@@ -51,8 +54,7 @@ namespace OpenWrap.Resharper
                                             ISolution solution = SolutionManager.Instance.CurrentSolution;
                                             if (solution == null) return;
 
-                                            var project = SolutionManager.Instance.CurrentSolution.GetAllProjects()
-                                                .FirstOrDefault(x => x.ProjectFile != null && x.ProjectFile.Location.FullPath == _projectFilePath);
+                                            var project = System.Linq.Enumerable.FirstOrDefault(SolutionManager.Instance.CurrentSolution.GetAllProjects(), x => x.ProjectFile != null && x.ProjectFile.Location.FullPath == _projectFilePath);
 
                                             if (project == null) return;
                                             
