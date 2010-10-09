@@ -40,6 +40,7 @@ namespace OpenWrap.Repositories
         {
             get { return Descriptor.Dependencies; }
         }
+        public bool Anchored { get { return Descriptor.Anchored; } }
 
         public string Name
         {

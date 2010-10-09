@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories
@@ -68,12 +70,20 @@ namespace OpenWrap.Repositories
                                                : packageFileName;
             if (_packages.Any(x=>x.FullName == fileWithoutExtension))
                 throw new InvalidOperationException("Package already exists in repository.");
-                
+
+            var inMemoryFile = new InMemoryFile("c:\\" + Guid.NewGuid());
+            using(var stream = inMemoryFile.OpenWrite())
+                packageStream.CopyTo(stream);
+
+            var tempFolder = new CachedZipPackage(null, inMemoryFile, null, null);
+
             var package = new InMemoryPackage
             {
                     Name = PackageNameUtility.GetName(fileWithoutExtension),
                     Version = PackageNameUtility.GetVersion(fileWithoutExtension),
-                    Source = this
+                    Source = this,
+                    Dependencies = tempFolder.Dependencies.ToList(),
+                    Anchored = tempFolder.Anchored
             };
             _packages.Add(package);
             return package;

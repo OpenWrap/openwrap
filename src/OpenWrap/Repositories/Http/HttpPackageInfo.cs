@@ -47,6 +47,12 @@ namespace OpenWrap.Repositories.Http
         }
 
         public DateTime? LastModifiedTimeUtc { get { return _package.LastModifiedTimeUtc; } }
+
+        public bool Anchored
+        {
+            get { return false; }
+        }
+
         public string Name { get{ return _package.Name;}}
 
         public IPackageRepository Source { get; private set; }

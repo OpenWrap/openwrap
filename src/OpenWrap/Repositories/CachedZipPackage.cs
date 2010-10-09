@@ -37,6 +37,7 @@ namespace OpenWrap.Repositories
         {
             get { return Descriptor.Name; }
         }
+        public bool Anchored { get { return Descriptor.Anchored; } }
 
         public Version Version
         {

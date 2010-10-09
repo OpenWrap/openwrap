@@ -183,7 +183,6 @@ namespace OpenWrap.Tests.Commands
         public void package_is_installed()
         {
             Environment.ProjectRepository.PackagesByName["sauron"].ShouldHaveCountOf(1);
-
         }
 
         [Test]

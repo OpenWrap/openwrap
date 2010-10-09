@@ -54,6 +54,11 @@ namespace OpenWrap.Repositories.Http
             get{ return _package.LastModifiedTimeUtc; }
         }
 
+        public bool Anchored
+        {
+            get { return false; }
+        }
+
         public Stream OpenStream()
         {
             VerifyLoaded();
