@@ -32,7 +32,7 @@ namespace OpenWrap.Commands.Wrap
 
             var packageManager = WrapServices.GetService<IPackageManager>();
             var openwrapPackage = packageManager.TryResolveDependencies(new WrapDescriptor { Name = "openwrap" }, new[] { Environment.SystemRepository });
-            foreach(var msg in packageManager.CopyPackagesToRepositories(openwrapPackage, new FolderRepository(projectDirectory.GetDirectory("wraps"), true)))
+            foreach(var msg in packageManager.CopyPackagesToRepositories(openwrapPackage, new FolderRepository(projectDirectory.GetDirectory("wraps"))))
                 yield return msg;
         }
 

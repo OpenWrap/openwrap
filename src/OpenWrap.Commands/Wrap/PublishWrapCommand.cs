@@ -65,7 +65,7 @@ namespace OpenWrap.Commands.Wrap
                 {
                     _packageStream = () => packageFile.OpenRead();
                     _packageFileName = packageFile.Name;
-                    var package = new CachedZipPackage(null, packageFile, null, null, false);
+                    var package = new CachedZipPackage(null, packageFile, null, null);
                     _packageName = package.Name;
                     _packageVersion = package.Version;
                 }

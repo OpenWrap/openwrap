@@ -96,7 +96,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
                     "depends: nhibernate-core = 2.1"
                     );
 
-                Repository = new FolderRepository(RepositoryPath, false);
+                Repository = new FolderRepository(RepositoryPath);
             }
 
             protected void when_reading_test_module_descriptor()

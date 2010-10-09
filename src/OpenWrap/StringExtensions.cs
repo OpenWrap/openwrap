@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -68,6 +69,16 @@ namespace OpenWrap
         static bool CharEq(int namePosition, string name, int valuePosition, string value)
         {
             return char.ToUpperInvariant(value[valuePosition]) == char.ToUpperInvariant(name[namePosition]);
+        }
+        public static Version ToVersion(this string version)
+        {
+            try
+            {
+                return new Version(version);
+            }catch
+            {
+                return null;
+            }
         }
     }
 }

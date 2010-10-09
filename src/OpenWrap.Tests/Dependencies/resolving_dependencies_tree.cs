@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
-using ICSharpCode.SharpZipLib.Zip;
 using NUnit.Framework;
-using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
@@ -331,36 +327,6 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             protected void given_dependency_override(string from, string to)
             {
                 DependencyDescriptor.Overrides.Add(new PackageNameOverride(from, to));            
-            }
-        }
-
-        public static class PackageBuilder
-        {
-
-            public static IFile New(IFile wrapFile, string name, string version, params string[] descriptorLines)
-            {
-                //var wrapFile = new InMemoryFile(name + "-" + version + ".wrap");
-                using (var wrapStream = wrapFile.OpenWrite())
-                using (var zipFile = new ZipOutputStream(wrapStream))
-                {
-                    var nameTransform = new ZipNameTransform();
-
-                    zipFile.PutNextEntry(new ZipEntry(name + ".wrapdesc"));
-
-                    var descriptorContent = descriptorLines.Any()
-                                                    ? string.Join("\r\n", descriptorLines)
-                                                    : " ";
-                    
-                    zipFile.Write(Encoding.UTF8.GetBytes(descriptorContent));
-
-                    var versionEntry = new ZipEntry("version");
-                    zipFile.PutNextEntry(versionEntry);
-
-                    var versionData = Encoding.UTF8.GetBytes(version);
-                    zipFile.Write(versionData);
-                    zipFile.Finish();
-                }
-                return wrapFile;
             }
         }
     }

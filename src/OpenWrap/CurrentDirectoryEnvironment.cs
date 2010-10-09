@@ -48,7 +48,7 @@ namespace OpenWrap
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
-            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath), false)
+            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath))
             {
                 Name = "System repository"
             };
@@ -76,7 +76,11 @@ namespace OpenWrap
 
 
             if (projectRepositoryDirectory != null)
-                ProjectRepository = new FolderRepository(projectRepositoryDirectory, true) { Name = "Project repository" };
+                ProjectRepository = new FolderRepository(projectRepositoryDirectory)
+                {
+                        Name = "Project repository",
+                        EnableAnchoring=true
+                };
         }
 
         HttpRepository CreateRemoteRepository(string repositoryName, Uri repositoryHref)

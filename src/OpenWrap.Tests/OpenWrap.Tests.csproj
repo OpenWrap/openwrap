@@ -108,6 +108,7 @@
     <Compile Include="Dependencies\anchored_dependencies.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Dependencies\OverrideParser_Specification.cs" />
+    <Compile Include="Dependencies\PackageDependency_specs.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
     <Compile Include="Dependencies\WrapDescriptionParserTests.cs" />

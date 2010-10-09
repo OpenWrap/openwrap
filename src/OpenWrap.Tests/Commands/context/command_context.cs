@@ -23,7 +23,7 @@ namespace OpenWrap.Tests.Commands.context
         protected CommandRepository Commands;
         protected InMemoryEnvironment Environment;
         protected List<ICommandOutput> Results;
-        InMemoryFileSystem FileSystem;
+        protected InMemoryFileSystem FileSystem;
 
         public command_context()
         {
@@ -48,21 +48,16 @@ namespace OpenWrap.Tests.Commands.context
             new DependsParser().Parse(dependency, Environment.Descriptor);
         }
 
-        protected void given_file(string filePath, Stream stream)
-        {
-
-        }
-
         protected void given_project_package(string name, Version version, params string[] dependencies)
         {
-            given_project_repository();
+            given_project_repository(new InMemoryRepository("Project repository"));
             AddInMemoryPackage(Environment.ProjectRepository, name, version, dependencies);
         }
 
-        protected void given_project_repository()
+        protected void given_project_repository(IPackageRepository repository)
         {
             if (Environment.ProjectRepository == null)
-                Environment.ProjectRepository = new InMemoryRepository("Project repository");
+                Environment.ProjectRepository = repository;
         }
         protected void given_current_directory_repository(CurrentDirectoryRepository repository)
         {
@@ -84,16 +79,11 @@ namespace OpenWrap.Tests.Commands.context
             Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
         }
 
-        protected static void AddInMemoryPackage(InMemoryRepository repository, string name, Version version, string[] dependencies)
+        protected static void AddInMemoryPackage(IPackageRepository repository, string name, Version version, string[] dependencies)
         {
-            repository.Packages.Add(new InMemoryPackage
-            {
-                Name = name,
-                Version = version,
-                Source = repository,
-                Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
-                                           .ToList()
-            });
+            var packageFileName = name + "-" + version + ".wrap";
+            using(var readStream = PackageBuilder.New(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead())
+            ((ISupportPublishing)repository).Publish(packageFileName, readStream);
         }
 
         protected void given_currentdirectory_package(string packageName, string version, params string[] dependencies)

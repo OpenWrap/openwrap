@@ -69,7 +69,7 @@ namespace OpenWrap.Repositories.Http
             using (var destinationStream = temporaryFile.OpenWrite())
                 sourceStream.CopyTo(destinationStream);
 
-            _loadedPackage = new CachedZipPackage(Source, temporaryFile, _fileSystem.CreateTempDirectory(), Enumerable.Empty<IExportBuilder>(), false).Load();
+            _loadedPackage = new CachedZipPackage(Source, temporaryFile, _fileSystem.CreateTempDirectory(), Enumerable.Empty<IExportBuilder>()).Load();
         }
 
     }
