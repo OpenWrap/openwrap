@@ -93,7 +93,8 @@ namespace OpenWrap.Tests.Commands.context
                 return;
             }
             var packageFileName = name + "-" + version + ".wrap";
-            using (var readStream = PackageBuilder.New(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead())
+            var packageStream = PackageBuilder.New(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
+            using (var readStream = packageStream)
                 ((ISupportPublishing)repository).Publish(packageFileName, readStream);
         }
 
@@ -103,7 +104,14 @@ namespace OpenWrap.Tests.Commands.context
         }
         protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
         {
-            AddInMemoryPackage(Environment.CurrentDirectoryRepository, packageName, version, dependencies);
+            if (Environment.CurrentDirectoryRepository is InMemoryRepository)
+                AddInMemoryPackage(Environment.CurrentDirectoryRepository, packageName, version, dependencies);
+            else
+            {
+                var localFile = Environment.CurrentDirectory.GetFile(PackageNameUtility.PacakgeFileName(packageName, version.ToString())).MustExist();
+                PackageBuilder.New(localFile, packageName, version.ToString(), dependencies);
+                
+            }
         }
 
         protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
