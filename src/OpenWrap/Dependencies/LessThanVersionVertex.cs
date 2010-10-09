@@ -20,5 +20,9 @@ namespace OpenWrap.Dependencies
                    ||
                    Version.Major > version.Major;
         }
+        public override string ToString()
+        {
+            return "< " + Version;
+        }
     }
 }

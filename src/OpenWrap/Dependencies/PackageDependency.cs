@@ -46,7 +46,7 @@ namespace OpenWrap.Dependencies
                 ? Name
                 : Name + " " + versions;
             if (Tags.Count() > 0)
-                returnValue = string.Join(" ", Tags.ToArray());
+                returnValue += " " + string.Join(" ", Tags.ToArray());
             return returnValue;
         }
     }

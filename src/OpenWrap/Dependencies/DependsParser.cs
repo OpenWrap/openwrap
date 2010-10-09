@@ -34,13 +34,18 @@ namespace OpenWrap.Dependencies
                 return null;
 
             var versions = ParseVersions(bits.Skip(1).ToArray()).ToList();
-            var tags = bits.Skip((versions.Count * 2) + versions.Count).ToArray();
+            var tags = bits.AsEnumerable();
+            
+            if (versions.Count > 0)
+                tags = tags.Skip((versions.Count * 2) + versions.Count - 1);
 
+            tags = tags.Skip(1);
+            
             return new PackageDependency
             {
                     Name = bits[0],
                     VersionVertices = versions.Count > 0 ? versions : new List<VersionVertex>() { new AnyVersionVertex() },
-                    Tags = tags,
+                    Tags = tags.ToArray(),
             };
         }
 
@@ -66,7 +71,9 @@ namespace OpenWrap.Dependencies
         private static VersionVertex GetVersionVertice(string[] strings, int offset)
         {
             var comparator = strings[offset];
-            var version = new Version(strings[offset + 1]);
+            var version = strings[offset + 1].ToVersion();
+            if (version == null)
+                return null;
             switch (comparator)
             {
                 case ">":
