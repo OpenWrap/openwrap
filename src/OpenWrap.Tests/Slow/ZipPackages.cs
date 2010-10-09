@@ -89,7 +89,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
             {
                 FileSystem = LocalFileSystem.Instance;
                 RepositoryPath = FileSystem.CreateTempDirectory();
-                PackageBuilder.New(
+                PackageBuilder.NewWithDescriptor(
                     RepositoryPath.GetFile("test-module-1.0.0.wrap"), 
                     "test-module",
                     "1.0.0",

@@ -43,7 +43,7 @@ namespace OpenWrap.Repositories
         public Stream OpenStream()
         {
             var package = new InMemoryFile(@"c:\test.wrap");
-            PackageBuilder.New(package, Name, Version.ToString(), Dependencies.Select(x=>"depends: " + x).ToArray());
+            PackageBuilder.NewWithDescriptor(package, Name, Version.ToString(), Dependencies.Select(x=>"depends: " + x).ToArray());
             return package.OpenRead();
         }
 

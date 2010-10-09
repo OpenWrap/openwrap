@@ -6,6 +6,7 @@ using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.Build;
 using OpenWrap.Build.BuildEngines;
+using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
 
@@ -68,15 +69,37 @@ namespace OpenWrap.Commands.Wrap
             if (buildFiles.Count > 0)
             {
                 var version = GetCurrentVersion().GenerateVersionNumber();
+
+                // don't incude the version, we've already parsed it
+                buildFiles = buildFiles
+                    .Where(x => !(x.ExportName == "." && x.FileName == "version"))
+                        .Distinct()
+                        .ToList();
+
                 foreach (var file in buildFiles)
-                {
                     yield return new GenericMessage(string.Format("Copying: {0} - {1}", file.ExportName, file.Path));
-                }
+
                 var packageFilePath = destinationPath.GetFile(packageName + "-" + version + ".wrap");
-                PackagePackager.CreatePackage(
-                        packageFilePath,
-                        version,
-                        buildFiles.GroupBy(x => x.ExportName, x => FileSystem.GetFile(x.Path.FullPath)));
+
+                var packageContent =
+                        (
+                                from file in buildFiles
+                                select new PackageContent
+                                {
+                                    FileName = System.IO.Path.GetFileName(file.Path.FullPath),
+                                    RelativePath = file.ExportName,
+                                    Stream = () => File.OpenRead(file.Path.FullPath)
+                                }
+                         ).Concat(new[]
+                            {
+                                new PackageContent
+                                {
+                                        FileName = "version",
+                                        RelativePath = ".",
+                                        Stream = ()=> version.ToUTF8Stream()
+                                }
+                            });
+                PackageBuilder.NewFromFiles(packageFilePath, packageContent);
                 yield return new GenericMessage(string.Format("Package built at '{0}'.", packageFilePath));
             }
         }

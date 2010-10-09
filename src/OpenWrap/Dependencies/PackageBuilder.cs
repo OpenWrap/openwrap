@@ -1,5 +1,7 @@
-﻿using System.Linq;
-using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenFileSystem.IO;
 
@@ -7,31 +9,64 @@ namespace OpenWrap.Dependencies
 {
     public static class PackageBuilder
     {
-
-        public static IFile New(IFile wrapFile, string name, string version, params string[] descriptorLines)
+        public static void NewFromFiles(IFile destinationPackage, IEnumerable<PackageContent> content)
         {
-            //var wrapFile = new InMemoryFile(name + "-" + version + ".wrap");
-            using (var wrapStream = wrapFile.OpenWrite())
+            using (var wrapStream = destinationPackage.OpenWrite())
             using (var zipFile = new ZipOutputStream(wrapStream))
             {
-                var nameTransform = new ZipNameTransform();
-
-                zipFile.PutNextEntry(new ZipEntry(name + ".wrapdesc"));
-
-                var descriptorContent = descriptorLines.Any()
-                                                ? string.Join("\r\n", descriptorLines)
-                                                : " ";
+                foreach(var contentFile in content)
+                {
+                    zipFile.PutNextEntry(GetZipEntry(contentFile));
                     
-                zipFile.Write(Encoding.UTF8.GetBytes(descriptorContent));
-
-                var versionEntry = new ZipEntry("version");
-                zipFile.PutNextEntry(versionEntry);
-
-                var versionData = Encoding.UTF8.GetBytes(version);
-                zipFile.Write(versionData);
+                    using (var contentStream = contentFile.Stream())
+                        contentStream.CopyTo(zipFile);
+                }
                 zipFile.Finish();
             }
+        }
+
+        static ZipEntry GetZipEntry(PackageContent contentFile)
+        {
+            if (contentFile.RelativePath == ".")
+                return new ZipEntry(Path.GetFileName(contentFile.FileName));
+            var target = contentFile.RelativePath;
+            if (target.Last() != '/')
+                target += '/';
+            return new ZipEntry(Path.Combine(target, contentFile.FileName));
+        }
+
+        public static IFile NewWithDescriptor(IFile wrapFile, string name, string version, params string[] descriptorLines)
+        {
+            return NewWithDescriptor(wrapFile, name, version, Enumerable.Empty<PackageContent>(), descriptorLines);
+        }
+
+        public static IFile NewWithDescriptor(IFile wrapFile, string name, string version, IEnumerable<PackageContent> addedContent, params string[] descriptorLines)
+        {
+            var descriptorContent = (descriptorLines.Any() ? String.Join("\r\n", descriptorLines) : " ").ToUTF8Stream();
+            var versionContent = version.ToUTF8Stream();
+            var content = new List<PackageContent>
+            {
+                    new PackageContent
+                    {
+                            FileName = name + ".wrapdesc",
+                            RelativePath = ".",
+                            Stream = () => descriptorContent
+                    },
+                    new PackageContent
+                    {
+                            FileName = "version",
+                            RelativePath = ".",
+                            Stream = () => versionContent
+                    }
+            }.Concat(addedContent);
+            NewFromFiles(wrapFile, content);
             return wrapFile;
         }
+    }
+    public class PackageContent
+    {
+        public string RelativePath { get; set; }
+        public string FileName { get; set; }
+        public Func<Stream> Stream { get;set; }
     }
 }

@@ -156,10 +156,14 @@
     <Compile Include="Repositories\Http\PackageItem.cs" />
     <Compile Include="Repositories\Http\RequestExtensions.cs" />
     <Compile Include="Repositories\ICommandExportItem.cs" />
+    <Compile Include="Repositories\NuPack\NuPackAtomExtensions.cs" />
+    <Compile Include="Repositories\NuPack\NuPackConverter.cs" />
+    <Compile Include="Repositories\NuPack\NuPackDependency.cs" />
     <Compile Include="Repositories\NuPack\NuPackFeedRepository.cs" />
-    <Compile Include="Repositories\NuPack\NuPackSyncidcationFeed.cs" />
+    <Compile Include="Repositories\NuPack\Namespaces.cs" />
+    <Compile Include="Repositories\NuPack\NuPackSyndicationFeed.cs" />
+    <Compile Include="Repositories\NuPack\NuPackSyndicationItem.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
-    <Compile Include="Repositories\PackagePackager.cs" />
     <Compile Include="Repositories\PackageRepositoryExtensions.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
     <Compile Include="Resolvers\RuntimeAssemblyResolver.cs" />

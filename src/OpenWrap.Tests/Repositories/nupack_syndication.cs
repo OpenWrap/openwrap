@@ -37,6 +37,12 @@ namespace nupack_syncidcation_specs
                     .Check(x => x.Version.ShouldBe("2.2.4.900".ToVersion()));
         }
         [Test]
+        public void package_has_correct_download_link()
+        {
+            var autofacPackage = PackageDoc.Packages.FirstOrDefault(x => x.Name == "Autofac");
+            autofacPackage.PackageHref.ShouldBe("http://173.203.67.148/packages/download?packageFile=Autofac.2.2.4.900.nupkg");
+        }
+        [Test]
         public void pacakge_has_correct_dependencies()
         {
             var autofacMvcPackage = PackageDoc.Packages.FirstOrDefault(x => x.Name == "Autofac.MVC2");
