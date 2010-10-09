@@ -9,11 +9,11 @@ namespace OpenWrap.Dependencies.Parsers
 
         protected override void ParseContent(string content, WrapDescriptor descriptor)
         {
-            descriptor.IsAnchored = string.Compare(content.Trim(), "true", StringComparison.OrdinalIgnoreCase) == 0;
+            descriptor.Anchored = string.Compare(content.Trim(), "true", StringComparison.OrdinalIgnoreCase) == 0;
         }
         protected override IEnumerable<string> WriteContent(WrapDescriptor descriptor)
         {
-            if (descriptor.IsAnchored)
+            if (descriptor.Anchored)
                 yield return "true";
         }
     }

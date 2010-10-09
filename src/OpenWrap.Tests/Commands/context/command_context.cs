@@ -81,9 +81,20 @@ namespace OpenWrap.Tests.Commands.context
 
         protected static void AddInMemoryPackage(IPackageRepository repository, string name, Version version, string[] dependencies)
         {
+            if (repository is InMemoryRepository)
+            {
+                ((InMemoryRepository)repository).Packages.Add(new InMemoryPackage
+                {
+                    Name = name,
+                    Source = repository,
+                    Version = version,
+                    Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies).ToList()
+                });
+                return;
+            }
             var packageFileName = name + "-" + version + ".wrap";
-            using(var readStream = PackageBuilder.New(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead())
-            ((ISupportPublishing)repository).Publish(packageFileName, readStream);
+            using (var readStream = PackageBuilder.New(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead())
+                ((ISupportPublishing)repository).Publish(packageFileName, readStream);
         }
 
         protected void given_currentdirectory_package(string packageName, string version, params string[] dependencies)
@@ -92,13 +103,7 @@ namespace OpenWrap.Tests.Commands.context
         }
         protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
         {
-            if (Environment.CurrentDirectoryRepository is InMemoryRepository)
-                command_context<AddWrapCommand>.AddInMemoryPackage((InMemoryRepository)Environment.CurrentDirectoryRepository, packageName, version, dependencies);
-            else
-            {
-                var packageFile = Environment.CurrentDirectory.GetFile(string.Format("{0}-{1}.wrap", packageName, version));
-                PackageBuilder.New(packageFile, packageName, version.ToString(), dependencies);
-            }
+            AddInMemoryPackage(Environment.CurrentDirectoryRepository, packageName, version, dependencies);
         }
 
         protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)

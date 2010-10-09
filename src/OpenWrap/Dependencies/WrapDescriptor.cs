@@ -44,7 +44,7 @@ namespace OpenWrap.Dependencies
             get { return null; }
         }
 
-        public bool IsAnchored { get; set; }
+        public bool Anchored { get; set; }
 
         public string BuildCommand { get; set; }
 
