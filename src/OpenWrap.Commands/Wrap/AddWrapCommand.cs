@@ -75,13 +75,11 @@ namespace OpenWrap.Commands.Wrap
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
 
-            var commandDescriptor = DescriptorFromCommand();
+            var packageDescriptor = DescriptorFromCommand();
             if (ShouldUpdateDescriptor)
-            {
-                yield return UpdateDescriptor(commandDescriptor);
-            }
+                yield return UpdateDescriptor(packageDescriptor);
 
-            var resolvedDependencies = PackageManager.TryResolveDependencies(commandDescriptor, Environment.RepositoriesForRead());
+            var resolvedDependencies = PackageManager.TryResolveDependencies(packageDescriptor, Environment.RepositoriesForRead());
 
             if (!resolvedDependencies.IsSuccess)
             {
@@ -101,6 +99,16 @@ namespace OpenWrap.Commands.Wrap
 
             foreach (var msg in PackageManager.ExpandPackages(Environment.ProjectRepository))
                 yield return msg;
+
+            // refresh dependencies to get new location of packages post-copy
+
+            var projectRepo = Environment.ProjectRepository as ISupportAnchoring;
+            if (projectRepo != null)
+            {
+                resolvedDependencies = PackageManager.TryResolveDependencies(packageDescriptor, Environment.RepositoriesForRead());
+                var packagesToAnchor = resolvedDependencies.Dependencies.Where(x => x.Dependency.Anchored && x.Package.Source == projectRepo).Select(x => x.Package).ToList();
+                projectRepo.VerifyAnchors(packagesToAnchor);
+            }
         }
 
         ICommandOutput UpdateDescriptor(WrapDescriptor commandDescriptor)
@@ -168,6 +176,8 @@ namespace OpenWrap.Commands.Wrap
                         new PackageDependency
                         {
                             Name = Name,
+                            Anchored = Anchored,
+                            ContentOnly = Content,
                             VersionVertices = Version != null
                                                   ? VersionVertices()
                                                   : new List<VersionVertex>{new AnyVersionVertex()}

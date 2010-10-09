@@ -122,6 +122,7 @@
     <Compile Include="Configuration\remote-repositories\RemoteRepository.cs" />
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\GreaterThenVersionVertex.cs" />
+    <Compile Include="Dependencies\PackageBuilder.cs" />
     <Compile Include="Dependencies\Parsers\AbstractDescriptorParser.cs" />
     <Compile Include="Dependencies\Parsers\BuildParser.cs" />
     <Compile Include="Dependencies\Parsers\IDescriptorParser.cs" />

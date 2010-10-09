@@ -29,10 +29,10 @@ namespace OpenWrap.Repositories
             get; set;
         }
 
-        public IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKepp)
+        public IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKeep)
         {
-            var packagesToRemove = _packages.Where(x => !packagesToKepp.Contains(x)).ToList();
-            _packages = packagesToKepp.ToList();
+            var packagesToRemove = _packages.Where(x => !packagesToKeep.Contains(x)).ToList();
+            _packages = packagesToKeep.ToList();
             return packagesToRemove;
         }
 
@@ -72,7 +72,8 @@ namespace OpenWrap.Repositories
             var package = new InMemoryPackage
             {
                     Name = PackageNameUtility.GetName(fileWithoutExtension),
-                    Version = PackageNameUtility.GetVersion(fileWithoutExtension)
+                    Version = PackageNameUtility.GetVersion(fileWithoutExtension),
+                    Source = this
             };
             _packages.Add(package);
             return package;

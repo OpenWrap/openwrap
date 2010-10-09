@@ -14,19 +14,17 @@ namespace OpenWrap.Repositories
     public class CachedZipPackage : IPackageInfo
     {
         readonly IEnumerable<IExportBuilder> _builders;
-        readonly bool _anchorsEnabled;
         readonly IDirectory _cacheDirectoryPathPath;
         readonly IFile _wrapFile;
         UncompressedPackage _cachedPackage;
 
-        public CachedZipPackage(IPackageRepository source, IFile wrapFile, IDirectory cacheDirectoryPath, IEnumerable<IExportBuilder> builders, bool anchorsEnabled)
+        public CachedZipPackage(IPackageRepository source, IFile wrapFile, IDirectory cacheDirectoryPath, IEnumerable<IExportBuilder> builders)
         {
             Source = source;
             _wrapFile = wrapFile;
             _cacheDirectoryPathPath = cacheDirectoryPath;
             _builders = builders;
-            _anchorsEnabled = anchorsEnabled;
-
+            
             LoadDescriptor();
         }
 
@@ -53,7 +51,7 @@ namespace OpenWrap.Repositories
             {
                 ExtractWrapFile(_wrapFile, _cacheDirectoryPathPath);
 
-                _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectoryPathPath, _builders, _anchorsEnabled);
+                _cachedPackage = new UncompressedPackage(Source, _wrapFile, _cacheDirectoryPathPath, _builders);
             }
             return _cachedPackage;
         }
