@@ -11,7 +11,7 @@ namespace OpenWrap.Commands.Remote
     [Command(Noun="Remote", Verb="List")]
     public class ListRemoteCommand : AbstractCommand
     {
-        IConfigurationManager ConfigurationManager { get { return WrapServices.GetService<IConfigurationManager>(); } }
+        IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
 
         public override IEnumerable<ICommandOutput> Execute()
         {

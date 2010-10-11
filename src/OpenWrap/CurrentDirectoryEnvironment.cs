@@ -29,7 +29,9 @@ namespace OpenWrap
 
         public IPackageRepository CurrentDirectoryRepository { get; set; }
 
-        public WrapDescriptor Descriptor { get; set; }
+        public IFile DescriptorFile { get; private set; }
+
+        public PackageDescriptor Descriptor { get; set; }
         public ExecutionEnvironment ExecutionEnvironment { get; private set; }
         public IFileSystem FileSystem { get; set; }
         public IPackageRepository ProjectRepository { get; set; }
@@ -42,7 +44,7 @@ namespace OpenWrap
             Descriptor = CurrentDirectory
                     .AncestorsAndSelf()
                     .SelectMany(x => x.Files("*.wrapdesc"))
-                    .Select(x => new WrapDescriptorParser().ParseFile(x))
+                    .Select(x => new PackageDescriptorReaderWriter().ParseFile(x))
                     .FirstOrDefault();
 
             TryInitializeProjectRepository();
@@ -56,7 +58,7 @@ namespace OpenWrap
 
             ConfigurationDirectory = FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory);
 
-            RemoteRepositories = WrapServices.GetService<IConfigurationManager>().LoadRemoteRepositories()
+            RemoteRepositories = Services.Services.GetService<IConfigurationManager>().LoadRemoteRepositories()
                     .Select(x => CreateRemoteRepository(x.Key, x.Value.Href))
                     .Where(x => x != null)
                     .Cast<IPackageRepository>()
@@ -71,11 +73,11 @@ namespace OpenWrap
 
         void TryInitializeProjectRepository()
         {
-            if (Descriptor == null || Descriptor.File == null)
+            if (Descriptor == null || DescriptorFile == null)
                 return;
             if (Descriptor.UseProjectRepository)
             {
-                var projectRepositoryDirectory = Descriptor.File.Parent.FindProjectRepositoryDirectory();
+                var projectRepositoryDirectory = DescriptorFile.Parent.FindProjectRepositoryDirectory();
 
 
                 if (projectRepositoryDirectory != null)

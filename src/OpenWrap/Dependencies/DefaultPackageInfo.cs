@@ -6,7 +6,7 @@ namespace OpenWrap.Dependencies
 {
     public class DefaultPackageInfo : IPackageInfo
     {
-        readonly WrapDescriptor _descriptor;
+        readonly PackageDescriptor _descriptor;
         readonly string _packageName;
         readonly Version _packageVersion;
 
@@ -60,7 +60,7 @@ namespace OpenWrap.Dependencies
             get { return _descriptor.Description; }
         }
 
-        public DefaultPackageInfo(string packageFileName, Version versionFileContent, WrapDescriptor descriptor)
+        public DefaultPackageInfo(string packageFileName, Version versionFileContent, PackageDescriptor descriptor)
         {
             _descriptor = descriptor;
             _packageVersion = versionFileContent ?? PackageNameUtility.GetVersion(packageFileName);

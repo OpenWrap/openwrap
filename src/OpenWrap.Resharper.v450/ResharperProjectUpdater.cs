@@ -33,7 +33,7 @@ namespace OpenWrap.Resharper
             _projectFilePath = projectFilePath;
             _ignoredAssemblies = ignoredAssemblies.ToList();
             Environment = environment;
-            WrapServices.GetService<IWrapDescriptorMonitoringService>()
+            Services.Services.GetService<IWrapDescriptorMonitoringService>()
                 .ProcessWrapDescriptor(_descriptorPath, _packageRepository, this);
         }
 

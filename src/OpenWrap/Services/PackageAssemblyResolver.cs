@@ -7,9 +7,9 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Services
 {
-    public class WrapDependencyResolver
+    public class PackageAssemblyResolver
     {
-        public IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(WrapDescriptor descriptor, IPackageRepository repository, IWrapAssemblyClient client)
+        public IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(PackageDescriptor descriptor, IPackageRepository repository, IWrapAssemblyClient client)
         {
             return (from dependency in descriptor.Dependencies
                     where dependency.ContentOnly == false

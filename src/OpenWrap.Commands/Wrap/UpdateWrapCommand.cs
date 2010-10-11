@@ -14,12 +14,12 @@ namespace OpenWrap.Commands.Wrap
 
         protected IEnvironment Environment
         {
-            get { return WrapServices.GetService<IEnvironment>(); }
+            get { return Services.Services.GetService<IEnvironment>(); }
         }
 
         protected IPackageManager PackageManager
         {
-            get { return WrapServices.GetService<IPackageManager>(); }
+            get { return Services.Services.GetService<IPackageManager>(); }
         }
 
         bool? _system;
@@ -116,7 +116,7 @@ namespace OpenWrap.Commands.Wrap
             };
         }
 
-        IEnumerable<WrapDescriptor> CreateDescriptorForEachSystemPackage()
+        IEnumerable<PackageDescriptor> CreateDescriptorForEachSystemPackage()
         {
 
 
@@ -128,7 +128,7 @@ namespace OpenWrap.Commands.Wrap
                                                            orderby versionedPackage.Version descending
                                                            select versionedPackage.Version
                                                    ).First()
-                           select new WrapDescriptor
+                           select new PackageDescriptor
                            {
                                Dependencies =
                                            {

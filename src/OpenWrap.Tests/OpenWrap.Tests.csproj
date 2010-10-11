@@ -113,7 +113,7 @@
     <Compile Include="Dependencies\PackageDependency_specs.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
-    <Compile Include="Dependencies\WrapDescriptionParserTests.cs" />
+    <Compile Include="Dependencies\DescriptionParserTests.cs" />
     <Compile Include="Extensions\CamelToSpacedName.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\current_directory_repository.cs" />

@@ -28,17 +28,17 @@ namespace OpenWrap.Windows
         protected override void OnStartup(StartupEventArgs e)
         {
 
-            WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
-            WrapServices.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
-            WrapServices.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(WrapServices.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
-            WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
+            Services.Services.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
+            Services.Services.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
+            Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
+            Services.Services.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
-            WrapServices.RegisterService<ITaskManager>(new TaskManager());
+            Services.Services.TryRegisterService<IPackageManager>(() => new PackageManager());
+            Services.Services.RegisterService<ITaskManager>(new TaskManager());
 
-            var repo = new CommandRepository(WrapServices.GetService<IEnvironment>().Commands());
+            var repo = new CommandRepository(Services.Services.GetService<IEnvironment>().Commands());
 
-            WrapServices.TryRegisterService<ICommandRepository>(() => repo);
+            Services.Services.TryRegisterService<ICommandRepository>(() => repo);
             base.OnStartup(e);
         }
     }

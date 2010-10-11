@@ -25,12 +25,12 @@ namespace OpenWrap.Commands.Wrap
 
         protected IEnvironment Environment
         {
-            get { return WrapServices.GetService<IEnvironment>(); }
+            get { return Services.Services.GetService<IEnvironment>(); }
         }
 
         protected IFileSystem FileSystem
         {
-            get { return WrapServices.GetService<IFileSystem>(); }
+            get { return Services.Services.GetService<IFileSystem>(); }
         }
 
         public override IEnumerable<ICommandOutput> Execute()

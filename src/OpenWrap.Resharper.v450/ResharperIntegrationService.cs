@@ -27,7 +27,7 @@ namespace OpenWrap.Resharper
             //Debugger.Launch();
             if (_projectFiles.ContainsKey(projectFilePath))
             {
-                WrapServices.GetService<IWrapDescriptorMonitoringService>().ProcessWrapDescriptor(descriptorPath, repository, _projectFiles[projectFilePath]);
+                Services.Services.GetService<IWrapDescriptorMonitoringService>().ProcessWrapDescriptor(descriptorPath, repository, _projectFiles[projectFilePath]);
                 return;
             }
             _projectFiles[projectFilePath] = new ResharperProjectUpdater(descriptorPath, repository, projectFilePath, Environment, ignoredAssemblies);

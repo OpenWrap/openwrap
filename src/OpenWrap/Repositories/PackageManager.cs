@@ -20,14 +20,14 @@ namespace OpenWrap.Repositories
             return latestPackages.Select(x => x.GetExport(exportName, environment)).OfType<T>();
         }
 
-        public DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor, IEnumerable<IPackageRepository> repositoriesToQuery)
+        public DependencyResolutionResult TryResolveDependencies(PackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repositoriesToQuery)
         {
-            var allDependencies = ResolveAllDependencies(wrapDescriptor.Dependencies, wrapDescriptor.Overrides, repositoriesToQuery);
+            var allDependencies = ResolveAllDependencies(packageDescriptor.Dependencies, packageDescriptor.Overrides, repositoriesToQuery);
 
             if (allDependencies.Any(x => x.Package == null))
                 return SomeDependenciesNotFound(allDependencies);
             if (HasDependenciesConflict(allDependencies))
-                allDependencies = OverrideDependenciesWithLocalDeclarations(allDependencies, wrapDescriptor.Dependencies);
+                allDependencies = OverrideDependenciesWithLocalDeclarations(allDependencies, packageDescriptor.Dependencies);
             if (HasDependenciesConflict(allDependencies))
                 return ConflictingDependencies(allDependencies);
 

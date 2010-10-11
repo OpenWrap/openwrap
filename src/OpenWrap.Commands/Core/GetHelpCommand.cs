@@ -12,7 +12,7 @@ namespace OpenWrap.Commands.Core
         public IEnumerable<ICommandOutput> Execute()
         {
             yield return new Result("List of commands");
-            foreach (var command in WrapServices.GetService<ICommandRepository>())
+            foreach (var command in Services.Services.GetService<ICommandRepository>())
             {
                 yield return new CommandListResult(command);
             }

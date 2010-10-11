@@ -27,18 +27,18 @@ namespace OpenWrap
         }
         public static int Main(string[] args)
         {
-            WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
-            WrapServices.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
-            WrapServices.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(WrapServices.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
-            WrapServices.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
+            Services.Services.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
+            Services.Services.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
+            Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
+            Services.Services.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
-            WrapServices.RegisterService<ITaskManager>(new TaskManager());
+            Services.Services.TryRegisterService<IPackageManager>(() => new PackageManager());
+            Services.Services.RegisterService<ITaskManager>(new TaskManager());
 
-            var commands = WrapServices.GetService<IEnvironment>().Commands();
+            var commands = Services.Services.GetService<IEnvironment>().Commands();
             var repo = new CommandRepository(commands);
 
-            WrapServices.TryRegisterService<ICommandRepository>(() => repo);
+            Services.Services.TryRegisterService<ICommandRepository>(() => repo);
             var processor = new CommandLineProcessor(repo);
             var backedupConsoleColor = Console.ForegroundColor;
             var returnCode = 0;
@@ -149,7 +149,7 @@ namespace OpenWrap
         static IEnumerable<ICommandOutput> AllOutputs(CommandLineProcessor processor, string[] args)
         {
             return processor.Execute(args);
-            var eventListener = WrapServices.GetService<ITaskManager>().GetListener();
+            var eventListener = Services.Services.GetService<ITaskManager>().GetListener();
             return Wrap(processor.Execute(args), eventListener).Merge(eventListener.Start().Select(x => ProgressMessage(x)));
         }
 
@@ -175,7 +175,7 @@ namespace OpenWrap
     {
         public static IEnumerable<ICommandDescriptor> Commands(this IEnvironment environment)
         {
-            return WrapServices.GetService<IPackageManager>()
+            return Services.Services.GetService<IPackageManager>()
                 .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
                 .SelectMany(x => x.Items)
                 .OfType<ICommandExportItem>()

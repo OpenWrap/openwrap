@@ -163,7 +163,7 @@ namespace OpenWrap.Build.Tasks
 
         bool RefreshWrapDependencies()
         {
-            var monitoringService = WrapServices.GetService<IWrapDescriptorMonitoringService>();
+            var monitoringService = Services.Services.GetService<IWrapDescriptorMonitoringService>();
             
             monitoringService.ProcessWrapDescriptor(WrapDescriptorPath, PackageRepository, this);
             return true;

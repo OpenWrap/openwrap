@@ -13,8 +13,8 @@ namespace OpenWrap.Resolvers
     public class RuntimeAssemblyResolver : IService
     {
         ILookup<string, IAssemblyReferenceExportItem> _assemblyReferences;
-        protected IPackageManager PackageManager { get { return WrapServices.GetService<IPackageManager>(); } }
-        protected IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); } }
+        protected IPackageManager PackageManager { get { return Services.Services.GetService<IPackageManager>(); } }
+        protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
         public void Initialize()
         {
             AppDomain.CurrentDomain.AssemblyResolve += TryResolveAssembly;

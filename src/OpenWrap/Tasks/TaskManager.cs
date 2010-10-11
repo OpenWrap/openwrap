@@ -11,8 +11,8 @@ namespace OpenWrap.Tasks
         {
             get
             {
-                WrapServices.TryRegisterService<ITaskManager>(() => new TaskManager());
-                return WrapServices.GetService<ITaskManager>();
+                Services.Services.TryRegisterService<ITaskManager>(() => new TaskManager());
+                return Services.Services.GetService<ITaskManager>();
             }
         }
         public event EventHandler<TaskEventArgs> TaskStarted;

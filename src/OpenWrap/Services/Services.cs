@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace OpenWrap.Services
 {
-    public static class WrapServices
+    public static class Services
     {
         static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
-        static WrapServices()
+        static Services()
         {
             Clear();
         }
@@ -37,7 +37,7 @@ namespace OpenWrap.Services
         public static void Clear()
         {
             _services.Clear();
-            RegisterService<IWrapDescriptorMonitoringService>(new WrapDescriptorMonitor());
+            RegisterService<IWrapDescriptorMonitoringService>(new PackageDescriptorMonitor());
         }
     }
 }

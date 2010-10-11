@@ -16,16 +16,16 @@ namespace OpenWrap.Commands.Wrap
     {
         public IEnvironment Environment
         {
-            get { return WrapServices.GetService<IEnvironment>(); }
+            get { return Services.Services.GetService<IEnvironment>(); }
 
         }
 
         protected IPackageManager PackageManager
         {
-            get { return WrapServices.GetService<IPackageManager>(); }
+            get { return Services.Services.GetService<IPackageManager>(); }
         }
 
-        protected DependencyResolutionResult ResolveDependencies(WrapDescriptor packageDescriptor, IEnumerable<IPackageRepository> repos)
+        protected DependencyResolutionResult ResolveDependencies(PackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repos)
         {
             return PackageManager.TryResolveDependencies(packageDescriptor, repos);
         }
@@ -127,8 +127,8 @@ namespace OpenWrap.Commands.Wrap
                     VersionVertices = VersionVertices(),
                     ContentOnly = Content
             });
-            using(var descriptor = Environment.Descriptor.File.OpenWrite())
-                new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor, descriptor);
+            using(var descriptor = Environment.DescriptorFile.OpenWrite())
+                new PackageDescriptorReaderWriter().SaveDescriptor(Environment.Descriptor, descriptor);
             return outputMessage;
         }
 
@@ -155,9 +155,9 @@ namespace OpenWrap.Commands.Wrap
             return null;
         }
 
-        WrapDescriptor DescriptorFromCommand()
+        PackageDescriptor DescriptorFromCommand()
         {
-            return new WrapDescriptor
+            return new PackageDescriptor
             {
                 Dependencies =
                     {

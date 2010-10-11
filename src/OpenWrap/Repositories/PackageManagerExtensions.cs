@@ -70,7 +70,7 @@ namespace OpenWrap.Repositories
             repositories = repositories.NotNull().ToArray();
             yield return new GenericMessage("Making sure the cache is up-to-date...");
             
-            packageManager.GetExports<IExport>("bin", WrapServices.GetService<IEnvironment>().ExecutionEnvironment, repositories).ToList();
+            packageManager.GetExports<IExport>("bin", Services.Services.GetService<IEnvironment>().ExecutionEnvironment, repositories).ToList();
 
             foreach (var repo in repositories)
                 repo.RefreshAnchors(packagesInUse);

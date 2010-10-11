@@ -9,8 +9,8 @@ namespace OpenWrap.Repositories
 {
     public class CurrentDirectoryRepository : IPackageRepository
     {
-        protected IFileSystem FileSystem {get{ return WrapServices.GetService<IFileSystem>();}}
-        protected IEnvironment Environment { get{ return WrapServices.GetService<IEnvironment>();}}
+        protected IFileSystem FileSystem {get{ return Services.Services.GetService<IFileSystem>();}}
+        protected IEnvironment Environment { get{ return Services.Services.GetService<IEnvironment>();}}
 
         public ILookup<string, IPackageInfo> PackagesByName
         {

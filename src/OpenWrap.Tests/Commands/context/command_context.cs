@@ -30,17 +30,17 @@ namespace OpenWrap.Tests.Commands.context
             Command = new AttributeBasedCommandDescriptor<T>();
             Commands = new CommandRepository { Command };
 
-            WrapServices.Clear();
+            Services.Services.Clear();
             var currentDirectory = System.Environment.CurrentDirectory;
             FileSystem = new InMemoryFileSystem() { CurrentDirectory = currentDirectory };
             Environment = new InMemoryEnvironment(
                 FileSystem.GetDirectory(currentDirectory),
                 FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory));
-            WrapServices.RegisterService<IFileSystem>(FileSystem);
-            WrapServices.RegisterService<IEnvironment>(Environment);
-            WrapServices.RegisterService<IPackageManager>(new PackageManager());
-            WrapServices.RegisterService<ICommandRepository>(Commands);
-            WrapServices.RegisterService<IConfigurationManager>(new ConfigurationManager(Environment.ConfigurationDirectory));
+            Services.Services.RegisterService<IFileSystem>(FileSystem);
+            Services.Services.RegisterService<IEnvironment>(Environment);
+            Services.Services.RegisterService<IPackageManager>(new PackageManager());
+            Services.Services.RegisterService<ICommandRepository>(Commands);
+            Services.Services.RegisterService<IConfigurationManager>(new ConfigurationManager(Environment.ConfigurationDirectory));
         }
 
         protected void given_dependency(string dependency)
@@ -131,7 +131,7 @@ namespace OpenWrap.Tests.Commands.context
 
         protected void given_remote_configuration(RemoteRepositories remoteRepositories)
         {
-            WrapServices.GetService<IConfigurationManager>()
+            Services.Services.GetService<IConfigurationManager>()
                     .Save(Configurations.Addresses.RemoteRepositories, remoteRepositories);
         }
         protected void given_file(string filePath, Stream stream)

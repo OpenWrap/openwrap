@@ -9,21 +9,21 @@ namespace OpenWrap.Dependencies
     {
         public DependsParser() : base("depends"){}
 
-        protected override void ParseContent(string content, WrapDescriptor descriptor)
+        protected override void ParseContent(string content, PackageDescriptor descriptor)
         {
             var dependency = ParseDependency(content);
             if (dependency != null)
                 descriptor.Dependencies.Add(dependency);
         }
-        protected override IEnumerable<string> WriteContent(WrapDescriptor descriptor)
+        protected override IEnumerable<string> WriteContent(PackageDescriptor descriptor)
         {
             foreach (var dependency in descriptor.Dependencies)
                 yield return dependency.ToString();
         }
 
-        public static WrapDescriptor ParseDependsInstruction(string line)
+        public static PackageDescriptor ParseDependsInstruction(string line)
         {
-            var descriptor = new WrapDescriptor();
+            var descriptor = new PackageDescriptor();
             new DependsParser().Parse(line, descriptor);
             return descriptor;
         }

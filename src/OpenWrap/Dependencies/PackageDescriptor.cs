@@ -5,9 +5,9 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Dependencies
 {
-    public class WrapDescriptor : IPackageInfo
+    public class PackageDescriptor : IPackageInfo
     {
-        public WrapDescriptor()
+        public PackageDescriptor()
         {
             Dependencies = new List<PackageDependency>();
             Overrides = new List<PackageNameOverride>();
@@ -22,7 +22,7 @@ namespace OpenWrap.Dependencies
 
         public Version Version { get; set; }
         public bool IsVersionInDescriptor { get; set; }
-        public IFile File { get; set; }
+        
         public string Description { get; set; }
         public bool UseProjectRepository { get; set; }
 

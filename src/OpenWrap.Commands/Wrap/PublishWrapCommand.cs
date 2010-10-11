@@ -29,8 +29,8 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public string Name { get; set; }
 
-        protected IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); } }
-        protected IFileSystem FileSystem { get { return WrapServices.GetService<IFileSystem>(); } }
+        protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
+        protected IFileSystem FileSystem { get { return Services.Services.GetService<IFileSystem>(); } }
         
         public override IEnumerable<ICommandOutput> Execute()
         {

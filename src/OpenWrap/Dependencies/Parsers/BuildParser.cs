@@ -13,12 +13,12 @@ namespace OpenWrap.Dependencies.Parsers
         public BuildParser() : base("build")
         {
         }
-        protected override void ParseContent(string content, WrapDescriptor descriptor)
+        protected override void ParseContent(string content, PackageDescriptor descriptor)
         {
             descriptor.BuildCommand = content;
         }
 
-        protected override IEnumerable<string> WriteContent(WrapDescriptor descriptor)
+        protected override IEnumerable<string> WriteContent(PackageDescriptor descriptor)
         {
             if (descriptor.BuildCommand != null)
                 yield return descriptor.BuildCommand;

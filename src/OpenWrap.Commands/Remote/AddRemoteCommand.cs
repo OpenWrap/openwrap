@@ -20,7 +20,7 @@ namespace OpenWrap.Commands.Remote
 
         
 
-        IConfigurationManager ConfigurationManager { get { return WrapServices.GetService<IConfigurationManager>(); } }
+        IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(InvalidName())

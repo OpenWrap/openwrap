@@ -83,7 +83,7 @@ namespace OpenWrap.Tests.Dependencies
 
             protected void given_override(string overrideLine)
             {
-                var target = new WrapDescriptor();
+                var target = new PackageDescriptor();
                 try
                 {
                     new OverrideParser().Parse(overrideLine, target);

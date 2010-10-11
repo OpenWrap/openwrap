@@ -37,7 +37,7 @@ namespace OpenWrap.Tests.Commands.Remote.Add
         [Test]
         public void remote_is_added_to_the_list()
         {
-            WrapServices.GetService<IConfigurationManager>()
+            Services.Services.GetService<IConfigurationManager>()
                     .LoadRemoteRepositories()
                     .ContainsKey("iron-hills")
                     .ShouldBeTrue();

@@ -14,8 +14,8 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput(Name="ProjectName", Position=0, IsRequired=true)]
         public string ProjectName { get; set; }
 
-        IFileSystem FileSystem { get { return WrapServices.GetService<IFileSystem>(); } }
-        IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); }}
+        IFileSystem FileSystem { get { return Services.Services.GetService<IFileSystem>(); } }
+        IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); }}
 
         [CommandInput]
         public bool Meta { get; set; }
@@ -28,12 +28,14 @@ namespace OpenWrap.Commands.Wrap
                         projectDirectory.GetFile(ProjectName + ".wrapdesc")};
             if (Meta)
             {
-                new WrapDescriptorParser().SaveDescriptor(new WrapDescriptor
+                using (var descriptorStream = projectDirectory.GetFile(ProjectName + ".wrapdesc").OpenWrite())
                 {
-                        BuildCommand = "$meta",
-                        UseProjectRepository = false,
-                        File = projectDirectory.GetFile(ProjectName + ".wrapdesc")
-                });
+                    new PackageDescriptorReaderWriter().SaveDescriptor(new PackageDescriptor
+                    {
+                            BuildCommand = "$meta",
+                            UseProjectRepository = false,
+                    }, descriptorStream);
+                }
                 using(var versionFile = projectDirectory.GetFile("version").OpenWrite())
                 {
                     versionFile.Write(Encoding.Default.GetBytes(("1.0.0.*")));
@@ -51,8 +53,8 @@ namespace OpenWrap.Commands.Wrap
                 });
                 yield return new GenericMessage("Created default project structure for '" + ProjectName + "'. Copying OpenWrap.");
 
-                var packageManager = WrapServices.GetService<IPackageManager>();
-                var openwrapPackage = packageManager.TryResolveDependencies(new WrapDescriptor { Name = "openwrap" }, new[] { Environment.SystemRepository });
+                var packageManager = Services.Services.GetService<IPackageManager>();
+                var openwrapPackage = packageManager.TryResolveDependencies(new PackageDescriptor { Name = "openwrap" }, new[] { Environment.SystemRepository });
                 foreach(var msg in packageManager.CopyPackagesToRepositories(openwrapPackage, new FolderRepository(projectDirectory.GetDirectory("wraps"))))
                     yield return msg;
             }

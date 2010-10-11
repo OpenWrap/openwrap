@@ -15,7 +15,7 @@ namespace OpenWrap.Dependencies
             _regex = new Regex(@"^\s*" + header + @"\s*:\s*(?<content>.*)$", RegexOptions.IgnoreCase);
         }
 
-        public void Parse(string line, WrapDescriptor descriptor)
+        public void Parse(string line, PackageDescriptor descriptor)
         {
             var match = _regex.Match(line);
             if (!match.Success)
@@ -23,16 +23,16 @@ namespace OpenWrap.Dependencies
             ParseContent(match.Groups["content"].Value, descriptor);
         }
 
-        public IEnumerable<string> Write(WrapDescriptor descriptor)
+        public IEnumerable<string> Write(PackageDescriptor descriptor)
         {
             var content = WriteContent(descriptor).ToList();
             if (content.Count == 0) return content;
             return content.Select(x=> Header + ": " + x);
         }
 
-        protected abstract IEnumerable<string> WriteContent(WrapDescriptor descriptor);
+        protected abstract IEnumerable<string> WriteContent(PackageDescriptor descriptor);
 
-        protected abstract void ParseContent(string content, WrapDescriptor descriptor);
+        protected abstract void ParseContent(string content, PackageDescriptor descriptor);
 
         public virtual string GetContentRegex()
         {
