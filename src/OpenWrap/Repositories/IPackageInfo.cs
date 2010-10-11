@@ -6,12 +6,14 @@ namespace OpenWrap.Repositories
 {
     public interface IPackageInfo
     {
-        ICollection<WrapDependency> Dependencies { get; }
+        ICollection<PackageDependency> Dependencies { get; }
         string Name { get; }
         Version Version { get; }
         IPackage Load();
         IPackageRepository Source { get; }
         string FullName { get; }
-        DateTime? LastModifiedTimeUtc { get; }
+        string Description { get; }
+        DateTimeOffset CreationTime { get; }
+        bool Anchored { get; }
     }
 }

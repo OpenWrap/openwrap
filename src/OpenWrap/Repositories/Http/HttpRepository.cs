@@ -21,8 +21,13 @@ namespace OpenWrap.Repositories.Http
             _navigator = navigator;
             Name = repositoryName;
             _packagesQuery = LoadPackages(navigator, fileSystem);
-        }
 
+        }
+        public void Refresh()
+        {
+            _packagesByName = null;
+
+        }
         IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
         {
             IndexDocument = navigator.Index();
@@ -59,7 +64,7 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
-        public IPackageInfo Find(WrapDependency dependency)
+        public IPackageInfo Find(PackageDependency dependency)
         {
             return PackagesByName.Find(dependency);
         }
@@ -72,7 +77,7 @@ namespace OpenWrap.Repositories.Http
             Navigator.PushPackage(packageFileName, packageStream);
             _packagesByName = null;
             EnsureDataLoaded();
-            return PackagesByName[WrapNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == WrapNameUtility.GetVersion(packageFileName));
+            return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
         }
 
         void EnsureDataLoaded()

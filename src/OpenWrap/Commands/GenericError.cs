@@ -25,7 +25,11 @@ namespace OpenWrap.Commands
 
         public override string ToString()
         {
-            return "An error has occurred: " + (Message ?? string.Format(MessageFormat, MessageArguments));
+            return "An error has occurred: " + (
+                Message
+                ?? (MessageFormat != null 
+                    ? string.Format(MessageFormat, MessageArguments)
+                    : null));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using OpenWrap.Dependencies;
@@ -23,9 +24,11 @@ namespace OpenWrap.Repositories
         // TODO: Make sure assemblies already loaded are loaded from normal reflection context
         public IExport ProcessExports(IEnumerable<IExport> exports, ExecutionEnvironment environment)
         {
+            var loadedAssemblyPaths = AppDomain.CurrentDomain.GetAssemblies().Select(x => Path.GetFullPath(x.Location)).ToList();
             var commandTypes = from folder in exports
                                from file in folder.Items
                                where file.FullPath.EndsWith(".dll")
+                               where !loadedAssemblyPaths.Contains(file.FullPath)
                                let assembly = TryReflectionOnlyLoad(file)
                                where assembly != null
                                from type in TryGetExportedTypes(assembly)

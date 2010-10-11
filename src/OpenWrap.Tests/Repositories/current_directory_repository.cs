@@ -83,7 +83,7 @@ namespace current_directory_specifications
             protected InMemoryFile Package(string wrapName, string version)
             {
                 var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
-                PackageBuilder.New(file, wrapName, version);
+                PackageBuilder.NewWithDescriptor(file, wrapName, version);
                 return file;
             }
 

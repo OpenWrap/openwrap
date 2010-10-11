@@ -8,7 +8,7 @@ namespace OpenWrap.Build.BuildEngines
 {
     public class BuiltInstructionParser
     {
-        static readonly Regex _buildInstructionRegex = new Regex(@"\[built\((?<export>.+)(\,'(?<fileSpec>.*)')\)\]");
+        static readonly Regex _buildInstructionRegex = new Regex(@"\[built\((?<export>.+)\s*(\,\s*'\s*(?<fileSpec>.*)\s*')\)\]");
 
         public IEnumerable<FileBuildResult> Parse(string line)
         {
@@ -21,7 +21,7 @@ namespace OpenWrap.Build.BuildEngines
                 {
                     return (
                                    from x in fileSpec.Value.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries)
-                                   select new FileBuildResult(exportName.Value.Trim(), new LocalPath(x))
+                                   select new FileBuildResult(exportName.Value.Trim(), new Path(x))
                            )
                             .ToList();
                 }

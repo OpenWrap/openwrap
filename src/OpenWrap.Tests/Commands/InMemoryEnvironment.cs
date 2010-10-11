@@ -12,7 +12,7 @@ namespace OpenWrap.Tests.Commands
 {
     public class InMemoryEnvironment : IEnvironment
     {
-        public InMemoryRepository ProjectRepository;
+        public IPackageRepository ProjectRepository;
         public IList<InMemoryRepository> RemoteRepositories;
         public InMemoryRepository SystemRepository;
         public InMemoryRepository RemoteRepository;

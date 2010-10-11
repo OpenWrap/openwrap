@@ -9,13 +9,14 @@ namespace OpenWrap.Dependencies
     {
         public WrapDescriptor()
         {
-            Dependencies = new List<WrapDependency>();
-            Overrides = new List<WrapOverride>();
+            Dependencies = new List<PackageDependency>();
+            Overrides = new List<PackageNameOverride>();
             Description = "";
+            UseProjectRepository = true;
         }
 
-        public ICollection<WrapDependency> Dependencies { get; set; }
-        public ICollection<WrapOverride> Overrides { get; set; }
+        public ICollection<PackageDependency> Dependencies { get; set; }
+        public ICollection<PackageNameOverride> Overrides { get; set; }
 
         public string Name { get; set; }
 
@@ -23,6 +24,7 @@ namespace OpenWrap.Dependencies
         public bool IsVersionInDescriptor { get; set; }
         public IFile File { get; set; }
         public string Description { get; set; }
+        public bool UseProjectRepository { get; set; }
 
         public IPackage Load()
         {
@@ -39,12 +41,9 @@ namespace OpenWrap.Dependencies
             get { return Name + "-" + Version; }
         }
 
-        public DateTime? LastModifiedTimeUtc
-        {
-            get { return null; }
-        }
+        public DateTimeOffset CreationTime { get { return DateTimeOffset.UtcNow; } }
 
-        public bool IsAnchored { get; set; }
+        public bool Anchored { get; set; }
 
         public string BuildCommand { get; set; }
 
@@ -52,6 +51,5 @@ namespace OpenWrap.Dependencies
         {
             return false;
         }
-
     }
 }

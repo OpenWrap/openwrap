@@ -137,7 +137,7 @@ namespace OpenWrap.Testing
             assertion(obj);
             return obj;
         }
-        public static void ShouldBeTheSameInstanceAs(this object actual, object expected)
+        public static void ShouldBeSameInstanceAs(this object actual, object expected)
         {
             Assert.That(actual, Is.SameAs(expected));
         }

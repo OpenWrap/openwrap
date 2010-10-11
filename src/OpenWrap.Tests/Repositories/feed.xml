@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xml:lang="en-us" xmlns:pkg="http://schemas.microsoft.com/packaging/2010/07/" xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">Demo Feed</title>
+  <subtitle type="text">ASP.NET package feed</subtitle>
+  <id>uuid:e25c6f6c-6108-4b8b-b4ab-5b23af6ea5d7;id=1282</id>
+  <rights type="text">Copyright 2010</rights>
+  <updated>2010-10-11T07:08:57Z</updated>
+  <author>
+    <name>Demo</name>
+    <uri>http://www.demofeed.com</uri>
+    <email>person@demofeed.com</email>
+  </author>
+  <entry>
+    <id>urn:uuid:f595b9d3-6405-4a79-9503-123a5d52e587</id>
+    <title type="text">Autofac</title>
+    <published>2010-10-11T07:08:57Z</published>
+    <updated>2010-10-11T07:08:57Z</updated>
+    <author>
+      <name>Nicholas Blumhardt</name>
+    </author>
+    <link hash="sha-512:cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" rel="enclosure" length="422312" href="http://173.203.67.148/file.nupkg" />
+    <link rel="license" href="http://www.opensource.org/licenses/mit-license.php" />
+    <content type="text">An IoC container for Microsoft .NET. It manages the dependencies between classes so that applications stay easy to change as they grow in size and complexity.</content>
+    <pkg:requireLicenseAcceptance>false</pkg:requireLicenseAcceptance>
+    <pkg:packageId>Autofac</pkg:packageId>
+    <pkg:version>2.2.4.900</pkg:version>
+    <pkg:language>en-US</pkg:language>
+  </entry>
+  <entry>
+    <id>urn:uuid:08233f5c-edad-4f39-93f7-ff85f55c8743</id>
+    <title type="text">2010-10-11T07:08:57Z</title>
+    <published>2010-10-11T07:08:57Z</published>
+    <updated>2010-10-11T07:08:57Z</updated>
+    <author>
+      <name>Nicholas Blumhardt</name>
+    </author>
+    <link hash="sha-512:cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" rel="enclosure" length="36720" href="http://173.203.67.148/file.nupkg" />
+    <link rel="license" href="http://www.opensource.org/licenses/mit-license.php" />
+    <content type="text">Provides an IControllerFactory implementation for System.Web.Mvc</content>
+    <pkg:requireLicenseAcceptance>false</pkg:requireLicenseAcceptance>
+    <pkg:packageId>Autofac.MVC2</pkg:packageId>
+    <pkg:version>2.2.4.900</pkg:version>
+    <pkg:language>en-US</pkg:language>
+    <pkg:dependencies xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+      <pkg:dependency>
+        <pkg:id>Autofac</pkg:id>
+        <pkg:version>2.2.4.900</pkg:version>
+      </pkg:dependency>
+    </pkg:dependencies>
+  </entry>
+</feed>

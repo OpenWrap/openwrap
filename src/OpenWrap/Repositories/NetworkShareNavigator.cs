@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -9,6 +10,7 @@ using OpenFileSystem.IO;
 
 namespace OpenWrap.Repositories
 {
+    // TODO: Add locking support
     public class NetworkShareNavigator : IHttpRepositoryNavigator
     {
         readonly IDirectory _directory;
@@ -68,20 +70,21 @@ namespace OpenWrap.Repositories
 
         public void PushPackage(string packageFileName, Stream packageStream)
         {
-            packageFileName = WrapNameUtility.NormalizeFileName(packageFileName);
+            packageFileName = PackageNameUtility.NormalizeFileName(packageFileName);
 
             var packageFile = _directory.GetFile(packageFileName);
             using (var destinationStream = packageFile.OpenWrite())
                 packageStream.CopyTo(destinationStream);
 
-            var zipPackage = new CachedZipPackage(null, packageFile, null, ExportBuilders.All, false);
+            var zipPackage = new CachedZipPackage(null, packageFile, null, ExportBuilders.All);
             IndexDocument.Document.Root.Add(
                     new XElement("wrap",
                                  new XAttribute("name", zipPackage.Name),
                                  new XAttribute("version", zipPackage.Version),
                                  new XElement("link",
                                               new XAttribute("rel", "package"),
-                                              new XAttribute("href", packageFile.Name))
+                                              new XAttribute("href", packageFile.Name)),
+                                              zipPackage.Dependencies.Select(x=>new XElement("depends", x.ToString()))
                             ));
 
             SaveIndex(IndexDocument);

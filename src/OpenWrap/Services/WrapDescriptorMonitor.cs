@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Build;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenWrap.Repositories;
+using IOPath = System.IO.Path;
 
 namespace OpenWrap.Services
 {
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
     public class WrapDescriptorMonitor : IWrapDescriptorMonitoringService
     {
-        readonly Dictionary<IPath, WrapFileDescriptor> _notificationClients = new Dictionary<IPath, WrapFileDescriptor>();
+        readonly Dictionary<Path, DescriptorSubscriptions> _notificationClients = new Dictionary<Path, DescriptorSubscriptions>();
         readonly WrapDependencyResolver _resolver = new WrapDependencyResolver();
 
 
@@ -37,15 +37,15 @@ namespace OpenWrap.Services
         {
         }
 
-        WrapFileDescriptor GetDescriptor(IFile wrapPath, IPackageRepository packageRepository)
+        DescriptorSubscriptions GetDescriptor(IFile wrapPath, IPackageRepository packageRepository)
         {
-            WrapFileDescriptor descriptor;
-            if (!_notificationClients.TryGetValue(wrapPath.Path, out descriptor))
-                _notificationClients.Add(wrapPath.Path, descriptor = new WrapFileDescriptor(wrapPath, packageRepository, HandleWrapFileUpdate));
-            return descriptor;
+            DescriptorSubscriptions descriptorSubscriptions;
+            if (!_notificationClients.TryGetValue(wrapPath.Path, out descriptorSubscriptions))
+                _notificationClients.Add(wrapPath.Path, descriptorSubscriptions = new DescriptorSubscriptions(wrapPath, packageRepository, HandleWrapFileUpdate));
+            return descriptorSubscriptions;
         }
 
-        void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
+        void HandleWrapFileUpdate(object sender, System.IO.FileSystemEventArgs e)
         {
             NotifyAllClients(LocalFileSystem.Instance.GetFile(e.FullPath));
         }
@@ -54,7 +54,7 @@ namespace OpenWrap.Services
             if (!_notificationClients.ContainsKey(wrapPath.Path))
                 return;
             var d = _notificationClients[wrapPath.Path];
-
+            d.Repository.Refresh();
             var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
             
 
@@ -65,7 +65,7 @@ namespace OpenWrap.Services
             if (!_notificationClients.ContainsKey(wrapPath.Path))
                 return;
             var d = _notificationClients[wrapPath.Path];
-
+            d.Repository.Refresh();
             var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
 
             foreach (var client in d.Clients)
@@ -74,22 +74,22 @@ namespace OpenWrap.Services
             }
         }
 
-        class WrapFileDescriptor
+        class DescriptorSubscriptions
         {
-            public WrapFileDescriptor(IFile path, IPackageRepository repository, FileSystemEventHandler handler)
+            public DescriptorSubscriptions(IFile path, IPackageRepository repository, System.IO.FileSystemEventHandler handler)
             {
                 Repository = repository;
                 Clients = new List<IWrapAssemblyClient>();
-                FileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(path.Path.FullPath), Path.GetFileName(path.Path.FullPath))
+                FileSystemWatcher = new System.IO.FileSystemWatcher(System.IO.Path.GetDirectoryName(path.Path.FullPath), System.IO.Path.GetFileName(path.Path.FullPath))
                 {
-                    NotifyFilter = NotifyFilters.LastWrite
+                    NotifyFilter = System.IO.NotifyFilters.LastWrite
                 };
                 FileSystemWatcher.Changed += handler;
                 FileSystemWatcher.EnableRaisingEvents = true;
             }
 
             public List<IWrapAssemblyClient> Clients { get; set; }
-            public FileSystemWatcher FileSystemWatcher { get; set; }
+            public System.IO.FileSystemWatcher FileSystemWatcher { get; set; }
             public IPackageRepository Repository { get; set; }
         }
     }

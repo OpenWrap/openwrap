@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+  <metadata>
+    <id>TestPackage</id>
+    <version>1.0.0.1234</version>
+    <description>Test package</description>
+    <authors>
+      <author>Frodo Baggins</author>
+    </authors>
+    <created>2010-10-10T08:03:59.6576+00:00</created>
+  </metadata>
+  <dependencies>
+    <dependency id="one-ring" version="1.0.0" />
+    <dependency id="shire" minversion="2.0.0" />
+  </dependencies>
+</package>

@@ -18,12 +18,12 @@ namespace OpenWrap.Repositories
             {
                 return (from wrapFile in Environment.CurrentDirectory.Files("*.wrap")
                         let tempFolder = FileSystem.CreateTempDirectory()
-                        select (IPackageInfo)new CachedZipPackage(this, wrapFile, tempFolder, ExportBuilders.All, false))
+                        select (IPackageInfo)new CachedZipPackage(this, wrapFile, tempFolder, ExportBuilders.All))
                     .ToLookup(x=>x.Name);
             }
         }
 
-        public IPackageInfo Find(WrapDependency dependency)
+        public IPackageInfo Find(PackageDependency dependency)
         {
             return PackagesByName.Find(dependency);
         }
@@ -36,6 +36,10 @@ namespace OpenWrap.Repositories
         public bool CanPublish
         {
             get { return false; }
+        }
+
+        public void Refresh()
+        {
         }
 
         public string Name

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
@@ -7,6 +7,7 @@ using OpenWrap.Configuration;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Repositories.Http;
+using OpenWrap.Repositories.NuPack;
 using OpenWrap.Services;
 
 namespace OpenWrap
@@ -44,25 +45,13 @@ namespace OpenWrap
                     .Select(x => new WrapDescriptorParser().ParseFile(x))
                     .FirstOrDefault();
 
-            var projectRepositoryDirectory = Descriptor == null
-                                                     ? null
-                                                     : Descriptor.File.Parent
-                                                               .AncestorsAndSelf()
-                                                               .SelectMany(x => x.Directories("wraps"))
-                                                               .Where(x => x != null)
-                                                               .FirstOrDefault();
-
-            if (projectRepositoryDirectory != null)
-                ProjectRepository = new FolderRepository(projectRepositoryDirectory, true)
-                {
-                        Name = "Project repository"
-                };
+            TryInitializeProjectRepository();
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
-            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath), false)
+            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath))
             {
-                    Name = "System repository"
+                Name = "System repository"
             };
 
             ConfigurationDirectory = FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory);
@@ -75,14 +64,42 @@ namespace OpenWrap
 
             ExecutionEnvironment = new ExecutionEnvironment
             {
-                    Platform = IntPtr.Size == 4 ? "x86" : "x64",
-                    Profile = "net35"
+                Platform = IntPtr.Size == 4 ? "x86" : "x64",
+                Profile = "net35"
             };
         }
 
-        HttpRepository CreateRemoteRepository(string repositoryName, Uri repositoryHref)
+        void TryInitializeProjectRepository()
         {
-            if (repositoryHref.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase))
+            if (Descriptor == null || Descriptor.File == null)
+                return;
+            if (Descriptor.UseProjectRepository)
+            {
+                var projectRepositoryDirectory = Descriptor.File.Parent.FindProjectRepositoryDirectory();
+
+
+                if (projectRepositoryDirectory != null)
+                    ProjectRepository = new FolderRepository(projectRepositoryDirectory)
+                    {
+                            Name = "Project repository",
+                            EnableAnchoring=true
+                    };
+            }
+        }
+
+        IPackageRepository CreateRemoteRepository(string repositoryName, Uri repositoryHref)
+        {
+            if (repositoryHref.Scheme.Equals("nupack", StringComparison.OrdinalIgnoreCase))
+            {
+                var builder = new UriBuilder(repositoryHref);
+                builder.Scheme = "http";
+                return new HttpRepository(
+                        FileSystem,
+                        repositoryName,
+                        new NuPackFeedNavigator(builder.Uri));
+            }
+            if (repositoryHref.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
+                repositoryHref.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
                 return new HttpRepository(FileSystem, repositoryName, new HttpRepositoryNavigator(repositoryHref));
             if (repositoryHref.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
                 return new IndexedFolderRepository(repositoryName, FileSystem.GetDirectory(repositoryHref.LocalPath));

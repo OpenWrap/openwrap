@@ -1,0 +1,93 @@
+﻿<Application
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windows="clr-namespace:OpenWrap.Windows" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Dependencies="clr-namespace:OpenWrap.Dependencies;assembly=OpenWrap" xmlns:Repositories="clr-namespace:OpenWrap.Repositories;assembly=OpenWrap" mc:Ignorable="d" x:Class="OpenWrap.Windows.App"
+    StartupUri="Main.xaml">
+    <Application.Resources>
+
+    	<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    	<DataTemplate DataType="{x:Type Windows:NounSlice}">
+            
+            <Grid/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type Windows:WrapSlice}">
+        	<Grid >
+        		<Grid.ColumnDefinitions>
+        			<ColumnDefinition Width="0.5*"/>
+        			<ColumnDefinition Width="0.5*"/>
+        		</Grid.ColumnDefinitions>
+        		<Grid.RowDefinitions>
+        			<RowDefinition Height="Auto"/>
+        			<RowDefinition Height="Auto" />
+        			<RowDefinition />
+        		</Grid.RowDefinitions>
+        		<TextBlock TextWrapping="Wrap" d:LayoutOverrides="Width, Height" Margin="10,10,0,10" Grid.ColumnSpan="2"><Run Language="en-gb" Text="Installed packages"/></TextBlock>
+        		<TextBox Grid.Column="1" Height="Auto" Margin="0" Grid.Row="0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.RowSpan="2" Width="180" d:LayoutOverrides="GridBox"/>
+        		<TextBlock Height="Auto" Margin="0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch"><Run Language="en-gb" Text="Project"/></TextBlock>
+        		<TextBlock Grid.Column="1" Height="Auto" Margin="0.774,1.04,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch"><Run Language="en-gb" Text="System"/></TextBlock>
+        		<ListBox Grid.Row="2" Style="{DynamicResource LocalPackageListBox}" ItemsSource="{Binding ProjectDependencies.Dependencies, Mode=OneWay}" SelectionMode="Multiple" MinWidth="300"/>
+        		<ListBox Grid.Column="1" Grid.Row="2" MinWidth="300"/>
+        	</Grid>
+        </DataTemplate>
+        <SolidColorBrush x:Key="ListBorder" Color="#828790"/>
+        <Style x:Key="LocalPackageListBox" TargetType="{x:Type ListBox}">
+        	<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+        	<Setter Property="BorderBrush" Value="{StaticResource ListBorder}"/>
+        	<Setter Property="BorderThickness" Value="1"/>
+        	<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        	<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        	<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        	<Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+        	<Setter Property="VerticalContentAlignment" Value="Center"/>
+        	<Setter Property="Template">
+        		<Setter.Value>
+        			<ControlTemplate TargetType="{x:Type ListBox}">
+        				<Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="1" SnapsToDevicePixels="true">
+        					<ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
+        						<ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+        					</ScrollViewer>
+        				</Border>
+        				<ControlTemplate.Triggers>
+        					<Trigger Property="IsEnabled" Value="false">
+        						<Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+        					</Trigger>
+        					<Trigger Property="IsGrouping" Value="true">
+        						<Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+        					</Trigger>
+        				</ControlTemplate.Triggers>
+        			</ControlTemplate>
+        		</Setter.Value>
+        	</Setter>
+        </Style>
+        <DataTemplate DataType="{x:Type Repositories:ResolvedDependency}">
+        	<Grid Height="Auto" Width="350">
+        		<Grid.RowDefinitions>
+        			<RowDefinition Height="Auto" />
+        			<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+        		<DockPanel Height="120" d:DataContext="{d:DesignData /SampleData/ResolvedDependency.xaml}" d:LayoutOverrides="Width">
+        			<DockPanel HorizontalAlignment="Stretch" DockPanel.Dock="Top">
+        				<TextBlock TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Text="{Binding Package.Version, Mode=OneWay}" DockPanel.Dock="Right"/>
+        				<TextBlock  x:Name="PackageName" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Top" Text="{Binding Dependency.Name}" d:LayoutOverrides="VerticalAlignment"/>
+        			</DockPanel>
+        			<ToggleButton Name="PackageDetailsButton" DockPanel.Dock="Bottom" Content="Details..." HorizontalAlignment="Left"  Grid.Row="2" VerticalAlignment="Stretch" d:LayoutOverrides="Height"/>
+					<TextBlock Text="Description" />
+        		</DockPanel>
+				<Grid Grid.Row="1" Visibility="{Binding IsChecked, ElementName=PackageDetailsButton, Converter={StaticResource BoolToVisibilityConverter}}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.5*" />
+						<ColumnDefinition Width="0.5*" />
+					</Grid.ColumnDefinitions>
+					<StackPanel>
+						<TextBlock>Attributes</TextBlock>
+						<CheckBox IsChecked="{Binding Dependency.ContentOnly}">Content</CheckBox>
+						<CheckBox IsChecked="{Binding Dependency.Anchored}">Anchored</CheckBox>
+					</StackPanel>
+					<StackPanel Grid.Column="1">
+						<TextBlock>Dependencies</TextBlock>
+						<ItemsControl ItemsSource="{Binding Package.Dependencies}" />
+					</StackPanel>
+				</Grid>
+        	</Grid>
+        </DataTemplate>
+    </Application.Resources>
+</Application>

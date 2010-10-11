@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
+  <PropertyGroup>
+    <OpenWrap-BuildTasksDirectory>$(MSBuildProjectDirectory)\..\wraps\openwrap\build</OpenWrap-BuildTasksDirectory>
+  </PropertyGroup>
+
+  <Target Name="_Initialize">
+
+    <!-- Initializes the environment and remote repositories -->
+    
+    <InitializeOpenWrap CurrentDirectory="$(MSBuildProjectDirectory)\..">
+      <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
+    </InitializeOpenWrap>
+
+    <PropertyGroup>
+      <RemoveRemoteRepository>
+        <Name>cs</Name>
+      </RemoveRemoteRepository>
+      <AddRemoteRepository>
+        <Name>cs</Name>
+        <Href>$(RepositoryHref)</Href>
+      </AddRemoteRepository>
+    </PropertyGroup>
+
+    <RunCommand
+      Verb="remove"
+      Noun="remote"
+      Args="$(RemoveRemoteRepository)"
+      ContinueOnError="true"
+      />
+    <RunCommand
+      Verb="add"
+      Noun="remote"
+      Args="$(AddRemoteRepository)"
+      ContinueOnError="true"
+      />
+
+  </Target>
+  <Target Name="Build" DependsOnTargets="_Initialize">
+
+
+    <!-- Builds the package -->
+
+    <RunCommand
+      Verb="build"
+      Noun="wrap" />
+    
+    
+  </Target>
+
+  <Target Name="Publish" DependsOnTargets="Build">
+
+    <!-- Deploys the package -->
+
+
+    <PropertyGroup>
+      <PublishArguments>
+        <Name>$(OpenWrap-PackageName)</Name>
+        <RemoteRepository>cs</RemoteRepository>
+      </PublishArguments>
+    </PropertyGroup>
+
+
+    <RunCommand
+      Verb="publish"
+      Noun="wrap"
+      Args="$(PublishArguments)" />
+  </Target>
+  <Import Project="..\wraps\openwrap\build\OpenWrap.tasks"/>
+</Project>

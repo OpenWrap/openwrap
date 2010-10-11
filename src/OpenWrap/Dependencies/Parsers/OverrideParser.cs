@@ -19,7 +19,7 @@ namespace OpenWrap.Dependencies
 
             var oldPackage = arguments[0];
             var newPackage = arguments[1];
-            descriptor.Overrides.Add(new WrapOverride(oldPackage, newPackage));
+            descriptor.Overrides.Add(new PackageNameOverride(oldPackage, newPackage));
         }
         protected override System.Collections.Generic.IEnumerable<string> WriteContent(WrapDescriptor descriptor)
         {

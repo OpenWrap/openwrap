@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -15,6 +15,27 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +44,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +52,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
@@ -42,6 +65,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -61,11 +86,16 @@
     <Compile Include="Build\BuildEngines\BuiltInstructionParser.cs" />
     <Compile Include="Build\BuildEngines\ConventionMSBuildEngine.cs" />
     <Compile Include="Build\BuildEngines\FileBuildResult.cs" />
+    <Compile Include="Build\BuildEngines\IPackageBuilder.cs" />
+    <Compile Include="Build\BuildEngines\MetaPackageBuilder.cs" />
     <Compile Include="Build\BuildEngines\TextBuildResult.cs" />
     <Compile Include="Build\InitializeOpenWrap.cs" />
     <Compile Include="Build\IWrapAssemblyClient.cs" />
+    <Compile Include="Build\MSBuildEnvironment.cs" />
+    <Compile Include="Build\Preloader.cs" />
     <Compile Include="Build\VersionNumberGenerator.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
+    <Compile Include="Commands\AmbiguousInputNameException.cs" />
     <Compile Include="Commands\AttributeBasedCommandDescriptor.cs" />
     <Compile Include="Commands\CommandAttribute.cs" />
     <Compile Include="Commands\CommandInputAttribute.cs" />
@@ -73,6 +103,7 @@
     <Compile Include="Commands\CommandLine.cs" />
     <Compile Include="Commands\CommandLineParser.cs" />
     <Compile Include="Commands\CommandRepository.cs" />
+    <Compile Include="Commands\CommandResultType.cs" />
     <Compile Include="Commands\ExceptionError.cs" />
     <Compile Include="Commands\GenericError.cs" />
     <Compile Include="Commands\GenericMessage.cs" />
@@ -98,16 +129,20 @@
     <Compile Include="Configuration\remote-repositories\RemoteRepositories.cs" />
     <Compile Include="Configuration\remote-repositories\RemoteRepository.cs" />
     <Compile Include="ConsoleRunner.cs" />
-    <Compile Include="Dependencies\GreaterThenVersionVertice.cs" />
+    <Compile Include="Dependencies\DefaultPackageInfo.cs" />
+    <Compile Include="Dependencies\GreaterThenVersionVertex.cs" />
+    <Compile Include="Dependencies\PackageBuilder.cs" />
     <Compile Include="Dependencies\Parsers\AbstractDescriptorParser.cs" />
     <Compile Include="Dependencies\Parsers\BuildParser.cs" />
     <Compile Include="Dependencies\Parsers\IDescriptorParser.cs" />
     <Compile Include="Dependencies\Parsers\AnchorParser.cs" />
-    <Compile Include="Dependencies\WrapNameUtility.cs" />
-    <Compile Include="Dependencies\WrapOverride.cs" />
+    <Compile Include="Dependencies\PackageNameUtility.cs" />
+    <Compile Include="Dependencies\PackageNameOverride.cs" />
     <Compile Include="Dependencies\Parsers\OverrideParser.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
+    <Compile Include="Dependencies\Parsers\UseProjectRepositoryParser.cs" />
     <Compile Include="Dependencies\Parsers\VersionParser.cs" />
+    <Compile Include="DescriptorExtensions.cs" />
     <Compile Include="Exports\AssemblyReferenceExportExtensions.cs" />
     <Compile Include="FuncExtensions.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
@@ -122,13 +157,22 @@
     <Compile Include="Repositories\DependencyResolutionFailedResult.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="Repositories\IndexedFolderRepository.cs" />
+    <Compile Include="Repositories\InMemoryPackage.cs" />
+    <Compile Include="Repositories\InMemoryRepository.cs" />
     <Compile Include="Repositories\NetworkShareNavigator.cs" />
     <Compile Include="Repositories\Http\PackageDocument.cs" />
     <Compile Include="Repositories\Http\PackageItem.cs" />
     <Compile Include="Repositories\Http\RequestExtensions.cs" />
     <Compile Include="Repositories\ICommandExportItem.cs" />
+    <Compile Include="Repositories\NuPack\NuPackAtomExtensions.cs" />
+    <Compile Include="Repositories\NuPack\NuPackConverter.cs" />
+    <Compile Include="Repositories\NuPack\NuPackDependency.cs" />
+    <Compile Include="Repositories\NuPack\NuPackFeedRepository.cs" />
+    <Compile Include="Repositories\NuPack\Namespaces.cs" />
+    <Compile Include="Repositories\NuPack\NuPackSyndicationFeed.cs" />
+    <Compile Include="Repositories\NuPack\NuPackSyndicationItem.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
-    <Compile Include="Repositories\PackagePackager.cs" />
+    <Compile Include="Repositories\PackageRepositoryExtensions.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
     <Compile Include="Resolvers\RuntimeAssemblyResolver.cs" />
     <Compile Include="StringExtensions.cs" />
@@ -166,12 +210,12 @@
     <Compile Include="Commands\ICommandOutput.cs" />
     <Compile Include="Commands\NotEnoughParameters.cs" />
     <Compile Include="Commands\UnknownCommand.cs" />
-    <Compile Include="Dependencies\AnyVersionVertice.cs" />
-    <Compile Include="Dependencies\GreaterThenOrEqualVersionVertice.cs" />
-    <Compile Include="Dependencies\ExactVersionVertice.cs" />
-    <Compile Include="Dependencies\LessThanVersionVertice.cs" />
-    <Compile Include="Dependencies\VersionVertice.cs" />
-    <Compile Include="Dependencies\WrapDependency.cs" />
+    <Compile Include="Dependencies\AnyVersionVertex.cs" />
+    <Compile Include="Dependencies\GreaterThenOrEqualVersionVertex.cs" />
+    <Compile Include="Dependencies\ExactVersionVertex.cs" />
+    <Compile Include="Dependencies\LessThanVersionVertex.cs" />
+    <Compile Include="Dependencies\VersionVertex.cs" />
+    <Compile Include="Dependencies\PackageDependency.cs" />
     <Compile Include="Dependencies\DependsParser.cs" />
     <Compile Include="Dependencies\WrapDescriptor.cs" />
     <Compile Include="Dependencies\WrapDescriptorParser.cs" />
@@ -190,12 +234,12 @@
     <Compile Include="Repositories\IPackage.cs" />
     <Compile Include="SharedReflectionExtensions.cs" />
     <Compile Include="StreamExtensions.cs" />
+    <Compile Include="InstallationPaths.cs" />
     <Compile Include="Strings.Designer.cs">
-      <DependentUpon>Strings.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
+      <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="InstallationPaths.cs" />
     <Compile Include="Tasks\ITask.cs" />
     <Compile Include="Tasks\ITaskChanges.cs" />
     <Compile Include="Tasks\ITaskListener.cs" />
@@ -220,7 +264,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BinFile Include="$(MSBuildProjectDirectory)\..\..\scratch\bin\$(MSBuildProjectName)-$(Configuration)-$(Platform)\ICSharpCode.SharpZipLib.dll">
+<!--    <BinFile Include="$(MSBuildProjectDirectory)\..\..\scratch\bin\$(MSBuildProjectName)-$(Configuration)-$(Platform)\ICSharpCode.SharpZipLib.dll">
       <Export>bin-net35</Export>
     </BinFile>
     <BinFile Include="$(MSBuildProjectDirectory)\..\..\scratch\bin\$(MSBuildProjectName)-$(Configuration)-$(Platform)\OpenFileSystem.dll">
@@ -229,6 +273,24 @@
     <BinFile Include="$(MSBuildProjectDirectory)\..\..\scratch\bin\$(MSBuildProjectName)-$(Configuration)-$(Platform)\OpenRasta.Client.dll">
       <Export>bin-net35</Export>
     </BinFile>
+-->
+
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
@@ -238,6 +300,8 @@
   </Target>
   -->
   <Target Name="AfterBuild">
- <Message Text="[built(%(BinFile.Export),'%(BinFile.FullPath)')]" />
+<!--
+ <Message Text="[built(%(BinFile.Export),'%(BinFile.FullPath)')]" />-->
+    <Message Text="[built(bin-net35, '%(Reference.HintPath)')]" Condition="'%(Reference.Identity)' == 'OpenFileSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' or '%(Reference.Identity)' == 'ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73'" />
   </Target>
 </Project>

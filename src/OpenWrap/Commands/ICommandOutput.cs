@@ -5,16 +5,14 @@ namespace OpenWrap.Commands
 {
     public interface ICommandOutput
     {
-        bool Success { get; }
         ICommand Source { get; }
         CommandResultType Type { get; }
     }
-    public enum CommandResultType
+    public static class CommandOutputExtensions
+{
+    public static bool Success(this ICommandOutput output)
     {
-        Info = 0,
-        Data,
-        Verbose,
-        Warning,
-        Error
+        return output.Type != CommandResultType.Error;
     }
+}
 }

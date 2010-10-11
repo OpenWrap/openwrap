@@ -11,7 +11,7 @@ namespace OpenWrap.Repositories.Http
         readonly IFileSystem _fileSystem;
         readonly IHttpRepositoryNavigator _httpNavigator;
         readonly PackageItem _package;
-        readonly DateTime? _lastModifiedTimeUtc;
+        readonly DateTimeOffset _lastModifiedTimeUtc;
         
 
 
@@ -25,32 +25,40 @@ namespace OpenWrap.Repositories.Http
             _httpNavigator = httpNavigator;
             _package = package;
 
-            _lastModifiedTimeUtc = package.LastModifiedTimeUtc;
+            _lastModifiedTimeUtc = package.CreationTime;
             
             Dependencies = (from dependency in _package.Dependencies
                             let strings = dependency.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                             where strings.Length >= 1
                             let dependencyName = strings[0]
                             where !string.IsNullOrEmpty(dependencyName)
-                            select new WrapDependency
+                            select new PackageDependency
                             {
                                 Name = dependencyName,
                                 VersionVertices = DependsParser.ParseVersions(strings.Skip(1).ToArray()).ToList()
                             }).ToList();
         }
 
-        public ICollection<WrapDependency> Dependencies { get; set; }
+        public ICollection<PackageDependency> Dependencies { get; set; }
 
         public string FullName
         {
             get { return Name + "-" + Version; }
         }
 
-        public DateTime? LastModifiedTimeUtc { get { return _package.LastModifiedTimeUtc; } }
+        public DateTimeOffset CreationTime { get { return _package.CreationTime; } }
+
+        public bool Anchored
+        {
+            get { return false; }
+        }
+
         public string Name { get{ return _package.Name;}}
 
         public IPackageRepository Source { get; private set; }
         public Version Version { get{ return _package.Version;} }
+        public string Description { get { return _package.Description; } }
+
 
         public IPackage Load()
         {

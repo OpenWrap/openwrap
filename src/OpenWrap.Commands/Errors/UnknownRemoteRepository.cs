@@ -11,7 +11,7 @@
 
         public override string ToString()
         {
-            return "Unknown remote repository '{0}'. To see the list of your remote repositories, use the 'list-remote' command.";
+            return string.Format("Unknown remote repository '{0}'. To see the list of your remote repositories, use the 'list-remote' command.", _remoteName);
         }
     }
     public class FileNotFound : GenericError
@@ -24,7 +24,7 @@
         }
         public override string ToString()
         {
-            return "File '{0}' was not found. Check the file name and try again.";
+            return string.Format("File '{0}' was not found. Check the file name and try again.", _filePath);
         }
     }
 }

@@ -7,14 +7,14 @@ namespace OpenWrap.Dependencies
 {
     public class VersionParser : AbstractDescriptorParser
     {
-        public VersionParser() : base("version")
+        public VersionParser()
+            : base("version")
         {
         }
 
         protected override void ParseContent(string content, WrapDescriptor descriptor)
         {
             descriptor.Version = new Version(content);
-            descriptor.IsVersionInDescriptor = true;
         }
         public override string GetContentRegex()
         {
@@ -22,7 +22,7 @@ namespace OpenWrap.Dependencies
         }
         protected override IEnumerable<string> WriteContent(WrapDescriptor descriptor)
         {
-            if (descriptor.IsVersionInDescriptor)
+            if (descriptor.Version != null)
                 yield return descriptor.Version.ToString();
         }
     }

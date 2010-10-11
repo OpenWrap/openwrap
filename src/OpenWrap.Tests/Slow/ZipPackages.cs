@@ -82,21 +82,21 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
             protected ITemporaryDirectory RepositoryPath;
             protected FolderRepository Repository;
             protected IPackageInfo Descriptor;
-            protected WrapDependency Dependency;
+            protected PackageDependency Dependency;
             protected IFileSystem FileSystem;
 
             protected void given_folder_repository_with_module()
             {
                 FileSystem = LocalFileSystem.Instance;
                 RepositoryPath = FileSystem.CreateTempDirectory();
-                PackageBuilder.New(
+                PackageBuilder.NewWithDescriptor(
                     RepositoryPath.GetFile("test-module-1.0.0.wrap"), 
                     "test-module",
                     "1.0.0",
                     "depends: nhibernate-core = 2.1"
                     );
 
-                Repository = new FolderRepository(RepositoryPath, false);
+                Repository = new FolderRepository(RepositoryPath);
             }
 
             protected void when_reading_test_module_descriptor()

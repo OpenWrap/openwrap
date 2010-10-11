@@ -35,18 +35,19 @@ namespace OpenWrap.Repositories
         }
 
         public void UpdateDependency(ResolvedDependency dependency,
-                                     IPackageRepository destinationRepository)
+                                     ISupportPublishing destinationRepository)
         {
             var source = dependency.Package.Load();
             using (var packageStream = source.OpenStream())
                 destinationRepository.Publish(dependency.Package.FullName + ".wrap", packageStream);
+            destinationRepository.Refresh();
         }
 
         public void Initialize()
         {
         }
 
-        WrapDependency ApplyAllWrapDependencyOverrides(IEnumerable<WrapOverride> dependencyOverrides, WrapDependency originalDependency)
+        PackageDependency ApplyAllWrapDependencyOverrides(IEnumerable<PackageNameOverride> dependencyOverrides, PackageDependency originalDependency)
         {
             return dependencyOverrides.Aggregate(originalDependency, (modifiedDependency, wrapOverride) => wrapOverride.Apply(modifiedDependency));
         }
@@ -61,7 +62,7 @@ namespace OpenWrap.Repositories
             return resolutions.ToLookup(x => x.Package.Name).Any(x => x.Count() > 1);
         }
 
-        IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(IEnumerable<ResolvedDependency> dependencies, ICollection<WrapDependency> rootDependencies)
+        IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(IEnumerable<ResolvedDependency> dependencies, ICollection<PackageDependency> rootDependencies)
         {
             var overriddenDependencies = dependencies.ToList();
 
@@ -80,31 +81,38 @@ namespace OpenWrap.Repositories
             return overriddenDependencies;
         }
 
-        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<WrapDependency> dependencies, IEnumerable<WrapOverride> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
+        IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<PackageDependency> dependencies, IEnumerable<PackageNameOverride> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
         {
             return ResolveAllDependencies(null, dependencies, dependencyOverrides, repositories, new List<ResolvedDependency>());
         }
 
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent,
-                                                               IEnumerable<WrapDependency> dependencies,
-                                                               IEnumerable<WrapOverride> dependencyOverrides,
+                                                               IEnumerable<PackageDependency> dependencies,
+                                                               IEnumerable<PackageNameOverride> dependencyOverrides,
                                                                IEnumerable<IPackageRepository> repositories,
                                                                List<ResolvedDependency> resolvedDependencies)
         {
             IEnumerable<ResolvedDependency> packages = (from dependency in dependencies
-                            let modifiedDependency = ApplyAllWrapDependencyOverrides(dependencyOverrides, dependency)
-                            let package = repositories
-                                    .Where(x => x != null)
-                                    .Select(x => x.Find(modifiedDependency))
-                                    .FirstOrDefault(x => x != null)
-                            where package == null ||
-                                  resolvedDependencies.None(x => x.Package != null && x.Package.Name == package.Name && x.Package.Version == package.Version)
-                            select new ResolvedDependency { Dependency = modifiedDependency, Package = package, ParentPackage = parent })
+                                                        let modifiedDependency = ApplyAllWrapDependencyOverrides(dependencyOverrides, dependency)
+                                                        let package = repositories
+                                                                .Where(x => x != null)
+                                                                .Select(x => x.Find(modifiedDependency))
+                                                                .NotNull()
+                                                                .OrderByDescending(x=>x.Version)
+                                                                .FirstOrDefault(x => x != null)
+                                                        where package == null ||
+                                                              resolvedDependencies.None(x => x.Package != null && x.Package.Name == package.Name && x.Package.Version == package.Version)
+                                                        select new ResolvedDependency
+                                                        {
+                                                                Dependency = modifiedDependency,
+                                                                Package = package,
+                                                                ParentPackage = parent
+                                                        })
                             .ToList();
             resolvedDependencies.AddRange(packages);
 
 
-            foreach (var package in packages.Where(x=>x.Package != null))
+            foreach (var package in packages.Where(x => x.Package != null))
                 packages = packages.Concat(ResolveAllDependencies(
                     package.Package,
                     package.Package.Dependencies,

@@ -1,0 +1,30 @@
+﻿<OpenWrap_Repositories:ResolvedDependency xmlns:OpenWrap_Repositories="clr-namespace:OpenWrap.Repositories;assembly=OpenWrap" xmlns:OpenWrap_Dependencies="clr-namespace:OpenWrap.Dependencies;assembly=OpenWrap" xmlns:System="clr-namespace:System;assembly=mscorlib">
+	<OpenWrap_Repositories:ResolvedDependency.Package>
+		<OpenWrap_Repositories:InMemoryPackage Name="Package Name">
+			<OpenWrap_Repositories:InMemoryPackage.Version>
+				<System:Version />
+			</OpenWrap_Repositories:InMemoryPackage.Version>
+		</OpenWrap_Repositories:InMemoryPackage>
+	</OpenWrap_Repositories:ResolvedDependency.Package>
+	<OpenWrap_Repositories:ResolvedDependency.Dependency>
+		<OpenWrap_Dependencies:PackageDependency Anchored="True" ContentOnly="False" Name="Vestibulum class">
+			<OpenWrap_Dependencies:PackageDependency.Tags>
+				<System:String>Maecenas nam aenean</System:String>
+				<System:String>Sed curae cras curabitur donec</System:String>
+				<System:String>Praesent mauris accumsan</System:String>
+				<System:String>Nullam phasellus etiam</System:String>
+				<System:String>Dis est adipiscing</System:String>
+				<System:String>Consequat duis hac bibendum</System:String>
+				<System:String>Aliquam dictumst</System:String>
+				<System:String>Eleifend fusce lorem</System:String>
+				<System:String>Facilisi morbi leo convallis dignissim</System:String>
+				<System:String>Integer nunc</System:String>
+			</OpenWrap_Dependencies:PackageDependency.Tags>
+			
+			<OpenWrap_Dependencies:PackageDependency.VersionVertices>
+				<OpenWrap_Dependencies:AnyVersionVertex>
+				</OpenWrap_Dependencies:AnyVersionVertex>
+			</OpenWrap_Dependencies:PackageDependency.VersionVertices>
+		</OpenWrap_Dependencies:PackageDependency>
+	</OpenWrap_Repositories:ResolvedDependency.Dependency>
+</OpenWrap_Repositories:ResolvedDependency>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.Services;
 using OpenWrap.Testing;
@@ -21,7 +22,7 @@ namespace OpenWrap.Tests.Commands.Remote.Remove
         [Test]
         public void an_error_is_returned()
         {
-            Results.ShouldHaveAtLeastOne(x => x.Success == false);
+            Results.ShouldHaveAtLeastOne(x => x.Success() == false);
         }
     }
     public class when_removing_an_existing_command

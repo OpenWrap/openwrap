@@ -9,7 +9,7 @@ using OpenWrap.Services;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb = "update", Noun = "wrap")]
-    public class UpdateWrapCommand : AbstractCommand
+    public class UpdateWrapCommand : WrapCommand
     {
 
         protected IEnvironment Environment
@@ -24,7 +24,7 @@ namespace OpenWrap.Commands.Wrap
 
         bool? _system;
 
-        [CommandInput(DisplayName = "System", IsRequired = false, Name="System")]
+        [CommandInput(DisplayName = "System", IsRequired = false, Name = "System")]
         public bool System
         {
             get { return _system != null ? (bool)_system : false; }
@@ -63,16 +63,22 @@ namespace OpenWrap.Commands.Wrap
         {
             if (!System) yield break;
 
-            var packagesToSearch = CreateDescriptorForSystemPackages();
             yield return new Result("Searching for updated packages...");
+            foreach (var packageToSearch in CreateDescriptorForEachSystemPackage())
+            {
+                var sourceRepos = Environment.RemoteRepositories.Concat(Environment.CurrentDirectoryRepository);
 
+                var resolveResult = PackageManager.TryResolveDependencies(packageToSearch, sourceRepos);
 
-            var resolveResult = PackageManager.TryResolveDependencies(packagesToSearch, Environment.RemoteRepositories);
-
-            foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
-                yield return m;
-            foreach(var m in PackageManager.ExpandPackages(Environment.SystemRepository))
-                yield return m;
+                foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
+                    if (m is DependencyResolutionFailedResult)
+                        yield return PackageNotFoundInRemote(m);
+                    else
+                        yield return m;
+                resolveResult = PackageManager.TryResolveDependencies(packageToSearch, sourceRepos);
+                foreach (var m in PackageManager.ExpandPackages(resolveResult, Environment.SystemRepository))
+                    yield return m;
+            }
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
@@ -80,35 +86,60 @@ namespace OpenWrap.Commands.Wrap
             if (!Project)
                 yield break;
 
-            var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository }));
+            var sourceRepos = Environment.RemoteRepositories
+                    .Concat(Environment.SystemRepository,
+                            Environment.CurrentDirectoryRepository);
+
+            var resolvedPackages = PackageManager.TryResolveDependencies(
+                Environment.Descriptor,
+                sourceRepos);
 
             var copyResult = PackageManager.CopyPackagesToRepositories(
                     resolvedPackages,
                     Environment.RepositoriesForWrite()
                     );
-            foreach(var m in copyResult) yield return m;
+            foreach (var m in copyResult) yield return m;
 
-            var expandResult = PackageManager.ExpandPackages(Environment.RepositoriesForWrite().ToArray());
+            resolvedPackages = PackageManager.TryResolveDependencies(
+                    Environment.Descriptor,
+                    sourceRepos);
+            var expandResult = PackageManager.ExpandPackages(resolvedPackages, Environment.RepositoriesForWrite());
+
             foreach (var m in expandResult) yield return m;
         }
 
-        WrapDescriptor CreateDescriptorForSystemPackages()
+        GenericMessage PackageNotFoundInRemote(ICommandOutput m)
         {
-            var installedPackages = Environment.SystemRepository.PackagesByName.Select(x => x.Key);
-
-            return new WrapDescriptor
+            return new GenericMessage("Package '{0}' doesn't exist in any remote repository.", ((DependencyResolutionFailedResult)m).Result.Dependencies.First().Dependency.Name)
             {
-                Dependencies = (from package in installedPackages
-                                let maxVersion = Environment.SystemRepository.PackagesByName[package]
-                                    .OrderByDescending(x => x.Version)
-                                    .Select(x => x.Version)
-                                    .First()
-                                select new WrapDependency
-                                {
-                                    Name = package,
-                                    VersionVertices = { new GreaterThenVersionVertice(maxVersion) }
-                                }).ToList()
+                    Type = CommandResultType.Warning
             };
+        }
+
+        IEnumerable<WrapDescriptor> CreateDescriptorForEachSystemPackage()
+        {
+
+
+            return (
+                           from systemPackage in Environment.SystemRepository.PackagesByName
+                           let systemPackageName = systemPackage.Key
+                           let maxPackageVersion = (
+                                                           from versionedPackage in systemPackage
+                                                           orderby versionedPackage.Version descending
+                                                           select versionedPackage.Version
+                                                   ).First()
+                           select new WrapDescriptor
+                           {
+                               Dependencies =
+                                           {
+                                                   new PackageDependency
+                                                   {
+                                                           Name = systemPackageName,
+                                                           VersionVertices = { new GreaterThenVersionVertex(maxPackageVersion) }
+                                                   }
+                                           }
+                           }
+                   ).ToList();
         }
     }
 }
