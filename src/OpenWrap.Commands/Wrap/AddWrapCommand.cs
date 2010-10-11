@@ -12,8 +12,23 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
+    public abstract class WrapCommand : AbstractCommand
+    {
+        public IEnvironment Environment { get; set; }
+
+        protected IPackageManager PackageManager
+        {
+            get { return WrapServices.GetService<IPackageManager>(); }
+        }
+
+        protected DependencyResolutionResult ResolveDependencies(WrapDescriptor packageDescriptor)
+        {
+            return PackageManager.TryResolveDependencies(packageDescriptor, Environment.RepositoriesForRead());
+        }
+    }
+
     [Command(Verb = "add", Noun = "wrap")]
-    public class AddWrapCommand : AbstractCommand
+    public class AddWrapCommand : WrapCommand
     {
         [CommandInput(IsRequired = true, Position = 0)]
         public string Name { get; set; }
@@ -35,13 +50,7 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public bool Anchored { get; set; }
-        public IEnvironment Environment { get; set; }
 
-
-        protected IPackageManager PackageManager
-        {
-            get { return WrapServices.GetService<IPackageManager>(); }
-        }
 
         bool ShouldUpdateDescriptor
         {
@@ -76,10 +85,11 @@ namespace OpenWrap.Commands.Wrap
             yield return VeryfyWrapRepository();
 
             var packageDescriptor = DescriptorFromCommand();
+
             if (ShouldUpdateDescriptor)
                 yield return UpdateDescriptor(packageDescriptor);
 
-            var resolvedDependencies = PackageManager.TryResolveDependencies(packageDescriptor, Environment.RepositoriesForRead());
+            var resolvedDependencies = ResolveDependencies(packageDescriptor);
 
             if (!resolvedDependencies.IsSuccess)
             {
@@ -102,13 +112,7 @@ namespace OpenWrap.Commands.Wrap
 
             // refresh dependencies to get new location of packages post-copy
 
-            var projectRepo = Environment.ProjectRepository as ISupportAnchoring;
-            if (projectRepo != null)
-            {
-                resolvedDependencies = PackageManager.TryResolveDependencies(packageDescriptor, Environment.RepositoriesForRead());
-                var packagesToAnchor = resolvedDependencies.Dependencies.Where(x => (x.Dependency.Anchored || x.Package.Anchored) && x.Package.Source == projectRepo).Select(x => x.Package).ToList();
-                projectRepo.VerifyAnchors(packagesToAnchor);
-            }
+            Environment.ProjectRepository.RefreshAnchors(ResolveDependencies(packageDescriptor));
         }
 
         ICommandOutput UpdateDescriptor(WrapDescriptor commandDescriptor)

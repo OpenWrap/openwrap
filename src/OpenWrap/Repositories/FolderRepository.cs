@@ -152,7 +152,7 @@ namespace OpenWrap.Repositories
         public IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKeep)
         {
             packagesToKeep = packagesToKeep.ToList();
-            var packagesToRemove = Packages.Where(x => !packagesToKeep.Contains(x.Package));
+            var packagesToRemove = Packages.Where(x => !packagesToKeep.Contains(x.Package)).ToList();
             foreach (var packageInfo in packagesToRemove)
             {
                 if (!Packages.Contains(packageInfo))
