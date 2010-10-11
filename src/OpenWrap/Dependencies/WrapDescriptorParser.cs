@@ -77,7 +77,11 @@ namespace OpenWrap.Dependencies
                 {
                     using (var fileStream = filePath.OpenRead())
                     {
-                        return ParseFile(fileStream);
+                        var descriptor = ParseFile(fileStream);
+                        descriptor.File = filePath;
+                        if (descriptor.Name == null)
+                            descriptor.Name = PackageNameUtility.GetName(filePath.NameWithoutExtension);
+                        return descriptor;
                     }
                 }
                 catch (IOException)
@@ -89,7 +93,6 @@ namespace OpenWrap.Dependencies
             }
             return null;
         }
-        // Version comes from the version file first, then the version: header in the descriptor, then from the filename if there is one
         public WrapDescriptor ParseFile(Stream content)
         {
             var stringReader = new StreamReader(content, true);
@@ -100,19 +103,6 @@ namespace OpenWrap.Dependencies
                 foreach (var parser in _lineParsers)
                     parser.Parse(line, descriptor);
 
-            //if (filePath.Parent != null && (versionFile = filePath.Parent.GetFile("version")).Exists)
-            //{
-
-            //    using(var versionStream = versionFile.OpenRead())
-            //    {
-            //        try
-            //        {
-            //            descriptor.Version = new Version(versionStream.ReadString(Encoding.UTF8));
-            //            descriptor.IsVersionInDescriptor = false;
-            //        }
-            //        catch{}
-            //    }
-            //}
             return descriptor;
         }
         public void SaveDescriptor(WrapDescriptor descriptor, Stream descriptorStream)
