@@ -18,6 +18,8 @@ namespace OpenWrap.Commands.Remote
         [CommandInput(Position=1, IsRequired=true)]
         public Uri Href { get; set; }
 
+        
+
         IConfigurationManager ConfigurationManager { get { return WrapServices.GetService<IConfigurationManager>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {

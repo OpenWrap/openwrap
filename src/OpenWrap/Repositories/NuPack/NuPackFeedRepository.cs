@@ -6,17 +6,16 @@ using System.ServiceModel.Syndication;
 using System.Text;
 using System.Xml;
 using OpenFileSystem.IO;
+using OpenRasta.Client;
 using OpenWrap.Repositories.Http;
 
 namespace OpenWrap.Repositories.NuPack
 {
-    public class NuPackFeedRepository
-    {
-    }
     public class NuPackFeedNavigator : IHttpRepositoryNavigator
     {
         Uri _feedUri;
         PackageDocument _packageDocument;
+        readonly IHttpClient _httpClient = new HttpWebRequestBasedClient();
 
         public NuPackFeedNavigator(Uri feedUri)
         {
@@ -36,8 +35,13 @@ namespace OpenWrap.Repositories.NuPack
 
         public Stream LoadPackage(PackageItem packageItem)
         {
-            // need to downlaod and up-convert the package.
-            throw new NotImplementedException();
+           var response =  _httpClient.CreateRequest(packageItem.PackageHref).Get().Send();
+           if (response.Entity == null)
+               return null;
+            var ms = new MemoryStream();
+            NuPackConverter.Convert(response.Entity.Stream, ms);
+            ms.Position = 0;
+            return ms;
         }
 
         public bool CanPublish
