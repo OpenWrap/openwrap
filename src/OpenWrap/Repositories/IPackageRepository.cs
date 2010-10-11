@@ -12,9 +12,6 @@ namespace OpenWrap.Repositories
         
         void Refresh();
         string Name { get; }
-
-        bool CanDelete { get; }
-        void Delete(IPackageInfo packageInfo);
     }
     public interface ISupportPublishing : IPackageRepository
     {

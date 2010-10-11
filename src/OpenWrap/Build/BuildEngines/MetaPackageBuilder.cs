@@ -19,14 +19,14 @@ namespace OpenWrap.Build.BuildEngines
             var currentDirectory = _environment.CurrentDirectory;
 
             yield return new FileBuildResult(metaExportName, 
-                                             new LocalPath(_environment.Descriptor.File.Path.FullPath));
+                                             new Path(_environment.Descriptor.File.Path.FullPath));
 
             // the version may not exist - it may be part of the wrapdescriptor
             // instead
             var versionFile = currentDirectory.GetFile("version");
             if (versionFile.Exists)
                 yield return new FileBuildResult(metaExportName,
-                                                 new LocalPath(versionFile.Path.FullPath));
+                                                 new Path(versionFile.Path.FullPath));
         }
     }
 }

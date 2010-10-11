@@ -329,15 +329,6 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 DependencyDescriptor.Overrides.Add(new PackageNameOverride(from, to));            
             }
 
-            public bool CanDelete
-            {
-                get { return true; }
-            }
-
-            public void Delete(IPackageInfo packageInfo)
-            {
-                Packages.Remove(packageInfo);
-            }
         }
     }
 }

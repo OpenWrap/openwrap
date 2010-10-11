@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
-using OpenWrap.Repositories;using OpenWrap.Services;
+using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -28,12 +29,13 @@ namespace OpenWrap.Commands.Wrap
                         projectDirectory.GetFile(ProjectName + ".wrapdesc")};
             if (Meta)
             {
-                new WrapDescriptorParser().SaveDescriptor(new WrapDescriptor
+                var descriptor = new WrapDescriptor
                 {
-                        BuildCommand = "$meta",
-                        UseProjectRepository = false,
-                        File = projectDirectory.GetFile(ProjectName + ".wrapdesc")
-                });
+                    BuildCommand = "$meta",
+                    UseProjectRepository = false,
+                    File = projectDirectory.GetFile(ProjectName + ".wrapdesc")
+                };
+                new WrapDescriptorParser().SaveDescriptor(descriptor, descriptor.File.OpenWrite());
                 using(var versionFile = projectDirectory.GetFile("version").OpenWrite())
                 {
                     versionFile.Write(Encoding.Default.GetBytes(("1.0.0.*")));

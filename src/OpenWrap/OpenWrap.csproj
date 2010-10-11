@@ -253,8 +253,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -264,7 +264,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-<!--    <BinFile Include="$(MSBuildProjectDirectory)\..\..\scratch\bin\$(MSBuildProjectName)-$(Configuration)-$(Platform)\ICSharpCode.SharpZipLib.dll">
+    <!--    <BinFile Include="$(MSBuildProjectDirectory)\..\..\scratch\bin\$(MSBuildProjectName)-$(Configuration)-$(Platform)\ICSharpCode.SharpZipLib.dll">
       <Export>bin-net35</Export>
     </BinFile>
     <BinFile Include="$(MSBuildProjectDirectory)\..\..\scratch\bin\$(MSBuildProjectName)-$(Configuration)-$(Platform)\OpenFileSystem.dll">
@@ -274,7 +274,6 @@
       <Export>bin-net35</Export>
     </BinFile>
 -->
-
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -290,7 +289,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
@@ -300,7 +298,7 @@
   </Target>
   -->
   <Target Name="AfterBuild">
-<!--
+    <!--
  <Message Text="[built(%(BinFile.Export),'%(BinFile.FullPath)')]" />-->
     <Message Text="[built(bin-net35, '%(Reference.HintPath)')]" Condition="'%(Reference.Identity)' == 'OpenFileSystem, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' or '%(Reference.Identity)' == 'ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73'" />
   </Target>
