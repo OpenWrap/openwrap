@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Core\CommandListResult.cs" />
     <Compile Include="Core\GetHelpCommand.cs" />
+    <Compile Include="NuPack\ConvertNuPack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Remote\AddRemoteCommand.cs" />
     <Compile Include="Remote\ListRemoteCommand.cs" />
