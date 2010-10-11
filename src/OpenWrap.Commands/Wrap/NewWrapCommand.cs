@@ -24,39 +24,62 @@ namespace OpenWrap.Commands.Wrap
         {
             var currentDirectory = Environment.CurrentDirectory;
             var projectDirectory = currentDirectory.GetDirectory(ProjectName);
-            var items = new List<IFileSystemItem> {
-                        projectDirectory.GetFile(ProjectName + ".wrapdesc")};
+            var packageDescriptorFile = projectDirectory.GetFile(ProjectName + ".wrapdesc");
+
+            var items = new List<IFileSystemItem> { packageDescriptorFile };
+
+            var packageDescriptor = new PackageDescriptor();
             if (Meta)
             {
-                using (var descriptorStream = projectDirectory.GetFile(ProjectName + ".wrapdesc").OpenWrite())
-                {
-                    new PackageDescriptorReaderWriter().SaveDescriptor(new PackageDescriptor
-                    {
-                            BuildCommand = "$meta",
-                            UseProjectRepository = false,
-                    }, descriptorStream);
-                }
-                using(var versionFile = projectDirectory.GetFile("version").OpenWrite())
-                {
-                    versionFile.Write(Encoding.Default.GetBytes(("1.0.0.*")));
-                }
-                yield return new GenericMessage("Created meta package version.");
-                yield return new GenericMessage("Done.");
+                packageDescriptor.BuildCommand = "$meta";
             }
             else  
             {
-                CreateStructure(new IFileSystemItem[]
-                {
-                        projectDirectory.GetFile(ProjectName + ".wrapdesc"),
-                        projectDirectory.GetDirectory("src"),
-                        projectDirectory.GetDirectory("wraps")
-                });
-                yield return new GenericMessage("Created default project structure for '" + ProjectName + "'. Copying OpenWrap.");
+                AddOpenWrapDependency(packageDescriptor);
+                AddPackageFolders(projectDirectory, items);
 
-                var packageManager = Services.Services.GetService<IPackageManager>();
-                var openwrapPackage = packageManager.TryResolveDependencies(new PackageDescriptor { Name = "openwrap" }, new[] { Environment.SystemRepository });
-                foreach(var msg in packageManager.CopyPackagesToRepositories(openwrapPackage, new FolderRepository(projectDirectory.GetDirectory("wraps"))))
-                    yield return msg;
+                foreach(var m in CopyOpenWrap(projectDirectory)) yield return m;
+            }
+            WriteVersionFile(projectDirectory);
+            WriteDescriptor(packageDescriptorFile, packageDescriptor);
+            yield return new GenericMessage("Package '{0}' initialized. Start adding packages by using the 'add-wrap' command.", ProjectName);
+        }
+
+        void AddOpenWrapDependency(PackageDescriptor packageDescriptor)
+        {
+            packageDescriptor.Dependencies.Add(new PackageDependency { Name = "openwrap", ContentOnly = true });
+        }
+
+        IEnumerable<ICommandOutput> CopyOpenWrap(IDirectory projectDirectory)
+        {
+            var packageManager = Services.Services.GetService<IPackageManager>();
+            var openwrapPackage = packageManager.TryResolveDependencies(new PackageDescriptor { Name = "openwrap" }, new[] { Environment.SystemRepository });
+            foreach(var msg in packageManager.CopyPackagesToRepositories(openwrapPackage, new FolderRepository(projectDirectory.GetDirectory("wraps"))))
+                yield return msg;
+        }
+
+        void AddPackageFolders(IDirectory projectDirectory, List<IFileSystemItem> items)
+        {
+            items.AddRange(new IFileSystemItem[]
+            {
+                    projectDirectory.GetDirectory("src"),
+                    projectDirectory.GetDirectory("wraps")
+            });
+        }
+
+        void WriteDescriptor(IFile descriptor, PackageDescriptor packageDescriptor)
+        {
+            using (var descriptorStream = descriptor.OpenWrite())
+            {
+                new PackageDescriptorReaderWriter().SaveDescriptor(packageDescriptor, descriptorStream);
+            }
+        }
+
+        void WriteVersionFile(IDirectory projectDirectory)
+        {
+            using(var versionFile = projectDirectory.GetFile("version").OpenWrite())
+            {
+                versionFile.Write(Encoding.Default.GetBytes(("0.0.1.*")));
             }
         }
 

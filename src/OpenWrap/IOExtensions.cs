@@ -42,5 +42,41 @@ namespace OpenWrap
             using (var stream = file.OpenRead())
                 return stream.ReadString(encoding);
         }
+
+        /// <summary>
+        /// Writes the provided string to a file, using the provided encoding. If the file already exists, it will be overwritten.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static void WriteString(this IFile file, string text)
+        {
+            WriteString(file, text, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// Writes the provided string to a file, using the provided encoding. If the file already exists, it will be overwritten.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="encoding"></param>
+        /// <returns></returns>
+        public static void WriteString(this IFile file, string text, Encoding encoding)
+        {
+            using (var stream = file.OpenWrite())
+            {
+                WriteString(stream, text, encoding);
+            }
+        }
+
+        public static void WriteString(this Stream stream, string text)
+        {
+            WriteString(stream, text, Encoding.UTF8);
+        }
+
+        public static void WriteString(this Stream stream, string text, Encoding encoding)
+        {
+            var bytes = encoding.GetBytes(text);
+            stream.Write(bytes,0,bytes.Length);
+        }
     }
 }
