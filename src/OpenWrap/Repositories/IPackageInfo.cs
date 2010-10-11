@@ -12,7 +12,8 @@ namespace OpenWrap.Repositories
         IPackage Load();
         IPackageRepository Source { get; }
         string FullName { get; }
-        DateTime? LastModifiedTimeUtc { get; }
+        string Description { get; }
+        DateTimeOffset CreationTime { get; }
         bool Anchored { get; }
     }
 }

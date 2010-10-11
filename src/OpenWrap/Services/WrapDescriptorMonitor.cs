@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Build;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenWrap.Repositories;
+using IOPath = System.IO.Path;
 
 namespace OpenWrap.Services
 {
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
     public class WrapDescriptorMonitor : IWrapDescriptorMonitoringService
     {
-        readonly Dictionary<IPath, DescriptorSubscriptions> _notificationClients = new Dictionary<IPath, DescriptorSubscriptions>();
+        readonly Dictionary<Path, DescriptorSubscriptions> _notificationClients = new Dictionary<Path, DescriptorSubscriptions>();
         readonly WrapDependencyResolver _resolver = new WrapDependencyResolver();
 
 
@@ -45,7 +45,7 @@ namespace OpenWrap.Services
             return descriptorSubscriptions;
         }
 
-        void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
+        void HandleWrapFileUpdate(object sender, System.IO.FileSystemEventArgs e)
         {
             NotifyAllClients(LocalFileSystem.Instance.GetFile(e.FullPath));
         }
@@ -76,20 +76,20 @@ namespace OpenWrap.Services
 
         class DescriptorSubscriptions
         {
-            public DescriptorSubscriptions(IFile path, IPackageRepository repository, FileSystemEventHandler handler)
+            public DescriptorSubscriptions(IFile path, IPackageRepository repository, System.IO.FileSystemEventHandler handler)
             {
                 Repository = repository;
                 Clients = new List<IWrapAssemblyClient>();
-                FileSystemWatcher = new FileSystemWatcher(Path.GetDirectoryName(path.Path.FullPath), Path.GetFileName(path.Path.FullPath))
+                FileSystemWatcher = new System.IO.FileSystemWatcher(System.IO.Path.GetDirectoryName(path.Path.FullPath), System.IO.Path.GetFileName(path.Path.FullPath))
                 {
-                    NotifyFilter = NotifyFilters.LastWrite
+                    NotifyFilter = System.IO.NotifyFilters.LastWrite
                 };
                 FileSystemWatcher.Changed += handler;
                 FileSystemWatcher.EnableRaisingEvents = true;
             }
 
             public List<IWrapAssemblyClient> Clients { get; set; }
-            public FileSystemWatcher FileSystemWatcher { get; set; }
+            public System.IO.FileSystemWatcher FileSystemWatcher { get; set; }
             public IPackageRepository Repository { get; set; }
         }
     }

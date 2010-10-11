@@ -41,10 +41,7 @@ namespace OpenWrap.Dependencies
             get { return Name + "-" + Version; }
         }
 
-        public DateTime? LastModifiedTimeUtc
-        {
-            get { return null; }
-        }
+        public DateTimeOffset CreationTime { get { return DateTimeOffset.UtcNow; } }
 
         public bool Anchored { get; set; }
 
@@ -54,6 +51,5 @@ namespace OpenWrap.Dependencies
         {
             return false;
         }
-
     }
 }

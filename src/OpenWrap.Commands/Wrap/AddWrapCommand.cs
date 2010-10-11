@@ -12,8 +12,27 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
+    public abstract class WrapCommand : AbstractCommand
+    {
+        public IEnvironment Environment
+        {
+            get { return WrapServices.GetService<IEnvironment>(); }
+
+        }
+
+        protected IPackageManager PackageManager
+        {
+            get { return WrapServices.GetService<IPackageManager>(); }
+        }
+
+        protected DependencyResolutionResult ResolveDependencies(WrapDescriptor packageDescriptor, IEnumerable<IPackageRepository> repos)
+        {
+            return PackageManager.TryResolveDependencies(packageDescriptor, repos);
+        }
+    }
+
     [Command(Verb = "add", Noun = "wrap")]
-    public class AddWrapCommand : AbstractCommand
+    public class AddWrapCommand : WrapCommand
     {
         [CommandInput(IsRequired = true, Position = 0)]
         public string Name { get; set; }
@@ -35,13 +54,7 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public bool Anchored { get; set; }
-        public IEnvironment Environment { get; set; }
 
-
-        protected IPackageManager PackageManager
-        {
-            get { return WrapServices.GetService<IPackageManager>(); }
-        }
 
         bool ShouldUpdateDescriptor
         {
@@ -53,33 +66,24 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        public AddWrapCommand()
-            : this(WrapServices.GetService<IEnvironment>())
-        {
-        }
-        public AddWrapCommand(IEnvironment environment)
-        {
-            Environment = environment;
-        }
-
         public override IEnumerable<ICommandOutput> Execute()
         {
             if (Name.EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
             {
                 var desc = WrapFileToPackageDescriptor();
                 yield return desc;
-                if (!desc.Success)
-                    yield break;
             }
 
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
 
             var packageDescriptor = DescriptorFromCommand();
-            if (ShouldUpdateDescriptor)
-                yield return UpdateDescriptor(packageDescriptor);
 
-            var resolvedDependencies = PackageManager.TryResolveDependencies(packageDescriptor, Environment.RepositoriesForRead());
+            if (ShouldUpdateDescriptor)
+                yield return UpdateDescriptor();
+
+            var sourceRepositories = Environment.RepositoriesForRead();
+            var resolvedDependencies = ResolveDependencies(packageDescriptor, sourceRepositories);
 
             if (!resolvedDependencies.IsSuccess)
             {
@@ -92,42 +96,25 @@ namespace OpenWrap.Commands.Wrap
                 Environment.CurrentDirectoryRepository,
                 ProjectOnly ? null : Environment.SystemRepository,
                 SystemOnly ? null : Environment.ProjectRepository
-            });
+            }).NotNull();
 
             foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo.NotNull()))
                 yield return msg;
 
-            foreach (var msg in PackageManager.ExpandPackages(Environment.ProjectRepository))
+            var descriptors = ResolveDependencies(packageDescriptor, sourceRepositories);
+            foreach (var msg in PackageManager.ExpandPackages(descriptors, repositoriesToCopyTo))
                 yield return msg;
-
-            // refresh dependencies to get new location of packages post-copy
-
-            var projectRepo = Environment.ProjectRepository as ISupportAnchoring;
-            if (projectRepo != null)
-            {
-                resolvedDependencies = PackageManager.TryResolveDependencies(packageDescriptor, Environment.RepositoriesForRead());
-                var packagesToAnchor = resolvedDependencies.Dependencies.Where(x => (x.Dependency.Anchored || x.Package.Anchored) && x.Package.Source == projectRepo).Select(x => x.Package).ToList();
-                projectRepo.VerifyAnchors(packagesToAnchor);
-            }
         }
 
-        ICommandOutput UpdateDescriptor(WrapDescriptor commandDescriptor)
+        ICommandOutput UpdateDescriptor()
         {
             ICommandOutput outputMessage;
-            var dependencyWithSameName = Environment.Descriptor.Dependencies.FirstOrDefault(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase));
-            if (dependencyWithSameName != null)
+            var dependencyWithSameName = Environment.Descriptor.Dependencies.Where(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (dependencyWithSameName.Count > 0)
             {
-                var requestedNormalizedVersionString = commandDescriptor.Dependencies.First().VersionVertices.Select(x => x.ToString()).OrderBy(x => x).Aggregate("", (x, e) => x + e);
-                var existingNormalizedVersionString = dependencyWithSameName.VersionVertices.Select(x => x.ToString()).OrderBy(x => x).Aggregate("", (x, e) => x + e);
-                if (requestedNormalizedVersionString == existingNormalizedVersionString)
-                {
-                    outputMessage = new GenericMessage("Dependency found with the same version requirements in the descriptor, nothing to do.");
-                }
-                else
-                {
-                    outputMessage = new GenericMessage("Dependency already found in descriptor, updating.");
-                    Environment.Descriptor.Dependencies.Remove(dependencyWithSameName);
-                }
+                outputMessage = new GenericMessage("Dependency already declared in descriptor, updating.");
+                foreach(var i in dependencyWithSameName)
+                    Environment.Descriptor.Dependencies.Remove(i);
             }
             else
             {
@@ -140,7 +127,8 @@ namespace OpenWrap.Commands.Wrap
                     VersionVertices = VersionVertices(),
                     ContentOnly = Content
             });
-            new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
+            using(var descriptor = Environment.Descriptor.File.OpenWrite())
+                new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor, descriptor);
             return outputMessage;
         }
 
@@ -198,7 +186,7 @@ namespace OpenWrap.Commands.Wrap
         {
             if (NoDescriptorUpdate)
                 new GenericMessage("Wrap descriptor ignored.");
-            return Environment.Descriptor != null
+            return Environment.Descriptor == null
                        ? new GenericMessage(@"No wrap descriptor found, installing locally.")
                        : new GenericMessage("Wrap descriptor found.");
         }
@@ -206,8 +194,8 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput VeryfyWrapRepository()
         {
             return Environment.ProjectRepository != null
-                       ? new GenericMessage("Project repository found.")
-                       : new GenericMessage("Project repository not found, installing to system repository.");
+                       ? new GenericMessage("Project repository present.")
+                       : new GenericMessage("Project repository not found.");
         }
     }
 }

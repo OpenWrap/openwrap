@@ -15,5 +15,20 @@ namespace OpenWrap.Repositories
         {
             return packageRepository.Find(new PackageDependency { Name = name, VersionVertices = { new ExactVersionVertex(version) } }) != null;
         }
+
+        public static void RefreshAnchors(this IPackageRepository repo, DependencyResolutionResult resolvedPackages)
+        {
+            var projectRepo = repo as ISupportAnchoring;
+            if (projectRepo != null)
+            {
+                var packagesToAnchor = resolvedPackages.Dependencies
+                    .Where(x => x.Dependency.Anchored || x.Package.Anchored)
+                    .Select(x=>x.Package)
+                    .NotNull()
+                    .Where(x=>x.Source == projectRepo).ToList();
+
+                projectRepo.VerifyAnchors(packagesToAnchor);
+            }
+        }
     }
 }

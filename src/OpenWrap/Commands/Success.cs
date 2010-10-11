@@ -9,10 +9,6 @@ namespace OpenWrap.Commands
             Type = CommandResultType.Info;
 
         }
-        bool ICommandOutput.Success
-        {
-            get { return true; }
-        }
         public override string ToString()
         {
             return "The command executed successfully.";

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using OpenWrap.Commands;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.remote_repositories;
@@ -22,7 +23,7 @@ namespace OpenWrap.Tests.Commands.Remote.Add
         [Test]
         public void an_error_is_returned()
         {
-            Results.FirstOrDefault(x => x.Success == false)
+            Results.FirstOrDefault(x => x.Success() == false)
                     .ShouldNotBeNull();
         }
     }

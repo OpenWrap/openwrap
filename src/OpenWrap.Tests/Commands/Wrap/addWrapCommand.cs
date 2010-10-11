@@ -5,12 +5,35 @@ using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
+using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
+    class adding_wrap_twice : context.command_context<AddWrapCommand>
+    {
+        public adding_wrap_twice()
+        {
+            given_dependency("depends: sauron");
+            given_project_package("sauron", new Version("1.0.0.0"));
+
+            when_executing_command("sauron", "-content");
+        }
+        [Test]
+        public void one_entry_exists()
+        {
+            Environment.Descriptor.Dependencies.Select(x => x.Name == "sauron")
+                    .ShouldHaveCountOf(1);
+        }
+        [Test]
+        public void entry_is_updated()
+        {
+            Environment.Descriptor.Dependencies.Single()
+                    .ContentOnly.ShouldBeTrue();
+        }
+    }
     class adding_wrap_with_incompatible_arguments : context.command_context<AddWrapCommand>
     {
         public adding_wrap_with_incompatible_arguments()
@@ -22,7 +45,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void results_in_an_error()
         {
-            Results.ShouldHaveAtLeastOne(x => x.Success == false);
+            Results.ShouldHaveAtLeastOne(x => x.Success() == false);
         }
     }
     class adding_wrap_from_system_pacakge_with_outdated_version_in_remote : context.command_context<AddWrapCommand>
@@ -163,7 +186,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void command_is_successful()
         {
-            Results.ShouldHaveAll(x => x.Success);
+            Results.ShouldHaveAll(x => x.Success());
         }
     }
 
@@ -203,7 +226,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void package_installation_is_unsuccessfull()
         {
-            Results.ShouldHaveAtLeastOne(x => x.Success == false);
+            Results.ShouldHaveAtLeastOne(x => x.Success() == false);
         }
     }
 

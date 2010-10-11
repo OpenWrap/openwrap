@@ -8,7 +8,7 @@ using OpenWrap.Services;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Noun = "wrap", Verb = "clean", Description = "Clean all but the latest version of a wrap from the repository.")]
-    public class CleanWrapCommand : AbstractCommand
+    public class CleanWrapCommand : WrapCommand
     {
         List<Func<IEnumerable<ICommandOutput>>> _cleanOperations = new List<Func<IEnumerable<ICommandOutput>>>();
 
@@ -48,7 +48,8 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> ExecuteCore()
         {
-            return _cleanOperations.SelectMany(x => x());
+            foreach (var m in _cleanOperations.SelectMany(x => x())) yield return m;
+            
         }
         bool IncludeProject
         {
@@ -68,7 +69,7 @@ namespace OpenWrap.Commands.Wrap
                 countWithMatchingName += Environment.SystemRepository.PackagesByName[Name].Count();
                 yield return TryAddRepository("System repository", Environment.SystemRepository, GetLastVersionOfSystemRepository());
             }
-            if (countWithMatchingName == 0)
+            if (Name != null && countWithMatchingName == 0)
                 yield return new GenericError("Cound not find a package called '{0}'.", Name);
 
         }
@@ -112,6 +113,7 @@ namespace OpenWrap.Commands.Wrap
         {
             foreach (var removedRepo in repository.Clean(packagesToKeep))
                 yield return new GenericMessage("Removed package '{0}'.", removedRepo.FullName);
+            repository.RefreshAnchors(PackageManager.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository }));
         }
     }
 }

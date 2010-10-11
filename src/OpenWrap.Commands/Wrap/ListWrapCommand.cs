@@ -13,13 +13,27 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool System { get; set; }
 
+        [CommandInput]
+        public string Remote { get; set; }
+
         protected IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {
-            var repoToList = (System ? Environment.SystemRepository : Environment.ProjectRepository);
+            var repoToList = GetRepositoryToList();
+            if (repoToList == null)
+                return new[] { new GenericError("Selected repository wasn't found. If you used -remote, make sure the remote repository exists.") };
 
             return repoToList.PackagesByName.NotNull()
                     .Select(x => (ICommandOutput)new PackageDescriptionOutput(x.Key, x));
+        }
+
+        IPackageRepository GetRepositoryToList()
+        {
+            if (System)
+                return Environment.SystemRepository;
+            if (!string.IsNullOrEmpty(Remote))
+                return Environment.RemoteRepositories.FirstOrDefault(x => x.Name.Equals(Remote, StringComparison.OrdinalIgnoreCase));
+            return Environment.ProjectRepository;
         }
     }
 

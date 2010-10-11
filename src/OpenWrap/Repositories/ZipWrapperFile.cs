@@ -3,6 +3,7 @@ using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.Local;
+using Path = OpenFileSystem.IO.FileSystem.Local.Path;
 
 namespace OpenWrap.Repositories
 {
@@ -22,9 +23,9 @@ namespace OpenWrap.Repositories
             throw new NotImplementedException();
         }
 
-        public IPath Path
+        public Path Path
         {
-            get { return new LocalPath("/"); }
+            get { return new Path("/"); }
         }
 
         public IDirectory Parent

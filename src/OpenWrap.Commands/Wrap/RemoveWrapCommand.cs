@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenFileSystem.IO;
 using OpenWrap.Dependencies;
 
 using OpenWrap.Services;
@@ -24,7 +25,8 @@ namespace OpenWrap.Commands.Wrap
             }
 
             Environment.Descriptor.Dependencies.Remove(dependency);
-            new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
+            using (var destinationStream = Environment.Descriptor.File.OpenWrite())
+                new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor, destinationStream);
 
         }
 

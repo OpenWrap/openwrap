@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -79,6 +80,10 @@ namespace OpenWrap
             {
                 return null;
             }
+        }
+        public static Stream ToUTF8Stream(this string value)
+        {
+            return new MemoryStream(Encoding.UTF8.GetBytes(value));
         }
     }
 }

@@ -61,6 +61,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -123,6 +125,7 @@
     <Compile Include="Configuration\remote-repositories\RemoteRepositories.cs" />
     <Compile Include="Configuration\remote-repositories\RemoteRepository.cs" />
     <Compile Include="ConsoleRunner.cs" />
+    <Compile Include="Dependencies\DefaultPackageInfo.cs" />
     <Compile Include="Dependencies\GreaterThenVersionVertex.cs" />
     <Compile Include="Dependencies\PackageBuilder.cs" />
     <Compile Include="Dependencies\Parsers\AbstractDescriptorParser.cs" />
@@ -157,8 +160,14 @@
     <Compile Include="Repositories\Http\PackageItem.cs" />
     <Compile Include="Repositories\Http\RequestExtensions.cs" />
     <Compile Include="Repositories\ICommandExportItem.cs" />
+    <Compile Include="Repositories\NuPack\NuPackAtomExtensions.cs" />
+    <Compile Include="Repositories\NuPack\NuPackConverter.cs" />
+    <Compile Include="Repositories\NuPack\NuPackDependency.cs" />
+    <Compile Include="Repositories\NuPack\NuPackFeedRepository.cs" />
+    <Compile Include="Repositories\NuPack\Namespaces.cs" />
+    <Compile Include="Repositories\NuPack\NuPackSyndicationFeed.cs" />
+    <Compile Include="Repositories\NuPack\NuPackSyndicationItem.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
-    <Compile Include="Repositories\PackagePackager.cs" />
     <Compile Include="Repositories\PackageRepositoryExtensions.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
     <Compile Include="Resolvers\RuntimeAssemblyResolver.cs" />

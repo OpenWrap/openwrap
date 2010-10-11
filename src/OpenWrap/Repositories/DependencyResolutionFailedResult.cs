@@ -5,12 +5,14 @@ namespace OpenWrap.Repositories
 {
     public class DependencyResolutionFailedResult : Error
     {
+        public DependencyResolutionResult Result { get; set; }
         readonly string _message;
         DependencyResolutionResult _result;
 
         public DependencyResolutionFailedResult(DependencyResolutionResult result)
                 : this("The following dependencies were not found:", result)
         {
+            Result = result;
         }
 
         public DependencyResolutionFailedResult(string message, DependencyResolutionResult result)

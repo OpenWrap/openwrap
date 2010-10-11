@@ -29,6 +29,8 @@ namespace OpenWrap.Repositories.Http
         public ICollection<PackageDependency> Dependencies { get; set; }
         public string Name { get { return _package.Name; } }
         public Version Version { get { return _package.Version; } }
+        public string Description { get { return _package.Description; } }
+
         public IPackage Load()
         {
             return this;
@@ -49,9 +51,9 @@ namespace OpenWrap.Repositories.Http
             get { return Name + "-" + Version; }
         }
 
-        public DateTime? LastModifiedTimeUtc
+        public DateTimeOffset CreationTime
         {
-            get{ return _package.LastModifiedTimeUtc; }
+            get{ return _package.CreationTime; }
         }
 
         public bool Anchored

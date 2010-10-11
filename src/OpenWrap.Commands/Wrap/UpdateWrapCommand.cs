@@ -9,7 +9,7 @@ using OpenWrap.Services;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb = "update", Noun = "wrap")]
-    public class UpdateWrapCommand : AbstractCommand
+    public class UpdateWrapCommand : WrapCommand
     {
 
         protected IEnvironment Environment
@@ -24,7 +24,7 @@ namespace OpenWrap.Commands.Wrap
 
         bool? _system;
 
-        [CommandInput(DisplayName = "System", IsRequired = false, Name="System")]
+        [CommandInput(DisplayName = "System", IsRequired = false, Name = "System")]
         public bool System
         {
             get { return _system != null ? (bool)_system : false; }
@@ -66,11 +66,17 @@ namespace OpenWrap.Commands.Wrap
             yield return new Result("Searching for updated packages...");
             foreach (var packageToSearch in CreateDescriptorForEachSystemPackage())
             {
-                var resolveResult = PackageManager.TryResolveDependencies(packageToSearch, Environment.RemoteRepositories.Concat(new[] { Environment.CurrentDirectoryRepository }));
+                var sourceRepos = Environment.RemoteRepositories.Concat(Environment.CurrentDirectoryRepository);
+
+                var resolveResult = PackageManager.TryResolveDependencies(packageToSearch, sourceRepos);
 
                 foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
-                    yield return m;
-                foreach (var m in PackageManager.ExpandPackages(Environment.SystemRepository))
+                    if (m is DependencyResolutionFailedResult)
+                        yield return PackageNotFoundInRemote(m);
+                    else
+                        yield return m;
+                resolveResult = PackageManager.TryResolveDependencies(packageToSearch, sourceRepos);
+                foreach (var m in PackageManager.ExpandPackages(resolveResult, Environment.SystemRepository))
                     yield return m;
             }
         }
@@ -80,22 +86,39 @@ namespace OpenWrap.Commands.Wrap
             if (!Project)
                 yield break;
 
-            var resolvedPackages = PackageManager.TryResolveDependencies(Environment.Descriptor, Environment.RemoteRepositories.Concat(new[] { Environment.SystemRepository, Environment.CurrentDirectoryRepository }));
+            var sourceRepos = Environment.RemoteRepositories
+                    .Concat(Environment.SystemRepository,
+                            Environment.CurrentDirectoryRepository);
+
+            var resolvedPackages = PackageManager.TryResolveDependencies(
+                Environment.Descriptor,
+                sourceRepos);
 
             var copyResult = PackageManager.CopyPackagesToRepositories(
                     resolvedPackages,
                     Environment.RepositoriesForWrite()
                     );
-            foreach(var m in copyResult) yield return m;
+            foreach (var m in copyResult) yield return m;
 
-            var expandResult = PackageManager.ExpandPackages(Environment.RepositoriesForWrite().ToArray());
+            resolvedPackages = PackageManager.TryResolveDependencies(
+                    Environment.Descriptor,
+                    sourceRepos);
+            var expandResult = PackageManager.ExpandPackages(resolvedPackages, Environment.RepositoriesForWrite());
+
             foreach (var m in expandResult) yield return m;
+        }
+
+        GenericMessage PackageNotFoundInRemote(ICommandOutput m)
+        {
+            return new GenericMessage("Package '{0}' doesn't exist in any remote repository.", ((DependencyResolutionFailedResult)m).Result.Dependencies.First().Dependency.Name)
+            {
+                    Type = CommandResultType.Warning
+            };
         }
 
         IEnumerable<WrapDescriptor> CreateDescriptorForEachSystemPackage()
         {
-            
-            var installedPackages = Environment.SystemRepository.PackagesByName.Select(x => x.Key);
+
 
             return (
                            from systemPackage in Environment.SystemRepository.PackagesByName
@@ -107,7 +130,7 @@ namespace OpenWrap.Commands.Wrap
                                                    ).First()
                            select new WrapDescriptor
                            {
-                                   Dependencies =
+                               Dependencies =
                                            {
                                                    new PackageDependency
                                                    {

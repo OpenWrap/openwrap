@@ -115,7 +115,7 @@ namespace OpenWrap.Tests.Repositories
             protected InMemoryFile Package(string wrapName, string version, params string[] wrapdescLines)
             {
                 var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
-                PackageBuilder.New(file, wrapName, version, wrapdescLines);
+                PackageBuilder.NewWithDescriptor(file, wrapName, version, wrapdescLines);
                 return file;
             }
 

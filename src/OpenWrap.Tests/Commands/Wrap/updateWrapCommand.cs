@@ -55,7 +55,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void error_message_is_generated()
         {
-            Results.Any(x => x.Success == false).ShouldBeTrue();
+            Results.Any(x => x.Success() == false).ShouldBeTrue();
         }
         [Test]
         public void package_in_system_repository_is_not_updated()
@@ -70,13 +70,68 @@ namespace OpenWrap.Tests.Commands
             given_project_package("goldberry", new Version(2, 0, 0));
             given_system_package("goldberry", new Version(2, 1, 0));
 
-
             when_executing_command("-system");
         }
         [Test]
         public void project_repo_not_updated()
         {
             Environment.ProjectRepository.ShouldHavePackage("goldberry","2.0.0");
+        }
+    }
+    public class project_and_system_defaults : context.command_context<UpdateWrapCommand>
+    {
+        UpdateWrapCommand CommandInstance;
+
+        public project_and_system_defaults()
+        {
+            CommandInstance = new UpdateWrapCommand();
+        }
+        [Test]public void project_is_selected()
+        {
+            CommandInstance.Project.ShouldBeTrue();
+        }
+        [Test]
+        public void system_is_not_selected()
+        {
+            CommandInstance.System.ShouldBeFalse();
+        }
+    }
+    public class project_is_selected_system_isnt : context.command_context<UpdateWrapCommand>
+    {
+        UpdateWrapCommand CommandInstance;
+
+        public project_is_selected_system_isnt()
+        {
+            CommandInstance = new UpdateWrapCommand() { Project = true};
+        }
+        [Test]
+        public void project_is_selected()
+        {
+            CommandInstance.Project.ShouldBeTrue();
+        }
+        [Test]
+        public void system_is_not_selected()
+        {
+            CommandInstance.System.ShouldBeFalse();
+        }
+    }
+    public class project_is_not_selected_system_is : context.command_context<UpdateWrapCommand>
+    {
+        UpdateWrapCommand CommandInstance;
+
+        public project_is_not_selected_system_is()
+        {
+            CommandInstance = new UpdateWrapCommand() { System = true };
+        }
+        [Test]
+        public void project_is_selected()
+        {
+            CommandInstance.Project.ShouldBeFalse();
+        }
+        [Test]
+        public void system_is_not_selected()
+        {
+            CommandInstance.System.ShouldBeTrue();
         }
     }
     public class project_and_system_flags_specified : context.command_context<UpdateWrapCommand>

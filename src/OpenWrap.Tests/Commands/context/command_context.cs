@@ -93,7 +93,7 @@ namespace OpenWrap.Tests.Commands.context
                 return;
             }
             var packageFileName = name + "-" + version + ".wrap";
-            var packageStream = PackageBuilder.New(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
+            var packageStream = PackageBuilder.NewWithDescriptor(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
             using (var readStream = packageStream)
                 ((ISupportPublishing)repository).Publish(packageFileName, readStream);
         }
@@ -109,7 +109,7 @@ namespace OpenWrap.Tests.Commands.context
             else
             {
                 var localFile = Environment.CurrentDirectory.GetFile(PackageNameUtility.PacakgeFileName(packageName, version.ToString())).MustExist();
-                PackageBuilder.New(localFile, packageName, version.ToString(), dependencies);
+                PackageBuilder.NewWithDescriptor(localFile, packageName, version.ToString(), dependencies);
                 
             }
         }

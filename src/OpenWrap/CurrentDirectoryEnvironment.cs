@@ -7,6 +7,7 @@ using OpenWrap.Configuration;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Repositories.Http;
+using OpenWrap.Repositories.NuPack;
 using OpenWrap.Services;
 
 namespace OpenWrap
@@ -86,9 +87,19 @@ namespace OpenWrap
             }
         }
 
-        HttpRepository CreateRemoteRepository(string repositoryName, Uri repositoryHref)
+        IPackageRepository CreateRemoteRepository(string repositoryName, Uri repositoryHref)
         {
-            if (repositoryHref.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase))
+            if (repositoryHref.Scheme.Equals("nupack", StringComparison.OrdinalIgnoreCase))
+            {
+                var builder = new UriBuilder(repositoryHref);
+                builder.Scheme = "http";
+                return new HttpRepository(
+                        FileSystem,
+                        repositoryName,
+                        new NuPackFeedNavigator(builder.Uri));
+            }
+            if (repositoryHref.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
+                repositoryHref.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
                 return new HttpRepository(FileSystem, repositoryName, new HttpRepositoryNavigator(repositoryHref));
             if (repositoryHref.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
                 return new IndexedFolderRepository(repositoryName, FileSystem.GetDirectory(repositoryHref.LocalPath));

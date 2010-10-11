@@ -5,7 +5,7 @@ namespace OpenWrap.Dependencies
 {
     public static class PackageNameUtility
     {
-        private static readonly Regex VERSION_REGEX = new Regex(@"\-\d+(\.\d+(\.\d+(\.\d+)?)?)?$", RegexOptions.Compiled);
+        private static readonly Regex VERSION_REGEX = new Regex(@"\-(?<version>\d+(\.\d+(\.\d+(\.\d+)?)?)?)(\.wrap)?$", RegexOptions.Compiled);
         public static string GetName(string name)
         {
             return GetVersion(name) == null ? name : name.Substring(0, name.LastIndexOf('-'));
@@ -14,7 +14,7 @@ namespace OpenWrap.Dependencies
         {
             var versionMAtch = VERSION_REGEX.Match(name);
             if (versionMAtch.Success)
-                return new Version(name.Substring(name.LastIndexOf('-') + 1));
+                return versionMAtch.Groups["version"].Value.ToVersion();
             return null;
         }
         public static string NormalizeFileName(string filename)

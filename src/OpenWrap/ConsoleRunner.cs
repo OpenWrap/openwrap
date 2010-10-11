@@ -49,11 +49,12 @@ namespace OpenWrap
                     if (HiddenVerboseOutput(args, commandOutput))
                         continue;
                     SetCommandColor(commandOutput.Type);
-                    if (!commandOutput.Success)
+                    RenderOutput(commandOutput);
+                    if (commandOutput.Type == CommandResultType.Error)
                     {
                         returnCode = -1;
+                        break;
                     }
-                    RenderOutput(commandOutput);
                 }
                 finally
                 {
