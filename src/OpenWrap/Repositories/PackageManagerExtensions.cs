@@ -42,7 +42,7 @@ namespace OpenWrap.Repositories
                 {
                     var existingUpToDateVersion = repository.PackagesByName.Contains(dependency.Package.Name)
                                                           ? repository.PackagesByName[dependency.Package.Name]
-                                                            .Where(x=>x.Version >= dependency.Package.Version)
+                                                            .Where(x => x.Version >= dependency.Package.Version)
                                                             .OrderByDescending(x => x.Version)
                                                             .FirstOrDefault()
                                                           : null;
@@ -60,40 +60,46 @@ namespace OpenWrap.Repositories
         }
 
         // TODO: Expose at the pacakge manager / repository level, such as a VerifyCache() or something along those lines...
-        public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, params IPackageRepository[] repositories)
+        public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, DependencyResolutionResult packagesInUse, params IPackageRepository[] repositories)
+        {
+            return ExpandPackages(packageManager, packagesInUse, (IEnumerable<IPackageRepository>)repositories);
+        }
+
+        public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, DependencyResolutionResult packagesInUse, IEnumerable<IPackageRepository> repositories)
         {
             repositories = repositories.NotNull().ToArray();
             yield return new GenericMessage("Making sure the cache is up-to-date...");
-            foreach (var repo in repositories)
-                repo.Refresh();
+            
             packageManager.GetExports<IExport>("bin", WrapServices.GetService<IEnvironment>().ExecutionEnvironment, repositories).ToList();
+
+            foreach (var repo in repositories)
+                repo.RefreshAnchors(packagesInUse);
         }
 
         public static IEnumerable<IPackageRepository> RepositoriesForRead(this IEnvironment environment)
         {
-            return new[]
-            {
-                    environment.CurrentDirectoryRepository,
-                    environment.ProjectRepository,
-                    environment.SystemRepository
-            }.Concat(environment.RemoteRepositories);
+            return
+                environment.RemoteRepositories
+                .Concat(environment.CurrentDirectoryRepository,
+                        environment.ProjectRepository,
+                        environment.SystemRepository);
         }
-
         public static IEnumerable<IPackageRepository> RepositoriesForWrite(this IEnvironment environment)
         {
-            var reps = environment.RemoteRepositories.Concat(new[]
-            {
-                    environment.CurrentDirectoryRepository,
-                    environment.SystemRepository
-            }).ToList();
-            if (environment.ProjectRepository != null)
-                reps.Add(environment.ProjectRepository);
-            return reps;
+            return environment.RemoteRepositories
+                    .Concat(environment.CurrentDirectoryRepository,
+                            environment.SystemRepository,
+                            environment.ProjectRepository)
+                    .NotNull().ToList();
         }
 
         static ICommandOutput DependencyResolutionFailed(DependencyResolutionResult result)
         {
             return new DependencyResolutionFailedResult(result);
+        }
+        public static IEnumerable<T> Concat<T>(this T value, IEnumerable<T> values)
+        {
+            return new[] { value }.Concat(values);
         }
     }
 }

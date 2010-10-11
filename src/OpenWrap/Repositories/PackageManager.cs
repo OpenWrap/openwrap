@@ -40,6 +40,7 @@ namespace OpenWrap.Repositories
             var source = dependency.Package.Load();
             using (var packageStream = source.OpenStream())
                 destinationRepository.Publish(dependency.Package.FullName + ".wrap", packageStream);
+            destinationRepository.Refresh();
         }
 
         public void Initialize()
@@ -101,7 +102,12 @@ namespace OpenWrap.Repositories
                                                                 .FirstOrDefault(x => x != null)
                                                         where package == null ||
                                                               resolvedDependencies.None(x => x.Package != null && x.Package.Name == package.Name && x.Package.Version == package.Version)
-                                                        select new ResolvedDependency { Dependency = modifiedDependency, Package = package, ParentPackage = parent })
+                                                        select new ResolvedDependency
+                                                        {
+                                                                Dependency = modifiedDependency,
+                                                                Package = package,
+                                                                ParentPackage = parent
+                                                        })
                             .ToList();
             resolvedDependencies.AddRange(packages);
 

@@ -11,6 +11,28 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
+    class adding_wrap_twice : context.command_context<AddWrapCommand>
+    {
+        public adding_wrap_twice()
+        {
+            given_dependency("depends: sauron");
+            given_project_package("sauron", new Version("1.0.0.0"));
+
+            when_executing_command("sauron", "-content");
+        }
+        [Test]
+        public void one_entry_exists()
+        {
+            Environment.Descriptor.Dependencies.Select(x => x.Name == "sauron")
+                    .ShouldHaveCountOf(1);
+        }
+        [Test]
+        public void entry_is_updated()
+        {
+            Environment.Descriptor.Dependencies.Single()
+                    .ContentOnly.ShouldBeTrue();
+        }
+    }
     class adding_wrap_with_incompatible_arguments : context.command_context<AddWrapCommand>
     {
         public adding_wrap_with_incompatible_arguments()
