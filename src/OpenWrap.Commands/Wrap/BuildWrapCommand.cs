@@ -72,7 +72,7 @@ namespace OpenWrap.Commands.Wrap
 
                 // don't incude the version, we've already parsed it
                 buildFiles = buildFiles
-                    .Where(x => !(x.ExportName == "." && x.FileName == "version"))
+                    .Where(x => !(x.ExportName == "." && x.FileName.Equals("version",StringComparison.OrdinalIgnoreCase)))
                         .Distinct()
                         .ToList();
 

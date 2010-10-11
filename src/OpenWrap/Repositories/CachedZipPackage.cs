@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using OpenWrap;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenWrap.Exports;
 using OpenWrap.Dependencies;
@@ -44,7 +45,7 @@ namespace OpenWrap.Repositories
             get { return Descriptor.Version; }
         }
 
-        protected WrapDescriptor Descriptor { get; set; }
+        protected IPackageInfo Descriptor { get; set; }
 
         public IPackage Load()
         {
@@ -98,26 +99,19 @@ namespace OpenWrap.Repositories
             using (var zip = new ZipFile(zipStream))
             {
                 var entries = zip.Cast<ZipEntry>();
-                var descriptor = entries.FirstOrDefault(x => x.Name.EndsWith(".wrapdesc"));
-                if (descriptor == null)
+                var descriptorFile = entries.FirstOrDefault(x => x.Name.EndsWith(".wrapdesc"));
+                if (descriptorFile == null)
                     throw new InvalidOperationException(string.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", _wrapFile.Name));
-                using (var stream = zip.GetInputStream(descriptor))
-                    Descriptor = new WrapDescriptorParser().ParseFile(new ZipWrapperFile(zip, descriptor), stream);
-                if (Descriptor.Version == null)
-                {
-                    var versionFile = entries.SingleOrDefault(x => string.Compare(x.Name, "version", StringComparison.OrdinalIgnoreCase) == 0);
-                    if (versionFile == null)
-                    {
-                        Descriptor.Version = PackageNameUtility.GetVersion(this._wrapFile.NameWithoutExtension);
-                    }
-                    else
-                    {
-                        using (var versionStream = zip.GetInputStream(versionFile))
-                            Descriptor.Version = new Version(versionStream.ReadString(Encoding.UTF8));
-                    }
-                }
+
+                var versionFile = entries.SingleOrDefault(x => x.Name.Equals("version", StringComparison.OrdinalIgnoreCase));
+                var versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x=>x.ReadString().ToVersion()) : null;
+                var descriptor = zip.Read(descriptorFile, x => new WrapDescriptorParser().ParseFile(x));
+
+                Descriptor = new DefaultPackageInfo(_wrapFile.Name, versionFromVersionFile, descriptor);
+
                 if (Descriptor.Version == null)
                     throw new InvalidOperationException("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.");
+                
             }
         }
     }

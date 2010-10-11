@@ -140,7 +140,8 @@ namespace OpenWrap.Commands.Wrap
                     VersionVertices = VersionVertices(),
                     ContentOnly = Content
             });
-            new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor);
+            using(var descriptor = Environment.Descriptor.File.OpenWrite())
+                new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor, descriptor);
             return outputMessage;
         }
 

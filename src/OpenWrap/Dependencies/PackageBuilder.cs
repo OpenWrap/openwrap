@@ -12,12 +12,18 @@ namespace OpenWrap.Dependencies
         public static void NewFromFiles(IFile destinationPackage, IEnumerable<PackageContent> content)
         {
             using (var wrapStream = destinationPackage.OpenWrite())
-            using (var zipFile = new ZipOutputStream(wrapStream))
+                NewFromFiles(wrapStream, content);
+        }
+
+        public static void NewFromFiles(Stream wrapStream, IEnumerable<PackageContent> content)
+        {
+            using (var zipFile = new ZipOutputStream(wrapStream){IsStreamOwner = false})
             {
+                List<string> addedDirectories = new List<string>();
                 foreach(var contentFile in content)
                 {
                     zipFile.PutNextEntry(GetZipEntry(contentFile));
-                    
+
                     using (var contentStream = contentFile.Stream())
                         contentStream.CopyTo(zipFile);
                 }
@@ -32,7 +38,10 @@ namespace OpenWrap.Dependencies
             var target = contentFile.RelativePath;
             if (target.Last() != '/')
                 target += '/';
-            return new ZipEntry(Path.Combine(target, contentFile.FileName));
+            var fileEntry = new ZipEntry(Path.Combine(target, contentFile.FileName));
+            if (contentFile.Size != null)
+                fileEntry.Size = contentFile.Size.Value;
+            return fileEntry;
         }
 
         public static IFile NewWithDescriptor(IFile wrapFile, string name, string version, params string[] descriptorLines)
@@ -50,13 +59,23 @@ namespace OpenWrap.Dependencies
                     {
                             FileName = name + ".wrapdesc",
                             RelativePath = ".",
-                            Stream = () => descriptorContent
+                            Size = descriptorContent.Length,
+                            Stream = () =>
+                            { 
+                                descriptorContent.Position = 0;
+                                return descriptorContent;
+                            }
                     },
                     new PackageContent
                     {
                             FileName = "version",
                             RelativePath = ".",
-                            Stream = () => versionContent
+                            Size = versionContent.Length,
+                            Stream = () =>
+                            {
+                                versionContent.Position = 0;
+                                return versionContent;
+                            }
                     }
             }.Concat(addedContent);
             NewFromFiles(wrapFile, content);
@@ -68,5 +87,7 @@ namespace OpenWrap.Dependencies
         public string RelativePath { get; set; }
         public string FileName { get; set; }
         public Func<Stream> Stream { get;set; }
+
+        public long? Size { get; set; }
     }
 }

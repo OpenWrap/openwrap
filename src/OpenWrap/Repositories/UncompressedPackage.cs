@@ -16,6 +16,7 @@ namespace OpenWrap.Repositories
         readonly IFile _originalWrapFile;
         readonly IEnumerable<IExportBuilder> _exporters;
         static readonly TraceSource _log = new TraceSource("openwrap", SourceLevels.All);
+        Version _version;
 
         public UncompressedPackage(IPackageRepository source,
                                    IFile originalPackage,
@@ -31,7 +32,8 @@ namespace OpenWrap.Repositories
             var wrapDescriptor = wrapCacheDirectory.Files("*.wrapdesc").SingleOrDefault();
             if (wrapDescriptor == null)
                 throw new InvalidOperationException("Could not find descriptor in wrap cache directory, or there are multiple .wrapdesc files in the package.");
-            Descriptor = new WrapDescriptorParser().ParseFile(wrapDescriptor);
+            var versionFile = wrapCacheDirectory.GetFile("version");
+            Descriptor = new DefaultPackageInfo(originalPackage.Name, versionFile.Exists ? versionFile.Read(x=>x.ReadString().ToVersion()) : null, new WrapDescriptorParser().ParseFile(wrapDescriptor));
         }
 
         protected IDirectory BaseDirectory { get; set; }
@@ -49,7 +51,7 @@ namespace OpenWrap.Repositories
 
         public Version Version
         {
-            get { return Descriptor.Version; }
+            get { return Descriptor.Version ?? _version; }
         }
 
         public IPackage Load()
@@ -73,17 +75,19 @@ namespace OpenWrap.Repositories
             get { return _originalWrapFile.LastModifiedTimeUtc; }
         }
 
-        protected WrapDescriptor Descriptor { get; set; }
+        protected DefaultPackageInfo Descriptor { get; set; }
 
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
             var exporter =
-                _exporters.SingleOrDefault(x => x.ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase));
-            if (exporter == null)
-                return null;
+                _exporters.FirstOrDefault(x => x.ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase));
 
-            var exports = from directory in BaseDirectory.Directories()
-                          where exporter.CanProcessExport(directory.Name)
+            var directories = BaseDirectory.Directories();
+            if (exporter != null)
+                directories = directories.Where(x => exporter.CanProcessExport(x.Name));
+            else
+                directories = directories.Take(1);
+            var exports = from directory in directories
                           select (IExport)new FolderExport(directory.Name)
                           {
                               Items = directory.Files()
@@ -91,7 +95,7 @@ namespace OpenWrap.Repositories
                                   .ToList()
                           };
 
-            return exporter.ProcessExports(exports, environment);
+            return exporter != null ? exporter.ProcessExports(exports, environment) : exports.FirstOrDefault();
         }
 
         public Stream OpenStream()

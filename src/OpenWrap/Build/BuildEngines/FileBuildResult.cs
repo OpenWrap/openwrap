@@ -6,7 +6,7 @@ namespace OpenWrap.Build.BuildEngines
     public class FileBuildResult : BuildResult, IEquatable<FileBuildResult>
     {
 
-        public FileBuildResult(string exportName, LocalPath file)
+        public FileBuildResult(string exportName, Path file)
         {
             if (exportName == null) throw new ArgumentNullException("exportName");
             if (file == null) throw new ArgumentNullException("file");
@@ -16,7 +16,7 @@ namespace OpenWrap.Build.BuildEngines
         }
 
         public string ExportName { get; private set; }
-        public LocalPath Path { get; private set; }
+        public Path Path { get; private set; }
         public string FileName { get; private set; }
 
         public bool Equals(FileBuildResult other)

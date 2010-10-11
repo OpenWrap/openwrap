@@ -29,6 +29,12 @@ namespace OpenWrap
 
             return totalWritten;
         }
+
+        public static string ReadString(this Stream stream)
+        {
+            return ReadString(stream, Encoding.UTF8);
+        }
+
         public static string ReadString(this Stream stream, Encoding encoding)
         {
             var stringReader = new StreamReader(stream, encoding);

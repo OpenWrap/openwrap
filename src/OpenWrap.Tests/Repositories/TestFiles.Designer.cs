@@ -78,5 +78,12 @@ namespace OpenWrap.Tests.Repositories {
                 return ResourceManager.GetString("feed", resourceCulture);
             }
         }
+        
+        internal static byte[] TestPackage {
+            get {
+                object obj = ResourceManager.GetObject("TestPackage", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
