@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using initWrap_specs.context;
 using NUnit.Framework;
 using OpenFileSystem.IO;
+using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands.context;
@@ -23,7 +24,7 @@ namespace initWrap_specs
         [Test]
         public void command_fails()
         {
-            Results.ShouldHaveAtLeastOne(x => x.Success == false);
+            Results.ShouldHaveAtLeastOne(x => x.Success() == false);
         }
     }
     public class init_for_all_projects : init_wrap
@@ -36,7 +37,7 @@ namespace initWrap_specs
         [Test]
         public void the_command_succeeds()
         {
-            Results.ShouldHaveAll(x => x.Success);
+            Results.ShouldHaveAll(x => x.Success());
         }
         [Test]
         public void the_project_is_patched()

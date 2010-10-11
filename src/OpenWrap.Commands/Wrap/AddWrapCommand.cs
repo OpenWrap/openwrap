@@ -72,8 +72,6 @@ namespace OpenWrap.Commands.Wrap
             {
                 var desc = WrapFileToPackageDescriptor();
                 yield return desc;
-                if (!desc.Success)
-                    yield break;
             }
 
             yield return VerifyWrapFile();

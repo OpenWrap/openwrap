@@ -55,7 +55,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void error_message_is_generated()
         {
-            Results.Any(x => x.Success == false).ShouldBeTrue();
+            Results.Any(x => x.Success() == false).ShouldBeTrue();
         }
         [Test]
         public void package_in_system_repository_is_not_updated()

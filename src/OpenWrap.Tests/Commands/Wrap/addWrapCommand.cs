@@ -5,6 +5,7 @@ using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
+using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
@@ -44,7 +45,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void results_in_an_error()
         {
-            Results.ShouldHaveAtLeastOne(x => x.Success == false);
+            Results.ShouldHaveAtLeastOne(x => x.Success() == false);
         }
     }
     class adding_wrap_from_system_pacakge_with_outdated_version_in_remote : context.command_context<AddWrapCommand>
@@ -185,7 +186,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void command_is_successful()
         {
-            Results.ShouldHaveAll(x => x.Success);
+            Results.ShouldHaveAll(x => x.Success());
         }
     }
 
@@ -225,7 +226,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void package_installation_is_unsuccessfull()
         {
-            Results.ShouldHaveAtLeastOne(x => x.Success == false);
+            Results.ShouldHaveAtLeastOne(x => x.Success() == false);
         }
     }
 

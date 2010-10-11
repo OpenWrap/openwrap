@@ -21,11 +21,6 @@ namespace OpenWrap.Commands
         {
         }
 
-        bool ICommandOutput.Success
-        {
-            get { return false; }
-        }
-
         ICommand ICommandOutput.Source
         {
             get { return null; }
