@@ -47,7 +47,7 @@ namespace OpenWrap.Repositories.Http
                                        Version = new Version(version.Value),
                                        PackageHref = absoluteLink,
                                        Dependencies = depends,
-                                       LastModifiedTimeUtc = lastModifiedTimeUtc
+                                       CreationTime = lastModifiedTimeUtc
                                }
             };
         }
@@ -77,11 +77,12 @@ namespace OpenWrap.Repositories.Http
             return false;
         }
 
-        static DateTime? GetModifiedTimeUtc(XAttribute attribute)
+        static DateTimeOffset GetModifiedTimeUtc(XAttribute attribute)
         {
-            if (attribute == null) return null;
-            DateTime dt;
-            return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
+            var now = DateTimeOffset.UtcNow;
+            if (attribute == null) return now;
+            DateTimeOffset dt;
+            return !DateTimeOffset.TryParse(attribute.Value, out dt) ? now : dt;
         }
     }
 }

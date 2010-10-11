@@ -6,6 +6,13 @@ using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories.NuPack
 {
+    [DataContract(Name="properties", Namespace=Namespaces.AstoriaD)]
+    public class NuPackODataProperties
+    {
+        
+        public string Version { get; set; }
+    }
+
     [DataContract(Name = "dependency", Namespace = Namespaces.NuPack)]
     public class NuPackDependency
     {

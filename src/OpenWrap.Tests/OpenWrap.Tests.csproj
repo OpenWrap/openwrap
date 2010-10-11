@@ -176,6 +176,9 @@
   <ItemGroup>
     <Folder Include="IO\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Repositories\feedodata.xml" />
+  </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

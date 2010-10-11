@@ -79,6 +79,22 @@ namespace OpenWrap.Tests.Repositories {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+        ///&lt;feed xml:base=&quot;http://173.203.67.148/current/odata/v1/&quot; xmlns:d=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices&quot; xmlns:m=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/metadata&quot; xmlns=&quot;http://www.w3.org/2005/Atom&quot;&gt;
+        ///  &lt;title type=&quot;text&quot;&gt;Packages&lt;/title&gt;
+        ///  &lt;id&gt;http://173.203.67.148/current/odata/v1/Packages&lt;/id&gt;
+        ///  &lt;updated&gt;2010-10-11T08:13:37Z&lt;/updated&gt;
+        ///  &lt;link rel=&quot;self&quot; title=&quot;Packages&quot; href=&quot;Packages&quot; /&gt;
+        ///  &lt;entry&gt;
+        ///    &lt;id&gt;http://173.203.67.148/ [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string feedodata {
+            get {
+                return ResourceManager.GetString("feedodata", resourceCulture);
+            }
+        }
+        
         internal static byte[] TestPackage {
             get {
                 object obj = ResourceManager.GetObject("TestPackage", resourceCulture);

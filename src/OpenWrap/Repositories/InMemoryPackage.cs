@@ -15,7 +15,7 @@ namespace OpenWrap.Repositories
 
         public InMemoryPackage()
         {
-            LastModifiedTimeUtc = DateTime.Now;
+            CreationTime = DateTime.Now;
             Dependencies = new List<PackageDependency>();
         }
         public string FullName
@@ -23,7 +23,7 @@ namespace OpenWrap.Repositories
             get { return Name + "-" + Version; }
         }
 
-        public DateTime? LastModifiedTimeUtc
+        public DateTimeOffset CreationTime
         {
             get; private set;
         }
@@ -31,7 +31,7 @@ namespace OpenWrap.Repositories
         public bool Anchored { get; set; }
 
         public string Name { get; set; }
-
+        public string Description { get; set; }
         public IPackageRepository Source { get; set; }
         public Version Version { get; set; }
 

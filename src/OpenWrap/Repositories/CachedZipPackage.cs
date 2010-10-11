@@ -14,6 +14,7 @@ namespace OpenWrap.Repositories
 {
     public class CachedZipPackage : IPackageInfo
     {
+
         readonly IEnumerable<IExportBuilder> _builders;
         readonly IDirectory _cacheDirectoryPathPath;
         readonly IFile _wrapFile;
@@ -33,7 +34,7 @@ namespace OpenWrap.Repositories
         {
             get { return Descriptor.Dependencies; }
         }
-
+        public string Description { get { return Descriptor.Description; } }
         public string Name
         {
             get { return Descriptor.Name; }
@@ -82,9 +83,9 @@ namespace OpenWrap.Repositories
             get { return Name + "-" + Version; }
         }
 
-        public DateTime? LastModifiedTimeUtc
+        public DateTimeOffset CreationTime
         {
-            get { return _wrapFile.LastModifiedTimeUtc; }
+            get { return new DateTimeOffset(_wrapFile.LastModifiedTimeUtc.Value); }
         }
 
         public IPackageRepository Source

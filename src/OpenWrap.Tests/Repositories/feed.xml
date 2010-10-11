@@ -4,7 +4,7 @@
   <subtitle type="text">ASP.NET package feed</subtitle>
   <id>uuid:e25c6f6c-6108-4b8b-b4ab-5b23af6ea5d7;id=1282</id>
   <rights type="text">Copyright 2010</rights>
-  <updated>2010-10-09T15:53:34Z</updated>
+  <updated>2010-10-11T07:08:57Z</updated>
   <author>
     <name>Demo</name>
     <uri>http://www.demofeed.com</uri>
@@ -13,12 +13,12 @@
   <entry>
     <id>urn:uuid:f595b9d3-6405-4a79-9503-123a5d52e587</id>
     <title type="text">Autofac</title>
-    <published>2010-10-09T08:38:17Z</published>
-    <updated>2010-10-09T08:38:17Z</updated>
+    <published>2010-10-11T07:08:57Z</published>
+    <updated>2010-10-11T07:08:57Z</updated>
     <author>
       <name>Nicholas Blumhardt</name>
     </author>
-    <link hash="sha-512:cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" rel="enclosure" length="422312" href="http://173.203.67.148/packages/download?packageFile=Autofac.2.2.4.900.nupkg" />
+    <link hash="sha-512:cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" rel="enclosure" length="422312" href="http://173.203.67.148/file.nupkg" />
     <link rel="license" href="http://www.opensource.org/licenses/mit-license.php" />
     <content type="text">An IoC container for Microsoft .NET. It manages the dependencies between classes so that applications stay easy to change as they grow in size and complexity.</content>
     <pkg:requireLicenseAcceptance>false</pkg:requireLicenseAcceptance>
@@ -28,13 +28,13 @@
   </entry>
   <entry>
     <id>urn:uuid:08233f5c-edad-4f39-93f7-ff85f55c8743</id>
-    <title type="text">Autofac.MVC2</title>
-    <published>2010-10-09T08:38:17Z</published>
-    <updated>2010-10-09T08:38:17Z</updated>
+    <title type="text">2010-10-11T07:08:57Z</title>
+    <published>2010-10-11T07:08:57Z</published>
+    <updated>2010-10-11T07:08:57Z</updated>
     <author>
       <name>Nicholas Blumhardt</name>
     </author>
-    <link hash="sha-512:cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" rel="enclosure" length="36720" href="http://173.203.67.148/packages/download?packageFile=Autofac.MVC2.2.2.4.900.nupkg" />
+    <link hash="sha-512:cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e" rel="enclosure" length="36720" href="http://173.203.67.148/file.nupkg" />
     <link rel="license" href="http://www.opensource.org/licenses/mit-license.php" />
     <content type="text">Provides an IControllerFactory implementation for System.Web.Mvc</content>
     <pkg:requireLicenseAcceptance>false</pkg:requireLicenseAcceptance>
