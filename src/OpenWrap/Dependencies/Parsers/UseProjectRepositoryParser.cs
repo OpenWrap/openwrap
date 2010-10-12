@@ -10,14 +10,14 @@ namespace OpenWrap.Dependencies.Parsers
         {
         }
 
-        protected override IEnumerable<string> WriteContent(WrapDescriptor descriptor)
+        protected override IEnumerable<string> WriteContent(PackageDescriptor descriptor)
         {
             // only return something if the default value of true is not used
             if (!descriptor.UseProjectRepository)
                 yield return "false";
         }
 
-        protected override void ParseContent(string content, WrapDescriptor descriptor)
+        protected override void ParseContent(string content, PackageDescriptor descriptor)
         {
             bool useProjectRepository;
             if (Boolean.TryParse(content, out useProjectRepository))

@@ -98,11 +98,11 @@ namespace current_directory_specifications
                 {
                         CurrentDirectory = currentDirectory
                 };
-                WrapServices.RegisterService<IFileSystem>(FileSystem);
+                Services.RegisterService<IFileSystem>(FileSystem);
 
                 Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory),
                                                       FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory));
-                WrapServices.RegisterService<IEnvironment>(Environment);
+                Services.RegisterService<IEnvironment>(Environment);
             }
 
             protected void given_packages_in_directory(string currentDirectory, params InMemoryFile[] packages)
@@ -115,7 +115,7 @@ namespace current_directory_specifications
 
             protected void when_finding_packages(string dependency)
             {
-                var dep = new WrapDescriptor();
+                var dep = new PackageDescriptor();
                 new DependsParser().Parse(dependency, dep);
 
                 FoundPackage = Repository.Find(dep.Dependencies.First());

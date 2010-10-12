@@ -10,7 +10,7 @@ namespace OpenWrap.Repositories
     {
         IEnumerable<T> GetExports<T>(string exportName, ExecutionEnvironment environment, IEnumerable<IPackageRepository> repositories)
             where T : IExport;
-        DependencyResolutionResult TryResolveDependencies(WrapDescriptor wrapDescriptor,
+        DependencyResolutionResult TryResolveDependencies(PackageDescriptor packageDescriptor,
                                                           IEnumerable<IPackageRepository> repositoriesToQuery);
 
         void UpdateDependency(ResolvedDependency dependency,

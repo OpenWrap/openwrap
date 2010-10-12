@@ -12,7 +12,7 @@ namespace OpenWrap.Dependencies
         {
         }
 
-        protected override void ParseContent(string content, WrapDescriptor descriptor)
+        protected override void ParseContent(string content, PackageDescriptor descriptor)
         {
             descriptor.Version = new Version(content);
         }
@@ -20,7 +20,7 @@ namespace OpenWrap.Dependencies
         {
             return @"\d+(\.\d+(\.\d+(\.\d+)?)?)?";
         }
-        protected override IEnumerable<string> WriteContent(WrapDescriptor descriptor)
+        protected override IEnumerable<string> WriteContent(PackageDescriptor descriptor)
         {
             if (descriptor.Version != null)
                 yield return descriptor.Version.ToString();

@@ -22,7 +22,7 @@ namespace OpenWrap.Repositories
             if (projectRepo != null)
             {
                 var packagesToAnchor = resolvedPackages.Dependencies
-                    .Where(x => x.Dependency.Anchored || x.Package.Anchored)
+                    .Where(x => x.Dependency.Anchored || (x.Package != null && x.Package.Anchored))
                     .Select(x=>x.Package)
                     .NotNull()
                     .Where(x=>x.Source == projectRepo).ToList();

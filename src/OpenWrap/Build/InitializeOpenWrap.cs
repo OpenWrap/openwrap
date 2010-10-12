@@ -35,19 +35,19 @@ namespace OpenWrap.Build
             RegisterServices(this, CurrentDirectory);
             _resolver = new RuntimeAssemblyResolver();
             _resolver.Initialize();
-            Name = WrapServices.GetService<IEnvironment>().Descriptor.Name;
+            Name = Services.Services.GetService<IEnvironment>().Descriptor.Name;
             return true;
         }
 
         static void RegisterServices(InitializeOpenWrap task, string currentDirectory)
         {
-            WrapServices.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
-            WrapServices.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(WrapServices.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
-            WrapServices.TryRegisterService<IEnvironment>(() => new MSBuildEnvironment(task, currentDirectory));
+            Services.Services.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
+            Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
+            Services.Services.TryRegisterService<IEnvironment>(() => new MSBuildEnvironment(task, currentDirectory));
 
-            WrapServices.TryRegisterService<IPackageManager>(() => new PackageManager());
-            WrapServices.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
-            WrapServices.RegisterService<ITaskManager>(new TaskManager());
+            Services.Services.TryRegisterService<IPackageManager>(() => new PackageManager());
+            Services.Services.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
+            Services.Services.RegisterService<ITaskManager>(new TaskManager());
         }
     }
 }

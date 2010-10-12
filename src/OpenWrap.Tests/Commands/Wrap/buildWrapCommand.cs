@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands.Wrap
@@ -14,9 +15,11 @@ namespace OpenWrap.Tests.Commands.Wrap
         const string packageName = "mypackage";
         public building_a_meta_package()
         {
+            given_current_directory_repository(new CurrentDirectoryRepository());
+            Environment.Descriptor.Name = packageName;
+            Environment.Descriptor.Version = version;
             Environment.Descriptor.BuildCommand = "$meta";
-            given_file(packageName + ".wrapdesc", new MemoryStream(Encoding.Default.GetBytes("build: $meta")));
-            given_file("version", new MemoryStream(Encoding.Default.GetBytes(version.ToString())));
+            Environment.Descriptor.Version = version;
             
             when_executing_command();
         }

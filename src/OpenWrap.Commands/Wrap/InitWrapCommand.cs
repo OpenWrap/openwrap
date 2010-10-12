@@ -26,7 +26,7 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public string Projects { get; set; }
-        protected IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); } }
+        protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(VerifyArguments()).Or(ExecuteCore());

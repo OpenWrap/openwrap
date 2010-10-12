@@ -4,7 +4,7 @@ namespace OpenWrap.Dependencies
 {
     public interface IDescriptorParser
     {
-        void Parse(string line, WrapDescriptor descriptor);
-        IEnumerable<string> Write(WrapDescriptor descriptor);
+        void Parse(string line, PackageDescriptor descriptor);
+        IEnumerable<string> Write(PackageDescriptor descriptor);
     }
 }

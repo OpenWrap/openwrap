@@ -14,7 +14,7 @@ namespace OpenWrap.Tests.Commands.NuPack
     {
         IFile _nuPackFile;
         IFile _destinationFile;
-        protected IFileSystem FileSystem { get { return WrapServices.GetService<IFileSystem>(); } }
+        protected IFileSystem FileSystem { get { return Services.Services.GetService<IFileSystem>(); } }
         [CommandInput(Position=0, IsRequired=true)]
         public string Path { get; set; }
 

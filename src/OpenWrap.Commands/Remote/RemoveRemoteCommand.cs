@@ -16,7 +16,7 @@ namespace OpenWrap.Commands.Remote
         [CommandInput(Position=0, IsRequired=true)]
         public string Name { get; set; }
 
-        IConfigurationManager ConfigurationManager { get { return WrapServices.GetService<IConfigurationManager>(); } }
+        IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(NameDoesntExist())

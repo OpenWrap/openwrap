@@ -121,7 +121,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
 
             public void given_dependency(string dependencyLine)
             {
-                var target = new WrapDescriptor();
+                var target = new PackageDescriptor();
                 new DependsParser().Parse(dependencyLine, target);
                 Declaration = target.Dependencies.First();
             }

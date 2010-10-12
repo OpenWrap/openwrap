@@ -131,6 +131,8 @@
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\DefaultPackageInfo.cs" />
     <Compile Include="Dependencies\GreaterThenVersionVertex.cs" />
+    <Compile Include="Dependencies\StringExtensions.cs" />
+    <Compile Include="IOExtensions.cs" />
     <Compile Include="Dependencies\PackageBuilder.cs" />
     <Compile Include="Dependencies\Parsers\AbstractDescriptorParser.cs" />
     <Compile Include="Dependencies\Parsers\BuildParser.cs" />
@@ -201,9 +203,9 @@
     <Compile Include="Repositories\CachedZipPackage.cs" />
     <Compile Include="Services\IService.cs" />
     <Compile Include="Services\IWrapDescriptorMonitoringService.cs" />
-    <Compile Include="Services\WrapDependencyResolver.cs" />
-    <Compile Include="Services\WrapDescriptorMonitor.cs" />
-    <Compile Include="Services\WrapServices.cs" />
+    <Compile Include="Services\PackageAssemblyResolver.cs" />
+    <Compile Include="Services\PackageDescriptorMonitor.cs" />
+    <Compile Include="Services\Services.cs" />
     <Compile Include="Commands\CommandList.cs" />
     <Compile Include="Commands\CommandLineProcessor.cs" />
     <Compile Include="Commands\ICommand.cs" />
@@ -217,8 +219,8 @@
     <Compile Include="Dependencies\VersionVertex.cs" />
     <Compile Include="Dependencies\PackageDependency.cs" />
     <Compile Include="Dependencies\DependsParser.cs" />
-    <Compile Include="Dependencies\WrapDescriptor.cs" />
-    <Compile Include="Dependencies\WrapDescriptorParser.cs" />
+    <Compile Include="Dependencies\PackageDescriptor.cs" />
+    <Compile Include="Dependencies\PackageDescriptorReaderWriter.cs" />
     <Compile Include="Dependencies\ExecutionEnvironment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Exports\AssemblyReferenceExport.cs" />

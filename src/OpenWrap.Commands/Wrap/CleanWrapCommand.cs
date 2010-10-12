@@ -31,7 +31,7 @@ namespace OpenWrap.Commands.Wrap
         protected IPackageManager PackageManager { get; private set; }
 
         public CleanWrapCommand()
-            : this(WrapServices.GetService<IEnvironment>(),WrapServices.GetService<IPackageManager>())
+            : this(Services.Services.GetService<IEnvironment>(),Services.Services.GetService<IPackageManager>())
         {
         }
 

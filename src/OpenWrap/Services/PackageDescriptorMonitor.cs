@@ -11,10 +11,10 @@ using IOPath = System.IO.Path;
 namespace OpenWrap.Services
 {
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
-    public class WrapDescriptorMonitor : IWrapDescriptorMonitoringService
+    public class PackageDescriptorMonitor : IWrapDescriptorMonitoringService
     {
         readonly Dictionary<Path, DescriptorSubscriptions> _notificationClients = new Dictionary<Path, DescriptorSubscriptions>();
-        readonly WrapDependencyResolver _resolver = new WrapDependencyResolver();
+        readonly PackageAssemblyResolver _resolver = new PackageAssemblyResolver();
 
 
 
@@ -55,7 +55,7 @@ namespace OpenWrap.Services
                 return;
             var d = _notificationClients[wrapPath.Path];
             d.Repository.Refresh();
-            var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
+            var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
             
 
             client.WrapAssembliesUpdated(_resolver.GetAssemblyReferences(parsedDescriptor, d.Repository, client));
@@ -66,7 +66,7 @@ namespace OpenWrap.Services
                 return;
             var d = _notificationClients[wrapPath.Path];
             d.Repository.Refresh();
-            var parsedDescriptor = new WrapDescriptorParser().ParseFile(wrapPath);
+            var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 
             foreach (var client in d.Clients)
             {

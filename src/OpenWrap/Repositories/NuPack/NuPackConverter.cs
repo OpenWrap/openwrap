@@ -93,7 +93,7 @@ namespace OpenWrap.Repositories.NuPack
             nuspec.Load(file.GetInputStream(entry));
 
 
-            var descriptor = new WrapDescriptor
+            var descriptor = new PackageDescriptor
             {
                 Name = nuspec.Element(XPaths.PackageName, ns),
                 Version = nuspec.Element(XPaths.PackageVersion, ns).ToVersion(),
@@ -101,7 +101,7 @@ namespace OpenWrap.Repositories.NuPack
                 Dependencies = nuspec.Elements(XPaths.PackageDependencies, ns).Select(CreateDependency).ToList()
             };
             var memoryStream = new MemoryStream();
-            new WrapDescriptorParser().SaveDescriptor(descriptor, memoryStream);
+            new PackageDescriptorReaderWriter().Write(descriptor, memoryStream);
             memoryStream.Position = 0;
             return new PackageContent
             {

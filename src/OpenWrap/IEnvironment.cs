@@ -10,7 +10,8 @@ namespace OpenWrap
     {
         IPackageRepository ProjectRepository { get; }
         IPackageRepository CurrentDirectoryRepository { get; }
-        WrapDescriptor Descriptor { get; }
+        IFile DescriptorFile { get; }
+        PackageDescriptor Descriptor { get; }
         IEnumerable<IPackageRepository> RemoteRepositories { get; }
         IPackageRepository SystemRepository { get; }
         IDirectory CurrentDirectory { get; }

@@ -19,7 +19,6 @@ namespace OpenWrap.Dependencies
         {
             using (var zipFile = new ZipOutputStream(wrapStream){IsStreamOwner = false})
             {
-                List<string> addedDirectories = new List<string>();
                 foreach(var contentFile in content)
                 {
                     zipFile.PutNextEntry(GetZipEntry(contentFile));

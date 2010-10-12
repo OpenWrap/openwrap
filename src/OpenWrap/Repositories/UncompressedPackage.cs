@@ -33,7 +33,7 @@ namespace OpenWrap.Repositories
             if (wrapDescriptor == null)
                 throw new InvalidOperationException("Could not find descriptor in wrap cache directory, or there are multiple .wrapdesc files in the package.");
             var versionFile = wrapCacheDirectory.GetFile("version");
-            Descriptor = new DefaultPackageInfo(originalPackage.Name, versionFile.Exists ? versionFile.Read(x=>x.ReadString().ToVersion()) : null, new WrapDescriptorParser().ParseFile(wrapDescriptor));
+            Descriptor = new DefaultPackageInfo(originalPackage.Name, versionFile.Exists ? versionFile.Read(x=>x.ReadString().ToVersion()) : null, new PackageDescriptorReaderWriter().Read(wrapDescriptor));
         }
 
         protected IDirectory BaseDirectory { get; set; }

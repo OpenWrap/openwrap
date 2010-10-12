@@ -23,7 +23,7 @@ namespace OpenWrap.Commands.Remote
         [CommandInput]
         public bool Latest { get; set; }
 
-        protected IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); } }
+        protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
 
         public override IEnumerable<ICommandOutput> Execute()
         {

@@ -261,7 +261,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
     {
         public abstract class dependency_manager_context : OpenWrap.Testing.context
         {
-            protected WrapDescriptor DependencyDescriptor;
+            protected PackageDescriptor DependencyDescriptor;
             protected InMemoryRepository ProjectRepository;
             protected InMemoryRepository RemoteRepository;
             protected DependencyResolutionResult Resolve;
@@ -270,7 +270,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             public dependency_manager_context()
             {
 
-                DependencyDescriptor = new WrapDescriptor
+                DependencyDescriptor = new PackageDescriptor
                 {
                     Name = "test",
                     Version = new Version("1.0")

@@ -16,7 +16,7 @@ namespace OpenWrap.Windows
     {
         public MainViewModel()
         {
-            var commands = WrapServices.GetService<ICommandRepository>();
+            var commands = Services.Services.GetService<ICommandRepository>();
             Nouns = commands != null 
                 ? commands.GroupBy(x => x.Noun).Select(x => CreateNounSlice(x)).ToList()
                 : MockCommands();
@@ -82,8 +82,8 @@ namespace OpenWrap.Windows
     
     public class WrapSlice : NounSlice
     {
-        protected IEnvironment Environment { get { return WrapServices.GetService<IEnvironment>(); } }
-        protected IPackageManager PackageManager { get { return WrapServices.GetService<IPackageManager>(); } }
+        protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
+        protected IPackageManager PackageManager { get { return Services.Services.GetService<IPackageManager>(); } }
 
         DependencyResolutionResult _projectDependencies;
         public DependencyResolutionResult ProjectDependencies

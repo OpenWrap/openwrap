@@ -25,8 +25,8 @@ namespace OpenWrap.Commands.Wrap
             }
 
             Environment.Descriptor.Dependencies.Remove(dependency);
-            using (var destinationStream = Environment.Descriptor.File.OpenWrite())
-                new WrapDescriptorParser().SaveDescriptor(Environment.Descriptor, destinationStream);
+            using (var destinationStream = Environment.DescriptorFile.OpenWrite())
+                new PackageDescriptorReaderWriter().Write(Environment.Descriptor, destinationStream);
 
         }
 
@@ -37,7 +37,7 @@ namespace OpenWrap.Commands.Wrap
 
         static IEnvironment Environment
         {
-            get { return WrapServices.GetService<IEnvironment>(); }
+            get { return Services.Services.GetService<IEnvironment>(); }
         }
     }
 }

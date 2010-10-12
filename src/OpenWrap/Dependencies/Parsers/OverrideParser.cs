@@ -10,7 +10,7 @@ namespace OpenWrap.Dependencies
             
         }
 
-        protected override void ParseContent(string content, WrapDescriptor descriptor)
+        protected override void ParseContent(string content, PackageDescriptor descriptor)
         {
 
             var arguments = content.Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -21,7 +21,7 @@ namespace OpenWrap.Dependencies
             var newPackage = arguments[1];
             descriptor.Overrides.Add(new PackageNameOverride(oldPackage, newPackage));
         }
-        protected override System.Collections.Generic.IEnumerable<string> WriteContent(WrapDescriptor descriptor)
+        protected override System.Collections.Generic.IEnumerable<string> WriteContent(PackageDescriptor descriptor)
         {
             return descriptor.Overrides.Select(x => x.OldPackage + " " + x.NewPackage);
         }

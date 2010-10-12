@@ -16,6 +16,14 @@ namespace OpenWrap
 {
     public static class StreamExtensions
     {
+        public static Func<Stream> ResetOnRead(this Stream stream)
+        {
+            return () =>
+            {
+                stream.Position = 0;
+                return stream;
+            };
+        }
         public static long CopyTo(this Stream stream, Stream destinationStream)
         {
             var buffer = new byte[4096];
