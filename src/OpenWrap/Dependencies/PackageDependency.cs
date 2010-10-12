@@ -10,6 +10,7 @@ namespace OpenWrap.Dependencies
         {
             VersionVertices = new List<VersionVertex>(copy.VersionVertices);
             Tags = new List<string>(copy.Tags);
+            Name = copy.Name;
         }
         public PackageDependency()
         {
@@ -17,6 +18,7 @@ namespace OpenWrap.Dependencies
             Tags = new List<string>();
         }
         public string Name { get; set; }
+
         public ICollection<VersionVertex> VersionVertices { get; set; }
 
         public bool Anchored

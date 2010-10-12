@@ -75,10 +75,13 @@ namespace OpenWrap.Commands.Wrap
                         yield return PackageNotFoundInRemote(m);
                     else
                         yield return m;
-                resolveResult = PackageManager.TryResolveDependencies(packageToSearch, sourceRepos);
-                foreach (var m in PackageManager.ExpandPackages(resolveResult, Environment.SystemRepository))
-                    yield return m;
+                foreach (var m in VerifyPackageCache()) yield return m;
             }
+        }
+
+        IEnumerable<ICommandOutput> VerifyPackageCache()
+        {
+            return PackageManager.VerifyPackageCache(Environment, Environment.Descriptor);
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
@@ -100,12 +103,7 @@ namespace OpenWrap.Commands.Wrap
                     );
             foreach (var m in copyResult) yield return m;
 
-            resolvedPackages = PackageManager.TryResolveDependencies(
-                    Environment.Descriptor,
-                    sourceRepos);
-            var expandResult = PackageManager.ExpandPackages(resolvedPackages, Environment.RepositoriesForWrite());
-
-            foreach (var m in expandResult) yield return m;
+            foreach (var m in PackageManager.VerifyPackageCache(Environment, Environment.Descriptor)) yield return m;
         }
 
         GenericMessage PackageNotFoundInRemote(ICommandOutput m)

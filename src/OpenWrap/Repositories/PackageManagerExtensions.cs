@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Commands;
+using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Services;
 
@@ -60,20 +61,20 @@ namespace OpenWrap.Repositories
         }
 
         // TODO: Expose at the pacakge manager / repository level, such as a VerifyCache() or something along those lines...
-        public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, DependencyResolutionResult packagesInUse, params IPackageRepository[] repositories)
+        public static IEnumerable<ICommandOutput> VerifyPackageCache(this IPackageManager packageManager, IEnvironment environment, PackageDescriptor descriptor)
         {
-            return ExpandPackages(packageManager, packagesInUse, (IEnumerable<IPackageRepository>)repositories);
-        }
 
-        public static IEnumerable<ICommandOutput> ExpandPackages(this IPackageManager packageManager, DependencyResolutionResult packagesInUse, IEnumerable<IPackageRepository> repositories)
-        {
-            repositories = repositories.NotNull().ToArray();
             yield return new GenericMessage("Making sure the cache is up-to-date...");
-            
-            packageManager.GetExports<IExport>("bin", Services.Services.GetService<IEnvironment>().ExecutionEnvironment, repositories).ToList();
+            var repositories = (new[] { environment.ProjectRepository, environment.SystemRepository }).NotNull();
+
+            var resolvedPackages = packageManager.TryResolveDependencies(
+                    environment.Descriptor,
+                    repositories);
+
+            packageManager.GetExports<IExport>("bin", environment.ExecutionEnvironment, repositories).ToList();
 
             foreach (var repo in repositories)
-                repo.RefreshAnchors(packagesInUse);
+                repo.RefreshAnchors(resolvedPackages);
         }
 
         public static IEnumerable<IPackageRepository> RepositoriesForRead(this IEnvironment environment)

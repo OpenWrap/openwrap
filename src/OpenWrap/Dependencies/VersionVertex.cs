@@ -4,7 +4,7 @@ namespace OpenWrap.Dependencies
 {
     public abstract class VersionVertex
     {
-        public Version Version { get; set; }
+        public Version Version { get; private set; }
 
         public VersionVertex(Version version)
         {
