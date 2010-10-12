@@ -30,6 +30,7 @@ namespace OpenWrap.Repositories.Http
         public string Name { get { return _package.Name; } }
         public Version Version { get { return _package.Version; } }
         public string Description { get { return _package.Description; } }
+        public bool Nuked { get { return _package.Nuked; } }
 
         public IPackage Load()
         {

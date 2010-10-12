@@ -48,6 +48,8 @@ namespace OpenWrap.Repositories
 
         protected IPackageInfo Descriptor { get; set; }
 
+        public bool Nuked { get { return false; } }
+
         public IPackage Load()
         {
             if (_cachedPackage == null)

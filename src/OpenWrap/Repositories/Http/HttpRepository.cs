@@ -11,23 +11,23 @@ namespace OpenWrap.Repositories.Http
     public class HttpRepository : IPackageRepository
     {
         readonly IHttpRepositoryNavigator _navigator;
-
-
+        readonly IFileSystem _fileSystem;
         readonly IEnumerable<HttpPackageInfo> _packagesQuery;
         ILookup<string, IPackageInfo> _packagesByName;
 
         public HttpRepository(IFileSystem fileSystem, string repositoryName, IHttpRepositoryNavigator navigator)
         {
             _navigator = navigator;
+            _fileSystem = fileSystem;
             Name = repositoryName;
             _packagesQuery = LoadPackages(navigator, fileSystem);
-
         }
+
         public void Refresh()
         {
             _packagesByName = null;
-
         }
+
         IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
         {
             IndexDocument = navigator.Index();

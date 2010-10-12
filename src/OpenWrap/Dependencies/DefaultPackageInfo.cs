@@ -60,6 +60,8 @@ namespace OpenWrap.Dependencies
             get { return _descriptor.Description; }
         }
 
+        public bool Nuked { get { return false; } }
+
         public DefaultPackageInfo(string packageFileName, Version versionFileContent, WrapDescriptor descriptor)
         {
             _descriptor = descriptor;

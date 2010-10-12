@@ -12,8 +12,7 @@ namespace OpenWrap.Repositories.Http
         readonly IHttpRepositoryNavigator _httpNavigator;
         readonly PackageItem _package;
         readonly DateTimeOffset _lastModifiedTimeUtc;
-        
-
+        readonly bool _nuked;
 
         public HttpPackageInfo(IFileSystem fileSystem,
                               IPackageRepository source,
@@ -26,6 +25,7 @@ namespace OpenWrap.Repositories.Http
             _package = package;
 
             _lastModifiedTimeUtc = package.CreationTime;
+            _nuked = package.Nuked;
             
             Dependencies = (from dependency in _package.Dependencies
                             let strings = dependency.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
@@ -58,7 +58,7 @@ namespace OpenWrap.Repositories.Http
         public IPackageRepository Source { get; private set; }
         public Version Version { get{ return _package.Version;} }
         public string Description { get { return _package.Description; } }
-
+        public bool Nuked { get { return _nuked; } }
 
         public IPackage Load()
         {

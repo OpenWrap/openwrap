@@ -12,5 +12,6 @@ namespace OpenWrap.Repositories.Http
         public IEnumerable<string> Dependencies { get; set; }
 
         public string Description { get; set; }
+        public bool Nuked { get; set; }
     }
 }
