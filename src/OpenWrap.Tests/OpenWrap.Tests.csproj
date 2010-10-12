@@ -68,7 +68,7 @@
     <Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\nunit-2.5.5\nunit.framework.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -134,7 +134,7 @@
     <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
       <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
       <Name>OpenRasta.Client</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Commands\OpenWrap.Commands.csproj">
       <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>
