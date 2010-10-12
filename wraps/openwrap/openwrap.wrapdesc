@@ -1,4 +1,5 @@
-﻿depends: openwrap content
-depends: openfilesystem
+﻿depends: openfilesystem
 depends: sharpziplib
+depends: openwrap content
 anchored: true
+version: 1.0.0.18676871

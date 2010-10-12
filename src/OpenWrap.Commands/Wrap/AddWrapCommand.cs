@@ -101,9 +101,7 @@ namespace OpenWrap.Commands.Wrap
             foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo.NotNull()))
                 yield return msg;
 
-            var descriptors = ResolveDependencies(packageDescriptor, sourceRepositories);
-            foreach (var msg in PackageManager.ExpandPackages(descriptors, repositoriesToCopyTo))
-                yield return msg;
+            foreach (var m in PackageManager.VerifyPackageCache(Environment, Environment.Descriptor)) yield return m;
         }
 
         ICommandOutput UpdateDescriptor()

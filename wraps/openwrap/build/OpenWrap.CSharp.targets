@@ -89,9 +89,9 @@
   <Target Name="OpenWrap-AfterBuild"
           Condition="$(OpenWrap-EmitOutputInstructions)">
     <!-- Descriptor file -->
-    <Message Text="[built(.,'%(_WrapFile.FullPath)')]" />
+    <!--<Message Text="[built(.,'%(_WrapFile.FullPath)')]" />-->
     <!-- Version file -->
-    <Message Text="[built(.,'@(_WrapFile->'%(RootDir)%(Directory)')version')]" />
+    <!--<Message Text="[built(.,'@(_WrapFile->'%(RootDir)%(Directory)')version')]" />-->
 
     <!-- Referenced projects -->
     <ItemGroup>

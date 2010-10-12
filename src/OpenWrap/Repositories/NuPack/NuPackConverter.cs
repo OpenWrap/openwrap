@@ -39,25 +39,48 @@ namespace OpenWrap.Repositories.NuPack
         {
             if (nuPackPackage == null) throw new ArgumentNullException("nuPackPackage");
             if (openWrapPackage == null) throw new ArgumentNullException("openWrapPackage");
+            
+            
 
             PackageBuilder.NewFromFiles(openWrapPackage, Content(nuPackPackage));
         }
         public static IEnumerable<PackageContent> Content(Stream nuPackPackage)
         {
             PackageContent content = null;
-            using (var inputZip = new ZipFile(nuPackPackage))
+            string temporaryFile = null;
+            try
             {
-                foreach (var entry in inputZip.Cast<ZipEntry>().Where(x=>x.IsFile))
+                if (!nuPackPackage.CanSeek)
                 {
-                    var segments = entry.Name.Split('/');
-                    if (segments.Length == 1 && Path.GetExtension(entry.Name).Equals(".nuspec", StringComparison.OrdinalIgnoreCase))
-                        yield return ConvertSpecification(inputZip, entry);
-                    else if (segments.Length > 2 && segments[0].Equals("lib", StringComparison.OrdinalIgnoreCase))
-                        if ((content = ConvertAssembly(segments, inputZip, entry)) != null)
-                            yield return content;
+                    temporaryFile = Path.GetTempFileName();
+                    var temporaryFileStream = File.OpenWrite(temporaryFile);
+                    nuPackPackage.CopyTo(temporaryFileStream);
+                    temporaryFileStream.Position = 0;
+                    nuPackPackage = temporaryFileStream;
+                }
+                using (var inputZip = new ZipFile(nuPackPackage))
+                {
+                    foreach (var entry in inputZip.Cast<ZipEntry>().Where(x => x.IsFile))
+                    {
+                        var segments = entry.Name.Split('/');
+                        if (segments.Length == 1 && Path.GetExtension(entry.Name).Equals(".nuspec", StringComparison.OrdinalIgnoreCase))
+                            yield return ConvertSpecification(inputZip, entry);
+                        else if (segments.Length > 2 && segments[0].Equals("lib", StringComparison.OrdinalIgnoreCase))
+                            if ((content = ConvertAssembly(segments, inputZip, entry)) != null)
+                                yield return content;
+                    }
+                }
+            }
+            finally
+            {
+                if (temporaryFile != null)
+                {
+                    nuPackPackage.Close();
+                    File.Delete(temporaryFile);
                 }
             }
         }
+
 
         static PackageContent ConvertAssembly(string[] segments, ZipFile inputZip, ZipEntry entry)
         {
