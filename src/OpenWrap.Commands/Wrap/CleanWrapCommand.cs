@@ -27,20 +27,6 @@ namespace OpenWrap.Commands.Wrap
             set { _project = value; }
         }
 
-        protected IEnvironment Environment { get; private set; }
-        protected IPackageManager PackageManager { get; private set; }
-
-        public CleanWrapCommand()
-            : this(Services.Services.GetService<IEnvironment>(),Services.Services.GetService<IPackageManager>())
-        {
-        }
-
-        public CleanWrapCommand(IEnvironment environment, IPackageManager packageManager)
-        {
-            Environment = environment;
-            PackageManager = packageManager;
-        }
-
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(VerifyInputs()).Or(ExecuteCore());

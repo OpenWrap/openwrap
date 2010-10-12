@@ -11,17 +11,6 @@ namespace OpenWrap.Commands.Wrap
     [Command(Verb = "update", Noun = "wrap")]
     public class UpdateWrapCommand : WrapCommand
     {
-
-        protected IEnvironment Environment
-        {
-            get { return Services.Services.GetService<IEnvironment>(); }
-        }
-
-        protected IPackageManager PackageManager
-        {
-            get { return Services.Services.GetService<IPackageManager>(); }
-        }
-
         bool? _system;
 
         [CommandInput(DisplayName = "System", IsRequired = false, Name = "System")]
