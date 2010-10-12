@@ -35,7 +35,7 @@ namespace OpenWrap.Repositories
         public IPackageRepository Source { get; set; }
         public Version Version { get; set; }
 
-        public bool Nuked { get { return false; } }
+        public bool Nuked { get; set; }
 
 
         public IExport GetExport(string exportName, ExecutionEnvironment environment)

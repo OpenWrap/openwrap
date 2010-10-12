@@ -68,7 +68,6 @@
     <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\nunit-2.5.5\nunit.framework.dll</HintPath>
-
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -110,6 +109,7 @@
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\anchored_dependencies.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
+    <Compile Include="Dependencies\nuked_package_resolution.cs" />
     <Compile Include="Dependencies\OverrideParser_Specification.cs" />
     <Compile Include="Dependencies\PackageDependency_specs.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
