@@ -128,7 +128,7 @@ namespace OpenWrap.Commands.Wrap
                     ContentOnly = Content
             });
             using(var descriptor = Environment.DescriptorFile.OpenWrite())
-                new PackageDescriptorReaderWriter().SaveDescriptor(Environment.Descriptor, descriptor);
+                new PackageDescriptorReaderWriter().Write(Environment.Descriptor, descriptor);
             return outputMessage;
         }
 

@@ -55,7 +55,7 @@ namespace OpenWrap.Services
                 return;
             var d = _notificationClients[wrapPath.Path];
             d.Repository.Refresh();
-            var parsedDescriptor = new PackageDescriptorReaderWriter().ParseFile(wrapPath);
+            var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
             
 
             client.WrapAssembliesUpdated(_resolver.GetAssemblyReferences(parsedDescriptor, d.Repository, client));
@@ -66,7 +66,7 @@ namespace OpenWrap.Services
                 return;
             var d = _notificationClients[wrapPath.Path];
             d.Repository.Refresh();
-            var parsedDescriptor = new PackageDescriptorReaderWriter().ParseFile(wrapPath);
+            var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 
             foreach (var client in d.Clients)
             {

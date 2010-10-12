@@ -44,7 +44,7 @@ namespace OpenWrap.Tests.Commands
             get { return CurrentDirectoryRepository; }
         }
 
-        public IFile DescriptorFile { get; private set; }
+        public IFile DescriptorFile { get; set; }
 
         public PackageDescriptor Descriptor { get; set; }
 

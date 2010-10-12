@@ -41,11 +41,12 @@ namespace OpenWrap
         public void Initialize()
         {
             FileSystem = LocalFileSystem.Instance;
-            Descriptor = CurrentDirectory
+            DescriptorFile = CurrentDirectory
                     .AncestorsAndSelf()
                     .SelectMany(x => x.Files("*.wrapdesc"))
-                    .Select(x => new PackageDescriptorReaderWriter().ParseFile(x))
                     .FirstOrDefault();
+            if (DescriptorFile != null)
+                Descriptor = new PackageDescriptorReaderWriter().Read(DescriptorFile);
 
             TryInitializeProjectRepository();
 

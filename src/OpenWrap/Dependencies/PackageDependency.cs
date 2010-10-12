@@ -6,6 +6,11 @@ namespace OpenWrap.Dependencies
 {
     public class PackageDependency
     {
+        public PackageDependency(PackageDependency copy)
+        {
+            VersionVertices = new List<VersionVertex>(copy.VersionVertices);
+            Tags = new List<string>(copy.Tags);
+        }
         public PackageDependency()
         {
             VersionVertices = new List<VersionVertex>();

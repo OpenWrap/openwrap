@@ -24,8 +24,7 @@ namespace OpenWrap.Dependencies
 
         public Version Version
         {
-            get { return _descriptor.Version ?? _packageVersion; }
-            set { _descriptor.Version = value; }
+            get { return _packageVersion; }
         }
 
 
@@ -63,7 +62,9 @@ namespace OpenWrap.Dependencies
         public DefaultPackageInfo(string packageFileName, Version versionFileContent, PackageDescriptor descriptor)
         {
             _descriptor = descriptor;
-            _packageVersion = versionFileContent ?? PackageNameUtility.GetVersion(packageFileName);
+            _packageVersion = versionFileContent 
+                ?? descriptor.Version 
+                ?? PackageNameUtility.GetVersion(packageFileName);
             _packageName = PackageNameUtility.GetName(packageFileName);
         }
     }

@@ -101,7 +101,7 @@ namespace OpenWrap.Repositories.NuPack
                 Dependencies = nuspec.Elements(XPaths.PackageDependencies, ns).Select(CreateDependency).ToList()
             };
             var memoryStream = new MemoryStream();
-            new PackageDescriptorReaderWriter().SaveDescriptor(descriptor, memoryStream);
+            new PackageDescriptorReaderWriter().Write(descriptor, memoryStream);
             memoryStream.Position = 0;
             return new PackageContent
             {

@@ -4,78 +4,55 @@ using System.Linq;
 using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.Dependencies;
+using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
-    public class when_removing_wrap_foo : context.command_context<RemoveWrapCommand>
+    public class removing_wrap : context.remove_wrap
     {
-        public when_removing_wrap_foo()
+        public removing_wrap()
         {
-            using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").Open(FileMode.Create, FileAccess.Write, FileShare.Read))
-            using (var w = new StreamWriter(f))
-            {
-                w.Write("depends: bar\r\ndepends: foo");
-            }
-
             given_dependency("depends: bar");
             given_dependency("depends: foo");
+            given_project_package("foo", "1.0.0.0".ToVersion());
+            given_project_package("bar", "1.0.0.0".ToVersion());
+
             when_executing_command("foo");
 
-            using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").OpenRead())
-            using (var r = new StreamReader(f))
-            {
-                descriptorFileLinesAfterRemove = r.ReadToEnd().Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            }
         }
 
-        string[] descriptorFileLinesAfterRemove;
 
         [Test]
         public void dependency_is_removed_from_descriptor()
         {
-            Assert.AreEqual(1, Environment.Descriptor.Dependencies.Count);
-            Assert.AreEqual("bar", Environment.Descriptor.Dependencies.First().Name);
+            PostCommandDescriptor.Dependencies.ShouldHaveCountOf(1);
         }
 
         [Test]
-        public void wrap_foo_is_removed()
+        public void package_removed_from_descriptor()
         {
-            Assert.AreEqual(1, descriptorFileLinesAfterRemove.Length);
+            PostCommandDescriptor.Dependencies.Where(x=>x.Name == "foo").ShouldBeEmpty();
         }
 
         [Test]
-        public void wrap_bar_remains()
+        public void unaffected_packages_remain()
         {
-            Assert.AreEqual("depends: bar", descriptorFileLinesAfterRemove[0]);
+            PostCommandDescriptor.Dependencies.Where(x => x.Name != "foo").ShouldHaveCountOf(1);
         }
     }
 
-    public class when_removing_wrap_foo_across_multiple_lines : context.command_context<RemoveWrapCommand>
+    namespace context
     {
-        public when_removing_wrap_foo_across_multiple_lines()
+        public abstract class remove_wrap : command_context<RemoveWrapCommand>
         {
-            using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").Open(FileMode.Create, FileAccess.Write, FileShare.Read))
-            using (var w = new StreamWriter(f))
+
+            protected PackageDescriptor PostCommandDescriptor;
+            protected override void when_executing_command(params string[] parameters)
             {
-                w.Write("depends: foo\r\n    = 1.0");
+                base.when_executing_command(parameters);
+                PostCommandDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);
             }
-
-            given_dependency("depends: foo");
-            when_executing_command("foo");
-
-            using (var f = Environment.CurrentDirectory.GetFile("descriptor.wrapdesc").OpenRead())
-            using (var r = new StreamReader(f))
-            {
-                descriptorFileLinesAfterRemove = r.ReadToEnd().Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            }
-        }
-
-        string[] descriptorFileLinesAfterRemove;
-
-        [Test]
-        public void wrap_foo_is_removed()
-        {
-            Assert.AreEqual(0, descriptorFileLinesAfterRemove.Length);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace OpenWrap.Build.BuildEngines
 {
     public class FileBuildResult : BuildResult, IEquatable<FileBuildResult>
     {
-
+        // TODO: Move Path manipulation to the OFS Path class
         public FileBuildResult(string exportName, Path file)
         {
             if (exportName == null) throw new ArgumentNullException("exportName");

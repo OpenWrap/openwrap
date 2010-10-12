@@ -127,6 +127,7 @@
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\DefaultPackageInfo.cs" />
     <Compile Include="Dependencies\GreaterThenVersionVertex.cs" />
+    <Compile Include="Dependencies\StringExtensions.cs" />
     <Compile Include="IOExtensions.cs" />
     <Compile Include="Dependencies\PackageBuilder.cs" />
     <Compile Include="Dependencies\Parsers\AbstractDescriptorParser.cs" />

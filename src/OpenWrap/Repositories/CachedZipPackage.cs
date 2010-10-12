@@ -106,7 +106,7 @@ namespace OpenWrap.Repositories
 
                 var versionFile = entries.SingleOrDefault(x => x.Name.Equals("version", StringComparison.OrdinalIgnoreCase));
                 var versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x=>x.ReadString().ToVersion()) : null;
-                var descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReaderWriter().ParseFile(x));
+                var descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReaderWriter().Read(x));
 
                 Descriptor = new DefaultPackageInfo(_wrapFile.Name, versionFromVersionFile, descriptor);
 

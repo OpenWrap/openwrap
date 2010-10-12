@@ -26,7 +26,7 @@ namespace OpenWrap.Commands.Wrap
 
             Environment.Descriptor.Dependencies.Remove(dependency);
             using (var destinationStream = Environment.DescriptorFile.OpenWrite())
-                new PackageDescriptorReaderWriter().SaveDescriptor(Environment.Descriptor, destinationStream);
+                new PackageDescriptorReaderWriter().Write(Environment.Descriptor, destinationStream);
 
         }
 

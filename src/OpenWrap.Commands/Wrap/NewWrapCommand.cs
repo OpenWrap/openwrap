@@ -11,8 +11,8 @@ namespace OpenWrap.Commands.Wrap
     [Command(Noun="wrap", Verb="new")]
     public class NewWrapCommand : ICommand
     {
-        [CommandInput(Name="ProjectName", Position=0, IsRequired=true)]
-        public string ProjectName { get; set; }
+        [CommandInput(Position=0, IsRequired=true)]
+        public string Target { get; set; }
 
         IFileSystem FileSystem { get { return Services.Services.GetService<IFileSystem>(); } }
         IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); }}
@@ -23,8 +23,11 @@ namespace OpenWrap.Commands.Wrap
         public IEnumerable<ICommandOutput> Execute()
         {
             var currentDirectory = Environment.CurrentDirectory;
-            var projectDirectory = currentDirectory.GetDirectory(ProjectName);
-            var packageDescriptorFile = projectDirectory.GetFile(ProjectName + ".wrapdesc");
+            var packagePath = Target;
+            var projectDirectory = currentDirectory.GetDirectory(packagePath);
+            var packageName = Target == "." ? Environment.CurrentDirectory.Name : Target;
+
+            var packageDescriptorFile = projectDirectory.GetFile(packageName + ".wrapdesc");
 
             var items = new List<IFileSystemItem> { packageDescriptorFile };
 
@@ -42,7 +45,7 @@ namespace OpenWrap.Commands.Wrap
             }
             WriteVersionFile(projectDirectory);
             WriteDescriptor(packageDescriptorFile, packageDescriptor);
-            yield return new GenericMessage("Package '{0}' initialized. Start adding packages by using the 'add-wrap' command.", ProjectName);
+            yield return new GenericMessage("Package '{0}' initialized. Start adding packages by using the 'add-wrap' command.", packageName);
         }
 
         void AddOpenWrapDependency(PackageDescriptor packageDescriptor)
@@ -71,7 +74,7 @@ namespace OpenWrap.Commands.Wrap
         {
             using (var descriptorStream = descriptor.OpenWrite())
             {
-                new PackageDescriptorReaderWriter().SaveDescriptor(packageDescriptor, descriptorStream);
+                new PackageDescriptorReaderWriter().Write(packageDescriptor, descriptorStream);
             }
         }
 

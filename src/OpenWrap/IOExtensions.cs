@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
@@ -31,6 +32,18 @@ namespace OpenWrap
         public static StreamReader StreamReader(this Stream stream, Encoding encoding)
         {
             return new StreamReader(stream, encoding);
+        }
+
+        public static IEnumerable<string> ReadLines(this IFile file)
+        {
+            return ReadLines(file, Encoding.UTF8);
+        }
+
+        public static IEnumerable<string> ReadLines(this IFile file, Encoding encoding)
+        {
+            using (var reader = file.OpenRead().StreamReader(encoding))
+                while (!reader.EndOfStream)
+                    yield return reader.ReadLine();
         }
         public static string ReadString(this IFile file)
         {
