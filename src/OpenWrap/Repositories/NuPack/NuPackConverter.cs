@@ -53,10 +53,10 @@ namespace OpenWrap.Repositories.NuPack
                 if (!nuPackPackage.CanSeek)
                 {
                     temporaryFile = Path.GetTempFileName();
-                    var temporaryFileStream = File.OpenWrite(temporaryFile);
-                    nuPackPackage.CopyTo(temporaryFileStream);
-                    temporaryFileStream.Position = 0;
-                    nuPackPackage = temporaryFileStream;
+                    using(var temporaryFileStream = File.OpenWrite(temporaryFile))
+                        nuPackPackage.CopyTo(temporaryFileStream);
+
+                    nuPackPackage = File.OpenRead(temporaryFile);
                 }
                 using (var inputZip = new ZipFile(nuPackPackage))
                 {
@@ -99,13 +99,14 @@ namespace OpenWrap.Repositories.NuPack
 
         static string ConvertAssemblyFolder(string identifier)
         {
+            
             var profile = FrameworkProfiles.Keys.FirstOrDefault(x => identifier.StartsWith(x, StringComparison.OrdinalIgnoreCase));
-            if (profile == null) return null;
 
-            var version = FrameworkVersions.Keys.FirstOrDefault(x => identifier.Substring(profile.Length).Equals(x, StringComparison.OrdinalIgnoreCase));
-            if (version == null) return null;
+            var nuPackFxVersion = profile == null ? identifier : identifier.Substring(profile.Length);
+            var version = FrameworkVersions.Keys.FirstOrDefault(x => nuPackFxVersion.Equals(x, StringComparison.OrdinalIgnoreCase));
 
-            return "bin-" +  FrameworkProfiles[profile] + FrameworkVersions[version];
+            if (profile == null && version == null) return null;
+            return "bin-" + (profile ?? "net") + (version ?? "20");
         }
 
         static PackageContent ConvertSpecification(ZipFile file, ZipEntry entry)

@@ -68,7 +68,7 @@ namespace OpenWrap.Repositories
             var repositories = (new[] { environment.ProjectRepository, environment.SystemRepository }).NotNull();
 
             var resolvedPackages = packageManager.TryResolveDependencies(
-                    environment.Descriptor,
+                    descriptor,
                     repositories);
 
             packageManager.GetExports<IExport>("bin", environment.ExecutionEnvironment, repositories).ToList();

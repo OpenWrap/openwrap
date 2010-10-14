@@ -13,11 +13,25 @@ using OpenWrap.Exports;
 using OpenWrap.Repositories;
 using OpenWrap.Repositories.NuPack;
 using OpenWrap.Testing;
+using OpenWrap.Tests;
 using OpenWrap.Tests.Repositories;
 using IOPath = System.IO.Path;
 
 namespace nupack_converter_specs
 {
+    public class converting_package_from_non_seekable_stream : context.nupack_converter
+    {
+        public converting_package_from_non_seekable_stream()
+        {
+            given_readonly_nu_package(TestFiles.TestPackage);
+            when_converting_package();
+        }
+        [Test]
+        public void package_is_converted()
+        {
+            Package.ShouldNotBeNull();
+        }
+    }
     public class converting_package : context.nupack_converter
     {
         public converting_package()
@@ -85,6 +99,11 @@ namespace nupack_converter_specs
             protected void given_nupack_package(byte[] testPackage)
             {
                 NuPackage = new MemoryStream(testPackage);
+            }
+
+            protected void given_readonly_nu_package(byte[] testPackage)
+            {
+                NuPackage = new NonSeekableMemoryStream(testPackage);
             }
         }
     }
