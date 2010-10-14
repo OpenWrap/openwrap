@@ -73,15 +73,16 @@ namespace OpenWrap.Commands.Wrap
                 foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
                     if (m is DependencyResolutionFailedResult)
                         yield return PackageNotFoundInRemote(m);
+
                     else
                         yield return m;
-                foreach (var m in VerifyPackageCache()) yield return m;
+                foreach (var m in VerifyPackageCache(packageToSearch)) yield return m;
             }
         }
 
-        IEnumerable<ICommandOutput> VerifyPackageCache()
+        IEnumerable<ICommandOutput> VerifyPackageCache(PackageDescriptor packageDescriptor)
         {
-            return PackageManager.VerifyPackageCache(Environment, Environment.Descriptor);
+            return PackageManager.VerifyPackageCache(Environment, packageDescriptor);
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()

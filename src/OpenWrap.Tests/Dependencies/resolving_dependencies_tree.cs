@@ -9,6 +9,25 @@ using OpenWrap.Testing;
 
 namespace OpenRasta.Wrap.Tests.Dependencies
 {
+    public class resolving_sub_builds_from_current_directory : dependency_manager_context
+    {
+        public resolving_sub_builds_from_current_directory()
+        {
+            given_project_package("rings-of-power-1.0.0");
+            given_current_directory_package("rings-of-power-1.0.0.1");
+            given_dependency("depends: rings-of-power");
+
+            when_resolving_packages();
+        }
+        [Test]
+        public void package_found_from_current_directory()
+        {
+            Resolve.Dependencies.Where(x => x.Package.Name == "rings-of-power")
+                    .ShouldHaveCountOf(1)
+                    .First().Package.Source.ShouldBe(CurrentDirectoryRepository);
+
+        }
+    }
     public class when_resolving_unavailable_dependencies : dependency_manager_context
     {
         public when_resolving_unavailable_dependencies()
@@ -266,6 +285,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             protected InMemoryRepository RemoteRepository;
             protected DependencyResolutionResult Resolve;
             protected InMemoryRepository SystemRepository;
+            protected InMemoryRepository CurrentDirectoryRepository;
 
             public dependency_manager_context()
             {
@@ -278,6 +298,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 ProjectRepository = new InMemoryRepository("Local repository");
                 SystemRepository = new InMemoryRepository("System repository");
                 RemoteRepository = new InMemoryRepository("Remote repository");
+                CurrentDirectoryRepository = new InMemoryRepository("Current repository");
             }
 
             protected void given_dependency(string dependency)
@@ -285,6 +306,11 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 new DependsParser().Parse(dependency, DependencyDescriptor);
             }
 
+            protected void given_current_directory_package(string name, params string[] dependencies)
+            {
+                Add(CurrentDirectoryRepository, name, dependencies);
+
+            }
             protected void given_project_package(string name, params string[] dependencies)
             {
                 Add(ProjectRepository, name, dependencies);
@@ -305,6 +331,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                 Resolve = new PackageManager().TryResolveDependencies(DependencyDescriptor,
                                                                       new[]
                                                                       {
+                                                                          CurrentDirectoryRepository,
                                                                           ProjectRepository,
                                                                           SystemRepository,
                                                                           RemoteRepository
