@@ -192,7 +192,7 @@ namespace OpenWrap.Commands.Wrap
             var versionFile = Environment.DescriptorFile != null && Environment.DescriptorFile.Exists
                                   ? Environment.DescriptorFile.Parent.GetFile("version")
                                   : null;
-            return versionFile.Exists == false
+            return versionFile == null || versionFile.Exists == false
                            ? null
                            : (from line in versionFile.ReadLines()
                               let version = line.GenerateVersionNumber().ToVersion()

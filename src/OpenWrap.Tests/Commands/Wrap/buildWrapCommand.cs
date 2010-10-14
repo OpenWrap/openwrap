@@ -27,7 +27,6 @@ namespace OpenWrap.Tests.Commands.Wrap
         [Test]
         public void wrapdescriptor_included_in_package()
         {
-            //Environment.CurrentDirectoryRepository.
         }
 
         [Test]

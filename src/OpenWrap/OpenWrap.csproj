@@ -171,6 +171,7 @@
     <Compile Include="Repositories\NuPack\NuPackSyndicationItem.cs" />
     <Compile Include="Repositories\PackageManagerExtensions.cs" />
     <Compile Include="Repositories\PackageRepositoryExtensions.cs" />
+    <Compile Include="Repositories\ZipPackage.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
     <Compile Include="Resolvers\RuntimeAssemblyResolver.cs" />
     <Compile Include="StringExtensions.cs" />
