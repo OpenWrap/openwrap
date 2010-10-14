@@ -10,6 +10,9 @@ namespace OpenWrap.Commands.Wrap
     [Command(Noun="wrap", Verb="list")]
     public class ListWrapCommand : AbstractCommand
     {
+        [CommandInput(Position=0)]
+        public string Query { get; set; }
+
         [CommandInput]
         public bool System { get; set; }
 
@@ -23,7 +26,13 @@ namespace OpenWrap.Commands.Wrap
             if (repoToList == null)
                 return new[] { new GenericError("Selected repository wasn't found. If you used -remote, make sure the remote repository exists.") };
 
-            return repoToList.PackagesByName.NotNull()
+            var packageList = repoToList.PackagesByName.NotNull();
+            if (!string.IsNullOrEmpty(Query))
+            {
+                var filter = Query.Wildcard();
+                packageList = packageList.Where(x => filter.IsMatch(x.Key));
+            }
+            return packageList
                     .Select(x => (ICommandOutput)new PackageDescriptionOutput(x.Key, x));
         }
 
@@ -39,9 +48,12 @@ namespace OpenWrap.Commands.Wrap
 
     public class PackageDescriptionOutput : GenericMessage
     {
+        public string PackageName { get; set; }
+
         public PackageDescriptionOutput(string packageName, IEnumerable<IPackageInfo> packageVersions)
             : base(" - {0}\r\n   Versions: {1}", packageName, string.Join(", ", packageVersions.Select(x => x.Version.ToString()).ToArray()))
         {
+            PackageName = packageName;
         }
     }
 }
