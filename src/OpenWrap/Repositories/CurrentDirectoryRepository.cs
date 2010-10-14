@@ -19,7 +19,7 @@ namespace OpenWrap.Repositories
                 return (from wrapFile in Environment.CurrentDirectory.Files("*.wrap")
                         let tempFolder = FileSystem.CreateTempDirectory()
                         select (IPackageInfo)new CachedZipPackage(this, wrapFile, tempFolder, ExportBuilders.All))
-                    .ToLookup(x=>x.Name);
+                    .ToLookup(x=>x.Name, StringComparer.OrdinalIgnoreCase);
             }
         }
 

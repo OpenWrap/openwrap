@@ -86,14 +86,16 @@ namespace OpenWrap.Repositories.Http
             {
                 try
                 {
-                    _packagesByName = _packagesQuery.Cast<IPackageInfo>().ToLookup(x => x.Name);
+                    _packagesByName = _packagesQuery
+                        .Cast<IPackageInfo>()
+                        .ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase);
                 }
                 catch
                 {
                 }
                 finally
                 {
-                    _packagesByName = _packagesByName ?? Enumerable.Empty<IPackageInfo>().ToLookup(x=>string.Empty  );
+                    _packagesByName = _packagesByName ?? Enumerable.Empty<IPackageInfo>().ToLookup(x=>string.Empty);
                 }
             }
         }

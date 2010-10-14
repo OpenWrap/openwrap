@@ -59,14 +59,14 @@ namespace OpenWrap.Repositories
 
         bool HasDependenciesConflict(IEnumerable<ResolvedDependency> resolutions)
         {
-            return resolutions.ToLookup(x => x.Package.Name).Any(x => x.Count() > 1);
+            return resolutions.ToLookup(x => x.Package.Name, StringComparer.OrdinalIgnoreCase).Any(x => x.Count() > 1);
         }
 
         IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(IEnumerable<ResolvedDependency> dependencies, ICollection<PackageDependency> rootDependencies)
         {
             var overriddenDependencies = dependencies.ToList();
 
-            foreach (var conflictingDependency in dependencies.ToLookup(x => x.Package.Name).Where(x => x.Count() > 1))
+            foreach (var conflictingDependency in dependencies.ToLookup(x => x.Package.Name, StringComparer.OrdinalIgnoreCase).Where(x => x.Count() > 1))
             {
                 var dependencyName = conflictingDependency.Key;
                 var rootDependency = rootDependencies.FirstOrDefault(x => x.Name == dependencyName);

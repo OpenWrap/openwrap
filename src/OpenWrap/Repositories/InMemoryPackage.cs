@@ -29,7 +29,7 @@ namespace OpenWrap.Repositories
         }
 
         public bool Anchored { get; set; }
-
+        
         public string Name { get; set; }
         public string Description { get; set; }
         public IPackageRepository Source { get; set; }

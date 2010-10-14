@@ -126,7 +126,7 @@
     <Compile Include="Configuration\remote-repositories\RemoteRepository.cs" />
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\DefaultPackageInfo.cs" />
-    <Compile Include="Dependencies\GreaterThenVersionVertex.cs" />
+    <Compile Include="Dependencies\GreaterThanVersionVertex.cs" />
     <Compile Include="Dependencies\StringExtensions.cs" />
     <Compile Include="IOExtensions.cs" />
     <Compile Include="Dependencies\PackageBuilder.cs" />
@@ -180,7 +180,6 @@
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="IEnvironment.cs" />
     <Compile Include="InternalServices.cs" />
-    <Compile Include="Repositories\AggregatePackageRepository.cs" />
     <Compile Include="Repositories\DependencyResolutionResult.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\Http\HttpRepositoryNavigator.cs" />

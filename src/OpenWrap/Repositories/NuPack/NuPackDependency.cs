@@ -32,7 +32,7 @@ namespace OpenWrap.Repositories.NuPack
 
         public string ToPackageDependencyLine()
         {
-            return "depends: " + new PackageDependency
+            return new PackageDependency
             {
                     Name = Id,
                     VersionVertices = CreateVersionVertices().ToList()

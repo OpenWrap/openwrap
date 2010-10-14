@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OpenWrap.Commands.Core;
@@ -24,7 +25,10 @@ namespace OpenWrap.Commands.Wrap
 
         bool? _system;
 
-        [CommandInput(DisplayName = "System", IsRequired = false, Name = "System")]
+        [CommandInput(Position=0)]
+        public string Name { get; set; }
+
+        [CommandInput]
         public bool System
         {
             get { return _system != null ? (bool)_system : false; }
@@ -33,7 +37,7 @@ namespace OpenWrap.Commands.Wrap
 
         bool? _project;
 
-        [CommandInput(IsRequired = false)]
+        [CommandInput]
         public bool Project
         {
             get { return _project == true || (_project == null && _system != true); }
@@ -70,7 +74,7 @@ namespace OpenWrap.Commands.Wrap
 
                 var resolveResult = PackageManager.TryResolveDependencies(packageToSearch, sourceRepos);
 
-                foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
+                foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.RemoteRepositories.Concat(Environment.SystemRepository)))
                     if (m is DependencyResolutionFailedResult)
                         yield return PackageNotFoundInRemote(m);
 
@@ -94,8 +98,13 @@ namespace OpenWrap.Commands.Wrap
                     .Concat(Environment.SystemRepository,
                             Environment.CurrentDirectoryRepository);
 
+            var updateDescriptor = new PackageDescriptor(Environment.Descriptor);
+            if (!string.IsNullOrEmpty(Name))
+                updateDescriptor.Dependencies = updateDescriptor.Dependencies.Where(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)).ToList();
+
+
             var resolvedPackages = PackageManager.TryResolveDependencies(
-                Environment.Descriptor,
+                updateDescriptor,
                 sourceRepos);
 
             var copyResult = PackageManager.CopyPackagesToRepositories(
@@ -104,7 +113,7 @@ namespace OpenWrap.Commands.Wrap
                     );
             foreach (var m in copyResult) yield return m;
 
-            foreach (var m in PackageManager.VerifyPackageCache(Environment, Environment.Descriptor)) yield return m;
+            foreach (var m in PackageManager.VerifyPackageCache(Environment, updateDescriptor)) yield return m;
         }
 
         GenericMessage PackageNotFoundInRemote(ICommandOutput m)
@@ -122,6 +131,7 @@ namespace OpenWrap.Commands.Wrap
             return (
                            from systemPackage in Environment.SystemRepository.PackagesByName
                            let systemPackageName = systemPackage.Key
+                           where ShouldIncludePackageInSystemUpdate(systemPackageName)
                            let maxPackageVersion = (
                                                            from versionedPackage in systemPackage
                                                            orderby versionedPackage.Version descending
@@ -134,11 +144,16 @@ namespace OpenWrap.Commands.Wrap
                                                    new PackageDependency
                                                    {
                                                            Name = systemPackageName,
-                                                           VersionVertices = { new GreaterThenVersionVertex(maxPackageVersion) }
+                                                           VersionVertices = { new GreaterThanVersionVertex(maxPackageVersion) }
                                                    }
                                            }
                            }
                    ).ToList();
+        }
+
+        bool ShouldIncludePackageInSystemUpdate(string systemPackageName)
+        {
+            return string.IsNullOrEmpty(Name) ? true : Name.Equals(systemPackageName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

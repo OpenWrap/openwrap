@@ -84,8 +84,7 @@ namespace OpenWrap.Repositories.NuPack
 
         IEnumerable<NuPackDependency> GetODataDependencies(string dependencyString)
         {
-            return 
-                   from dependency in dependencyString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            return (from dependency in dependencyString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                    let chunks = dependency.Split(':')
                    select new NuPackDependency
                    {
@@ -93,7 +92,7 @@ namespace OpenWrap.Repositories.NuPack
                            MinVersion = chunks[1],
                            MaxVersion = chunks[2],
                            Version = chunks[3]
-                   };
+                   }).ToList();
         }
 
         bool ODataNode()

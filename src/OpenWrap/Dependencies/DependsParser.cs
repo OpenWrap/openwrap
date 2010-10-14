@@ -77,7 +77,7 @@ namespace OpenWrap.Dependencies
             switch (comparator)
             {
                 case ">":
-                    return new GreaterThenVersionVertex(version);
+                    return new GreaterThanVersionVertex(version);
                 case ">=": return new GreaterThenOrEqualVersionVertex(version);
                 case "=": return new ExactVersionVertex(version);
                 case "<": return new LessThanVersionVertex(version);

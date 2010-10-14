@@ -50,7 +50,7 @@ namespace OpenWrap.Repositories
 
         public ILookup<string, IPackageInfo> PackagesByName
         {
-            get { return _packages.ToLookup(x => x.Name); }
+            get { return _packages.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
         }
 
         public IList<IPackageInfo> Packages

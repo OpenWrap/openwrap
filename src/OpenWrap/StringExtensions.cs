@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace OpenWrap
 {
@@ -84,6 +85,16 @@ namespace OpenWrap
         public static Stream ToUTF8Stream(this string value)
         {
             return new MemoryStream(Encoding.UTF8.GetBytes(value));
+        }
+        public static string Join(this IEnumerable<string> strings, string separator)
+        {
+            return string.Join(separator, strings.ToArray());
+        }
+
+        public static Regex Wildcard(this string stringValue)
+        {
+            stringValue = Regex.Escape(stringValue).Replace("\\?", ".?").Replace("\\*", ".*");
+            return new Regex("^" + stringValue + "$");
         }
     }
 }

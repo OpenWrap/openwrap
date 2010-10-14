@@ -62,7 +62,7 @@ namespace nupack_syncidcation_specs
 
             autofacMvcPackage.Dependencies
                     .ShouldHaveCountOf(1)
-                    .First().ShouldBe("depends: Autofac = 2.2.4.900");
+                    .First().ShouldBe("Autofac = 2.2.4.900");
         }
     }
     namespace context

@@ -15,12 +15,25 @@ using OpenWrap.Tests.Slow;
 
 namespace OpenWrap.Repositories.Wrap.Tests.Slow
 {
+    public class package_name_case_sensitivity : context.folder_based_repository
+    {
+        public package_name_case_sensitivity()
+        {
+            given_folder_repository_with_module("test-package");
+            when_reading_test_module_descriptor("Test-Package");
+        }
+        [Test]
+        public void package_is_found_case_insensitively()
+        {
+            Descriptor.ShouldNotBeNull();
+        }
+    }
     public class when_accessing_repositories_with_zip_files : context.folder_based_repository
     {
         public when_accessing_repositories_with_zip_files()
         {
-            given_folder_repository_with_module();
-            when_reading_test_module_descriptor();
+            given_folder_repository_with_module("test-module");
+            when_reading_test_module_descriptor("test-module");
         }
         [Test]
         public void descirptor_is_read()
@@ -56,7 +69,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
 
         public when_loading_zipped_package()
         {
-            given_folder_repository_with_module();
+            given_folder_repository_with_module("test-module");
             when_reading_test_module();
 
         }
@@ -70,7 +83,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
         }
         protected void when_reading_test_module()
         {
-            when_reading_test_module_descriptor();
+            when_reading_test_module_descriptor("test-module");
             var dependency = Descriptor.Load();
 
         }
@@ -85,13 +98,13 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
             protected PackageDependency Dependency;
             protected IFileSystem FileSystem;
 
-            protected void given_folder_repository_with_module()
+            protected void given_folder_repository_with_module(string packageName)
             {
                 FileSystem = LocalFileSystem.Instance;
                 RepositoryPath = FileSystem.CreateTempDirectory();
                 PackageBuilder.NewWithDescriptor(
-                    RepositoryPath.GetFile("test-module-1.0.0.wrap"), 
-                    "test-module",
+                    RepositoryPath.GetFile(packageName + "-1.0.0.wrap"), 
+                    packageName,
                     "1.0.0",
                     "depends: nhibernate-core = 2.1"
                     );
@@ -99,9 +112,9 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
                 Repository = new FolderRepository(RepositoryPath);
             }
 
-            protected void when_reading_test_module_descriptor()
+            protected void when_reading_test_module_descriptor(string packageName)
             {
-                Descriptor = Repository.PackagesByName["test-module"].FirstOrDefault();
+                Descriptor = Repository.PackagesByName[packageName].FirstOrDefault();
 
                 Dependency = Descriptor.Dependencies.FirstOrDefault();
             }
