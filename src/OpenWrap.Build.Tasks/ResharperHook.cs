@@ -29,10 +29,13 @@ namespace OpenWrap.Build.Tasks
             var unimportantType = Type.GetType("JetBrains.Application.Shell, JetBrains.Platform.ReSharper.Shell");
             if (unimportantType == null) return null;
 
-            var version = unimportantType.Assembly.GetName().Version;
-            Type resharperIntegratorType;
-            if (!_integrationTypes.TryGetValue(version, out resharperIntegratorType))
-                return null;
+            var installedVersion = unimportantType.Assembly.GetName().Version;
+            var resharperIntegratorType = (from supportedResharperVersion in _integrationTypes.Keys
+                                            orderby supportedResharperVersion descending
+                                            where installedVersion >= supportedResharperVersion
+                                            select _integrationTypes[supportedResharperVersion]).FirstOrDefault();
+
+            if (resharperIntegratorType == null) return null;
 
             var instance = Activator.CreateInstance(resharperIntegratorType, environment);
             resharperIntegratorType.GetMethod("TryAddNotifier").Invoke(instance, new object[] { descriptorPath, packageRepository, projectFilePath, excludedAssemblies });
