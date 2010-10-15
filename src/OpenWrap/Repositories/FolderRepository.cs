@@ -99,6 +99,7 @@ namespace OpenWrap.Repositories
             get;
             set;
         }
+
         public IEnumerable<IPackageInfo> VerifyAnchors(IEnumerable<IPackageInfo> packagesToAnchor)
         {
             if (!EnableAnchoring)
@@ -124,7 +125,7 @@ namespace OpenWrap.Repositories
                         packageDirectory.LinkTo(anchoredPath.FullPath);
 
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         failed.Add(package);
                         success = false;
@@ -135,7 +136,7 @@ namespace OpenWrap.Repositories
                         {
                             anchoredDirectory.FileSystem.GetDirectory(temporaryDirectoryPath).Delete();
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             failed.Add(package);
                         }

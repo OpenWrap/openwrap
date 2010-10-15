@@ -15,5 +15,7 @@ namespace OpenWrap.Repositories
         string Description { get; }
         DateTimeOffset CreationTime { get; }
         bool Anchored { get; }
+
+        bool Nuked { get; }
     }
 }

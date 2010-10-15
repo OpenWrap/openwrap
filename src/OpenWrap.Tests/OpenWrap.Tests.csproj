@@ -4,7 +4,7 @@
     <OpenWrap-ExportName>tests</OpenWrap-ExportName>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -65,10 +65,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\Microsoft.Build.Engine.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework, Version=2.5.5.10112, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+    <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\nunit-2.5.5\nunit.framework.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -100,6 +99,7 @@
     <Compile Include="Commands\Wrap\initWrapCommand.cs" />
     <Compile Include="Commands\Wrap\cleanWrapCommand.cs" />
     <Compile Include="Commands\Wrap\listWrapCommand.cs" />
+    <Compile Include="Commands\Wrap\nukeWrapCommand.cs" />
     <Compile Include="Commands\Wrap\publishWrapCommand.cs" />
     <Compile Include="Commands\Wrap\removeWrapCommand.cs" />
     <Compile Include="Commands\setupWrapCommand.cs" />
@@ -109,6 +109,7 @@
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\anchored_dependencies.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
+    <Compile Include="Dependencies\nuked_package_resolution.cs" />
     <Compile Include="Dependencies\OverrideParser_Specification.cs" />
     <Compile Include="Dependencies\PackageDependency_specs.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />

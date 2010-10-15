@@ -80,6 +80,8 @@ namespace OpenWrap.Repositories
 
         protected DefaultPackageInfo Descriptor { get; set; }
 
+        public bool Nuked { get { return false; } }
+
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
             var exporter =

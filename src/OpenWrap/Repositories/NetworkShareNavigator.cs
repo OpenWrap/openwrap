@@ -53,7 +53,6 @@ namespace OpenWrap.Repositories
 
         public PackageDocument Index()
         {
-            
             return IndexDocument.ParsePackageDocument();
         }
 
@@ -91,6 +90,29 @@ namespace OpenWrap.Repositories
             
             return;
             
+        }
+
+        internal void Nuke(IPackageInfo packageInfo)
+        {
+            if (packageInfo.Nuked)
+                throw new InvalidOperationException("The package has already been nuked.");
+
+            var packageVersionNode = (from node in IndexDocument.Descendants("wrap")
+                                      let versionAttribute = node.Attribute("version")
+                                      let nameAttribute = node.Attribute("name")
+                                      where nameAttribute != null && nameAttribute.Value.EqualsNoCase(packageInfo.Name) &&
+                                            versionAttribute != null && versionAttribute.Value.Equals(packageInfo.Version.ToString())
+                                      select node).FirstOrDefault();
+
+            if (packageVersionNode == null)
+                throw new InvalidOperationException(
+                    String.Format("The package {0} {1} does not exist in the index.",
+                                  packageInfo.Name, packageInfo.Version));
+
+            packageVersionNode.Add(new XAttribute("nuked", true));
+
+            SaveIndex(IndexDocument);
+
         }
     }
 }

@@ -8,13 +8,13 @@ using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories
 {
-    public abstract class ZipPackage : IPackageInfo
+    public class ZipPackage : IPackageInfo
     {
-        protected IFile _packageFile;
+        public IFile PackageFile { get; set; }
 
         protected ZipPackage(IFile packageFile)
         {
-            _packageFile = packageFile;
+            PackageFile = packageFile;
         }
 
         public bool Anchored
@@ -22,9 +22,14 @@ namespace OpenWrap.Repositories
             get { return Descriptor.Anchored; }
         }
 
+        public bool Nuked
+        {
+            get { return Descriptor.Nuked; }
+        }
+
         public DateTimeOffset CreationTime
         {
-            get { return _packageFile.LastModifiedTimeUtc != null ? new DateTimeOffset(_packageFile.LastModifiedTimeUtc.Value) : DateTimeOffset.UtcNow; }
+            get { return PackageFile.LastModifiedTimeUtc != null ? new DateTimeOffset(PackageFile.LastModifiedTimeUtc.Value) : DateTimeOffset.UtcNow; }
         }
 
         public ICollection<PackageDependency> Dependencies
@@ -65,23 +70,26 @@ namespace OpenWrap.Repositories
             get { return Descriptor.Version; }
         }
 
-        public abstract IPackage Load();
+        public virtual IPackage Load()
+        {
+            return null;
+        }
 
         void LoadDescriptor()
         {
-            using (Stream zipStream = _packageFile.OpenRead())
+            using (Stream zipStream = PackageFile.OpenRead())
             using (var zip = new ZipFile(zipStream))
             {
                 IEnumerable<ZipEntry> entries = zip.Cast<ZipEntry>();
                 ZipEntry descriptorFile = entries.FirstOrDefault(x => x.Name.EndsWith(".wrapdesc"));
                 if (descriptorFile == null)
-                    throw new InvalidOperationException(String.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", _packageFile.Name));
+                    throw new InvalidOperationException(String.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", PackageFile.Name));
 
                 ZipEntry versionFile = entries.SingleOrDefault(x => x.Name.Equals("version", StringComparison.OrdinalIgnoreCase));
                 Version versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().ToVersion()) : null;
                 PackageDescriptor descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReaderWriter().Read(x));
 
-                _descriptor = new DefaultPackageInfo(_packageFile.Name, versionFromVersionFile, descriptor);
+                _descriptor = new DefaultPackageInfo(PackageFile.Name, versionFromVersionFile, descriptor);
 
                 if (Descriptor.Version == null)
                     throw new InvalidOperationException("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.");

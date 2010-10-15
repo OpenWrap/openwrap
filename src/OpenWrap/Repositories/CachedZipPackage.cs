@@ -23,19 +23,19 @@ namespace OpenWrap.Repositories
             _cacheDirectoryPathPath = cacheDirectoryPath;
             _builders = builders;
         }
-
+        
         public override IPackage Load()
         {
             if (_cachedPackage == null)
             {
-                ExtractPackage(_packageFile, _cacheDirectoryPathPath);
+                ExtractPackage(PackageFile, _cacheDirectoryPathPath);
 
-                _cachedPackage = new UncompressedPackage(Source, _packageFile, _cacheDirectoryPathPath, _builders);
+                _cachedPackage = new UncompressedPackage(Source, PackageFile, _cacheDirectoryPathPath, _builders);
             }
             return _cachedPackage;
         }
         // TODO: Replace with clean OFS-based zip methods
-        void ExtractPackage(IFile wrapFile, IDirectory destinationDirectory)
+        static void ExtractPackage(IFile wrapFile, IDirectory destinationDirectory)
         {
             var nt = new WindowsNameTransform(destinationDirectory.Path.FullPath);
             using (var zipFile = new ZipFile(wrapFile.OpenRead()))

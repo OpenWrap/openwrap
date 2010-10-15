@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
-using OpenWrap.Repositories;using OpenWrap.Services;
+using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {

@@ -40,6 +40,8 @@ namespace OpenWrap.Dependencies
         public string Description { get; set; }
         public bool UseProjectRepository { get; set; }
 
+        public bool Nuked { get { return false; } }
+
         public IPackage Load()
         {
             return null;

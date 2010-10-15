@@ -56,5 +56,39 @@ namespace OpenWrap.Dependencies
                 returnValue += " " + string.Join(" ", Tags.ToArray());
             return returnValue;
         }
+
+        internal bool IsExactlyFulfilledBy(Version version)
+        {
+            bool exactlyFulfilled = false;
+            if (VersionVertices.Count() == 1)
+            {
+                var thisVersion = VersionVertices.FirstOrDefault();
+                if (thisVersion is ExactVersionVertex)
+                {
+                    // only exactly fulfilled if both are of the same length
+                    if (thisVersion.Version.Major
+                        == version.Major
+                        && thisVersion.Version.Minor
+                        == version.Minor
+                        && thisVersion.Version.Build
+                        == version.Build
+                        && thisVersion.Version.Revision == -1
+                        && version.Revision == -1)
+                    {
+                        exactlyFulfilled = true;
+                    }
+
+                }
+                
+
+            }
+            return exactlyFulfilled;
+        }
+
+        bool IsExact()
+        {
+            return VersionVertices.Count() == 1 
+                && VersionVertices.First() is ExactVersionVertex;
+        }
     }
 }

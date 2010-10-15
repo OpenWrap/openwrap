@@ -31,4 +31,9 @@ namespace OpenWrap.Repositories
     {
         IEnumerable<IPackageInfo> VerifyAnchors(IEnumerable<IPackageInfo> packagesToAnchor);
     }
+
+    public interface ISupportNuking : IPackageRepository
+    {
+        void Nuke(IPackageInfo packageInfo);
+    }
 }

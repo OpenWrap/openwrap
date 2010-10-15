@@ -31,6 +31,7 @@ namespace OpenWrap.Repositories.Http
                     Packages = from wrapList in xmlDocument.Descendants("wrap")
                                let name = wrapList.Attribute("name")
                                let version = wrapList.Attribute("version")
+                               let nuked = wrapList.Attribute("nuked")
                                let lastModifiedTimeUtc = GetModifiedTimeUtc(wrapList.Attribute("last-modified-time-utc"))
                                let link = (from link in wrapList.Elements("link")
                                            let relAttribute = link.Attribute("rel")
@@ -47,9 +48,19 @@ namespace OpenWrap.Repositories.Http
                                        Version = new Version(version.Value),
                                        PackageHref = absoluteLink,
                                        Dependencies = depends,
-                                       CreationTime = lastModifiedTimeUtc
+                                       CreationTime = lastModifiedTimeUtc,
+                                       Nuked = nuked == null ? false : GetNuked(nuked.Value)
                                }
             };
+        }
+
+        static bool GetNuked(string s)
+        {
+            bool b;
+            if (Boolean.TryParse(s, out b))
+                return b;
+            else
+                return false;
         }
 
         static Uri GetPublishHref(XDocument xmlDocument)

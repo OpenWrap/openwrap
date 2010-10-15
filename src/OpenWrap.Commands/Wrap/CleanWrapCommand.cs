@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,20 +25,6 @@ namespace OpenWrap.Commands.Wrap
         {
             get { return _project ?? false; }
             set { _project = value; }
-        }
-
-        protected IEnvironment Environment { get; private set; }
-        protected IPackageManager PackageManager { get; private set; }
-
-        public CleanWrapCommand()
-            : this(Services.Services.GetService<IEnvironment>(),Services.Services.GetService<IPackageManager>())
-        {
-        }
-
-        public CleanWrapCommand(IEnvironment environment, IPackageManager packageManager)
-        {
-            Environment = environment;
-            PackageManager = packageManager;
         }
 
         public override IEnumerable<ICommandOutput> Execute()
