@@ -8,7 +8,7 @@ using OpenFileSystem.IO;
 
 namespace OpenWrap.Repositories.Http
 {
-    public class HttpRepository : IPackageRepository
+    public class HttpRepository : IPackageRepository, ISupportPublishing
     {
         readonly IHttpRepositoryNavigator _navigator;
 

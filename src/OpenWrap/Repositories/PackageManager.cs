@@ -69,7 +69,7 @@ namespace OpenWrap.Repositories
             foreach (var conflictingDependency in dependencies.ToLookup(x => x.Package.Name, StringComparer.OrdinalIgnoreCase).Where(x => x.Count() > 1))
             {
                 var dependencyName = conflictingDependency.Key;
-                var rootDependency = rootDependencies.FirstOrDefault(x => x.Name == dependencyName);
+                var rootDependency = rootDependencies.FirstOrDefault(x => x.Name.EqualsNoCase(dependencyName));
                 if (rootDependency == null)
                     continue;
                 var rescuedDependency = conflictingDependency.OrderByDescending(x => x.Package.Version).FirstOrDefault(x => rootDependency.IsFulfilledBy(x.Package.Version));

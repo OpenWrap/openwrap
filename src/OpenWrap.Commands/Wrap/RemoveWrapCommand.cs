@@ -32,7 +32,7 @@ namespace OpenWrap.Commands.Wrap
 
         PackageDependency FindDependencyByName()
         {
-            return Environment.Descriptor.Dependencies.FirstOrDefault(d => d.Name == Name);
+            return Environment.Descriptor.Dependencies.FirstOrDefault(d => d.Name.EqualsNoCase(Name));
         }
 
         static IEnvironment Environment

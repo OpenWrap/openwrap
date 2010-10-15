@@ -25,7 +25,7 @@ namespace OpenWrap.Commands.Wrap
 
         bool? _system;
 
-        [CommandInput(Position=0)]
+        [CommandInput(Position = 0)]
         public string Name { get; set; }
 
         [CommandInput]
@@ -107,20 +107,35 @@ namespace OpenWrap.Commands.Wrap
                 updateDescriptor,
                 sourceRepos);
 
+            if (!resolvedPackages.IsSuccess)
+                yield return FailedUpdate(resolvedPackages);
+
             var copyResult = PackageManager.CopyPackagesToRepositories(
-                    resolvedPackages,
-                    Environment.RepositoriesForWrite()
-                    );
+                resolvedPackages,
+                Environment.RepositoriesForWrite()
+                );
             foreach (var m in copyResult) yield return m;
 
             foreach (var m in PackageManager.VerifyPackageCache(Environment, updateDescriptor)) yield return m;
+        }
+
+        ICommandOutput FailedUpdate(DependencyResolutionResult resolvedPackages)
+        {
+            // try to find conflicting resolutions
+            var t = from dependency in resolvedPackages.Dependencies.GroupBy(x => x.Dependency.Name, StringComparer.OrdinalIgnoreCase)
+                    where dependency.Count() > 1
+                    select dependency;
+            if (t.Count() > 0)
+                return new DependenciesConflictMessage(t.ToList());
+
+            return new GenericError("An unkown update error has occured.");
         }
 
         GenericMessage PackageNotFoundInRemote(ICommandOutput m)
         {
             return new GenericMessage("Package '{0}' doesn't exist in any remote repository.", ((DependencyResolutionFailedResult)m).Result.Dependencies.First().Dependency.Name)
             {
-                    Type = CommandResultType.Warning
+                Type = CommandResultType.Warning
             };
         }
 
@@ -154,6 +169,24 @@ namespace OpenWrap.Commands.Wrap
         bool ShouldIncludePackageInSystemUpdate(string systemPackageName)
         {
             return string.IsNullOrEmpty(Name) ? true : Name.Equals(systemPackageName, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    internal class DependenciesConflictMessage : GenericError
+    {
+        public List<IGrouping<string, ResolvedDependency>> ConflictingPackages { get; set; }
+
+        public DependenciesConflictMessage(List<IGrouping<string, ResolvedDependency>> packageNames)
+        {
+            ConflictingPackages = packageNames;
+            this.Type = CommandResultType.Error;
+        }
+        public override string ToString()
+        {
+            return "The following packages have conflicting dependencies:\r\n"
+                   + ConflictingPackages.Select(x => 
+                       x.Key + " versions: " + x.Select(y=>y.Package.Version.ToString()).Join(", ")
+                             ).Join(Environment.NewLine);
         }
     }
 }

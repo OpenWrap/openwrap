@@ -9,7 +9,7 @@ namespace OpenWrap.Dependencies.Parsers
 
         protected override void ParseContent(string content, PackageDescriptor descriptor)
         {
-            descriptor.Anchored = string.Compare(content.Trim(), "true", StringComparison.OrdinalIgnoreCase) == 0;
+            descriptor.Anchored = content.Trim().EqualsNoCase("true");
         }
         protected override IEnumerable<string> WriteContent(PackageDescriptor descriptor)
         {

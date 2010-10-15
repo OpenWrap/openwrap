@@ -47,8 +47,8 @@ namespace OpenWrap.Commands
 
         public ICommandDescriptor Get(string @namespace, string name)
         {
-            return _commands.Single(x => string.Compare(x.Noun, @namespace, StringComparison.OrdinalIgnoreCase) == 0
-                                         && string.Compare(x.Verb, name, StringComparison.OrdinalIgnoreCase) == 0);
+            return _commands.Single(x => x.Noun.EqualsNoCase(@namespace)
+                                         && x.Verb.EqualsNoCase(name));
         }
 
         IEnumerator<ICommandDescriptor> IEnumerable<ICommandDescriptor>.GetEnumerator()

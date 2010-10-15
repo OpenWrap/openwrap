@@ -28,4 +28,21 @@ namespace listWrap_specs
                     .First().PackageName.ShouldBe("one-ring");
         }
     }
+    public class filtering_project_with_different_casing : command_context<ListWrapCommand>
+    {
+        public filtering_project_with_different_casing()
+        {
+            given_project_package("one-ring", new Version("1.0"));
+            given_dependency("depends: one-ring");
+
+            when_executing_command("*Rin*");
+        }
+        [Test]
+        public void casing_is_ignored()
+        {
+            Results.OfType<PackageDescriptionOutput>()
+                    .ShouldHaveCountOf(1)
+                    .First().PackageName.ShouldBe("one-ring");
+        }
+    }
 }

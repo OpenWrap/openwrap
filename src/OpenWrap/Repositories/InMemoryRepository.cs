@@ -68,7 +68,7 @@ namespace OpenWrap.Repositories
             var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
                                                ? Path.GetFileNameWithoutExtension(packageFileName)
                                                : packageFileName;
-            if (_packages.Any(x=>x.FullName == fileWithoutExtension))
+            if (_packages.Any(x=>x.FullName.EqualsNoCase(fileWithoutExtension)))
                 throw new InvalidOperationException("Package already exists in repository.");
 
             var inMemoryFile = new InMemoryFile("c:\\" + Guid.NewGuid());

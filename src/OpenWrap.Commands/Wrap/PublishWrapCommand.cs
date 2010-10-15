@@ -54,7 +54,7 @@ namespace OpenWrap.Commands.Wrap
             _remoteRepository = namedRepository as ISupportPublishing;
             
             if (_remoteRepository == null)
-                yield return new GenericError("Cannot publish to repository '{0}'.", namedRepository.Name);
+                yield return new GenericError("Repository '{0}' doesn't support publishing.", namedRepository.Name);
 
             if (Path != null)
             {

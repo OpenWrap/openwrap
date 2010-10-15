@@ -94,7 +94,16 @@ namespace OpenWrap
         public static Regex Wildcard(this string stringValue)
         {
             stringValue = Regex.Escape(stringValue).Replace("\\?", ".?").Replace("\\*", ".*");
-            return new Regex("^" + stringValue + "$");
+            return new Regex("^" + stringValue + "$", RegexOptions.IgnoreCase);
+        }
+        public static bool EqualsNoCase(this string value, string valueToCompare)
+        {
+            if (value == null) return valueToCompare == null;
+            return value.Equals(valueToCompare, StringComparison.OrdinalIgnoreCase);
+        }
+        public static bool EndsWithNoCase(this string value, string valueToCompare)
+        {
+            return value.EndsWith(valueToCompare, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -89,7 +89,7 @@ namespace OpenWrap.Commands.Wrap
 
         PackageDescriptor GetCurrentPackageDescriptor()
         {
-            foreach (var file in _buildResults.Where(x => x.ExportName == "." && x.FileName.EndsWith(".wrapdesc")).ToList())
+            foreach (var file in _buildResults.Where(x => x.ExportName == "." && x.FileName.EndsWithNoCase(".wrapdesc")).ToList())
                 _buildResults.Remove(file);
 
             return Environment.Descriptor;
@@ -167,7 +167,7 @@ namespace OpenWrap.Commands.Wrap
 
         bool IsVersion(FileBuildResult build)
         {
-            return build.ExportName == "." && build.FileName.Equals("version", StringComparison.OrdinalIgnoreCase);
+            return build.ExportName == "." && build.FileName.EqualsNoCase("version");
         }
         Version GetVersionFromVersionFiles(IList<FileBuildResult> buildFiles)
         {

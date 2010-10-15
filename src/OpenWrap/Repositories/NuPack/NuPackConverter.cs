@@ -63,7 +63,7 @@ namespace OpenWrap.Repositories.NuPack
                     foreach (var entry in inputZip.Cast<ZipEntry>().Where(x => x.IsFile))
                     {
                         var segments = entry.Name.Split('/');
-                        if (segments.Length == 1 && Path.GetExtension(entry.Name).Equals(".nuspec", StringComparison.OrdinalIgnoreCase))
+                        if (segments.Length == 1 && Path.GetExtension(entry.Name).EqualsNoCase(".nuspec"))
                             yield return ConvertSpecification(inputZip, entry);
                         else if (segments.Length > 2 && segments[0].Equals("lib", StringComparison.OrdinalIgnoreCase))
                             if ((content = ConvertAssembly(segments, inputZip, entry)) != null)
