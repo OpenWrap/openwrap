@@ -66,5 +66,19 @@ namespace OpenWrap.Repositories
         {
             return _zip.GetInputStream(_entry);
         }
+
+        #region IFileSystemItem Members
+
+        public void CopyTo(IFileSystemItem item)
+        {
+            
+        }
+
+        public void MoveTo(IFileSystemItem item)
+        {
+            
+        }
+
+        #endregion
     }
 }

@@ -97,8 +97,13 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> CleanRepository(ISupportCleaning repository, IEnumerable<IPackageInfo> packagesToKeep)
         {
-            foreach (var removedRepo in repository.Clean(packagesToKeep))
-                yield return new GenericMessage("Removed package '{0}'.", removedRepo.FullName);
+            foreach (var package in repository.Clean(packagesToKeep))
+            {
+                if (package.Success)
+                    yield return new GenericMessage("Package '{0}' removed.", package.Package.FullName);
+                else
+                    yield return new GenericMessage("Package '{0}' could not be removed, possibly because a file is still in use. If you use Visual Studio, try closing it and retrying.", package.Package.FullName);
+            }
             repository.RefreshAnchors(PackageManager.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository }));
         }
     }

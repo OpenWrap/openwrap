@@ -2,4 +2,4 @@
 depends: sharpziplib
 depends: openwrap content
 anchored: true
-version: 1.0.0.18871048
+version: 1.0.0.19021568

@@ -91,5 +91,19 @@ namespace OpenWrap
             var bytes = encoding.GetBytes(text);
             stream.Write(bytes,0,bytes.Length);
         }
+        public static bool TryDelete(this IDirectory directory)
+        {
+            try
+            {
+                var directoryToDelete = directory.Parent.GetDirectory(directory.Name + ".old");
+                directory.MoveTo(directoryToDelete);
+                directoryToDelete.Delete();
+                return true;
+            }
+            catch(IOException)
+            {
+                return false;
+            }
+        }
     }
 }

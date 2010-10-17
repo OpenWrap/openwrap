@@ -150,7 +150,7 @@ namespace OpenWrap.Repositories
             return failed;
         }
 
-        public IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKeep)
+        public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
         {
             packagesToKeep = packagesToKeep.ToList();
             var packagesToRemove = Packages.Where(x => !packagesToKeep.Contains(x.Package)).ToList();
@@ -159,15 +159,31 @@ namespace OpenWrap.Repositories
                 if (!Packages.Contains(packageInfo))
                     throw new ArgumentException("Supplied packageInfo must belong to the FolderRepository.", "packageInfo");
 
-                Packages.Remove(packageInfo);
-                packageInfo.CacheDirectory.Delete();
+                if (packageInfo.CacheDirectory.TryDelete())
+                {
+                    Packages.Remove(packageInfo);
 
-                BasePath.GetFile(packageInfo.Package.FullName + ".wrap").Delete();
-
-                yield return packageInfo.Package;
+                    BasePath.GetFile(packageInfo.Package.FullName + ".wrap").Delete();
+                    yield return new PackageCleanResult(packageInfo.Package, true);
+                }
+                else
+                {
+                    yield return new PackageCleanResult(packageInfo.Package, false);
+                }
             }
         }
 
+    }
+    public class PackageCleanResult
+    {
+        public PackageCleanResult(IPackageInfo package, bool success)
+        {
+            Package = package;
+            Success = success;
+        }
+
+        public IPackageInfo Package { get; private set; }
+        public bool Success { get; private set; }
     }
 
 }

@@ -31,11 +31,11 @@ namespace OpenWrap.Repositories
             get; set;
         }
 
-        public IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKeep)
+        public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
         {
             var packagesToRemove = _packages.Where(x => !packagesToKeep.Contains(x)).ToList();
             _packages = packagesToKeep.ToList();
-            return packagesToRemove;
+            return packagesToRemove.Select(x=>new PackageCleanResult(x, true));
         }
 
         public bool CanDelete

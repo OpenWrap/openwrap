@@ -24,7 +24,7 @@ namespace OpenWrap.Repositories
         /// </summary>
         /// <param name="packagesToKeep"></param>
         /// <returns>The packages that were removed from the repository</returns>
-        IEnumerable<IPackageInfo> Clean(IEnumerable<IPackageInfo> packagesToKeep);
+        IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep);
     }
 
     public interface ISupportAnchoring : IPackageRepository
