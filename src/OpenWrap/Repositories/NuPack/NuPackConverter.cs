@@ -105,7 +105,6 @@ namespace OpenWrap.Repositories.NuPack
             var nuPackFxVersion = profile == null ? identifier : identifier.Substring(profile.Length);
             var version = FrameworkVersions.Keys.FirstOrDefault(x => nuPackFxVersion.Equals(x, StringComparison.OrdinalIgnoreCase));
 
-            if (profile == null && version == null) return null;
             return "bin-" + (profile ?? "net") + (version ?? "20");
         }
 
