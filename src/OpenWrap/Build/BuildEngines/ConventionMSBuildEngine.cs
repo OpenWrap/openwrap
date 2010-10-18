@@ -63,7 +63,7 @@ namespace OpenWrap.Build.BuildEngines
                     {
                             RedirectStandardOutput = true,
                             FileName = GetMSBuildExecutableName(),
-                            Arguments = project.Path.FullPath + " /p:OpenWrap-EmitOutputInstructions=true",
+                            Arguments = "\"" + project.Path.FullPath + "\" /p:OpenWrap-EmitOutputInstructions=true",
                             UseShellExecute = false
                     }
             };
