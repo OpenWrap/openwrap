@@ -45,7 +45,7 @@ namespace OpenWrap.Dependencies
             {
                     Name = bits[0],
                     VersionVertices = versions.Count > 0 ? versions : new List<VersionVertex>() { new AnyVersionVertex() },
-                    Tags = tags.ToArray(),
+                    Tags = tags.ToList(),
             };
         }
 
