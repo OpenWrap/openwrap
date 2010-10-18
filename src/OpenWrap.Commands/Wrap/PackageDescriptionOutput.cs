@@ -9,9 +9,19 @@ namespace OpenWrap.Commands.Wrap
         public string PackageName { get; set; }
 
         public PackageDescriptionOutput(string packageName, IEnumerable<IPackageInfo> packageVersions)
-                : base(" - {0}\r\n   Versions: {1}", packageName, string.Join(", ", packageVersions.Select(x => x.Version.ToString()).ToArray()))
+                : base(" - {0} (versions: {1})", packageName, CreateVersionOutput(packageVersions))
         {
             PackageName = packageName;
+        }
+
+        static string CreateVersionOutput(IEnumerable<IPackageInfo> packageVersions)
+        {
+            return packageVersions.Select(VersionIdentifier).Join(", ");
+        }
+
+        static string VersionIdentifier(IPackageInfo x)
+        {
+            return x.Version.ToString() + (x.Nuked ? " [nuked]" : string.Empty);
         }
     }
 }
