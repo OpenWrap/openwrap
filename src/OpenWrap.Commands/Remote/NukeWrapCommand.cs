@@ -36,14 +36,14 @@ namespace OpenWrap.Commands.Remote
             var nukingRepo = repo as ISupportNuking;
             if (nukingRepo == null)
             {
-                yield return new GenericError("The remote repository {0} does not support nuking.", RemoteRepository);
+                yield return new Error("The remote repository {0} does not support nuking.", RemoteRepository);
                 yield break;
             }
 
             var packagesOfName = repo.PackagesByName[WrapName];
             if(!packagesOfName.Any())
             {
-                yield return new GenericError("The remote repository {0} does not contain any package called {1}.", 
+                yield return new Error("The remote repository {0} does not contain any package called {1}.", 
                     RemoteRepository,
                     WrapName);
                 yield break;
@@ -54,7 +54,7 @@ namespace OpenWrap.Commands.Remote
             
             if(packageToNuke == null)
             {
-                yield return new GenericError("The package {0} does not have a version {1} in the remote repository {2}.", 
+                yield return new Error("The package {0} does not have a version {1} in the remote repository {2}.", 
                     WrapName,
                     Version,
                     RemoteRepository);

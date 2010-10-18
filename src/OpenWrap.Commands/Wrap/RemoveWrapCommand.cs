@@ -20,7 +20,7 @@ namespace OpenWrap.Commands.Wrap
             var dependency = FindDependencyByName();
             if (dependency == null)
             {
-                yield return new GenericError("Dependency not found: " + Name);
+                yield return new Error("Dependency not found: " + Name);
                 yield break;
             }
 

@@ -41,7 +41,7 @@ namespace OpenWrap.Commands.Wrap
         {
             if (_remoteRepository.HasPackage(_packageName, _packageVersion.ToString()))
             {
-                yield return new GenericError("The package '{0}' already exists. Please create a new version before uploading.", _packageFileName);
+                yield return new Error("The package '{0}' already exists. Please create a new version before uploading.", _packageFileName);
             }
         }
 
@@ -54,7 +54,7 @@ namespace OpenWrap.Commands.Wrap
             _remoteRepository = namedRepository as ISupportPublishing;
             
             if (_remoteRepository == null)
-                yield return new GenericError("Repository '{0}' doesn't support publishing.", namedRepository.Name);
+                yield return new Error("Repository '{0}' doesn't support publishing.", namedRepository.Name);
 
             if (Path != null)
             {
@@ -75,7 +75,7 @@ namespace OpenWrap.Commands.Wrap
                 // get latest version of the Named package
                 if (!Environment.CurrentDirectoryRepository.PackagesByName.Contains(Name))
                 {
-                    yield return new GenericError("No package named '{0}' was found.");
+                    yield return new Error("No package named '{0}' was found.");
                     yield break;
                 }
                 var packageToCopy = Environment.CurrentDirectoryRepository.PackagesByName[Name].OrderByDescending(x=>x.Version).First();
@@ -86,7 +86,7 @@ namespace OpenWrap.Commands.Wrap
             }
             else
             {
-                yield return new GenericError("Please specify either a file path using the -Path input, or a name using -Name.");
+                yield return new Error("Please specify either a file path using the -Path input, or a name using -Name.");
             }
         }
         IEnumerable<ICommandOutput> ExecuteCore()

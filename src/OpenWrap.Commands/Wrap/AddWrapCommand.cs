@@ -148,7 +148,7 @@ namespace OpenWrap.Commands.Wrap
             }
             if (File.Exists(Name))
             {
-                return new GenericError("You have given a path to a .wrap file that is not in the current directory but exists on disk. This is not currently supported. Go to the directory, and re-issue the command.");
+                return new Error("You have given a path to a .wrap file that is not in the current directory but exists on disk. This is not currently supported. Go to the directory, and re-issue the command.");
             }
             return null;
         }

@@ -9,10 +9,14 @@ namespace OpenWrap.Commands
         CommandResultType Type { get; }
     }
     public static class CommandOutputExtensions
-{
-    public static bool Success(this ICommandOutput output)
     {
-        return output.Type != CommandResultType.Error;
+        public static bool Success(this ICommandOutput output)
+        {
+            return output.Type != CommandResultType.Error;
+        }
+        public static bool Error(this ICommandOutput output)
+        {
+            return output.Type == CommandResultType.Error;
+        }
     }
-}
 }

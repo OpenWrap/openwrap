@@ -43,13 +43,13 @@ namespace OpenWrap.Commands.Remote
         IEnumerable<ICommandOutput> NameAlreadyExists()
         {
             if (ConfigurationManager.LoadRemoteRepositories().ContainsKey(Name))
-                yield return new GenericError("A repository with the name '{0}' already exists.", Name);
+                yield return new Error("A repository with the name '{0}' already exists.", Name);
         }
 
         IEnumerable<ICommandOutput> InvalidName()
         {
             if (!NameIsValid)
-                yield return new GenericError("The 'Name' parameter is invalid.");
+                yield return new Error("The 'Name' parameter is invalid.");
         }
 
         protected bool NameIsValid

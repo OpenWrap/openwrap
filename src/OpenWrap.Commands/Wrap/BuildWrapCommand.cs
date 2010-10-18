@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+using System;
 using System.Linq;
 using System.Text;
 using OpenFileSystem.IO;
@@ -59,7 +59,7 @@ namespace OpenWrap.Commands.Wrap
             var generatedVersion = GetPackageVersion(_buildResults, packageDescriptorForEmbedding);
 
             if (generatedVersion == null)
-                yield return new GenericError("Could not build package, no version found.");
+                yield return new Error("Could not build package, no version found.");
 
             packageDescriptorForEmbedding.Version = generatedVersion;
             packageDescriptorForEmbedding.Name = packageName;
@@ -124,7 +124,7 @@ namespace OpenWrap.Commands.Wrap
                 }
                 else if (t is ErrorBuildResult)
                 {
-                    yield return new GenericError(t.Message);
+                    yield return new Error(t.Message);
                     yield break;
                 }
             }
@@ -220,7 +220,7 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput NoDescriptorFound()
         {
             return Environment.Descriptor == null
-                           ? new GenericError("Could not find a wrap descriptor. Are you in a project directory?")
+                           ? new Error("Could not find a wrap descriptor. Are you in a project directory?")
                            : null;
         }
 
@@ -240,7 +240,7 @@ namespace OpenWrap.Commands.Wrap
             {
                 _destinationPath = FileSystem.GetDirectory(Path);
                 if (_destinationPath.Exists == false)
-                    return new GenericError("Path '{0}' doesn't exist.", Path);
+                    return new Error("Path '{0}' doesn't exist.", Path);
             }
             return null;
         }

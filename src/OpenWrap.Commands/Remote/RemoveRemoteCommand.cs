@@ -36,7 +36,7 @@ namespace OpenWrap.Commands.Remote
         IEnumerable<ICommandOutput> NameDoesntExist()
         {
             if (!ConfigurationManager.LoadRemoteRepositories().ContainsKey(Name))
-                yield return new GenericError("Remote repository '{0}' not found.", Name);
+                yield return new Error("Remote repository '{0}' not found.", Name);
         }
     }
 }

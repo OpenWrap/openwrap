@@ -4,14 +4,15 @@ namespace OpenWrap.Commands
 {
     public class GenericMessage : ICommandOutput
     {
+        protected string DefaultMessage { get; set; }
         public string Message { get; private set; }
-        protected string MessageFormat { get; set; }
         protected object[] MessageArguments { get; set; }
 
         public GenericMessage(string message, params object[] args)
         {
-            MessageFormat = message;
+            Message = message;
             MessageArguments = args;
+            DefaultMessage = "An unknown message was sent.";
         }
         
         public GenericMessage(string message)
@@ -19,22 +20,23 @@ namespace OpenWrap.Commands
             Message = message;
             Type = CommandResultType.Info;
         }
-        
-        public bool Success
+        protected GenericMessage(string message, object[] args, string defaultMessage, CommandResultType type)
         {
-            get { return true; }
+            Message = message;
+            MessageArguments = args;
+            DefaultMessage = defaultMessage;
+            Type = type;
         }
-
-        public ICommand Source
-        {
-            get {return null; }
-        }
+        public ICommand Source { get; set; }
 
         public CommandResultType Type { get; set; }
 
         public override string ToString()
         {
-            return (Message ?? string.Format(MessageFormat, MessageArguments));
+            
+            return MessageArguments != null
+                           ? string.Format(Message, MessageArguments)
+                           : (Message ?? DefaultMessage);
         }
     }
 }

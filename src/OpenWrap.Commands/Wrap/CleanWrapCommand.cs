@@ -56,7 +56,7 @@ namespace OpenWrap.Commands.Wrap
                 yield return TryAddRepository("System repository", Environment.SystemRepository, GetLastVersionOfSystemRepository());
             }
             if (Name != null && countWithMatchingName == 0)
-                yield return new GenericError("Cound not find a package called '{0}'.", Name);
+                yield return new Error("Cound not find a package called '{0}'.", Name);
 
         }
 
@@ -74,10 +74,10 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput TryAddRepository(string repositoryName, IPackageRepository repository, IEnumerable<IPackageInfo> packagesToKeep)
         {
             if (repository == null)
-                return new GenericError("Repository '{0}' not found.", repositoryName);
+                return new Error("Repository '{0}' not found.", repositoryName);
             var repo = repository as ISupportCleaning;
             if (repo == null)
-                return new GenericError("Repository '{0}' does not support cleaning.", repositoryName);
+                return new Error("Repository '{0}' does not support cleaning.", repositoryName);
 
             if (Name != null)
             {

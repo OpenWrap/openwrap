@@ -3,38 +3,30 @@ using OpenWrap.Commands;
 
 namespace OpenWrap.Commands
 {
-    public abstract class Error : ICommandOutput
+    public class Error : GenericMessage
     {
-        string _message;
-        readonly object[] _messageArgs;
-
-        public Error()
+        public const string ERROR_MESSAGE = "An unknown error has occured";
+        protected Error() : base(null, null, null, CommandResultType.Error){}
+        public Error(string message, params object[] args) : base(message, args, ERROR_MESSAGE, CommandResultType.Error)
         {
-            Type = CommandResultType.Error;
         }
 
-        public Error(string message) : this()
+        public Error(string message) : base(message, null, ERROR_MESSAGE, CommandResultType.Error)
         {
-            _message = message;
+        }
+    }
+    public class Warning : GenericMessage
+    {
+        public const string ERROR_MESSAGE = "An unknown warning has occured";
+        protected Warning() : base(null, null, null, CommandResultType.Warning){}
+        public Warning(string message, params object[] args)
+            : base(message, args, ERROR_MESSAGE, CommandResultType.Warning)
+        {
         }
 
-        public Error(string message, params object[] args) : this()
+        public Warning(string message)
+            : base(message, null, ERROR_MESSAGE, CommandResultType.Warning)
         {
-            _message = message;
-            _messageArgs = args;
-        }
-
-        public ICommand Source { get;  private set; }
-
-        public CommandResultType Type { get; protected set; }
-
-        public bool Success { get; private set; }
-        public override string ToString()
-        {
-            return _messageArgs != null
-                           ? string.Format(_message, _messageArgs)
-                           : (_message
-                             ?? "An unknown error has occured");
         }
     }
 }

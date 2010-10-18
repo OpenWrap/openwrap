@@ -49,7 +49,7 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput VerifyInputs()
         {
             if (Project && Environment.ProjectRepository == null)
-                return new GenericError("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
+                return new Error("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
             return null;
         }
         IEnumerable<ICommandOutput> UpdateSystemPackages()
@@ -117,7 +117,7 @@ namespace OpenWrap.Commands.Wrap
             if (t.Count() > 0)
                 return new DependenciesConflictMessage(t.ToList());
 
-            return new GenericError("An unkown update error has occured.");
+            return new Error("An unkown update error has occured.");
         }
 
         GenericMessage PackageNotFoundInRemote(ICommandOutput m)
@@ -161,7 +161,7 @@ namespace OpenWrap.Commands.Wrap
         }
     }
 
-    internal class DependenciesConflictMessage : GenericError
+    internal class DependenciesConflictMessage : Error
     {
         public List<IGrouping<string, ResolvedDependency>> ConflictingPackages { get; set; }
 

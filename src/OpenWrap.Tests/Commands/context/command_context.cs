@@ -147,5 +147,12 @@ namespace OpenWrap.Tests.Commands.context
         {
             Environment.RemoteRepositories.Add(new InMemoryRepository(remoteName));
         }
+
+        protected void given_current_directory(string currentDirectory)
+        {
+            FileSystem.CurrentDirectory = currentDirectory;
+            Environment.CurrentDirectory = FileSystem.GetDirectory(currentDirectory);
+
+        }
     }
 }

@@ -96,13 +96,12 @@
     <Compile Include="Commands\context\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
     <Compile Include="Commands\Wrap\buildWrapCommand.cs" />
-    <Compile Include="Commands\Wrap\initWrapCommand.cs" />
     <Compile Include="Commands\Wrap\cleanWrapCommand.cs" />
     <Compile Include="Commands\Wrap\listWrapCommand.cs" />
     <Compile Include="Commands\Wrap\nukeWrapCommand.cs" />
     <Compile Include="Commands\Wrap\publishWrapCommand.cs" />
     <Compile Include="Commands\Wrap\removeWrapCommand.cs" />
-    <Compile Include="Commands\setupWrapCommand.cs" />
+    <Compile Include="Commands\Wrap\initWrapCommand.cs" />
     <Compile Include="Commands\Wrap\updateWrapCommand.cs" />
     <Compile Include="Configuration\configuration_parser_spec.cs" />
     <Compile Include="Configuration\configuration_specifications.cs" />

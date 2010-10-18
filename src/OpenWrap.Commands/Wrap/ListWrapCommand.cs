@@ -24,7 +24,7 @@ namespace OpenWrap.Commands.Wrap
         {
             var repoToList = GetRepositoryToList();
             if (repoToList == null)
-                return new[] { new GenericError("Selected repository wasn't found. If you used -remote, make sure the remote repository exists.") };
+                return new[] { new Error("Selected repository wasn't found. If you used -remote, make sure the remote repository exists.") };
 
             var packageList = repoToList.PackagesByName.NotNull();
             if (!string.IsNullOrEmpty(Query))

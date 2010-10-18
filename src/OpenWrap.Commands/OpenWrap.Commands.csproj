@@ -80,10 +80,9 @@
     <Compile Include="Remote\RemoveRemoteCommand.cs" />
     <Compile Include="Wrap\AddWrapCommand.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
-    <Compile Include="Wrap\InitWrapCommand.cs" />
     <Compile Include="Wrap\CleanWrapCommand.cs" />
     <Compile Include="Wrap\ListWrapCommand.cs" />
-    <Compile Include="Wrap\NewWrapCommand.cs" />
+    <Compile Include="Wrap\InitWrapCommand.cs" />
     <Compile Include="Wrap\PublishWrapCommand.cs" />
     <Compile Include="Wrap\RemoveWrapCommand.cs" />
     <Compile Include="Errors\UnknownRemoteRepository.cs" />

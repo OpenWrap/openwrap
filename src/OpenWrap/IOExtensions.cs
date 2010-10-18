@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenFileSystem.IO;
+using OpenWrap.Commands;
 
 namespace OpenWrap
 {

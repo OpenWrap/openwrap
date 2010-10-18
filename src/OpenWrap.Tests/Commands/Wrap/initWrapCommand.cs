@@ -1,33 +1,90 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using initWrap_specs.context;
 using NUnit.Framework;
 using OpenFileSystem.IO;
+using OpenWrap;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands.context;
 
-namespace initWrap_specs
+namespace init_wrap_specs
 {
-    public class init_without_parameters : init_wrap
+    class init_wrap_in_empty_dot_folder : context.init_wrap
     {
-        public init_without_parameters()
+        public init_wrap_in_empty_dot_folder()
         {
-            given_csharp_project_file(@"project1.csproj");
-            when_executing_command();
+            given_current_directory(@"c:\newpackage");
+            given_project_repository(new FolderRepository(Environment.CurrentDirectory.GetDirectory("wraps")));
+            when_executing_command(".");
+            Environment.ProjectRepository.Refresh();
         }
         [Test]
-        public void command_fails()
+        public void descriptor_should_have_correct_name()
         {
-            Results.ShouldHaveAtLeastOne(x => x.Success() == false);
+            Environment.CurrentDirectory
+                    .GetFile("newpackage.wrapdesc")
+                    .Exists.ShouldBeTrue();
+        }
+        [Test]
+        public void descriptor_should_have_openwrap_as_content_dependency()
+        {
+            new PackageDescriptorReaderWriter()
+                .Read(Environment.CurrentDirectory.GetFile("newpackage.wrapdesc"))
+                .Dependencies
+                .FirstOrDefault(x=>x.Name.EqualsNoCase("openwrap"))
+                .ShouldNotBeNull()
+                .ContentOnly.ShouldBeTrue();
+        }
+        [Test]
+        public void openwrap_package_is_installed()
+        {
+            Environment.ProjectRepository.PackagesByName["openwrap"]
+                    .ShouldHaveCountOf(1);
+            
+        }
+        [Test]
+        public void openwrap_junction_is_installed()
+        {
+            Environment.CurrentDirectory.GetDirectory("wraps").GetDirectory("openwrap")
+                    .Exists.ShouldBeTrue();
         }
     }
-    public class init_for_all_projects : init_wrap
+    class init_dot_in_existing_package : context.init_wrap
+    {
+        public init_dot_in_existing_package()
+        {
+            given_current_directory(@"c:\newpackage");
+            given_dependency("depends: openwrap");
+            given_dependency_file("newpackage.wrapdesc");
+            given_project_package("openwrap", "1.0.0".ToVersion());
+            when_executing_command(".");
+        }
+
+        [Test]
+        public void dependency_is_not_updated()
+        {
+            new PackageDescriptorReaderWriter()
+                .Read(Environment.CurrentDirectory.GetFile("newpackage.wrapdesc"))
+                .Dependencies.SingleOrDefault(x => x.Name.EqualsNoCase("openwrap"))
+                    .ContentOnly.ShouldBeFalse();
+        }
+
+        void given_dependency_file(string name)
+        {
+            new PackageDescriptorReaderWriter()
+                    .Write(
+                            Environment.Descriptor,
+                            Environment.CurrentDirectory.GetFile(name).OpenWrite());
+        }
+    }
+
+    public class init_for_all_projects : context.init_wrap
     {
         public init_for_all_projects()
         {
@@ -37,7 +94,7 @@ namespace initWrap_specs
         [Test]
         public void the_command_succeeds()
         {
-            Results.ShouldHaveAll(x => x.Success());
+            Results.ShouldHaveNo(x => x.Error());
         }
         [Test]
         public void the_project_is_patched()
@@ -46,7 +103,7 @@ namespace initWrap_specs
             using (var stream = projectFIle.OpenRead())
             {
                 var doc = XDocument.Load(new XmlTextReader(stream));
-                
+
                 doc.Document.Descendants(XName.Get("Import", MSBUILD_NS)).First().Attribute("Project").Value
                     .ShouldContain("OpenWrap.CSharp.targets");
             }
@@ -57,6 +114,10 @@ namespace initWrap_specs
     {
         public abstract class init_wrap : command_context<InitWrapCommand>
         {
+            public init_wrap()
+            {
+                given_system_package("openwrap", "1.0.0".ToVersion());                
+            }
             protected const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
 
             protected void given_csharp_project_file(string projectPath)

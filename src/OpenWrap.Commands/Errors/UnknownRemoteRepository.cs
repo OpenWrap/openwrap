@@ -1,6 +1,6 @@
 ﻿namespace OpenWrap.Commands.Errors
 {
-    public class UnknownRemoteRepository : GenericError
+    public class UnknownRemoteRepository : Error
     {
         readonly string _remoteName;
 
@@ -14,7 +14,7 @@
             return string.Format("Unknown remote repository '{0}'. To see the list of your remote repositories, use the 'list-remote' command.", _remoteName);
         }
     }
-    public class FileNotFound : GenericError
+    public class FileNotFound : Error
     {
         readonly string _filePath;
 

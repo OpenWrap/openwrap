@@ -41,7 +41,7 @@ namespace OpenWrap.Tests.Commands.NuPack
         {
             _nuPackFile = FileSystem.GetFile(Path);
             if (!_nuPackFile.Exists)
-                yield return new GenericError("File '{0}' not found.", Path);
+                yield return new Error("File '{0}' not found.", Path);
 
             _destinationFile = Destination == null
                                        ? FileSystem.GetFile(Destination)
