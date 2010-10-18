@@ -110,6 +110,8 @@ namespace OpenWrap.Commands.Wrap
                 yield return new DependencyResolutionFailedResult(string.Format("Could not find a package for dependency '{0}'.", Name), resolvedDependencies);
                 yield break;
             }
+            foreach (var m in resolvedDependencies.GacConflicts(Environment.ExecutionEnvironment))
+                yield return m;
 
             foreach (var warning in resolvedDependencies.Warnings)
                 yield return warning;
@@ -230,6 +232,15 @@ namespace OpenWrap.Commands.Wrap
             return Environment.ProjectRepository != null
                        ? new GenericMessage("Project repository present.")
                        : new GenericMessage("Project repository not found.");
+        }
+    }
+    public static class DependencyResolutionResultExtensions
+    {
+        public static IEnumerable<ICommandOutput> GacConflicts(this DependencyResolutionResult result, ExecutionEnvironment env)
+        {
+            return from package in GacResolver.InGac(result.Dependencies.Select(x => x.Package), env)
+                   from assembly in package
+                   select new GacConflict(package.Key, assembly) as ICommandOutput;
         }
     }
 }

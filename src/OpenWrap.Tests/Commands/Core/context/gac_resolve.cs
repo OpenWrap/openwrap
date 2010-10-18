@@ -1,7 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Xml;
+using NUnit.Framework;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystem.InMemory;
+using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Commands.Core;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
@@ -11,14 +18,48 @@ namespace OpenWrap.Tests.Dependencies
 {
     public abstract class gac_resolve : Testing.context
     {
-        protected bool result;
+        protected ILookup<IPackageInfo, AssemblyName> result;
 
-        protected void when_resolving(string partialName)
+        public gac_resolve()
         {
-            result =  GACResolve.InGAC(new ResolvedDependency
+            FileSystem = LocalFileSystem.Instance;
+            PackageFile = FileSystem.CreateTempFile();
+            PackageFileDirectory = FileSystem.CreateTempDirectory();
+        }
+        [TestFixtureTearDown]
+        void DeleteTemp()
+        {
+            PackageFile.Dispose();
+            PackageFileDirectory.Dispose();
+        }
+        protected ITemporaryFile PackageFile { get; set; }
+
+        protected ITemporaryDirectory PackageFileDirectory { get; set; }
+
+        protected IFileSystem FileSystem { get; set; }
+
+        protected void when_loading_assembly_in_gac()
+        {
+            result = GacResolver.InGac(new[]
             {
-                    Dependency = new PackageDependency { Name = partialName }
-            });
+                    new CachedZipPackage(
+                        null,
+                        PackageBuilder.NewWithDescriptor(
+                            PackageFile,
+                            "package",
+                            "1.0.0",
+                            new[]
+                            {
+                                    new PackageContent
+                                    {
+                                            FileName = "System.Xml.dll",
+                                            RelativePath = "bin-net20",
+                                            Stream = () => File.OpenRead(typeof(XmlDocument).Assembly.Location)
+                                    }
+                            }),
+                        PackageFileDirectory,
+                        ExportBuilders.All)
+            }, new ExecutionEnvironment{ Profile="net20", Platform="x86" });
         }
     }
 }

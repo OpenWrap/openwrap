@@ -357,6 +357,7 @@
       <Abbreviation Text="OK" />
       <Abbreviation Text="IO" />
       <Abbreviation Text="MS" />
+      <Abbreviation Text="GAC" />
     </Naming2>
   </CodeStyleSettings>
 </Configuration>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -103,8 +103,8 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
-            foreach (var warning in resolvedPackages.Warnings)
-                yield return warning;
+            foreach (var m in resolvedPackages.GacConflicts(Environment.ExecutionEnvironment))
+                yield return m;
 
             var copyResult = PackageManager.CopyPackagesToRepositories(
                 resolvedPackages,

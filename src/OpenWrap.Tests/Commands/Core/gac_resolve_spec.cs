@@ -10,31 +10,15 @@ namespace OpenWrap.Tests.Commands.Core
 {
     public class gac_resolve_existing : gac_resolve
     {
-
         public gac_resolve_existing()
         {
-            when_resolving("System");
+            when_loading_assembly_in_gac();
         }
 
         [Test]
         public void has_resolved()
         {
-            result.ShouldBeTrue();
-        }
-    }
-
-    public class gac_resolve_nonexisting : gac_resolve
-    {
-
-        public gac_resolve_nonexisting()
-        {
-            when_resolving("ThisAssemblyAlmostCertainlyDoesntExistLordOfTheRingsReference");
-        }
-
-        [Test]
-        public void has_not_resolved()
-        {
-            result.ShouldBeFalse();
+            result.SelectMany(x => x).ShouldHaveCountOf(1).First().Name.ShouldBe("System.Xml");
         }
     }
 }

@@ -1,26 +1,38 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Reflection;
+using OpenWrap.Dependencies;
+using OpenWrap.Exports;
 
 namespace OpenWrap.Repositories
 {
-    public static class GACResolve
+    public static class GacResolver
     {
         public class Loader : MarshalByRefObject
         {
-            public bool InGAC(string partialName)
+            public bool InGAC(AssemblyName assemblyName)
             {
-                return Assembly.LoadWithPartialName(partialName) != null;
+                return Assembly.LoadWithPartialName(assemblyName.Name) != null;
             }
         }
 
-        public static bool InGAC(ResolvedDependency dependency)
+        public static ILookup<IPackageInfo, AssemblyName> InGac(IEnumerable<IPackageInfo> packages, ExecutionEnvironment environment)
         {
             var domain = TempDomain();
+            var loader = ((Loader)domain.CreateInstanceAndUnwrap(
+                    typeof(Loader).Assembly.FullName, 
+                    typeof(Loader).FullName));
             try
             {
-                return ((Loader)domain.CreateInstanceAndUnwrap(
-                    typeof(Loader).Assembly.FullName, 
-                    typeof(Loader).FullName)).InGAC(dependency.Dependency.Name);
+                return (from package in packages.NotNull().Select(x=>x.Load()).NotNull()
+                        let export = package.GetExport("bin", environment)
+                        where export != null
+                        from assembly in export.Items.OfType<IAssemblyReferenceExportItem>()
+                        let inGac = loader.InGAC(assembly.AssemblyName)
+                        where inGac
+                        select new { package, assembly.AssemblyName })
+                        .ToLookup(x => (IPackageInfo)x.package, x => x.AssemblyName);
             }
             finally
             {

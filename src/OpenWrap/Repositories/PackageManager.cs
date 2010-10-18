@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using OpenWrap.Commands;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
@@ -34,14 +35,9 @@ namespace OpenWrap.Repositories
            
 
 
-            return Successful(allDependencies,GacConflicts(allDependencies));
+            return Successful(allDependencies);
         }
 
-        IEnumerable<Warning> GacConflicts(IEnumerable<ResolvedDependency> allDependencies)
-        {
-            return allDependencies.Where(GACResolve.InGAC)
-                .Select(d => (Warning)new GACConflict(d));
-        }
 
         public void UpdateDependency(ResolvedDependency dependency,
                                      ISupportPublishing destinationRepository)
@@ -92,7 +88,9 @@ namespace OpenWrap.Repositories
 
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<PackageDependency> dependencies, IEnumerable<PackageNameOverride> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
         {
-            return ResolveAllDependencies(null, dependencies, dependencyOverrides, repositories, new List<ResolvedDependency>());
+            var resolved = ResolveAllDependencies(null, dependencies, dependencyOverrides, repositories, new List<ResolvedDependency>());
+            
+            return resolved;
         }
 
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent,
@@ -116,8 +114,9 @@ namespace OpenWrap.Repositories
                                                                 Dependency = modifiedDependency,
                                                                 Package = package,
                                                                 ParentPackage = parent
-                                                        })
-                            .ToList();
+                                                        }
+                                                        ).ToList();
+
             resolvedDependencies.AddRange(packages);
 
 
@@ -137,9 +136,9 @@ namespace OpenWrap.Repositories
             return new DependencyResolutionResult { IsSuccess = false, Dependencies = dependencies };
         }
 
-        DependencyResolutionResult Successful(IEnumerable<ResolvedDependency> dependencies, IEnumerable<Warning> gacConflicts)
+        DependencyResolutionResult Successful(IEnumerable<ResolvedDependency> dependencies)
         {
-            return new DependencyResolutionResult { IsSuccess = true, Dependencies = dependencies, Warnings = gacConflicts};
+            return new DependencyResolutionResult { IsSuccess = true, Dependencies = dependencies};
         }
     }
 }

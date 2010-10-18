@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands
 {
-    public class GACConflict : Warning
+    public class GacConflict : Warning
     {
-        public ResolvedDependency Dependency { get; protected set; }
-        const string MESSAGE = "The dependency {0} exists in the GAC";
+        const string MESSAGE = "Package '{0}' contains assembly '{1}' that is already in the Global Assembly Cache. For this assembly to be used, you need to remove this assembly from the gac.";
 
-        public GACConflict(ResolvedDependency dependency) : base(string.Format(MESSAGE,dependency.Dependency))
+        public GacConflict(IPackageInfo package, AssemblyName assembly)
+            : base(string.Format(MESSAGE,package.FullName, assembly.FullName))
         {
-            Dependency = dependency;
         }
     }
 }
