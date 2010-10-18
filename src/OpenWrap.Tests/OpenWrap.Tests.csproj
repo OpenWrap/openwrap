@@ -89,6 +89,7 @@
     <Compile Include="Commands\CommandsExtension.cs" />
     <Compile Include="Commands\command_description_spec.cs" />
     <Compile Include="Commands\command_documentation.cs" />
+    <Compile Include="Commands\Core\gac_resolve_spec.cs" />
     <Compile Include="Commands\Remote\addRemoteCommand.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\anchored_dependencies.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
+    <Compile Include="Commands\Core\context\gac_resolve.cs" />
     <Compile Include="Dependencies\nuked_package_resolution.cs" />
     <Compile Include="Dependencies\OverrideParser_Specification.cs" />
     <Compile Include="Dependencies\PackageDependency_specs.cs" />
