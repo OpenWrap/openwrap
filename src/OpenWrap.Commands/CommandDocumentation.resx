@@ -254,10 +254,34 @@ Note that the NuPack support is only provided for backward compatibility with le
     <value>The name of the remote repository to remove. Use 'list-remote' to find out the name.</value>
   </data>
   <data name="remove-wrap" xml:space="preserve">
-    <value>Removes a pacakge from local repositories.</value>
+    <value>Removes a package from local repositories.</value>
   </data>
   <data name="remove-wrap-name" xml:space="preserve">
     <value>Specifies the name of the package to remove from the local repository.</value>
+  </data>
+  <data name="set-wrap" xml:space="preserve">
+    <value>Updates a wrap dependency in the project repository.</value>
+  </data>
+  <data name="set-wrap-anchored" xml:space="preserve">
+    <value>Either true or false, sets the anchored flag</value>
+  </data>
+  <data name="set-wrap-anyversion" xml:space="preserve">
+    <value>Removes any existing version constraints</value>
+  </data>
+  <data name="set-wrap-content" xml:space="preserve">
+    <value>Either true or false, sets the content flag</value>
+  </data>
+  <data name="set-wrap-maxversion" xml:space="preserve">
+    <value>The exclusive, upper-bound of the dependency version</value>
+  </data>
+  <data name="set-wrap-minversion" xml:space="preserve">
+    <value>The inclusive, lower-bound of the dependency version</value>
+  </data>
+  <data name="set-wrap-name" xml:space="preserve">
+    <value>The name of the package dependency to update</value>
+  </data>
+  <data name="set-wrap-version" xml:space="preserve">
+    <value>The exact version of the dependency</value>
   </data>
   <data name="update-wrap" xml:space="preserve">
     <value>Updates packages to their latest versions in local repositories.</value>

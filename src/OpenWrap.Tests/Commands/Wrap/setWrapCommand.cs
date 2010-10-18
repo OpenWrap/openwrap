@@ -81,20 +81,21 @@ namespace OpenWrap.Tests.Commands.Wrap
             given_project_package("sauron", new Version("1.0.0.0"));
 
             when_executing_command("sauron", "-version", "2.0.0");
+            verticies = Environment.Descriptor.Dependencies.First().VersionVertices.ToArray();
         }
+
+        VersionVertex[] verticies;
 
         [Test]
         public void dependency_has_one_version_vertex()
         {
-            var vertices = Environment.Descriptor.Dependencies.First().VersionVertices;
-            vertices.ShouldHaveCountOf(1);
+            verticies.ShouldHaveCountOf(1);
         }
 
         [Test]
         public void dependency_version_equals_2()
         {
-            var vertices = Environment.Descriptor.Dependencies.First().VersionVertices;
-            vertices.First().Version.Equals(new Version("2.0.0"));
+            verticies.First().Version.Equals(new Version("2.0.0"));
         }
     }
 
@@ -130,7 +131,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public void dependency_version_is_greaterthan_2()
         {
             var vertex = Environment.Descriptor.Dependencies.First().VersionVertices.First();
-            var greater = vertex as GreaterThanVersionVertex;
+            var greater = vertex as GreaterThenOrEqualVersionVertex;
             greater.Version.ShouldBe(new Version("2.0.0"));
         }
     }
@@ -151,9 +152,9 @@ namespace OpenWrap.Tests.Commands.Wrap
         VersionVertex[] vertices;
 
         [Test]
-        public void vertex_0_is_greaterthan_2()
+        public void vertex_0_is_greaterthanorequal_2()
         {
-            var greater = vertices[0] as GreaterThanVersionVertex;
+            var greater = vertices[0] as GreaterThenOrEqualVersionVertex;
             greater.Version.ShouldBe(new Version("2.0.0"));
         }
 
