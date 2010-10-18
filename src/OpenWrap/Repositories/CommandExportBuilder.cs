@@ -32,7 +32,9 @@ namespace OpenWrap.Repositories
                                let assembly = TryReflectionOnlyLoad(file)
                                where assembly != null
                                from type in TryGetExportedTypes(assembly)
-                               where type.GetInterface("ICommand") != null
+                               where type.IsAbstract == false &&
+                                     type.IsGenericTypeDefinition == false &&
+                                     type.GetInterface("ICommand") != null
                                let loadedAssembly = Assembly.LoadFrom(file.FullPath)
                                select loadedAssembly.GetType(type.FullName);
             return new CommandExport(commandTypes);

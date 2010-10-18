@@ -87,6 +87,8 @@
     <Compile Include="Collections\MultiThreaded_specs.cs" />
     <Compile Include="CommandsExtensions.cs" />
     <Compile Include="Commands\CommandsExtension.cs" />
+    <Compile Include="Commands\command_description_spec.cs" />
+    <Compile Include="Commands\command_documentation.cs" />
     <Compile Include="Commands\Remote\addRemoteCommand.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />

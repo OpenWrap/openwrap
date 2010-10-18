@@ -10,7 +10,7 @@
         }
         public override string ToString()
         {
-            return string.Format("{0} {1}: {2}",_command.Noun, _command.Verb, _command.Description);
+            return string.Format("{0} {1}:\r\n\t{2}",_command.Noun, _command.Verb, _command.Description);
         }
     }
 }

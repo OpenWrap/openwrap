@@ -21,7 +21,7 @@ namespace OpenWrap.Commands.Wrap
         string _packageName;
 
         [CommandInput(IsRequired = true, Position = 0)]
-        public string RemoteRepository { get; set; }
+        public string Remote { get; set; }
 
         [CommandInput(Position = 1)]
         public string Path { get; set; }
@@ -47,9 +47,9 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> ValidateInputs()
         {
-            var namedRepository = Environment.RemoteRepositories.FirstOrDefault(x => x.Name.Equals(RemoteRepository, StringComparison.OrdinalIgnoreCase));
+            var namedRepository = Environment.RemoteRepositories.FirstOrDefault(x => x.Name.Equals(Remote, StringComparison.OrdinalIgnoreCase));
             if (namedRepository == null)
-                yield return new Errors.UnknownRemoteRepository(RemoteRepository);
+                yield return new Errors.UnknownRemoteRepository(Remote);
 
             _remoteRepository = namedRepository as ISupportPublishing;
             
@@ -83,7 +83,7 @@ namespace OpenWrap.Commands.Wrap
                 _packageFileName = packageToCopy.FullName + ".wrap";
                 _packageName = packageToCopy.Name;
                 _packageVersion = packageToCopy.Version;
-            }
+            }   
             else
             {
                 yield return new Error("Please specify either a file path using the -Path input, or a name using -Name.");
@@ -91,7 +91,7 @@ namespace OpenWrap.Commands.Wrap
         }
         IEnumerable<ICommandOutput> ExecuteCore()
         {
-            yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, RemoteRepository));
+            yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
             using (var packageStream = _packageStream())
                 _remoteRepository.Publish(_packageFileName, packageStream);
         }

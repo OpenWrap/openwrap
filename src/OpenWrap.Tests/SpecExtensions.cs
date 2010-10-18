@@ -258,12 +258,6 @@ namespace OpenWrap.Testing
             return obj;
         }
 
-        public static T ShouldNotBeNull<T>(this T? obj) where T : struct
-        {
-            Assert.True(obj.HasValue);
-            return obj.Value;
-        }
-
         public static void ShouldNotBeTheSameInstanceAs(this object actual, object expected)
         {
             Assert.That(actual, Is.Not.SameAs(expected));
@@ -299,22 +293,49 @@ namespace OpenWrap.Testing
             Assert.Fail("Expected an exception of type \"{0}\" but none were thrown.", typeof(T).Name);
             return null; // this never happens as Fail will throw...
         }
+
         public static IEnumerable<T> ShouldHaveNo<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T : class
         {
             enumerable.None(predicate).ShouldBeTrue();
             return enumerable;
         }
-        
+
         public static IEnumerable<T> ShouldHaveAtLeastOne<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T:class
         {
             enumerable.Any(predicate).ShouldBeTrue();
             return enumerable;
         }
+
         public static IEnumerable<T> ShouldHaveAll<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T:class
         {
             enumerable.All(predicate).ShouldBeTrue();
             return enumerable;
         }
+
+        public static T ShouldNotBeNull<T>(this T? obj) where T : struct
+        {
+            Assert.True(obj.HasValue);
+       
+            return obj.Value;
+        }
+
+        public static string ShouldNotBeNullOrEmpty(this string value, string error)
+        {
+
+            string.IsNullOrEmpty(value).ShouldBeFalse(error);
+            return value;
+        }
+
+        static void ShouldBeFalse(this bool value, string error)
+        {
+            Assert.That(value, Is.False, error);
+        }
+
+        public static string ShouldNotBeNullOrEmpty(this string value)
+            {
+                string.IsNullOrEmpty(value).ShouldBeFalse();
+                return value;
+            }
     }
 }
 

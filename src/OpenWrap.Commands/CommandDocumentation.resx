@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="add-remote" xml:space="preserve">
+    <value>Adds a remote repository.</value>
+  </data>
+  <data name="add-remote-href" xml:space="preserve">
+    <value>Specifies the URI used to access this remote.
+ - file://[servername]/path/ for local or UNC paths
+ - http://[servername] for OpenWrap repositories
+ - nupack://[servername]/path for NuPack repositories
+Note that the NuPack support is only provided for backward compatibility with legacy package management systems, and will only import assemblies.</value>
+  </data>
+  <data name="add-remote-name" xml:space="preserve">
+    <value>Specifies the name used to identify this remote repository.</value>
+  </data>
+  <data name="add-wrap" xml:space="preserve">
+    <value>Adds a package to the current solution</value>
+  </data>
+  <data name="add-wrap-anchored" xml:space="preserve">
+    <value>Marks the dependency as 'anchored', providing the content of the dependency in a folder accessible without versioning information.</value>
+  </data>
+  <data name="add-wrap-content" xml:space="preserve">
+    <value>Marks the dependency as being content-only, importing the content of the package but ignoring assembly references.</value>
+  </data>
+  <data name="add-wrap-name" xml:space="preserve">
+    <value>Specifies the name of the package to add.</value>
+  </data>
+  <data name="add-wrap-nodescriptorupdate" xml:space="preserve">
+    <value>Prevents the descriptor file from being updated with a 'depends:' clause.</value>
+  </data>
+  <data name="add-wrap-projectonly" xml:space="preserve">
+    <value>Specifies that the dependency will only be added to the current project.</value>
+  </data>
+  <data name="add-wrap-systemonly" xml:space="preserve">
+    <value>Specifies that the dependency will only be installed in the system repository.</value>
+  </data>
+  <data name="add-wrap-version" xml:space="preserve">
+    <value>Specifies the exact version of the package to import.</value>
+  </data>
+  <data name="build-wrap" xml:space="preserve">
+    <value>Builds the current package, using the build provider specified in the descriptor, or the default convention-based msbuild builder.</value>
+  </data>
+  <data name="build-wrap-name" xml:space="preserve">
+    <value>Sets the name of the package to create. If not present, the name specified in the descriptor is used.</value>
+  </data>
+  <data name="build-wrap-path" xml:space="preserve">
+    <value>Sets the location in which to build the pacakge. Defaults to the current directory.</value>
+  </data>
+  <data name="build-wrap-quiet" xml:space="preserve">
+    <value>Specifies that the builder output should not be displayed.</value>
+  </data>
+  <data name="clean-wrap" xml:space="preserve">
+    <value>Removes packages no longer in use in the local repositories.</value>
+  </data>
+  <data name="clean-wrap-name" xml:space="preserve">
+    <value>Specifies the name of the package for which to remove unused versions. If omitted, the clean will affect all packages.</value>
+  </data>
+  <data name="clean-wrap-project" xml:space="preserve">
+    <value>Limits the cleaning to the project repository.</value>
+  </data>
+  <data name="clean-wrap-system" xml:space="preserve">
+    <value>Limits the cleaning to the system repository.</value>
+  </data>
+  <data name="convert-nupack" xml:space="preserve">
+    <value>Converts a NuPack legacy package into an OpenWrap pacakge.</value>
+  </data>
+  <data name="convert-nupack-destination" xml:space="preserve">
+    <value>Specifies the file or directory in which to produce the OpenWrap package.</value>
+  </data>
+  <data name="convert-nupack-path" xml:space="preserve">
+    <value>Specifies the path to the NuPack pacakge to convert.</value>
+  </data>
+  <data name="get-help" xml:space="preserve">
+    <value>Provides documentation for the commands available in the current OpenWrap session.</value>
+  </data>
+  <data name="get-help-commandname" xml:space="preserve">
+    <value>Limits the help to commands matching this value. If multiple commands match, a list is displayed. If only one match is found, the full documentation for that command will be displayed.</value>
+  </data>
+  <data name="init-wrap" xml:space="preserve">
+    <value>Initializes a project and it's associated Visual Studio projects for use by OpenWrap.</value>
+  </data>
+  <data name="init-wrap-all" xml:space="preserve">
+    <value>Specifies that all msbuild project files found under the current repository will be patched to use OpenWrap's assembly resolution.</value>
+  </data>
+  <data name="init-wrap-meta" xml:space="preserve">
+    <value>Specifies that the target is a meta-package, aka a combination of other packages without build provider or project repository.</value>
+  </data>
+  <data name="init-wrap-projects" xml:space="preserve">
+    <value>Specifies a semi-column-separated paths to msbuild files to update to use OpenWrap for assembly resolution.</value>
+  </data>
+  <data name="init-wrap-target" xml:space="preserve">
+    <value>Specifies the target for which to initialize OpenWrap. Defaults to '.' for the current directory.</value>
+  </data>
+  <data name="list-remote" xml:space="preserve">
+    <value>Lists the configured remote repositories.</value>
+  </data>
+  <data name="list-wrap" xml:space="preserve">
+    <value>Lists or queries all packages in a repository.</value>
+  </data>
+  <data name="list-wrap-query" xml:space="preserve">
+    <value>Specifies the wildcard to be used when listing packages in a repository.</value>
+  </data>
+  <data name="list-wrap-remote" xml:space="preserve">
+    <value>Runs the query on the provided remote repository.</value>
+  </data>
+  <data name="list-wrap-system" xml:space="preserve">
+    <value>Runs the query on the system repository.</value>
+  </data>
+  <data name="nuke-wrap" xml:space="preserve">
+    <value>Disables a specific version of a package from a repository, for when a package has been published but doesn't work.</value>
+  </data>
+  <data name="nuke-wrap-name" xml:space="preserve">
+    <value>Specifies the name of the package to nuke.</value>
+  </data>
+  <data name="nuke-wrap-remote" xml:space="preserve">
+    <value>Specifies the remote repository from which to nuke the package.</value>
+  </data>
+  <data name="nuke-wrap-version" xml:space="preserve">
+    <value>Specifies the exact version of the package to nuke.</value>
+  </data>
+  <data name="publish-wrap" xml:space="preserve">
+    <value>Publishes a package to a remote repository.</value>
+  </data>
+  <data name="publish-wrap-name" xml:space="preserve">
+    <value>Specifies the name of the package to publish. If provided, any package file found in the current repository matching the provided name will be published.</value>
+  </data>
+  <data name="publish-wrap-path" xml:space="preserve">
+    <value>Specifies the package's file path to publish.</value>
+  </data>
+  <data name="publish-wrap-remote" xml:space="preserve">
+    <value>Specifies the name of the remote repository to which the package is to be published.</value>
+  </data>
+  <data name="remove-remote" xml:space="preserve">
+    <value>Removes a remote repository.</value>
+  </data>
+  <data name="remove-remote-name" xml:space="preserve">
+    <value>The name of the remote repository to remove. Use 'list-remote' to find out the name.</value>
+  </data>
+  <data name="remove-wrap" xml:space="preserve">
+    <value>Removes a pacakge from local repositories.</value>
+  </data>
+  <data name="remove-wrap-name" xml:space="preserve">
+    <value>Specifies the name of the package to remove from the local repository.</value>
+  </data>
+  <data name="update-wrap" xml:space="preserve">
+    <value>Updates packages to their latest versions in local repositories.</value>
+  </data>
+  <data name="update-wrap-name" xml:space="preserve">
+    <value>Specifies a single package to update. By default, all packages are updated.</value>
+  </data>
+  <data name="update-wrap-project" xml:space="preserve">
+    <value>Limits the update to the project repository.</value>
+  </data>
+  <data name="update-wrap-system" xml:space="preserve">
+    <value>Limits the update to the system repository.</value>
+  </data>
+</root>

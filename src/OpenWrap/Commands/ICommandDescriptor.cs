@@ -7,7 +7,6 @@ namespace OpenWrap.Commands
     {
         string Noun { get; }
         string Verb { get; }
-        string DisplayName { get; }
         string Description { get; }
 
         IDictionary<string, ICommandInputDescriptor> Inputs { get; }

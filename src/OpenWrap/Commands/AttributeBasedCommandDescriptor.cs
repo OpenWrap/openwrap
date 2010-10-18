@@ -13,28 +13,35 @@ namespace OpenWrap.Commands
         {
             _commandType = commandType;
             var attribute = commandType.GetAttribute<CommandAttribute>() ?? new CommandAttribute();
-            Noun = attribute.Noun ?? commandType.Namespace;
+            Noun = attribute.Noun ?? DeductNounFromNamespace(commandType);
             Verb = attribute.Verb ?? commandType.Name;
-            DisplayName = attribute.DisplayName ?? commandType.Name.CamelToSpacedName();
-            Description = attribute.Description ?? string.Empty;
+
+            var commandResourceKey = attribute.Verb + "-" + attribute.Noun;
+            Description = attribute.Description ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey);
 
             Inputs = (from pi in commandType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                      let inputAttrib = ReflectionExtensions.GetAttribute<CommandInputAttribute>(pi)
+                      let inputAttrib = pi.GetAttribute<CommandInputAttribute>()
                       where inputAttrib != null
                       let values = inputAttrib ?? new CommandInputAttribute()
+                      let inputName = values.Name ?? pi.Name
                       select (ICommandInputDescriptor)new CommandInputDescriptor
                       {
-                          Name = values.Name ?? pi.Name,
+                          Name = inputName,
                           IsRequired = values.IsRequired,
-                          DisplayName = values.DisplayName ?? StringExtensions.CamelToSpacedName(pi.Name),
+                          Description = values.DisplayName ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey+"-"+inputName),
                           Position = values.Position,
                           Property = pi
                       }).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
         }
 
+        string DeductNounFromNamespace(Type commandType)
+        {
+            int dotIndex = commandType.Namespace.LastIndexOf('.');
+            return dotIndex != -1 ? commandType.Namespace.Substring(dotIndex=1) : commandType.Namespace;
+        }
+
         public string Noun { get; set; }
         public string Verb { get; set; }
-        public string DisplayName { get; set; }
         public string Description { get; set; }
         public IDictionary<string, ICommandInputDescriptor> Inputs { get; set; }
         public ICommand Create()

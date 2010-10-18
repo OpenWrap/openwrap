@@ -9,8 +9,7 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Remote
 {
-    // TODO: only load remote repository data at beginning of execution
-    [Command(Noun="Remote", Verb="Remove")]
+    [Command(Noun="remote", Verb="remove")]
     public class RemoveRemoteCommand : AbstractCommand
     {
         [CommandInput(Position=0, IsRequired=true)]

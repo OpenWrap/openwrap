@@ -22,7 +22,10 @@ namespace OpenWrap
         {
             return !input.Any(condition);
         }
-
+        public static IEnumerable<string> NotNullOrEmpty(this IEnumerable<string> input)
+        {
+            return input.Where(x => !string.IsNullOrEmpty(x));
+        }
         public static IEnumerable<T> NotNull<T>(this IEnumerable<T> input) where T : class
         {
             return input.Where(x => x != null);

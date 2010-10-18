@@ -105,5 +105,9 @@ namespace OpenWrap
         {
             return value.EndsWith(valueToCompare, StringComparison.OrdinalIgnoreCase);
         }
+        public static bool ContainsNoCase(this string value, string valueToSearch)
+        {
+            return value.IndexOf(valueToSearch, StringComparison.OrdinalIgnoreCase) != -1;
+        }
     }
 }

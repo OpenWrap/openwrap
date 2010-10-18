@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 
 namespace OpenWrap.Commands
@@ -6,9 +7,9 @@ namespace OpenWrap.Commands
     {
         public bool IsRequired { get; set; }
         public string Name { get; set; }
-        public string DisplayName { get; set; }
+        public string Description { get; set; }
 
-
+        public Type Type { get { return Property.PropertyType; } }
         public object ValidateValue<T>(T value)
         {
             try
@@ -40,6 +41,6 @@ namespace OpenWrap.Commands
 
         public PropertyInfo Property { get; set; }
 
-        public int Position { get; set; }
+        public int? Position { get; set; }
     }
 }

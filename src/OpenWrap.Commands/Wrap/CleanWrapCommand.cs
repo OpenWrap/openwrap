@@ -7,20 +7,20 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Noun = "wrap", Verb = "clean", Description = "Clean all but the latest version of a wrap from the repository.")]
+    [Command(Noun = "wrap", Verb = "clean")]
     public class CleanWrapCommand : WrapCommand
     {
         List<Func<IEnumerable<ICommandOutput>>> _cleanOperations = new List<Func<IEnumerable<ICommandOutput>>>();
 
-        [CommandInput(Position = 0, DisplayName="The name of the package to clean")]
+        [CommandInput(Position = 0)]
         public string Name { get; set; }
 
-        [CommandInput(DisplayName = "Cleans the System repository")]
+        [CommandInput]
         public bool System { get; set; }
 
         bool? _project;
 
-        [CommandInput(DisplayName = "Cleans the current project's repository")]
+        [CommandInput]
         public bool Project
         {
             get { return _project ?? false; }

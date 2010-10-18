@@ -91,7 +91,7 @@ namespace OpenWrap.Commands
             // now got a clean set of input names that pass. Now on to the unnamed ones.
             var unfullfilledCommandInputs = (from input in command.Inputs
                                              where !inputNamesAlreadyFilled.Contains(input.Key, StringComparer.OrdinalIgnoreCase)
-                                                   && input.Value.Position >= 0
+                                                   && input.Value.Position != null && input.Value.Position >= 0
                                              orderby input.Value.Position ascending
                                              select input.Value).ToList();
 

@@ -9,7 +9,7 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Remote
 {
-    [Command(Noun="Remote", Verb="Add")]
+    [Command(Noun="remote", Verb="add")]
     public class AddRemoteCommand : AbstractCommand
     {
         [CommandInput(Position=0, IsRequired=true)]
