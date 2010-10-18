@@ -104,6 +104,7 @@
     <Compile Include="Commands\Wrap\publishWrapCommand.cs" />
     <Compile Include="Commands\Wrap\removeWrapCommand.cs" />
     <Compile Include="Commands\Wrap\initWrapCommand.cs" />
+    <Compile Include="Commands\Wrap\setWrapCommand.cs" />
     <Compile Include="Commands\Wrap\updateWrapCommand.cs" />
     <Compile Include="Configuration\configuration_parser_spec.cs" />
     <Compile Include="Configuration\configuration_specifications.cs" />
