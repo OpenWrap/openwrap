@@ -111,6 +111,9 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
+            foreach (var warning in resolvedDependencies.Warnings)
+                yield return warning;
+
             var repositoriesToCopyTo = Environment.RemoteRepositories.Concat(new[]
             {
                 Environment.CurrentDirectoryRepository,

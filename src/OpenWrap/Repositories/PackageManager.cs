@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenWrap.Commands;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 
@@ -30,8 +31,16 @@ namespace OpenWrap.Repositories
                 allDependencies = OverrideDependenciesWithLocalDeclarations(allDependencies, packageDescriptor.Dependencies);
             if (HasDependenciesConflict(allDependencies))
                 return ConflictingDependencies(allDependencies);
+           
 
-            return Successful(allDependencies);
+
+            return Successful(allDependencies,GacConflicts(allDependencies));
+        }
+
+        IEnumerable<Warning> GacConflicts(IEnumerable<ResolvedDependency> allDependencies)
+        {
+            return allDependencies.Where(GACResolve.InGAC)
+                .Select(d => (Warning)new GACConflict(d));
         }
 
         public void UpdateDependency(ResolvedDependency dependency,
@@ -128,9 +137,9 @@ namespace OpenWrap.Repositories
             return new DependencyResolutionResult { IsSuccess = false, Dependencies = dependencies };
         }
 
-        DependencyResolutionResult Successful(IEnumerable<ResolvedDependency> dependencies)
+        DependencyResolutionResult Successful(IEnumerable<ResolvedDependency> dependencies, IEnumerable<Warning> gacConflicts)
         {
-            return new DependencyResolutionResult { IsSuccess = true, Dependencies = dependencies };
+            return new DependencyResolutionResult { IsSuccess = true, Dependencies = dependencies, Warnings = gacConflicts};
         }
     }
 }

@@ -97,10 +97,15 @@ namespace OpenWrap.Commands.Wrap
                 sourceRepos);
 
             if (!resolvedPackages.IsSuccess)
+
             {
                 foreach (var m in FailedUpdate(resolvedPackages, sourceRepos)) yield return m;
                 yield break;
             }
+
+            foreach (var warning in resolvedPackages.Warnings)
+                yield return warning;
+
             var copyResult = PackageManager.CopyPackagesToRepositories(
                 resolvedPackages,
                 Environment.RepositoriesForWrite()

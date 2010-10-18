@@ -55,7 +55,6 @@
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
     <Compile Include="Core\CommandDescriptionOutput.cs" />
-    <Compile Include="Core\GACResolve.cs" />
     <Compile Include="Errors\FileNotFound.cs" />
     <Compile Include="Remote\RemoteRepositoryMessage.cs" />
     <Compile Include="Wrap\DependenciesConflictMessage.cs" />

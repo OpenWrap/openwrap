@@ -15,7 +15,7 @@ namespace OpenWrap.Tests.Dependencies
 
         protected void when_resolving(string partialName)
         {
-            result = new GACResolve().InGAC(new ResolvedDependency
+            result =  GACResolve.InGAC(new ResolvedDependency
             {
                     Dependency = new PackageDependency { Name = partialName }
             });

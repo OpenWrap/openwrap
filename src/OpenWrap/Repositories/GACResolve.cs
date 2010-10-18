@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using OpenWrap.Repositories;
 
-namespace OpenWrap.Commands.Core
+namespace OpenWrap.Repositories
 {
-    public class GACResolve
+    public static class GACResolve
     {
         public class Loader : MarshalByRefObject
         {
@@ -17,17 +13,9 @@ namespace OpenWrap.Commands.Core
             }
         }
 
-        public bool InGAC(ResolvedDependency dependency)
+        public static bool InGAC(ResolvedDependency dependency)
         {
-
-            var currentSetup = AppDomain.CurrentDomain.SetupInformation;
-
-            var setupCopy = new AppDomainSetup
-            {
-                    ApplicationBase = currentSetup.ApplicationBase
-            };
-
-            var domain = AppDomain.CreateDomain("GAC Resolve",null,setupCopy);
+            var domain = TempDomain();
             try
             {
                 return ((Loader)domain.CreateInstanceAndUnwrap(
@@ -40,7 +28,16 @@ namespace OpenWrap.Commands.Core
             }
         }
 
+        static AppDomain TempDomain()
+        {
+            var currentSetup = AppDomain.CurrentDomain.SetupInformation;
 
-     
+            var setupCopy = new AppDomainSetup
+            {
+                    ApplicationBase = currentSetup.ApplicationBase
+            };
+
+            return AppDomain.CreateDomain("GAC Resolve",null,setupCopy);
+        }
     }
 }
