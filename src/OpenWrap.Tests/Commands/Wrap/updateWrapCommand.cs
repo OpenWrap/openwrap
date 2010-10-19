@@ -12,6 +12,28 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
+    public class update_package_not_existing_anywhere_but_in_project : context.command_context<UpdateWrapCommand>
+    {
+        public update_package_not_existing_anywhere_but_in_project()
+        {
+            given_dependency("depends: goldberry");
+            given_project_package("goldberry", "1.0".ToVersion());
+
+            when_executing_command();
+        }
+        [Test]
+        public void dependency_not_found_warning_is_produced()
+        {
+            Results.OfType<DependencyNotFoundInRepositories>()
+                    .ShouldHaveCountOf(1)
+                    .First().Dependency.Name.ShouldBe("goldberry");
+        }
+        [Test]
+        public void no_error_should_be_reported()
+        {
+            Results.ShouldHaveNo(x => x.Error());
+        }
+    }
     public class update_package_by_name_in_project : context.command_context<UpdateWrapCommand>
     {
         public update_package_by_name_in_project()

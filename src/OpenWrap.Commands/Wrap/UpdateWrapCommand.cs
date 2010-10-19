@@ -97,8 +97,10 @@ namespace OpenWrap.Commands.Wrap
                 sourceRepos);
 
             if (!resolvedPackages.IsSuccess)
-                yield return FailedUpdate(resolvedPackages);
-
+            {
+                foreach (var m in FailedUpdate(resolvedPackages, sourceRepos)) yield return m;
+                yield break;
+            }
             var copyResult = PackageManager.CopyPackagesToRepositories(
                 resolvedPackages,
                 Environment.RepositoriesForWrite()
@@ -108,16 +110,18 @@ namespace OpenWrap.Commands.Wrap
             foreach (var m in PackageManager.VerifyPackageCache(Environment, updateDescriptor)) yield return m;
         }
 
-        ICommandOutput FailedUpdate(DependencyResolutionResult resolvedPackages)
+        IEnumerable<ICommandOutput> FailedUpdate(DependencyResolutionResult resolvedPackages, IEnumerable<IPackageRepository> sourceRepos)
         {
-            // try to find conflicting resolutions
-            var t = from dependency in resolvedPackages.Dependencies.GroupBy(x => x.Dependency.Name, StringComparer.OrdinalIgnoreCase)
-                    where dependency.Count() > 1
-                    select dependency;
-            if (t.Count() > 0)
-                return new DependenciesConflictMessage(t.ToList());
+            foreach(var notFoundPackage in resolvedPackages.Dependencies.Where(x=>x.Package == null))
+                yield return new DependencyNotFoundInRepositories(notFoundPackage.Dependency, sourceRepos);
 
-            return new Error("An unkown update error has occured.");
+            var t = resolvedPackages.Dependencies
+                    .Where(x => x.Package != null)
+                    .GroupBy(x => x.Dependency.Name, StringComparer.OrdinalIgnoreCase)
+                    .Where(x => x.Count() > 1);
+                    
+            if (t.Count() > 0)
+                yield return new DependenciesConflictMessage(t.ToList());
         }
 
         GenericMessage PackageNotFoundInRemote(ICommandOutput m)
@@ -158,6 +162,21 @@ namespace OpenWrap.Commands.Wrap
         bool ShouldIncludePackageInSystemUpdate(string systemPackageName)
         {
             return string.IsNullOrEmpty(Name) ? true : Name.Equals(systemPackageName, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+    public class DependencyNotFoundInRepositories : Warning
+    {
+        public PackageDependency Dependency { get; set; }
+        public IEnumerable<IPackageRepository> Repositories { get; set; }
+
+        public DependencyNotFoundInRepositories(PackageDependency dependency, IEnumerable<IPackageRepository> repositories)
+        {
+            Dependency = dependency;
+            Repositories = repositories;
+        }
+        public override string ToString()
+        {
+            return string.Format("'{0}' not found in '{1}'.",Dependency, Repositories.Select(x => x.Name).Join(", "));
         }
     }
 }
