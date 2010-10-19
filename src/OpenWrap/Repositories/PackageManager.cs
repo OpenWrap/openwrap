@@ -38,7 +38,6 @@ namespace OpenWrap.Repositories
             return Successful(allDependencies);
         }
 
-
         public void UpdateDependency(ResolvedDependency dependency,
                                      ISupportPublishing destinationRepository)
         {
