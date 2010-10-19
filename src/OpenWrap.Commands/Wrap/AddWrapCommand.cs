@@ -164,7 +164,7 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput VerifyWrapFile()
         {
             if (NoDescriptorUpdate)
-                new GenericMessage("Wrap descriptor ignored.");
+                return new GenericMessage("Wrap descriptor ignored.");
             return Environment.Descriptor == null
                        ? new GenericMessage(@"No wrap descriptor found, installing locally.")
                        : new GenericMessage("Wrap descriptor found.");

@@ -21,7 +21,7 @@ namespace OpenWrap.Commands.Wrap
 
         static string VersionIdentifier(IPackageInfo x)
         {
-            return x.Version.ToString() + (x.Nuked ? " [nuked]" : string.Empty);
+            return x.Version + (x.Nuked ? " [nuked]" : string.Empty);
         }
     }
 }

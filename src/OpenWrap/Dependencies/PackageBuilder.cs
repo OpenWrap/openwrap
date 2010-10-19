@@ -17,7 +17,7 @@ namespace OpenWrap.Dependencies
 
         public static void NewFromFiles(Stream wrapStream, IEnumerable<PackageContent> content)
         {
-            using (var zipFile = new ZipOutputStream(wrapStream){IsStreamOwner = false})
+            using (var zipFile = new ZipOutputStream(wrapStream){IsStreamOwner = false, UseZip64 = UseZip64.Off})
             {
                 foreach(var contentFile in content)
                 {
