@@ -9,9 +9,8 @@ using OpenWrap.Services;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb = "remove", Noun = "wrap")]
-    public class RemoveWrapCommand : ICommand
+    public class RemoveWrapCommand : WrapCommand
     {
-        // TODO: Need to be able to remove packages from the system repository
         [CommandInput(IsRequired = true, Position = 0)]
         public string Name { get; set; }
 
@@ -27,22 +26,54 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool System { get; set; }
 
-        public IEnumerable<ICommandOutput> Execute()
+        [CommandInput]
+        public Version Version { get; set; }
+
+        [CommandInput]
+        public bool Last { get; set; }
+
+        public override IEnumerable<ICommandOutput> Execute()
+        {
+            return Either(VerifyInputs()).Or(ExecuteCore());
+        }
+
+        IEnumerable<ICommandOutput> VerifyInputs()
+        {
+            if (Version != null && Last)
+                yield return new Error("Cannot use '-Last' and '-Version' together.");
+            if (System && !Environment.SystemRepository.PackagesByName[Name].Any())
+                yield return new Error("Cannot find package named '{0}' in system repository.", Name);
+            if (Project && Environment.ProjectRepository == null)
+                yield return new Error("Not in a pacakge directory.");
+        }
+
+        IEnumerable<ICommandOutput> ExecuteCore()
         {
             if (Project)
                 foreach(var m in RemoveFromProjectRepository()) yield return m;
             if (System)
                 foreach(var m in RemoveFromSystemRepository()) yield return m;
+            foreach(var m in  PackageManager.VerifyPackageCache(Environment, Environment.Descriptor))
+                yield return m;
         }
 
         IEnumerable<ICommandOutput> RemoveFromSystemRepository()
         {
             var systemRepository = (ISupportCleaning)Environment.SystemRepository;
-            
-            return systemRepository.Clean(systemRepository.PackagesByName
-                                           .SelectMany(x => x)
-                                           .Where(PackageShouldBeKept))
-                                   .Select(x=>PackageRemovedMessage(x));
+
+            return RemoveFromRepository(systemRepository);
+        }
+
+        IEnumerable<ICommandOutput> RemoveFromRepository(ISupportCleaning repository)
+        {
+            if (Last)
+                Version = repository.PackagesByName[Name].Select(x=>x.Version)
+                                                         .OrderByDescending(x => x)
+                                                         .FirstOrDefault();
+            return repository.Clean(repository.PackagesByName
+                                                  .SelectMany(x => x)
+                                                  .Where(PackageShouldBeKept))
+                                                  .Select(PackageRemovedMessage);
         }
 
         ICommandOutput PackageRemovedMessage(PackageCleanResult packageCleanResult)
@@ -54,10 +85,27 @@ namespace OpenWrap.Commands.Wrap
 
         bool PackageShouldBeKept(IPackageInfo packageInfo)
         {
-            return packageInfo.Name.EqualsNoCase(Name) == false;
+            bool matchesName = packageInfo.Name.EqualsNoCase(Name);
+            bool matchesVersion = Version == null ? true : packageInfo.Version == Version;
+            return !(matchesName && matchesVersion);
         }
 
         IEnumerable<ICommandOutput> RemoveFromProjectRepository()
+        {
+            return Version == null ? RemoveFromDescriptor() : RemovePackageFilesFromProjectRepo();
+        }
+
+        IEnumerable<ICommandOutput> RemovePackageFilesFromProjectRepo()
+        {
+            yield return
+                    new Warning(
+                            "You specified a version to remove from your project. Your descriptor will not be updated, and the package files will be removed. If you want to change what version of a pacakge you depend on, use the 'set-wrap' command.")
+                    ;
+            foreach (var m in RemoveFromRepository((ISupportCleaning)Environment.ProjectRepository))
+                yield return m;
+        }
+
+        IEnumerable<ICommandOutput> RemoveFromDescriptor()
         {
             var dependency = FindProjectDependencyByName();
             if (dependency == null)
@@ -78,9 +126,5 @@ namespace OpenWrap.Commands.Wrap
                            : null;
         }
 
-        static IEnvironment Environment
-        {
-            get { return Services.Services.GetService<IEnvironment>(); }
-        }
     }
 }

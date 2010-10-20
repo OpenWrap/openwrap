@@ -256,6 +256,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="remove-wrap" xml:space="preserve">
     <value>Removes a package from local repositories.</value>
   </data>
+  <data name="remove-wrap-last" xml:space="preserve">
+    <value>Specifies that the last version of the package is to be removed.</value>
+  </data>
   <data name="remove-wrap-name" xml:space="preserve">
     <value>Specifies the name of the package to remove from the local repository.</value>
   </data>
@@ -265,17 +268,20 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="remove-wrap-system" xml:space="preserve">
     <value>Specifies that the package is to be removed from the system repository. If specified, the project repository will not be affected.</value>
   </data>
+  <data name="remove-wrap-version" xml:space="preserve">
+    <value>Specifies the exact version of the package to remove.</value>
+  </data>
   <data name="set-wrap" xml:space="preserve">
     <value>Updates a wrap dependency in the project repository.</value>
   </data>
   <data name="set-wrap-anchored" xml:space="preserve">
-    <value>Either true or false, sets the anchored flag</value>
+    <value>Either true or false, sets the anchored flag.</value>
   </data>
   <data name="set-wrap-anyversion" xml:space="preserve">
-    <value>Removes any existing version constraints</value>
+    <value>Removes any existing version constraints.</value>
   </data>
   <data name="set-wrap-content" xml:space="preserve">
-    <value>Either true or false, sets the content flag</value>
+    <value>Either true or false, sets the content flag.</value>
   </data>
   <data name="set-wrap-maxversion" xml:space="preserve">
     <value>The exclusive, upper-bound of the dependency version</value>

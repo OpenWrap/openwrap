@@ -3,12 +3,134 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using OpenFileSystem.IO;
+using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Dependencies;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
+    public class remove_from_project_when_not_in_project : context.remove_wrap
+    {
+        public remove_from_project_when_not_in_project()
+        {
+            given_project_repository(null);
+            when_executing_command("saruman");
+        }
+        [Test]
+        public void an_error_is_triggered()
+        {
+            Results.ShouldHaveError();
+        }
+    }
+    public class remove_unknown_project_package : context.remove_wrap
+    {
+        public remove_unknown_project_package()
+        {
+            when_executing_command("saruman");
+        }
+        [Test]
+        public void an_error_is_triggered()
+        {
+            Results.ShouldHaveError();
+        }
+    }
+    public class remove_unknown_system_package : context.remove_wrap
+    {
+        public remove_unknown_system_package()
+        {
+            when_executing_command("saruman", "-system");
+        }
+        [Test]
+        public void an_error_is_triggered()
+        {
+            Results.ShouldHaveError();
+        }
+    }
+    public class removing_last_version : context.remove_wrap
+    {
+        public removing_last_version()
+        {
+            given_system_package("saruman", "1.0.0.0".ToVersion());
+            given_system_package("saruman", "1.0.0.1".ToVersion());
+            when_executing_command("saruman","-system", "-last");
+        }
+        [Test]
+        public void packge_is_removed()
+        {
+            Environment.SystemRepository.ShouldNotHavePackage("saruman", "1.0.0.1");
+        }
+        [Test]
+        public void earlier_versions_are_preserved()
+        {
+            Environment.SystemRepository.ShouldHavePackage("saruman", "1.0.0.0");
+        }
+    }
+    public class removing_wrap_by_version_and_last : context.remove_wrap
+    {
+        public removing_wrap_by_version_and_last()
+        {
+            given_system_package("saruman", "1.0.0.0".ToVersion());
+            when_executing_command("saruman", "-version", "1.0.0.0", "-last");
+        }
+        [Test]
+        public void error_is_displayed()
+        {
+            Results.ShouldHaveError();
+        }
+    }
+    public class removing_wrap_by_version_in_system : context.remove_wrap
+    {
+        public removing_wrap_by_version_in_system()
+        {
+            given_system_package("saruman", "1.0.0.0".ToVersion());
+            given_system_package("saruman", "1.0.0.1".ToVersion());
+            when_executing_command("saruman", "-system", "-version", "1.0.0.1");
+        }
+        [Test]
+        public void version_is_removed()
+        {
+            Environment.SystemRepository
+                    .ShouldNotHavePackage("saruman", "1.0.0.1");
+        }
+        [Test]
+        public void other_versions_not_removed()
+        {
+            Environment.SystemRepository
+                    .ShouldHavePackage("saruman", "1.0.0.0");
+        }
+    }
+    public class removing_wrap_by_version_in_project : context.remove_wrap
+    {
+        public removing_wrap_by_version_in_project()
+        {
+            given_dependency("depends: saruman");
+            given_project_package("saruman", "1.0.0.0".ToVersion());
+            given_project_package("saruman", "1.0.0.1".ToVersion());
+            when_executing_command("saruman", "-project", "-version", "1.0.0.0");
+        }
+        [Test]
+        public void version_is_removed()
+        {
+            Environment.ProjectRepository.ShouldNotHavePackage("saruman", "1.0.0.0");
+        }
+        [Test]
+        public void other_versions_are_not_removed()
+        {
+            Environment.ProjectRepository.ShouldHavePackage("saruman", "1.0.0.1");
+        }
+        [Test]
+        public void descriptor_is_not_updated()
+        {
+            Environment.Descriptor.Dependencies.ShouldHaveCountOf(1);
+        }
+        [Test]
+        public void warning_is_issued_about_descriptor_not_updated()
+        {
+            Results.OfType<Warning>()
+                    .ShouldHaveCountOf(1);
+        }
+    }
     public class removing_wrap_by_name_in_both_system_and_proejct : context.remove_wrap
     {
         public removing_wrap_by_name_in_both_system_and_proejct()
