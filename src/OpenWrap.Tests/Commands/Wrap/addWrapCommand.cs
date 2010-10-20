@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
-using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;

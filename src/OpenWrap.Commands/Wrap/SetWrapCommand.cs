@@ -81,13 +81,13 @@ namespace OpenWrap.Commands.Wrap
 
             if (gotMinVersion && MinVersion.ToVersion() == null)
             {
-                yield return new Error("Could not parse minversion: " + Version);
+                yield return new Error("Could not parse minversion: " + MinVersion);
                 yield break;
             }
 
             if (gotMaxVersion && MaxVersion.ToVersion() == null)
             {
-                yield return new Error("Could not parse maxversion: " + Version);
+                yield return new Error("Could not parse maxversion: " + MaxVersion);
                 yield break;
             }
 
