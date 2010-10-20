@@ -34,6 +34,12 @@ namespace OpenWrap.Commands.Wrap
         public string Version { get; set; }
 
         [CommandInput]
+        public string MinVersion { get; set; }
+
+        [CommandInput]
+        public string MaxVersion { get; set; }
+
+        [CommandInput]
         public bool Anchored { get; set; }
 
 
@@ -145,9 +151,7 @@ namespace OpenWrap.Commands.Wrap
                             Name = Name,
                             Anchored = Anchored,
                             ContentOnly = Content,
-                            VersionVertices = Version != null
-                                                  ? VersionVertices()
-                                                  : new List<VersionVertex>{new AnyVersionVertex()}
+                            VersionVertices = VersionVertices()
                         }
                     }
             };
@@ -155,9 +159,24 @@ namespace OpenWrap.Commands.Wrap
 
         List<VersionVertex> VersionVertices()
         {
-            if (Version == null)
-                return new List<VersionVertex>();
-            return DependsParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+            var vertices = new List<VersionVertex>();
+            if (Version != null)
+            {
+                vertices.Add(new ExactVersionVertex(Version.ToVersion()));
+            }
+            if (MinVersion != null)
+            {
+                vertices.Add(new GreaterThenOrEqualVersionVertex(MinVersion.ToVersion()));
+            }
+            if (MaxVersion != null)
+            {
+                vertices.Add(new LessThanVersionVertex(MaxVersion.ToVersion()));
+            }
+            if (Version == null || MinVersion == null || MaxVersion == null)
+            {
+                vertices.Add(new AnyVersionVertex());
+            }
+            return vertices;
         }
 
 
