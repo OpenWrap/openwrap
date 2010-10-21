@@ -2,13 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using OpenWrap.Commands.Remote;
-using OpenWrap.Dependencies;
-using OpenWrap.Exports;
 using OpenFileSystem.IO;
+using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
-using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -34,6 +30,12 @@ namespace OpenWrap.Commands.Wrap
         public string Version { get; set; }
 
         [CommandInput]
+        public string MinVersion { get; set; }
+
+        [CommandInput]
+        public string MaxVersion { get; set; }
+
+        [CommandInput]
         public bool Anchored { get; set; }
 
 
@@ -48,6 +50,43 @@ namespace OpenWrap.Commands.Wrap
         }
 
         public override IEnumerable<ICommandOutput> Execute()
+        {
+            return Either(ValidateInputs()).Or(ExecuteCore());
+        }
+
+        IEnumerable<ICommandOutput> ValidateInputs()
+        {
+            var gotVersion = Version != null;
+            var gotMinVersion = MinVersion != null;
+            var gotMaxVersion = MaxVersion != null;
+            var numberOfVersionInputTypes = (new[] { gotVersion, (gotMinVersion || gotMaxVersion) }).Count(v => v);
+
+            if (numberOfVersionInputTypes > 1)
+            {
+                yield return new Error("Arguments for 'version' and 'version boundaries' cannot be combined.");
+                yield break;
+            }
+
+            if (gotVersion && Version.ToVersion() == null)
+            {
+                yield return new Error("Could not parse version: " + Version);
+                yield break;
+            }
+
+            if (gotMinVersion && MinVersion.ToVersion() == null)
+            {
+                yield return new Error("Could not parse minversion: " + MinVersion);
+                yield break;
+            }
+
+            if (gotMaxVersion && MaxVersion.ToVersion() == null)
+            {
+                yield return new Error("Could not parse maxversion: " + MaxVersion);
+                yield break;
+            }
+        }
+
+        IEnumerable<ICommandOutput> ExecuteCore()
         {
             if (Name.EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
             {
@@ -88,7 +127,7 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput UpdateDescriptor()
         {
             ICommandOutput outputMessage;
-            var dependencyWithSameName = Environment.Descriptor.Dependencies.Where(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)).ToList();
+            var dependencyWithSameName = Environment.Descriptor.Dependencies.Where(x => x.Name.EqualsNoCase(Name)).ToList();
             if (dependencyWithSameName.Count > 0)
             {
                 outputMessage = new GenericMessage("Dependency already declared in descriptor, updating.");
@@ -145,9 +184,7 @@ namespace OpenWrap.Commands.Wrap
                             Name = Name,
                             Anchored = Anchored,
                             ContentOnly = Content,
-                            VersionVertices = Version != null
-                                                  ? VersionVertices()
-                                                  : new List<VersionVertex>{new AnyVersionVertex()}
+                            VersionVertices = VersionVertices()
                         }
                     }
             };
@@ -155,9 +192,24 @@ namespace OpenWrap.Commands.Wrap
 
         List<VersionVertex> VersionVertices()
         {
-            if (Version == null)
-                return new List<VersionVertex>();
-            return DependsParser.ParseVersions(Version.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)).ToList();
+            var vertices = new List<VersionVertex>();
+            if (Version != null)
+            {
+                vertices.Add(new ExactVersionVertex(Version.ToVersion()));
+            }
+            if (MinVersion != null)
+            {
+                vertices.Add(new GreaterThenOrEqualVersionVertex(MinVersion.ToVersion()));
+            }
+            if (MaxVersion != null)
+            {
+                vertices.Add(new LessThanVersionVertex(MaxVersion.ToVersion()));
+            }
+            if (Version == null || MinVersion == null || MaxVersion == null)
+            {
+                vertices.Add(new AnyVersionVertex());
+            }
+            return vertices;
         }
 
 

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
-using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
@@ -272,6 +269,76 @@ namespace OpenWrap.Tests.Commands
                     .Target.ShouldBe(ProjectRepositoryDir.GetDirectory("_cache").GetDirectory("sauron-1.0.0"));
         }
     }
+
+    class adding_exact_version : context.add_wrap_context
+    {
+        public adding_exact_version()
+        {
+            given_file_based_project_repository();
+            given_system_package("sauron", new Version(1, 0, 0));
+            given_system_package("sauron", new Version(2, 0, 0));
+            when_executing_command("sauron", "-version", "1.0.0");
+        }
+
+        [Test]
+        public void v1_package_added()
+        {
+            Environment.ProjectRepository.ShouldHavePackage("sauron", "1.0.0");
+        }
+    }
+
+    class adding_minversion : context.add_wrap_context
+    {
+        public adding_minversion()
+        {
+            given_file_based_project_repository();
+            given_system_package("sauron", new Version(1, 0, 0));
+            given_system_package("sauron", new Version(2, 0, 0));
+            when_executing_command("sauron", "-minversion", "1.0.0");
+        }
+
+        [Test]
+        public void v2_package_added()
+        {
+            Environment.ProjectRepository.ShouldHavePackage("sauron", "2.0.0");
+        }
+    }
+
+    class adding_maxversion : context.add_wrap_context
+    {
+        public adding_maxversion()
+        {
+            given_file_based_project_repository();
+            given_system_package("sauron", new Version(1, 0, 0));
+            given_system_package("sauron", new Version(2, 0, 0));
+            when_executing_command("sauron", "-maxversion", "2.0.0");
+        }
+
+        [Test]
+        public void v1_package_added()
+        {
+            Environment.ProjectRepository.ShouldHavePackage("sauron", "1.0.0");
+        }
+    }
+
+    class adding_minversion_and_maxversion : context.add_wrap_context
+    {
+        public adding_minversion_and_maxversion()
+        {
+            given_file_based_project_repository();
+            given_system_package("sauron", new Version(1, 0, 0));
+            given_system_package("sauron", new Version(2, 0, 0));
+            given_system_package("sauron", new Version(3, 0, 0));
+            when_executing_command("sauron", "-minversion", "1.0.0", "-maxversion", "3.0.0");
+        }
+
+        [Test]
+        public void v2_package_added()
+        {
+            Environment.ProjectRepository.ShouldHavePackage("sauron", "2.0.0");
+        }
+    }
+
     namespace context
     {
         public class add_wrap_context : context.command_context<AddWrapCommand>
