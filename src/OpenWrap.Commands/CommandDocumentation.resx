@@ -200,7 +200,7 @@ Note that the NuPack support is only provided for backward compatibility with le
     <value>Limits the help to commands matching this value. If multiple commands match, a list is displayed. If only one match is found, the full documentation for that command will be displayed.</value>
   </data>
   <data name="init-wrap" xml:space="preserve">
-    <value>Initializes a project and it's associated Visual Studio projects for use by OpenWrap.</value>
+    <value>Initializes a project and its associated Visual Studio projects for use by OpenWrap.</value>
   </data>
   <data name="init-wrap-all" xml:space="preserve">
     <value>Specifies that all msbuild project files found under the current repository will be patched to use OpenWrap's assembly resolution.</value>
