@@ -72,7 +72,7 @@ namespace OpenWrap.Build.Tasks
             if (!EnableVisualStudioIntegration) return true;
             if (_resharperHook != null)
                 return true;
-            _resharperHook = ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository, ProjectFilePath, ExcludeAssemblies.Select(x=>x.ItemSpec).ToList());
+            ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository, ProjectFilePath, ExcludeAssemblies.Select(x=>x.ItemSpec).ToList());
             return true;
         }
     }

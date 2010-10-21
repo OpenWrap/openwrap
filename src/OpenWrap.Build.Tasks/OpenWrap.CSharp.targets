@@ -116,6 +116,9 @@
     <!-- Satellite assemblies-->
     <Message Text="[built($(OpenWrap-ExportName),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
              Condition="Exists('@(IntermediateSatelliteAssembliesWithTargetPath)')"/>
+    
+    <!-- delete assembly reference cache to prevent VS from not calling us on next opening -->
+    <Delete Files="$(ResolveAssemblyReferencesStateFile)" ContinueOnError="true" />
   </Target>
 
 
