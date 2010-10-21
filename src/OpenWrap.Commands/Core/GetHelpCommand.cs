@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using OpenWrap.Commands;
 using OpenWrap.Services;
+using System;
 
 namespace OpenWrap.Commands.Core
 {
@@ -25,16 +26,23 @@ namespace OpenWrap.Commands.Core
 
         IEnumerable<ICommandOutput> ListAllCommands(IEnumerable<ICommandDescriptor> commandRepository)
         {
-            yield return new Result("\r\nList of available commands\r\n--------------------------\r\n");
-            foreach (var command in commandRepository)
+            yield return new Result(Environment.NewLine + "List of available commands" + Environment.NewLine + "--------------------------");
+            yield return new Result(Environment.NewLine + "Usage:" + Environment.NewLine + "  o {{verb}}-{{noun}} <command-arguments>" + Environment.NewLine);
+            var groups = commandRepository
+                .GroupBy(r => r.Noun)
+                .OrderBy(g => g.Key)
+                .Select(g => new CommandGroupResult(g.Key, g));
+            foreach (var group in groups)
             {
-                yield return new CommandListResult(command);
+                yield return group;
             }
+
+            yield return new Result(Environment.NewLine + "For detailed help on a particular command, run:" + Environment.NewLine + "  o get-help {{verb}}-{{noun}}");
         }
 
         IEnumerable<ICommandOutput> ListCommand()
         {
-            var matchingCommands = CommandRepository.Where(x => (x.Verb + "-" + x.Noun).ContainsNoCase(CommandName)).ToList();
+            var matchingCommands = CommandRepository.Where(x => (x.Verb + "-" + x.Noun).ContainsNoCase(CommandName)).OrderBy(d => d.Noun).ThenBy(d => d.Verb).ToList();
             if (matchingCommands.Count == 0)
                 return CommandNotFound();
             if (matchingCommands.Count > 1)
