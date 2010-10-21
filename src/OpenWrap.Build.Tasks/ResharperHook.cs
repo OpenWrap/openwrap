@@ -30,7 +30,7 @@ namespace OpenWrap.Build.Tasks
 
         static object _instance;
         static Timer _timer;
-        static int _tries = 50;
+        static int _tries = 0;
 
         public static void TryRegisterResharper(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, IEnumerable<string> excludedAssemblies)
         {
@@ -51,10 +51,7 @@ namespace OpenWrap.Build.Tasks
 
         static void Queue(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, IEnumerable<string> excludedAssemblies)
         {
-                if (_instance != null)
-                    ExecyteTryAddNotifierMethod(environment,descriptorPath,packageRepository,projectFilePath,excludedAssemblies);
-                else
-                    _registrationQueue.Enqueue(new NotificationRegistration(environment,descriptorPath,packageRepository,projectFilePath, excludedAssemblies));
+            _registrationQueue.Enqueue(new NotificationRegistration(environment,descriptorPath,packageRepository,projectFilePath, excludedAssemblies));
         }
 
         static void TryCreateIntegrationService()
@@ -63,9 +60,10 @@ namespace OpenWrap.Build.Tasks
             {
                 if (_instance != null) return;
                 var unimportantType = Type.GetType("JetBrains.Application.Shell, JetBrains.Platform.ReSharper.Shell");
-                if (unimportantType == null)
+                if (unimportantType == null && _tries < 50)
                 {
-                    _timer = new Timer(x => TryCreateIntegrationService(), null, 1000, Timeout.Infinite);
+                    _tries++;
+                    _timer = new Timer(x => TryCreateIntegrationService(), null, 5000, Timeout.Infinite);
                     return;
                 }
 

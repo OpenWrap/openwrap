@@ -22,13 +22,14 @@ namespace OpenWrap.Resharper
         public void TryAddNotifier(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository repository, string projectFilePath, IEnumerable<string> ignoredAssemblies)
         {
             lock (_projectFiles)
-
+            {
                 if (_projectFiles.ContainsKey(projectFilePath))
                 {
                     Services.Services.GetService<IWrapDescriptorMonitoringService>().ProcessWrapDescriptor(descriptorPath, repository, _projectFiles[projectFilePath]);
                     return;
                 }
-            _projectFiles[projectFilePath] = new ResharperProjectUpdater(descriptorPath, repository, projectFilePath, environment, ignoredAssemblies);
+                _projectFiles[projectFilePath] = new ResharperProjectUpdater(descriptorPath, repository, projectFilePath, environment, ignoredAssemblies);
+            }
 
         }
     }

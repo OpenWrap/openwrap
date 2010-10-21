@@ -113,9 +113,6 @@ namespace OpenWrap.Commands.Wrap
             foreach (var m in resolvedDependencies.GacConflicts(Environment.ExecutionEnvironment))
                 yield return m;
 
-            foreach (var warning in resolvedDependencies.Warnings)
-                yield return warning;
-
             var repositoriesToCopyTo = Environment.RemoteRepositories.Concat(new[]
             {
                 Environment.CurrentDirectoryRepository,

@@ -57,6 +57,7 @@ namespace OpenWrap.Resharper
 
                             ISolution solution = SolutionManager.Instance.CurrentSolution;
                             if (solution == null) return;
+                            _succeeded = true;
 
                             var project = System.Linq.Enumerable.FirstOrDefault(solution.GetAllProjects(), x => x.ProjectFile != null && x.ProjectFile.Location.FullPath == _projectFilePath);
 
@@ -78,7 +79,6 @@ namespace OpenWrap.Resharper
                             {
                                 project.RemoveModuleReference(openwrapAssemblyReferences.First(x => x.HintLocation.FullPath == toRemove));
                             }
-                            _succeeded = true;
                         }
 
                     });
@@ -89,7 +89,7 @@ namespace OpenWrap.Resharper
             }
             if (!_succeeded)
             {
-                _timer = new Timer(s=>WrapAssembliesUpdated((IEnumerable<IAssemblyReferenceExportItem>)s), assemblyPaths, 500, Timeout.Infinite);
+                _timer = new Timer(s=>WrapAssembliesUpdated((IEnumerable<IAssemblyReferenceExportItem>)s), assemblyPaths, 2000, Timeout.Infinite);
             }
         }
 
