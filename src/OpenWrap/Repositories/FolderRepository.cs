@@ -110,6 +110,7 @@ namespace OpenWrap.Repositories
             {
                 if (package.Source != this)
                     continue;
+                package.Load();
                 var anchoredDirectory = BasePath.GetDirectory(package.Name);
                 var packageDirectory = Packages.First(x => x.Package == package).CacheDirectory;
                 if (anchoredDirectory.Exists)

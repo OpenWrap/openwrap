@@ -37,6 +37,12 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public string Projects { get; set; }
 
+        [CommandInput]
+        public bool Git { get; set; }
+
+        [CommandInput]
+        public string IgnoreFileName { get; set; }
+
         [CommandInput(Position = 0)]
         public string Target { get; set; }
 
@@ -68,6 +74,11 @@ namespace OpenWrap.Commands.Wrap
             _projectsToPatch = All ? GetAllProjects() : GetSpecificProjects();
             foreach (IFile proj in _projectsToPatch.Where(x => x.Exists == false))
                 yield return new Warning("The project at path '{0}' does not exist. Check the path and try again.", proj.Path.FullPath);
+
+            if (Git)
+            {
+                IgnoreFileName = ".gitignore";
+            }
         }
 
         static void CreateStructure(IFileSystemItem[] fileSystemItems)
@@ -88,7 +99,8 @@ namespace OpenWrap.Commands.Wrap
             items.AddRange(new IFileSystemItem[]
             {
                     projectDirectory.GetDirectory("src"),
-                    projectDirectory.GetDirectory("wraps")
+                    projectDirectory.GetDirectory("wraps"),
+                    projectDirectory.GetDirectory("wraps").GetDirectory("_cache")
             });
         }
 
@@ -116,6 +128,7 @@ namespace OpenWrap.Commands.Wrap
                     folderRepository))
                 yield return msg;
             folderRepository.Refresh();
+            
             folderRepository.VerifyAnchors(new[] { folderRepository.PackagesByName["openwrap"].First() });
         }
 
@@ -181,12 +194,18 @@ namespace OpenWrap.Commands.Wrap
             {
                 AddOpenWrapDependency(packageDescriptor);
                 AddPackageFolders(projectDirectory, items);
-
+                AddIgnores(projectDirectory);
                 foreach (ICommandOutput m in CopyOpenWrap(projectDirectory)) yield return m;
             }
             WriteVersionFile(projectDirectory);
             WriteDescriptor(packageDescriptorFile, packageDescriptor);
             yield return new GenericMessage("Package '{0}' initialized. Start adding packages by using the 'add-wrap' command.", packageName);
+        }
+
+        void AddIgnores(IDirectory projectDirectory)
+        {
+            if (IgnoreFileName == null) return;
+            projectDirectory.GetDirectory("wraps").GetFile(IgnoreFileName).WriteString("_cache\r\n_cache\\*");
         }
 
         void WriteDescriptor(IFile descriptor, PackageDescriptor packageDescriptor)

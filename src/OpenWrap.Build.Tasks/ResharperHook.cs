@@ -34,7 +34,6 @@ namespace OpenWrap.Build.Tasks
 
         public static void TryRegisterResharper(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, IEnumerable<string> excludedAssemblies)
         {
-            Debugger.Launch();
             TryCreateIntegrationService();
             TryRegisterProjectToResharper(environment, descriptorPath, packageRepository, projectFilePath, excludedAssemblies);
         }
@@ -52,13 +51,10 @@ namespace OpenWrap.Build.Tasks
 
         static void Queue(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, IEnumerable<string> excludedAssemblies)
         {
-            lock(_registrationQueue)
-            {
                 if (_instance != null)
                     ExecyteTryAddNotifierMethod(environment,descriptorPath,packageRepository,projectFilePath,excludedAssemblies);
                 else
                     _registrationQueue.Enqueue(new NotificationRegistration(environment,descriptorPath,packageRepository,projectFilePath, excludedAssemblies));
-            }
         }
 
         static void TryCreateIntegrationService()
