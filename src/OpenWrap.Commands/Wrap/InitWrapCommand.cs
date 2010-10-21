@@ -41,6 +41,12 @@ namespace OpenWrap.Commands.Wrap
         public bool Git { get; set; }
 
         [CommandInput]
+        public bool Hg { get; set; }
+
+        [CommandInput]
+        public bool Bazaar { get; set; }
+
+        [CommandInput]
         public string IgnoreFileName { get; set; }
 
         [CommandInput(Position = 0)]
@@ -76,17 +82,11 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Warning("The project at path '{0}' does not exist. Check the path and try again.", proj.Path.FullPath);
 
             if (Git)
-            {
                 IgnoreFileName = ".gitignore";
-            }
-        }
-
-        static void CreateStructure(IFileSystemItem[] fileSystemItems)
-        {
-            foreach (IDirectory fs in fileSystemItems.OfType<IDirectory>())
-                fs.MustExist();
-            foreach (IFile fs in fileSystemItems.OfType<IFile>())
-                fs.MustExist();
+            if (Hg)
+                IgnoreFileName = ".hgignore";
+            if (Bazaar)
+                IgnoreFileName = ".bzrignore";
         }
 
         void AddOpenWrapDependency(PackageDescriptor packageDescriptor)
@@ -94,14 +94,10 @@ namespace OpenWrap.Commands.Wrap
             packageDescriptor.Dependencies.Add(new PackageDependency { Name = "openwrap", ContentOnly = true });
         }
 
-        void AddPackageFolders(IDirectory projectDirectory, List<IFileSystemItem> items)
+        void AddPackageFolders(IDirectory projectDirectory)
         {
-            items.AddRange(new IFileSystemItem[]
-            {
-                    projectDirectory.GetDirectory("src"),
-                    projectDirectory.GetDirectory("wraps"),
-                    projectDirectory.GetDirectory("wraps").GetDirectory("_cache")
-            });
+            projectDirectory.GetDirectory("src").MustExist();
+            projectDirectory.GetDirectory("wraps").GetDirectory("_cache").MustExist();
         }
 
         IEnumerable<ICommandOutput> CopyOpenWrap(IDirectory projectDirectory)
@@ -109,8 +105,8 @@ namespace OpenWrap.Commands.Wrap
             var packageManager = Services.Services.GetService<IPackageManager>();
             var initialDescriptor = new PackageDescriptor
             {
-                    Name = "openwrap",
-                    Dependencies =
+                Name = "openwrap",
+                Dependencies =
                             {
                                     new PackageDependency
                                     {
@@ -121,14 +117,18 @@ namespace OpenWrap.Commands.Wrap
             };
 
             DependencyResolutionResult openwrapPackage = packageManager.TryResolveDependencies(initialDescriptor, new[] { Environment.SystemRepository });
-            var folderRepository = new FolderRepository(projectDirectory.GetDirectory("wraps")) { EnableAnchoring = true };
+            var folderRepository = new FolderRepository(projectDirectory.GetDirectory("wraps"))
+            {
+                EnableAnchoring = true,
+                Name = "Project repository"
+            };
             foreach (ICommandOutput msg in packageManager.CopyPackagesToRepositories(
                     openwrapPackage,
                     Environment.SystemRepository,
                     folderRepository))
                 yield return msg;
             folderRepository.Refresh();
-            
+
             folderRepository.VerifyAnchors(new[] { folderRepository.PackagesByName["openwrap"].First() });
         }
 
@@ -183,9 +183,8 @@ namespace OpenWrap.Commands.Wrap
                 yield return new GenericMessage("Package descriptor found.");
                 yield break;
             }
-            var items = new List<IFileSystemItem> { packageDescriptorFile };
 
-            var packageDescriptor = new PackageDescriptor();
+            var packageDescriptor = new PackageDescriptor(){Name = packageName};
             if (Meta)
             {
                 packageDescriptor.BuildCommand = "$meta";
@@ -193,7 +192,7 @@ namespace OpenWrap.Commands.Wrap
             else
             {
                 AddOpenWrapDependency(packageDescriptor);
-                AddPackageFolders(projectDirectory, items);
+                AddPackageFolders(projectDirectory);
                 AddIgnores(projectDirectory);
                 foreach (ICommandOutput m in CopyOpenWrap(projectDirectory)) yield return m;
             }

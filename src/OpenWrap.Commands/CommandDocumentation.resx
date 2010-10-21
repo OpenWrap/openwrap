@@ -199,6 +199,18 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="init-wrap-all" xml:space="preserve">
     <value>Specifies that all msbuild project files found under the current repository will be patched to use OpenWrap's assembly resolution.</value>
   </data>
+  <data name="init-wrap-bazaar" xml:space="preserve">
+    <value>Adds .bzrignore files to the project.</value>
+  </data>
+  <data name="init-wrap-git" xml:space="preserve">
+    <value>Adds .gitignore files to the project.</value>
+  </data>
+  <data name="init-wrap-hg" xml:space="preserve">
+    <value>Adds .hgignore files to the project.</value>
+  </data>
+  <data name="init-wrap-ignorefilename" xml:space="preserve">
+    <value>Specifies the name of the file containing ignore instructions for your source control system.</value>
+  </data>
   <data name="init-wrap-meta" xml:space="preserve">
     <value>Specifies that the target is a meta-package, aka a combination of other packages without build provider or project repository.</value>
   </data>
