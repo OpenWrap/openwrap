@@ -26,7 +26,7 @@ namespace OpenWrap.Commands.Core
         IEnumerable<ICommandOutput> ListAllCommands(IEnumerable<ICommandDescriptor> commandRepository)
         {
             yield return new Result("\r\nList of available commands\r\n--------------------------\r\n");
-            foreach (var command in commandRepository)
+            foreach (var command in commandRepository.OrderBy(d => d.Noun).ThenBy(d => d.Verb))
             {
                 yield return new CommandListResult(command);
             }
@@ -34,7 +34,7 @@ namespace OpenWrap.Commands.Core
 
         IEnumerable<ICommandOutput> ListCommand()
         {
-            var matchingCommands = CommandRepository.Where(x => (x.Verb + "-" + x.Noun).ContainsNoCase(CommandName)).ToList();
+            var matchingCommands = CommandRepository.Where(x => (x.Verb + "-" + x.Noun).ContainsNoCase(CommandName)).OrderBy(d => d.Noun).ThenBy(d => d.Verb).ToList();
             if (matchingCommands.Count == 0)
                 return CommandNotFound();
             if (matchingCommands.Count > 1)
