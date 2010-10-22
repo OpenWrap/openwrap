@@ -58,6 +58,7 @@
     <Compile Include="Core\CommandGroupResult.cs" />
     <Compile Include="Errors\FileNotFound.cs" />
     <Compile Include="Remote\RemoteRepositoryMessage.cs" />
+    <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Wrap\DependenciesConflictMessage.cs" />
     <Compile Include="Wrap\PackageDescriptionOutput.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
