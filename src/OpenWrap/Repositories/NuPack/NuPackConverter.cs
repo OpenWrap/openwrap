@@ -65,7 +65,7 @@ namespace OpenWrap.Repositories.NuPack
                         var segments = entry.Name.Split('/');
                         if (segments.Length == 1 && Path.GetExtension(entry.Name).EqualsNoCase(".nuspec"))
                             yield return ConvertSpecification(inputZip, entry);
-                        else if (segments.Length > 2 && segments[0].Equals("lib", StringComparison.OrdinalIgnoreCase))
+                        else if (segments.Length >= 2 && segments[0].Equals("lib", StringComparison.OrdinalIgnoreCase))
                             if ((content = ConvertAssembly(segments, inputZip, entry)) != null)
                                 yield return content;
                     }
@@ -84,7 +84,7 @@ namespace OpenWrap.Repositories.NuPack
 
         static PackageContent ConvertAssembly(string[] segments, ZipFile inputZip, ZipEntry entry)
         {
-            var destinationBinFolder = ConvertAssemblyFolder(segments[1]);
+            var destinationBinFolder = segments.Length == 2 ? "bin-net20" : ConvertAssemblyFolder(segments[1]);
             if (destinationBinFolder == null)
                 return null;
 
@@ -105,7 +105,7 @@ namespace OpenWrap.Repositories.NuPack
             var nuPackFxVersion = profile == null ? identifier : identifier.Substring(profile.Length);
             var version = FrameworkVersions.Keys.FirstOrDefault(x => nuPackFxVersion.Equals(x, StringComparison.OrdinalIgnoreCase));
 
-            return "bin-" + (profile ?? "net") + (version ?? "20");
+            return "bin-" + (profile == null && version == null ? identifier : ((profile ?? "net") + (version ?? "20")));
         }
 
         static PackageContent ConvertSpecification(ZipFile file, ZipEntry entry)
