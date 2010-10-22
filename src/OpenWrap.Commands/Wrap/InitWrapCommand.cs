@@ -155,13 +155,17 @@ namespace OpenWrap.Commands.Wrap
 
                 using (Stream projectFileStream = project.OpenRead())
                     xmlDoc.Load(projectFileStream);
-                XmlNode importNode = xmlDoc.SelectSingleNode(@"//msbuild:Import[@Project='$(MSBuildToolsPath)\Microsoft.CSharp.targets']", namespaceManager);
-                if (importNode == null)
+                var csharpTarget = (from node in xmlDoc.SelectNodes(@"//msbuild:Import", namespaceManager).OfType<XmlElement>()
+                                   let attr = node.GetAttribute("Project", MSBUILD_NS)
+                                   where attr.EndsWith("Microsoft.CSharp.targets")
+                                   select node).FirstOrDefault();
+
+                if (csharpTarget == null)
                     yield return new GenericMessage("Project '{0}' was not a recognized csharp project file. Ignoring.", project.Name);
                 else
                 {
                     // TODO: Detect path of openwrap directory and generate correct relative path from there
-                    importNode.Attributes["Project"].Value = OPENWRAP_BUILD;
+                    csharpTarget.Attributes["Project"].Value = OPENWRAP_BUILD;
                     using (Stream projectFileStream = project.OpenWrite())
                         xmlDoc.Save(projectFileStream);
                     yield return new GenericMessage(string.Format("Project '{0}' updated to use OpenWrap.", project.Path.FullPath));
