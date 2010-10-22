@@ -94,15 +94,9 @@ namespace OpenWrap.Tests.Commands
         }
 
         [Test]
-        public void the_package_is_installed_alongside_previous_version_in_system_repo()
+        public void the_package_is_not_installed_in_system_repo()
         {
-            Environment.SystemRepository.PackagesByName["goldberry"].ShouldHaveCountOf(2);
-        }
-
-        [Test]
-        public void the_package_is_installed_in_system_repo()
-        {
-            Environment.SystemRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
+            Environment.SystemRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 1, 0));
         }
 
         [Test]

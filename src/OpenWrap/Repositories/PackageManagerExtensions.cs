@@ -34,12 +34,7 @@ namespace OpenWrap.Repositories
             {
                 // fast forward to the source repository
 
-                var repositoriesForDependency = repositoriesToWriteTo
-                        .SkipWhile(x => x != dependency.Package.Source)
-                        .Skip(1)
-                        .ToList();
-
-                foreach (var repository in repositoriesForDependency.NotNull().OfType<ISupportPublishing>().ToList())
+                foreach (var repository in repositoriesToWriteTo.NotNull().OfType<ISupportPublishing>().ToList())
                 {
                     var existingUpToDateVersion = repository.PackagesByName.Contains(dependency.Package.Name)
                                                           ? repository.PackagesByName[dependency.Package.Name]
@@ -84,14 +79,6 @@ namespace OpenWrap.Repositories
                 .Concat(environment.CurrentDirectoryRepository,
                         environment.ProjectRepository,
                         environment.SystemRepository);
-        }
-        public static IEnumerable<IPackageRepository> RepositoriesForWrite(this IEnvironment environment)
-        {
-            return environment.RemoteRepositories
-                    .Concat(environment.CurrentDirectoryRepository,
-                            environment.SystemRepository,
-                            environment.ProjectRepository)
-                    .NotNull().ToList();
         }
 
         static ICommandOutput DependencyResolutionFailed(DependencyResolutionResult result)

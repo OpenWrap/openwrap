@@ -18,10 +18,10 @@ namespace OpenWrap.Commands.Wrap
         public bool NoDescriptorUpdate { get; set; }
 
         [CommandInput]
-        public bool ProjectOnly { get; set; }
+        public bool Project { get; set; }
 
         [CommandInput]
-        public bool SystemOnly { get; set; }
+        public bool System { get; set; }
 
         [CommandInput]
         public bool Content { get; set; }
@@ -45,7 +45,7 @@ namespace OpenWrap.Commands.Wrap
             {
                 return NoDescriptorUpdate == false &&
                        Environment.Descriptor != null &&
-                       SystemOnly == false;
+                       System == false;
             }
         }
 
@@ -113,17 +113,14 @@ namespace OpenWrap.Commands.Wrap
             foreach (var m in resolvedDependencies.GacConflicts(Environment.ExecutionEnvironment))
                 yield return m;
 
-            var repositoriesToCopyTo = Environment.RemoteRepositories.Concat(new[]
-            {
-                Environment.CurrentDirectoryRepository,
-                ProjectOnly ? null : Environment.SystemRepository,
-                SystemOnly ? null : Environment.ProjectRepository
-            }).NotNull();
-
-            foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositoriesToCopyTo.NotNull()))
+            var repositories = new List<IPackageRepository>();
+            if (Project) repositories.Add(Environment.SystemRepository);
+            if (System) repositories.Add(Environment.ProjectRepository);
+            foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositories))
                 yield return msg;
 
-            foreach (var m in PackageManager.VerifyPackageCache(Environment, Environment.Descriptor)) yield return m;
+            foreach (var m in PackageManager.VerifyPackageCache(Environment, Environment.Descriptor))
+                yield return m;
         }
 
         ICommandOutput UpdateDescriptor()

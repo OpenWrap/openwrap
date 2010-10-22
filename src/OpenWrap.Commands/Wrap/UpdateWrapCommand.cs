@@ -59,11 +59,14 @@ namespace OpenWrap.Commands.Wrap
             yield return new Result("Searching for updated packages...");
             foreach (var packageToSearch in CreateDescriptorForEachSystemPackage())
             {
-                var sourceRepos = Environment.RemoteRepositories.Concat(Environment.CurrentDirectoryRepository);
+                var sourceRepos = Environment.RemoteRepositories.Concat(Environment.CurrentDirectoryRepository).ToList();
 
                 var resolveResult = PackageManager.TryResolveDependencies(packageToSearch, sourceRepos);
-
-                foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.RemoteRepositories.Concat(Environment.SystemRepository)))
+                var successful = resolveResult.Dependencies.Where(x => x.Package != null).ToList();
+                resolveResult = new DependencyResolutionResult { IsSuccess = successful.Count > 0, Dependencies = successful };
+                if (!resolveResult.IsSuccess)
+                    continue;
+                foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
                     if (m is DependencyResolutionFailedResult)
                         yield return PackageNotFoundInRemote(m);
 
@@ -108,7 +111,7 @@ namespace OpenWrap.Commands.Wrap
 
             var copyResult = PackageManager.CopyPackagesToRepositories(
                 resolvedPackages,
-                Environment.RepositoriesForWrite()
+                Environment.ProjectRepository
                 );
             foreach (var m in copyResult) yield return m;
 
@@ -157,7 +160,7 @@ namespace OpenWrap.Commands.Wrap
                                                    new PackageDependency
                                                    {
                                                            Name = systemPackageName,
-                                                           VersionVertices = { new GreaterThanVersionVertex(maxPackageVersion) }
+                                                           VersionVertices = { new UpdatePackageVertex(maxPackageVersion) }
                                                    }
                                            }
                            }
@@ -169,6 +172,30 @@ namespace OpenWrap.Commands.Wrap
             return string.IsNullOrEmpty(Name) ? true : Name.Equals(systemPackageName, StringComparison.OrdinalIgnoreCase);
         }
     }
+
+    public class UpdatePackageVertex : VersionVertex
+    {
+        public UpdatePackageVertex(Version existingVersion) : base(existingVersion)
+        {
+        }
+        public override bool IsCompatibleWith(Version version)
+        {
+            return (Version.Major == version.Major
+                    && Version.Minor == version.Minor
+                    && Version.Build == version.Build
+                    && Version.Revision < version.Revision)
+                   || 
+                   (Version.Major == version.Major
+                    && Version.Minor == version.Minor
+                    && Version.Build < version.Build)
+                   ||
+                   (Version.Major == version.Major
+                    && Version.Minor < version.Minor)
+                   ||
+                   (Version.Major < version.Major);
+        }
+    }
+
     public class DependencyNotFoundInRepositories : Warning
     {
         public PackageDependency Dependency { get; set; }

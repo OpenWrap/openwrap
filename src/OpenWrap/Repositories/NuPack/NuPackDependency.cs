@@ -46,7 +46,7 @@ namespace OpenWrap.Repositories.NuPack
                 yield return new ExactVersionVertex(version);
             if (!string.IsNullOrEmpty(MinVersion) && (version = MinVersion.ToVersion()) != null)
                 yield return new GreaterThenOrEqualVersionVertex(version);
-            if (!string.IsNullOrEmpty(MinVersion) && (version = MaxVersion.ToVersion()) != null)
+            if (!string.IsNullOrEmpty(MaxVersion) && (version = MaxVersion.ToVersion()) != null)
                 yield return new LessThanVersionVertex(version);
         }
     }

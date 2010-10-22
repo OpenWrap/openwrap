@@ -10,12 +10,19 @@ namespace OpenWrap.Build.BuildEngines
 {
     public class ConventionMSBuildEngine : IPackageBuilder
     {
+        readonly IFileSystem _fileSystem;
         readonly IEnvironment _environment;
         readonly BuiltInstructionParser _parser = new BuiltInstructionParser();
-
-        public ConventionMSBuildEngine(IEnvironment environment)
+        public IEnumerable<string> Profile { get; set; }
+        public IEnumerable<string> Platform { get; set; }
+        public IEnumerable<string> Project { get; set; }
+        public ConventionMSBuildEngine(IFileSystem fileSystem, IEnvironment environment)
         {
+            _fileSystem = fileSystem;
             _environment = environment;
+            Profile = new List<string> { environment.ExecutionEnvironment.Profile };
+            Platform = new List<string> { environment.ExecutionEnvironment.Platform };
+            Project = new List<string>();
         }
 
         public IEnumerable<BuildResult> Build()
@@ -29,14 +36,23 @@ namespace OpenWrap.Build.BuildEngines
                                                           _environment.CurrentDirectory.Path.FullPath));
                 yield break;
             }
-            foreach (var project in sourceDirectory.Files("*.*proj", SearchScope.SubFolders))
+            
+            var projectFiles = (Project.Count() > 0)
+                ? Project.Select(x=> _fileSystem.GetFile(_environment.DescriptorFile.Parent.Path.Combine(x).FullPath)).Where(x=>x.Exists)
+                : sourceDirectory.Files("*.*proj", SearchScope.SubFolders);
+
+            var builds = from file in projectFiles
+                         from platform in Platform
+                         from profile in Profile
+                         select new { file, platform, profile };
+            foreach (var project in builds)
             {
-                var msbuildProcess = CreateMSBuildProcess(project);
+                var msbuildProcess = CreateMSBuildProcess(project.file, project.platform, project.profile);
                 yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", msbuildProcess.StartInfo.FileName));
                 msbuildProcess.Start();
                 var reader = msbuildProcess.StandardOutput;
 
-                yield return new TextBuildResult(string.Format("Building '{0}'...", project.Path.FullPath));
+                yield return new TextBuildResult(string.Format("Building '{0}'...", project.file.Path.FullPath));
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
@@ -55,15 +71,17 @@ namespace OpenWrap.Build.BuildEngines
             }
         }
 
-        static Process CreateMSBuildProcess(IFile project)
+        static Process CreateMSBuildProcess(IFile project, string platform, string profile)
         {
+            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1}", platform, profile);
+
             return new Process
             {
                     StartInfo = new ProcessStartInfo
                     {
                             RedirectStandardOutput = true,
                             FileName = GetMSBuildExecutableName(),
-                            Arguments = "\"" + project.Path.FullPath + "\" /p:OpenWrap-EmitOutputInstructions=true",
+                            Arguments = "\"" + project.Path.FullPath + "\"" + msbuildParams,
                             UseShellExecute = false
                     }
             };

@@ -2,6 +2,7 @@
 using System.IO;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.Build;
@@ -120,7 +121,8 @@ namespace OpenWrap.Commands.Wrap
                 {
                     var buildResult = (FileBuildResult)t;
                     onFound(buildResult);
-                    yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
+                    if (!Quiet)
+                        yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
                 }
                 else if (t is ErrorBuildResult)
                 {
@@ -203,7 +205,24 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput CreateBuilder()
         {
             var commandLine = Environment.Descriptor.BuildCommand;
-            _builder = commandLine == "$meta" ? (IPackageBuilder)new MetaPackageBuilder(Environment) :  new ConventionMSBuildEngine(Environment);
+            if (string.IsNullOrEmpty(commandLine))
+                commandLine = "msbuild";
+            var properties = from segment in commandLine.Split(';').Skip(1)
+                             let keyValues = segment.Split('=')
+                             where keyValues.Length >= 2
+                             let key = keyValues[0]
+                             let value = segment.Substring(key.Length + 1)
+                             group new { key, value } by key;
+
+            _builder = commandLine.Trim().StartsWith("msbuild", StringComparison.OrdinalIgnoreCase)
+                                  ? (IPackageBuilder)new ConventionMSBuildEngine(FileSystem, Environment)
+                                  : new MetaPackageBuilder(Environment);
+            foreach(var property in properties)
+            {
+                var pi = _builder.GetType().GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
+                if (pi != null)
+                    pi.SetValue(_builder, property.Select(x=>x.value).ToList(), null);
+            }
             return null;
         }
 

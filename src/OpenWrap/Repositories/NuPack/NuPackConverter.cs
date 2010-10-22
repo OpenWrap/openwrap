@@ -100,12 +100,16 @@ namespace OpenWrap.Repositories.NuPack
         static string ConvertAssemblyFolder(string identifier)
         {
             
-            var profile = FrameworkProfiles.Keys.FirstOrDefault(x => identifier.StartsWith(x, StringComparison.OrdinalIgnoreCase));
+            var nuPackProfile = FrameworkProfiles.Keys.FirstOrDefault(x => identifier.StartsWith(x, StringComparison.OrdinalIgnoreCase));
 
-            var nuPackFxVersion = profile == null ? identifier : identifier.Substring(profile.Length);
-            var version = FrameworkVersions.Keys.FirstOrDefault(x => nuPackFxVersion.Equals(x, StringComparison.OrdinalIgnoreCase));
+            var versionString = nuPackProfile == null ? identifier : identifier.Substring(nuPackProfile.Length);
+            var nuPackVersion = FrameworkVersions.Keys.FirstOrDefault(x => versionString.Equals(x, StringComparison.OrdinalIgnoreCase));
 
-            return "bin-" + (profile == null && version == null ? identifier : ((profile ?? "net") + (version ?? "20")));
+            if (nuPackProfile != null)
+                nuPackProfile = FrameworkProfiles[nuPackProfile];
+            if (nuPackVersion != null)
+                nuPackVersion = FrameworkVersions[nuPackVersion];
+            return "bin-" + (nuPackProfile == null && nuPackVersion == null ? identifier : ((nuPackProfile ?? "net") + (nuPackVersion ?? "20")));
         }
 
         static PackageContent ConvertSpecification(ZipFile file, ZipEntry entry)

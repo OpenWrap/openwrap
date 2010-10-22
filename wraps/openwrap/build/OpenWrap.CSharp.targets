@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">true</OpenWrap-EnableVisualStudioIntegration>
-    
+
     <!-- Emit output information post-build for OpenWrap to create packages -->
     <OpenWrap-EmitOutputInstructions Condition="'$(OpenWrap-EmitOutputInstructions)' == ''">false</OpenWrap-EmitOutputInstructions>
 
@@ -26,7 +26,8 @@
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v3.0'">net30</OpenWrap-TargetProfile>
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v3.5'">net35</OpenWrap-TargetProfile>
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v4.0'">net40</OpenWrap-TargetProfile>
-
+    <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">$(Platform)</OpenWrap-TargetPlatform>
+    <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">AnyCPU</OpenWrap-TargetPlatform>
     <OpenWrap-ExportName Condition="'$(OpenWrap-ExportName)' == ''">bin-$(OpenWrap-TargetProfile)</OpenWrap-ExportName>
   </PropertyGroup>
 
@@ -43,7 +44,7 @@
     <InitializeVisualStudioIntegration
       WrapDescriptor="@(_WrapFile)"
       WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
-      Platform="$(Platform)"
+      Platform="$(OpenWrap-TargetPlatform)"
       Profile="$(OpenWrap-TargetProfile)"
       ProjectFilePath="$(MSBuildProjectFullPath)"
       EnableVisualStudioIntegration="$(OpenWrap-EnableVisualStudioIntegration)"
@@ -66,7 +67,7 @@
     <ResolveWrapReferences
       WrapDescriptor="@(_WrapFile)"
       WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
-      Platform="$(Platform)"
+      Platform="$(OpenWrap-TargetPlatform)"
       Profile="$(OpenWrap-TargetProfile)"
       ProjectFilePath="$(MSBuildProjectFullPath)"
       ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)"
@@ -116,7 +117,7 @@
     <!-- Satellite assemblies-->
     <Message Text="[built($(OpenWrap-ExportName),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
              Condition="Exists('@(IntermediateSatelliteAssembliesWithTargetPath)')"/>
-    
+
     <!-- delete assembly reference cache to prevent VS from not calling us on next opening -->
     <Delete Files="$(ResolveAssemblyReferencesStateFile)" ContinueOnError="true" />
   </Target>

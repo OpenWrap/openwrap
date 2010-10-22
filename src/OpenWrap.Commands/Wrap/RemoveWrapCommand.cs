@@ -29,8 +29,14 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public Version Version { get; set; }
 
+        bool? _last;
+
         [CommandInput]
-        public bool Last { get; set; }
+        public bool Last
+        {
+            get { return _last ?? false; }
+            set { _last = value; }
+        }
 
         public override IEnumerable<ICommandOutput> Execute()
         {
@@ -92,7 +98,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> RemoveFromProjectRepository()
         {
-            return Version == null ? RemoveFromDescriptor() : RemovePackageFilesFromProjectRepo();
+            return (Version == null && _last == null) ? RemoveFromDescriptor() : RemovePackageFilesFromProjectRepo();
         }
 
         IEnumerable<ICommandOutput> RemovePackageFilesFromProjectRepo()

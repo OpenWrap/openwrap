@@ -100,12 +100,7 @@ namespace OpenWrap.Repositories
         {
             IEnumerable<ResolvedDependency> packages = (from dependency in dependencies
                                                         let modifiedDependency = ApplyAllWrapDependencyOverrides(dependencyOverrides, dependency)
-                                                        let package = repositories
-                                                                .Where(x => x != null)
-                                                                .Select(x => x.Find(modifiedDependency))
-                                                                .NotNull()
-                                                                .OrderByDescending(x=>x.Version)
-                                                                .FirstOrDefault(x => x != null)
+                                                        let package = GetLatestPackageVersion(repositories, modifiedDependency)
                                                         where package == null ||
                                                               resolvedDependencies.None(x => x.Package != null && x.Package.Name == package.Name && x.Package.Version == package.Version)
                                                         select new ResolvedDependency
@@ -128,6 +123,17 @@ namespace OpenWrap.Repositories
                     resolvedDependencies));
 
             return packages;
+        }
+
+        IPackageInfo GetLatestPackageVersion(IEnumerable<IPackageRepository> repositories, PackageDependency modifiedDependency)
+        {
+            var allPackages = repositories
+                    .NotNull()
+                    .Select(x => x.Find(modifiedDependency))
+                    .NotNull()
+                    .OrderByDescending(x=>x.Version);
+            return allPackages
+                    .FirstOrDefault(x => x != null);
         }
 
         DependencyResolutionResult SomeDependenciesNotFound(IEnumerable<ResolvedDependency> dependencies)
