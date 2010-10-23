@@ -60,7 +60,7 @@ namespace OpenWrap
             ConfigurationDirectory = FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory);
 
             RemoteRepositories = Services.Services.GetService<IConfigurationManager>().LoadRemoteRepositories()
-                    .OrderBy(x => x.Value.Position)
+                    .OrderBy(x => x.Value.Priority)
                     .Select(x => CreateRemoteRepository(x.Key, x.Value.Href))
                     .Where(x => x != null)
                     .Cast<IPackageRepository>()

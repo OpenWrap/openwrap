@@ -41,7 +41,7 @@ namespace OpenWrap.Commands.Remote
             {
                 Href = Href,
                 Name = Name,
-                Position = position
+                Priority = position
             };
             ConfigurationManager.SaveRemoteRepositories(repositories);
             yield return new GenericMessage(string.Format("Remote repository '{0}' added.", Name));
@@ -55,7 +55,7 @@ namespace OpenWrap.Commands.Remote
             }
             else if (repositories.Count > 0)
             {
-                return repositories.Values.Max(r => r.Position) + 1;
+                return repositories.Values.Max(r => r.Priority) + 1;
             }
             else
             {

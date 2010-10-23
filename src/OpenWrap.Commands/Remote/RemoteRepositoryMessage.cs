@@ -15,7 +15,7 @@ namespace OpenWrap.Commands.Remote
         }
         public override string ToString()
         {
-            return string.Format("{0,15}:{1}", Name, RemoteRepository.Href);
+            return string.Format("{0}. {1,15}: {2}", RemoteRepository.Priority, Name, RemoteRepository.Href);
         }
 
         public bool Success

@@ -46,7 +46,7 @@ namespace OpenWrap.Tests.Commands.Remote.Add
         public void remote_has_position_1()
         {
             var remote = Services.Services.GetService<IConfigurationManager>().LoadRemoteRepositories()["iron-hills"];
-            remote.Position.ShouldBe(1);
+            remote.Priority.ShouldBe(1);
         }
     }
 }

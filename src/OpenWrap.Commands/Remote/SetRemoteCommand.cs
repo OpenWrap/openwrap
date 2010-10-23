@@ -13,7 +13,7 @@ namespace OpenWrap.Commands.Remote
         public string Name { get; set; }
 
         [CommandInput]
-        public int Position
+        public int Priority
         {
             get { return _position ?? 1; }
             set { _position = value; }
@@ -33,7 +33,7 @@ namespace OpenWrap.Commands.Remote
 
             if (_position.HasValue)
             {
-                remote.Position = _position.Value;
+                remote.Priority = _position.Value;
             }
 
             ConfigurationManager.SaveRemoteRepositories(repositories);
