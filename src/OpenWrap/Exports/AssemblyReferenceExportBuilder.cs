@@ -55,14 +55,24 @@ namespace OpenWrap.Exports
         private bool ProfileMatches(string binProfile, string envProfile)
         {
             if (envProfile == "net40")
-                return binProfile == "net40" || binProfile == "net35" || binProfile == "net30" || binProfile == "net20";
+                return binProfile == "net40" || binProfile == "net40cp" || binProfile == "net35" || binProfile == "net35cp" || binProfile == "net30" || binProfile == "net20";
+
+            if (envProfile == "net40cp")
+                return binProfile == "net40cp" || binProfile == "net35cp" || binProfile == "net30" || binProfile == "net20";
 
             if (envProfile == "net35")
-                return binProfile == "net35" || binProfile == "net30" || binProfile == "net20";
+                return binProfile == "net35" || binProfile == "net35cp" || binProfile == "net30" || binProfile == "net20";
+            if (envProfile == "net35cp")
+                return binProfile == "net35cp" || binProfile == "net30" || binProfile == "net20";
+
             if (envProfile == "net30")
                 return binProfile == "net30" || binProfile == "net20";
             if (envProfile == "net20")
                 return binProfile == "net20";
+            if (envProfile == "monotouch20")
+                return binProfile == "monotouch20";
+            if (envProfile == "monodroid20")
+                return binProfile == "monodroid20";
             return false;
         }
 

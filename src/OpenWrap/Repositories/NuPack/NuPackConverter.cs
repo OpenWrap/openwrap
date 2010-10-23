@@ -33,7 +33,9 @@ namespace OpenWrap.Repositories.NuPack
                 { "20", "20"},
                 { "30", "30"},
                 { "35", "35"},
-                { "40", "40"}
+                { "40", "40"},
+                { "40ClientProfile", "40cp"},
+                { "35ClientProfile", "35cp"}
         };
         public static void Convert(Stream nuPackPackage, Stream openWrapPackage)
         {
