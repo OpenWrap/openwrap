@@ -25,7 +25,7 @@ namespace OpenWrap.Tests.Commands
                     .ShouldHaveCountOf(1);
         }
         [Test]
-        public void entry_is_updated()
+        public void entry_is_overwritten()
         {
             Environment.Descriptor.Dependencies.Single()
                     .ContentOnly.ShouldBeTrue();

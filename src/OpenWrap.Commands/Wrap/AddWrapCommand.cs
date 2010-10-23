@@ -17,11 +17,23 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool NoDescriptorUpdate { get; set; }
 
-        [CommandInput]
-        public bool Project { get; set; }
+        bool? _project;
+
+        bool? _system;
 
         [CommandInput]
-        public bool System { get; set; }
+        public bool Project
+        {
+            get { return _project ?? (_system == null); }
+            set { _project = value; }
+        }
+
+        [CommandInput]
+        public bool System
+        {
+            get { return _system ?? _project == null; }
+            set { _system = value; }
+        }
 
         [CommandInput]
         public bool Content { get; set; }
@@ -44,9 +56,12 @@ namespace OpenWrap.Commands.Wrap
             get
             {
                 return NoDescriptorUpdate == false &&
-                       Environment.Descriptor != null &&
-                       System == false;
+                       Environment.Descriptor != null;
             }
+        }
+
+        public AddWrapCommand()
+        {
         }
 
         public override IEnumerable<ICommandOutput> Execute()
@@ -114,8 +129,8 @@ namespace OpenWrap.Commands.Wrap
                 yield return m;
 
             var repositories = new List<IPackageRepository>();
-            if (Project) repositories.Add(Environment.SystemRepository);
-            if (System) repositories.Add(Environment.ProjectRepository);
+            if (Project) repositories.Add(Environment.ProjectRepository);
+            if (System) repositories.Add(Environment.SystemRepository);
             foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositories))
                 yield return msg;
 
@@ -195,6 +210,7 @@ namespace OpenWrap.Commands.Wrap
             if (Version != null)
             {
                 vertices.Add(new ExactVersionVertex(Version.ToVersion()));
+                return vertices;
             }
             if (MinVersion != null)
             {
@@ -204,7 +220,7 @@ namespace OpenWrap.Commands.Wrap
             {
                 vertices.Add(new LessThanVersionVertex(MaxVersion.ToVersion()));
             }
-            if (Version == null || MinVersion == null || MaxVersion == null)
+            if (Version == null && MinVersion == null && MaxVersion == null)
             {
                 vertices.Add(new AnyVersionVertex());
             }

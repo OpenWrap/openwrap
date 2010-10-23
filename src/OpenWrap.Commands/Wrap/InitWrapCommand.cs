@@ -156,8 +156,8 @@ namespace OpenWrap.Commands.Wrap
                 using (Stream projectFileStream = project.OpenRead())
                     xmlDoc.Load(projectFileStream);
                 var csharpTarget = (from node in xmlDoc.SelectNodes(@"//msbuild:Import", namespaceManager).OfType<XmlElement>()
-                                   let attr = node.GetAttribute("Project", MSBUILD_NS)
-                                   where attr.EndsWith("Microsoft.CSharp.targets")
+                                   let attr = node.GetAttribute("Project")
+                                   where attr != null && attr.EndsWith("Microsoft.CSharp.targets")
                                    select node).FirstOrDefault();
 
                 if (csharpTarget == null)
