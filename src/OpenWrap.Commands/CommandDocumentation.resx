@@ -289,6 +289,12 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="remove-wrap-version" xml:space="preserve">
     <value>Specifies the exact version of the package to remove.</value>
   </data>
+  <data name="set-remote" xml:space="preserve">
+    <value>Updates a remote repository's metadata.</value>
+  </data>
+  <data name="set-remote-position" xml:space="preserve">
+    <value>Updates the integer position used to order remote repositories.</value>
+  </data>
   <data name="set-wrap" xml:space="preserve">
     <value>Updates a wrap dependency in the project repository.</value>
   </data>

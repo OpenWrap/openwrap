@@ -6,5 +6,6 @@ namespace OpenWrap.Configuration.remote_repositories
     {
         public string Name { get; set; }
         public Uri Href { get; set; }
+        public int Position { get; set; }
     }
 }
