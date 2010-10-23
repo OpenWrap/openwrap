@@ -3,4 +3,4 @@ depends: openfilesystem
 depends: sharpziplib
 anchored: true
 build: msbuild;profile=net35
-version: 1.0.0.19333707
+version: 1.0.0.19385129

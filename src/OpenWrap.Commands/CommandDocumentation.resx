@@ -151,10 +151,10 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="add-wrap-nodescriptorupdate" xml:space="preserve">
     <value>Prevents the descriptor file from being updated with a 'depends:' clause.</value>
   </data>
-  <data name="add-wrap-projectonly" xml:space="preserve">
+  <data name="add-wrap-project" xml:space="preserve">
     <value>Specifies that the dependency will only be added to the current project.</value>
   </data>
-  <data name="add-wrap-systemonly" xml:space="preserve">
+  <data name="add-wrap-system" xml:space="preserve">
     <value>Specifies that the dependency will only be installed in the system repository.</value>
   </data>
   <data name="add-wrap-version" xml:space="preserve">
