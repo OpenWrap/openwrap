@@ -20,6 +20,7 @@ namespace OpenWrap.Dependencies
 
         readonly IEnumerable<IDescriptorParser> _lineParsers = new List<IDescriptorParser>
         {
+            new SourceDirectoryParser(),
             new DependsParser(),
             new DescriptionParser(),
             new OverrideParser(),

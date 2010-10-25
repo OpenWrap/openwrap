@@ -41,6 +41,14 @@ namespace init_wrap_specs
                 .ShouldNotBeNull()
                 .ContentOnly.ShouldBeTrue();
         }
+        
+        [Test]
+        public void descriptor_return_the_default_source_directory()
+        {
+            new PackageDescriptorReaderWriter()
+                .Read(Environment.CurrentDirectory.GetFile("newpackage.wrapdesc"))
+                .SourceDirectory.ShouldNotBeNullOrEmpty("Descriptor was null").EqualsNoCase("src");
+        }
         [Test]
         public void openwrap_package_is_installed()
         {
@@ -54,7 +62,39 @@ namespace init_wrap_specs
             Environment.CurrentDirectory.GetDirectory("wraps").GetDirectory("openwrap")
                     .Exists.ShouldBeTrue();
         }
+
+        [Test]
+        public void default_src_directory_is_present()
+        {
+            Environment.CurrentDirectory.GetDirectory("src").Exists.ShouldBeTrue();
+        }
     }
+
+    class init_wrap_in_empty_dot_folder_custom_src : context.init_wrap
+    {
+        public init_wrap_in_empty_dot_folder_custom_src()
+        {
+            given_current_directory(@"c:\newpackage");
+            given_project_repository(new FolderRepository(Environment.CurrentDirectory.GetDirectory("wraps")));
+            when_executing_command(".", "-srcdir", "code");
+            Environment.ProjectRepository.Refresh();
+        }
+
+        [Test]
+        public void custom_src_directory_is_present()
+        {
+            Environment.CurrentDirectory.GetDirectory("code").Exists.ShouldBeTrue();
+        }
+
+        [Test]
+        public void descriptor_should_contain_custom_src_directory()
+        {
+            new PackageDescriptorReaderWriter()
+                .Read(Environment.CurrentDirectory.GetFile("newpackage.wrapdesc"))
+                .SourceDirectory.ShouldNotBeNullOrEmpty("Descriptor was null").EqualsNoCase("code");
+        }
+    }
+
     class init_dot_in_existing_package : context.init_wrap
     {
         public init_dot_in_existing_package()

@@ -28,6 +28,7 @@ namespace OpenWrap.Dependencies
             Description = "";
             UseProjectRepository = true;
             CreationTime = DateTimeOffset.UtcNow;
+            SourceDirectory = "src";
         }
 
         public ICollection<PackageDependency> Dependencies { get; set; }
@@ -62,6 +63,8 @@ namespace OpenWrap.Dependencies
         public bool Anchored { get; set; }
 
         public string BuildCommand { get; set; }
+
+        public string SourceDirectory { get; set; }
 
         public bool IsCompatibleWith(Version version)
         {

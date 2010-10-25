@@ -131,6 +131,7 @@
     <Compile Include="ConsoleRunner.cs" />
     <Compile Include="Dependencies\DefaultPackageInfo.cs" />
     <Compile Include="Dependencies\GreaterThanVersionVertex.cs" />
+    <Compile Include="Dependencies\Parsers\SourceDirectoryParser.cs" />
     <Compile Include="Dependencies\StringExtensions.cs" />
     <Compile Include="IOExtensions.cs" />
     <Compile Include="Dependencies\PackageBuilder.cs" />

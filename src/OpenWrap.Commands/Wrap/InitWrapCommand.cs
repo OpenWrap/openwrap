@@ -22,6 +22,7 @@ namespace OpenWrap.Commands.Wrap
         public InitWrapCommand()
         {
             Target = ".";
+            SrcDir = "src";
         }
 
         [CommandInput]
@@ -48,6 +49,9 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public string IgnoreFileName { get; set; }
+
+        [CommandInput]
+        public string SrcDir { get; set; }
 
         [CommandInput(Position = 0)]
         public string Target { get; set; }
@@ -89,6 +93,11 @@ namespace OpenWrap.Commands.Wrap
                 IgnoreFileName = ".bzrignore";
         }
 
+        void AddSourceDirecotry(PackageDescriptor packageDescriptor)
+        {
+            packageDescriptor.SourceDirectory = SrcDir;
+        }
+
         void AddOpenWrapDependency(PackageDescriptor packageDescriptor)
         {
             packageDescriptor.Dependencies.Add(new PackageDependency { Name = "openwrap", ContentOnly = true });
@@ -96,7 +105,7 @@ namespace OpenWrap.Commands.Wrap
 
         void AddPackageFolders(IDirectory projectDirectory)
         {
-            projectDirectory.GetDirectory("src").MustExist();
+            projectDirectory.GetDirectory(SrcDir).MustExist();
             projectDirectory.GetDirectory("wraps").GetDirectory("_cache").MustExist();
         }
 
@@ -195,6 +204,7 @@ namespace OpenWrap.Commands.Wrap
             }
             else
             {
+                AddSourceDirecotry(packageDescriptor);
                 AddOpenWrapDependency(packageDescriptor);
                 AddPackageFolders(projectDirectory);
                 AddIgnores(projectDirectory);

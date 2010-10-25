@@ -28,12 +28,12 @@ namespace OpenWrap.Build.BuildEngines
         public IEnumerable<BuildResult> Build()
         {
             var currentDirectory = _environment.CurrentDirectory;
-            var sourceDirectory = currentDirectory.GetDirectory("src");
+            var sourceDirectory = currentDirectory.GetDirectory(_environment.Descriptor.SourceDirectory);
             if (!sourceDirectory.Exists)
             {
                 yield return
-                        new ErrorBuildResult(string.Format("Could not locate a /src folder in current directory '{0}'. Make sure you use the default layout for project code.",
-                                                          _environment.CurrentDirectory.Path.FullPath));
+                        new ErrorBuildResult(string.Format("Could not locate a /{0} folder in current directory '{1}'. Make sure you use the default layout for project code, or add \"source-directory /MyCode\" to your wrapdesc.",
+                                                          _environment.Descriptor.SourceDirectory, _environment.CurrentDirectory.Path.FullPath));
                 yield break;
             }
             
