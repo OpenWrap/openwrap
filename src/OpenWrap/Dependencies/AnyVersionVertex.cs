@@ -4,10 +4,7 @@ namespace OpenWrap.Dependencies
 {
     public class AnyVersionVertex : VersionVertex
     {
-        public AnyVersionVertex(Version version) : base(version)
-        {
-        }
-        public AnyVersionVertex() : base(new Version())
+        public AnyVersionVertex()
         {
         }
         public override bool IsCompatibleWith(Version version)

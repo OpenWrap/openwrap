@@ -19,7 +19,7 @@ using BeforeReloadedEventHandler = resharper::JetBrains.ProjectModel.BeforeReloa
 
 namespace OpenWrap.Resharper
 {
-    public class ResharperProjectUpdater : IWrapAssemblyClient
+    public class ResharperProjectUpdater : IPackageAssembliesListener
     {
         readonly IFile _descriptorPath;
         
@@ -41,7 +41,7 @@ namespace OpenWrap.Resharper
         }
 
 
-        public void WrapAssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths)
+        public void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths)
         {
             
             var allAssemblyPaths = assemblyPaths.Select(x => x.FullPath).ToList();
@@ -89,7 +89,7 @@ namespace OpenWrap.Resharper
             }
             if (!_succeeded)
             {
-                _timer = new Timer(s=>WrapAssembliesUpdated((IEnumerable<IAssemblyReferenceExportItem>)s), assemblyPaths, 2000, Timeout.Infinite);
+                _timer = new Timer(s=>AssembliesUpdated((IEnumerable<IAssemblyReferenceExportItem>)s), assemblyPaths, 2000, Timeout.Infinite);
             }
         }
 

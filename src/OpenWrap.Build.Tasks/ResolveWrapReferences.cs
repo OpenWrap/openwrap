@@ -16,7 +16,7 @@ using OpenFileSystem.IO.FileSystem.Local;
 namespace OpenWrap.Build.Tasks
 {
 
-    public class ResolveWrapReferences : Task, IWrapAssemblyClient
+    public class ResolveWrapReferences : Task, IPackageAssembliesListener
     {
         readonly IFileSystem _fileSystem;
 
@@ -101,7 +101,7 @@ namespace OpenWrap.Build.Tasks
             return RefreshWrapDependencies();
         }
         
-        public void WrapAssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths)
+        public void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths)
         {
             
 

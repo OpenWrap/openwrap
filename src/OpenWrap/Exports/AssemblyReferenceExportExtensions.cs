@@ -9,9 +9,20 @@ namespace OpenWrap.Exports
 {
     public static class AssemblyReferenceExportExtensions
     {
-        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageManager manager, ExecutionEnvironment environment, params IPackageRepository[] repositories)
+        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageManager manager, ExecutionEnvironment exec, PackageDescriptor descriptor, params IPackageRepository[] repositories)
         {
-            return manager.GetExports<IExport>("bin", environment, repositories.NotNull()).SelectMany(x => x.Items).OfType<IAssemblyReferenceExportItem>().ToList();
+            return GetAssemblyReferences(manager.TryResolveDependencies(descriptor, repositories), exec);
+        }
+
+        static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(DependencyResolutionResult resolveResult, ExecutionEnvironment exec)
+        {
+            return resolveResult.Dependencies
+                    .Select(x => x.Package)
+                    .GroupBy(x=>x.Name)
+                    .Select(x=>x.OrderByDescending(y=>y.Version).First())
+                    .NotNull()
+                    .SelectMany(x => x.Load().GetExport("bin", exec).Items)
+                    .Cast<IAssemblyReferenceExportItem>();
         }
     }
 }

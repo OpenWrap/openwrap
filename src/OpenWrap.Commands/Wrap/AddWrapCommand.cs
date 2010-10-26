@@ -170,7 +170,7 @@ namespace OpenWrap.Commands.Wrap
             {
                 var originalName = Name;
                 Name = PackageNameUtility.GetName(Path.GetFileNameWithoutExtension(Name));
-                Version = "= " + PackageNameUtility.GetVersion(Path.GetFileNameWithoutExtension(originalName));
+                Version = PackageNameUtility.GetVersion(Path.GetFileNameWithoutExtension(originalName)).ToString();
                 return
                         new GenericMessage(
                                 string.Format("The requested package contained '.wrap' in the name. Assuming you pointed to the file in the current directory and meant a package named '{0}' with version qualifier '{1}'.",

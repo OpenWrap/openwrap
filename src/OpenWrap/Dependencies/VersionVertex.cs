@@ -6,10 +6,17 @@ namespace OpenWrap.Dependencies
     {
         public Version Version { get; private set; }
 
-        public VersionVertex(Version version)
+        protected VersionVertex(Version version)
         {
+            if (version == null) throw new ArgumentNullException("version");
             Version = version;
         }
+
+        protected VersionVertex()
+        {
+            
+        }
+
         public abstract bool IsCompatibleWith(Version version);
     }
 }

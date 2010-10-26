@@ -6,6 +6,6 @@ namespace OpenWrap.Services
 {
     public interface IWrapDescriptorMonitoringService : IService
     {
-        void ProcessWrapDescriptor(IFile wrapPath, IPackageRepository packageRepository, IWrapAssemblyClient client);
+        void ProcessWrapDescriptor(IFile wrapPath, IPackageRepository packageRepository, IPackageAssembliesListener listener);
     }
 }

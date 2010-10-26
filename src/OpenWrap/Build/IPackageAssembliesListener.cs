@@ -8,9 +8,9 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Build
 {
-    public interface IWrapAssemblyClient
+    public interface IPackageAssembliesListener
     {
-        void WrapAssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths);
+        void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths);
         ExecutionEnvironment Environment { get; }
         bool IsLongRunning { get; }
     }
