@@ -45,7 +45,11 @@ namespace OpenWrap.Resolvers
         {
             if (_assemblyReferences != null)
                 return;
-            _assemblyReferences = PackageManager.GetAssemblyReferences(true, Environment.ExecutionEnvironment, Environment.Descriptor, Environment.ProjectRepository).ToLookup(x => x.AssemblyName.Name);
+            if (Environment.Descriptor == null)
+                _assemblyReferences = 
+            _assemblyReferences = Environment.Descriptor == null
+                ? PackageManager.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name)
+                : PackageManager.GetAssemblyReferences(true, Environment.ExecutionEnvironment, Environment.Descriptor, Environment.ProjectRepository, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name);
         }
     }
 }

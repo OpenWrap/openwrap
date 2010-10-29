@@ -63,9 +63,10 @@ namespace OpenWrap.Build.Tasks
                 if (unimportantType == null && _tries < 50)
                 {
                     _tries++;
-                    _timer = new Timer(x => TryCreateIntegrationService(), null, 5000, Timeout.Infinite);
-                    return;
+                    _timer = new Timer(x => TryCreateIntegrationService(), null, 1000, Timeout.Infinite);
                 }
+                if (unimportantType == null)
+                    return;
 
                 var installedVersion = unimportantType.Assembly.GetName().Version;
                 var resharperIntegratorType = (from supportedResharperVersion in _integrationTypes.Keys

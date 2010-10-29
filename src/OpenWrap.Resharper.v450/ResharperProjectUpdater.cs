@@ -36,6 +36,9 @@ namespace OpenWrap.Resharper
             _projectFilePath = projectFilePath;
             _ignoredAssemblies = ignoredAssemblies.ToList();
             Environment = environment;
+            object result = null;
+            if (Shell.HasInstance)
+               result = Shell.Instance.TryGetComponent<MessageBoxStuff>();
             Services.Services.GetService<IWrapDescriptorMonitoringService>()
                 .ProcessWrapDescriptor(_descriptorPath, _packageRepository, this);
         }
@@ -105,5 +108,25 @@ namespace OpenWrap.Resharper
             get{ return true; }
         }
 
+    }
+
+    public class MessageBoxStuff : resharper::JetBrains.ProjectModel.ISolutionComponent
+    {
+        public void Dispose()
+        {
+        }
+
+        public void Init()
+        {
+        }
+
+        public void AfterSolutionOpened()
+        {
+            resharper::JetBrains.Util.MessageBox.ShowInfo("Solution opened.");
+        }
+
+        public void BeforeSolutionClosed()
+        {
+        }
     }
 }
