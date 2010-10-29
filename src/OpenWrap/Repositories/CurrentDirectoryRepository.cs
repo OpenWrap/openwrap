@@ -11,15 +11,18 @@ namespace OpenWrap.Repositories
     {
         protected IFileSystem FileSystem {get{ return Services.Services.GetService<IFileSystem>();}}
         protected IEnvironment Environment { get{ return Services.Services.GetService<IEnvironment>();}}
+        ILookup<string, IPackageInfo> _packages;
 
         public ILookup<string, IPackageInfo> PackagesByName
         {
             get
             {
-                return (from wrapFile in Environment.CurrentDirectory.Files("*.wrap")
-                        let tempFolder = FileSystem.CreateTempDirectory()
+                if (_packages == null)
+                _packages = (from wrapFile in Environment.CurrentDirectory.Files("*.wrap")
+                        let tempFolder = FileSystem.GetTempDirectory().GetDirectory(Guid.NewGuid().ToString())
                         select (IPackageInfo)new CachedZipPackage(this, wrapFile, tempFolder, ExportBuilders.All))
                     .ToLookup(x=>x.Name, StringComparer.OrdinalIgnoreCase);
+                return _packages;
             }
         }
 
@@ -40,6 +43,7 @@ namespace OpenWrap.Repositories
 
         public void Refresh()
         {
+            _packages = null;
         }
 
         public string Name

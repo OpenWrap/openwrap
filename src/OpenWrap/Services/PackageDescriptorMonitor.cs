@@ -59,7 +59,7 @@ namespace OpenWrap.Services
             var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 
 
-            listener.AssembliesUpdated(PackageManager.GetAssemblyReferences(listener.Environment, parsedDescriptor, d.Repository));
+            listener.AssembliesUpdated(PackageManager.GetAssemblyReferences(false, listener.Environment, parsedDescriptor, d.Repository));
         }
         void NotifyAllClients(IFile wrapPath)
         {
@@ -71,7 +71,7 @@ namespace OpenWrap.Services
 
             foreach (var client in d.Clients)
             {
-                client.AssembliesUpdated(PackageManager.GetAssemblyReferences(client.Environment, parsedDescriptor, d.Repository));
+                client.AssembliesUpdated(PackageManager.GetAssemblyReferences(false, client.Environment, parsedDescriptor, d.Repository));
             }
         }
 

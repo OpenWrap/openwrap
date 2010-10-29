@@ -16,12 +16,13 @@ namespace OpenWrap.Build
 {
     public class InitializeOpenWrap : Microsoft.Build.Utilities.Task
     {
-        static void IntializeOpenWrap()
-        {
-            Preloader.PreloadDependencies(new[] { "openfilesystem", "sharpziplib" });
-        }
         public string CurrentDirectory { get; set; }
 
+        public InitializeOpenWrap()
+        {
+            Preloader.PreloadDependencies("openfilesystem", "sharpziplib");
+            
+        }
         [Output]
         public string Name { get; set; }
 

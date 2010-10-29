@@ -68,30 +68,42 @@ namespace OpenWrap.Repositories
 
         IEnumerable<ResolvedDependency> OverrideDependenciesWithLocalDeclarations(IEnumerable<ResolvedDependency> dependencies, ICollection<PackageDependency> rootDependencies)
         {
+            dependencies = dependencies.ToList();
             var overriddenDependencies = dependencies.ToList();
 
-            foreach (var conflictingDependency in dependencies.ToLookup(x => x.Package.Name, StringComparer.OrdinalIgnoreCase).Where(x => x.Count() > 1))
+            foreach (var conflictingDependencies in dependencies.ToLookup(x => x.Package.Name, StringComparer.OrdinalIgnoreCase).Where(x => x.Count() > 1))
             {
-                var dependencyName = conflictingDependency.Key;
+                var dependencyName = conflictingDependencies.Key;
                 var rootDependency = rootDependencies.FirstOrDefault(x => x.Name.EqualsNoCase(dependencyName));
-                if (rootDependency == null)
+                var resolvedRootDependency = conflictingDependencies.FirstOrDefault(x => x.Dependency == rootDependency);
+                if (resolvedRootDependency == null)
                     continue;
-                var rescuedDependency = conflictingDependency.OrderByDescending(x => x.Package.Version).FirstOrDefault(x => rootDependency.IsFulfilledBy(x.Package.Version));
-                if (rescuedDependency == null)
-                    continue;
-                foreach (var toRemove in conflictingDependency.Where(x => x != rescuedDependency))
-                    overriddenDependencies.Remove(toRemove);
+                foreach(var discarded in conflictingDependencies.Where(x=> x!= resolvedRootDependency))
+                    overriddenDependencies.Remove(discarded);
             }
             return overriddenDependencies;
         }
 
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IEnumerable<PackageDependency> dependencies, IEnumerable<PackageNameOverride> dependencyOverrides, IEnumerable<IPackageRepository> repositories)
         {
-            var resolved = ResolveAllDependencies(null, dependencies, dependencyOverrides, repositories, new List<ResolvedDependency>());
-            
-            return resolved;
+            return dependencies.SelectMany(x => ResolveDependency(null, x, dependencyOverrides, repositories, new List<IPackageInfo>()));
         }
+        IEnumerable<ResolvedDependency> ResolveDependency(ResolvedDependency parent, PackageDependency dependencyToResolve, IEnumerable<PackageNameOverride> dependencyOverrides, IEnumerable<IPackageRepository> repositories, List<IPackageInfo> recursionPreventer)
+        {
+            dependencyToResolve = ApplyAllWrapDependencyOverrides(dependencyOverrides, dependencyToResolve);
+            var package = GetLatestPackageVersion(repositories, dependencyToResolve);
+            var dep = new ResolvedDependency
+            {
+                    Dependency = dependencyToResolve,
+                    Package = package,
+                    Parent = parent
+            };
+            if (package == null || recursionPreventer.Contains(package))
+                return new[] { dep };
 
+            recursionPreventer.Add(package);
+            return dep.Concat(package.Dependencies.SelectMany(x => ResolveDependency(dep, x, dependencyOverrides, repositories, recursionPreventer))).ToList();
+        }
         IEnumerable<ResolvedDependency> ResolveAllDependencies(IPackageInfo parent,
                                                                IEnumerable<PackageDependency> dependencies,
                                                                IEnumerable<PackageNameOverride> dependencyOverrides,
@@ -106,8 +118,8 @@ namespace OpenWrap.Repositories
                                                         select new ResolvedDependency
                                                         {
                                                                 Dependency = modifiedDependency,
-                                                                Package = package,
-                                                                ParentPackage = parent
+                                                                Package = package
+                                                                
                                                         }
                                                         ).ToList();
 

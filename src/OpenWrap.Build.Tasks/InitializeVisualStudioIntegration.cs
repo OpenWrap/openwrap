@@ -12,7 +12,6 @@ namespace OpenWrap.Build.Tasks
     public class InitializeVisualStudioIntegration : Task
     {
         public bool EnableVisualStudioIntegration { get; set; }
-        object _resharperHook;
 
         [Required]
         public string Platform { get; set; }
@@ -70,8 +69,7 @@ namespace OpenWrap.Build.Tasks
         {
             EnsureWrapRepositoryIsInitialized();
             if (!EnableVisualStudioIntegration) return true;
-            if (_resharperHook != null)
-                return true;
+
             ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository, ProjectFilePath, ExcludeAssemblies.Select(x=>x.ItemSpec).ToList());
             return true;
         }

@@ -23,7 +23,7 @@ namespace OpenWrap.Dependencies
 
         public bool Anchored
         {
-            get { return Tags.Contains("anchored", StringComparer.OrdinalIgnoreCase);}
+            get { return Tags.Contains("anchored", StringComparer.OrdinalIgnoreCase); }
             set { SetTag("anchored", value); }
         }
 
@@ -48,7 +48,7 @@ namespace OpenWrap.Dependencies
         }
         public override string ToString()
         {
-            var versions = string.Join(" and ", VersionVertices.Select(x => x.ToString()).ToArray());
+            var versions = VersionVertices.Select(x=>x.ToString()).Join(" and ");
             var returnValue = versions.Length == 0
                 ? Name
                 : Name + " " + versions;
@@ -79,16 +79,10 @@ namespace OpenWrap.Dependencies
                     }
 
                 }
-                
+
 
             }
             return exactlyFulfilled;
-        }
-
-        bool IsExact()
-        {
-            return VersionVertices.Count() == 1 
-                && VersionVertices.First() is ExactVersionVertex;
         }
     }
 }

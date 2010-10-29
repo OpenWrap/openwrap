@@ -29,7 +29,5 @@ namespace OpenWrap.Repositories
                     where !package.Nuked
                     select package).FirstOrDefault();
         }
-
-
     }
 }

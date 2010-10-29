@@ -12,6 +12,7 @@ namespace OpenWrap.Build
         static bool _initialized = false;
         public static void PreloadDependencies(params string[] packageNames)
         {
+            //System.Diagnostics.Debugger.Launch();
             if (_initialized)
                 return;
             _initialized = true;
@@ -24,6 +25,7 @@ namespace OpenWrap.Build
 
             if (rootWrapsPath == null || !rootWrapsPath.Exists)
                 throw new DirectoryNotFoundException("Pacakge cache could not be found. Cannot start OpenWrap.");
+
 
             var dependencyDirectories = packageNames.Select(x => GetDependencyDirectory(rootWrapsPath, x));
             foreach (var dependencyDirectory in dependencyDirectories)

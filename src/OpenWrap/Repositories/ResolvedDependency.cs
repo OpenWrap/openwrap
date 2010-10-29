@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories
@@ -6,6 +8,6 @@ namespace OpenWrap.Repositories
     {
         public PackageDependency Dependency { get; set; }
         public IPackageInfo Package { get; set; }
-        public IPackageInfo ParentPackage { get; set; }
+        public ResolvedDependency Parent { get; set; }
     }
 }

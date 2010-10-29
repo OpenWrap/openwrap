@@ -45,7 +45,7 @@
     </ItemGroup>
     <Delete Files="$(Root)\scratch\build\version" Condition="Exists('$(Root)\scratch\build\version')" />
     <WriteLinesToFile File="$(Root)\scratch\build\version" Lines="$(PackageVersion)" />
-    <Copy SourceFiles="@(_DescriptorSource)" DestinationFiles="$(Root)\scratch\build\$(PackageName)-$(PackageVersion).wrapdesc" />
+    <Copy SourceFiles="@(_DescriptorSource)" DestinationFiles="$(Root)\scratch\build\$(PackageName).wrapdesc" />
     <ItemGroup>
       <BinFile Include="$(Root)\scratch\build\OpenWrap\OpenWrap.dll">
         <Export>bin-net35</Export>
