@@ -36,9 +36,14 @@ namespace OpenWrap.Resharper
             _projectFilePath = projectFilePath;
             _ignoredAssemblies = ignoredAssemblies.ToList();
             Environment = environment;
-            object result = null;
-            if (Shell.HasInstance)
-               result = Shell.Instance.TryGetComponent<MessageBoxStuff>();
+            //object result = null;
+            //if (SolutionManager.Instance != null)
+            {
+                //var descriptor = resharper::JetBrains.ComponentModel.ComponentDescriptor.CreateImplOnly(typeof(MessageBoxStuff));
+                //((resharper::JetBrains.ComponentModel.ICollectionChangedEventSink<resharper::JetBrains.ComponentModel.ComponentDescriptor>)SolutionManager.Instance).OnAdd(
+                //    new List<resharper::JetBrains.ComponentModel.ComponentDescriptor>{descriptor});
+            }
+
             Services.Services.GetService<IWrapDescriptorMonitoringService>()
                 .ProcessWrapDescriptor(_descriptorPath, _packageRepository, this);
         }

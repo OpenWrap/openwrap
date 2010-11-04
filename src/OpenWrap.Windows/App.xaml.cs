@@ -33,7 +33,7 @@ namespace OpenWrap.Windows
             Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
             Services.Services.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            Services.Services.TryRegisterService<IPackageManager>(() => new PackageManager());
+            Services.Services.TryRegisterService<IPackageResolver>(() => new PackageResolver());
             Services.Services.RegisterService<ITaskManager>(new TaskManager());
 
             var repo = new CommandRepository(Services.Services.GetService<IEnvironment>().Commands());

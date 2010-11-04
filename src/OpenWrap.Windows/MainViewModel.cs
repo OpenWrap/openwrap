@@ -83,7 +83,7 @@ namespace OpenWrap.Windows
     public class WrapSlice : NounSlice
     {
         protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
-        protected IPackageManager PackageManager { get { return Services.Services.GetService<IPackageManager>(); } }
+        protected IPackageResolver PackageResolver { get { return Services.Services.GetService<IPackageResolver>(); } }
 
         DependencyResolutionResult _projectDependencies;
         public DependencyResolutionResult ProjectDependencies
@@ -98,7 +98,7 @@ namespace OpenWrap.Windows
 
             if (Environment != null && Environment.ProjectRepository != null)
             {
-                ProjectDependencies = PackageManager.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository });
+                ProjectDependencies = PackageResolver.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository });
             }
         }
 

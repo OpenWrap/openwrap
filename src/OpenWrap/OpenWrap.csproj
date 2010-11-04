@@ -80,7 +80,8 @@
   <ItemGroup>
     <Compile Include="Build\BuildEngines\BuildResult.cs" />
     <Compile Include="Build\BuildEngines\BuiltInstructionParser.cs" />
-    <Compile Include="Build\BuildEngines\ConventionMSBuildEngine.cs" />
+    <Compile Include="Build\BuildEngines\CommandLinePackageBuilder.cs" />
+    <Compile Include="Build\BuildEngines\MSBuildPackageBuilder.cs" />
     <Compile Include="Build\BuildEngines\FileBuildResult.cs" />
     <Compile Include="Build\BuildEngines\IPackageBuilder.cs" />
     <Compile Include="Build\BuildEngines\MetaPackageBuilder.cs" />
@@ -170,8 +171,9 @@
     <Compile Include="Repositories\NuPack\Namespaces.cs" />
     <Compile Include="Repositories\NuPack\NuPackSyndicationFeed.cs" />
     <Compile Include="Repositories\NuPack\NuPackSyndicationItem.cs" />
-    <Compile Include="Repositories\PackageManagerExtensions.cs" />
+    <Compile Include="Repositories\PackageResolverExtensions.cs" />
     <Compile Include="Repositories\PackageRepositoryExtensions.cs" />
+    <Compile Include="Repositories\ParentedDependency.cs" />
     <Compile Include="Repositories\ZipPackage.cs" />
     <Compile Include="Repositories\ZipWrapperFile.cs" />
     <Compile Include="Resolvers\RuntimeAssemblyResolver.cs" />
@@ -184,10 +186,10 @@
     <Compile Include="Repositories\DependencyResolutionResult.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\Http\HttpRepositoryNavigator.cs" />
-    <Compile Include="Repositories\IPackageManager.cs" />
-    <Compile Include="Repositories\PackageManager.cs" />
+    <Compile Include="Repositories\IPackageResolver.cs" />
+    <Compile Include="Repositories\PackageResolver.cs" />
     <Compile Include="Repositories\PackagesExtensions.cs" />
-    <Compile Include="Repositories\ResolvedDependency.cs" />
+    <Compile Include="Repositories\ResolvedPackage.cs" />
     <Compile Include="Repositories\Http\HttpPackage.cs" />
     <Compile Include="Repositories\Http\HttpPackageInfo.cs" />
     <Compile Include="Repositories\Http\IHttpRepositoryNavigator.cs" />
@@ -200,7 +202,6 @@
     <Compile Include="Repositories\CachedZipPackage.cs" />
     <Compile Include="Services\IService.cs" />
     <Compile Include="Services\IWrapDescriptorMonitoringService.cs" />
-    <Compile Include="Services\PackageAssemblyResolver.cs" />
     <Compile Include="Services\PackageDescriptorMonitor.cs" />
     <Compile Include="Services\Services.cs" />
     <Compile Include="Commands\CommandList.cs" />
@@ -290,6 +291,7 @@
     <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
       <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
       <Name>OpenRasta.Client</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />

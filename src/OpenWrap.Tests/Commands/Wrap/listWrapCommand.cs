@@ -13,8 +13,8 @@ namespace listWrap_specs
     {
         public filtering_project_package_list_by_name()
         {
-            given_project_package("one-ring", new Version("1.0"));
-            given_project_package("sauron", new Version("2.0"));
+            given_project_package("one-ring", "1.0");
+            given_project_package("sauron", "2.0");
             given_dependency("depends: one-ring");
             given_dependency("depends: sauron");
 
@@ -32,7 +32,7 @@ namespace listWrap_specs
     {
         public filtering_project_with_different_casing()
         {
-            given_project_package("one-ring", new Version("1.0"));
+            given_project_package("one-ring", "1.0");
             given_dependency("depends: one-ring");
 
             when_executing_command("*Rin*");

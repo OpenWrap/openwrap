@@ -14,7 +14,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public set_wrap_content_true()
         {
             given_dependency("depends: sauron");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
 
             when_executing_command("sauron", "-content", "true");
         }
@@ -37,7 +37,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public set_wrap_anchored_true()
         {
             given_dependency("depends: sauron");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
             
             when_executing_command("sauron", "-anchored", "true");
         }
@@ -60,7 +60,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public set_wrap_anchored_false()
         {
             given_dependency("depends: sauron");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
             ((InMemoryPackage)Environment.ProjectRepository.PackagesByName["sauron"].First()).Anchored = true;
 
             when_executing_command("sauron", "-anchored", "false");
@@ -78,7 +78,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public set_wrap_version_to_2()
         {
             given_dependency("depends: sauron = 1.0.0");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
 
             when_executing_command("sauron", "-version", "2.0.0");
             verticies = Environment.Descriptor.Dependencies.First().VersionVertices.ToArray();
@@ -104,7 +104,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public set_wrap_version_to_any()
         {
             given_dependency("depends: sauron = 1.0.0");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
 
             when_executing_command("sauron", "-anyversion");
         }
@@ -122,7 +122,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public set_wrap_minversion_2()
         {
             given_dependency("depends: sauron = 1.0.0");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
 
             when_executing_command("sauron", "-minversion", "2.0.0");
         }
@@ -142,7 +142,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public set_wrap_minversion_2_maxversion_3()
         {
             given_dependency("depends: sauron = 1.0.0");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
 
             when_executing_command("sauron", "-minversion", "2.0.0", "-maxversion", "3.0.0");
 
@@ -171,7 +171,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public set_wrap_conflicting_version_inputs()
         {
             given_dependency("depends: sauron = 1.0.0");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
 
             when_executing_command("sauron", "-version", "2.0.0", "-maxversion", "3.0.0");
         }

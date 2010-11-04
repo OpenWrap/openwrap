@@ -78,7 +78,7 @@ namespace OpenWrap.Exports
 
         private bool PlatformMatches(string binPlatform, string envPlatform)
         {
-            return binPlatform == ANYCPU || (envPlatform != ANYCPU && binPlatform == envPlatform);
+            return binPlatform.EqualsNoCase(ANYCPU) || (envPlatform.EqualsNoCase(ANYCPU) == false && binPlatform.EqualsNoCase(envPlatform));
         }
     }
 }

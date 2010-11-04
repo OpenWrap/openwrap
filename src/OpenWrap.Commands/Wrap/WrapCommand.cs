@@ -12,14 +12,14 @@ namespace OpenWrap.Commands.Wrap
 
         }
 
-        protected IPackageManager PackageManager
+        protected IPackageResolver PackageResolver
         {
-            get { return Services.Services.GetService<IPackageManager>(); }
+            get { return Services.Services.GetService<IPackageResolver>(); }
         }
 
         protected DependencyResolutionResult ResolveDependencies(PackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repos)
         {
-            return PackageManager.TryResolveDependencies(packageDescriptor, repos);
+            return PackageResolver.TryResolveDependencies(packageDescriptor, repos);
         }
     }
 }

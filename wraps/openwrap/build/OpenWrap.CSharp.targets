@@ -29,6 +29,9 @@
     <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">$(Platform)</OpenWrap-TargetPlatform>
     <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">AnyCPU</OpenWrap-TargetPlatform>
     <OpenWrap-ExportName Condition="'$(OpenWrap-ExportName)' == ''">bin-$(OpenWrap-TargetProfile)</OpenWrap-ExportName>
+
+     <DefineConstants>$(DefineConstants);__OW_PLATFORM_$(OpenWrap-TargetPlatform)__;__OW_PROFILE_$(OpenWrap-TargetProfile)__;</DefineConstants>
+
   </PropertyGroup>
 
 
@@ -84,15 +87,11 @@
   </Target>
 
   <Target Name="OpenWrap-BeforeBuild" DependsOnTargets="_Initialize">
-
+    
   </Target>
 
   <Target Name="OpenWrap-AfterBuild"
           Condition="$(OpenWrap-EmitOutputInstructions)">
-    <!-- Descriptor file -->
-    <!--<Message Text="[built(.,'%(_WrapFile.FullPath)')]" />-->
-    <!-- Version file -->
-    <!--<Message Text="[built(.,'@(_WrapFile->'%(RootDir)%(Directory)')version')]" />-->
 
     <!-- Referenced projects -->
     <ItemGroup>
@@ -118,8 +117,9 @@
     <Message Text="[built($(OpenWrap-ExportName),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
              Condition="Exists('@(IntermediateSatelliteAssembliesWithTargetPath)')"/>
 
-    <!-- delete assembly reference cache to prevent VS from not calling us on next opening -->
-    <Delete Files="$(ResolveAssemblyReferencesStateFile)" ContinueOnError="true" />
+    <!-- delete assembly reference cache to prevent VS from not calling the initialize task on next opening -->
+    <Delete Files="$(ResolveAssemblyReferencesStateFile);$(IntermediateOutputPath)*.cache" ContinueOnError="true" />
+    
   </Target>
 
 

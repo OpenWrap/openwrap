@@ -51,8 +51,8 @@ namespace OpenWrap.Tests.Commands
     {
         public removing_last_version()
         {
-            given_system_package("saruman", "1.0.0.0".ToVersion());
-            given_system_package("saruman", "1.0.0.1".ToVersion());
+            given_system_package("saruman", "1.0.0.0");
+            given_system_package("saruman", "1.0.0.1");
             when_executing_command("saruman","-system", "-last");
         }
         [Test]
@@ -70,7 +70,7 @@ namespace OpenWrap.Tests.Commands
     {
         public removing_wrap_by_version_and_last()
         {
-            given_system_package("saruman", "1.0.0.0".ToVersion());
+            given_system_package("saruman", "1.0.0.0");
             when_executing_command("saruman", "-version", "1.0.0.0", "-last");
         }
         [Test]
@@ -83,8 +83,8 @@ namespace OpenWrap.Tests.Commands
     {
         public removing_wrap_by_version_in_system()
         {
-            given_system_package("saruman", "1.0.0.0".ToVersion());
-            given_system_package("saruman", "1.0.0.1".ToVersion());
+            given_system_package("saruman", "1.0.0.0");
+            given_system_package("saruman", "1.0.0.1");
             when_executing_command("saruman", "-system", "-version", "1.0.0.1");
         }
         [Test]
@@ -105,8 +105,8 @@ namespace OpenWrap.Tests.Commands
         public removing_wrap_by_version_in_project()
         {
             given_dependency("depends: saruman");
-            given_project_package("saruman", "1.0.0.0".ToVersion());
-            given_project_package("saruman", "1.0.0.1".ToVersion());
+            given_project_package("saruman", "1.0.0.0");
+            given_project_package("saruman", "1.0.0.1");
             when_executing_command("saruman", "-project", "-version", "1.0.0.0");
         }
         [Test]
@@ -136,9 +136,9 @@ namespace OpenWrap.Tests.Commands
         public removing_wrap_by_name_in_both_system_and_proejct()
         {
             given_dependency("depends: gandalf");
-            given_system_package("gandalf", "1.0.0.0".ToVersion());
-            given_project_package("saruman", "99".ToVersion());
-            given_project_package("gandalf", "1.0.0.0".ToVersion());
+            given_system_package("gandalf", "1.0.0.0");
+            given_project_package("saruman", "99");
+            given_project_package("gandalf", "1.0.0.0");
             when_executing_command("gandalf", "-project", "-system");
         }
         [Test]
@@ -155,10 +155,10 @@ namespace OpenWrap.Tests.Commands
     {
         public removing_system_wrap_by_name()
         {
-            given_system_package("gandalf", "1.0.0.0".ToVersion());
-            given_system_package("gandalf", "1.0.1.0".ToVersion());
-            given_system_package("saruman", "99".ToVersion());
-            given_project_package("gandalf", "1.0.0.0".ToVersion());
+            given_system_package("gandalf", "1.0.0.0");
+            given_system_package("gandalf", "1.0.1.0");
+            given_system_package("saruman", "99");
+            given_project_package("gandalf", "1.0.0.0");
             when_executing_command("gandalf", "-system");
         }
         [Test]
@@ -185,8 +185,8 @@ namespace OpenWrap.Tests.Commands
         {
             given_dependency("depends: bar");
             given_dependency("depends: foo");
-            given_project_package("foo", "1.0.0.0".ToVersion());
-            given_project_package("bar", "1.0.0.0".ToVersion());
+            given_project_package("foo", "1.0.0.0");
+            given_project_package("bar", "1.0.0.0");
 
             when_executing_command("foo");
         }

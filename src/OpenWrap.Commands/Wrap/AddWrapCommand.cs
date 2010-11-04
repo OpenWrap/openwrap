@@ -105,8 +105,7 @@ namespace OpenWrap.Commands.Wrap
         {
             if (Name.EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
             {
-                var desc = WrapFileToPackageDescriptor();
-                yield return desc;
+                yield return WrapFileToPackageDescriptor();
             }
 
             yield return VerifyWrapFile();
@@ -117,8 +116,7 @@ namespace OpenWrap.Commands.Wrap
             if (ShouldUpdateDescriptor)
                 yield return UpdateDescriptor();
 
-            var sourceRepositories = Environment.RepositoriesForRead();
-            var resolvedDependencies = ResolveDependencies(packageDescriptor, sourceRepositories);
+            var resolvedDependencies = ResolveDependencies(packageDescriptor, Environment.RemoteRepositories.Concat(Environment.SystemRepository, Environment.CurrentDirectoryRepository));
 
             if (!resolvedDependencies.IsSuccess)
             {
@@ -131,10 +129,10 @@ namespace OpenWrap.Commands.Wrap
             var repositories = new List<IPackageRepository>();
             if (Project) repositories.Add(Environment.ProjectRepository);
             if (System) repositories.Add(Environment.SystemRepository);
-            foreach (var msg in PackageManager.CopyPackagesToRepositories(resolvedDependencies, repositories))
+            foreach (var msg in PackageResolver.CopyPackagesToRepositories(resolvedDependencies, repositories))
                 yield return msg;
 
-            foreach (var m in PackageManager.VerifyPackageCache(Environment, Environment.Descriptor))
+            foreach (var m in PackageResolver.VerifyPackageCache(Environment, Environment.Descriptor))
                 yield return m;
         }
 
@@ -248,7 +246,7 @@ namespace OpenWrap.Commands.Wrap
     {
         public static IEnumerable<ICommandOutput> GacConflicts(this DependencyResolutionResult result, ExecutionEnvironment env)
         {
-            return from package in GacResolver.InGac(result.Dependencies.Select(x => x.Package), env)
+            return from package in GacResolver.InGac(result.ResolvedPackages.Select(x => x.Package), env)
                    from assembly in package
                    select new GacConflict(package.Key, assembly) as ICommandOutput;
         }

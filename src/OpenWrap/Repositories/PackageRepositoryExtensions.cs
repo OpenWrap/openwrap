@@ -21,8 +21,8 @@ namespace OpenWrap.Repositories
             var projectRepo = repo as ISupportAnchoring;
             if (projectRepo != null)
             {
-                var packagesToAnchor = resolvedPackages.Dependencies
-                    .Where(x => x.Dependency.Anchored || (x.Package != null && x.Package.Anchored))
+                var packagesToAnchor = resolvedPackages.ResolvedPackages
+                    .Where(x => x.Dependencies.Any(d=>d.Dependency.Anchored) || (x.Package != null && x.Package.Anchored))
                     .Select(x=>x.Package)
                     .NotNull()
                     .Where(x=>x.Source == projectRepo).ToList();

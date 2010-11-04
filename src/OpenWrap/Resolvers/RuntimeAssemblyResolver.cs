@@ -13,7 +13,7 @@ namespace OpenWrap.Resolvers
     public class RuntimeAssemblyResolver : IService
     {
         ILookup<string, IAssemblyReferenceExportItem> _assemblyReferences;
-        protected IPackageManager PackageManager { get { return Services.Services.GetService<IPackageManager>(); } }
+        protected IPackageResolver PackageResolver { get { return Services.Services.GetService<IPackageResolver>(); } }
         protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
         public void Initialize()
         {
@@ -45,11 +45,10 @@ namespace OpenWrap.Resolvers
         {
             if (_assemblyReferences != null)
                 return;
-            if (Environment.Descriptor == null)
-                _assemblyReferences = 
+
             _assemblyReferences = Environment.Descriptor == null
-                ? PackageManager.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name)
-                : PackageManager.GetAssemblyReferences(true, Environment.ExecutionEnvironment, Environment.Descriptor, Environment.ProjectRepository, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name);
+                ? PackageResolver.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name)
+                : PackageResolver.GetAssemblyReferences(true, Environment.ExecutionEnvironment, Environment.Descriptor, Environment.ProjectRepository, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name);
         }
     }
 }

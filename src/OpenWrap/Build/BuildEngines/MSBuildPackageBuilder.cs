@@ -8,24 +8,25 @@ using OpenFileSystem.IO.FileSystems;
 
 namespace OpenWrap.Build.BuildEngines
 {
-    public class ConventionMSBuildEngine : IPackageBuilder
+    public class MSBuildPackageBuilder : CommandLinePackageBuilder
     {
-        readonly IFileSystem _fileSystem;
-        readonly IEnvironment _environment;
-        readonly BuiltInstructionParser _parser = new BuiltInstructionParser();
         public IEnumerable<string> Profile { get; set; }
         public IEnumerable<string> Platform { get; set; }
         public IEnumerable<string> Project { get; set; }
-        public ConventionMSBuildEngine(IFileSystem fileSystem, IEnvironment environment)
+        protected override string ExecutablePath
         {
-            _fileSystem = fileSystem;
-            _environment = environment;
+            get { return GetMSBuildExecutablePath(); }
+        }
+        public MSBuildPackageBuilder(IFileSystem fileSystem, IEnvironment environment)
+            : base(fileSystem,environment)
+
+        {
             Profile = new List<string> { environment.ExecutionEnvironment.Profile };
             Platform = new List<string> { environment.ExecutionEnvironment.Platform };
             Project = new List<string>();
         }
 
-        public IEnumerable<BuildResult> Build()
+        public override IEnumerable<BuildResult> Build()
         {
             var currentDirectory = _environment.CurrentDirectory;
             var sourceDirectory = currentDirectory.GetDirectory("src");
@@ -45,49 +46,34 @@ namespace OpenWrap.Build.BuildEngines
                          from platform in Platform
                          from profile in Profile
                          select new { file, platform, profile };
+
+            yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", ExecutablePath));
+
+            foreach(var m in builds
+                .SelectMany(project=>ExecuteEngine(CreateMSBuildProcess(project.file, project.platform, project.profile, "Clean"))))
+                    yield return m;
+            
             foreach (var project in builds)
             {
-                var msbuildProcess = CreateMSBuildProcess(project.file, project.platform, project.profile);
-                yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", msbuildProcess.StartInfo.FileName));
-                msbuildProcess.Start();
-                var reader = msbuildProcess.StandardOutput;
-
+                var msbuildProcess = CreateMSBuildProcess(project.file, project.platform, project.profile, "Build");
                 yield return new TextBuildResult(string.Format("Building '{0}'...", project.file.Path.FullPath));
-                while (!reader.EndOfStream)
-                {
-                    var line = reader.ReadLine();
-                    var parsed = _parser.Parse(line);
-                    if (parsed.Count() > 0)
-                        foreach (var m in parsed)
-                            yield return m;
-                    else
-                        yield return new TextBuildResult(line);
-                }
-                msbuildProcess.WaitForExit();
-                if (msbuildProcess.ExitCode != 0)
-                    yield return new ErrorBuildResult();
+
+
+                foreach (var m in ExecuteEngine(msbuildProcess)) yield return m;
 
                 yield return new TextBuildResult("Build complete.");
             }
         }
 
-        static Process CreateMSBuildProcess(IFile project, string platform, string profile)
+        public Process CreateMSBuildProcess(IFile project, string platform, string profile, string msbuildTargets)
         {
-            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1}", platform, profile);
+            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1} /p:t={2}", platform, profile, msbuildTargets);
 
-            return new Process
-            {
-                    StartInfo = new ProcessStartInfo
-                    {
-                            RedirectStandardOutput = true,
-                            FileName = GetMSBuildExecutableName(),
-                            Arguments = "\"" + project.Path.FullPath + "\"" + msbuildParams,
-                            UseShellExecute = false
-                    }
-            };
+            var arguments = "\"" + project.Path.FullPath + "\"" + msbuildParams;
+            return CreateProcess(arguments);
         }
 
-        static string GetMSBuildExecutableName()
+        static string GetMSBuildExecutablePath()
         {
             var versionedFolders = from version in Directory.GetDirectories(Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\"), "v*")
                                    orderby version descending

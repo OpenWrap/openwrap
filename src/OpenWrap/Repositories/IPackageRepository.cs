@@ -9,6 +9,7 @@ namespace OpenWrap.Repositories
     {
         ILookup<string, IPackageInfo> PackagesByName { get; }
         IPackageInfo Find(PackageDependency dependency);
+        IEnumerable<IPackageInfo> FindAll(PackageDependency dependency);
         
         void Refresh();
         string Name { get; }

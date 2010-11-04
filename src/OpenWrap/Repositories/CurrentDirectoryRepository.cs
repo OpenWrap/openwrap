@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenWrap.Dependencies;
@@ -29,6 +30,11 @@ namespace OpenWrap.Repositories
         public IPackageInfo Find(PackageDependency dependency)
         {
             return PackagesByName.Find(dependency);
+        }
+
+        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
+        {
+            return PackagesByName.FindAll(dependency);
         }
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)

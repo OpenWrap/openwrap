@@ -9,21 +9,30 @@ namespace OpenWrap.Exports
 {
     public static class AssemblyReferenceExportExtensions
     {
-        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageManager manager, bool includeContentOnly, ExecutionEnvironment exec, PackageDescriptor descriptor, params IPackageRepository[] repositories)
+        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageResolver resolver, bool includeContentOnly, ExecutionEnvironment exec, PackageDescriptor descriptor, params IPackageRepository[] repositories)
         {
-            return GetAssemblyReferences(manager.TryResolveDependencies(descriptor, repositories), exec, includeContentOnly);
+            return GetAssemblyReferences(resolver.TryResolveDependencies(descriptor, repositories), exec, includeContentOnly);
         }
-        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageManager manager, ExecutionEnvironment exec, params IPackageRepository[] repositories)
+        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageResolver resolver, ExecutionEnvironment exec, params IPackageRepository[] repositories)
         {
             return GetAssemblyReferencesFromPackages(repositories.SelectMany(x => x.PackagesByName.SelectMany(y => y)), exec);
         }
 
         static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(DependencyResolutionResult resolveResult, ExecutionEnvironment exec, bool includeContentOnly)
         {
-            var packages = resolveResult.Dependencies
-                    .Where(x=> includeContentOnly || !IsInContentBranch(x))
-                    .Select(x => x.Package);
+            var packages = resolveResult.ResolvedPackages.Where(resolvedPackage => includeContentOnly || !IsInContentBranch(resolvedPackage)).Select(x=>x.Package);
             return GetAssemblyReferencesFromPackages(packages, exec);
+        }
+
+        static bool IsInContentBranch(ResolvedPackage resolvedPackage)
+        {
+            return resolvedPackage.Dependencies.All(IsInContentBranch);
+        }
+
+        static bool IsInContentBranch(ParentedDependency resolvedPackage)
+        {
+            return resolvedPackage.Dependency.ContentOnly
+                   || (resolvedPackage.Parent != null && IsInContentBranch(resolvedPackage.Parent));
         }
 
         static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferencesFromPackages(IEnumerable<IPackageInfo> packages, ExecutionEnvironment exec)
@@ -34,12 +43,6 @@ namespace OpenWrap.Exports
                     .NotNull()
                     .SelectMany(x => x.Load().GetExport("bin", exec).Items)
                     .Cast<IAssemblyReferenceExportItem>();
-        }
-
-        static bool IsInContentBranch(ResolvedDependency resolvedDependency)
-        {
-            return resolvedDependency.Dependency.ContentOnly
-                   || (resolvedDependency.Parent != null && IsInContentBranch(resolvedDependency.Parent));
         }
     }
 }

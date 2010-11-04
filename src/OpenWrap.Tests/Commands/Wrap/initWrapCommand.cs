@@ -62,7 +62,7 @@ namespace init_wrap_specs
             given_current_directory(@"c:\newpackage");
             given_dependency("depends: openwrap");
             given_dependency_file("newpackage.wrapdesc");
-            given_project_package("openwrap", "1.0.0".ToVersion());
+            given_project_package("openwrap", "1.0.0");
             when_executing_command(".");
         }
 
@@ -116,7 +116,7 @@ namespace init_wrap_specs
         {
             public init_wrap()
             {
-                given_system_package("openwrap", "1.0.0".ToVersion());                
+                given_system_package("openwrap", "1.0.0");                
             }
             protected const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
 

@@ -106,6 +106,7 @@
     <Compile Include="Configuration\configuration_specifications.cs" />
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\anchored_dependencies.cs" />
+    <Compile Include="Dependencies\assembly_resolving_specs.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Commands\Core\context\gac_resolve.cs" />
     <Compile Include="Dependencies\nuked_package_resolution.cs" />
@@ -126,7 +127,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TestFiles.resx</DependentUpon>
     </Compile>
-    <Compile Include="Slow\building_openwrap.cs" />
     <Compile Include="Slow\ZipPackages.cs" />
     <Compile Include="SpecExtensions.cs" />
     <Compile Include="string_specs.cs" />

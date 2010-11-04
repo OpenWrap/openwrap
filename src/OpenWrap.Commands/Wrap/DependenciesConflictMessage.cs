@@ -7,9 +7,9 @@ namespace OpenWrap.Commands.Wrap
 {
     internal class DependenciesConflictMessage : Error
     {
-        public List<IGrouping<string, ResolvedDependency>> ConflictingPackages { get; set; }
+        public List<IGrouping<string, ResolvedPackage>> ConflictingPackages { get; set; }
 
-        public DependenciesConflictMessage(List<IGrouping<string, ResolvedDependency>> packageNames)
+        public DependenciesConflictMessage(List<IGrouping<string, ResolvedPackage>> packageNames)
         {
             ConflictingPackages = packageNames;
             this.Type = CommandResultType.Error;

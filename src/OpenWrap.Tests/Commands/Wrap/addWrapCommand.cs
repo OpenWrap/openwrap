@@ -14,7 +14,7 @@ namespace OpenWrap.Tests.Commands
         public adding_wrap_twice()
         {
             given_dependency("depends: sauron");
-            given_project_package("sauron", new Version("1.0.0.0"));
+            given_project_package("sauron", "1.0.0.0");
 
             when_executing_command("sauron", "-content");
         }
@@ -50,9 +50,9 @@ namespace OpenWrap.Tests.Commands
         public adding_wrap_from_system_pacakge_with_outdated_version_in_remote()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
-            given_project_package("sauron", new Version("1.0.0.0"));
-            given_system_package("sauron", new Version("1.0.0.2"));
-            given_remote_package("sauron", new Version("1.0.0.1"));
+            given_project_package("sauron", "1.0.0.0");
+            given_system_package("sauron", "1.0.0.2");
+            given_remote_package("sauron", "1.0.0.1");
 
             when_executing_command("sauron");
         }
@@ -193,8 +193,8 @@ namespace OpenWrap.Tests.Commands
         {
             given_project_repository(new InMemoryRepository("Project repository"));
 
-            given_currentdirectory_package("sauron", new Version(1,0,0), "depends: one-ring");
-            given_system_package("one-ring", new Version(1,0,0));
+            given_currentdirectory_package("sauron", "1.0.0", "depends: one-ring");
+            given_system_package("one-ring", "1.0.0");
 
             when_executing_command("sauron");
         }
@@ -232,8 +232,8 @@ namespace OpenWrap.Tests.Commands
         public adding_dependency_already_present()
         {
             given_dependency("depends: sauron >= 2.0");
-            given_project_package("sauron", new Version(1,0,0));
-            given_system_package("sauron", new Version(2,0,0));
+            given_project_package("sauron", "1.0.0");
+            given_system_package("sauron", "2.0.0");
 
             when_executing_command("sauron");
         }
@@ -251,7 +251,7 @@ namespace OpenWrap.Tests.Commands
         {
             given_file_based_project_repository();
 
-            given_system_package("sauron", new Version(1, 0, 0));
+            given_system_package("sauron", "1.0.0");
 
             when_executing_command("sauron", "-anchored");
         }
@@ -275,8 +275,8 @@ namespace OpenWrap.Tests.Commands
         public adding_exact_version()
         {
             given_file_based_project_repository();
-            given_system_package("sauron", new Version(1, 0, 0));
-            given_system_package("sauron", new Version(2, 0, 0));
+            given_system_package("sauron", "1.0.0");
+            given_system_package("sauron", "2.0.0");
             when_executing_command("sauron", "-version", "1.0.0");
         }
 
@@ -292,8 +292,8 @@ namespace OpenWrap.Tests.Commands
         public adding_minversion()
         {
             given_file_based_project_repository();
-            given_system_package("sauron", new Version(1, 0, 0));
-            given_system_package("sauron", new Version(2, 0, 0));
+            given_system_package("sauron", "1.0.0");
+            given_system_package("sauron", "2.0.0");
             when_executing_command("sauron", "-minversion", "1.0.0");
         }
 
@@ -309,8 +309,8 @@ namespace OpenWrap.Tests.Commands
         public adding_maxversion()
         {
             given_file_based_project_repository();
-            given_system_package("sauron", new Version(1, 0, 0));
-            given_system_package("sauron", new Version(2, 0, 0));
+            given_system_package("sauron", "1.0.0");
+            given_system_package("sauron", "2.0.0");
             when_executing_command("sauron", "-maxversion", "2.0.0");
         }
 
@@ -326,9 +326,9 @@ namespace OpenWrap.Tests.Commands
         public adding_minversion_and_maxversion()
         {
             given_file_based_project_repository();
-            given_system_package("sauron", new Version(1, 0, 0));
-            given_system_package("sauron", new Version(2, 0, 0));
-            given_system_package("sauron", new Version(3, 0, 0));
+            given_system_package("sauron","1.0.0");
+            given_system_package("sauron", "2.0.0");
+            given_system_package("sauron", "3.0.0");
             when_executing_command("sauron", "-minversion", "1.0.0", "-maxversion", "3.0.0");
         }
 

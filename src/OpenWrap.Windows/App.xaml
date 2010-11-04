@@ -24,7 +24,7 @@
         		<TextBox Grid.Column="1" Height="Auto" Margin="0" Grid.Row="0" TextWrapping="Wrap" Text="" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.RowSpan="2" Width="180" d:LayoutOverrides="GridBox"/>
         		<TextBlock Height="Auto" Margin="0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch"><Run Language="en-gb" Text="Project"/></TextBlock>
         		<TextBlock Grid.Column="1" Height="Auto" Margin="0.774,1.04,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Stretch"><Run Language="en-gb" Text="System"/></TextBlock>
-        		<ListBox Grid.Row="2" Style="{DynamicResource LocalPackageListBox}" ItemsSource="{Binding ProjectDependencies.Dependencies, Mode=OneWay}" SelectionMode="Multiple" MinWidth="300"/>
+        		<ListBox Grid.Row="2" Style="{DynamicResource LocalPackageListBox}" ItemsSource="{Binding ProjectDependencies.ResolvedPackages, Mode=OneWay}" SelectionMode="Multiple" MinWidth="300"/>
         		<ListBox Grid.Column="1" Grid.Row="2" MinWidth="300"/>
         	</Grid>
         </DataTemplate>
@@ -58,7 +58,7 @@
         		</Setter.Value>
         	</Setter>
         </Style>
-        <DataTemplate DataType="{x:Type Repositories:ResolvedDependency}">
+        <DataTemplate DataType="{x:Type Repositories:ResolvedPackage}">
         	<Grid Height="Auto" Width="350">
         		<Grid.RowDefinitions>
         			<RowDefinition Height="Auto" />

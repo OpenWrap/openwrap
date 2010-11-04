@@ -23,6 +23,11 @@ namespace OpenWrap.Repositories.Http
             _packagesQuery = LoadPackages(navigator, fileSystem);
         }
 
+        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
+        {
+            return PackagesByName.FindAll(dependency);
+        }
+
         public void Refresh()
         {
             _packagesByName = null;

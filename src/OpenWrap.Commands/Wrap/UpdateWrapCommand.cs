@@ -61,14 +61,14 @@ namespace OpenWrap.Commands.Wrap
             {
                 var sourceRepos = Environment.RemoteRepositories.Concat(Environment.CurrentDirectoryRepository).ToList();
 
-                var resolveResult = PackageManager.TryResolveDependencies(packageToSearch, sourceRepos);
-                var successful = resolveResult.Dependencies.Where(x => x.Package != null).ToList();
-                resolveResult = new DependencyResolutionResult { IsSuccess = successful.Count > 0, Dependencies = successful };
+                var resolveResult = PackageResolver.TryResolveDependencies(packageToSearch, sourceRepos);
+                var successful = resolveResult.ResolvedPackages.Where(x => x.Package != null).ToList();
+                resolveResult = new DependencyResolutionResult { IsSuccess = successful.Count > 0, ResolvedPackages = successful };
                 if (!resolveResult.IsSuccess)
                     continue;
-                foreach (var m in PackageManager.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
+                foreach (var m in PackageResolver.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
                     if (m is DependencyResolutionFailedResult)
-                        yield return PackageNotFoundInRemote(m);
+                        yield return PackageNotFoundInRemote((DependencyResolutionFailedResult)m);
 
                     else
                         yield return m;
@@ -78,7 +78,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> VerifyPackageCache(PackageDescriptor packageDescriptor)
         {
-            return PackageManager.VerifyPackageCache(Environment, packageDescriptor);
+            return PackageResolver.VerifyPackageCache(Environment, packageDescriptor);
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
@@ -95,7 +95,7 @@ namespace OpenWrap.Commands.Wrap
                 updateDescriptor.Dependencies = updateDescriptor.Dependencies.Where(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)).ToList();
 
 
-            var resolvedPackages = PackageManager.TryResolveDependencies(
+            var resolvedPackages = PackageResolver.TryResolveDependencies(
                 updateDescriptor,
                 sourceRepos);
 
@@ -109,32 +109,32 @@ namespace OpenWrap.Commands.Wrap
             foreach (var m in resolvedPackages.GacConflicts(Environment.ExecutionEnvironment))
                 yield return m;
 
-            var copyResult = PackageManager.CopyPackagesToRepositories(
+            var copyResult = PackageResolver.CopyPackagesToRepositories(
                 resolvedPackages,
                 Environment.ProjectRepository
                 );
             foreach (var m in copyResult) yield return m;
 
-            foreach (var m in PackageManager.VerifyPackageCache(Environment, updateDescriptor)) yield return m;
+            foreach (var m in PackageResolver.VerifyPackageCache(Environment, updateDescriptor)) yield return m;
         }
 
         IEnumerable<ICommandOutput> FailedUpdate(DependencyResolutionResult resolvedPackages, IEnumerable<IPackageRepository> sourceRepos)
         {
-            foreach(var notFoundPackage in resolvedPackages.Dependencies.Where(x=>x.Package == null))
-                yield return new DependencyNotFoundInRepositories(notFoundPackage.Dependency, sourceRepos);
+            foreach(var notFoundPackage in resolvedPackages.ResolvedPackages.Where(x=>x.Package == null))
+                yield return new DependenciesNotFoundInRepositories(notFoundPackage.Dependencies, sourceRepos);
 
-            var t = resolvedPackages.Dependencies
+            var conflictingDependencies = resolvedPackages.ResolvedPackages
                     .Where(x => x.Package != null)
-                    .GroupBy(x => x.Dependency.Name, StringComparer.OrdinalIgnoreCase)
+                    .GroupBy(x => x.Package.Name, StringComparer.OrdinalIgnoreCase)
                     .Where(x => x.Count() > 1);
                     
-            if (t.Count() > 0)
-                yield return new DependenciesConflictMessage(t.ToList());
+            if (conflictingDependencies.Count() > 0)
+                yield return new DependenciesConflictMessage(conflictingDependencies.ToList());
         }
 
-        GenericMessage PackageNotFoundInRemote(ICommandOutput m)
+        GenericMessage PackageNotFoundInRemote(DependencyResolutionFailedResult m)
         {
-            return new GenericMessage("Package '{0}' doesn't exist in any remote repository.", ((DependencyResolutionFailedResult)m).Result.Dependencies.First().Dependency.Name)
+            return new GenericMessage("Package '{0}' doesn't exist in any remote repository.", m.Result.ResolvedPackages.First().Dependencies.Select(x=>x.Dependency.Name).First())
             {
                 Type = CommandResultType.Warning
             };
@@ -196,19 +196,19 @@ namespace OpenWrap.Commands.Wrap
         }
     }
 
-    public class DependencyNotFoundInRepositories : Warning
+    public class DependenciesNotFoundInRepositories : Warning
     {
-        public PackageDependency Dependency { get; set; }
+        public IEnumerable<ParentedDependency> Dependencies { get; set; }
         public IEnumerable<IPackageRepository> Repositories { get; set; }
 
-        public DependencyNotFoundInRepositories(PackageDependency dependency, IEnumerable<IPackageRepository> repositories)
+        public DependenciesNotFoundInRepositories(IEnumerable<ParentedDependency> dependencies, IEnumerable<IPackageRepository> repositories)
         {
-            Dependency = dependency;
+            Dependencies = dependencies;
             Repositories = repositories;
         }
         public override string ToString()
         {
-            return string.Format("'{0}' not found in '{1}'.",Dependency, Repositories.Select(x => x.Name).Join(", "));
+            return string.Format("{0} not found in '{1}'.",Dependencies.Select(x=>"'" + x.Dependency.Name + "'").Distinct().Join(", "), Repositories.Select(x => x.Name).Join(", "));
         }
     }
 }

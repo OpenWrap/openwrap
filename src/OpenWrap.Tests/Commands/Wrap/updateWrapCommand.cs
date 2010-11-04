@@ -17,16 +17,17 @@ namespace OpenWrap.Tests.Commands
         public update_package_not_existing_anywhere_but_in_project()
         {
             given_dependency("depends: goldberry");
-            given_project_package("goldberry", "1.0".ToVersion());
+            given_project_package("goldberry", "1.0");
 
             when_executing_command();
         }
         [Test]
         public void dependency_not_found_warning_is_produced()
         {
-            Results.OfType<DependencyNotFoundInRepositories>()
+            Results.OfType<DependenciesNotFoundInRepositories>()
                     .ShouldHaveCountOf(1)
-                    .First().Dependency.Name.ShouldBe("goldberry");
+                    .First().Dependencies
+                    .ShouldHaveCountOf(1).First().Dependency.Name.ShouldBe("goldberry");
         }
         [Test]
         public void no_error_should_be_reported()
@@ -40,10 +41,10 @@ namespace OpenWrap.Tests.Commands
         {
             given_dependency("depends: goldberry = 2");
             given_dependency("depends: one-ring = 1");
-            given_project_package("goldberry", "2.0".ToVersion());
-            given_project_package("one-ring", "1.0".ToVersion());
-            given_remote_package("one-ring", "1.1".ToVersion());
-            given_remote_package("goldberry", "2.1".ToVersion());
+            given_project_package("goldberry", "2.0");
+            given_project_package("one-ring", "1.0");
+            given_remote_package("one-ring", "1.1");
+            given_remote_package("goldberry", "2.1");
 
             when_executing_command("one-ring", "-project");
         }
@@ -62,10 +63,10 @@ namespace OpenWrap.Tests.Commands
     {
         public update_package_by_name_in_system()
         {
-            given_system_package("goldberry", "2.0".ToVersion());
-            given_system_package("one-ring", "1.0".ToVersion());
-            given_remote_package("one-ring", "1.1".ToVersion());
-            given_remote_package("goldberry", "2.1".ToVersion());
+            given_system_package("goldberry", "2.0");
+            given_system_package("one-ring", "1.0");
+            given_remote_package("one-ring", "1.1");
+            given_remote_package("goldberry", "2.1");
 
             when_executing_command("one-ring", "-sys");
         }
@@ -86,9 +87,9 @@ namespace OpenWrap.Tests.Commands
         {
             given_dependency("depends: goldberry >= 2.0");
 
-            given_project_package("goldberry", new Version(2, 0, 0));
-            given_system_package("goldberry", new Version(2, 1, 0));
-            given_remote_package("goldberry", new Version(2, 2, 0));
+            given_project_package("goldberry", "2.0.0");
+            given_system_package("goldberry", "2.1.0");
+            given_remote_package("goldberry", "2.2.0");
 
             when_executing_command();
         }
@@ -109,8 +110,8 @@ namespace OpenWrap.Tests.Commands
     {
         public when_not_in_project_folder_and_package_can_be_updated()
         {
-            given_system_package("goldberry", new Version(2, 0, 0));
-            given_remote_package("goldberry", new Version(2, 1, 0));
+            given_system_package("goldberry", "2.0.0");
+            given_remote_package("goldberry", "2.1.0");
 
             when_executing_command();
         }
@@ -129,8 +130,8 @@ namespace OpenWrap.Tests.Commands
     {
         public system_flag_is_specified()
         {
-            given_project_package("goldberry", new Version(2, 0, 0));
-            given_system_package("goldberry", new Version(2, 1, 0));
+            given_project_package("goldberry", "2.0.0");
+            given_system_package("goldberry", "2.1.0");
 
             when_executing_command("-system");
         }
@@ -204,9 +205,9 @@ namespace OpenWrap.Tests.Commands
             given_dependency("depends: goldberry");
 
 
-            given_project_package("goldberry", new Version(2, 0, 0));
-            given_system_package("goldberry", new Version(2, 0, 0));
-            given_remote_package("goldberry", new Version(3, 0, 0));
+            given_project_package("goldberry", "2.0.0");
+            given_system_package("goldberry", "2.0.0");
+            given_remote_package("goldberry", "3.0.0");
 
 
             when_executing_command("-system","-project");

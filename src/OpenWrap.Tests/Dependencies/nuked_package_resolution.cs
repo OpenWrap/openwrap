@@ -61,7 +61,7 @@ namespace OpenWrap.Tests.Dependencies
 
     namespace ctxt
     {
-        public class nuked_package_resolution
+        public class nuked_package_resolution : OpenWrap.Testing.context
         {
             protected string ResolvedVersion;
             private PackageDependency _packageDependency

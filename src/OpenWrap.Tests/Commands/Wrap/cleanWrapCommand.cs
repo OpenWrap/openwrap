@@ -17,7 +17,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public cleaning_a_non_existing_wrap()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
-            given_project_package("lionel", new Version(1, 2, 3, 4));
+            given_project_package("lionel", "1.2.3.4");
 
             when_executing_command("richie", "-Project");
         }
@@ -43,7 +43,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public cleaning_a_wrap_with_one_version()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
-            given_project_package("lionel", new Version(1, 2, 3, 4));
+            given_project_package("lionel", "1.2.3.4");
             given_dependency("depends: lionel");
                     
             when_executing_command("lionel", "-Project");
@@ -66,11 +66,11 @@ namespace OpenWrap.Tests.Commands.Wrap
 
     public class cleaning_a_wrap_with_two_versions : context.command_context<CleanWrapCommand>
     {
-        static readonly Version LionelVersion = new Version(1, 0, 0, 123);
+        static readonly string LionelVersion = "1.0.0.123";
         public cleaning_a_wrap_with_two_versions()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
-            given_project_package("lionel", new Version(1, 0, 0, 0));
+            given_project_package("lionel", "1.0.0.0");
             given_project_package("lionel", LionelVersion);
             given_dependency("depends: lionel");
             when_executing_command("lionel", "-Project");
@@ -93,16 +93,16 @@ namespace OpenWrap.Tests.Commands.Wrap
 
     public class cleaning_package_from_system_repository : context.command_context<CleanWrapCommand>
     {
-        static readonly Version LionelVersion = new Version(1, 0, 0, 123);
+        static readonly string LionelVersion = "1.0.0.123";
 
         public cleaning_package_from_system_repository()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
-            given_project_package("lionel", new Version(1, 0, 0, 0));
+            given_project_package("lionel", "1.0.0.0");
             given_project_package("lionel", LionelVersion);
 
 
-            given_system_package("lionel", new Version(1, 0, 0, 0));
+            given_system_package("lionel", "1.0.0.0");
             given_system_package("lionel", LionelVersion);
 
             when_executing_command("lionel", "-system");
@@ -134,17 +134,17 @@ namespace OpenWrap.Tests.Commands.Wrap
 
     public class cleaning_package_from_both_repositories : context.command_context<CleanWrapCommand>
     {
-        static readonly Version LionelVersion = new Version(1, 0, 0, 123);
+        static readonly string LionelVersion = "1.0.0.123";
 
         public cleaning_package_from_both_repositories()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
-            given_project_package("lionel", new Version(1, 0, 0, 0));
+            given_project_package("lionel", "1.0.0.0");
             given_project_package("lionel", LionelVersion);
             given_dependency("depends: lionel");
 
 
-            given_system_package("lionel", new Version(1, 0, 0, 0));
+            given_system_package("lionel", "1.0.0.0");
             given_system_package("lionel", LionelVersion);
 
             when_executing_command("lionel", "-sys", "-proj");

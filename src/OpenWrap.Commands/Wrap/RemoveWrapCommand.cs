@@ -59,7 +59,7 @@ namespace OpenWrap.Commands.Wrap
                 foreach(var m in RemoveFromProjectRepository()) yield return m;
             if (System)
                 foreach(var m in RemoveFromSystemRepository()) yield return m;
-            foreach(var m in  PackageManager.VerifyPackageCache(Environment, Environment.Descriptor))
+            foreach(var m in  PackageResolver.VerifyPackageCache(Environment, Environment.Descriptor))
                 yield return m;
         }
 

@@ -6,7 +6,7 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Repositories
 {
-    public interface IPackageManager : IService
+    public interface IPackageResolver : IService
     {
         /// <summary>
         /// Gets all the exports present in the provided repositories.
@@ -21,7 +21,7 @@ namespace OpenWrap.Repositories
         DependencyResolutionResult TryResolveDependencies(PackageDescriptor packageDescriptor,
                                                           IEnumerable<IPackageRepository> repositoriesToQuery);
 
-        void UpdateDependency(ResolvedDependency dependency,
+        void UpdateDependency(ResolvedPackage resolvedPackage,
                               ISupportPublishing destinationRepository);
     }
     

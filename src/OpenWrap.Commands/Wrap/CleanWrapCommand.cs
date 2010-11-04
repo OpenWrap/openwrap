@@ -68,7 +68,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<IPackageInfo> GetProjectPackages()
         {
-            return PackageManager.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository }).Dependencies.Select(x => x.Package);
+            return PackageResolver.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository }).ResolvedPackages.Select(x => x.Package);
         }
 
         ICommandOutput TryAddRepository(string repositoryName, IPackageRepository repository, IEnumerable<IPackageInfo> packagesToKeep)
@@ -104,7 +104,7 @@ namespace OpenWrap.Commands.Wrap
                 else
                     yield return new GenericMessage("Package '{0}' could not be removed, possibly because a file is still in use. If you use Visual Studio, try closing it and retrying.", package.Package.FullName);
             }
-            repository.RefreshAnchors(PackageManager.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository }));
+            repository.RefreshAnchors(PackageResolver.TryResolveDependencies(Environment.Descriptor, new[] { Environment.ProjectRepository }));
         }
     }
 }

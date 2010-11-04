@@ -25,8 +25,8 @@ namespace OpenWrap.Repositories
         {
             return _message + "\r\n\t"
                    + string.Join("\r\n\t",
-                                 _result.Dependencies.Where(x => x.Package == null)
-                                         .Select(x => "- '" + x.Dependency.Name + "'")
+                                 _result.ResolvedPackages.Where(x => x.Package == null)
+                                         .Select(x => "- '" + x.PackageName + "'")
                                          .ToArray());
         }
     }

@@ -8,18 +8,18 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Repositories
 {
-    public static class PackageManagerExtensions
+    public static class PackageResolverExtensions
     {
-        public static IEnumerable<ICommandOutput> CopyPackagesToRepositories(this IPackageManager manager, DependencyResolutionResult dependencies, params IPackageRepository[] repositories)
+        public static IEnumerable<ICommandOutput> CopyPackagesToRepositories(this IPackageResolver resolver, DependencyResolutionResult dependencies, params IPackageRepository[] repositories)
         {
-            return CopyPackagesToRepositories(manager, dependencies, (IEnumerable<IPackageRepository>)repositories);
+            return CopyPackagesToRepositories(resolver, dependencies, (IEnumerable<IPackageRepository>)repositories);
         }
 
-        public static IEnumerable<ICommandOutput> CopyPackagesToRepositories(this IPackageManager manager,
+        public static IEnumerable<ICommandOutput> CopyPackagesToRepositories(this IPackageResolver resolver,
                                                                              DependencyResolutionResult dependencies,
                                                                              IEnumerable<IPackageRepository> repositoriesToWriteTo)
         {
-            if (manager == null) throw new ArgumentNullException("manager");
+            if (resolver == null) throw new ArgumentNullException("resolver");
             if (dependencies == null) throw new ArgumentNullException("dependencies");
             if (repositoriesToWriteTo == null) throw new ArgumentNullException("repositoriesToWriteTo");
 
@@ -30,10 +30,8 @@ namespace OpenWrap.Repositories
             }
 
 
-            foreach (var dependency in dependencies.Dependencies)
+            foreach (var dependency in dependencies.ResolvedPackages)
             {
-                // fast forward to the source repository
-
                 foreach (var repository in repositoriesToWriteTo.NotNull().OfType<ISupportPublishing>().ToList())
                 {
                     var existingUpToDateVersion = repository.PackagesByName.Contains(dependency.Package.Name)
@@ -44,43 +42,44 @@ namespace OpenWrap.Repositories
                                                           : null;
                     if (existingUpToDateVersion == null)
                     {
-                        yield return new Result("Copying '{0}' from '{1}' to '{2}'", dependency.Package.FullName, dependency.Package.Source.Name, repository.Name);
-                        manager.UpdateDependency(dependency, repository);
+                        yield return new Result("'{0}' in '{1}': Updating to {2} from '{3}'", dependency.Package.Name, repository.Name, dependency.Package.Version, dependency.Package.Source.Name);
+                        resolver.UpdateDependency(dependency, repository);
                     }
                     else
                     {
-                        yield return new Result("'{0}' up-to-date as '{1}' <= '{2}'.", repository.Name, dependency.Package.FullName, existingUpToDateVersion.FullName);
+                        yield return new Result("'{0}' in '{1}': Up-to-date.", dependency.Package.Name, repository.Name);
                     }
                 }
             }
         }
 
-        // TODO: Expose at the pacakge manager / repository level, such as a VerifyCache() or something along those lines...
-        public static IEnumerable<ICommandOutput> VerifyPackageCache(this IPackageManager packageManager, IEnvironment environment, PackageDescriptor descriptor)
+        // TODO: Expose at the pacakge resolver / repository level, such as a VerifyCache() or something along those lines...
+        public static IEnumerable<ICommandOutput> VerifyPackageCache(this IPackageResolver packageResolver, IEnvironment environment, PackageDescriptor descriptor)
         {
 
-            yield return new GenericMessage("Making sure the cache is up-to-date...");
+            yield return new GenericMessage("Updating the package cache...");
             var repositories = (new[] { environment.ProjectRepository, environment.SystemRepository }).NotNull();
 
-            packageManager.GetExports<IExport>("bin", environment.ExecutionEnvironment, repositories).ToList();
+            packageResolver.GetExports<IExport>("bin", environment.ExecutionEnvironment, repositories).ToList();
 
-            var resolvedPackages = packageManager.TryResolveDependencies(
+            var resolvedPackages = packageResolver.TryResolveDependencies(
                     descriptor,
                     repositories);
 
             foreach (var repo in repositories)
                 repo.RefreshAnchors(resolvedPackages);
         }
-
-        public static IEnumerable<IPackageRepository> RepositoriesForRead(this IEnvironment environment)
+        public static IPackageInfo LatestVersion(this IEnumerable<IPackageInfo> packages)
         {
-            return
-                environment.RemoteRepositories
-                .Concat(environment.CurrentDirectoryRepository,
-                        environment.ProjectRepository,
-                        environment.SystemRepository);
+            var packagesByVersion = packages
+                    .NotNull()
+                    .OrderByDescending(x => x.Version)
+                    .ToList();
+            return packagesByVersion
+                    .Where(x=>x.Nuked == false)
+                    .DefaultIfEmpty(packagesByVersion.FirstOrDefault())
+                    .First();
         }
-
         static ICommandOutput DependencyResolutionFailed(DependencyResolutionResult result)
         {
             return new DependencyResolutionFailedResult(result);

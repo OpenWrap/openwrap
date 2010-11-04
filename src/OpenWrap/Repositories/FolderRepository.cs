@@ -27,6 +27,11 @@ namespace OpenWrap.Repositories
         }
 
         public bool EnableAnchoring { get; set; }
+        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
+        {
+            return PackagesByName.FindAll(dependency);
+        }
+
         public void Refresh()
         {
             Packages = (from wrapFile in BasePath.Files("*.wrap")

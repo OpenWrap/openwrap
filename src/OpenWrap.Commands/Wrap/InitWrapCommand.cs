@@ -102,7 +102,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> CopyOpenWrap(IDirectory projectDirectory)
         {
-            var packageManager = Services.Services.GetService<IPackageManager>();
+            var packageManager = Services.Services.GetService<IPackageResolver>();
             var initialDescriptor = new PackageDescriptor
             {
                 Name = "openwrap",

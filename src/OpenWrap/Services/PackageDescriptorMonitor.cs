@@ -15,10 +15,10 @@ namespace OpenWrap.Services
     public class PackageDescriptorMonitor : IWrapDescriptorMonitoringService
     {
         readonly Dictionary<Path, DescriptorSubscriptions> _notificationClients = new Dictionary<Path, DescriptorSubscriptions>();
-        readonly PackageAssemblyResolver _resolver = new PackageAssemblyResolver();
+        
 
 
-        IPackageManager PackageManager { get { return Services.GetService<IPackageManager>(); } }
+        IPackageResolver PackageResolver { get { return Services.GetService<IPackageResolver>(); } }
         public void ProcessWrapDescriptor(IFile wrapFile, IPackageRepository packageRepository, IPackageAssembliesListener listener)
         {
             if (!wrapFile.Exists)
@@ -59,7 +59,7 @@ namespace OpenWrap.Services
             var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 
 
-            listener.AssembliesUpdated(PackageManager.GetAssemblyReferences(false, listener.Environment, parsedDescriptor, d.Repository));
+            listener.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, listener.Environment, parsedDescriptor, d.Repository));
         }
         void NotifyAllClients(IFile wrapPath)
         {
@@ -71,7 +71,7 @@ namespace OpenWrap.Services
 
             foreach (var client in d.Clients)
             {
-                client.AssembliesUpdated(PackageManager.GetAssemblyReferences(false, client.Environment, parsedDescriptor, d.Repository));
+                client.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, client.Environment, parsedDescriptor, d.Repository));
             }
         }
 
