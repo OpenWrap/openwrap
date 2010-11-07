@@ -19,15 +19,17 @@ namespace OpenWrap.Build
             var openwrapAssemblyPath = typeof(InitializeOpenWrap).Assembly.Location;
             // openwrap is in /wraps/openwrap/build/ or /wraps/_cache/openwrap-xx/build
             var path = new DirectoryInfo(Path.GetDirectoryName(openwrapAssemblyPath));
-            var rootWrapsPath = path.FullName.Contains("_cache")
-                                        ? path.Parent.Parent
-                                        : path.Parent.Parent.GetDirectories("_cache").FirstOrDefault();
+            var cachePath = path.FullName.Contains("_cache")
+                                    ? (path.Parent != null ? path.Parent.Parent : null)
+                                    : (path.Parent != null && path.Parent.Parent != null
+                                               ? path.Parent.Parent.GetDirectories("_cache").FirstOrDefault() ?? path.Parent.Parent.CreateSubdirectory("_cache")
+                                               : null);
 
-            if (rootWrapsPath == null || !rootWrapsPath.Exists)
-                throw new DirectoryNotFoundException("Pacakge cache could not be found. Cannot start OpenWrap.");
+            if (cachePath == null || !cachePath.Exists)
+                throw new DirectoryNotFoundException("Package cache could not be found. Cannot start OpenWrap.");
 
 
-            var dependencyDirectories = packageNames.Select(x => GetDependencyDirectory(rootWrapsPath, x));
+            var dependencyDirectories = packageNames.Select(x => GetDependencyDirectory(cachePath, x));
             foreach (var dependencyDirectory in dependencyDirectories)
             {
                 if (dependencyDirectory == null || !dependencyDirectory.Exists)
