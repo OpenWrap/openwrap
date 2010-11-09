@@ -11,21 +11,21 @@ namespace OpenWrap
 {
     public static class InstallationPaths
     {
-        public static string UserRepositoryPath
+        public static string SystemRepositoryDirectory
         {
             get
             {
-                return Path.Combine(RootPath, "wraps");
+                return Path.Combine(SystemDirectory, "wraps");
             }
         }
         public static string ConfigurationDirectory
         {
             get
             {
-                return Path.Combine(RootPath, "config");
+                return Path.Combine(SystemDirectory, "config");
             }
         }
-        public static string RootPath
+        public static string SystemDirectory
         {
             get
             {

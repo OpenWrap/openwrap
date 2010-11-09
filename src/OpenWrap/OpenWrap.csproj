@@ -89,7 +89,6 @@
     <Compile Include="Build\InitializeOpenWrap.cs" />
     <Compile Include="Build\IPackageAssembliesListener.cs" />
     <Compile Include="Build\MSBuildEnvironment.cs" />
-    <Compile Include="Build\Preloader.cs" />
     <Compile Include="Build\VersionNumberGenerator.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
     <Compile Include="Commands\AmbiguousInputNameException.cs" />
@@ -148,6 +147,13 @@
     <Compile Include="Dependencies\Parsers\DescriptionParser.cs" />
     <Compile Include="MoveNextResult.cs" />
     <Compile Include="PackageException.cs" />
+    <Compile Include="Preloading\INotifyDownload.cs" />
+    <Compile Include="Preloading\NotifyProgressWebClient.cs" />
+    <Compile Include="Preloading\Preloader.cs" />
+    <Compile Include="Preloading\TinySharpZip\ZipArchive.cs" />
+    <Compile Include="Preloading\TinySharpZip\ZipDirectoryEntry.cs" />
+    <Compile Include="Preloading\TinySharpZip\ZipEntry.cs" />
+    <Compile Include="Preloading\TinySharpZip\ZipFileEntry.cs" />
     <Compile Include="ReflectionExtensions.cs" />
     <Compile Include="Repositories\CommandExport.cs" />
     <Compile Include="Repositories\CommandExportBuilder.cs" />

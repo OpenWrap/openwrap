@@ -7,6 +7,7 @@ using Microsoft.Build.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.Local;
 using OpenWrap.Configuration;
+using OpenWrap.Preloading;
 using OpenWrap.Repositories;
 using OpenWrap.Resolvers;
 using OpenWrap.Services;
@@ -20,7 +21,7 @@ namespace OpenWrap.Build
 
         public InitializeOpenWrap()
         {
-            Preloader.PreloadDependencies("openfilesystem", "sharpziplib");
+            Preloader.GetPackageFolders(Preloader.RemoteInstall.None, InstallationPaths.SystemRepositoryDirectory, "openfilesystem", "sharpziplib");
             
         }
         [Output]

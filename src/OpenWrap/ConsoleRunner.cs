@@ -23,7 +23,7 @@ namespace OpenWrap
     {
         static ConsoleRunner()
         {
-            Preloader.PreloadDependencies(new[] { "openfilesystem", "sharpziplib" });
+            //Preloader.PreloadDependencies(new[] { "openfilesystem", "sharpziplib" });
         }
         public static int Main(string[] args)
         {

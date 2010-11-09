@@ -52,7 +52,7 @@ namespace OpenWrap
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
-            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.UserRepositoryPath))
+            SystemRepository = new FolderRepository(FileSystem.GetDirectory(InstallationPaths.SystemRepositoryDirectory))
             {
                 Name = "System repository"
             };
