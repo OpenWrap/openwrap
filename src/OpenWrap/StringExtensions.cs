@@ -101,6 +101,10 @@ namespace OpenWrap
             if (value == null) return valueToCompare == null;
             return value.Equals(valueToCompare, StringComparison.OrdinalIgnoreCase);
         }
+        public static bool StartsWithNoCase(this string value, string valueToCompare)
+        {
+            return value.StartsWith(valueToCompare, StringComparison.OrdinalIgnoreCase);
+        }
         public static bool EndsWithNoCase(this string value, string valueToCompare)
         {
             return value.EndsWith(valueToCompare, StringComparison.OrdinalIgnoreCase);

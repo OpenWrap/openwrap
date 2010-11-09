@@ -215,7 +215,7 @@ namespace OpenWrap.Commands.Wrap
                              group new { key, value } by key;
 
             _builder = commandLine.Trim().StartsWith("msbuild", StringComparison.OrdinalIgnoreCase)
-                                  ? (IPackageBuilder)new MSBuildPackageBuilder(FileSystem, Environment)
+                                  ? (IPackageBuilder)new MSBuildBuildEngine(FileSystem, Environment)
                                   : new MetaPackageBuilder(Environment);
             foreach(var property in properties)
             {

@@ -8,7 +8,7 @@ using OpenFileSystem.IO.FileSystems;
 
 namespace OpenWrap.Build.BuildEngines
 {
-    public class MSBuildPackageBuilder : CommandLinePackageBuilder
+    public class MSBuildBuildEngine : CommandLinePackageBuilder
     {
         public IEnumerable<string> Profile { get; set; }
         public IEnumerable<string> Platform { get; set; }
@@ -17,7 +17,7 @@ namespace OpenWrap.Build.BuildEngines
         {
             get { return GetMSBuildExecutablePath(); }
         }
-        public MSBuildPackageBuilder(IFileSystem fileSystem, IEnvironment environment)
+        public MSBuildBuildEngine(IFileSystem fileSystem, IEnvironment environment)
             : base(fileSystem,environment)
 
         {
@@ -67,7 +67,16 @@ namespace OpenWrap.Build.BuildEngines
 
         public Process CreateMSBuildProcess(IFile project, string platform, string profile, string msbuildTargets)
         {
-            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1} /p:t={2}", platform, profile, msbuildTargets);
+            var commandLineArgs = Environment.GetCommandLineArgs();
+            var logger = commandLineArgs.FirstOrDefault(x => x.StartsWith("/logger", StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
+            var additionalProperties = (from argument in commandLineArgs
+                                        where argument.StartsWithNoCase("/p:") ||
+                                              argument.StartsWithNoCase("/property:") ||
+                                              argument.StartsWithNoCase("\"/property:") ||
+                                              argument.StartsWithNoCase("\"/p:")
+                                        select argument).Join(" ");
+
+            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1} /p:t={2} {3} {4}", platform, profile, msbuildTargets, logger, additionalProperties);
 
             var arguments = "\"" + project.Path.FullPath + "\"" + msbuildParams;
             return CreateProcess(arguments);
