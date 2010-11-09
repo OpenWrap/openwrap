@@ -82,7 +82,7 @@ namespace OpenWrap.Tests.Commands.Wrap
             Environment.ProjectRepository
                 .PackagesByName["lionel"]
                 .ShouldHaveCountOf(1)
-                .ShouldHaveAll(v => v.Version.Equals(LionelVersion));
+                .ShouldHaveAll(v => v.Version.ToString().Equals(LionelVersion));
         }
         [Test]
         public void reported_no_errors()
@@ -114,7 +114,7 @@ namespace OpenWrap.Tests.Commands.Wrap
             Environment.SystemRepository
                 .PackagesByName["lionel"]
                 .ShouldHaveCountOf(1)
-                .ShouldHaveAll(v => v.Version.Equals(LionelVersion));
+                .ShouldHaveAll(v => v.Version.ToString().Equals(LionelVersion));
         }
 
         [Test]
@@ -156,7 +156,7 @@ namespace OpenWrap.Tests.Commands.Wrap
             Environment.SystemRepository
                 .PackagesByName["lionel"]
                 .ShouldHaveCountOf(1)
-                .ShouldHaveAll(v => v.Version.Equals(LionelVersion));
+                .ShouldHaveAll(v => v.Version.ToString().Equals(LionelVersion));
         }
 
         [Test]
@@ -165,7 +165,7 @@ namespace OpenWrap.Tests.Commands.Wrap
             Environment.ProjectRepository
                 .PackagesByName["lionel"]
                 .ShouldHaveCountOf(1)
-                .ShouldHaveAll(v => v.Version.Equals(LionelVersion));
+                .ShouldHaveAll(v => v.Version.ToString().Equals(LionelVersion));
         }
 
         [Test]

@@ -24,7 +24,7 @@ namespace OpenWrap.Repositories
         // TODO: Make sure assemblies already loaded are loaded from normal reflection context
         public IExport ProcessExports(IEnumerable<IExport> exports, ExecutionEnvironment environment)
         {
-            var loadedAssemblyPaths = AppDomain.CurrentDomain.GetAssemblies().Select(x => Path.GetFullPath(x.Location)).ToList();
+            var loadedAssemblyPaths = AppDomain.CurrentDomain.GetAssemblies().Select(TryGetAssemblyLocation).NotNull().ToList();
             var commandTypes = from folder in exports
                                from file in folder.Items
                                where file.FullPath.EndsWith(".dll")
@@ -39,13 +39,27 @@ namespace OpenWrap.Repositories
                                select loadedAssembly.GetType(type.FullName);
             return new CommandExport(commandTypes);
         }
+        static string TryGetAssemblyLocation(Assembly assembly)
+        {
+            {
+                try
+                {
+                    return Path.GetFullPath(assembly.Location);
+                }
+                catch
+                {
+                    return null;
+                }
 
+            }
+        }
         static IEnumerable<Type> TryGetExportedTypes(Assembly assembly)
         {
             try
             {
                 return assembly.GetExportedTypes();
-            }catch
+            }
+            catch
             {
                 return Enumerable.Empty<Type>();
             }
@@ -56,7 +70,8 @@ namespace OpenWrap.Repositories
             {
                 return Assembly.ReflectionOnlyLoadFrom(file.FullPath);
             }
-            catch{
+            catch
+            {
                 return null;
             }
         }

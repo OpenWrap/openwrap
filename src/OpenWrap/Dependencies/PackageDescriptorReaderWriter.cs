@@ -15,7 +15,7 @@ namespace OpenWrap.Dependencies
     public class PackageDescriptorReaderWriter
     {
         const int FILE_READ_RETRIES = 5;
-        const int FILE_READ_RETRIES_WAIT = 500;
+        const int FILE_READ_RETRIES_WAIT = 20;
 
 
         readonly IEnumerable<IDescriptorParser> _lineParsers = new List<IDescriptorParser>
@@ -32,6 +32,9 @@ namespace OpenWrap.Dependencies
 
         public PackageDescriptor Read(IFile filePath)
         {
+            if (!filePath.Exists)
+                return null;
+            IOException ioException = null;
             int tries = 0;
             while (tries < FILE_READ_RETRIES)
             {
@@ -45,14 +48,15 @@ namespace OpenWrap.Dependencies
                         return descriptor;
                     }
                 }
-                catch (IOException)
+                catch (IOException ex)
                 {
+                    ioException = ex;
                     tries++;
                     Thread.Sleep(FILE_READ_RETRIES_WAIT);
                     continue;
                 }
             }
-            return null;
+            throw ioException;
         }
         public PackageDescriptor Read(Stream content)
         {
