@@ -5,12 +5,6 @@ using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using EnvDTE;
-using EnvDTE80;
-using Extensibility;
-using Microsoft.VisualStudio.CommandBars;
-using Debugger=EnvDTE.Debugger;
-
 namespace OpenWrap
 {
     //[Guid(ComRegistrations.ADD_IN_GUID)]
