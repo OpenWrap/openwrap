@@ -21,7 +21,9 @@ namespace OpenWrap.Build
 
         public InitializeOpenWrap()
         {
-            Preloader.GetPackageFolders(Preloader.RemoteInstall.None, InstallationPaths.SystemRepositoryDirectory, "openfilesystem", "sharpziplib");
+            Preloader.LoadAssemblies(
+                Preloader.GetPackageFolders(Preloader.RemoteInstall.None, InstallationPaths.SystemRepositoryDirectory, "openfilesystem", "sharpziplib")
+            );
             
         }
         [Output]

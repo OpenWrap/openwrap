@@ -23,10 +23,13 @@ namespace OpenWrap
     {
         static ConsoleRunner()
         {
-            //Preloader.PreloadDependencies(new[] { "openfilesystem", "sharpziplib" });
         }
         public static int Main(string[] args)
         {
+            if (args == null || args.Length == 0)
+            {
+                Console.WriteLine("No command was entered. Type 'get-help' to get a list of supported commands.");
+            }
             Services.Services.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
             Services.Services.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
             Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
@@ -69,11 +72,6 @@ namespace OpenWrap
             return returnCode;
         }
 
-        static void LoadBootstrapAssemblies()
-        {
-            
-        }
-
         static void RenderOutput(ICommandOutput commandOutput)
         {
             if (commandOutput is IProgressOutput)
@@ -83,10 +81,7 @@ namespace OpenWrap
                 int writtenDots = 0;
                 bool progressOpened = false;
                 Console.WriteLine(commandOutput);
-                progress.StatusChanged += (s, e) =>
-                {
-                    Console.WriteLine(e.Message);
-                };
+                progress.StatusChanged += (s, e) => Console.WriteLine(e.Message);
                 progress.ProgressChanged += (s, e) =>
                 {
                     if (!progressOpened)
@@ -113,7 +108,7 @@ namespace OpenWrap
                 Console.WriteLine(commandOutput);
         }
 
-        static bool HiddenVerboseOutput(string[] args, ICommandOutput commandOutput)
+        static bool HiddenVerboseOutput(IEnumerable<string> args, ICommandOutput commandOutput)
         {
             return commandOutput.Type == CommandResultType.Verbose && !HasFlag(args, "verbose");
         }
