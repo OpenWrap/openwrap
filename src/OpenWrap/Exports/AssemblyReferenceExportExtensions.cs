@@ -38,6 +38,7 @@ namespace OpenWrap.Exports
         static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferencesFromPackages(IEnumerable<IPackageInfo> packages, ExecutionEnvironment exec)
         {
             return packages
+                    .NotNull()
                     .GroupBy(x=>x.Name)
                     .Select(x=>x.OrderByDescending(y=>y.Version).First())
                     .NotNull()

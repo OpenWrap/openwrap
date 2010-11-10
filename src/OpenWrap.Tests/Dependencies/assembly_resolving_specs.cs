@@ -16,6 +16,23 @@ using OpenWrap.Tests.Commands.context;
 
 namespace assembly_resolving_specs
 {
+    public class resolving_assemblies_when_invalid_dependencies : contexts.assembly_resolving
+    {
+        public resolving_assemblies_when_invalid_dependencies()
+        {
+            given_dependency("depends: mirkwood");
+            given_dependency("depends: eastbight");
+            given_project_package("mirkwood", "1.0.0.0", Assemblies(Assembly("mirkwood", "bin-net35")));
+
+            when_resolving_assemblies("anyCPU", "net35");
+        }
+        [Test]
+        public void assemblies_from_valid_packages_are_loaded()
+
+        {
+            AssemblyReferences.ShouldHaveCountOf(1).First().AssemblyName.Name.ShouldBe("mirkwood");
+        }
+    }
     public class marking_dependency_as_content : contexts.assembly_resolving
     {
         public marking_dependency_as_content()
@@ -106,7 +123,7 @@ namespace assembly_resolving_specs
                 var asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.Save | AssemblyBuilderAccess.ReflectionOnly, assemblyFile.Parent.Path.FullPath);
                 var mb = asmBuilder.DefineDynamicModule(assemblyName + ".dll");
                 asmBuilder.Save(assemblyFile.Name);
-                
+
                 return new PackageContent { FileName = assemblyFile.Name, RelativePath = content, Stream = () => assemblyFile.OpenRead(), Size = new System.IO.FileInfo(assemblyFile.Path.FullPath).Length };
 
             }
