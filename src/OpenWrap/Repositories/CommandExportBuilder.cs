@@ -24,12 +24,16 @@ namespace OpenWrap.Repositories
         // TODO: Make sure assemblies already loaded are loaded from normal reflection context
         public IExport ProcessExports(IEnumerable<IExport> exports, ExecutionEnvironment environment)
         {
-            var loadedAssemblyPaths = AppDomain.CurrentDomain.GetAssemblies().Select(x=>new { loc = TryGetAssemblyLocation(x), asm=x }).Where(x=>x.loc != null).ToDictionary(x=>x.loc,x=>x.asm, StringComparer.OrdinalIgnoreCase);
+            var loadedAssemblyPaths = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(x=>new { loc = TryGetAssemblyLocation(x), asm=x })
+                .Where(x=>x.loc != null)
+                .ToLookup(x=>x.loc,x=>x.asm, StringComparer.OrdinalIgnoreCase);
+
             var commandTypes = from folder in exports
                                from file in folder.Items
                                where file.FullPath.EndsWith(".dll")
-                               let assembly = loadedAssemblyPaths.ContainsKey(file.FullPath)
-                                                      ? loadedAssemblyPaths[file.FullPath]
+                               let assembly = loadedAssemblyPaths.Contains(file.FullPath)
+                                                      ? loadedAssemblyPaths[file.FullPath].First()
                                                       : TryReflectionOnlyLoad(file) 
                                where assembly != null
                                from type in TryGetExportedTypes(assembly)

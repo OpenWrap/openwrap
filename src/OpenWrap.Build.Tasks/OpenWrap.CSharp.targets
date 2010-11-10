@@ -3,8 +3,6 @@
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="_Initialize">
 
   <!-- Default folder locations -->
-
-
   <PropertyGroup>
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == '' and '$(BuildingInsideVisualStudio)' == 'true'">true</OpenWrap-EnableVisualStudioIntegration>
 
@@ -42,7 +40,10 @@
     <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\*.wrapdesc" Condition="!Exists(@(_WrapFile->'%(FullPath)'))" />
   </ItemGroup>
   <Target Name="_Initialize">
-    <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" />
+    <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" >
+      <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />  
+    </InitializeOpenWrap>
+                        
 
     <InitializeVisualStudioIntegration
       WrapDescriptor="@(_WrapFile)"

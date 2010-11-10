@@ -119,6 +119,7 @@
   <ItemGroup>
     <Content Include="OpenWrap.CSharp.targets">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="OpenWrap.tasks">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

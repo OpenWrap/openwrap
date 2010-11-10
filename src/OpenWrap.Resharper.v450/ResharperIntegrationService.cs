@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using OpenWrap.Dependencies;
@@ -25,11 +26,22 @@ namespace OpenWrap.Resharper
             {
                 if (_projectFiles.ContainsKey(projectFilePath))
                 {
+                    ResharperLogger.Debug("TryAddNotifier: updating {0}.", projectFilePath);
                     Services.Services.GetService<IWrapDescriptorMonitoringService>().ProcessWrapDescriptor(descriptorPath, repository, _projectFiles[projectFilePath]);
                     return;
                 }
+                ResharperLogger.Debug("TryAddNotifier: adding {0} as new project.", projectFilePath);
                 _projectFiles[projectFilePath] = new ResharperProjectUpdater(descriptorPath, repository, projectFilePath, environment, ignoredAssemblies);
             }
+
+        }
+    }
+
+    static class ResharperLogger
+    {
+        public static void Debug(string text, params string[] args)
+        {
+            Debugger.Log(0, "resharper", DateTime.Now.ToShortTimeString() + ":" + string.Format(text, args) + "\r\n");
 
         }
     }

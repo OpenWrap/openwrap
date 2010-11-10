@@ -16,7 +16,13 @@ using System.Diagnostics;
 
 namespace OpenWrap.Build.Tasks
 {
-
+    static class ResharperLogger
+    {
+        public static void Debug(string text, params string[] args)
+        {
+            Debugger.Log(0, "resharper", DateTime.Now.ToShortTimeString() +":"+ string.Format(text, args)+"\r\n");
+        }
+    }
     public static class ResharperHook
     {
         static Queue<NotificationRegistration> _registrationQueue = new Queue<NotificationRegistration>();
@@ -45,12 +51,14 @@ namespace OpenWrap.Build.Tasks
                 if (_instance == null)
                     Queue(environment, descriptorPath, packageRepository, projectFilePath, excludedAssemblies);
                 else
-                    ExecyteTryAddNotifierMethod(environment,descriptorPath,packageRepository,projectFilePath,excludedAssemblies);
+                    ExecuteTryAddNotifierMethod(environment,descriptorPath,packageRepository,projectFilePath,excludedAssemblies);
             }
         }
 
         static void Queue(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, IEnumerable<string> excludedAssemblies)
         {
+            ResharperLogger.Debug("Queue: queued '{0}'.", projectFilePath);
+
             _registrationQueue.Enqueue(new NotificationRegistration(environment,descriptorPath,packageRepository,projectFilePath, excludedAssemblies));
         }
 
@@ -58,12 +66,18 @@ namespace OpenWrap.Build.Tasks
         {
             lock (_registrationQueue)
             {
-                if (_instance != null) return;
+                if (_instance != null)
+                {
+                    ResharperLogger.Debug("TryCreateIntegrationService: _instance already set.");
+                    return;
+                }
                 var unimportantType = Type.GetType("JetBrains.Application.Shell, JetBrains.Platform.ReSharper.Shell");
                 if (unimportantType == null && _tries < 50)
                 {
+                    ResharperLogger.Debug("TryCreateIntegrationService: resharperType not loaded, try {0}.", _tries.ToString());
+
                     _tries++;
-                    _timer = new Timer(x => TryCreateIntegrationService(), null, 1000, Timeout.Infinite);
+                    _timer = new Timer(x => TryCreateIntegrationService(), null, 500, Timeout.Infinite);
                 }
                 if (unimportantType == null)
                     return;
@@ -77,10 +91,10 @@ namespace OpenWrap.Build.Tasks
                 if (resharperIntegratorType == null) return;
 
                 _instance = Activator.CreateInstance(resharperIntegratorType);
-
+                ResharperLogger.Debug("TryCreateIntegrationService: instance loaded: '{0}'.", _instance.GetType().AssemblyQualifiedName);
                 foreach(var reg in _registrationQueue)
                 {
-                    ExecyteTryAddNotifierMethod(
+                    ExecuteTryAddNotifierMethod(
                             reg.Environment,
                             reg.DescriptorPath,
                             reg.PackageRepository,
@@ -92,8 +106,10 @@ namespace OpenWrap.Build.Tasks
             }
         }
 
-        static void ExecyteTryAddNotifierMethod(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, IEnumerable<string> excludedAssemblies)
+        static void ExecuteTryAddNotifierMethod(ExecutionEnvironment environment, IFile descriptorPath, IPackageRepository packageRepository, string projectFilePath, IEnumerable<string> excludedAssemblies)
         {
+            ResharperLogger.Debug("ExecuteTryAddNotifierMethod: executing TryAdd for {0}.", projectFilePath);
+
             _instance.GetType().GetMethod("TryAddNotifier").Invoke(_instance, new object[] { environment, descriptorPath, packageRepository, projectFilePath, excludedAssemblies });
         }
 

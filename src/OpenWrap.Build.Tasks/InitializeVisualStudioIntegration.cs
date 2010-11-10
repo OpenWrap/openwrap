@@ -67,6 +67,7 @@ namespace OpenWrap.Build.Tasks
         }
         public override bool Execute()
         {
+            ResharperLogger.Debug("Initialize called on " + ProjectFilePath);
             EnsureWrapRepositoryIsInitialized();
             if (!EnableVisualStudioIntegration) return true;
 

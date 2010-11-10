@@ -40,14 +40,17 @@ namespace OpenWrap.Commands
             var matchingVerbs = _commands.Verbs.Where(x => x.StartsWith(commandLine.Verb, StringComparison.OrdinalIgnoreCase)).ToList();
             if (matchingVerbs.Count != 1)
             {
-                yield return new UnknownCommand(commandLine.Verb, matchingVerbs);
+                yield return new UnknownCommand(commandLine.Verb);
                 yield break;
             }
 
             var verb = matchingVerbs[0];
 
             var command = _commands.Get(noun, verb);
-
+            if (command == null)
+            {
+                yield return new UnknownCommand(verb + "-" + noun);
+            }
             var inputsFromCommandLine = ParseInputsFromCommandLine(commandLine.Arguments).ToLookup(x => x.Key, x => x.Value);
 
             var unnamedCommandInputsFromCommandLine = inputsFromCommandLine[null].ToList();

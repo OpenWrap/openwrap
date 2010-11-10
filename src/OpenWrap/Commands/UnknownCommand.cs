@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using OpenWrap.Commands;
 using OpenWrap;
 
@@ -8,7 +7,7 @@ namespace OpenWrap.Commands
     {
         public string CommandName { get; set; }
 
-        public UnknownCommand(string commandName, List<string> verbs)
+        public UnknownCommand(string commandName)
         {
             CommandName = commandName;
         }

@@ -45,9 +45,9 @@ namespace OpenWrap.Commands
             _commands.Add(commandDescriptor);
         }
 
-        public ICommandDescriptor Get(string @namespace, string name)
+        public ICommandDescriptor Get(string verb, string name)
         {
-            return _commands.Single(x => x.Noun.EqualsNoCase(@namespace)
+            return _commands.FirstOrDefault(x => x.Noun.EqualsNoCase(verb)
                                          && x.Verb.EqualsNoCase(name));
         }
 
