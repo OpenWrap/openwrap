@@ -134,6 +134,8 @@ namespace OpenWrap.Commands.Wrap
 
             foreach (var m in PackageResolver.VerifyPackageCache(Environment, Environment.Descriptor))
                 yield return m;
+            if (ShouldUpdateDescriptor)
+                SaveDescriptorFile();
         }
 
         ICommandOutput UpdateDescriptor()
@@ -157,9 +159,14 @@ namespace OpenWrap.Commands.Wrap
                     VersionVertices = VersionVertices(),
                     ContentOnly = Content
             });
+            
+            return outputMessage;
+        }
+
+        void SaveDescriptorFile()
+        {
             using(var descriptor = Environment.DescriptorFile.OpenWrite())
                 new PackageDescriptorReaderWriter().Write(Environment.Descriptor, descriptor);
-            return outputMessage;
         }
 
         ICommandOutput WrapFileToPackageDescriptor()
