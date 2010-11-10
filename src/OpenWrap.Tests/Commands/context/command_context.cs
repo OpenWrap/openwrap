@@ -139,6 +139,11 @@ namespace OpenWrap.Tests.Commands.context
             Environment.CurrentDirectory = FileSystem.GetDirectory(currentDirectory);
 
         }
+
+        protected void given_descriptor(PackageDescriptor packageDescriptor)
+        {
+            Environment.Descriptor = packageDescriptor;
+        }
     }
 
     public abstract class command_context<T> : openwrap_context where T : ICommand

@@ -62,6 +62,8 @@ namespace OpenWrap.Repositories
 
             packageResolver.GetExports<IExport>("bin", environment.ExecutionEnvironment, repositories).ToList();
 
+            if (descriptor == null) yield break;
+
             var resolvedPackages = packageResolver.TryResolveDependencies(
                     descriptor,
                     repositories);

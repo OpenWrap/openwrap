@@ -4,6 +4,7 @@ using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
@@ -45,9 +46,9 @@ namespace OpenWrap.Tests.Commands
             Results.ShouldHaveAtLeastOne(x => x.Success() == false);
         }
     }
-    class adding_wrap_from_system_pacakge_with_outdated_version_in_remote : context.command_context<AddWrapCommand>
+    class adding_wrap_from_system_package_with_outdated_version_in_remote : context.command_context<AddWrapCommand>
     {
-        public adding_wrap_from_system_pacakge_with_outdated_version_in_remote()
+        public adding_wrap_from_system_package_with_outdated_version_in_remote()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
             given_project_package("sauron", "1.0.0.0");
@@ -338,7 +339,22 @@ namespace OpenWrap.Tests.Commands
             Environment.ProjectRepository.ShouldHavePackage("sauron", "2.0.0");
         }
     }
+    class adding_package_to_system : context.add_wrap_context
+    {
+        public adding_package_to_system()
+        {
+            given_remote_package("sauron", "1.0.0");
+            given_project_repository(null);
+            given_descriptor(null);
+            when_executing_command("sauron", "-system");
+        }
 
+        [Test]
+        public void the_command_is_successful()
+        {
+            Results.ShouldHaveNoError();
+        }
+    }
     namespace context
     {
         public class add_wrap_context : context.command_context<AddWrapCommand>
