@@ -9,6 +9,25 @@ using OpenWrap.Testing;
 
 namespace OpenRasta.Wrap.Tests.Dependencies
 {
+    public class latest_version_resolving_between_packages_with_different_sub_dependencies:dependency_manager_context
+    {
+        public latest_version_resolving_between_packages_with_different_sub_dependencies()
+        {
+            given_system_package("ring-of-power-1.0.0");
+            given_system_package("ring-of-power-1.0.1");
+            given_remote1_package("frodo-1.0.0", "depends: ring-of-power = 1.0.0");
+            given_remote1_package("frodo-1.0.1", "depends: ring-of-power = 1.0.1");
+
+            given_dependency("depends: frodo");
+
+            when_resolving_packages();
+        }
+        [Test]
+        public void resolve_is_successful()
+        {
+            Resolve.IsSuccess.ShouldBeTrue();
+        }
+    }
     public class resolving_sub_builds_from_current_directory : dependency_manager_context
     {
         public resolving_sub_builds_from_current_directory()
@@ -23,9 +42,9 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         [Test]
         public void package_found_from_current_directory()
         {
-            Resolve.ResolvedPackages.Where(x => x.Package.Name == "rings-of-power")
+            Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "rings-of-power")
                     .ShouldHaveCountOf(1)
-                    .First().Package.Source.ShouldBe(CurrentDirectoryRepository);
+                    .First().Packages.First().Source.ShouldBe(CurrentDirectoryRepository);
         }
     }
 
@@ -46,15 +65,35 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         [Test]
         public void common_compatible_version_is_resolved()
         {
-            Resolve.ResolvedPackages.Where(x => x.PackageName == "rings-of-power")
+            Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "rings-of-power")
                     .ShouldHaveCountOf(1)
-                    .First().Package.Version.ShouldBe("1.0.0".ToVersion());
+                    .First().Packages.First().Version.ShouldBe("1.0.0".ToVersion());
         }
     }
-
-    public class when_resolving_unavailable_dependencies : dependency_manager_context
+    public class resolving_unavailable_sub_dependencies : dependency_manager_context
     {
-        public when_resolving_unavailable_dependencies()
+        public resolving_unavailable_sub_dependencies()
+        {
+            given_system_package("rings-of-power-1.0.0", "depends: unknown");
+            given_dependency("depends: rings-of-power");
+
+            when_resolving_packages();
+        }
+        [Test]
+        public void resolution_fails()
+        {
+            Resolve.IsSuccess.ShouldBeFalse();
+        }
+        [Test]
+        public void missing_package_is_described()
+        {
+            Resolve.MissingPackages.ShouldHaveCountOf(1)
+                    .First().Identifier.Name.ShouldBe("unknown");
+        }
+    }
+    public class resolving_unavailable_dependencies : dependency_manager_context
+    {
+        public resolving_unavailable_dependencies()
         {
             given_dependency("depends: rings-of-power");
 
@@ -62,10 +101,15 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
 
         [Test]
-        public void dependency_has_no_package()
+        public void has_no_successful_package()
         {
-            Resolve.ResolvedPackages.ShouldHaveCountOf(1);
-            Resolve.ResolvedPackages.First().Package.ShouldBeNull();
+            Resolve.SuccessfulPackages.ShouldHaveCountOf(0);
+        }
+        [Test]
+        public void has_missing_package()
+        {
+            Resolve.MissingPackages.ShouldHaveCountOf(1)
+                    .First().Identifier.Name.ShouldBe("rings-of-power");
         }
 
         [Test]
@@ -89,10 +133,12 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         [Test]
         public void package_is_present()
         {
-            Resolve.ResolvedPackages.Count().ShouldBe(1);
-            Resolve.ResolvedPackages.First()
-                    .Check(x => x.Package.Name.ShouldBe("evil"))
-                    .Check(x => x.Package.Version.ShouldBe(new Version("1.0.0")));
+            Resolve.SuccessfulPackages.Count().ShouldBe(1);
+            Resolve.SuccessfulPackages.First()
+                    .Check(x => x.Identifier.Name.ShouldBe("evil"))
+                    .Check(x=>x.Packages.ShouldHaveCountOf(1))
+                    .Check(x => x.Identifier.Version.ShouldBe(new Version("1.0.0")));
+
         }
 
         [Test]
@@ -122,10 +168,10 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public void local_declaration_overrides_package_dependency()
         {
             Resolve.IsSuccess.ShouldBeTrue();
-            Resolve.ResolvedPackages.Count().ShouldBe(4);
-            Resolve.ResolvedPackages.ToLookup(x => x.Package.Name)["sauron"]
+            Resolve.SuccessfulPackages.Count().ShouldBe(4);
+            Resolve.SuccessfulPackages.ToLookup(x => x.Identifier.Name)["sauron"]
                     .ShouldHaveCountOf(1)
-                    .First().Package.Version.ShouldBe(new Version(1, 0, 0));
+                    .First().Identifier.Version.ShouldBe(new Version(1, 0, 0));
         }
     }
 
@@ -148,8 +194,14 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public void the_resolving_fails()
         {
             Resolve.IsSuccess.ShouldBeFalse();
-            Resolve.ResolvedPackages.Count().ShouldBe(5);
-            Resolve.ResolvedPackages.ToLookup(x => x.Package.Name)["sauron"].Count().ShouldBe(2);
+        }
+        [Test]
+        public void conflicting_packages_are_present()
+        {
+            Resolve.ConflictingPackages.ShouldHaveCountOf(1);
+            Resolve.ConflictingPackages.First()
+                    .Check(_ => _.Identifier.Name.ShouldBe("sauron"))
+                    .Check(_ => _.DependencyStacks.ShouldHaveCountOf(2));
         }
     }
 
@@ -179,9 +231,9 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         [Test]
         public void local_choice_overrides()
         {
-            Resolve.ResolvedPackages.Where(x => x.PackageName == "castle.core")
+            Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "castle.core")
                     .ShouldHaveCountOf(1)
-                    .First().Package.Version.ShouldBe("1.1.0".ToVersion());
+                    .First().Identifier.Version.ShouldBe("1.1.0".ToVersion());
         }
     }
 
@@ -199,7 +251,8 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public void dependency_on_remote_package_is_resolved()
         {
             Resolve.IsSuccess.ShouldBeTrue();
-            Resolve.ResolvedPackages.First().Package.ShouldNotBeNull()
+            Resolve.SuccessfulPackages.First().Packages.ShouldNotBeEmpty()
+                    .First()
                     .Source.ShouldBe(RemoteRepository);
         }
     }
@@ -218,8 +271,8 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public void system_package_is_resolved()
         {
             Resolve.IsSuccess.ShouldBeTrue();
-            Resolve.ResolvedPackages.First().Package.ShouldNotBeNull()
-                    .Source.ShouldBe(SystemRepository);
+            Resolve.SuccessfulPackages.First().Packages.ShouldNotBeEmpty()
+                    .First().Source.ShouldBe(SystemRepository);
         }
     }
 
@@ -238,11 +291,12 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public void finds_highest_version_number_across_repositories()
         {
             Resolve.IsSuccess.ShouldBeTrue();
-            var dependency = Resolve.ResolvedPackages.First();
+            var dependency = Resolve.SuccessfulPackages.First();
 
-            dependency.Package.ShouldNotBeNull()
+            dependency.Packages.ShouldNotBeEmpty().First()
                     .Source.ShouldBe(RemoteRepository);
-            dependency.Package.Version.ShouldBe(new Version(1, 1, 0));
+            dependency.Packages.ShouldNotBeEmpty()
+                    .First().Version.ShouldBe(new Version(1, 1, 0));
         }
     }
 
@@ -260,7 +314,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         public void package_is_resolved()
         {
             Resolve.IsSuccess.ShouldBeTrue();
-            Resolve.ResolvedPackages.ShouldHaveCountOf(1);
+            Resolve.SuccessfulPackages.ShouldHaveCountOf(1);
         }
     }
 
@@ -285,10 +339,10 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         [Test]
         public void the_package_is_installed_from_system()
         {
-            Resolve.ResolvedPackages.ShouldHaveCountOf(1)
+            Resolve.SuccessfulPackages.ShouldHaveCountOf(1)
                     .First()
-                    .Check(x => x.Package.Source.ShouldBe(SystemRepository))
-                    .Check(x => x.Package.Version.ShouldBe(new Version("1.0.0.1")));
+                    .Check(x => x.Packages.First().Source.ShouldBe(SystemRepository))
+                    .Check(x => x.Packages.First().Version.ShouldBe(new Version("1.0.0.1")));
         }
     }
 
@@ -315,30 +369,30 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         [Test]
         public void dependencies_in_dependency_chain_are_overridden()
         {
-            Resolve.ResolvedPackages.Where(x => x.PackageName == "one-ring").FirstOrDefault()
+            Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "one-ring").FirstOrDefault()
                     .ShouldNotBeNull()
-                    .Package.Name.ShouldBe("one-ring");
+                    .Packages.First().Name.ShouldBe("one-ring");
         }
 
         [Test]
         public void locally_declared_dependency_is_overrridden()
         {
-            Resolve.ResolvedPackages.Where(x => x.PackageName == "minas-tirith").FirstOrDefault()
+            Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "minas-tirith").FirstOrDefault()
                     .ShouldNotBeNull()
-                    .Package.Name.ShouldBe("minas-tirith");
+                    .Packages.First().Name.ShouldBe("minas-tirith");
         }
 
         [Test]
         public void originally_declared_dependency_in_dependency_chain_is_not_resolved()
         {
-            Resolve.ResolvedPackages.Where(x => x.PackageName == "ring-of-power")
+            Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "ring-of-power")
                     .ShouldHaveCountOf(0);
         }
 
         [Test]
         public void originally_locally_declared_dependency_is_not_resolved()
         {
-            Resolve.ResolvedPackages.Where(x => x.PackageName == "fangorn")
+            Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "fangorn")
                     .ShouldHaveCountOf(0);
         }
 
@@ -405,7 +459,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
             protected void when_resolving_packages()
             {
-                Resolve = new PackageResolver()
+                Resolve = new ExhaustiveResolver()
                         .TryResolveDependencies(DependencyDescriptor,
                                                 new[]
                                                 {

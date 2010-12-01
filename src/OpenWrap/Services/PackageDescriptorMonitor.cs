@@ -55,7 +55,7 @@ namespace OpenWrap.Services
             if (!_notificationClients.ContainsKey(wrapPath.Path))
                 return;
             var d = _notificationClients[wrapPath.Path];
-            d.Repository.Refresh();
+            d.Repository.RefreshPackages();
             var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 
 
@@ -66,7 +66,7 @@ namespace OpenWrap.Services
             if (!_notificationClients.ContainsKey(wrapPath.Path))
                 return;
             var d = _notificationClients[wrapPath.Path];
-            d.Repository.Refresh();
+            d.Repository.RefreshPackages();
             var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 
             foreach (var client in d.Clients)

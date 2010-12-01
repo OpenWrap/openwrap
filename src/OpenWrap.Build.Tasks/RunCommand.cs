@@ -55,7 +55,7 @@ namespace OpenWrap.Build.Tasks
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            return Services.Services.GetService<IPackageResolver>()
+            return Services.Services.GetService<IPackageExporter>()
                     .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
                     .SelectMany(x => x.Items)
                     .OfType<ICommandExportItem>()

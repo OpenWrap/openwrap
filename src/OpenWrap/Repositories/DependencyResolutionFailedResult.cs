@@ -1,33 +1,42 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using OpenWrap.Commands;
+using OpenWrap.PackageManagement;
 
 namespace OpenWrap.Repositories
 {
-    public class DependencyResolutionFailedResult : Error
+    public class PackageConflictsOutput : Error
     {
-        public DependencyResolutionResult Result { get; set; }
-        readonly string _message;
-        DependencyResolutionResult _result;
+        public PackageConflictResult Result { get; set; }
+        
+        static readonly string MESSAGE = "Dependency {0} is in conflict [{1}]." + Environment.NewLine + "{2}";
 
-        public DependencyResolutionFailedResult(DependencyResolutionResult result)
-                : this("The following dependencies were not found:", result)
+        public PackageConflictsOutput(PackageConflictResult result)
         {
             Result = result;
         }
 
-        public DependencyResolutionFailedResult(string message, DependencyResolutionResult result)
-        {
-            _message = message;
-            _result = result;
-        }
-
         public override string ToString()
         {
-            return _message + "\r\n\t"
-                   + string.Join("\r\n\t",
-                                 _result.ResolvedPackages.Where(x => x.Package == null)
-                                         .Select(x => "- '" + x.PackageName + "'")
-                                         .ToArray());
+            return string.Format(MESSAGE,
+                                 Result.Package.Identifier.Name,
+                                 Result.Package.Packages.Select(x => x.Version.ToString()).Join(", "),
+                                 Result.Package.DependencyStacks.Select(x => "\t" + x.ToString()).Join(Environment.NewLine));
+        }
+    }
+    public class PackageMissingOutput : Error {
+
+        public PackageMissingResult Result { get; private set; }
+        static readonly string MESSAGE = "Dependency {0} wasn't found.";
+        public PackageMissingOutput(PackageMissingResult result)
+        {
+            Result = result;
+            
+        }
+        public override string  ToString()
+        {
+            return string.Format(MESSAGE, Result.Package.Identifier.Name);
         }
     }
 }

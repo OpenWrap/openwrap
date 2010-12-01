@@ -172,7 +172,7 @@ namespace OpenWrap.Tests.Commands
         {
             given_currentdirectory_package("sauron", new Version(1, 0, 0));
 
-            when_executing_command("-Name", "sauron");
+            when_executing_command("-Name", "sauron", "-System");
         }
         [Test]
         public void installs_package_in_system_repository()

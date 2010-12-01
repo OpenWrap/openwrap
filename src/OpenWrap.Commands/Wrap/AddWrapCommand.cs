@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.Dependencies;
+using OpenWrap.PackageManagement;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
@@ -99,6 +100,13 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Error("Could not parse maxversion: " + MaxVersion);
                 yield break;
             }
+
+            if (Project && Environment.ProjectRepository == null)
+            {
+                yield return new Error("Project repository doesn't exist but -project has been specified.");
+                yield break;
+
+            }
         }
 
         IEnumerable<ICommandOutput> ExecuteCore()
@@ -111,63 +119,62 @@ namespace OpenWrap.Commands.Wrap
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
 
-            var packageDescriptor = DescriptorFromCommand();
+            var sourceRepositories = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }.Concat(Environment.RemoteRepositories);
+
+            if (Project && System)
+            {
+                var sysToAdd = new List<PackageIdentifier>();
+                foreach (var m in PackageManager.AddProjectPackage(this.PackageRequest, sourceRepositories, Environment.Descriptor, Environment.ProjectRepository, AddOptions))
+                {
+                    yield return ToOutput(m);
+                    var added = m as PackagePublishedResult;
+                    if (added != null)
+                        sysToAdd.Add(added.Package.Identifier);
+                }
+                foreach (var identifier in sysToAdd)
+                foreach (var m in PackageManager.AddSystemPackage(PackageRequest.Exact(identifier.Name, identifier.Version), sourceRepositories, Environment.SystemRepository))
+                        yield return ToOutput(m);
+            }
+            else if (Project)
+            {
+                foreach (var m in PackageManager.AddProjectPackage(this.PackageRequest, sourceRepositories, Environment.Descriptor, Environment.ProjectRepository, AddOptions))
+                    yield return ToOutput(m);
+            }
+            else if (System)
+            {
+                foreach (var m in PackageManager.AddSystemPackage(PackageRequest, sourceRepositories, Environment.SystemRepository, AddOptions))
+                    yield return ToOutput(m);
+            }
+
 
             if (ShouldUpdateDescriptor)
-                yield return UpdateDescriptor();
-
-            var resolvedDependencies = ResolveDependencies(packageDescriptor, Environment.RemoteRepositories.Concat(Environment.SystemRepository, Environment.CurrentDirectoryRepository));
-
-            if (!resolvedDependencies.IsSuccess)
-            {
-                yield return new DependencyResolutionFailedResult(string.Format("Could not find a package for dependency '{0}'.", Name), resolvedDependencies);
-                yield break;
-            }
-            foreach (var m in resolvedDependencies.GacConflicts(Environment.ExecutionEnvironment))
-                yield return m;
-
-            var repositories = new List<IPackageRepository>();
-            if (Project) repositories.Add(Environment.ProjectRepository);
-            if (System) repositories.Add(Environment.SystemRepository);
-            foreach (var msg in PackageResolver.CopyPackagesToRepositories(resolvedDependencies, repositories))
-                yield return msg;
-
-            foreach (var m in PackageResolver.VerifyPackageCache(Environment, Environment.Descriptor))
-                yield return m;
-            if (ShouldUpdateDescriptor)
-                SaveDescriptorFile();
+                TrySaveDescriptorFile();
         }
 
-        ICommandOutput UpdateDescriptor()
+        PackageAddOptions AddOptions
         {
-            ICommandOutput outputMessage;
-            var dependencyWithSameName = Environment.Descriptor.Dependencies.Where(x => x.Name.EqualsNoCase(Name)).ToList();
-            if (dependencyWithSameName.Count > 0)
-            {
-                outputMessage = new GenericMessage("Dependency already declared in descriptor, updating.");
-                foreach(var i in dependencyWithSameName)
-                    Environment.Descriptor.Dependencies.Remove(i);
+            get {
+                PackageAddOptions addOptions = 0;
+                if (this.Anchored)
+                    addOptions |= PackageAddOptions.Anchor;
+                if (Content)
+                    addOptions |= PackageAddOptions.Content;
+                if (!NoDescriptorUpdate)
+                    addOptions |= PackageAddOptions.UpdateDescriptor;
+                return addOptions;
             }
-            else
-            {
-                outputMessage = new GenericMessage("Dependency added to descriptor.");
-            }
-            Environment.Descriptor.Dependencies.Add(new PackageDependency
-            {
-                    Anchored = Anchored, 
-                    Name = Name, 
-                    VersionVertices = VersionVertices(),
-                    ContentOnly = Content
-            });
-            
-            return outputMessage;
         }
 
-        void SaveDescriptorFile()
+        protected PackageRequest PackageRequest
         {
-            using(var descriptor = Environment.DescriptorFile.OpenWrite())
-                new PackageDescriptorReaderWriter().Write(Environment.Descriptor, descriptor);
+            get
+            {
+                if (Version != null) return PackageRequest.Exact(Name, Version.ToVersion());
+                if (MinVersion != null || MaxVersion != null) return PackageRequest.Between(Name, MinVersion.ToVersion(), MaxVersion.ToVersion());
+                return PackageRequest.Any(Name);
+            }
         }
+
 
         ICommandOutput WrapFileToPackageDescriptor()
         {
@@ -192,46 +199,6 @@ namespace OpenWrap.Commands.Wrap
             return null;
         }
 
-        PackageDescriptor DescriptorFromCommand()
-        {
-            return new PackageDescriptor
-            {
-                Dependencies =
-                    {
-                        new PackageDependency
-                        {
-                            Name = Name,
-                            Anchored = Anchored,
-                            ContentOnly = Content,
-                            VersionVertices = VersionVertices()
-                        }
-                    }
-            };
-        }
-
-        List<VersionVertex> VersionVertices()
-        {
-            var vertices = new List<VersionVertex>();
-            if (Version != null)
-            {
-                vertices.Add(new ExactVersionVertex(Version.ToVersion()));
-                return vertices;
-            }
-            if (MinVersion != null)
-            {
-                vertices.Add(new GreaterThenOrEqualVersionVertex(MinVersion.ToVersion()));
-            }
-            if (MaxVersion != null)
-            {
-                vertices.Add(new LessThanVersionVertex(MaxVersion.ToVersion()));
-            }
-            if (Version == null && MinVersion == null && MaxVersion == null)
-            {
-                vertices.Add(new AnyVersionVertex());
-            }
-            return vertices;
-        }
-
 
         ICommandOutput VerifyWrapFile()
         {
@@ -246,16 +213,7 @@ namespace OpenWrap.Commands.Wrap
         {
             return Environment.ProjectRepository != null
                        ? new GenericMessage("Project repository present.")
-                       : new GenericMessage("Project repository not found.");
-        }
-    }
-    public static class DependencyResolutionResultExtensions
-    {
-        public static IEnumerable<ICommandOutput> GacConflicts(this DependencyResolutionResult result, ExecutionEnvironment env)
-        {
-            return from package in GacResolver.InGac(result.ResolvedPackages.Select(x => x.Package), env)
-                   from assembly in package
-                   select new GacConflict(package.Key, assembly) as ICommandOutput;
+                       : new GenericMessage("Project repository absent.");
         }
     }
 }

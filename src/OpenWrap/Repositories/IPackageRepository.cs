@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using OpenWrap.Dependencies;
 
@@ -11,30 +10,7 @@ namespace OpenWrap.Repositories
         IPackageInfo Find(PackageDependency dependency);
         IEnumerable<IPackageInfo> FindAll(PackageDependency dependency);
         
-        void Refresh();
+        void RefreshPackages();
         string Name { get; }
-    }
-    public interface ISupportPublishing : IPackageRepository
-    {
-        IPackageInfo Publish(string packageFileName, Stream packageStream);
-    }
-    public interface ISupportCleaning : IPackageRepository
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packagesToKeep"></param>
-        /// <returns>The packages that were removed from the repository</returns>
-        IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep);
-    }
-
-    public interface ISupportAnchoring : IPackageRepository
-    {
-        IEnumerable<IPackageInfo> VerifyAnchors(IEnumerable<IPackageInfo> packagesToAnchor);
-    }
-
-    public interface ISupportNuking : IPackageRepository
-    {
-        void Nuke(IPackageInfo packageInfo);
     }
 }

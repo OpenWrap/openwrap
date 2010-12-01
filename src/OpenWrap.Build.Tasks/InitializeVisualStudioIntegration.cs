@@ -30,6 +30,7 @@ namespace OpenWrap.Build.Tasks
                 };
             }
         }
+
         IFile WrapDescriptorPath
         {
             get { return LocalFileSystem.Instance.GetFile(WrapDescriptor.ItemSpec); }

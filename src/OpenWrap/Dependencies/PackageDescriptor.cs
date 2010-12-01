@@ -30,6 +30,8 @@ namespace OpenWrap.Dependencies
             CreationTime = DateTimeOffset.UtcNow;
         }
 
+        public PackageIdentifier Identifier { get { return new PackageIdentifier(Name, Version); } }
+
         public ICollection<PackageDependency> Dependencies { get; set; }
         public ICollection<PackageNameOverride> Overrides { get; set; }
 
@@ -62,10 +64,5 @@ namespace OpenWrap.Dependencies
         public bool Anchored { get; set; }
 
         public string BuildCommand { get; set; }
-
-        public bool IsCompatibleWith(Version version)
-        {
-            return false;
-        }
     }
 }

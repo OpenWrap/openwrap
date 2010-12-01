@@ -43,7 +43,7 @@
     <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" >
       <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />  
     </InitializeOpenWrap>
-                        
+    <WriteLinesToFile File="c:\tmp\init.txt" Lines="$(MSBuildProjectFullPath)"  /> 
 
     <InitializeVisualStudioIntegration
       WrapDescriptor="@(_WrapFile)"

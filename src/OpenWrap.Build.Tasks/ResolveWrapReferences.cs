@@ -157,7 +157,7 @@ namespace OpenWrap.Build.Tasks
                 return;
             }
             PackageRepository = new FolderRepository(WrapsDirectoryPath);
-            PackageRepository.Refresh();
+            PackageRepository.RefreshPackages();
         }
 
 

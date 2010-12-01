@@ -47,7 +47,7 @@ namespace OpenWrap.Repositories
             get { return false; }
         }
 
-        public void Refresh()
+        public void RefreshPackages()
         {
             _packages = null;
         }

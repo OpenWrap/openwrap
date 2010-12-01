@@ -56,7 +56,7 @@ namespace nupack_syncidcation_specs
             autofacPackage.PackageHref.ShouldBe("http://173.203.67.148/file.nupkg");
         }
         [Test]
-        public void pacakge_has_correct_dependencies()
+        public void package_has_correct_dependencies()
         {
             var autofacMvcPackage = PackageDoc.Packages.FirstOrDefault(x => x.Name == "Autofac.MVC2");
 

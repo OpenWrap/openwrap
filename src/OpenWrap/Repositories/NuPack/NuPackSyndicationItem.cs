@@ -15,7 +15,7 @@ namespace OpenWrap.Repositories.NuPack
         string _oDataPackageVersion;
         IEnumerable<NuPackDependency> _oDataDependencies;
         bool? _oDataFound;
-        string _oDataCreated;
+        string _oDataPublished;
 
         public string PackageName
         {
@@ -47,11 +47,11 @@ namespace OpenWrap.Repositories.NuPack
                                          : null;
             }
         }
-        public string PackageCreated
+        public string PackagePublished
         {
             get
             {
-                if (ODataNode()) return _oDataCreated;
+                if (ODataNode()) return _oDataPublished;
                 return new DateTimeOffset(PublishDate.UtcDateTime).ToString();
             }
         }
@@ -114,8 +114,8 @@ namespace OpenWrap.Repositories.NuPack
                             _oDataPackageVersion = reader.ReadElementContentAsString();
                         else if (reader.LocalName == "Dependencies")
                             _oDataDependencies = GetODataDependencies(reader.ReadElementContentAsString());
-                        else if (reader.LocalName == "Created")
-                            _oDataCreated = reader.ReadElementContentAsString();
+                        else if (reader.LocalName == "Published")
+                            _oDataPublished = reader.ReadElementContentAsString();
                     }
                 }
             }
@@ -136,7 +136,7 @@ namespace OpenWrap.Repositories.NuPack
                 Version = PackageVersion.ToVersion(),
                 Description = PackageDescription,
                 PackageHref = PackageHref,
-                CreationTime = DateTimeOffset.Parse(PackageCreated)
+                CreationTime = PackagePublished == null ? default(DateTimeOffset) : DateTimeOffset.Parse(PackagePublished)
             };
         }
     }

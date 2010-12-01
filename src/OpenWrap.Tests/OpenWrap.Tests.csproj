@@ -115,6 +115,7 @@
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
     <Compile Include="Dependencies\DescriptionParserTests.cs" />
+    <Compile Include="Dependencies\version_vertices_specs.cs" />
     <Compile Include="Extensions\CamelToSpacedName.cs" />
     <Compile Include="NonSeekableMemoryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

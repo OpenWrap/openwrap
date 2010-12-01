@@ -11,10 +11,26 @@ namespace OpenWrap.Dependencies
 
         public override bool IsCompatibleWith(Version version)
         {
-            return Version.Major == version.Major
-                   && Version.Minor == version.Minor
-                   && Version.Build <= version.Build;
+            return MajorMatches(version)
+                   && MinorMatches(version)
+                   && BuildMatches(version);
         }
+
+        bool MajorMatches(Version version)
+        {
+            return Version.Major == version.Major;
+        }
+
+        bool MinorMatches(Version version)
+        {
+            return Version.Minor == version.Minor;
+        }
+
+        bool BuildMatches(Version version)
+        {
+            return Version.Build == -1 || Version.Build == version.Build;
+        }
+
         public override string ToString()
         {
             return "= " + Version;

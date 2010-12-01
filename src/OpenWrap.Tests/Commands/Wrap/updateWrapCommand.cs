@@ -24,15 +24,13 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void dependency_not_found_warning_is_produced()
         {
-            Results.OfType<DependenciesNotFoundInRepositories>()
-                    .ShouldHaveCountOf(1)
-                    .First().Dependencies
-                    .ShouldHaveCountOf(1).First().Dependency.Name.ShouldBe("goldberry");
+            Results.Where(x => x.Type == CommandResultType.Warning)
+                    .ShouldHaveCountOf(1);
         }
         [Test]
         public void no_error_should_be_reported()
         {
-            Results.ShouldHaveNo(x => x.Error());
+            Results.ShouldHaveNoError();
         }
     }
     public class update_package_by_name_in_project : context.command_context<UpdateWrapCommand>

@@ -14,6 +14,7 @@ namespace OpenWrap.Repositories.Http
         readonly IHttpRepositoryNavigator _httpNavigator;
         readonly PackageItem _package;
         IPackage _loadedPackage;
+        LazyValue<PackageIdentifier> _identifier;
 
         public HttpPackage(IFileSystem fileSystem,
             IPackageRepository source, 
@@ -23,7 +24,13 @@ namespace OpenWrap.Repositories.Http
             _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;
             _package = package;
+            _identifier = Lazy.Is(()=>new PackageIdentifier(Name, Version));
             Source = source;
+        }
+
+        public PackageIdentifier Identifier
+        {
+            get { return _identifier; }
         }
 
         public ICollection<PackageDependency> Dependencies { get; set; }

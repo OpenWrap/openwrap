@@ -35,7 +35,7 @@ namespace OpenWrap
             Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
             Services.Services.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            Services.Services.TryRegisterService<IPackageResolver>(() => new PackageResolver());
+            Services.Services.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
             Services.Services.RegisterService<ITaskManager>(new TaskManager());
 
             var commands = Services.Services.GetService<IEnvironment>().Commands();
@@ -170,7 +170,7 @@ namespace OpenWrap
     {
         public static IEnumerable<ICommandDescriptor> Commands(this IEnvironment environment)
         {
-            return Services.Services.GetService<IPackageResolver>()
+            return Services.Services.GetService<IPackageExporter>()
                 .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
                 .SelectMany(x => x.Items)
                 .OfType<ICommandExportItem>()

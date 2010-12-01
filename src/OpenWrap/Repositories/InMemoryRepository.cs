@@ -27,7 +27,7 @@ namespace OpenWrap.Repositories
             return PackagesByName.FindAll(dependency);
         }
 
-        public void Refresh()
+        public void RefreshPackages()
         {
         }
 
@@ -92,6 +92,10 @@ namespace OpenWrap.Repositories
             };
             _packages.Add(package);
             return package;
+        }
+
+        public void PublishCompleted()
+        {
         }
     }
 }

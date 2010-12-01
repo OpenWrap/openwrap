@@ -8,6 +8,10 @@ namespace OpenWrap
 {
     public static class EnumerableExtensions
     {
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> input)
+        {
+            return input ?? Enumerable.Empty<T>();
+        }
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> input, params T[] values)
         {
             return input.Concat((IEnumerable<T>)values);
@@ -21,6 +25,10 @@ namespace OpenWrap
         public static bool None<T>(this IEnumerable<T> input, Func<T, bool> condition) where T : class
         {
             return !input.Any(condition);
+        }
+        public static bool Empty<T>(this IEnumerable<T> input)
+        {
+            return input.Any() == false;
         }
         public static IEnumerable<string> NotNullOrEmpty(this IEnumerable<string> input)
         {

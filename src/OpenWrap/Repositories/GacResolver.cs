@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 
 namespace OpenWrap.Repositories
 {
-    public static class AssemblyNameExtensions
-    {
-        public static bool IsStronglyNamed(this AssemblyName assemblyName)
-        {
-            return assemblyName.GetPublicKeyToken().Length > 0;
-        }
-    }
     public static class GacResolver
     {
         public class Loader : MarshalByRefObject
@@ -41,8 +34,8 @@ namespace OpenWrap.Repositories
             try
             {
                 var loader = ((Loader)domain.CreateInstanceFromAndUnwrap(
-                    typeof(Loader).Assembly.Location,
-                    typeof(Loader).FullName));
+                        typeof(Loader).Assembly.Location,
+                        typeof(Loader).FullName));
                 return (from package in packages.NotNull().Select(x => x.Load()).NotNull()
                         let export = package.GetExport("bin", environment)
                         where export != null

@@ -165,7 +165,7 @@ namespace OpenWrap.Tests.Repositories
                     Repository.PackagesByName[name]
                     .Where(x => x.Version.ToString().Equals(version))
                     .First());
-                Repository.Refresh();
+                Repository.RefreshPackages();
             }
 
             protected void given_published_package(string packageName, string packageVersion)

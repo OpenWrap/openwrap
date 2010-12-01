@@ -22,7 +22,7 @@ namespace OpenWrap.Repositories
 
 
             _rootCacheDirectory = BasePath.GetOrCreateDirectory("_cache");
-            Refresh();
+            RefreshPackages();
 
         }
 
@@ -32,16 +32,16 @@ namespace OpenWrap.Repositories
             return PackagesByName.FindAll(dependency);
         }
 
-        public void Refresh()
+        public void RefreshPackages()
         {
             Packages = (from wrapFile in BasePath.Files("*.wrap")
                         let packageFullName = wrapFile.NameWithoutExtension
                         let packageVersion = PackageNameUtility.GetVersion(packageFullName)
                         where packageVersion != null
-                        let cacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
+                        let packageCacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
                         select new PackageLocation(
-                            cacheDirectory,
-                            CreatePackageInstance(cacheDirectory, wrapFile)
+                            packageCacheDirectory,
+                            CreatePackageInstance(packageCacheDirectory, wrapFile)
                         )).ToList();
         }
 
@@ -94,18 +94,19 @@ namespace OpenWrap.Repositories
             return newPackage;
         }
 
-        public bool CanPublish
+        public void PublishCompleted()
         {
-            get { return true; }
+            foreach (var package in Packages) package.Package.Load();
+            RefreshPackages();
         }
-
+        
         public string Name
         {
             get;
             set;
         }
 
-        public IEnumerable<IPackageInfo> VerifyAnchors(IEnumerable<IPackageInfo> packagesToAnchor)
+        public IEnumerable<IPackageInfo> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor)
         {
             if (!EnableAnchoring)
                 return Enumerable.Empty<IPackageInfo>();
@@ -160,6 +161,7 @@ namespace OpenWrap.Repositories
         {
             packagesToKeep = packagesToKeep.ToList();
             var packagesToRemove = Packages.Where(x => !packagesToKeep.Contains(x.Package)).ToList();
+            bool somethingDone = false;
             foreach (var packageInfo in packagesToRemove)
             {
                 if (!Packages.Contains(packageInfo))
@@ -176,20 +178,9 @@ namespace OpenWrap.Repositories
                 {
                     yield return new PackageCleanResult(packageInfo.Package, false);
                 }
+                somethingDone = true;
             }
         }
 
     }
-    public class PackageCleanResult
-    {
-        public PackageCleanResult(IPackageInfo package, bool success)
-        {
-            Package = package;
-            Success = success;
-        }
-
-        public IPackageInfo Package { get; private set; }
-        public bool Success { get; private set; }
-    }
-
 }

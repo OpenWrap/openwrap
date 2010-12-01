@@ -126,7 +126,7 @@ namespace OpenWrap.Repositories.NuPack
             {
                 Name = nuspec.Element(XPaths.PackageName, ns),
                 Version = nuspec.Element(XPaths.PackageVersion, ns).ToVersion(),
-                Description = nuspec.Element(XPaths.PacakgeDescrition, ns),
+                Description = nuspec.Element(XPaths.packageDescrition, ns),
                 Dependencies = nuspec.Elements(XPaths.PackageDependencies, ns).Select(x=>CreateDependency(x)).ToList()
             };
             var memoryStream = new MemoryStream();
@@ -161,31 +161,6 @@ namespace OpenWrap.Repositories.NuPack
             if (maxversion != null)
                 dep.VersionVertices.Add(new LessThanVersionVertex(maxversion.Value.ToVersion()));
             return dep;
-        }
-    }
-    public static class XPaths
-    {
-        public const string Metadata = "package/metadata/";
-        public const string MetadataNS = "nuspec:package/nuspec:metadata/";
-
-        public const string Dependencies = "package/dependencies/dependency";
-        public const string DependenciesNS = "nuspec:package/nuspec:dependencies/nuspec:dependency";
-
-        public static string[] PackageName = new[] { Metadata + "id", MetadataNS + "nuspec:id" };
-        public static string[] PackageVersion = new[] { Metadata + "version", MetadataNS + "nuspec:version" };
-        public static string[] PacakgeDescrition = new[] { Metadata + "description", MetadataNS + "nuspec:description" };
-
-        public static string[] PackageDependencies = new[] { Dependencies, DependenciesNS };
-    }
-    public static class XmlDocumentExtensions
-    {
-        public static string Element(this XmlDocument document, string[] xpaths, XmlNamespaceManager ns)
-        {
-            return xpaths.Select(x => document.SelectSingleNode(x, ns)).NotNull().Select(x => x.InnerText).FirstOrDefault();
-        }
-        public static IEnumerable<XmlNode> Elements(this XmlDocument document, string[] xpaths, XmlNamespaceManager ns)
-        {
-            return xpaths.SelectMany(x => document.SelectNodes(x, ns).OfType<XmlNode>());
         }
     }
 }

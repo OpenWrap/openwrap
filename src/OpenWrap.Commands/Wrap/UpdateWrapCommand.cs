@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using OpenWrap.Commands.Core;
 using OpenWrap.Dependencies;
+using OpenWrap.PackageManagement;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
-
+using OpenWrap;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb = "update", Noun = "wrap")]
@@ -33,9 +34,6 @@ namespace OpenWrap.Commands.Wrap
             set { _project = value; }
         }
 
-        public UpdateWrapCommand()
-        {
-        }
         public override IEnumerable<ICommandOutput> Execute()
         {
             var update = Enumerable.Empty<ICommandOutput>();
@@ -57,28 +55,15 @@ namespace OpenWrap.Commands.Wrap
             if (!System) yield break;
 
             yield return new Result("Searching for updated packages...");
-            foreach (var packageToSearch in CreateDescriptorForEachSystemPackage())
-            {
-                var sourceRepos = Environment.RemoteRepositories.Concat(Environment.CurrentDirectoryRepository).ToList();
 
-                var resolveResult = PackageResolver.TryResolveDependencies(packageToSearch, sourceRepos);
-                var successful = resolveResult.ResolvedPackages.Where(x => x.Package != null).ToList();
-                resolveResult = new DependencyResolutionResult { IsSuccess = successful.Count > 0, ResolvedPackages = successful };
-                if (!resolveResult.IsSuccess)
-                    continue;
-                foreach (var m in PackageResolver.CopyPackagesToRepositories(resolveResult, Environment.SystemRepository))
-                    if (m is DependencyResolutionFailedResult)
-                        yield return PackageNotFoundInRemote((DependencyResolutionFailedResult)m);
 
-                    else
-                        yield return m;
-                foreach (var m in VerifyPackageCache(packageToSearch)) yield return m;
-            }
-        }
+            var sourceRepos = new[] { Environment.CurrentDirectoryRepository }.Concat(Environment.RemoteRepositories).ToList();
 
-        IEnumerable<ICommandOutput> VerifyPackageCache(PackageDescriptor packageDescriptor)
-        {
-            return PackageResolver.VerifyPackageCache(Environment, packageDescriptor);
+            foreach (var x in (string.IsNullOrEmpty(Name)
+                ? PackageManager.UpdateSystemPackages(sourceRepos, Environment.SystemRepository)
+                : PackageManager.UpdateSystemPackages(sourceRepos, Environment.SystemRepository, Name))
+                .Select(ToOutput))
+                yield return x;
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
@@ -86,114 +71,42 @@ namespace OpenWrap.Commands.Wrap
             if (!Project)
                 yield break;
 
-            var sourceRepos = Environment.RemoteRepositories
-                    .Concat(Environment.SystemRepository,
-                            Environment.CurrentDirectoryRepository);
-
-            var updateDescriptor = new PackageDescriptor(Environment.Descriptor);
-            if (!string.IsNullOrEmpty(Name))
-                updateDescriptor.Dependencies = updateDescriptor.Dependencies.Where(x => x.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)).ToList();
-
-
-            var resolvedPackages = PackageResolver.TryResolveDependencies(
-                updateDescriptor,
-                sourceRepos);
-
-            if (!resolvedPackages.IsSuccess)
-
-            {
-                foreach (var m in FailedUpdate(resolvedPackages, sourceRepos)) yield return m;
-                yield break;
-            }
-
-            foreach (var m in resolvedPackages.GacConflicts(Environment.ExecutionEnvironment))
-                yield return m;
-
-            var copyResult = PackageResolver.CopyPackagesToRepositories(
-                resolvedPackages,
-                Environment.ProjectRepository
-                );
-            foreach (var m in copyResult) yield return m;
-
-            foreach (var m in PackageResolver.VerifyPackageCache(Environment, updateDescriptor)) yield return m;
+            var sourceRepos = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }.Concat(Environment.RemoteRepositories);
+            foreach (var x in (string.IsNullOrEmpty(Name) ? PackageManager.UpdateProjectPackages(sourceRepos, Environment.ProjectRepository, Environment.Descriptor)
+                                                         : PackageManager.UpdateProjectPackages(sourceRepos, Environment.ProjectRepository, Environment.Descriptor, Name))
+                    .Select(ToOutput))
+                yield return x;
         }
-
-        IEnumerable<ICommandOutput> FailedUpdate(DependencyResolutionResult resolvedPackages, IEnumerable<IPackageRepository> sourceRepos)
+        protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
-            foreach(var notFoundPackage in resolvedPackages.ResolvedPackages.Where(x=>x.Package == null))
-                yield return new DependenciesNotFoundInRepositories(notFoundPackage.Dependencies, sourceRepos);
-
-            var conflictingDependencies = resolvedPackages.ResolvedPackages
-                    .Where(x => x.Package != null)
-                    .GroupBy(x => x.Package.Name, StringComparer.OrdinalIgnoreCase)
-                    .Where(x => x.Count() > 1);
-                    
-            if (conflictingDependencies.Count() > 0)
-                yield return new DependenciesConflictMessage(conflictingDependencies.ToList());
+            return packageOperationResult is PackageMissingResult
+                            ? new Warning("Package {0} not found in repositories.", ((PackageMissingResult)packageOperationResult).Package)
+                            : base.ToOutput(packageOperationResult);
         }
 
-        GenericMessage PackageNotFoundInRemote(DependencyResolutionFailedResult m)
-        {
-            return new GenericMessage("Package '{0}' doesn't exist in any remote repository.", m.Result.ResolvedPackages.First().Dependencies.Select(x=>x.Dependency.Name).First())
-            {
-                Type = CommandResultType.Warning
-            };
-        }
+        //IEnumerable<ICommandOutput> FailedUpdate(DependencyResolutionResult resolvedPackages, IEnumerable<IPackageRepository> sourceRepos)
+        //{
+        //    // TODO: Update implementation to use the new result class
+        //    foreach(var notFoundPackage in resolvedPackages.SuccessfulPackages.Where(x=>x.Packages.Empty()))
+        //        yield return new DependenciesNotFoundInRepositories(notFoundPackage.DependencyStacks, sourceRepos);
 
-        IEnumerable<PackageDescriptor> CreateDescriptorForEachSystemPackage()
-        {
+        //    var conflictingDependencies = resolvedPackages.SuccessfulPackages
+        //            .Where(x => x.Packages.Any())
+        //            .GroupBy(x => x.Identifier.Name, StringComparer.OrdinalIgnoreCase)
+        //            .Where(x => x.Count() > 1);
 
+        //    if (conflictingDependencies.Count() > 0)
+        //        yield return new DependenciesConflictMessage(conflictingDependencies.ToList());
+        //}
 
-            return (
-                           from systemPackage in Environment.SystemRepository.PackagesByName
-                           let systemPackageName = systemPackage.Key
-                           where ShouldIncludePackageInSystemUpdate(systemPackageName)
-                           let maxPackageVersion = (
-                                                           from versionedPackage in systemPackage
-                                                           orderby versionedPackage.Version descending
-                                                           select versionedPackage.Version
-                                                   ).First()
-                           select new PackageDescriptor
-                           {
-                               Dependencies =
-                                           {
-                                                   new PackageDependency
-                                                   {
-                                                           Name = systemPackageName,
-                                                           VersionVertices = { new UpdatePackageVertex(maxPackageVersion) }
-                                                   }
-                                           }
-                           }
-                   ).ToList();
-        }
+        //GenericMessage PackageNotFoundInRemote(DependencyResolutionFailedResult m)
+        //{
+        //    return new GenericMessage("Package '{0}' doesn't exist in any remote repository.", m.Result.SuccessfulPackages.First().Identifier.Name)
+        //    {
+        //        Type = CommandResultType.Warning
+        //    };
+        //}
 
-        bool ShouldIncludePackageInSystemUpdate(string systemPackageName)
-        {
-            return string.IsNullOrEmpty(Name) ? true : Name.Equals(systemPackageName, StringComparison.OrdinalIgnoreCase);
-        }
-    }
-
-    public class UpdatePackageVertex : VersionVertex
-    {
-        public UpdatePackageVertex(Version existingVersion) : base(existingVersion)
-        {
-        }
-        public override bool IsCompatibleWith(Version version)
-        {
-            return (Version.Major == version.Major
-                    && Version.Minor == version.Minor
-                    && Version.Build == version.Build
-                    && Version.Revision < version.Revision)
-                   || 
-                   (Version.Major == version.Major
-                    && Version.Minor == version.Minor
-                    && Version.Build < version.Build)
-                   ||
-                   (Version.Major == version.Major
-                    && Version.Minor < version.Minor)
-                   ||
-                   (Version.Major < version.Major);
-        }
     }
 
     public class DependenciesNotFoundInRepositories : Warning
@@ -208,7 +121,7 @@ namespace OpenWrap.Commands.Wrap
         }
         public override string ToString()
         {
-            return string.Format("{0} not found in '{1}'.",Dependencies.Select(x=>"'" + x.Dependency.Name + "'").Distinct().Join(", "), Repositories.Select(x => x.Name).Join(", "));
+            return string.Format("{0} not found in '{1}'.", Dependencies.Select(x => "'" + x.Dependency.Name + "'").Distinct().Join(", "), Repositories.Select(x => x.Name).Join(", "));
         }
     }
 }

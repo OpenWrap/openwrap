@@ -39,6 +39,11 @@ namespace OpenWrap.Repositories.Http
                             }).ToList();
         }
 
+        public PackageIdentifier Identifier
+        {
+            get { return new PackageIdentifier(Name, Version); }
+        }
+
         public ICollection<PackageDependency> Dependencies { get; set; }
 
         public string FullName

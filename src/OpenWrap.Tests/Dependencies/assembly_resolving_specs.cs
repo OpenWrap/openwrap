@@ -93,11 +93,11 @@ namespace assembly_resolving_specs
             {
 
                 given_project_repository(new FolderRepository(FileSystem.GetTempDirectory().GetDirectory(Guid.NewGuid().ToString()).MustExist()));
-                this.PackageResolver = new PackageResolver();
+                this.PackageResolver = new ExhaustiveResolver();
             }
 
 
-            protected PackageResolver PackageResolver { get; set; }
+            protected ExhaustiveResolver PackageResolver { get; set; }
 
             protected override IFileSystem given_file_system(string currentDirectory)
             {

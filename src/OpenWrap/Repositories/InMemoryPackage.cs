@@ -11,6 +11,11 @@ namespace OpenWrap.Repositories
 {
     public class InMemoryPackage : IPackageInfo, IPackage
     {
+        public PackageIdentifier Identifier
+        {
+            get { return new PackageIdentifier(Name, Version); }
+        }
+
         public ICollection<PackageDependency> Dependencies { get; set; }
 
         public InMemoryPackage()

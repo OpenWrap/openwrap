@@ -18,7 +18,7 @@ namespace OpenWrap.Commands.Wrap
         {
             return "The following packages have conflicting dependencies:\r\n"
                    + ConflictingPackages.Select(x => 
-                                                x.Key + " versions: " + x.Select(y=>y.Package.Version.ToString()).Join(", ")
+                                                x.Key + " versions: " + x.Select(y=>y.Identifier.Version.ToString()).Join(", ")
                              ).Join(Environment.NewLine);
         }
     }
