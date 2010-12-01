@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using OpenWrap.Commands;
+using OpenWrap.Dependencies;
+using OpenWrap.Repositories;
 using OpenWrap.Windows.Framework;
 
 namespace OpenWrap.Windows
 {
     public class MainViewModel : ViewModelBase
     {
+        private readonly ObservableCollection<PackageViewModel> _packages = new ObservableCollection<PackageViewModel>();
         private IEnumerable<NounSlice> _nouns;
         private NounSlice _selectedNoun;
 
@@ -15,6 +19,29 @@ namespace OpenWrap.Windows
         {
             var commands = Services.Services.GetService<ICommandRepository>();
             Nouns = commands != null ? RealCommands(commands) : MockCommands();
+
+            var env = Services.Services.GetService<IEnvironment>();
+
+            ReadPackages(env.ProjectRepository.FindAll(new PackageDependency()));
+        }
+
+        private void ReadPackages(IEnumerable<IPackageInfo> packages)
+        {
+            foreach (var packageInfo in packages)
+            {
+                PackageViewModel viewModel = new PackageViewModel
+                {
+                        Name = packageInfo.Name,
+                        FullName = packageInfo.FullName,
+                        Description = packageInfo.Description,
+                        Version = packageInfo.Version,
+                        CreationTime = packageInfo.CreationTime,
+                        Anchored = packageInfo.Anchored,
+                        Nuked = packageInfo.Nuked
+                };
+
+                _packages.Add(viewModel);
+            }
         }
 
         public IEnumerable<NounSlice> Nouns
@@ -42,7 +69,12 @@ namespace OpenWrap.Windows
                 RaisePropertyChanged<MainViewModel>(o => o.SelectedNoun);
             }
         }
-        
+
+        public ObservableCollection<PackageViewModel> Packages
+        {
+            get { return _packages; }
+        }
+
         private static NounSlice CreateNounSlice(IGrouping<string, ICommandDescriptor> x)
         {
             if (x.Key.Equals("wrap", StringComparison.OrdinalIgnoreCase))
