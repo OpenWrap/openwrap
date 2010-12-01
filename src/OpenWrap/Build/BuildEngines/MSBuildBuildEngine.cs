@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystems;
 
 namespace OpenWrap.Build.BuildEngines
 {
@@ -86,7 +85,7 @@ namespace OpenWrap.Build.BuildEngines
         {
             var versionedFolders = from version in Directory.GetDirectories(Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\"), "v*")
                                    orderby version descending
-                                   let msbuildPath = Path.Combine(version, "msbuild.exe")
+                                   let msbuildPath = System.IO.Path.Combine(version, "msbuild.exe")
                                    where File.Exists(msbuildPath)
                                    select msbuildPath;
             return versionedFolders.FirstOrDefault();

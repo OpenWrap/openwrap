@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace OpenWrap.Repositories
@@ -82,6 +83,11 @@ namespace OpenWrap.Repositories
             var newIgnores = _incompatiblePackages.Pop();
             _incompatiblePackages.Pop();
             _incompatiblePackages.Push(newIgnores);
+        }
+
+        public void ExistingPackageCompatible(PackageIdentifier packageIdentifier, CallStack callStack)
+        {
+            _compatiblePackageVersions.Peek().Add(packageIdentifier, new[] { callStack });
         }
     }
 }

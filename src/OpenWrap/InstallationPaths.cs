@@ -15,14 +15,14 @@ namespace OpenWrap
         {
             get
             {
-                return Path.Combine(SystemDirectory, "wraps");
+                return System.IO.Path.Combine(SystemDirectory, "wraps");
             }
         }
         public static string ConfigurationDirectory
         {
             get
             {
-                return Path.Combine(SystemDirectory, "config");
+                return System.IO.Path.Combine(SystemDirectory, "config");
             }
         }
         public static string SystemDirectory
@@ -30,7 +30,7 @@ namespace OpenWrap
             get
             {
                 return 
-                    Path.Combine(
+                    System.IO.Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                         "openwrap");
             }

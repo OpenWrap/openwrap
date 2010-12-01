@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
+using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories
@@ -71,7 +71,7 @@ namespace OpenWrap.Repositories
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
             var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
-                                               ? Path.GetFileNameWithoutExtension(packageFileName)
+                                               ? System.IO.Path.GetFileNameWithoutExtension(packageFileName)
                                                : packageFileName;
             if (_packages.Any(x=>x.FullName.EqualsNoCase(fileWithoutExtension)))
                 throw new InvalidOperationException("Package already exists in repository.");

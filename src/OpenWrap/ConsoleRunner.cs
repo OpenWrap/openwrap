@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenRasta.Client;
 using OpenWrap.Build;
 using OpenWrap.Commands;

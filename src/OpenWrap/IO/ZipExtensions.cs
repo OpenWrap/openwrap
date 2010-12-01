@@ -1,7 +1,7 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO;
 
-namespace OpenFileSystem.IO
+namespace OpenWrap.IO
 {
     public static class ZipExtensions
     {

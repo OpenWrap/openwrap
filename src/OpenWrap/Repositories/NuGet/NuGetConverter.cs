@@ -8,9 +8,9 @@ using ICSharpCode.SharpZipLib.Zip;
 using OpenFileSystem.IO;
 using OpenWrap.Dependencies;
 
-namespace OpenWrap.Repositories.NuPack
+namespace OpenWrap.Repositories.NuGet
 {
-    public static class NuPackConverter
+    public static class NuGetConverter
     {
         public const string NuSpecSchema = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd";
 
@@ -37,35 +37,35 @@ namespace OpenWrap.Repositories.NuPack
                 { "40ClientProfile", "40cp"},
                 { "35ClientProfile", "35cp"}
         };
-        public static void Convert(Stream nuPackPackage, Stream openWrapPackage)
+        public static void Convert(Stream nuGetPackage, Stream openWrapPackage)
         {
-            if (nuPackPackage == null) throw new ArgumentNullException("nuPackPackage");
+            if (nuGetPackage == null) throw new ArgumentNullException("nuGetPackage");
             if (openWrapPackage == null) throw new ArgumentNullException("openWrapPackage");
             
             
 
-            PackageBuilder.NewFromFiles(openWrapPackage, Content(nuPackPackage));
+            PackageBuilder.NewFromFiles(openWrapPackage, Content(nuGetPackage));
         }
-        public static IEnumerable<PackageContent> Content(Stream nuPackPackage)
+        public static IEnumerable<PackageContent> Content(Stream nuGetPackage)
         {
             PackageContent content = null;
             string temporaryFile = null;
             try
             {
-                if (!nuPackPackage.CanSeek)
+                if (!nuGetPackage.CanSeek)
                 {
-                    temporaryFile = Path.GetTempFileName();
+                    temporaryFile = System.IO.Path.GetTempFileName();
                     using(var temporaryFileStream = File.OpenWrite(temporaryFile))
-                        nuPackPackage.CopyTo(temporaryFileStream);
+                        nuGetPackage.CopyTo(temporaryFileStream);
 
-                    nuPackPackage = File.OpenRead(temporaryFile);
+                    nuGetPackage = File.OpenRead(temporaryFile);
                 }
-                using (var inputZip = new ZipFile(nuPackPackage))
+                using (var inputZip = new ZipFile(nuGetPackage))
                 {
                     foreach (var entry in inputZip.Cast<ZipEntry>().Where(x => x.IsFile))
                     {
                         var segments = entry.Name.Split('/');
-                        if (segments.Length == 1 && Path.GetExtension(entry.Name).EqualsNoCase(".nuspec"))
+                        if (segments.Length == 1 && System.IO.Path.GetExtension(entry.Name).EqualsNoCase(".nuspec"))
                             yield return ConvertSpecification(inputZip, entry);
                         else if (segments.Length >= 2 && segments[0].Equals("lib", StringComparison.OrdinalIgnoreCase))
                             if ((content = ConvertAssembly(segments, inputZip, entry)) != null)
@@ -77,7 +77,7 @@ namespace OpenWrap.Repositories.NuPack
             {
                 if (temporaryFile != null)
                 {
-                    nuPackPackage.Close();
+                    nuGetPackage.Close();
                     File.Delete(temporaryFile);
                 }
             }
@@ -92,7 +92,7 @@ namespace OpenWrap.Repositories.NuPack
 
             return new PackageContent
             {
-                FileName = Path.GetFileName(entry.Name),
+                FileName = System.IO.Path.GetFileName(entry.Name),
                 RelativePath = destinationBinFolder,
                 Stream = () => inputZip.GetInputStream(entry),
                 Size = entry.Size
@@ -134,7 +134,7 @@ namespace OpenWrap.Repositories.NuPack
             memoryStream.Position = 0;
             return new PackageContent
             {
-                FileName = Path.GetFileNameWithoutExtension(entry.Name) + ".wrapdesc",
+                FileName = System.IO.Path.GetFileNameWithoutExtension(entry.Name) + ".wrapdesc",
                 RelativePath = ".",
                 Size = memoryStream.Length,
                 Stream = () =>

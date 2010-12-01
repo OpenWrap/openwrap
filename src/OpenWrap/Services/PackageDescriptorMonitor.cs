@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Build;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;

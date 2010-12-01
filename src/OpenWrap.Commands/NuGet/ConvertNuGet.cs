@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.Commands;
-using OpenWrap.Repositories.NuPack;
+using OpenWrap.Repositories.NuGet;
 using OpenWrap.Services;
 
 namespace OpenWrap.Tests.Commands.NuPack
 {
-    [Command(Noun="nupack", Verb="convert")]
-    public class ConvertNuPack : AbstractCommand
+    [Command(Noun="nuget", Verb="convert")]
+    public class ConvertNuGet : AbstractCommand
     {
         IFile _nuPackFile;
         IFile _destinationFile;
@@ -32,7 +32,7 @@ namespace OpenWrap.Tests.Commands.NuPack
             using(var nuPackStream = _nuPackFile.OpenRead())
             using(var wrapStream = _destinationFile.OpenWrite())
             {
-                NuPackConverter.Convert(nuPackStream, wrapStream);
+                NuGetConverter.Convert(nuPackStream, wrapStream);
             }
             yield return new GenericMessage("Package successfully converted.");
         }

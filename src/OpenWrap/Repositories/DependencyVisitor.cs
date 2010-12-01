@@ -58,6 +58,9 @@ namespace OpenWrap.Repositories
                 if (existing != null && existing.IsCompatibleWith(dependency))
                 {
                     WriteDebug("VisitDependencies existing version compatible");
+                    PushStack(existing);
+                    _selectionContext.ExistingPackageCompatible(existing, CurrentCallStack);
+                    PopStack();
                     return true;
                 }
                 if (existing != null)

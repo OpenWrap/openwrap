@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Xml;
 
-namespace OpenWrap.Repositories.NuPack
+namespace OpenWrap.Repositories.NuGet
 {
     public static class XmlDocumentExtensions
     {

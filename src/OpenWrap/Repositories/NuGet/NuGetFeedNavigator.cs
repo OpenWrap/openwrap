@@ -9,15 +9,15 @@ using OpenFileSystem.IO;
 using OpenRasta.Client;
 using OpenWrap.Repositories.Http;
 
-namespace OpenWrap.Repositories.NuPack
+namespace OpenWrap.Repositories.NuGet
 {
-    public class NuPackFeedNavigator : IHttpRepositoryNavigator
+    public class NuGetFeedNavigator : IHttpRepositoryNavigator
     {
         Uri _feedUri;
         PackageDocument _packageDocument;
         readonly IHttpClient _httpClient = new HttpWebRequestBasedClient();
 
-        public NuPackFeedNavigator(Uri feedUri)
+        public NuGetFeedNavigator(Uri feedUri)
         {
             _feedUri = feedUri;
         }
@@ -30,7 +30,7 @@ namespace OpenWrap.Repositories.NuPack
         void EnsureFeedLoaded()
         {
             if (_packageDocument == null)
-                _packageDocument = SyndicationFeed.Load<NuPackSyndicationFeed>(XmlReader.Create(_feedUri.ToString())).ToPackageDocument();
+                _packageDocument = SyndicationFeed.Load<NuGetSyndicationFeed>(XmlReader.Create(_feedUri.ToString())).ToPackageDocument();
         }
 
         public Stream LoadPackage(PackageItem packageItem)
@@ -39,7 +39,7 @@ namespace OpenWrap.Repositories.NuPack
            if (response.Entity == null)
                return null;
             var ms = new MemoryStream();
-            NuPackConverter.Convert(response.Entity.Stream, ms);
+            NuGetConverter.Convert(response.Entity.Stream, ms);
             ms.Position = 0;
             return ms;
         }
@@ -51,7 +51,7 @@ namespace OpenWrap.Repositories.NuPack
 
         public void PushPackage(string packageFileName, Stream packageStream)
         {
-            throw new NotSupportedException("Legacy NuPack feeds do not include upload support.");
+            throw new NotSupportedException("Legacy NuGet feeds do not include upload support.");
         }
     }
 }

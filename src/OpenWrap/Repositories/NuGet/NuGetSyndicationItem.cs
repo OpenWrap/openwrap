@@ -6,14 +6,14 @@ using System.Xml;
 using System.Xml.Linq;
 using OpenWrap.Repositories.Http;
 
-namespace OpenWrap.Repositories.NuPack
+namespace OpenWrap.Repositories.NuGet
 {
-    public class NuPackSyndicationItem : SyndicationItem
+    public class NuGetSyndicationItem : SyndicationItem
     {
         XDocument _oDataNode;
         
         string _oDataPackageVersion;
-        IEnumerable<NuPackDependency> _oDataDependencies;
+        IEnumerable<NuGetDependency> _oDataDependencies;
         bool? _oDataFound;
         string _oDataPublished;
 
@@ -76,17 +76,17 @@ namespace OpenWrap.Repositories.NuPack
                
                 var deps = _oDataDependencies 
                            ?? GetDependencies()
-                           ?? Enumerable.Empty<NuPackDependency>();
+                           ?? Enumerable.Empty<NuGetDependency>();
 
                 return deps.Select(x => x.ToPackageDependencyLine()).ToList();
             }
         }
 
-        IEnumerable<NuPackDependency> GetODataDependencies(string dependencyString)
+        IEnumerable<NuGetDependency> GetODataDependencies(string dependencyString)
         {
             return (from dependency in dependencyString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                    let chunks = dependency.Split(':')
-                   select new NuPackDependency
+                   select new NuGetDependency
                    {
                            Id = chunks[0],
                            MinVersion = chunks[1],
@@ -122,9 +122,9 @@ namespace OpenWrap.Repositories.NuPack
             return true;
         }
 
-        NuPackDependency[] GetDependencies()
+        NuGetDependency[] GetDependencies()
         {
-            return ElementExtensions.OptionalExtension<NuPackDependency[]>("dependencies");
+            return ElementExtensions.OptionalExtension<NuGetDependency[]>("dependencies");
         }
 
         public PackageItem ToPackage()

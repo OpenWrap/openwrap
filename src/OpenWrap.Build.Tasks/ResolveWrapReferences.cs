@@ -7,11 +7,11 @@ using System.Reflection;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
-using OpenFileSystem.IO.FileSystem.Local;
 
 namespace OpenWrap.Build.Tasks
 {

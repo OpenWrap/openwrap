@@ -3,8 +3,9 @@ using System.Collections;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using OpenWrap.IO;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 
 namespace OpenWrap.Build.Tasks
 {

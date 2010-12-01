@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Configuration;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Repositories.Http;
-using OpenWrap.Repositories.NuPack;
+using OpenWrap.Repositories.NuGet;
 using OpenWrap.Services;
 
 namespace OpenWrap
@@ -95,14 +95,15 @@ namespace OpenWrap
         {
             try
             {
-                if (repositoryHref.Scheme.Equals("nupack", StringComparison.OrdinalIgnoreCase))
+                if (repositoryHref.Scheme.Equals("nuget", StringComparison.OrdinalIgnoreCase)
+                    || repositoryHref.Scheme.Equals("nupack", StringComparison.OrdinalIgnoreCase))
                 {
                     var builder = new UriBuilder(repositoryHref);
                     builder.Scheme = "http";
                     return new HttpRepository(
                             FileSystem,
                             repositoryName,
-                            new NuPackFeedNavigator(builder.Uri));
+                            new NuGetFeedNavigator(builder.Uri));
                 }
                 if (repositoryHref.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
                     repositoryHref.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))

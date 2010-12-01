@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 
 namespace OpenWrap.Build
 {

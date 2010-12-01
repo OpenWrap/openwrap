@@ -1,4 +1,4 @@
-﻿namespace OpenWrap.Repositories.NuPack
+﻿namespace OpenWrap.Repositories.NuGet
 {
     public static class XPaths
     {

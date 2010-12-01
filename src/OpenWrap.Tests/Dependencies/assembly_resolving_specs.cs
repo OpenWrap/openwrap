@@ -6,8 +6,8 @@ using System.Reflection.Emit;
 using System.Text;
 using NUnit.Framework;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
@@ -62,6 +62,26 @@ namespace assembly_resolving_specs
         public void assemblies_are_ignored()
         {
             AssemblyReferences.ShouldBeEmpty();
+        }
+    }
+    public class t : contexts.assembly_resolving
+    {
+        public t()
+        {
+            given_dependency("depends: openwrap content");
+            given_dependency("depends: openfilesystem");
+            given_dependency("depends: sharpziplib");
+            given_project_package("openwrap", "1.0.0.0", Assemblies(Assembly("openwrap", "bin-net35")), "depends: openwrap content", "depends: sharpziplib", "depends: openfilesystem");
+            given_project_package("sharpziplib", "1.0.0.0", Assemblies(Assembly("sharpziplib", "bin-net35")));
+            given_project_package("openfilesystem", "1.0.0.0", Assemblies(Assembly("openfilesystem", "bin-net35")), "depends: openwrap content", "depends: sharpziplib");
+
+            when_resolving_assemblies("anyCPU", "net35");
+        }
+        [Test]
+        public void assemblies()
+        {
+            AssemblyReferences.ShouldHaveCountOf(2);
+
         }
     }
     public class assemblies_are_found : contexts.assembly_resolving

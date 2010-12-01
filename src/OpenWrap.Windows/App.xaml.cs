@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Build;
 using OpenWrap.Commands;
 using OpenWrap.Configuration;

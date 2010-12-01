@@ -6,7 +6,7 @@ using OpenFileSystem.IO;
 using OpenWrap.Dependencies;
 using OpenWrap.PackageManagement;
 using OpenWrap.Repositories;
-
+using SysPath = System.IO.Path;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb = "add", Noun = "wrap")]
@@ -178,11 +178,11 @@ namespace OpenWrap.Commands.Wrap
 
         ICommandOutput WrapFileToPackageDescriptor()
         {
-            if (Path.GetExtension(Name).Equals(".wrap", StringComparison.OrdinalIgnoreCase) && Environment.CurrentDirectory.GetFile(Path.GetFileName(Name)).Exists)
+            if (SysPath.GetExtension(Name).Equals(".wrap", StringComparison.OrdinalIgnoreCase) && Environment.CurrentDirectory.GetFile(SysPath.GetFileName(Name)).Exists)
             {
                 var originalName = Name;
-                Name = PackageNameUtility.GetName(Path.GetFileNameWithoutExtension(Name));
-                Version = PackageNameUtility.GetVersion(Path.GetFileNameWithoutExtension(originalName)).ToString();
+                Name = PackageNameUtility.GetName(SysPath.GetFileNameWithoutExtension(Name));
+                Version = PackageNameUtility.GetVersion(SysPath.GetFileNameWithoutExtension(originalName)).ToString();
                 return
                         new GenericMessage(
                                 string.Format("The requested package contained '.wrap' in the name. Assuming you pointed to the file in the current directory and meant a package named '{0}' with version qualifier '{1}'.",

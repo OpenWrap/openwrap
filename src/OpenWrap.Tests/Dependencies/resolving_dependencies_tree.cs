@@ -9,7 +9,38 @@ using OpenWrap.Testing;
 
 namespace OpenRasta.Wrap.Tests.Dependencies
 {
-    public class latest_version_resolving_between_packages_with_different_sub_dependencies:dependency_manager_context
+    public class dependency_stacks : dependency_manager_context
+    {
+        public dependency_stacks()
+        {
+            given_project_package("openwrap-1.0.0.1");
+            given_project_package("openfilesystem-1.0.0.0", "depends: openwrap");
+            
+            given_dependency("depends: openwrap");
+            given_dependency("depends: openfilesystem");
+
+            when_resolving_packages();
+        }
+        [Test]
+        public void resolve_succeeds()
+        {
+            Resolve.IsSuccess.ShouldBeTrue();
+        }
+        [Test]
+        public void direct_path_is_present()
+        {
+            Resolve.SuccessfulPackages.First(x => x.Identifier.Name == "openwrap")
+                    .DependencyStacks.ShouldHaveAtLeastOne(x => x.ToString() == "openwrap -> openwrap-1.0.0.1");
+        }
+
+        [Test]
+        public void indirect_path_is_present()
+        {
+            Resolve.SuccessfulPackages.First(x => x.Identifier.Name == "openwrap")
+                    .DependencyStacks.ShouldHaveAtLeastOne(x => x.ToString() == "openfilesystem -> openfilesystem-1.0.0.0 -> openwrap -> openwrap-1.0.0.1");
+        }
+    }
+    public class latest_version_resolving_between_packages_with_different_sub_dependencies : dependency_manager_context
     {
         public latest_version_resolving_between_packages_with_different_sub_dependencies()
         {
@@ -136,7 +167,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             Resolve.SuccessfulPackages.Count().ShouldBe(1);
             Resolve.SuccessfulPackages.First()
                     .Check(x => x.Identifier.Name.ShouldBe("evil"))
-                    .Check(x=>x.Packages.ShouldHaveCountOf(1))
+                    .Check(x => x.Packages.ShouldHaveCountOf(1))
                     .Check(x => x.Identifier.Version.ShouldBe(new Version("1.0.0")));
 
         }
@@ -418,8 +449,8 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             {
                 DependencyDescriptor = new PackageDescriptor
                 {
-                        Name = "test",
-                        Version = new Version("1.0")
+                    Name = "test",
+                    Version = new Version("1.0")
                 };
                 ProjectRepository = new InMemoryRepository("Local repository");
                 SystemRepository = new InMemoryRepository("System repository");
@@ -474,11 +505,11 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             {
                 var package = new InMemoryPackage
                 {
-                        Name = PackageNameUtility.GetName(name),
-                        Version = PackageNameUtility.GetVersion(name),
-                        Source = repository,
-                        Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
-                                .ToList()
+                    Name = PackageNameUtility.GetName(name),
+                    Version = PackageNameUtility.GetVersion(name),
+                    Source = repository,
+                    Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
+                            .ToList()
                 };
                 repository.Packages.Add(package);
             }

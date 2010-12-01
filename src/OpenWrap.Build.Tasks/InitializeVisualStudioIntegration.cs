@@ -5,7 +5,7 @@ using Microsoft.Build.Utilities;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 
 namespace OpenWrap.Build.Tasks
 {

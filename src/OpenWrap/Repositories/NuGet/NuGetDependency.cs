@@ -4,12 +4,12 @@ using System.Linq;
 using System.Runtime.Serialization;
 using OpenWrap.Dependencies;
 
-namespace OpenWrap.Repositories.NuPack
+namespace OpenWrap.Repositories.NuGet
 {
-    [DataContract(Name = "dependency", Namespace = Namespaces.NuPack)]
-    public class NuPackDependency
+    [DataContract(Name = "dependency", Namespace = Namespaces.NuGet)]
+    public class NuGetDependency
     {
-        public NuPackDependency() {
+        public NuGetDependency() {
         }
         [DataMember(Name = "id", EmitDefaultValue = false)]
         public string Id { get; set; }

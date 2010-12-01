@@ -2,8 +2,8 @@
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
-using Path = OpenFileSystem.IO.FileSystem.Local.Path;
+using OpenFileSystem.IO.FileSystems.Local;
+using Path = OpenFileSystem.IO.Path;
 
 namespace OpenWrap.Repositories
 {
