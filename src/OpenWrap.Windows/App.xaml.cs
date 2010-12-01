@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Windows;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystem.Local;
-using OpenWrap.Build;
 using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.Repositories;
 using OpenWrap.Resolvers;
-using OpenWrap.Services;
 using OpenWrap.Tasks;
 
 namespace OpenWrap.Windows
