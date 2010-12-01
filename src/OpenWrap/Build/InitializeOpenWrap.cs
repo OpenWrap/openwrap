@@ -50,8 +50,8 @@ namespace OpenWrap.Build
             Services.Services.TryRegisterService<IEnvironment>(() => new MSBuildEnvironment(task, currentDirectory));
 
             Services.Services.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
-            Services.Services.TryRegisterService<IPackageDeployer>(() => new PackageDeployer());
-            Services.Services.TryRegisterService<IPackageExporter>(() => new PackageExporter());
+            Services.Services.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            Services.Services.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
             Services.Services.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
             Services.Services.RegisterService<ITaskManager>(new TaskManager());
         }

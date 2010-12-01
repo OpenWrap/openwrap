@@ -213,7 +213,7 @@
     <Compile Include="Repositories\NuPack\XmlDocumentExtensions.cs" />
     <Compile Include="Repositories\NuPack\XPaths.cs" />
     <Compile Include="Repositories\PackageCleanResult.cs" />
-    <Compile Include="Repositories\PackageExporter.cs" />
+    <Compile Include="Repositories\DefaultPackageExporter.cs" />
     <Compile Include="Repositories\PackageIdentifier.cs" />
     <Compile Include="Repositories\PackageNode.cs" />
     <Compile Include="Repositories\PackageResolutionStacks.cs" />
@@ -235,7 +235,7 @@
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\Http\HttpRepositoryNavigator.cs" />
     <Compile Include="Repositories\IPackageResolver.cs" />
-    <Compile Include="Repositories\PackageDeployer.cs" />
+    <Compile Include="Repositories\DefaultPackageDeployer.cs" />
     <Compile Include="Repositories\PackagesExtensions.cs" />
     <Compile Include="Repositories\ResolvedPackage.cs" />
     <Compile Include="Repositories\Http\HttpPackage.cs" />

@@ -35,8 +35,8 @@ namespace OpenWrap.Tests.Commands.context
             Services.Services.RegisterService<IFileSystem>(FileSystem);
             Services.Services.RegisterService<IEnvironment>(Environment);
             Services.Services.RegisterService<IPackageResolver>(new ExhaustiveResolver());
-            Services.Services.TryRegisterService<IPackageDeployer>(() => new PackageDeployer());
-            Services.Services.TryRegisterService<IPackageExporter>(() => new PackageExporter());
+            Services.Services.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            Services.Services.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
             Services.Services.RegisterService<ICommandRepository>(Commands);
             Services.Services.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
                                                                                 Services.Services.GetService<IPackageDeployer>(),

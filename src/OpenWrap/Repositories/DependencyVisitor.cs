@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OpenWrap.Dependencies;
 
@@ -104,7 +105,7 @@ namespace OpenWrap.Repositories
                                          _selectionContext.CompatiblePackageVersions.Select(x => x.Key.ToString()).Join(","),
                                          _selectionContext.IncompatiblePackageVersions.Select(x => x.Key.ToString()).Join(","));
 
-            Console.WriteLine(new String(' ', _currentNode.Count) + text + packages);
+            Debug.WriteLine(new String(' ', _currentNode.Count) + text + packages);
         }
 
         bool VisitPackageVersions(PackageDependency dependency)

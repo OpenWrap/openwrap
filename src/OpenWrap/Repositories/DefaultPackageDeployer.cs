@@ -5,7 +5,7 @@ using OpenWrap.Commands;
 
 namespace OpenWrap.Repositories
 {
-    public class PackageDeployer : IPackageDeployer
+    public class DefaultPackageDeployer : IPackageDeployer
     {
         public void DeployDependency(IPackageInfo resolvedPackage,
                                      ISupportPublishing destinationRepository)

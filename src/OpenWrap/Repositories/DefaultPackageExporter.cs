@@ -5,7 +5,7 @@ using OpenWrap.Exports;
 
 namespace OpenWrap.Repositories
 {
-    public class PackageExporter : IPackageExporter
+    public class DefaultPackageExporter : IPackageExporter
     {
         public IEnumerable<T> GetExports<T>(string exportName, ExecutionEnvironment environment, IEnumerable<IPackageRepository> repositories) where T : IExport
         {
