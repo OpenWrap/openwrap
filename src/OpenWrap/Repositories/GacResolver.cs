@@ -28,7 +28,7 @@ namespace OpenWrap.Repositories
             }
         }
 
-        public static ILookup<IPackageInfo, AssemblyName> InGac(IEnumerable<IPackageInfo> packages, ExecutionEnvironment environment)
+        public static ILookup<IPackageInfo, AssemblyName> InGac(IEnumerable<IPackageInfo> packages, ExecutionEnvironment environment = null)
         {
             var domain = TempDomain();
             try

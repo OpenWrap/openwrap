@@ -171,10 +171,11 @@
     <EmbeddedResource Include="Repositories\TestFiles.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TestFiles.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Repositories\TestPackage.nupkg" />
+    <EmbeddedResource Include="Repositories\TestPackageOld.nupkg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IO\" />

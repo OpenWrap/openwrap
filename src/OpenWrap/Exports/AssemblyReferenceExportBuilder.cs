@@ -28,8 +28,9 @@ namespace OpenWrap.Exports
                                      export.Name.Split(new[] {"-"}, StringSplitOptions.RemoveEmptyEntries)
                                  let platform = exportSegments.Length == 3 ? exportSegments[1] : ANYCPU
                                  let target = exportSegments.Length == 3 ? exportSegments[2] : exportSegments[1]
-                                 where PlatformMatches(platform, environment.Platform)
-                                       && ProfileMatches(target, environment.Profile)
+                                 where (environment == null ||
+                                        (PlatformMatches(platform, environment.Platform)
+                                         && ProfileMatches(target, environment.Profile)))
                                  from file in export.Items
 
                                  select new EnvironmentDependentFile()
@@ -52,7 +53,7 @@ namespace OpenWrap.Exports
             return new AssemblyReferenceExport(compatibleAssembly);
         }
 
-        private bool ProfileMatches(string binProfile, string envProfile)
+        private static bool ProfileMatches(string binProfile, string envProfile)
         {
             if (envProfile == "net40")
                 return binProfile == "net40" || binProfile == "net40cp" || binProfile == "net35" || binProfile == "net35cp" || binProfile == "net30" || binProfile == "net20";
@@ -76,7 +77,7 @@ namespace OpenWrap.Exports
             return false;
         }
 
-        private bool PlatformMatches(string binPlatform, string envPlatform)
+        private static bool PlatformMatches(string binPlatform, string envPlatform)
         {
             return binPlatform.EqualsNoCase(ANYCPU) || (envPlatform.EqualsNoCase(ANYCPU) == false && binPlatform.EqualsNoCase(envPlatform));
         }

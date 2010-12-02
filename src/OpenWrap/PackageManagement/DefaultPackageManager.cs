@@ -13,7 +13,6 @@ namespace OpenWrap.PackageManagement
 
         readonly IPackageResolver _resolver;
 
-        ExecutionEnvironment _environment;
         IPackageExporter _exporter;
 
         public DefaultPackageManager(IPackageDeployer deployer, IPackageResolver resolver, IPackageExporter exporter)
@@ -154,21 +153,15 @@ namespace OpenWrap.PackageManagement
 
         static IEnumerable<PackageAnchoredResult> AnchorPackages(DependencyResolutionResult resolvedPackages, IEnumerable<IPackageRepository> destinationRepositories)
         {
-            foreach (var repo in destinationRepositories.OfType<ISupportAnchoring>())
-            {
-                var packagesToAnchor = resolvedPackages.SuccessfulPackages
-                        .Where(x => x.IsAnchored)
-                        .SelectMany(x => x.Packages)
-                        .NotNull()
-                        .Where(x => x.Source == repo)
-                        .ToList();
-
-                var anchorResult = repo.AnchorPackages(packagesToAnchor).ToList();
-                foreach (var package in packagesToAnchor)
-                {
-                    yield return new PackageAnchoredResult(repo, package, anchorResult.Contains(package));
-                }
-            }
+            return from repo in destinationRepositories.OfType<ISupportAnchoring>()
+                   from successfulPackage in resolvedPackages.SuccessfulPackages
+                   where successfulPackage.IsAnchored
+                   let packageInstances = from packageInstance in successfulPackage.Packages
+                                          where packageInstance != null &&
+                                                packageInstance.Source == repo
+                                          select packageInstance
+                   from anchorResult in repo.AnchorPackages(packageInstances)
+                   select anchorResult;
         }
 
         static IPackageInfo GetBestSourcePackage(IEnumerable<IPackageRepository> sourceRepositories, IEnumerable<IPackageInfo> packages)
@@ -179,7 +172,7 @@ namespace OpenWrap.PackageManagement
                            where compatiblePackage != null
                            select compatiblePackage
                    )
-                    .First();
+                   .First();
         }
 
         static IEnumerable<PackageOperationResult> RemovePackageFilesFromProjectRepo(PackageRequest packageToRemove, IPackageRepository projectRepository)
@@ -277,11 +270,9 @@ namespace OpenWrap.PackageManagement
 
             var packagesForGacDetection = resolvedPackages.SuccessfulPackages.Select(x => x.Packages.First()).ToList();
 
-            foreach (var conflict in from errors in GacResolver.InGac(packagesForGacDetection, _environment).Select(x => x)
+            foreach (var conflict in from errors in GacResolver.InGac(packagesForGacDetection)
                                      select new PackageGacConflictResult(errors.Key, errors))
-            {
                 yield return conflict;
-            }
 
             foreach (var m in CopyPackagesToRepositories(sourceRepositories, resolvedPackages, destinationRepositories))
                 yield return m;

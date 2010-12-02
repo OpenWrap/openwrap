@@ -20,7 +20,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public reading_a_wrap_list()
         {
-            given_repository();
+            given_repository(); 
         }
 
         [Test]

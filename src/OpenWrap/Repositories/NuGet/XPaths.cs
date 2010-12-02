@@ -2,16 +2,18 @@
 {
     public static class XPaths
     {
-        public const string Metadata = "package/metadata/";
-        public const string MetadataNS = "nuspec:package/nuspec:metadata/";
+        public static string Local(string elementName)
+        {
+            return string.Format("*[local-name()='{0}']", elementName);
+        }
 
-        public const string Dependencies = "package/dependencies/dependency";
-        public const string DependenciesNS = "nuspec:package/nuspec:dependencies/nuspec:dependency";
+        public static string Metadata = "//" + Local("package") + "/" + Local("metadata") + "/";
+        public static string Dependencies = Metadata + Local("dependencies") + "/" + Local("dependency");
 
-        public static string[] PackageName = new[] { Metadata + "id", MetadataNS + "nuspec:id" };
-        public static string[] PackageVersion = new[] { Metadata + "version", MetadataNS + "nuspec:version" };
-        public static string[] packageDescrition = new[] { Metadata + "description", MetadataNS + "nuspec:description" };
+        public static string[] PackageName = new[] { Metadata + Local("id") };
+        public static string[] PackageVersion = new[] { Metadata + Local("version") };
+        public static string[] PackageDescription = new[] { Metadata + Local("description") };
 
-        public static string[] PackageDependencies = new[] { Dependencies, DependenciesNS };
+        public static string[] PackageDependencies = new[] { Dependencies };
     }
 }

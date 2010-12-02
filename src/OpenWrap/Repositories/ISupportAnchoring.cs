@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using OpenWrap.PackageManagement;
 
 namespace OpenWrap.Repositories
 {
     public interface ISupportAnchoring : IPackageRepository
     {
-        IEnumerable<IPackageInfo> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor);
+        IEnumerable<PackageAnchoredResult> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor);
     }
 }

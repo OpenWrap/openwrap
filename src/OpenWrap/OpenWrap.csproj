@@ -102,7 +102,6 @@
     <Compile Include="Commands\CommandRepository.cs" />
     <Compile Include="Commands\CommandResultType.cs" />
     <Compile Include="Commands\ExceptionError.cs" />
-    <Compile Include="Commands\GACConflict.cs" />
     <Compile Include="Commands\GenericMessage.cs" />
     <Compile Include="Commands\ISequenceBuilder.cs" />
     <Compile Include="Commands\NamespaceNotFound.cs" />

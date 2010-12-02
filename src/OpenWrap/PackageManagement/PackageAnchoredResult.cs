@@ -7,7 +7,8 @@ namespace OpenWrap.PackageManagement
     {
         readonly ISupportAnchoring _repository;
         readonly IPackageInfo _package;
-        readonly bool _success;
+        
+        bool _success;
 
         public PackageAnchoredResult(ISupportAnchoring repository, IPackageInfo package, bool success)
         {
@@ -18,9 +19,10 @@ namespace OpenWrap.PackageManagement
 
         public override ICommandOutput ToOutput()
         {
-            if (_success)
-                return new Warning("Package {0} could not be anchored in {1}.", _package.Identifier, _repository.Name);
-            return new Info("Package {0} anchored in {1}.", _package.Identifier, _repository.Name);
+            if (_success == false)
+                return new Warning("{0}: Package {1} could not be anchored.", _repository.Name, _package.Identifier);
+            
+                return new Info("{0}: Package {0} anchored.", _repository.Name, _package.Identifier);
         }
     }
 }

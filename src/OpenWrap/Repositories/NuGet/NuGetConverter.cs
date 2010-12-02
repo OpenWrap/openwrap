@@ -126,8 +126,8 @@ namespace OpenWrap.Repositories.NuGet
             {
                 Name = nuspec.Element(XPaths.PackageName, ns),
                 Version = nuspec.Element(XPaths.PackageVersion, ns).ToVersion(),
-                Description = nuspec.Element(XPaths.packageDescrition, ns),
-                Dependencies = nuspec.Elements(XPaths.PackageDependencies, ns).Select(x=>CreateDependency(x)).ToList()
+                Description = nuspec.Element(XPaths.PackageDescription, ns),
+                Dependencies = nuspec.Elements(XPaths.PackageDependencies, ns).Select(CreateDependency).ToList()
             };
             var memoryStream = new MemoryStream();
             new PackageDescriptorReaderWriter().Write(descriptor, memoryStream);

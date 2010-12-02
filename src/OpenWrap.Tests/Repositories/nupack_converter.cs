@@ -19,11 +19,11 @@ using IOPath = System.IO.Path;
 
 namespace nupack_converter_specs
 {
-    public class converting_package_from_non_seekable_stream : context.nupack_converter
+    public class convertings_package_from_non_seekable_stream : context.nupack_converter
     {
-        public converting_package_from_non_seekable_stream()
+        public convertings_package_from_non_seekable_stream()
         {
-            given_readonly_nu_package(TestFiles.TestPackage);
+            given_readonly_nu_package(TestFiles.TestPackageOld);
             when_converting_package();
         }
         [Test]
@@ -36,7 +36,7 @@ namespace nupack_converter_specs
     {
         public converting_package()
         {
-            given_nupack_package(TestFiles.TestPackage);
+            given_nupack_package(TestFiles.TestPackageOld);
             when_converting_package();
         }
         [Test]

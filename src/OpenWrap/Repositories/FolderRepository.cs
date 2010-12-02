@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
+using OpenWrap.PackageManagement;
 
 namespace OpenWrap.Repositories
 {
@@ -106,11 +107,11 @@ namespace OpenWrap.Repositories
             set;
         }
 
-        public IEnumerable<IPackageInfo> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor)
+        public IEnumerable<PackageAnchoredResult> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor)
         {
             if (!EnableAnchoring)
-                return Enumerable.Empty<IPackageInfo>();
-
+                yield break;
+            
             List<IPackageInfo> failed = new List<IPackageInfo>();
             foreach (var package in packagesToAnchor)
             {
@@ -124,37 +125,37 @@ namespace OpenWrap.Repositories
                     if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(packageDirectory))
                         continue;
                     bool success = true;
-                    var temporaryDirectoryPath = anchoredDirectory.Parent.Path.Combine(anchoredDirectory.Name + ".old").FullPath;
+                    var temporaryDirectoryPath = anchoredDirectory.Parent.GetDirectory(anchoredDirectory.Name + ".old");
                     try
                     {
-                        System.IO.Directory.Move(anchoredDirectory.Path.FullPath, temporaryDirectoryPath);
+                        anchoredDirectory.MoveTo(temporaryDirectoryPath);
+                        
                         var anchoredPath = anchoredDirectory.Path;
                         packageDirectory.LinkTo(anchoredPath.FullPath);
 
                     }
                     catch (Exception)
                     {
-                        failed.Add(package);
                         success = false;
                     }
                     if (success)
                     {
                         try
                         {
-                            anchoredDirectory.FileSystem.GetDirectory(temporaryDirectoryPath).Delete();
+                            temporaryDirectoryPath.Delete();
                         }
                         catch (Exception)
                         {
-                            failed.Add(package);
+                            success = false;
                         }
                     }
+                    yield return new PackageAnchoredResult(this, package, success);
                 }
                 else
                 {
                     packageDirectory.LinkTo(anchoredDirectory.Path.FullPath);
                 }
             }
-            return failed;
         }
 
         public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
