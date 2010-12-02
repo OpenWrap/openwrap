@@ -1,22 +1,43 @@
 ﻿<Window x:Class="OpenWrap.Windows.Main"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:vm="clr-namespace:OpenWrap.Windows"
-    Title="OpenWrap Console" Height="569" Width="875">
+    xmlns:vm="clr-namespace:OpenWrap.Windows" xmlns:Controls="clr-namespace:OpenWrap.Windows.Controls" Title="OpenWrap Console" Height="569" Width="875">
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" MinWidth="200" />
-            <ColumnDefinition Width="733*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Label Grid.ColumnSpan="2">OpenWrap Console</Label>
-        <ListBox Grid.Row="1" ItemsSource="{Binding Nouns}" SelectedItem="{Binding SelectedNoun, Mode=OneWayToSource}" DisplayMemberPath="Noun" />
-        <ContentPresenter Grid.Column="1" Grid.Row="1" Content="{Binding SelectedNoun}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-    </Grid>
+    <TabControl>
+        <TabItem Header="Nouns and verbs">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="200" />
+                    <ColumnDefinition Width="733*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.ColumnSpan="2">OpenWrap Console</Label>
+                <ListBox Grid.Row="1" ItemsSource="{Binding Nouns}" SelectedItem="{Binding SelectedNoun, Mode=OneWayToSource}" DisplayMemberPath="Noun" />
+                <ContentPresenter Grid.Column="1" Grid.Row="1" Content="{Binding SelectedNoun}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Remotes">
+            <ListBox ItemsSource="{Binding PackageRepositories}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Controls:PackageRepositoryControl />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </TabItem>
+        <TabItem Header="System Packages">
+            <ListBox ItemsSource="{Binding SystemPackages}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Controls:PackageControl />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </TabItem>
+    </TabControl>
 </Window>

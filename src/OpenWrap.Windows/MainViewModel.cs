@@ -11,7 +11,9 @@ namespace OpenWrap.Windows
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly ObservableCollection<PackageViewModel> _packages = new ObservableCollection<PackageViewModel>();
+        private readonly ObservableCollection<PackageViewModel> _systemPackages = new ObservableCollection<PackageViewModel>();
+        private readonly ObservableCollection<PackageRepositoryViewModel> _packageRepositories = new ObservableCollection<PackageRepositoryViewModel>();
+
         private IEnumerable<NounSlice> _nouns;
         private NounSlice _selectedNoun;
 
@@ -22,26 +24,8 @@ namespace OpenWrap.Windows
 
             var env = Services.Services.GetService<IEnvironment>();
 
-            ReadPackages(env.ProjectRepository.FindAll(new PackageDependency()));
-        }
-
-        private void ReadPackages(IEnumerable<IPackageInfo> packages)
-        {
-            foreach (var packageInfo in packages)
-            {
-                PackageViewModel viewModel = new PackageViewModel
-                {
-                        Name = packageInfo.Name,
-                        FullName = packageInfo.FullName,
-                        Description = packageInfo.Description,
-                        Version = packageInfo.Version,
-                        CreationTime = packageInfo.CreationTime,
-                        Anchored = packageInfo.Anchored,
-                        Nuked = packageInfo.Nuked
-                };
-
-                _packages.Add(viewModel);
-            }
+            ReadPackageRepositories(env.RemoteRepositories);
+            ReadSystemPackages(env.SystemRepository.FindAll(new PackageDependency()));
         }
 
         public IEnumerable<NounSlice> Nouns
@@ -70,9 +54,14 @@ namespace OpenWrap.Windows
             }
         }
 
-        public ObservableCollection<PackageViewModel> Packages
+        public ObservableCollection<PackageViewModel> SystemPackages
         {
-            get { return _packages; }
+            get { return _systemPackages; }
+        }
+
+        public ObservableCollection<PackageRepositoryViewModel> PackageRepositories
+        {
+            get { return _packageRepositories; }
         }
 
         private static NounSlice CreateNounSlice(IGrouping<string, ICommandDescriptor> x)
@@ -82,15 +71,46 @@ namespace OpenWrap.Windows
             return new NounSlice(x.Key, x.Select(y => new VerbSlice(y)));
         }
 
-        private static IEnumerable<NounSlice> RealCommands(ICommandRepository commands)
+        private static IEnumerable<NounSlice> RealCommands(IEnumerable<ICommandDescriptor> commands)
         {
-            return commands.GroupBy(x => x.Noun).Select(x => CreateNounSlice(x));
+            return commands.GroupBy(x => x.Noun).Select(CreateNounSlice);
         }
         
         private static IEnumerable<NounSlice> MockCommands()
         {
             yield return new NounSlice("Test 1", new[] { new VerbSlice(new InMemoryCommandDescriptor()) });
             yield return new NounSlice("Test 2", new[] { new VerbSlice(new InMemoryCommandDescriptor()) });
+        }
+
+        private void ReadSystemPackages(IEnumerable<IPackageInfo> packages)
+        {
+            foreach (var packageInfo in packages)
+            {
+                PackageViewModel viewModel = new PackageViewModel
+                {
+                    Name = packageInfo.Name,
+                    FullName = packageInfo.FullName,
+                    Description = packageInfo.Description,
+                    Version = packageInfo.Version,
+                    CreationTime = packageInfo.CreationTime,
+                    Anchored = packageInfo.Anchored,
+                    Nuked = packageInfo.Nuked
+                };
+
+                _systemPackages.Add(viewModel);
+            }
+        }
+
+        private void ReadPackageRepositories(IEnumerable<IPackageRepository> remoteRepositories)
+        {
+            foreach (var packageRepository in remoteRepositories)
+            {
+                PackageRepositoryViewModel viewModel = new PackageRepositoryViewModel
+                {
+                        Name = packageRepository.Name
+                };
+                _packageRepositories.Add(viewModel);
+            }
         }
     }
 }
