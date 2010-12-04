@@ -25,7 +25,7 @@ namespace OpenWrap.Windows
             var env = Services.Services.GetService<IEnvironment>();
 
             ReadPackageRepositories(env.RemoteRepositories);
-            ReadSystemPackages(env.SystemRepository.FindAll(new PackageDependency()));
+            ReadSystemPackages(env.SystemRepository.PackagesByName.NotNull());
         }
 
         public IEnumerable<NounSlice> Nouns
@@ -82,22 +82,28 @@ namespace OpenWrap.Windows
             yield return new NounSlice("Test 2", new[] { new VerbSlice(new InMemoryCommandDescriptor()) });
         }
 
-        private void ReadSystemPackages(IEnumerable<IPackageInfo> packages)
+        private void ReadSystemPackages(IEnumerable<IGrouping<string, IPackageInfo>> packageGroups)
         {
-            foreach (var packageInfo in packages)
+            foreach (IGrouping<string, IPackageInfo> packageGroup in packageGroups)
             {
-                PackageViewModel viewModel = new PackageViewModel
+                string groupName = packageGroup.Key;
+                foreach (var packageInfo in packageGroup)
                 {
-                    Name = packageInfo.Name,
-                    FullName = packageInfo.FullName,
-                    Description = packageInfo.Description,
-                    Version = packageInfo.Version,
-                    CreationTime = packageInfo.CreationTime,
-                    Anchored = packageInfo.Anchored,
-                    Nuked = packageInfo.Nuked
-                };
+                    PackageViewModel viewModel = new PackageViewModel
+                    {
+                        Name = packageInfo.Name,
+                        FullName = packageInfo.FullName,
+                        Description = packageInfo.Description,
+                        GroupName = groupName,
+                        Version = packageInfo.Version,
+                        CreationTime = packageInfo.CreationTime,
+                        Anchored = packageInfo.Anchored,
+                        Nuked = packageInfo.Nuked
+                    };
 
-                _systemPackages.Add(viewModel);
+                    _systemPackages.Add(viewModel);
+                }
+                
             }
         }
 
