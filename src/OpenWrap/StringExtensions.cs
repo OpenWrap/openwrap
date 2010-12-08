@@ -113,5 +113,9 @@ namespace OpenWrap
         {
             return value.IndexOf(valueToSearch, StringComparison.OrdinalIgnoreCase) != -1;
         }
+        public static bool ContainsNoCase(this IEnumerable<string> values, string valueToSearch)
+        {
+            return values.Contains(valueToSearch, StringComparer.OrdinalIgnoreCase);
+        }
     }
 }

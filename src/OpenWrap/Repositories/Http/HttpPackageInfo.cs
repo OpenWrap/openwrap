@@ -32,11 +32,10 @@ namespace OpenWrap.Repositories.Http
                             where strings.Length >= 1
                             let dependencyName = strings[0]
                             where !string.IsNullOrEmpty(dependencyName)
-                            select new PackageDependency
-                            {
-                                Name = dependencyName,
-                                VersionVertices = DependsParser.ParseVersions(strings.Skip(1).ToArray()).ToList()
-                            }).ToList();
+                            select (PackageDependency)new PackageDependencyBuilder(dependencyName)
+                                        .SetVersionVertices(DependsParser.ParseVersions(strings.Skip(1).ToArray()))
+                            )
+                            .ToList();
         }
 
         public PackageIdentifier Identifier
@@ -51,7 +50,7 @@ namespace OpenWrap.Repositories.Http
             get { return Name + "-" + Version; }
         }
 
-        public DateTimeOffset CreationTime { get { return _package.CreationTime; } }
+        public DateTimeOffset Created { get { return _package.CreationTime; } }
 
         public bool Anchored
         {

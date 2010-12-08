@@ -41,7 +41,7 @@ namespace OpenWrap.Commands.Wrap
             if (System)
                 return Environment.SystemRepository;
             if (!string.IsNullOrEmpty(Remote))
-                return Environment.RemoteRepositories.FirstOrDefault(x => x.Name.Equals(Remote, StringComparison.OrdinalIgnoreCase));
+                return Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(Remote));
             return Environment.ProjectRepository;
         }
     }

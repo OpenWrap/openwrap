@@ -45,9 +45,9 @@ namespace OpenWrap.Dependencies
             get { return _descriptor.FullName; }
         }
 
-        public DateTimeOffset CreationTime
+        public DateTimeOffset Created
         {
-            get { return _descriptor.CreationTime; }
+            get { return _descriptor.Created; }
         }
 
         public bool Anchored

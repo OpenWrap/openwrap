@@ -75,7 +75,7 @@ namespace OpenWrap.Repositories
             get { return Name + "-" + Version; }
         }
 
-        public DateTimeOffset CreationTime
+        public DateTimeOffset Created
         {
             get { if (_originalWrapFile.LastModifiedTimeUtc != null) return new DateTimeOffset(_originalWrapFile.LastModifiedTimeUtc.Value);
                 return DateTimeOffset.UtcNow;

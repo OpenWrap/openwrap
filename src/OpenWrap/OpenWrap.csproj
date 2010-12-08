@@ -90,7 +90,9 @@
     <Compile Include="Build\IPackageAssembliesListener.cs" />
     <Compile Include="Build\MSBuildEnvironment.cs" />
     <Compile Include="Build\VersionNumberGenerator.cs" />
+    <Compile Include="Check.cs" />
     <Compile Include="CollectionExtensions.cs" />
+    <Compile Include="Collections\NotificationCollection.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
     <Compile Include="Commands\AmbiguousInputNameException.cs" />
     <Compile Include="Commands\AttributeBasedCommandDescriptor.cs" />
@@ -128,6 +130,7 @@
     <Compile Include="Dependencies\AbsolutelyEqualVersionVertex.cs" />
     <Compile Include="Dependencies\DefaultPackageInfo.cs" />
     <Compile Include="Dependencies\GreaterThanVersionVertex.cs" />
+    <Compile Include="Dependencies\IPackageDescriptor.cs" />
     <Compile Include="Dependencies\StringExtensions.cs" />
     <Compile Include="IOExtensions.cs" />
     <Compile Include="Dependencies\PackageBuilder.cs" />

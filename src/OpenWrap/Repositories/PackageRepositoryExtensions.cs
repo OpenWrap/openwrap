@@ -14,7 +14,8 @@ namespace OpenWrap.Repositories
         }
         public static bool HasDependency(this IPackageRepository packageRepository, string name, Version version)
         {
-            return packageRepository.Find(new PackageDependency { Name = name, VersionVertices = { new ExactVersionVertex(version) } }) != null;
+            return packageRepository.Find(
+                new PackageDependencyBuilder(name).VersionVertex(new ExactVersionVertex(version))) != null;
         }
     }
 }

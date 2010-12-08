@@ -28,7 +28,7 @@ namespace OpenWrap.Repositories
             get { return Descriptor.Nuked; }
         }
 
-        public DateTimeOffset CreationTime
+        public DateTimeOffset Created
         {
             get { return PackageFile.LastModifiedTimeUtc != null ? new DateTimeOffset(PackageFile.LastModifiedTimeUtc.Value) : DateTimeOffset.UtcNow; }
         }

@@ -59,7 +59,7 @@ namespace OpenWrap.Repositories.Http
             get { return Name + "-" + Version; }
         }
 
-        public DateTimeOffset CreationTime
+        public DateTimeOffset Created
         {
             get{ return _package.CreationTime; }
         }

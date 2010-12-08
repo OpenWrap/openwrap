@@ -18,6 +18,11 @@ namespace OpenWrap.Repositories
 
         public DependencyVisitor(IEnumerable<IPackageRepository> repositories, PackageSelectionContext selectionContext, IEnumerable<PackageDependency> hints, IEnumerable<PackageNameOverride> nameOverrides)
         {
+            Check.NotNull(selectionContext, "selectionContext");
+            Check.NoNullElements(repositories, "repositories");
+            Check.NoNullElements(hints, "hints");
+            Check.NoNullElements(nameOverrides, "nameOverrides");
+
             _repositories = repositories;
             _selectionContext = selectionContext;
             _nameOverrides = nameOverrides;

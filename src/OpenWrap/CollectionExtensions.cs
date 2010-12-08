@@ -12,5 +12,10 @@ namespace OpenWrap
             foreach(var entry in toRemove)
                 collection.Remove(entry);
         }
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> toAdd)
+        {
+            foreach(var value in toAdd)
+                collection.Add(value);
+        }
     }
 }

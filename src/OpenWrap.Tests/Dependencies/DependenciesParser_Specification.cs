@@ -21,7 +21,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         [Test]
         public void the_versions_are_processed()
         {
-            Declaration.VersionVertices.Count.ShouldBe(2);
+            Declaration.VersionVertices.Count().ShouldBe(2);
 
             Declaration.IsFulfilledBy(new Version("2.1.0.0")).ShouldBeTrue();
             Declaration.IsFulfilledBy(new Version("3.0.0.0")).ShouldBeFalse();

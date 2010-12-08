@@ -124,11 +124,13 @@ namespace OpenWrap.Repositories.NuGet
 
             var descriptor = new PackageDescriptor
             {
-                Name = nuspec.Element(XPaths.PackageName, ns),
-                Version = nuspec.Element(XPaths.PackageVersion, ns).ToVersion(),
-                Description = nuspec.Element(XPaths.PackageDescription, ns),
-                Dependencies = nuspec.Elements(XPaths.PackageDependencies, ns).Select(CreateDependency).ToList()
+                    Name = nuspec.Element(XPaths.PackageName, ns),
+                    Version = nuspec.Element(XPaths.PackageVersion, ns).ToVersion(),
+                    Description = nuspec.Element(XPaths.PackageDescription, ns)
             };
+            descriptor.Dependencies.AddRange(
+                    nuspec.Elements(XPaths.PackageDependencies, ns).Select(CreateDependency)
+                    );
             var memoryStream = new MemoryStream();
             new PackageDescriptorReaderWriter().Write(descriptor, memoryStream);
             memoryStream.Position = 0;
@@ -147,19 +149,17 @@ namespace OpenWrap.Repositories.NuGet
 
         static PackageDependency CreateDependency(XmlNode xmlNode)
         {
-            var dep = new PackageDependency
-            {
-                Name = (xmlNode.Attributes["id"] ?? xmlNode.Attributes["id", NuSpecSchema]).Value
-            };
+            var dep = new PackageDependencyBuilder((xmlNode.Attributes["id"] ?? xmlNode.Attributes["id", NuSpecSchema]).Value);
+
             var version = xmlNode.Attributes["version"] ?? xmlNode.Attributes["version", NuSpecSchema];
             var minversion = xmlNode.Attributes["minversion"] ?? xmlNode.Attributes["minversion", NuSpecSchema];
             var maxversion = xmlNode.Attributes["maxversion"] ?? xmlNode.Attributes["maxversion", NuSpecSchema];
             if (version != null)
-                dep.VersionVertices.Add(new ExactVersionVertex(version.Value.ToVersion()));
+                dep.VersionVertex(new ExactVersionVertex(version.Value.ToVersion()));
             if (minversion != null)
-                dep.VersionVertices.Add(new GreaterThenOrEqualVersionVertex(minversion.Value.ToVersion()));
+                dep.VersionVertex(new GreaterThenOrEqualVersionVertex(minversion.Value.ToVersion()));
             if (maxversion != null)
-                dep.VersionVertices.Add(new LessThanVersionVertex(maxversion.Value.ToVersion()));
+                dep.VersionVertex(new LessThanVersionVertex(maxversion.Value.ToVersion()));
             return dep;
         }
     }

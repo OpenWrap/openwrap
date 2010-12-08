@@ -92,7 +92,7 @@ namespace OpenWrap.Commands.Wrap
 
         void AddOpenWrapDependency(PackageDescriptor packageDescriptor)
         {
-            packageDescriptor.Dependencies.Add(new PackageDependency { Name = "openwrap", ContentOnly = true, Anchored = true });
+            packageDescriptor.Dependencies.Add(new PackageDependencyBuilder("openwrap").Content().Anchored());
         }
 
         void AddPackageFolders(IDirectory projectDirectory)

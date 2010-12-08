@@ -64,9 +64,9 @@ namespace assembly_resolving_specs
             AssemblyReferences.ShouldBeEmpty();
         }
     }
-    public class t : contexts.assembly_resolving
+    public class recursive_dependencies_for_assemblies : contexts.assembly_resolving
     {
-        public t()
+        public recursive_dependencies_for_assemblies()
         {
             given_dependency("depends: openwrap content");
             given_dependency("depends: openfilesystem");

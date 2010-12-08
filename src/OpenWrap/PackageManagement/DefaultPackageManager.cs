@@ -252,10 +252,9 @@ namespace OpenWrap.PackageManagement
                                                             PackageDescriptor descriptor,
                                                             Func<string, bool> nameSelector)
         {
-            var updateDescriptor = new PackageDescriptor(descriptor)
-            {
-                Dependencies = descriptor.Dependencies.Where(x => nameSelector(x.Name)).ToList()
-            };
+            var updateDescriptor = new PackageDescriptor(descriptor);
+            updateDescriptor.Dependencies.Clear();
+            updateDescriptor.Dependencies.AddRange(descriptor.Dependencies.Where(x => nameSelector(x.Name)));
 
             var resolvedPackages = _resolver.TryResolveDependencies(
                     updateDescriptor,
@@ -337,11 +336,8 @@ namespace OpenWrap.PackageManagement
                            {
                                Dependencies =
                                            {
-                                                   new PackageDependency
-                                                   {
-                                                           Name = systemPackageName,
-                                                           VersionVertices = { new UpdatePackageVertex(maxPackageVersion) }
-                                                   }
+                                                   new PackageDependencyBuilder(systemPackageName)
+                                                    .VersionVertex(new UpdatePackageVertex(maxPackageVersion))
                                            }
                            }
                    ).ToList();
@@ -379,13 +375,10 @@ namespace OpenWrap.PackageManagement
 
         PackageDependency ToDependency(PackageRequest packageToAdd, PackageAddOptions options)
         {
-            return new PackageDependency
-            {
-                Name = packageToAdd.Name,
-                VersionVertices = ToVersionVertices(packageToAdd),
-                Anchored = (options & PackageAddOptions.Anchor) == PackageAddOptions.Anchor,
-                ContentOnly = (options & PackageAddOptions.Content) == PackageAddOptions.Content
-            };
+            return new PackageDependencyBuilder(packageToAdd.Name)
+                    .SetVersionVertices(ToVersionVertices(packageToAdd))
+                    .Anchored((options & PackageAddOptions.Anchor) == PackageAddOptions.Anchor)
+                    .Content((options & PackageAddOptions.Content) == PackageAddOptions.Content);
         }
 
         PackageDescriptor ToDescriptor(PackageRequest package, PackageAddOptions options)
@@ -394,13 +387,10 @@ namespace OpenWrap.PackageManagement
             {
                 Dependencies =
                             {
-                                    new PackageDependency
-                                    {
-                                            Name = package.Name,
-                                            ContentOnly = (options & PackageAddOptions.Content) == PackageAddOptions.Content,
-                                            Anchored = (options & PackageAddOptions.Anchor) == PackageAddOptions.Anchor,
-                                            VersionVertices = ToVersionVertices(package)
-                                    }
+                                    new PackageDependencyBuilder(package.Name)
+                                        .Content((options & PackageAddOptions.Content) == PackageAddOptions.Content)
+                                        .Anchored((options & PackageAddOptions.Anchor) == PackageAddOptions.Anchor)
+                                        .SetVersionVertices(ToVersionVertices(package))
                             }
             };
         }

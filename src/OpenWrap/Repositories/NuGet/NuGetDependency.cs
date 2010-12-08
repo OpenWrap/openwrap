@@ -25,11 +25,9 @@ namespace OpenWrap.Repositories.NuGet
 
         public string ToPackageDependencyLine()
         {
-            return new PackageDependency
-            {
-                    Name = Id,
-                    VersionVertices = CreateVersionVertices().ToList()
-            }.ToString();
+            return new PackageDependencyBuilder(Id)
+                .SetVersionVertices(CreateVersionVertices())
+                .ToString();
         }
 
         IEnumerable<VersionVertex> CreateVersionVertices()

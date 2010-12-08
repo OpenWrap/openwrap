@@ -18,16 +18,14 @@ namespace OpenWrap.Tests.Dependencies
         [Test]
         public void sonic_is_changed_to_super_sonic()
         {
-            var sonic = new PackageDependency { Name = "sonic" };
-            PackageNameOverride.Apply(sonic);
+            var sonic = PackageNameOverride.Apply(new PackageDependency("sonic"));
             sonic.Name.ShouldBe("super-sonic");
         }
 
         [Test]
         public void tails_is_still_tails()
         {
-            var tails = new PackageDependency { Name = "tails" };
-            PackageNameOverride.Apply(tails);
+            var tails = PackageNameOverride.Apply(new PackageDependency("tails"));
             tails.Name.ShouldBe("tails");
         }
     }

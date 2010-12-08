@@ -16,7 +16,7 @@ namespace OpenWrap.Dependencies
         {
             descriptor.Version = new Version(content);
         }
-        public override string GetContentRegex()
+        public virtual string GetContentRegex()
         {
             return @"\d+(\.\d+(\.\d+(\.\d+)?)?)?";
         }

@@ -20,13 +20,17 @@ namespace OpenWrap.Dependencies
         /// </summary>
         public PackageDependency Apply(PackageDependency dependency)
         {
-            if (dependency.Name == OldPackage)
+            if (dependency.Name.EqualsNoCase(OldPackage))
             {
                 // TODO: Should we create a new PackageDependency instance instead?
                 // Might be a good idea to make these objects immutable...
-                dependency.Name = NewPackage;
+               return new PackageDependencyBuilder(dependency).Name(NewPackage);
             }
             return dependency;
+        }
+        public override string ToString()
+        {
+            return string.Format("override: {0} {1}", OldPackage, NewPackage);
         }
     }
 }

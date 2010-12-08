@@ -63,7 +63,6 @@ namespace OpenWrap
                     .OrderBy(x => x.Value.Priority)
                     .Select(x => CreateRemoteRepository(x.Key, x.Value.Href))
                     .Where(x => x != null)
-                    .Cast<IPackageRepository>()
                     .ToList();
 
             ExecutionEnvironment = new ExecutionEnvironment

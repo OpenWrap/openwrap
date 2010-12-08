@@ -59,11 +59,7 @@ namespace OpenWrap.Repositories
 
         PackageDependency ToDependency(PackageIdentifier pid)
         {
-            return new PackageDependency
-            {
-                    Name = pid.Name,
-                    VersionVertices = { new AbsolutelyEqualVersionVertex(pid.Version) }
-            };
+            return new PackageDependencyBuilder(pid.Name).VersionVertex(new AbsolutelyEqualVersionVertex(pid.Version));
         }
     }
 }
