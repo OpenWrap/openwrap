@@ -1,4 +1,5 @@
-﻿using OpenWrap.Commands;
+﻿using System;
+using OpenWrap.Commands;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
@@ -8,6 +9,11 @@ namespace OpenWrap.PackageManagement
         public PackageMissingResult(ResolvedPackage result)
                 : base(result)
         {
+        }
+
+        public override bool Success
+        {
+            get { return false; }
         }
 
         public override ICommandOutput ToOutput()

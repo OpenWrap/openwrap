@@ -119,41 +119,70 @@ namespace OpenWrap.Commands.Wrap
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
 
-            var sourceRepositories = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }.Concat(Environment.RemoteRepositories);
-
+            var sourceRepositories = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }.Concat(Environment.RemoteRepositories).NotNull();
+            bool succeeded = false;
             if (Project && System)
             {
                 var sysToAdd = new List<PackageIdentifier>();
                 foreach (var m in PackageManager.AddProjectPackage(this.PackageRequest, sourceRepositories, Environment.Descriptor, Environment.ProjectRepository, AddOptions))
                 {
+                    
                     yield return ToOutput(m);
-                    var added = m as PackagePublishedResult;
-                    if (added != null)
-                        sysToAdd.Add(added.Package.Identifier);
+                    ParseSuccess(m,
+                                 x =>
+                                 {
+                                     succeeded = true;
+                                     sysToAdd.Add(x);
+                                 },
+                                 () => { });
                 }
                 foreach (var identifier in sysToAdd)
-                foreach (var m in PackageManager.AddSystemPackage(PackageRequest.Exact(identifier.Name, identifier.Version), sourceRepositories, Environment.SystemRepository))
+                    foreach (var m in PackageManager.AddSystemPackage(PackageRequest.Exact(identifier.Name, identifier.Version), sourceRepositories, Environment.SystemRepository))
                         yield return ToOutput(m);
             }
             else if (Project)
             {
                 foreach (var m in PackageManager.AddProjectPackage(this.PackageRequest, sourceRepositories, Environment.Descriptor, Environment.ProjectRepository, AddOptions))
+                {
                     yield return ToOutput(m);
+                    ParseSuccess(m, x => { succeeded = true; }, () => { });
+                }
             }
             else if (System)
             {
                 foreach (var m in PackageManager.AddSystemPackage(PackageRequest, sourceRepositories, Environment.SystemRepository, AddOptions))
+                {
                     yield return ToOutput(m);
+                    ParseSuccess(m, x => { succeeded = true; }, () => { });
+
+                }
             }
 
-
-            if (ShouldUpdateDescriptor)
+            if (!succeeded)
+            {
+                yield return new Info("Did you mean one of the following?", Name);
+                foreach (var m in PackageManager.ListPackages(sourceRepositories, Name))
+                    yield return ToOutput(m);
+            }
+            else if (ShouldUpdateDescriptor)
                 TrySaveDescriptorFile();
+        }
+
+        void ParseSuccess(PackageOperationResult m, Action<PackageIdentifier> onSuccess, Action onFailure)
+        {
+            var id = m is PackageCopiedResult ? ((PackageCopiedResult)m).Package.Identifier : null;
+            if (m.Success && id != null)
+                onSuccess(id);
+            else if (m.Success)
+                return;
+            else
+                onFailure();
         }
 
         PackageAddOptions AddOptions
         {
-            get {
+            get
+            {
                 PackageAddOptions addOptions = 0;
                 if (this.Anchored)
                     addOptions |= PackageAddOptions.Anchor;
@@ -187,10 +216,7 @@ namespace OpenWrap.Commands.Wrap
                         new GenericMessage(
                                 string.Format("The requested package contained '.wrap' in the name. Assuming you pointed to the file in the current directory and meant a package named '{0}' with version qualifier '{1}'.",
                                               Name,
-                                              Version))
-                        {
-                            Type = CommandResultType.Warning
-                        };
+                                              Version)) { Type = CommandResultType.Warning };
             }
             if (File.Exists(Name))
             {

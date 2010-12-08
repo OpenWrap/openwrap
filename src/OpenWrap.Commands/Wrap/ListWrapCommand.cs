@@ -7,10 +7,10 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Noun="wrap", Verb="list")]
-    public class ListWrapCommand : AbstractCommand
+    [Command(Noun = "wrap", Verb = "list")]
+    public class ListWrapCommand : WrapCommand
     {
-        [CommandInput(Position=0)]
+        [CommandInput(Position = 0)]
         public string Query { get; set; }
 
         [CommandInput]
@@ -23,7 +23,7 @@ namespace OpenWrap.Commands.Wrap
         public string Remote
         {
             get { return _remote; }
-            set 
+            set
             {
                 _remote = value;
                 _remoteSet = true;
@@ -35,27 +35,21 @@ namespace OpenWrap.Commands.Wrap
         {
             var repoToList = GetRepositoryToList();
             if (repoToList == null)
-                return new[] { new Error("Selected repository wasn't found. If you used -remote, make sure the remote repository exists.") };
+                yield return new Error("Selected repository wasn't found. If you used -remote, make sure the remote repository exists.");
 
-            var packageList = repoToList.SelectMany(x=>x.PackagesByName.NotNull());
-            if (!string.IsNullOrEmpty(Query))
-            {
-                var filter = Query.Wildcard(autoWrap: true);
-                packageList = packageList.Where(x => filter.IsMatch(x.Key));
-            }
-            return packageList
-                    .Select(x => (ICommandOutput)new PackageDescriptionOutput(x.Key, x));
+            foreach (var m in PackageManager.ListPackages(repoToList, Query))
+                yield return ToOutput(m);
         }
 
         IEnumerable<IPackageRepository> GetRepositoryToList()
         {
             if (System)
-                return new[]{ Environment.SystemRepository };
-           else if (_remoteSet && string.IsNullOrEmpty(Remote))
+                return new[] { Environment.SystemRepository };
+            else if (_remoteSet && string.IsNullOrEmpty(Remote))
                 return Environment.RemoteRepositories;
             else if (_remoteSet)
-                return new[]{Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(Remote))};
-            return new[]{Environment.ProjectRepository};
+                return new[] { Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(Remote)) };
+            return new[] { Environment.ProjectRepository };
         }
     }
 }

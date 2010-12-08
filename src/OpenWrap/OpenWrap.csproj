@@ -166,7 +166,7 @@
     <Compile Include="PackageManagement\PackageRemoveOptions.cs" />
     <Compile Include="PackageManagement\PackageRequest.cs" />
     <Compile Include="PackageManagement\PackageResolveError.cs" />
-    <Compile Include="PackageManagement\PackageUpdatedResult.cs" />
+    <Compile Include="PackageManagement\PackageCopiedResult.cs" />
     <Compile Include="PackageManagement\PackageUpToDateResult.cs" />
     <Compile Include="Preloading\INotifyDownload.cs" />
     <Compile Include="Preloading\NotifyProgressWebClient.cs" />

@@ -6,14 +6,16 @@ namespace OpenWrap.Repositories
 {
     public class PackageCleanResult : PackageOperationResult
     {
+        bool _success;
+
         public PackageCleanResult(IPackageInfo package, bool success)
         {
             Package = package;
-            Success = success;
+            _success = success;
         }
 
         public IPackageInfo Package { get; private set; }
-        public bool Success { get; private set; }
+        public override bool Success { get { return _success; } }
         public override ICommandOutput ToOutput()
         {
             if (Success) return new Info("Package {0} removed.", Package.Identifier);

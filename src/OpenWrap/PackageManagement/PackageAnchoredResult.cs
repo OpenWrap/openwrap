@@ -1,4 +1,5 @@
-﻿using OpenWrap.Commands;
+﻿using System;
+using OpenWrap.Commands;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
@@ -15,6 +16,11 @@ namespace OpenWrap.PackageManagement
             _repository = repository;
             _package = package;
             _success = success;
+        }
+
+        public override bool Success
+        {
+            get { return true; }
         }
 
         public override ICommandOutput ToOutput()

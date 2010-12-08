@@ -37,5 +37,6 @@ namespace OpenWrap.PackageManagement
         IEnumerable<PackageOperationResult> CleanProjectPackages(PackageDescriptor projectDescriptor, IPackageRepository projectRepository, string packageName);
         IEnumerable<PackageOperationResult> CleanSystemPackages(IPackageRepository systemRepository);
         IEnumerable<PackageOperationResult> CleanSystemPackages(IPackageRepository systemRepository, string packageName);
+        IEnumerable<PackageOperationResult> ListPackages(IEnumerable<IPackageRepository> repositories, string query = null);
     }
 }

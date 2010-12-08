@@ -65,7 +65,6 @@ namespace OpenWrap
                     if (commandOutput.Type == CommandResultType.Error)
                     {
                         returnCode = -1;
-                        break;
                     }
                 }
                 finally

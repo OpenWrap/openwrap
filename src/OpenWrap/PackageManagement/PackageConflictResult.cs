@@ -12,6 +12,11 @@ namespace OpenWrap.PackageManagement
         {
         }
 
+        public override bool Success
+        {
+            get { return false; }
+        }
+
         public override ICommandOutput ToOutput()
         {
             var conflictingVersions = StringExtensions.Join(Package.DependencyStacks.Select(x=>"\t" + x.ToString()), Environment.NewLine);

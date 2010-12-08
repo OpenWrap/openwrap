@@ -28,12 +28,16 @@ namespace OpenWrap.PackageManagement
                                                                      IPackageRepository projectRepository,
                                                                      PackageAddOptions options = PackageAddOptions.Default)
         {
-            if (packageToAdd == null) throw new ArgumentNullException("packageToAdd");
-            if (sourceRepositories == null) throw new ArgumentNullException("sourceRepositories");
-            if (sourceRepositories.Any(x=>x==null)) throw new ArgumentException("One of the source repositories is null.", "sourceRepository");
-            if (projectDescriptor == null) throw new ArgumentNullException("projectDescriptor");
-            if (projectRepository == null) throw new ArgumentNullException("projectRepository");
+            Check.NotNull(packageToAdd, "packageToAdd");
+            Check.NoNullElements(sourceRepositories, "sourceRepositories");
+            Check.NotNull(projectDescriptor, "projectDescriptor");
+            Check.NotNull(projectRepository, "projectRepository");
 
+            return AddProjectPackageCore(packageToAdd, sourceRepositories, projectDescriptor, projectRepository, options);
+        }
+
+        IEnumerable<PackageOperationResult> AddProjectPackageCore(PackageRequest packageToAdd, IEnumerable<IPackageRepository> sourceRepositories, PackageDescriptor projectDescriptor, IPackageRepository projectRepository, PackageAddOptions options)
+        {
             var finalDescriptor = (options & PackageAddOptions.UpdateDescriptor) == PackageAddOptions.UpdateDescriptor
                                           ? projectDescriptor
                                           : new PackageDescriptor(projectDescriptor);
@@ -52,7 +56,6 @@ namespace OpenWrap.PackageManagement
 
             foreach (var m in CopyPackageCore(sourceRepositories, new[] { projectRepository }, finalDescriptor, x => true))
                 yield return m;
-
         }
 
         public IEnumerable<PackageOperationResult> AddSystemPackage(PackageRequest packageToAdd,
@@ -320,6 +323,17 @@ namespace OpenWrap.PackageManagement
             foreach (var repo in publishingRepos)
                 repo.PublishCompleted();
         }
+        public IEnumerable<PackageOperationResult> ListPackages(IEnumerable<IPackageRepository> repositories, string query = null)
+        {
+            var packages = repositories.SelectMany(x => x.PackagesByName.NotNull());
+            if (query != null)
+            {
+                var queryRegex = query.Wildcard(true);
+                packages = packages.Where(x => queryRegex.IsMatch(x.Key));
+            }
+            foreach(var x in packages)
+                yield return new PackageFoundResult(x);
+        }
 
         IEnumerable<PackageDescriptor> CreateDescriptorForEachSystemPackage(IPackageRepository repository, Func<string, bool> packageNameSelection)
         {
@@ -433,6 +447,11 @@ namespace OpenWrap.PackageManagement
         public PackageCleanCannotDo(PackageDescriptor projectDescriptor)
         {
             
+        }
+
+        public override bool Success
+        {
+            get { return false; }
         }
 
         public override ICommandOutput ToOutput()
