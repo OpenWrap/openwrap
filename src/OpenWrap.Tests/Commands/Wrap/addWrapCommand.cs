@@ -401,7 +401,7 @@ namespace OpenWrap.Tests.Commands
             protected void given_file_based_project_repository()
             {
                 ProjectRepositoryDir = FileSystem.GetDirectory(@"c:\repo");
-                given_project_repository(new FolderRepository(ProjectRepositoryDir) { EnableAnchoring = true });
+                given_project_repository(new FolderRepository(ProjectRepositoryDir, FolderRepositoryOptions.UseSymLinks | FolderRepositoryOptions.AnchoringEnabled));
             }
         }
     

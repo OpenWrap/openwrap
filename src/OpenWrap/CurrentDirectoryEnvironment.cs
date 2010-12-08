@@ -79,11 +79,15 @@ namespace OpenWrap
 
 
                 if (projectRepositoryDirectory != null)
-                    ProjectRepository = new FolderRepository(projectRepositoryDirectory)
+                {
+                    var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
+                    if (Descriptor.UseSymLinks)
+                        repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
+                    ProjectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions)
                     {
-                            Name = "Project repository",
-                            EnableAnchoring=true
+                            Name = "Project repository"
                     };
+                }
             }
         }
 

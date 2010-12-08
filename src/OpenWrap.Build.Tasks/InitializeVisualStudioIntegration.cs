@@ -53,7 +53,7 @@ namespace OpenWrap.Build.Tasks
         {
             if (PackageRepository != null)
             {
-                Log.LogMessage(MessageImportance.Low, "No project repository found.");
+                Log.LogMessage(MessageImportance.Low, "Project repository found.");
                 return;
             }
             PackageRepository = new FolderRepository(WrapsDirectoryPath);

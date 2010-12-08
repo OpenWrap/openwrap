@@ -220,8 +220,17 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="init-wrap-meta" xml:space="preserve">
     <value>Specifies that the target is a meta-package, aka a combination of other packages without build provider or project repository.</value>
   </data>
+  <data name="init-wrap-nosymlink" xml:space="preserve">
+    <value>Specifies if symlinks are to be used for anchoring. If synlinks are not in use, anchored packages will be copied in the correct folders instead.</value>
+  </data>
+  <data name="init-wrap-nosymlinks" xml:space="preserve">
+    <value>Specifies that OpenWrap should use file copies instead of symlinks, typically used for source-control systems that have issues with symlinks such as subversion.</value>
+  </data>
   <data name="init-wrap-projects" xml:space="preserve">
     <value>Specifies a semi-column-separated paths to msbuild files to update to use OpenWrap for assembly resolution.</value>
+  </data>
+  <data name="init-wrap-svn" xml:space="preserve">
+    <value>Configures the repository for use by svn (adds .svnignore files and deactivates symlinks usage).</value>
   </data>
   <data name="init-wrap-target" xml:space="preserve">
     <value>Specifies the target for which to initialize OpenWrap. Defaults to '.' for the current directory.</value>

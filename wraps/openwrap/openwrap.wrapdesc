@@ -3,4 +3,4 @@ depends: openfilesystem
 depends: openwrap content
 anchored: true
 build: msbuild;profile=net35
-version: 1.0.0.22463475
+version: 1.0.0.22349123

@@ -13,10 +13,14 @@ namespace OpenWrap.Repositories
     /// </summary>
     public class FolderRepository : ISupportCleaning, ISupportPublishing, ISupportAnchoring
     {
+        readonly bool _useSymLinks;
+        readonly bool _anchoringEnabled;
         IDirectory _rootCacheDirectory;
 
-        public FolderRepository(IDirectory packageBasePath)
+        public FolderRepository(IDirectory packageBasePath, FolderRepositoryOptions options = FolderRepositoryOptions.Default)
         {
+            _useSymLinks = (options & FolderRepositoryOptions.UseSymLinks) == FolderRepositoryOptions.UseSymLinks;
+            _anchoringEnabled = (options & FolderRepositoryOptions.AnchoringEnabled) == FolderRepositoryOptions.AnchoringEnabled;
             if (packageBasePath == null) throw new ArgumentNullException("packageBasePath");
 
             BasePath = packageBasePath;
@@ -27,7 +31,6 @@ namespace OpenWrap.Repositories
 
         }
 
-        public bool EnableAnchoring { get; set; }
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
         {
             return PackagesByName.FindAll(dependency);
@@ -109,7 +112,7 @@ namespace OpenWrap.Repositories
 
         public IEnumerable<PackageAnchoredResult> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor)
         {
-            if (!EnableAnchoring)
+            if (!_anchoringEnabled)
                 yield break;
             
             List<IPackageInfo> failed = new List<IPackageInfo>();
@@ -122,17 +125,28 @@ namespace OpenWrap.Repositories
                 var packageDirectory = Packages.First(x => x.Package == package).CacheDirectory;
                 if (anchoredDirectory.Exists)
                 {
-                    if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(packageDirectory))
-                        continue;
+                    if (_useSymLinks)
+                    {
+                        if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(packageDirectory))
+                            continue;
+                    }
+                    else
+                    {
+                        var anchorFile = anchoredDirectory.GetFile(".anchored");
+                        if (anchorFile.Exists)
+                        {
+                            var content = anchorFile.ReadString();
+                            if (content == packageDirectory.Name)
+                                continue;
+                        }
+                    }
                     bool success = true;
                     var temporaryDirectoryPath = anchoredDirectory.Parent.GetDirectory(anchoredDirectory.Name + ".old");
                     try
                     {
                         anchoredDirectory.MoveTo(temporaryDirectoryPath);
-                        
-                        var anchoredPath = anchoredDirectory.Path;
-                        packageDirectory.LinkTo(anchoredPath.FullPath);
 
+                        Anchor(packageDirectory, anchoredDirectory);
                     }
                     catch (Exception)
                     {
@@ -153,8 +167,20 @@ namespace OpenWrap.Repositories
                 }
                 else
                 {
-                    packageDirectory.LinkTo(anchoredDirectory.Path.FullPath);
+                    Anchor(packageDirectory, anchoredDirectory);
                 }
+            }
+        }
+
+        void Anchor(IDirectory packageDirectory, IDirectory anchoredDirectory)
+        {
+            var anchoredPath = anchoredDirectory.Path;
+            if (_useSymLinks)
+                packageDirectory.LinkTo(anchoredPath.FullPath);
+            else
+            {
+                packageDirectory.CopyTo(anchoredDirectory);
+                anchoredDirectory.GetFile(".anchored").WriteString(packageDirectory.Name);
             }
         }
 

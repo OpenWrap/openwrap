@@ -119,7 +119,20 @@ namespace package_descriptor_specs
         public void use_project_repository_should_be_true()
         {
             Descriptor.UseProjectRepository.ShouldBeTrue();
-
+        }
+    }
+    public class setting_symlinks : contexts.descriptor
+    {
+        public setting_symlinks()
+        {
+            given_descriptor();
+            Descriptor.UseSymLinks = false;
+            when_writing();
+        }
+        [Test]
+        public void symlinks_are_disabled()
+        {
+            should_have_content("use-symlinks: false");
         }
     }
     namespace contexts

@@ -19,19 +19,7 @@ namespace OpenWrap.Dependencies
         const int FILE_READ_RETRIES = 5;
         const int FILE_READ_RETRIES_WAIT = 20;
 
-
-        readonly IEnumerable<IDescriptorParser> _lineParsers = new List<IDescriptorParser>
-        {
-            new DependsParser(),
-            new DescriptionParser(),
-            new OverrideParser(),
-            new AnchorParser(),
-            new BuildParser(),
-
-            new UseProjectRepositoryParser(),
-            new VersionParser()
-        };
-
+        // TODO: Read-retry should be part of an extension method that can be reused for reading the index in indexed folder repositories.
         public PackageDescriptor Read(IFile filePath)
         {
             if (!filePath.Exists)
@@ -83,13 +71,12 @@ namespace OpenWrap.Dependencies
 
         public void Write(PackageDescriptor descriptor, Stream descriptorStream)
         {
-            var streamWriter = new StreamWriter(descriptorStream, Encoding.UTF8);
-            var lines = from parser in _lineParsers
-                        from parserLine in parser.Write(descriptor)
-                        select parserLine;
 
-            var content = lines.Join("\r\n");
-            streamWriter.Write(content);
+            var streamWriter = new StreamWriter(descriptorStream, Encoding.UTF8);
+            foreach(var line in descriptor)
+            {
+                streamWriter.Write(line.Name + ": " + line.Value + "\r\n");
+            }
             streamWriter.Flush();
         }
     }

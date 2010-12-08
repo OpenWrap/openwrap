@@ -201,6 +201,7 @@
     <Compile Include="Repositories\ExhaustiveResolver.cs" />
     <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="Repositories\AssemblyNameExtensions.cs" />
+    <Compile Include="Repositories\FolderRepositoryOptions.cs" />
     <Compile Include="Repositories\GacResolver.cs" />
     <Compile Include="Repositories\IndexedFolderRepository.cs" />
     <Compile Include="Repositories\InMemoryPackage.cs" />

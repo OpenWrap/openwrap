@@ -20,7 +20,7 @@ namespace init_wrap_specs
         public init_wrap_in_empty_dot_folder()
         {
             given_current_directory(@"c:\newpackage");
-            given_project_repository(new FolderRepository(Environment.CurrentDirectory.GetDirectory("wraps")));
+            given_project_repository(new FolderRepository(Environment.CurrentDirectory.GetDirectory("wraps"), FolderRepositoryOptions.AnchoringEnabled));
             when_executing_command(".");
             Environment.ProjectRepository.RefreshPackages();
         }

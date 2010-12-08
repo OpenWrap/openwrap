@@ -48,6 +48,9 @@ namespace OpenWrap.Commands.Wrap
         public bool Bazaar { get; set; }
 
         [CommandInput]
+        public bool NoSymLinks { get; set; }
+
+        [CommandInput]
         public string IgnoreFileName { get; set; }
 
         [CommandInput(Position = 0)]
@@ -88,7 +91,14 @@ namespace OpenWrap.Commands.Wrap
                 IgnoreFileName = ".hgignore";
             if (Bazaar)
                 IgnoreFileName = ".bzrignore";
+            if (Svn)
+            {
+                IgnoreFileName = ".svnignore";
+                NoSymLinks = true;
+            }
         }
+
+        protected bool Svn { get; set; }
 
         void AddOpenWrapDependency(PackageDescriptor packageDescriptor)
         {
@@ -105,9 +115,11 @@ namespace OpenWrap.Commands.Wrap
         {
             var packageManager = Services.Services.GetService<IPackageManager>();
 
-            var projectRepository = new FolderRepository(projectDirectory.GetDirectory("wraps"))
+            var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
+            if (projectDescriptor.UseSymLinks)
+                repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
+            var projectRepository = new FolderRepository(projectDirectory.GetDirectory("wraps"), repositoryOptions)
             {
-                    EnableAnchoring = true,
                     Name = "Project repository"
             };
             packageManager.AddProjectPackage(PackageRequest.Any("openwrap"),
@@ -192,6 +204,8 @@ namespace OpenWrap.Commands.Wrap
             }
 
             var packageDescriptor = new PackageDescriptor(){Name = packageName};
+            if (NoSymLinks)
+                packageDescriptor.UseSymLinks = false;
             if (Meta)
             {
                 packageDescriptor.BuildCommand = "$meta";
