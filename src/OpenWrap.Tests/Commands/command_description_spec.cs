@@ -120,6 +120,10 @@ namespace command_description_spec
     }
     public class MemoryCommandInput : ICommandInputDescriptor
     {
+        public MemoryCommandInput()
+        {
+            IsValueRequired = true;
+        }
         public bool IsRequired { get; set; }
 
         public bool IsValueRequired { get; set; }

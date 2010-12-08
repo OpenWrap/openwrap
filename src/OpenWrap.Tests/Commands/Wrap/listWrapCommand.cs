@@ -45,4 +45,26 @@ namespace listWrap_specs
                     .First().PackageName.ShouldBe("one-ring");
         }
     }
+    public class listing_packages_from_all_repositories : command_context<ListWrapCommand>
+    {
+        public listing_packages_from_all_repositories()
+        {
+            given_remote_repository("first");
+            given_remote_repository("second");
+            given_remote_package("first", "one-ring", "1.0.0");
+            given_remote_package("second", "ring-of-power", "1.0.0");
+
+            when_executing_command("ring", "-remote");
+        }
+
+        [Test]
+        public void packages_are_found_in_any_remote()
+        {
+            Results.OfType<PackageDescriptionOutput>()
+                    .ShouldHaveCountOf(2)
+                    .Check(x => x.ShouldHaveAtLeastOne(n => n.PackageName.Equals("one-ring")))
+                    .Check(x => x.ShouldHaveAtLeastOne(n => n.PackageName.Equals("ring-of-power")));
+        }
+    }
+
 }

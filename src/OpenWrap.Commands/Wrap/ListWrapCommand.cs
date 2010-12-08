@@ -40,7 +40,7 @@ namespace OpenWrap.Commands.Wrap
             var packageList = repoToList.SelectMany(x=>x.PackagesByName.NotNull());
             if (!string.IsNullOrEmpty(Query))
             {
-                var filter = Query.Wildcard();
+                var filter = Query.Wildcard(autoWrap: true);
                 packageList = packageList.Where(x => filter.IsMatch(x.Key));
             }
             return packageList

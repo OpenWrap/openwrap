@@ -8,6 +8,7 @@ namespace OpenWrap.Commands
         public ReflectionCommandInputDescriptor(PropertyInfo property)
         {
             Property = property;
+            IsValueRequired = true;
         }
 
         public bool IsRequired { get; set; }
@@ -31,7 +32,7 @@ namespace OpenWrap.Commands
                 {
                     return Property.PropertyType.CreateInstanceFrom(value as string);
                 }
-                if (Property.PropertyType.IsAssignableFrom(value.GetType()))
+                if (Property.PropertyType.IsAssignableFrom(typeof(T)))
                 {
                     return value;
                 }
@@ -44,7 +45,10 @@ namespace OpenWrap.Commands
 
         public void SetValue(object target, object value)
         {
-            Property.SetValue(target, value ?? "true", null);
+            Property.SetValue(target, value ?? 
+                (Property.PropertyType == typeof(bool) 
+                    ?"true"
+                    : null), null);
         }
 
         public PropertyInfo Property { get; private set; }
