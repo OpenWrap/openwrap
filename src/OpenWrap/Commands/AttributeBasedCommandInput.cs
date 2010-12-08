@@ -3,9 +3,17 @@ using System.Reflection;
 
 namespace OpenWrap.Commands
 {
-    public class CommandInputDescriptor : ICommandInputDescriptor
+    public class ReflectionCommandInputDescriptor : ICommandInputDescriptor
     {
+        public ReflectionCommandInputDescriptor(PropertyInfo property)
+        {
+            Property = property;
+        }
+
         public bool IsRequired { get; set; }
+
+        public bool IsValueRequired { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
 
@@ -39,7 +47,7 @@ namespace OpenWrap.Commands
             Property.SetValue(target, value ?? "true", null);
         }
 
-        public PropertyInfo Property { get; set; }
+        public PropertyInfo Property { get; private set; }
 
         public int? Position { get; set; }
     }

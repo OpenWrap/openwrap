@@ -8,6 +8,7 @@ namespace OpenWrap.Commands
         public CommandInputAttribute()
         {
             Position = -1;
+            IsValueRequired = true;
         }
         public bool IsRequired
         {
@@ -29,5 +30,7 @@ namespace OpenWrap.Commands
         {
             get; set;
         }
+
+        public bool IsValueRequired { get; set; }
     }
 }

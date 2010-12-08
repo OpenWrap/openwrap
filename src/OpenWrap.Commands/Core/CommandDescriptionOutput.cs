@@ -69,7 +69,12 @@ namespace OpenWrap.Commands.Core
 
         string CreateUnpositionedParameter(ICommandInputDescriptor command)
         {
-            return string.Format(!command.IsRequired ? "[-{0} <{1}>]" : "-{0} <{1}>", command.Name, command.Type.Name);
+
+            string format = command.IsValueRequired ? "<{1}>" : "[<{1}>]";
+            format = "-{0} " + format;
+            if (!command.IsRequired)
+                format = "[" + format + "]";
+            return string.Format(format, command.Name, command.Type.Name);
         }
 
         string CreatePositionedParameters(ICommandDescriptor command)
@@ -88,9 +93,18 @@ namespace OpenWrap.Commands.Core
 
         string CreatePositionedParameter(ICommandInputDescriptor x)
         {
-            return string.Format(!x.IsRequired ? "[[-{0}] <{1}>]" : "[-{0}] <{1}>", x.Name, x.Type.Name);
+            string format = string.Empty;
+            if (x.IsRequired && x.IsValueRequired)
+                format = "[-{0}] <{1}>";
+            else if (x.IsRequired)
+                format = "-{0} [<{1}>]";
+            else if (x.IsValueRequired)
+                format = "[[-{0}] <{1}>]";
+            else
+                format = "(-{0} [<{1}>] | <{1}>)";
+            return string.Format(format, x.Name, x.Type.Name);
         }
-        
+
         public string UsageLine { get; set; }
 
         public string Description { get; set; }

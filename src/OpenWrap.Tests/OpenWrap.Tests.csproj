@@ -85,6 +85,7 @@
     <Compile Include="Commands\command_description_spec.cs" />
     <Compile Include="Commands\command_documentation.cs" />
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
+    <Compile Include="Commands\Help\getHelpCommand.cs" />
     <Compile Include="Commands\Remote\addRemoteCommand.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />

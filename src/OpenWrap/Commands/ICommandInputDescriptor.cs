@@ -5,6 +5,7 @@ namespace OpenWrap.Commands
     public interface ICommandInputDescriptor
     {
         bool IsRequired { get; }
+        bool IsValueRequired { get; }
         string Name { get; }
         Type Type { get; }
         string Description { get; }

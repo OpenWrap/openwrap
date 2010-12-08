@@ -24,13 +24,13 @@ namespace OpenWrap.Commands
                       where inputAttrib != null
                       let values = inputAttrib ?? new CommandInputAttribute()
                       let inputName = values.Name ?? pi.Name
-                      select (ICommandInputDescriptor)new CommandInputDescriptor
+                      select (ICommandInputDescriptor)new ReflectionCommandInputDescriptor(pi)
                       {
                           Name = inputName,
                           IsRequired = values.IsRequired,
                           Description = values.DisplayName ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey+"-"+inputName),
-                          Position = values.Position,
-                          Property = pi
+                          Position = values.Position == -1 ? (int?)null : values.Position,
+                          IsValueRequired = values.IsValueRequired
                       }).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
         }
 
