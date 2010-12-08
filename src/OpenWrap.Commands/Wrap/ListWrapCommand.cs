@@ -16,7 +16,7 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool System { get; set; }
 
-        [CommandInput]
+        [CommandInput(IsValueRequired = false)]
         public string Remote { get; set; }
 
         protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
