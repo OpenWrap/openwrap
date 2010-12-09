@@ -28,7 +28,7 @@ namespace OpenWrap.PackageManagement
             if (_success == false)
                 return new Warning("{0}: Package {1} could not be anchored.", _repository.Name, _package.Identifier);
             
-                return new Info("{0}: Package {0} anchored.", _repository.Name, _package.Identifier);
+                return new Info("{0}: Package {1} anchored.", _repository.Name, _package.Identifier);
         }
     }
 }

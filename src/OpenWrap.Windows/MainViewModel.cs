@@ -24,7 +24,7 @@ namespace OpenWrap.Windows
 
         NounSlice CreateNounSlice(IGrouping<string, ICommandDescriptor> x)
         {
-            if (x.Key.Equals("wrap", StringComparison.OrdinalIgnoreCase))
+            if (x.Key.EqualsNoCase("wrap"))
                 return new WrapSlice(x.Key, x.Select(y => new VerbSlice(y)));
             return new NounSlice(x.Key,x.Select(y=>new VerbSlice(y)));
         }

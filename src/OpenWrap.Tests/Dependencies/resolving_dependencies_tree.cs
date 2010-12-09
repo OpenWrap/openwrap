@@ -77,6 +77,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     .ShouldHaveCountOf(1)
                     .First().Packages.First().Source.ShouldBe(CurrentDirectoryRepository);
         }
+
     }
 
     public class dependency_leveling_across_dependencies : dependency_manager_context
@@ -99,6 +100,12 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "rings-of-power")
                     .ShouldHaveCountOf(1)
                     .First().Packages.First().Version.ShouldBe("1.0.0".ToVersion());
+        }
+
+        [Test]
+        public void resolve_is_successful()
+        {
+            Resolve.IsSuccess.ShouldBeTrue();
         }
     }
     public class resolving_unavailable_sub_dependencies : dependency_manager_context
@@ -229,8 +236,8 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         [Test]
         public void conflicting_packages_are_present()
         {
-            Resolve.ConflictingPackages.ShouldHaveCountOf(1);
-            Resolve.ConflictingPackages.First()
+            Resolve.DiscardedPackages.ShouldHaveCountOf(1);
+            Resolve.DiscardedPackages.First()
                     .Check(_ => _.Identifier.Name.ShouldBe("sauron"))
                     .Check(_ => _.DependencyStacks.ShouldHaveCountOf(2));
         }

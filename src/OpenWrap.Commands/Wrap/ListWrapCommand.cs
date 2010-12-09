@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenWrap.Commands.Remote;
+using OpenWrap.Configuration;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
 
@@ -29,13 +31,17 @@ namespace OpenWrap.Commands.Wrap
                 _remoteSet = true;
             }
         }
-
         protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {
             var repoToList = GetRepositoryToList();
-            if (repoToList == null)
-                yield return new Error("Selected repository wasn't found. If you used -remote, make sure the remote repository exists.");
+            if (_remoteSet && repoToList.Empty())
+            {
+                yield return new Error("Remote repository was not found.");
+                foreach(var m in HintRemoteRepositories())
+                    yield return m;
+                yield break;
+            }
 
             foreach (var m in PackageManager.ListPackages(repoToList, Query))
                 yield return ToOutput(m);
@@ -45,9 +51,9 @@ namespace OpenWrap.Commands.Wrap
         {
             if (System)
                 return new[] { Environment.SystemRepository };
-            else if (_remoteSet && string.IsNullOrEmpty(Remote))
+            if (_remoteSet && string.IsNullOrEmpty(Remote))
                 return Environment.RemoteRepositories;
-            else if (_remoteSet)
+            if (_remoteSet)
                 return new[] { Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(Remote)) };
             return new[] { Environment.ProjectRepository };
         }

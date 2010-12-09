@@ -67,7 +67,7 @@ namespace OpenWrap.Repositories.NuGet
                         var segments = entry.Name.Split('/');
                         if (segments.Length == 1 && System.IO.Path.GetExtension(entry.Name).EqualsNoCase(".nuspec"))
                             yield return ConvertSpecification(inputZip, entry);
-                        else if (segments.Length >= 2 && segments[0].Equals("lib", StringComparison.OrdinalIgnoreCase))
+                        else if (segments.Length >= 2 && segments[0].EqualsNoCase("lib"))
                             if ((content = ConvertAssembly(segments, inputZip, entry)) != null)
                                 yield return content;
                     }
@@ -105,7 +105,7 @@ namespace OpenWrap.Repositories.NuGet
             var nuPackProfile = FrameworkProfiles.Keys.FirstOrDefault(x => identifier.StartsWith(x, StringComparison.OrdinalIgnoreCase));
 
             var versionString = nuPackProfile == null ? identifier : identifier.Substring(nuPackProfile.Length);
-            var nuPackVersion = FrameworkVersions.Keys.FirstOrDefault(x => versionString.Equals(x, StringComparison.OrdinalIgnoreCase));
+            var nuPackVersion = FrameworkVersions.Keys.FirstOrDefault(x => versionString.EqualsNoCase(x));
 
             if (nuPackProfile != null)
                 nuPackProfile = FrameworkProfiles[nuPackProfile];

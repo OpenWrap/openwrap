@@ -12,9 +12,4 @@ namespace OpenWrap.Dependencies
         bool UseProjectRepository { get; set; }
         ICollection<PackageNameOverride> Overrides { get; }
     }
-    public interface IPackageDescriptorLine
-    {
-        string Name { get; }
-        string Value { get; }
-    }
 }

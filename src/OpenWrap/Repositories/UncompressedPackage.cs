@@ -89,7 +89,7 @@ namespace OpenWrap.Repositories
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
             var exporter =
-                _exporters.FirstOrDefault(x => x.ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase));
+                _exporters.FirstOrDefault(x => x.ExportName.EqualsNoCase(exportName));
 
             var directories = BaseDirectory.Directories();
             if (exporter != null)

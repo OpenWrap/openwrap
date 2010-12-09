@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Commands;
@@ -299,30 +300,40 @@ namespace OpenWrap.PackageManagement
             var publishingRepos = destinationRepositories.NotNull().OfType<ISupportPublishing>().ToList();
             foreach (var foundPackage in resolvedPackages.SuccessfulPackages)
             {
-                foreach (var repository in publishingRepos)
+                foreach (var destinationRepository in publishingRepos)
                 {
-                    var existingUpToDateVersion = repository.PackagesByName.Contains(foundPackage.Identifier.Name)
-                                                          ? repository.PackagesByName[foundPackage.Identifier.Name]
-                                                                    .Where(x => foundPackage.Identifier.Version != null && x.Version >= foundPackage.Identifier.Version)
-                                                                    .OrderByDescending(x => x.Version)
-                                                                    .FirstOrDefault()
-                                                          : null;
+                    var existingUpToDateVersion = GetExistingPackage(destinationRepository, foundPackage, x => x >= foundPackage.Identifier.Version);
                     if (existingUpToDateVersion == null)
                     {
                         var sourcePackage = GetBestSourcePackage(sourceRepositories, foundPackage.Packages);
 
-                        _deployer.DeployDependency(sourcePackage, repository);
-                        yield return new PackagePublishedResult(sourcePackage, repository);
+                        _deployer.DeployDependency(sourcePackage, destinationRepository);
+                        var existingVersion = GetExistingPackage(destinationRepository, foundPackage, x => x < foundPackage.Identifier.Version);
+                        
+                        yield return existingVersion == null
+                            ? new PackageAddedResult(sourcePackage, destinationRepository)
+                            : new PackageUpdatedResult(existingVersion, sourcePackage, destinationRepository);
                     }
                     else
                     {
-                        yield return new PackageUpToDateResult(existingUpToDateVersion, repository);
+                        yield return new PackageUpToDateResult(existingUpToDateVersion, destinationRepository);
                     }
                 }
             }
             foreach (var repo in publishingRepos)
                 repo.PublishCompleted();
         }
+
+        IPackageInfo GetExistingPackage(ISupportPublishing destinationRepository, ResolvedPackage foundPackage, Func<Version, bool> versionSelector)
+        {
+            return destinationRepository.PackagesByName.Contains(foundPackage.Identifier.Name)
+                           ? destinationRepository.PackagesByName[foundPackage.Identifier.Name]
+                                     .Where(x => foundPackage.Identifier.Version != null && versionSelector(x.Version))
+                                     .OrderByDescending(x => x.Version)
+                                     .FirstOrDefault()
+                           : null;
+        }
+
         public IEnumerable<PackageOperationResult> ListPackages(IEnumerable<IPackageRepository> repositories, string query = null)
         {
             var packages = repositories.SelectMany(x => x.PackagesByName.NotNull());
@@ -383,7 +394,7 @@ namespace OpenWrap.PackageManagement
 
         IEnumerable<PackageOperationResult> ReturnError(DependencyResolutionResult resolvedPackages)
         {
-            return resolvedPackages.ConflictingPackages.Select(PackageConflict)
+            return resolvedPackages.DiscardedPackages.Select(PackageConflict)
                     .Concat(resolvedPackages.MissingPackages.Select(PackageMissing));
         }
 

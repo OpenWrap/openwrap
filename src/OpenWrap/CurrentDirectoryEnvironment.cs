@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
@@ -40,6 +41,7 @@ namespace OpenWrap
 
         public void Initialize()
         {
+            
             FileSystem = LocalFileSystem.Instance;
             DescriptorFile = CurrentDirectory
                     .AncestorsAndSelf()
@@ -59,12 +61,7 @@ namespace OpenWrap
 
             ConfigurationDirectory = FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory);
 
-            RemoteRepositories = Services.Services.GetService<IConfigurationManager>().LoadRemoteRepositories()
-                    .OrderBy(x => x.Value.Priority)
-                    .Select(x => CreateRemoteRepository(x.Key, x.Value.Href))
-                    .Where(x => x != null)
-                    .ToList();
-
+            RemoteRepositories = new RemoteRepositoryManager(FileSystem, Services.Services.GetService<IConfigurationManager>()).GetInstances().ToList();
             ExecutionEnvironment = new ExecutionEnvironment
             {
                 Platform = IntPtr.Size == 4 ? "x86" : "x64",
@@ -90,30 +87,62 @@ namespace OpenWrap
             }
         }
 
-        IPackageRepository CreateRemoteRepository(string repositoryName, Uri repositoryHref)
+    }
+
+    public interface IRemoteRepositoryManager
+    {
+        IPackageRepository CreateRepositoryInstance(string repositoryName, Uri repositoryHref);
+        IEnumerable<IPackageRepository> GetInstances();
+    }
+
+    public class RemoteRepositoryManager : IRemoteRepositoryManager
+    {
+        readonly IFileSystem _fileSystem;
+        IConfigurationManager _configurationManager;
+
+        public RemoteRepositoryManager()
+            : this(Services.Services.GetService<IFileSystem>(), Services.Services.GetService<IConfigurationManager>())
+        {
+            
+        }
+        public RemoteRepositoryManager(IFileSystem fileSystem, IConfigurationManager configurationManager)
+        {
+            _fileSystem = fileSystem;
+            _configurationManager = configurationManager;
+        }
+
+        public IPackageRepository CreateRepositoryInstance(string repositoryName, Uri repositoryHref)
         {
             try
             {
-                if (repositoryHref.Scheme.Equals("nuget", StringComparison.OrdinalIgnoreCase)
-                    || repositoryHref.Scheme.Equals("nupack", StringComparison.OrdinalIgnoreCase))
+                if (repositoryHref.Scheme.EqualsNoCase("nuget")
+                    || repositoryHref.Scheme.EqualsNoCase("nupack"))
                 {
                     var builder = new UriBuilder(repositoryHref);
                     builder.Scheme = "http";
                     return new HttpRepository(
-                            FileSystem,
+                            _fileSystem,
                             repositoryName,
                             new NuGetFeedNavigator(builder.Uri));
                 }
-                if (repositoryHref.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
-                    repositoryHref.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
-                    return new HttpRepository(FileSystem, repositoryName, new HttpRepositoryNavigator(repositoryHref));
-                if (repositoryHref.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
-                    return new IndexedFolderRepository(repositoryName, FileSystem.GetDirectory(repositoryHref.LocalPath));
+                if (repositoryHref.Scheme.EqualsNoCase("http") ||
+                    repositoryHref.Scheme.EqualsNoCase("https"))
+                    return new HttpRepository(_fileSystem, repositoryName, new HttpRepositoryNavigator(repositoryHref));
+                if (repositoryHref.Scheme.EqualsNoCase("file"))
+                    return new IndexedFolderRepository(repositoryName, _fileSystem.GetDirectory(repositoryHref.LocalPath));
             }
             catch
             {
             }
             return null;
+        }
+
+        public IEnumerable<IPackageRepository> GetInstances()
+        {
+            return _configurationManager.LoadRemoteRepositories()
+                    .OrderBy(x => x.Value.Priority)
+                    .Select(x => CreateRepositoryInstance(x.Key, x.Value.Href))
+                    .Where(x => x != null);
         }
     }
 }

@@ -60,7 +60,7 @@ namespace OpenWrap.Dependencies
                     yield break;
                 yield return version;
                 for (int i = 0; i < (args.Length - 2) / 3; i++)
-                    if (args[2 + (i * 3)].Equals("and", StringComparison.OrdinalIgnoreCase))
+                    if (args[2 + (i * 3)].EqualsNoCase("and"))
                         if ((version = GetVersionVertice(args, 3 + (i * 3))) != null)
                             yield return version;
                         else

@@ -80,33 +80,9 @@ namespace OpenWrap.Commands.Wrap
         protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
             return packageOperationResult is PackageMissingResult
-                            ? new Warning("Package {0} not found in repositories.", ((PackageMissingResult)packageOperationResult).Package)
+                            ? new Warning("Package {0} not found in repositories.", ((PackageMissingResult)packageOperationResult).Package.Identifier)
                             : base.ToOutput(packageOperationResult);
         }
-
-        //IEnumerable<ICommandOutput> FailedUpdate(DependencyResolutionResult resolvedPackages, IEnumerable<IPackageRepository> sourceRepos)
-        //{
-        //    // TODO: Update implementation to use the new result class
-        //    foreach(var notFoundPackage in resolvedPackages.SuccessfulPackages.Where(x=>x.Packages.Empty()))
-        //        yield return new DependenciesNotFoundInRepositories(notFoundPackage.DependencyStacks, sourceRepos);
-
-        //    var conflictingDependencies = resolvedPackages.SuccessfulPackages
-        //            .Where(x => x.Packages.Any())
-        //            .GroupBy(x => x.Identifier.Name, StringComparer.OrdinalIgnoreCase)
-        //            .Where(x => x.Count() > 1);
-
-        //    if (conflictingDependencies.Count() > 0)
-        //        yield return new DependenciesConflictMessage(conflictingDependencies.ToList());
-        //}
-
-        //GenericMessage PackageNotFoundInRemote(DependencyResolutionFailedResult m)
-        //{
-        //    return new GenericMessage("Package '{0}' doesn't exist in any remote repository.", m.Result.SuccessfulPackages.First().Identifier.Name)
-        //    {
-        //        Type = CommandResultType.Warning
-        //    };
-        //}
-
     }
 
     public class DependenciesNotFoundInRepositories : Warning

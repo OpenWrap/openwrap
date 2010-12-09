@@ -18,7 +18,7 @@ namespace OpenWrap.Repositories
 
         public bool CanProcessExport(string exportName)
         {
-            return ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase);
+            return ExportName.EqualsNoCase(exportName);
         }
 
         // TODO: Make sure assemblies already loaded are loaded from normal reflection context

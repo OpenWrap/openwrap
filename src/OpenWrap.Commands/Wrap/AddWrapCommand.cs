@@ -21,6 +21,7 @@ namespace OpenWrap.Commands.Wrap
         bool? _project;
 
         bool? _system;
+        bool _packageNotFound;
 
         [CommandInput]
         public bool Project
@@ -120,7 +121,6 @@ namespace OpenWrap.Commands.Wrap
             yield return VeryfyWrapRepository();
 
             var sourceRepositories = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }.Concat(Environment.RemoteRepositories).NotNull();
-            bool succeeded = false;
             if (Project && System)
             {
                 var sysToAdd = new List<PackageIdentifier>();
@@ -128,13 +128,7 @@ namespace OpenWrap.Commands.Wrap
                 {
                     
                     yield return ToOutput(m);
-                    ParseSuccess(m,
-                                 x =>
-                                 {
-                                     succeeded = true;
-                                     sysToAdd.Add(x);
-                                 },
-                                 () => { });
+                    ParseSuccess(m, sysToAdd.Add);
                 }
                 foreach (var identifier in sysToAdd)
                     foreach (var m in PackageManager.AddSystemPackage(PackageRequest.Exact(identifier.Name, identifier.Version), sourceRepositories, Environment.SystemRepository))
@@ -145,7 +139,6 @@ namespace OpenWrap.Commands.Wrap
                 foreach (var m in PackageManager.AddProjectPackage(this.PackageRequest, sourceRepositories, Environment.Descriptor, Environment.ProjectRepository, AddOptions))
                 {
                     yield return ToOutput(m);
-                    ParseSuccess(m, x => { succeeded = true; }, () => { });
                 }
             }
             else if (System)
@@ -153,29 +146,35 @@ namespace OpenWrap.Commands.Wrap
                 foreach (var m in PackageManager.AddSystemPackage(PackageRequest, sourceRepositories, Environment.SystemRepository, AddOptions))
                 {
                     yield return ToOutput(m);
-                    ParseSuccess(m, x => { succeeded = true; }, () => { });
-
                 }
             }
 
-            if (!succeeded)
+            if (_packageNotFound)
             {
-                yield return new Info("Did you mean one of the following?", Name);
+                yield return new Info("Did you mean one of the following package?", Name);
                 foreach (var m in PackageManager.ListPackages(sourceRepositories, Name))
                     yield return ToOutput(m);
             }
-            else if (ShouldUpdateDescriptor)
+            if (ShouldUpdateDescriptor)
                 TrySaveDescriptorFile();
         }
-
-        void ParseSuccess(PackageOperationResult m, Action<PackageIdentifier> onSuccess, Action onFailure)
+        protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
-            var id = m is PackageCopiedResult ? ((PackageCopiedResult)m).Package.Identifier : null;
+            if (packageOperationResult is PackageMissingResult)
+                _packageNotFound = true;
+            return base.ToOutput(packageOperationResult);
+        }
+
+        void ParseSuccess(PackageOperationResult m, Action<PackageIdentifier> onSuccess, Action onFailure = null)
+        {
+            var id = m is PackageUpdatedResult 
+                ? ((PackageUpdatedResult)m).Package.Identifier
+                : (m is PackageAddedResult ? ((PackageAddedResult)m).Package.Identifier : null);
             if (m.Success && id != null)
                 onSuccess(id);
             else if (m.Success)
                 return;
-            else
+            else if (onFailure != null)
                 onFailure();
         }
 
@@ -207,7 +206,7 @@ namespace OpenWrap.Commands.Wrap
 
         ICommandOutput WrapFileToPackageDescriptor()
         {
-            if (SysPath.GetExtension(Name).Equals(".wrap", StringComparison.OrdinalIgnoreCase) && Environment.CurrentDirectory.GetFile(SysPath.GetFileName(Name)).Exists)
+            if (SysPath.GetExtension(Name).EqualsNoCase(".wrap") && Environment.CurrentDirectory.GetFile(SysPath.GetFileName(Name)).Exists)
             {
                 var originalName = Name;
                 Name = PackageNameUtility.GetName(SysPath.GetFileNameWithoutExtension(Name));

@@ -65,7 +65,7 @@ namespace OpenWrap.Repositories.NuGet
                 if (url != null && url.Type == "application/zip")
                     return url.Url;
 
-                return Links.Where(x => x.RelationshipType.Equals("enclosure", StringComparison.OrdinalIgnoreCase)).First().GetAbsoluteUri();
+                return Links.Where(x => x.RelationshipType.EqualsNoCase("enclosure")).First().GetAbsoluteUri();
             }
         }
         public List<string> Dependencies

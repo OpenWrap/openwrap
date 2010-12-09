@@ -147,7 +147,7 @@ namespace OpenWrap.Configuration
             var dictionaryParameterType = dictionaryInterface.GetGenericArguments()[1];
             var addMethod = dictionaryInterface.GetMethod("Add", new[] { typeof(string), dictionaryParameterType });
 
-            foreach (var section in parsedConfig.OfType<ConfigurationSection>().Where(x => x.Type.Equals(dictionaryParameterType.Name, StringComparison.OrdinalIgnoreCase)))
+            foreach (var section in parsedConfig.OfType<ConfigurationSection>().Where(x => x.Type.EqualsNoCase(dictionaryParameterType.Name)))
             {
                 try
                 {

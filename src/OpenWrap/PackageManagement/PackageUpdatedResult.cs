@@ -3,7 +3,7 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
 {
-    public class PackageUpdatedResult : PackagePublishedResult
+    public class PackageUpdatedResult : PackageAddedResult
     {
         public PackageUpdatedResult(IPackageInfo previousPackage, IPackageInfo package, ISupportPublishing repository)
                 : base(package, repository)

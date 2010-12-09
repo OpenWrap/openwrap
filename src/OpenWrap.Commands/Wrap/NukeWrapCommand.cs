@@ -6,9 +6,9 @@ using OpenWrap.Repositories;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Noun = "wrap", Verb = "nuke", Description = "Removes a wrap from a remote repository index.")]
-    public class NukeWrapCommand : AbstractCommand
+    public class NukeWrapCommand : WrapCommand
     {
-        [CommandInput(IsRequired = true, Position = 0)]
+        [CommandInput(IsRequired = true, Position = 0, IsValueRequired = false)]
         public string Remote { get; set; }
 
         [CommandInput(IsRequired = true, Position = 1)]
@@ -23,11 +23,13 @@ namespace OpenWrap.Commands.Wrap
         public override IEnumerable<ICommandOutput> Execute()
         {
             IPackageRepository repo = Environment.RemoteRepositories
-                                  .FirstOrDefault(x => x.Name.Equals(Remote,
-                                                                     StringComparison.OrdinalIgnoreCase));
+                                  .FirstOrDefault(x => x.Name.EqualsNoCase(Remote));
             if (repo == null)
+            {
                 yield return new Errors.UnknownRemoteRepository(Remote);
-
+                foreach (var m in HintRemoteRepositories()) yield return m;
+                yield break;
+            }
             var nukingRepo = repo as ISupportNuking;
             if (nukingRepo == null)
             {

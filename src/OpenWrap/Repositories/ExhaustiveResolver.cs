@@ -43,15 +43,18 @@ namespace OpenWrap.Repositories
 
         DependencyResolutionResult Result(PackageSelectionContext packageSelectionContext, IEnumerable<IPackageRepository> repositoriesToQuery, IEnumerable<IGrouping<PackageDependency, CallStack>> notFound)
         {
-            var success = from compatible in packageSelectionContext.CompatiblePackageVersions
-                          let id = compatible.Key
-                          let packages = from repo in repositoriesToQuery
-                                         from package in repo.FindAll(ToDependency(id))
-                                         select package
-                          select new ResolvedPackage(id, packages.ToList(), compatible.Value.Successful);
+            var success = (from compatible in packageSelectionContext.CompatiblePackageVersions
+                            let id = compatible.Key
+                            let packages = from repo in repositoriesToQuery
+                                            from package in repo.FindAll(ToDependency(id))
+                                            select package
+                            select new ResolvedPackage(id, packages.ToList(), compatible.Value.Successful))
+                            .ToList();
             var missing = from descriptor in notFound
+                          
                           select new ResolvedPackage(new PackageIdentifier(descriptor.Key.Name), Enumerable.Empty<IPackageInfo>(), descriptor.ToList());
             var conflicting = from incompat in packageSelectionContext.IncompatiblePackageVersions.GroupBy(x => x.Key, x => x.Value)
+                              
                               select new ResolvedPackage(incompat.Key, Enumerable.Empty<IPackageInfo>(), incompat.SelectMany(x => x.Failed.Concat(x.Successful)));
 
             return new DependencyResolutionResult(success, conflicting, missing);

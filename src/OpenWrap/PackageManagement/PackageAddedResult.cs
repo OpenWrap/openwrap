@@ -4,9 +4,9 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
 {
-    public class PackagePublishedResult : PackageOperationResult
+    public class PackageAddedResult : PackageOperationResult
     {
-        public PackagePublishedResult(IPackageInfo package, ISupportPublishing repository)
+        public PackageAddedResult(IPackageInfo package, ISupportPublishing repository)
         {
             Package = package;
             Repository = repository;
@@ -22,7 +22,7 @@ namespace OpenWrap.PackageManagement
 
         public override ICommandOutput ToOutput()
         {
-            return new Info("{0}: {1} published.", Repository.Name, Package.Identifier);
+            return new Info("{0}: {1} added.", Repository.Name, Package.Identifier);
         }
     }
 }
