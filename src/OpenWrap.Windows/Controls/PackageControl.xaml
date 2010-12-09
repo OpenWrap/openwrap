@@ -7,5 +7,7 @@
              d:DesignHeight="100" d:DesignWidth="200">
     <StackPanel Orientation="Horizontal">
         <Label Content="{Binding Name}" />
+        <Label Content="{Binding Version}" />
+        <Label Content="{Binding Description}" />
     </StackPanel>
 </UserControl>

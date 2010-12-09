@@ -1,5 +1,4 @@
 ﻿using System;
-using OpenWrap.Repositories;
 using OpenWrap.Windows.Framework;
 
 namespace OpenWrap.Windows
