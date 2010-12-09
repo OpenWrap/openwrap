@@ -16,7 +16,7 @@ namespace OpenWrap.Commands.Wrap
     public class InitWrapCommand : AbstractCommand
     {
         const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
-        const string OPENWRAP_BUILD = @"..\..\wraps\openwrap\build\OpenWrap.CSharp.targets";
+        const string OPENWRAP_BUILD = @"wraps\openwrap\build\OpenWrap.CSharp.targets";
         bool? _allProjects;
         IEnumerable<IFile> _projectsToPatch;
 
@@ -151,12 +151,28 @@ namespace OpenWrap.Commands.Wrap
                 else
                 {
                     // TODO: Detect path of openwrap directory and generate correct relative path from there
-                    csharpTarget.Attributes["Project"].Value = OPENWRAP_BUILD;
+                    csharpTarget.Attributes["Project"].Value = GetOpenWrapPath(project.Parent, Environment.DescriptorFile.Parent);
                     using (Stream projectFileStream = project.OpenWrite())
                         xmlDoc.Save(projectFileStream);
                     yield return new GenericMessage(string.Format("Project '{0}' updated to use OpenWrap.", project.Path.FullPath));
                 }
             }
+        }
+
+        string GetOpenWrapPath(IDirectory projectPath, IDirectory wrapPath)
+        {
+            int deepness = 1;
+            
+            for (var current = projectPath; 
+                (current = current.Parent) != null;
+                deepness++)
+            {
+                if (current.Path == wrapPath.Path)
+                    return Enumerable.Repeat("..", deepness).Join("\\")
+                           + "\\"
+                           + OPENWRAP_BUILD;
+            }
+            throw new InvalidOperationException("Could not find a descriptor.");
         }
 
         IEnumerable<ICommandOutput> SetupDirectoriesAndDescriptor()
