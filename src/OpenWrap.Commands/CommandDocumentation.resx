@@ -167,7 +167,7 @@ Note that the NuPack support is only provided for backward compatibility with le
     <value>Sets the name of the package to create. If not present, the name specified in the descriptor is used.</value>
   </data>
   <data name="build-wrap-path" xml:space="preserve">
-    <value>Sets the location in which to build the pacakge. Defaults to the current directory.</value>
+    <value>Sets the location in which to build the package. Defaults to the current directory.</value>
   </data>
   <data name="build-wrap-quiet" xml:space="preserve">
     <value>Specifies that the builder output should not be displayed.</value>
@@ -184,14 +184,14 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="clean-wrap-system" xml:space="preserve">
     <value>Limits the cleaning to the system repository.</value>
   </data>
-  <data name="convert-nupack" xml:space="preserve">
-    <value>Converts a NuPack legacy package into an OpenWrap pacakge.</value>
+  <data name="convert-nuget" xml:space="preserve">
+    <value>Converts a NuPack legacy package into an OpenWrap package.</value>
   </data>
-  <data name="convert-nupack-destination" xml:space="preserve">
+  <data name="convert-nuget-destination" xml:space="preserve">
     <value>Specifies the file or directory in which to produce the OpenWrap package.</value>
   </data>
-  <data name="convert-nupack-path" xml:space="preserve">
-    <value>Specifies the path to the NuPack pacakge to convert.</value>
+  <data name="convert-nuget-path" xml:space="preserve">
+    <value>Specifies the path to the NuPack package to convert.</value>
   </data>
   <data name="get-help" xml:space="preserve">
     <value>Provides documentation for the commands available in the current OpenWrap session.</value>
@@ -273,6 +273,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   </data>
   <data name="remove-wrap" xml:space="preserve">
     <value>Removes a package from local repositories.</value>
+  </data>
+  <data name="remove-wrap-clean" xml:space="preserve">
+    <value>Specifies the repository should remove packages not in use once the package has been removed.</value>
   </data>
   <data name="remove-wrap-last" xml:space="preserve">
     <value>Specifies that the last version of the package is to be removed.</value>

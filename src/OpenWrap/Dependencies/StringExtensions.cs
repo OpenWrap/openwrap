@@ -11,7 +11,8 @@ namespace OpenWrap.Dependencies
         public static string[] GetUnfoldedLines(this string content)
         {
             content = _foldableLines.Replace(content, " ");
-            return content.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+            var linesToProcess = content.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            return linesToProcess
                     .Select(x => x.Trim())
                     .Where(x => x != string.Empty)
                     .ToArray();

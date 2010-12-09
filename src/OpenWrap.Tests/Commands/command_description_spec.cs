@@ -106,6 +106,11 @@ namespace command_description_spec
         public MemoryCommandDescriptor()
         {
             AllInputs = new List<ICommandInputDescriptor>();
+        }
+
+        public MemoryCommandDescriptor(IEnumerable<ICommandInputDescriptor> inputs)
+        {
+            AllInputs = new List<ICommandInputDescriptor>(inputs);
 
         }
         public ICommand Create()
@@ -115,7 +120,14 @@ namespace command_description_spec
     }
     public class MemoryCommandInput : ICommandInputDescriptor
     {
+        public MemoryCommandInput()
+        {
+            IsValueRequired = true;
+        }
         public bool IsRequired { get; set; }
+
+        public bool IsValueRequired { get; set; }
+
         public string Name { get; set; }
         public string Description { get; set; }
         public int? Position { get; set; }

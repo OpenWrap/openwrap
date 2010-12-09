@@ -85,6 +85,7 @@
     <Compile Include="Commands\command_description_spec.cs" />
     <Compile Include="Commands\command_documentation.cs" />
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
+    <Compile Include="Commands\Help\getHelpCommand.cs" />
     <Compile Include="Commands\Remote\addRemoteCommand.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
@@ -112,9 +113,11 @@
     <Compile Include="Dependencies\nuked_package_resolution.cs" />
     <Compile Include="Dependencies\OverrideParser_Specification.cs" />
     <Compile Include="Dependencies\PackageDependency_specs.cs" />
+    <Compile Include="Dependencies\package_descriptor_specs.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
     <Compile Include="Dependencies\DescriptionParserTests.cs" />
+    <Compile Include="Dependencies\version_vertices_specs.cs" />
     <Compile Include="Extensions\CamelToSpacedName.cs" />
     <Compile Include="NonSeekableMemoryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -170,10 +173,11 @@
     <EmbeddedResource Include="Repositories\TestFiles.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>TestFiles.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Repositories\TestPackage.nupkg" />
+    <EmbeddedResource Include="Repositories\TestPackageOld.nupkg" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="IO\" />

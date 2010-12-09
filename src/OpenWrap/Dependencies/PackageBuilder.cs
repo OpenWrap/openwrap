@@ -33,11 +33,11 @@ namespace OpenWrap.Dependencies
         static ZipEntry GetZipEntry(PackageContent contentFile)
         {
             if (contentFile.RelativePath == ".")
-                return new ZipEntry(Path.GetFileName(contentFile.FileName));
+                return new ZipEntry(System.IO.Path.GetFileName(contentFile.FileName));
             var target = contentFile.RelativePath;
             if (target.Last() != '/')
                 target += '/';
-            var fileEntry = new ZipEntry(Path.Combine(target, contentFile.FileName));
+            var fileEntry = new ZipEntry(System.IO.Path.Combine(target, contentFile.FileName));
             if (contentFile.Size != null)
                 fileEntry.Size = contentFile.Size.Value;
             return fileEntry;
@@ -80,13 +80,5 @@ namespace OpenWrap.Dependencies
             NewFromFiles(wrapFile, content);
             return wrapFile;
         }
-    }
-    public class PackageContent
-    {
-        public string RelativePath { get; set; }
-        public string FileName { get; set; }
-        public Func<Stream> Stream { get;set; }
-
-        public long? Size { get; set; }
     }
 }

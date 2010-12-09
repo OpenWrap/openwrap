@@ -127,7 +127,7 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void warning_is_issued_about_descriptor_not_updated()
         {
-            Results.OfType<Warning>()
+            Results.Where(x=>x.Type == CommandResultType.Warning)
                     .ShouldHaveCountOf(1);
         }
     }

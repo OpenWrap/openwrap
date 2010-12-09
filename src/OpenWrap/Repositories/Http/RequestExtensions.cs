@@ -36,7 +36,7 @@ namespace OpenWrap.Repositories.Http
                                let link = (from link in wrapList.Elements("link")
                                            let relAttribute = link.Attribute("rel")
                                            let hrefAttribute = link.Attribute("href")
-                                           where hrefAttribute != null && relAttribute != null && relAttribute.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
+                                           where hrefAttribute != null && relAttribute != null && relAttribute.Value.EqualsNoCase("package")
                                            select hrefAttribute).FirstOrDefault()
                                let baseUri = !string.IsNullOrEmpty(xmlDocument.BaseUri) ? new Uri(xmlDocument.BaseUri, UriKind.Absolute) : null
                                let absoluteLink = baseUri == null ? new Uri(link.Value, UriKind.RelativeOrAbsolute) : new Uri(baseUri, new Uri(link.Value, UriKind.RelativeOrAbsolute))

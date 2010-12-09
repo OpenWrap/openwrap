@@ -67,7 +67,7 @@ namespace OpenWrap.Tests.Repositories {
         ///  &lt;subtitle type=&quot;text&quot;&gt;ASP.NET package feed&lt;/subtitle&gt;
         ///  &lt;id&gt;uuid:e25c6f6c-6108-4b8b-b4ab-5b23af6ea5d7;id=1282&lt;/id&gt;
         ///  &lt;rights type=&quot;text&quot;&gt;Copyright 2010&lt;/rights&gt;
-        ///  &lt;updated&gt;2010-10-09T15:53:34Z&lt;/updated&gt;
+        ///  &lt;updated&gt;2010-10-11T07:08:57Z&lt;/updated&gt;
         ///  &lt;author&gt;
         ///    &lt;name&gt;Demo&lt;/name&gt;
         ///    &lt;uri&gt;http://www.demofeed.com&lt;/uri&gt;
@@ -95,9 +95,9 @@ namespace OpenWrap.Tests.Repositories {
             }
         }
         
-        internal static byte[] TestPackage {
+        internal static byte[] TestPackageOld {
             get {
-                object obj = ResourceManager.GetObject("TestPackage", resourceCulture);
+                object obj = ResourceManager.GetObject("TestPackageOld", resourceCulture);
                 return ((byte[])(obj));
             }
         }

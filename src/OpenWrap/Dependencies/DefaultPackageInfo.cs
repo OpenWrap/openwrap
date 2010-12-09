@@ -10,6 +10,8 @@ namespace OpenWrap.Dependencies
         readonly string _packageName;
         readonly Version _packageVersion;
 
+        public PackageIdentifier Identifier { get; private set; }
+
         public ICollection<PackageDependency> Dependencies
         {
             get { return _descriptor.Dependencies; }
@@ -43,9 +45,9 @@ namespace OpenWrap.Dependencies
             get { return _descriptor.FullName; }
         }
 
-        public DateTimeOffset CreationTime
+        public DateTimeOffset Created
         {
-            get { return _descriptor.CreationTime; }
+            get { return _descriptor.Created; }
         }
 
         public bool Anchored
@@ -68,6 +70,7 @@ namespace OpenWrap.Dependencies
                 ?? descriptor.Version 
                 ?? PackageNameUtility.GetVersion(packageFileName);
             _packageName = PackageNameUtility.GetName(packageFileName);
+            Identifier = new PackageIdentifier(Name, Version);
         }
     }
 }

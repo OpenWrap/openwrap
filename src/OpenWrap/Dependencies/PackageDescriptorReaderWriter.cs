@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using OpenFileSystem.IO;
 using OpenWrap.Dependencies.Parsers;
@@ -58,18 +60,27 @@ namespace OpenWrap.Dependencies
             }
             throw ioException;
         }
+
+        static Regex _lineParser = new Regex(@"^\s*(?<fieldname>[0-9a-zA-Z\-\.]*)\s*:\s*(?<fieldvalue>.*)\s*$", RegexOptions.Compiled);
+
         public PackageDescriptor Read(Stream content)
         {
             var stringReader = new StreamReader(content, true);
             var lines = stringReader.ReadToEnd().GetUnfoldedLines();
 
-            var descriptor = new PackageDescriptor();
-            foreach (var line in lines)
-                foreach (var parser in _lineParsers)
-                    parser.Parse(line, descriptor);
-
-            return descriptor;
+            return new PackageDescriptor(lines.Select(ParseLine));
         }
+
+        IPackageDescriptorLine ParseLine(string line)
+        {
+            var match = _lineParser.Match(line);
+            return !match.Success
+                           ? null
+                           : new GenericDescriptorLine(
+                                     match.Groups["fieldname"].Value,
+                                     match.Groups["fieldvalue"].Value);
+        }
+
         public void Write(PackageDescriptor descriptor, Stream descriptorStream)
         {
             var streamWriter = new StreamWriter(descriptorStream, Encoding.UTF8);

@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
 using System.Windows;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
+using OpenWrap.Build;
 using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.Repositories;
 using OpenWrap.Resolvers;
+using OpenWrap.Services;
 using OpenWrap.Tasks;
 
 namespace OpenWrap.Windows
@@ -27,7 +32,7 @@ namespace OpenWrap.Windows
             Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
             Services.Services.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            Services.Services.TryRegisterService<IPackageResolver>(() => new PackageResolver());
+            Services.Services.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
             Services.Services.RegisterService<ITaskManager>(new TaskManager());
 
             var repo = new CommandRepository(Services.Services.GetService<IEnvironment>().Commands());

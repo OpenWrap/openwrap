@@ -46,7 +46,7 @@ namespace OpenWrap.Commands.Wrap
             return Either(ValidateInputs()).Or(ExecuteCore());    
         }
 
-        PackageDependency dependency;
+        PackageDependency _dependency;
 
         PackageDependency FindDependencyByName()
         {
@@ -55,8 +55,8 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> ValidateInputs()
         {
-            dependency = FindDependencyByName();
-            if (dependency == null)
+            _dependency = FindDependencyByName();
+            if (_dependency == null)
             {
                 yield return new Error("Dependency not found: " + Name);
                 yield break;
@@ -95,41 +95,45 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> ExecuteCore()
         {
-            UpdatedDependency(dependency);
-            RewriteDescriptorFile();
+            var newDependency = UpdatedDependency(_dependency);
+            Environment.Descriptor.Dependencies.Remove(_dependency);
+            Environment.Descriptor.Dependencies.Add(newDependency);
+            RewriteDescriptorFile(Environment.Descriptor);
             yield break;
         }
 
-        void UpdatedDependency(PackageDependency dependency)
+        PackageDependency UpdatedDependency(PackageDependency dependency)
         {
+            var builder = new PackageDependencyBuilder(dependency);
             if (_content.HasValue)
             {
-                dependency.ContentOnly = _content.Value;
+                builder = builder.Content(_content.Value);
             }
             if (_anchored.HasValue)
             {
-                dependency.Anchored = _anchored.Value;
+                builder = builder.Anchored(_anchored.Value);
             }
             if (SomeVersionInputGiven)
             {
-                dependency.VersionVertices.Clear();
+                builder = builder.SetVersionVertices(Enumerable.Empty<VersionVertex>());
             }
             if (AnyVersion)
             {
-                dependency.VersionVertices.Add(new AnyVersionVertex());
+                builder = builder.VersionVertex(new AnyVersionVertex());
             }
             if (Version != null)
             {
-                dependency.VersionVertices.Add(new ExactVersionVertex(Version.ToVersion()));
+                builder = builder.VersionVertex(new ExactVersionVertex(Version.ToVersion()));
             }
             if (MinVersion != null)
             {
-                dependency.VersionVertices.Add(new GreaterThenOrEqualVersionVertex(MinVersion.ToVersion()));
+                builder = builder.VersionVertex(new GreaterThenOrEqualVersionVertex(MinVersion.ToVersion()));
             }
             if (MaxVersion != null)
             {
-                dependency.VersionVertices.Add(new LessThanVersionVertex(MaxVersion.ToVersion()));
+                builder = builder.VersionVertex(new LessThanVersionVertex(MaxVersion.ToVersion()));
             }
+            return builder;
         }
 
         bool SomeVersionInputGiven
@@ -140,11 +144,11 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        void RewriteDescriptorFile()
+        void RewriteDescriptorFile(PackageDescriptor descriptor)
         {
             using (var destinationStream = Environment.DescriptorFile.OpenWrite())
             {
-                new PackageDescriptorReaderWriter().Write(Environment.Descriptor, destinationStream);
+                new PackageDescriptorReaderWriter().Write(descriptor, destinationStream);
             }
         }
     }

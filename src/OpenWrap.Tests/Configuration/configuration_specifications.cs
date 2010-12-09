@@ -6,7 +6,7 @@ using NUnit.Framework;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.remote_repositories;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
+using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Configuration

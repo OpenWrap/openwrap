@@ -96,7 +96,7 @@ namespace OpenWrap.Windows
                         Description = packageInfo.Description,
                         GroupName = groupName,
                         Version = packageInfo.Version,
-                        CreationTime = packageInfo.CreationTime,
+                        Created = packageInfo.Created,
                         Anchored = packageInfo.Anchored,
                         Nuked = packageInfo.Nuked
                     };

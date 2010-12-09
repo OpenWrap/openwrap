@@ -6,8 +6,8 @@ using System.Reflection.Emit;
 using System.Text;
 using NUnit.Framework;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
@@ -64,6 +64,26 @@ namespace assembly_resolving_specs
             AssemblyReferences.ShouldBeEmpty();
         }
     }
+    public class recursive_dependencies_for_assemblies : contexts.assembly_resolving
+    {
+        public recursive_dependencies_for_assemblies()
+        {
+            given_dependency("depends: openwrap content");
+            given_dependency("depends: openfilesystem");
+            given_dependency("depends: sharpziplib");
+            given_project_package("openwrap", "1.0.0.0", Assemblies(Assembly("openwrap", "bin-net35")), "depends: openwrap content", "depends: sharpziplib", "depends: openfilesystem");
+            given_project_package("sharpziplib", "1.0.0.0", Assemblies(Assembly("sharpziplib", "bin-net35")));
+            given_project_package("openfilesystem", "1.0.0.0", Assemblies(Assembly("openfilesystem", "bin-net35")), "depends: openwrap content", "depends: sharpziplib");
+
+            when_resolving_assemblies("anyCPU", "net35");
+        }
+        [Test]
+        public void assemblies()
+        {
+            AssemblyReferences.ShouldHaveCountOf(2);
+
+        }
+    }
     public class assemblies_are_found : contexts.assembly_resolving
     {
         public assemblies_are_found()
@@ -93,11 +113,11 @@ namespace assembly_resolving_specs
             {
 
                 given_project_repository(new FolderRepository(FileSystem.GetTempDirectory().GetDirectory(Guid.NewGuid().ToString()).MustExist()));
-                this.PackageResolver = new PackageResolver();
+                this.PackageResolver = new ExhaustiveResolver();
             }
 
 
-            protected PackageResolver PackageResolver { get; set; }
+            protected ExhaustiveResolver PackageResolver { get; set; }
 
             protected override IFileSystem given_file_system(string currentDirectory)
             {

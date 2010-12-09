@@ -90,6 +90,11 @@ namespace OpenWrap.Testing
             values.ShouldHaveCountOf(0);
         }
 
+        public static IEnumerable<T> ShouldNotBeEmpty<T>(this IEnumerable<T> values)
+        {
+            values.Count().ShouldNotBe(0);
+            return values;
+        }
         /// <summary>
         /// Tests that two objects have the same public properties.
         /// </summary>

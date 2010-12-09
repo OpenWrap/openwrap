@@ -20,20 +20,10 @@ namespace OpenWrap.Exports
 
         static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(DependencyResolutionResult resolveResult, ExecutionEnvironment exec, bool includeContentOnly)
         {
-            var packages = resolveResult.ResolvedPackages.Where(resolvedPackage => includeContentOnly || !IsInContentBranch(resolvedPackage)).Select(x=>x.Package);
+            var packages = resolveResult.SuccessfulPackages.Where(resolvedPackage => includeContentOnly || !resolvedPackage.IsInContentBranch).SelectMany(x=>x.Packages);
             return GetAssemblyReferencesFromPackages(packages, exec);
         }
 
-        static bool IsInContentBranch(ResolvedPackage resolvedPackage)
-        {
-            return resolvedPackage.Dependencies.All(IsInContentBranch);
-        }
-
-        static bool IsInContentBranch(ParentedDependency resolvedPackage)
-        {
-            return resolvedPackage.Dependency.ContentOnly
-                   || (resolvedPackage.Parent != null && IsInContentBranch(resolvedPackage.Parent));
-        }
 
         static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferencesFromPackages(IEnumerable<IPackageInfo> packages, ExecutionEnvironment exec)
         {

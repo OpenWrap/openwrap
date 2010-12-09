@@ -91,8 +91,10 @@ namespace OpenWrap
             return string.Join(separator, strings.ToArray());
         }
 
-        public static Regex Wildcard(this string stringValue)
+        public static Regex Wildcard(this string stringValue, bool autoWrap = false)
         {
+            if (autoWrap && !stringValue.Contains('?') && !stringValue.Contains('*'))
+                stringValue = "*" + stringValue + "*";
             stringValue = Regex.Escape(stringValue).Replace("\\?", ".?").Replace("\\*", ".*");
             return new Regex("^" + stringValue + "$", RegexOptions.IgnoreCase);
         }
@@ -112,6 +114,10 @@ namespace OpenWrap
         public static bool ContainsNoCase(this string value, string valueToSearch)
         {
             return value.IndexOf(valueToSearch, StringComparison.OrdinalIgnoreCase) != -1;
+        }
+        public static bool ContainsNoCase(this IEnumerable<string> values, string valueToSearch)
+        {
+            return values.Contains(valueToSearch, StringComparer.OrdinalIgnoreCase);
         }
     }
 }

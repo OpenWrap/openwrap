@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenFileSystem.IO;
-using OpenWrap.Dependencies;
-using OpenWrap.Repositories;
+using OpenWrap.PackageManagement;
 using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
@@ -29,6 +27,9 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public Version Version { get; set; }
 
+        [CommandInput]
+        public bool Clean { get; set; }
+
         bool? _last;
 
         [CommandInput]
@@ -50,87 +51,43 @@ namespace OpenWrap.Commands.Wrap
             if (System && !Environment.SystemRepository.PackagesByName[Name].Any())
                 yield return new Error("Cannot find package named '{0}' in system repository.", Name);
             if (Project && Environment.ProjectRepository == null)
-                yield return new Error("Not in a pacakge directory.");
+                yield return new Error("Not in a package directory.");
         }
 
         IEnumerable<ICommandOutput> ExecuteCore()
         {
+            var options = Options;
+            if (Project && Version != null)
+                yield return new Warning("Because you have selected a specific version to remove from the project repository, your descriptor file will not be updated. To remove the dependency from your descriptor, either do not specify a version or use the set-wrap command to update the version of a package in use by your project.");
             if (Project)
-                foreach(var m in RemoveFromProjectRepository()) yield return m;
+                foreach (var m in PackageManager.RemoveProjectPackage(PackageRequest, Environment.Descriptor, Environment.ProjectRepository, options)) yield return ToOutput(m);
             if (System)
-                foreach(var m in RemoveFromSystemRepository()) yield return m;
-            foreach(var m in  PackageResolver.VerifyPackageCache(Environment, Environment.Descriptor))
-                yield return m;
+                foreach (var m in PackageManager.RemoveSystemPackage(PackageRequest, Environment.SystemRepository, Options)) yield return ToOutput(m);
+
+            TrySaveDescriptorFile();
         }
 
-        IEnumerable<ICommandOutput> RemoveFromSystemRepository()
+        protected PackageRemoveOptions Options
         {
-            var systemRepository = (ISupportCleaning)Environment.SystemRepository;
-
-            return RemoveFromRepository(systemRepository);
-        }
-
-        IEnumerable<ICommandOutput> RemoveFromRepository(ISupportCleaning repository)
-        {
-            if (Last)
-                Version = repository.PackagesByName[Name].Select(x=>x.Version)
-                                                         .OrderByDescending(x => x)
-                                                         .FirstOrDefault();
-            return repository.Clean(repository.PackagesByName
-                                                  .SelectMany(x => x)
-                                                  .Where(PackageShouldBeKept))
-                                                  .Select(PackageRemovedMessage);
-        }
-
-        ICommandOutput PackageRemovedMessage(PackageCleanResult packageCleanResult)
-        {
-            if (packageCleanResult.Success)
-                return new GenericMessage("Package '{0}' removed.", packageCleanResult.Package.FullName);
-            return new Warning("Package '{0}' could not be removed.", packageCleanResult.Package.FullName);
-        }
-
-        bool PackageShouldBeKept(IPackageInfo packageInfo)
-        {
-            bool matchesName = packageInfo.Name.EqualsNoCase(Name);
-            bool matchesVersion = Version == null ? true : packageInfo.Version == Version;
-            return !(matchesName && matchesVersion);
-        }
-
-        IEnumerable<ICommandOutput> RemoveFromProjectRepository()
-        {
-            return (Version == null && _last == null) ? RemoveFromDescriptor() : RemovePackageFilesFromProjectRepo();
-        }
-
-        IEnumerable<ICommandOutput> RemovePackageFilesFromProjectRepo()
-        {
-            yield return
-                    new Warning(
-                            "You specified a version to remove from your project. Your descriptor will not be updated, and the package files will be removed. If you want to change what version of a pacakge you depend on, use the 'set-wrap' command.")
-                    ;
-            foreach (var m in RemoveFromRepository((ISupportCleaning)Environment.ProjectRepository))
-                yield return m;
-        }
-
-        IEnumerable<ICommandOutput> RemoveFromDescriptor()
-        {
-            var dependency = FindProjectDependencyByName();
-            if (dependency == null)
+            get
             {
-                yield return new Error("Dependency not found: " + Name);
-                yield break;
+                var options = PackageRemoveOptions.Default;
+                if (Clean)
+                    options |= PackageRemoveOptions.Clean;
+                return options;
             }
-
-            Environment.Descriptor.Dependencies.Remove(dependency);
-            using (var destinationStream = Environment.DescriptorFile.OpenWrite())
-                new PackageDescriptorReaderWriter().Write(Environment.Descriptor, destinationStream);
         }
 
-        PackageDependency FindProjectDependencyByName()
+        protected PackageRequest PackageRequest
         {
-            return Environment.Descriptor != null
-                           ? Environment.Descriptor.Dependencies.FirstOrDefault(d => d.Name.EqualsNoCase(Name))
-                           : null;
+            get
+            {
+                if (Last)
+                    return PackageRequest.Last(Name);
+                if (Version != null)
+                    return PackageRequest.Exact(Name, Version);
+                return PackageRequest.Any(Name);
+            }
         }
-
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.PackageManagement;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands.context;
 
@@ -23,9 +24,9 @@ namespace listWrap_specs
         [Test]
         public void matching_package_is_returned()
         {
-            Results.OfType<PackageDescriptionOutput>()
+            Results.OfType<PackageFoundCommandOutput>()
                     .ShouldHaveCountOf(1)
-                    .First().PackageName.ShouldBe("one-ring");
+                    .First().Name.ShouldBe("one-ring");
         }
     }
     public class filtering_project_with_different_casing : command_context<ListWrapCommand>
@@ -40,9 +41,31 @@ namespace listWrap_specs
         [Test]
         public void casing_is_ignored()
         {
-            Results.OfType<PackageDescriptionOutput>()
+            Results.OfType<PackageFoundCommandOutput>()
                     .ShouldHaveCountOf(1)
-                    .First().PackageName.ShouldBe("one-ring");
+                    .First().Name.ShouldBe("one-ring");
         }
     }
+    public class listing_packages_from_all_repositories : command_context<ListWrapCommand>
+    {
+        public listing_packages_from_all_repositories()
+        {
+            given_remote_repository("first");
+            given_remote_repository("second");
+            given_remote_package("first", "one-ring", "1.0.0");
+            given_remote_package("second", "ring-of-power", "1.0.0");
+
+            when_executing_command("ring", "-remote");
+        }
+
+        [Test]
+        public void packages_are_found_in_any_remote()
+        {
+            Results.OfType<PackageFoundCommandOutput>()
+                    .ShouldHaveCountOf(2)
+                    .Check(x => x.ShouldHaveAtLeastOne(n => n.Name.Equals("one-ring")))
+                    .Check(x => x.ShouldHaveAtLeastOne(n => n.Name.Equals("ring-of-power")));
+        }
+    }
+
 }

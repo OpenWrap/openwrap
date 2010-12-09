@@ -113,7 +113,7 @@
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
       <Name>OpenWrap</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,7 @@ namespace OpenWrap.Dependencies
 
         protected override void ParseContent(string content, PackageDescriptor descriptor)
         {
-            var dependency = ParseDependency(content);
+            var dependency = ParseDependsValue(content);
             if (dependency != null)
                 descriptor.Dependencies.Add(dependency);
         }
@@ -27,7 +27,7 @@ namespace OpenWrap.Dependencies
             new DependsParser().Parse(line, descriptor);
             return descriptor;
         }
-        static PackageDependency ParseDependency(string line)
+        public static PackageDependency ParseDependsValue(string line)
         {
             var bits = line.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
             if (bits.Length < 1)
@@ -42,16 +42,15 @@ namespace OpenWrap.Dependencies
             tags = tags.Skip(1);
             
             return new PackageDependency
-            {
-                    Name = bits[0],
-                    VersionVertices = versions.Count > 0 ? versions : new List<VersionVertex>() { new AnyVersionVertex() },
-                    Tags = tags.ToList(),
-            };
+            (
+                    bits[0],
+                    versions.Count > 0 ? versions : new List<VersionVertex>() { new AnyVersionVertex() },
+                    tags.ToList()
+            );
         }
 
         public static IEnumerable<VersionVertex> ParseVersions(string[] args)
         {
-            int consumedArgs = 0;
             // Versions are always in the format
             // comparator version ('and' comparator version)*
             if (args.Length >= 2)
@@ -61,7 +60,7 @@ namespace OpenWrap.Dependencies
                     yield break;
                 yield return version;
                 for (int i = 0; i < (args.Length - 2) / 3; i++)
-                    if (args[2 + (i * 3)].Equals("and", StringComparison.OrdinalIgnoreCase))
+                    if (args[2 + (i * 3)].EqualsNoCase("and"))
                         if ((version = GetVersionVertice(args, 3 + (i * 3))) != null)
                             yield return version;
                         else

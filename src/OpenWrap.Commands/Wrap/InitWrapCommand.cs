@@ -7,6 +7,7 @@ using System.Xml;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems;
 using OpenWrap.Dependencies;
+using OpenWrap.PackageManagement;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
@@ -15,7 +16,7 @@ namespace OpenWrap.Commands.Wrap
     public class InitWrapCommand : AbstractCommand
     {
         const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
-        const string OPENWRAP_BUILD = @"..\..\wraps\openwrap\build\OpenWrap.CSharp.targets";
+        const string OPENWRAP_BUILD = @"wraps\openwrap\build\OpenWrap.CSharp.targets";
         bool? _allProjects;
         IEnumerable<IFile> _projectsToPatch;
 
@@ -91,7 +92,7 @@ namespace OpenWrap.Commands.Wrap
 
         void AddOpenWrapDependency(PackageDescriptor packageDescriptor)
         {
-            packageDescriptor.Dependencies.Add(new PackageDependency { Name = "openwrap", ContentOnly = true });
+            packageDescriptor.Dependencies.Add(new PackageDependencyBuilder("openwrap").Content().Anchored());
         }
 
         void AddPackageFolders(IDirectory projectDirectory)
@@ -100,36 +101,21 @@ namespace OpenWrap.Commands.Wrap
             projectDirectory.GetDirectory("wraps").GetDirectory("_cache").MustExist();
         }
 
-        IEnumerable<ICommandOutput> CopyOpenWrap(IDirectory projectDirectory)
+        IEnumerable<ICommandOutput> CopyOpenWrap(PackageDescriptor projectDescriptor, IDirectory projectDirectory)
         {
-            var packageManager = Services.Services.GetService<IPackageResolver>();
-            var initialDescriptor = new PackageDescriptor
-            {
-                Name = "openwrap",
-                Dependencies =
-                            {
-                                    new PackageDependency
-                                    {
-                                            Name = "OpenWrap",
-                                            VersionVertices = { new AnyVersionVertex() }
-                                    }
-                            }
-            };
+            var packageManager = Services.Services.GetService<IPackageManager>();
 
-            DependencyResolutionResult openwrapPackage = packageManager.TryResolveDependencies(initialDescriptor, new[] { Environment.SystemRepository });
-            var folderRepository = new FolderRepository(projectDirectory.GetDirectory("wraps"))
+            var projectRepository = new FolderRepository(projectDirectory.GetDirectory("wraps"))
             {
-                EnableAnchoring = true,
-                Name = "Project repository"
+                    EnableAnchoring = true,
+                    Name = "Project repository"
             };
-            foreach (ICommandOutput msg in packageManager.CopyPackagesToRepositories(
-                    openwrapPackage,
-                    Environment.SystemRepository,
-                    folderRepository))
-                yield return msg;
-            folderRepository.Refresh();
-
-            folderRepository.VerifyAnchors(new[] { folderRepository.PackagesByName["openwrap"].First() });
+            packageManager.AddProjectPackage(PackageRequest.Any("openwrap"),
+                                             new[] { Environment.SystemRepository },
+                                             projectDescriptor,
+                                             projectRepository,
+                                             PackageAddOptions.Default | PackageAddOptions.Anchor | PackageAddOptions.Content).ToList();
+            yield return new GenericMessage("Project repository initialized.");
         }
 
         IEnumerable<IFile> GetAllProjects()
@@ -165,12 +151,28 @@ namespace OpenWrap.Commands.Wrap
                 else
                 {
                     // TODO: Detect path of openwrap directory and generate correct relative path from there
-                    csharpTarget.Attributes["Project"].Value = OPENWRAP_BUILD;
+                    csharpTarget.Attributes["Project"].Value = GetOpenWrapPath(project.Parent, Environment.DescriptorFile.Parent);
                     using (Stream projectFileStream = project.OpenWrite())
                         xmlDoc.Save(projectFileStream);
                     yield return new GenericMessage(string.Format("Project '{0}' updated to use OpenWrap.", project.Path.FullPath));
                 }
             }
+        }
+
+        string GetOpenWrapPath(IDirectory projectPath, IDirectory wrapPath)
+        {
+            int deepness = 1;
+            
+            for (var current = projectPath; 
+                (current = current.Parent) != null;
+                deepness++)
+            {
+                if (current.Path == wrapPath.Path)
+                    return Enumerable.Repeat("..", deepness).Join("\\")
+                           + "\\"
+                           + OPENWRAP_BUILD;
+            }
+            throw new InvalidOperationException("Could not find a descriptor.");
         }
 
         IEnumerable<ICommandOutput> SetupDirectoriesAndDescriptor()
@@ -195,10 +197,9 @@ namespace OpenWrap.Commands.Wrap
             }
             else
             {
-                AddOpenWrapDependency(packageDescriptor);
                 AddPackageFolders(projectDirectory);
                 AddIgnores(projectDirectory);
-                foreach (ICommandOutput m in CopyOpenWrap(projectDirectory)) yield return m;
+                foreach (ICommandOutput m in CopyOpenWrap(packageDescriptor, projectDirectory)) yield return m;
             }
             WriteVersionFile(projectDirectory);
             WriteDescriptor(packageDescriptorFile, packageDescriptor);
@@ -223,7 +224,7 @@ namespace OpenWrap.Commands.Wrap
         {
             using (Stream versionFile = projectDirectory.GetFile("version").OpenWrite())
             {
-                versionFile.Write(Encoding.Default.GetBytes(("0.0.1.*")));
+                versionFile.Write(Encoding.UTF8.GetBytes(("0.0.1.*")));
             }
         }
     }

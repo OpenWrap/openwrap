@@ -69,7 +69,7 @@ namespace OpenWrap.Commands.Wrap
                 yield return new GenericMessage(string.Format("Copying: {0} - {1}", file.ExportName, file.Path));
 
             var packageFilePath = destinationPath.GetFile(
-                PackageNameUtility.PacakgeFileName(packageName, generatedVersion.ToString()));
+                PackageNameUtility.PackageFileName(packageName, generatedVersion.ToString()));
 
             var packageContent = GeneratePackageContent(_buildResults).Concat(
                                     GenerateVersionFile(generatedVersion),

@@ -24,7 +24,7 @@ namespace OpenWrap.Dependencies
                 filename += ".wrap";
             return filename;
         }
-        public static string PacakgeFileName(string packageName, string version)
+        public static string PackageFileName(string packageName, string version)
         {
             return string.Format("{0}-{1}.wrap", packageName,version);
         }

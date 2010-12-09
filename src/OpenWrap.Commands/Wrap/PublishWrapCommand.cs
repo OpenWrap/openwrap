@@ -11,7 +11,7 @@ using OpenWrap.Services;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Noun="wrap", Verb="publish", Description="Publishes a package to a remote reposiory.")]
-    public class PublishWrapCommand : AbstractCommand
+    public class PublishWrapCommand : WrapCommand
     {
         ISupportPublishing _remoteRepository;
 
@@ -47,20 +47,29 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> ValidateInputs()
         {
-            var namedRepository = Environment.RemoteRepositories.FirstOrDefault(x => x.Name.Equals(Remote, StringComparison.OrdinalIgnoreCase));
+            var namedRepository = GetRemoteRepository(Remote);
+
             if (namedRepository == null)
+            {
                 yield return new Errors.UnknownRemoteRepository(Remote);
-
+                foreach (var _ in HintRemoteRepositories()) yield return _;
+                yield break;
+            }
             _remoteRepository = namedRepository as ISupportPublishing;
-            
-            if (_remoteRepository == null)
-                yield return new Error("Repository '{0}' doesn't support publishing.", namedRepository.Name);
 
+            if (_remoteRepository == null)
+            {
+                yield return new Error("Repository '{0}' doesn't support publishing.", namedRepository.Name);
+                yield break;
+            }
             if (Path != null)
             {
                 var packageFile = FileSystem.GetFile(Path);
                 if (!packageFile.Exists)
+                {
                     yield return new Errors.FileNotFound(Path);
+                    yield break;
+                }
                 else
                 {
                     _packageStream = () => packageFile.OpenRead();

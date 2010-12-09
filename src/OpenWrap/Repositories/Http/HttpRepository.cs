@@ -28,7 +28,7 @@ namespace OpenWrap.Repositories.Http
             return PackagesByName.FindAll(dependency);
         }
 
-        public void Refresh()
+        public void RefreshPackages()
         {
             _packagesByName = null;
         }
@@ -83,6 +83,10 @@ namespace OpenWrap.Repositories.Http
             _packagesByName = null;
             EnsureDataLoaded();
             return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
+        }
+
+        public void PublishCompleted()
+        {
         }
 
         void EnsureDataLoaded()

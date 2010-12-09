@@ -159,7 +159,7 @@ namespace OpenWrap.Preloading
                                      let packageSource = (from link in packageElement.Descendants("link")
                                                           let rel = link.Attribute("rel")
                                                           let href = link.Attribute("href")
-                                                          where rel != null && rel.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
+                                                          where rel != null && rel.Value.EqualsNoCase("package")
                                                           select href.Value).FirstOrDefault()
                                      where nameAttribute != null &&
                                            versionAttribute != null &&
@@ -173,7 +173,7 @@ namespace OpenWrap.Preloading
 
             foreach (var packageName in packageNames)
             {
-                var foundPackage = packagesToDownload.FirstOrDefault(x => x.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
+                var foundPackage = packagesToDownload.FirstOrDefault(x => x.Name.EqualsNoCase(packageName));
                 if (foundPackage == null)
                     throw new FileNotFoundException(string.Format("Package '{0}' not found in repository.", packageName));
                 var fullPackageUri = foundPackage.Href;

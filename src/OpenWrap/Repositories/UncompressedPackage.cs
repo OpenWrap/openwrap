@@ -11,6 +11,7 @@ using OpenWrap.Tasks;
 
 namespace OpenWrap.Repositories
 {
+    
     public class UncompressedPackage : IPackage
     {
         readonly IFile _originalWrapFile;
@@ -34,7 +35,10 @@ namespace OpenWrap.Repositories
                 throw new InvalidOperationException("Could not find descriptor in wrap cache directory, or there are multiple .wrapdesc files in the package.");
             var versionFile = wrapCacheDirectory.GetFile("version");
             Descriptor = new DefaultPackageInfo(originalPackage.Name, versionFile.Exists ? versionFile.Read(x=>x.ReadString().ToVersion()) : null, new PackageDescriptorReaderWriter().Read(wrapDescriptor));
+            Identifier = new PackageIdentifier(Name, Version);
         }
+
+        public PackageIdentifier Identifier { get; private set; }
 
         protected IDirectory BaseDirectory { get; set; }
 
@@ -71,7 +75,7 @@ namespace OpenWrap.Repositories
             get { return Name + "-" + Version; }
         }
 
-        public DateTimeOffset CreationTime
+        public DateTimeOffset Created
         {
             get { if (_originalWrapFile.LastModifiedTimeUtc != null) return new DateTimeOffset(_originalWrapFile.LastModifiedTimeUtc.Value);
                 return DateTimeOffset.UtcNow;
@@ -85,7 +89,7 @@ namespace OpenWrap.Repositories
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
             var exporter =
-                _exporters.FirstOrDefault(x => x.ExportName.Equals(exportName, StringComparison.OrdinalIgnoreCase));
+                _exporters.FirstOrDefault(x => x.ExportName.EqualsNoCase(exportName));
 
             var directories = BaseDirectory.Directories();
             if (exporter != null)
@@ -107,5 +111,6 @@ namespace OpenWrap.Repositories
         {
             return _originalWrapFile.OpenRead();
         }
+
     }
 }

@@ -64,8 +64,8 @@ namespace OpenWrap.Tests.Dependencies
         public class nuked_package_resolution : OpenWrap.Testing.context
         {
             protected string ResolvedVersion;
-            private PackageDependency _packageDependency
-                = new PackageDependency() { Name = packageName };
+            private PackageDependencyBuilder _packageDependency
+                = new PackageDependencyBuilder(packageName);
             private List<IPackageInfo> _versions = new List<IPackageInfo>(); 
 
             const string packageName="test";
@@ -91,7 +91,7 @@ namespace OpenWrap.Tests.Dependencies
 
             protected void given_dependency(VersionVertex vertex)
             {
-                _packageDependency.VersionVertices.Add(vertex);
+                _packageDependency.VersionVertex(vertex);
             }
 
             protected void when_resolving()

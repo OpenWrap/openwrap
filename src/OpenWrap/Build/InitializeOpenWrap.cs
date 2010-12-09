@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Build.Framework;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Configuration;
 using OpenWrap.Preloading;
 using OpenWrap.Repositories;
@@ -49,7 +49,9 @@ namespace OpenWrap.Build
             Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
             Services.Services.TryRegisterService<IEnvironment>(() => new MSBuildEnvironment(task, currentDirectory));
 
-            Services.Services.TryRegisterService<IPackageResolver>(() => new PackageResolver());
+            Services.Services.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
+            Services.Services.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            Services.Services.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
             Services.Services.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
             Services.Services.RegisterService<ITaskManager>(new TaskManager());
         }

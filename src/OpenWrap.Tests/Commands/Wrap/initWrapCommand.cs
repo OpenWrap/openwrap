@@ -22,7 +22,12 @@ namespace init_wrap_specs
             given_current_directory(@"c:\newpackage");
             given_project_repository(new FolderRepository(Environment.CurrentDirectory.GetDirectory("wraps")));
             when_executing_command(".");
-            Environment.ProjectRepository.Refresh();
+            Environment.ProjectRepository.RefreshPackages();
+        }
+        [Test]
+        public void command_is_successful()
+        {
+            Results.ShouldHaveNoError();
         }
         [Test]
         public void descriptor_should_have_correct_name()
@@ -94,7 +99,7 @@ namespace init_wrap_specs
         [Test]
         public void the_command_succeeds()
         {
-            Results.ShouldHaveNo(x => x.Error());
+            Results.ShouldHaveNoError();
         }
         [Test]
         public void the_project_is_patched()
@@ -116,7 +121,9 @@ namespace init_wrap_specs
         {
             public init_wrap()
             {
-                given_system_package("openwrap", "1.0.0");                
+                given_system_package("sharpziplib", "0.85.1");
+                given_system_package("openfilesystem", "1.0.0");
+                given_system_package("openwrap", "1.0.0", "depends: openfilesystem", "depends: sharpziplib");                
             }
             protected const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
 

@@ -6,7 +6,7 @@ using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
+using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
 using OpenWrap.Testing;
@@ -80,7 +80,7 @@ namespace OpenWrap.Tests.Repositories
              select node)
             .ShouldHaveCountOf(1);
         }
-
+        [Test]
         public void returned_packageinfo_is_marked_as_nuked()
         {
             Repository.PackagesByName["pharrell"]
@@ -89,7 +89,7 @@ namespace OpenWrap.Tests.Repositories
                 .ShouldNotBeNull()
                 .Nuked
                 .ShouldBeTrue();
-                
+
         }
 
     }
@@ -111,39 +111,18 @@ namespace OpenWrap.Tests.Repositories
             }
 
 
-            protected void given_file_system(string currentDirectory, params InMemoryDirectory[] directories)
+            protected void given_file_system(string currentDirectory)
             {
-                FileSystem = new InMemoryFileSystem(directories)
+                FileSystem = new InMemoryFileSystem()
                 {
                     CurrentDirectory = currentDirectory
                 };
+
                 Services.Services.RegisterService<IFileSystem>(FileSystem);
 
                 Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory),
                     FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory));
                 Services.Services.RegisterService<IEnvironment>(Environment);
-            }
-
-            protected void when_getting_package_names()
-            {
-                PackagesByName = Repository.PackagesByName;
-            }
-
-            protected void given_packages_in_directory(string currentDirectory, params InMemoryFile[] packages)
-            {
-                given_file_system(
-                    currentDirectory,
-                    new InMemoryDirectory(currentDirectory,
-                                          packages));
-            }
-
-            protected void when_finding_packages(string dependency)
-            {
-                var dep = new PackageDescriptor();
-                new DependsParser().Parse(dependency, dep);
-
-                FoundPackage = Repository.Find(dep.Dependencies.First());
-            
             }
 
             protected InMemoryFile Package(string wrapName, string version, params string[] wrapdescLines)
@@ -165,7 +144,7 @@ namespace OpenWrap.Tests.Repositories
                     Repository.PackagesByName[name]
                     .Where(x => x.Version.ToString().Equals(version))
                     .First());
-                Repository.Refresh();
+                Repository.RefreshPackages();
             }
 
             protected void given_published_package(string packageName, string packageVersion)

@@ -121,11 +121,11 @@
   <data name="feed" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>feed.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="TestPackage" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>testpackage.nupkg;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="feedodata" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>feedodata.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="TestPackageOld" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>testpackageold.nupkg;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

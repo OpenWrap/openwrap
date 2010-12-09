@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using OpenFileSystem.IO.FileSystem.Local;
+using System.IO;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Build;
 using OpenWrap.Dependencies;
-using OpenFileSystem.IO;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
 using IOPath = System.IO.Path;
+using Path = OpenFileSystem.IO.Path;
 
 namespace OpenWrap.Services
 {
@@ -15,10 +16,17 @@ namespace OpenWrap.Services
     public class PackageDescriptorMonitor : IWrapDescriptorMonitoringService
     {
         readonly Dictionary<Path, DescriptorSubscriptions> _notificationClients = new Dictionary<Path, DescriptorSubscriptions>();
-        
 
 
-        IPackageResolver PackageResolver { get { return Services.GetService<IPackageResolver>(); } }
+        IPackageResolver PackageResolver
+        {
+            get { return Services.GetService<IPackageResolver>(); }
+        }
+
+        public void Initialize()
+        {
+        }
+
         public void ProcessWrapDescriptor(IFile wrapFile, IPackageRepository packageRepository, IPackageAssembliesListener listener)
         {
             if (!wrapFile.Exists)
@@ -26,16 +34,12 @@ namespace OpenWrap.Services
 
             if (packageRepository == null) throw new ArgumentNullException("packageRepository");
             if (listener == null) throw new ArgumentNullException("listener");
-   
+
             var descriptor = GetDescriptor(wrapFile, packageRepository);
             if (listener.IsLongRunning)
                 descriptor.Clients.Add(listener);
 
             NotifyClient(wrapFile, listener);
-        }
-
-        public void Initialize()
-        {
         }
 
         DescriptorSubscriptions GetDescriptor(IFile wrapPath, IPackageRepository packageRepository)
@@ -46,27 +50,17 @@ namespace OpenWrap.Services
             return descriptorSubscriptions;
         }
 
-        void HandleWrapFileUpdate(object sender, System.IO.FileSystemEventArgs e)
+        void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
         {
             NotifyAllClients(LocalFileSystem.Instance.GetFile(e.FullPath));
         }
-        void NotifyClient(IFile wrapPath, IPackageAssembliesListener listener)
-        {
-            if (!_notificationClients.ContainsKey(wrapPath.Path))
-                return;
-            var d = _notificationClients[wrapPath.Path];
-            d.Repository.Refresh();
-            var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 
-
-            listener.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, listener.Environment, parsedDescriptor, d.Repository));
-        }
         void NotifyAllClients(IFile wrapPath)
         {
             if (!_notificationClients.ContainsKey(wrapPath.Path))
                 return;
             var d = _notificationClients[wrapPath.Path];
-            d.Repository.Refresh();
+            d.Repository.RefreshPackages();
             var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 
             foreach (var client in d.Clients)
@@ -75,22 +69,34 @@ namespace OpenWrap.Services
             }
         }
 
+        void NotifyClient(IFile wrapPath, IPackageAssembliesListener listener)
+        {
+            if (!_notificationClients.ContainsKey(wrapPath.Path))
+                return;
+            var d = _notificationClients[wrapPath.Path];
+            d.Repository.RefreshPackages();
+            var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
+
+
+            listener.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, listener.Environment, parsedDescriptor, d.Repository));
+        }
+
         class DescriptorSubscriptions
         {
-            public DescriptorSubscriptions(IFile path, IPackageRepository repository, System.IO.FileSystemEventHandler handler)
+            public DescriptorSubscriptions(IFile path, IPackageRepository repository, FileSystemEventHandler handler)
             {
                 Repository = repository;
                 Clients = new List<IPackageAssembliesListener>();
-                FileSystemWatcher = new System.IO.FileSystemWatcher(System.IO.Path.GetDirectoryName(path.Path.FullPath), System.IO.Path.GetFileName(path.Path.FullPath))
+                FileSystemWatcher = new FileSystemWatcher(IOPath.GetDirectoryName(path.Path.FullPath), IOPath.GetFileName(path.Path.FullPath))
                 {
-                    NotifyFilter = System.IO.NotifyFilters.LastWrite
+                        NotifyFilter = NotifyFilters.LastWrite
                 };
                 FileSystemWatcher.Changed += handler;
                 FileSystemWatcher.EnableRaisingEvents = true;
             }
 
             public List<IPackageAssembliesListener> Clients { get; set; }
-            public System.IO.FileSystemWatcher FileSystemWatcher { get; set; }
+            public FileSystemWatcher FileSystemWatcher { get; set; }
             public IPackageRepository Repository { get; set; }
         }
     }

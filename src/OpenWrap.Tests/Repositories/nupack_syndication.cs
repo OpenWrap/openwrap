@@ -8,7 +8,7 @@ using System.Xml;
 using NUnit.Framework;
 using OpenWrap;
 using OpenWrap.Repositories.Http;
-using OpenWrap.Repositories.NuPack;
+using OpenWrap.Repositories.NuGet;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Repositories;
 
@@ -56,7 +56,7 @@ namespace nupack_syncidcation_specs
             autofacPackage.PackageHref.ShouldBe("http://173.203.67.148/file.nupkg");
         }
         [Test]
-        public void pacakge_has_correct_dependencies()
+        public void package_has_correct_dependencies()
         {
             var autofacMvcPackage = PackageDoc.Packages.FirstOrDefault(x => x.Name == "Autofac.MVC2");
 
@@ -69,7 +69,7 @@ namespace nupack_syncidcation_specs
     {
         public abstract class nupack_syndication : OpenWrap.Testing.context
         {
-            protected NuPackSyndicationFeed Feed;
+            protected NuGetSyndicationFeed Feed;
             protected PackageDocument PackageDoc;
 
             protected void when_parsing_package_document()
@@ -79,7 +79,7 @@ namespace nupack_syncidcation_specs
 
             protected void given_syndication_feed(string feedContent)
             {
-                Feed = SyndicationFeed.Load<NuPackSyndicationFeed>(new XmlTextReader(new StringReader(feedContent)));
+                Feed = SyndicationFeed.Load<NuGetSyndicationFeed>(new XmlTextReader(new StringReader(feedContent)));
             }
         }
     }

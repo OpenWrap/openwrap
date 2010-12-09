@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
+using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 
@@ -11,11 +11,16 @@ namespace OpenWrap.Repositories
 {
     public class InMemoryPackage : IPackageInfo, IPackage
     {
+        public PackageIdentifier Identifier
+        {
+            get { return new PackageIdentifier(Name, Version); }
+        }
+
         public ICollection<PackageDependency> Dependencies { get; set; }
 
         public InMemoryPackage()
         {
-            CreationTime = DateTime.Now;
+            Created = DateTime.Now;
             Dependencies = new List<PackageDependency>();
         }
         public string FullName
@@ -23,7 +28,7 @@ namespace OpenWrap.Repositories
             get { return Name + "-" + Version; }
         }
 
-        public DateTimeOffset CreationTime
+        public DateTimeOffset Created
         {
             get; private set;
         }

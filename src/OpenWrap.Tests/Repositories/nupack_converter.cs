@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.InMemory;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap;
 using OpenWrap.Dependencies;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
-using OpenWrap.Repositories.NuPack;
+using OpenWrap.Repositories.NuGet;
 using OpenWrap.Testing;
 using OpenWrap.Tests;
 using OpenWrap.Tests.Repositories;
@@ -19,11 +19,11 @@ using IOPath = System.IO.Path;
 
 namespace nupack_converter_specs
 {
-    public class converting_package_from_non_seekable_stream : context.nupack_converter
+    public class convertings_package_from_non_seekable_stream : context.nupack_converter
     {
-        public converting_package_from_non_seekable_stream()
+        public convertings_package_from_non_seekable_stream()
         {
-            given_readonly_nu_package(TestFiles.TestPackage);
+            given_readonly_nu_package(TestFiles.TestPackageOld);
             when_converting_package();
         }
         [Test]
@@ -36,7 +36,7 @@ namespace nupack_converter_specs
     {
         public converting_package()
         {
-            given_nupack_package(TestFiles.TestPackage);
+            given_nupack_package(TestFiles.TestPackageOld);
             when_converting_package();
         }
         [Test]
@@ -88,7 +88,7 @@ namespace nupack_converter_specs
 
                 //c:\tmp\TestPackage-1.0.0.1234.wrap
                 using(var openWrapPackage = wrapFile.OpenWrite())
-                    NuPackConverter.Convert(NuPackage, openWrapPackage);
+                    NuGetConverter.Convert(NuPackage, openWrapPackage);
                 
                 Package = new CachedZipPackage(null, wrapFile, cacheDir, new IExportBuilder[0]);
             }

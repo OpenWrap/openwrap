@@ -5,7 +5,8 @@ using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Commands;
 using OpenWrap.Exports;
 using OpenWrap.Repositories;
@@ -55,7 +56,7 @@ namespace OpenWrap.Build.Tasks
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            return Services.Services.GetService<IPackageResolver>()
+            return Services.Services.GetService<IPackageExporter>()
                     .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
                     .SelectMany(x => x.Items)
                     .OfType<ICommandExportItem>()

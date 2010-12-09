@@ -4,43 +4,29 @@ using System.Linq;
 
 namespace OpenWrap.Dependencies
 {
-    public class PackageDependency
+    public class PackageDependency : IPackageDependency
     {
-        public PackageDependency(PackageDependency copy)
+        public PackageDependency(
+            string name, 
+            IEnumerable<VersionVertex> versions = null,
+            IEnumerable<string> tags = null)
         {
-            VersionVertices = new List<VersionVertex>(copy.VersionVertices);
-            Tags = new List<string>(copy.Tags);
-            Name = copy.Name;
-        }
-        public PackageDependency()
-        {
-            VersionVertices = new List<VersionVertex>();
-            Tags = new List<string>();
-        }
-        public string Name { get; set; }
-
-        public ICollection<VersionVertex> VersionVertices { get; set; }
-
-        public bool Anchored
-        {
-            get { return Tags.Contains("anchored", StringComparer.OrdinalIgnoreCase); }
-            set { SetTag("anchored", value); }
-        }
-
-        public bool ContentOnly
-        {
-            get { return Tags.Contains("content", StringComparer.OrdinalIgnoreCase); }
-            set { SetTag("content", value); }
+            Name = name;
+            Tags = tags != null ? new List<string>(tags).AsReadOnly() : Enumerable.Empty<string>();
+            VersionVertices = versions != null ? new List<VersionVertex>(versions).AsReadOnly() : Enumerable.Empty<VersionVertex>();
+            ContentOnly = Tags.ContainsNoCase("content");
+            Anchored = Tags.ContainsNoCase("anchored");
 
         }
-        void SetTag(string tag, bool isSet)
-        {
-            if (isSet && !Tags.Contains(tag))
-                Tags.Add(tag);
-            else if (!isSet && Tags.Contains(tag))
-                Tags.Remove(tag);
-        }
-        public ICollection<string> Tags { get; set; }
+        public string Name { get; private set; }
+
+        public IEnumerable<VersionVertex> VersionVertices { get; private set; }
+
+        public bool Anchored { get; private set; }
+
+        public bool ContentOnly { get; private set; }
+
+        public IEnumerable<string> Tags { get; set; }
 
         public bool IsFulfilledBy(Version version)
         {

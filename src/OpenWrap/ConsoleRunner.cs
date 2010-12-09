@@ -5,13 +5,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenRasta.Client;
 using OpenWrap.Build;
 using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.Exports;
 using OpenFileSystem.IO;
+using OpenWrap.PackageManagement;
 using OpenWrap.Repositories;
 using OpenWrap.Resolvers;
 using OpenWrap.Services;
@@ -35,7 +36,15 @@ namespace OpenWrap
             Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
             Services.Services.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            Services.Services.TryRegisterService<IPackageResolver>(() => new PackageResolver());
+            Services.Services.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
+            Services.Services.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
+            Services.Services.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            Services.Services.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
+                Services.Services.GetService<IPackageDeployer>(),
+                Services.Services.GetService<IPackageResolver>(),
+                Services.Services.GetService<IPackageExporter>()
+                ));
+
             Services.Services.RegisterService<ITaskManager>(new TaskManager());
 
             var commands = Services.Services.GetService<IEnvironment>().Commands();
@@ -56,7 +65,6 @@ namespace OpenWrap
                     if (commandOutput.Type == CommandResultType.Error)
                     {
                         returnCode = -1;
-                        break;
                     }
                 }
                 finally
@@ -144,8 +152,8 @@ namespace OpenWrap
         static IEnumerable<ICommandOutput> AllOutputs(CommandLineProcessor processor, string[] args)
         {
             return processor.Execute(args);
-            var eventListener = Services.Services.GetService<ITaskManager>().GetListener();
-            return Wrap(processor.Execute(args), eventListener).Merge(eventListener.Start().Select(x => ProgressMessage(x)));
+            //var eventListener = Services.Services.GetService<ITaskManager>().GetListener();
+            //return Wrap(processor.Execute(args), eventListener).Merge(eventListener.Start().Select(x => ProgressMessage(x)));
         }
 
         static ICommandOutput ProgressMessage(ITask task)
@@ -170,7 +178,7 @@ namespace OpenWrap
     {
         public static IEnumerable<ICommandDescriptor> Commands(this IEnvironment environment)
         {
-            return Services.Services.GetService<IPackageResolver>()
+            return Services.Services.GetService<IPackageExporter>()
                 .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
                 .SelectMany(x => x.Items)
                 .OfType<ICommandExportItem>()

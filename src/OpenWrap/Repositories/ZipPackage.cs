@@ -15,6 +15,7 @@ namespace OpenWrap.Repositories
         protected ZipPackage(IFile packageFile)
         {
             PackageFile = packageFile;
+            _identifier = new LazyValue<PackageIdentifier>(() => new PackageIdentifier(Name, Version));
         }
 
         public bool Anchored
@@ -27,9 +28,14 @@ namespace OpenWrap.Repositories
             get { return Descriptor.Nuked; }
         }
 
-        public DateTimeOffset CreationTime
+        public DateTimeOffset Created
         {
             get { return PackageFile.LastModifiedTimeUtc != null ? new DateTimeOffset(PackageFile.LastModifiedTimeUtc.Value) : DateTimeOffset.UtcNow; }
+        }
+
+        public PackageIdentifier Identifier
+        {
+            get { return _identifier; }
         }
 
         public ICollection<PackageDependency> Dependencies
@@ -43,6 +49,8 @@ namespace OpenWrap.Repositories
         }
 
         IPackageInfo _descriptor;
+        LazyValue<PackageIdentifier> _identifier;
+
         public IPackageInfo Descriptor
         {
             get
@@ -85,7 +93,7 @@ namespace OpenWrap.Repositories
                 if (descriptorFile == null)
                     throw new InvalidOperationException(String.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", PackageFile.Name));
 
-                ZipEntry versionFile = entries.SingleOrDefault(x => x.Name.Equals("version", StringComparison.OrdinalIgnoreCase));
+                ZipEntry versionFile = entries.SingleOrDefault(x => x.Name.EqualsNoCase("version"));
                 Version versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().ToVersion()) : null;
                 PackageDescriptor descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReaderWriter().Read(x));
 

@@ -32,6 +32,31 @@ namespace OpenWrap.Tests.Commands
                     .ContentOnly.ShouldBeTrue();
         }
     }
+    public class updating_descriptor_when_adding_pacakge : context.add_wrap_context
+    {
+        public updating_descriptor_when_adding_pacakge()
+        {
+            given_project_repository(new InMemoryRepository("ProjectRepository"));
+            given_system_package("sauron", "1.0.0.0");
+
+            when_executing_command("sauron", "-content");   
+        }
+
+        [Test]
+        public void descriptor_is_updated()
+        {
+            Environment.Descriptor.Dependencies.ShouldHaveCountOf(1)
+                    .First().Name.ShouldBe("sauron");
+
+        }
+        [Test]
+        public void descriptor_file_is_saved()
+        {
+            PostExecutionDescriptor.Dependencies.ShouldHaveCountOf(1)
+                    .First().Name.ShouldBe("sauron");
+
+        }
+    }
     class adding_wrap_with_incompatible_arguments : context.command_context<AddWrapCommand>
     {
         public adding_wrap_with_incompatible_arguments()
@@ -68,7 +93,7 @@ namespace OpenWrap.Tests.Commands
             Environment.ProjectRepository.ShouldNotHavePackage("sauron", "1.0.0.1");
         }
     }
-    class adding_wrap_from_local_package_in_project_path_without_descriptor_update : context.command_context<AddWrapCommand>
+    class adding_wrap_from_local_package_in_project_path_without_descriptor_update : context.add_wrap_context
     {
         
         public adding_wrap_from_local_package_in_project_path_without_descriptor_update()
@@ -92,6 +117,12 @@ namespace OpenWrap.Tests.Commands
             Environment.Descriptor.Dependencies.FirstOrDefault(x=>x.Name == "sauron")
                 .ShouldBeNull();
         }
+        [Test]
+        public void descriptor_file_is_not_updated()
+        {
+            PostExecutionDescriptor.Dependencies.FirstOrDefault(x => x.Name == "sauron")
+                .ShouldBeNull();
+        }
     }
     class adding_wrap_from_local_package_in_project_path : context.command_context<AddWrapCommand>
     {
@@ -100,7 +131,6 @@ namespace OpenWrap.Tests.Commands
             given_dependency("depends: sauron");
             given_project_repository(new InMemoryRepository("Project repository"));
             given_currentdirectory_package("sauron", new Version(1, 0, 0));
-
 
             when_executing_command("-Name", "sauron");
         }
@@ -172,7 +202,7 @@ namespace OpenWrap.Tests.Commands
         {
             given_currentdirectory_package("sauron", new Version(1, 0, 0));
 
-            when_executing_command("-Name", "sauron");
+            when_executing_command("-Name", "sauron", "-System");
         }
         [Test]
         public void installs_package_in_system_repository()
@@ -360,12 +390,19 @@ namespace OpenWrap.Tests.Commands
         public class add_wrap_context : context.command_context<AddWrapCommand>
         {
             protected IDirectory ProjectRepositoryDir;
+            protected PackageDescriptor PostExecutionDescriptor;
 
+            protected override void when_executing_command(params string[] parameters)
+            {
+                base.when_executing_command(parameters);
+
+                PostExecutionDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);
+            }
             protected void given_file_based_project_repository()
             {
                 ProjectRepositoryDir = FileSystem.GetDirectory(@"c:\repo");
-                given_project_repository(new FolderRepository(ProjectRepositoryDir) { EnableAnchoring=true });
-            }        
+                given_project_repository(new FolderRepository(ProjectRepositoryDir) { EnableAnchoring = true });
+            }
         }
     
     }

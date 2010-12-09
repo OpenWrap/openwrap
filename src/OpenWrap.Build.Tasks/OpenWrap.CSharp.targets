@@ -43,7 +43,6 @@
     <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" >
       <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />  
     </InitializeOpenWrap>
-                        
 
     <InitializeVisualStudioIntegration
       WrapDescriptor="@(_WrapFile)"

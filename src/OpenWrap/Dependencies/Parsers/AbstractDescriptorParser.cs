@@ -27,16 +27,11 @@ namespace OpenWrap.Dependencies
         {
             var content = WriteContent(descriptor).ToList();
             if (content.Count == 0) return content;
-            return content.Select(x=> Header + ": " + x);
+            return content.Select(x => Header + ": " + x);
         }
 
         protected abstract IEnumerable<string> WriteContent(PackageDescriptor descriptor);
 
         protected abstract void ParseContent(string content, PackageDescriptor descriptor);
-
-        public virtual string GetContentRegex()
-        {
-            return @".*";
-        }
-   }
+    }
 }

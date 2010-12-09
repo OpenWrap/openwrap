@@ -6,7 +6,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
-using OpenFileSystem.IO.FileSystem.Local;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Exports;
 using OpenFileSystem.IO;
 using OpenWrap.Repositories;
@@ -20,7 +20,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
     {
         public reading_a_wrap_list()
         {
-            given_repository();
+            given_repository(); 
         }
 
         [Test]
