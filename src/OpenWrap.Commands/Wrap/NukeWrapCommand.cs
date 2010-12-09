@@ -22,8 +22,7 @@ namespace OpenWrap.Commands.Wrap
 
         public override IEnumerable<ICommandOutput> Execute()
         {
-            IPackageRepository repo = Environment.RemoteRepositories
-                                  .FirstOrDefault(x => x.Name.EqualsNoCase(Remote));
+            IPackageRepository repo = GetRemoteRepository(Remote);
             if (repo == null)
             {
                 yield return new Errors.UnknownRemoteRepository(Remote);

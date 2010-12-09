@@ -47,7 +47,8 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> ValidateInputs()
         {
-            var namedRepository = Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(Remote));
+            var namedRepository = GetRemoteRepository(Remote);
+
             if (namedRepository == null)
             {
                 yield return new Errors.UnknownRemoteRepository(Remote);

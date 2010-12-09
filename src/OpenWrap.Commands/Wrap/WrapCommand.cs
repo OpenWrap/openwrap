@@ -39,6 +39,10 @@ namespace OpenWrap.Commands.Wrap
         {
             get { return Services.Services.GetService<IPackageDeployer>(); }
         }
+        protected IFileSystem FileSystem
+        {
+            get { return Services.Services.GetService<IFileSystem>(); }
+        }
         protected IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
 
         protected DependencyResolutionResult ResolveDependencies(PackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repos)
@@ -71,6 +75,22 @@ namespace OpenWrap.Commands.Wrap
                     .OrderBy(x => x.Value.Priority)
                     .Select(x => new RemoteRepositoryMessage(this, x.Key, x.Value)))
                 yield return m;
+        }
+
+        protected IPackageRepository GetRemoteRepository(string repositoryName)
+        {
+            Uri possibleUri;
+            try
+            {
+                possibleUri = new Uri(repositoryName, UriKind.Absolute);
+            }
+            catch
+            {
+                possibleUri = null;
+            }
+            return possibleUri != null
+                           ? new RemoteRepositoryManager(FileSystem, ConfigurationManager).CreateRepositoryInstance(repositoryName, possibleUri)
+                           : Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(repositoryName));
         }
     }
 }

@@ -54,7 +54,10 @@ namespace OpenWrap.Commands.Wrap
             if (_remoteSet && string.IsNullOrEmpty(Remote))
                 return Environment.RemoteRepositories;
             if (_remoteSet)
-                return new[] { Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(Remote)) };
+            {
+                var repo = GetRemoteRepository(Remote);
+                return repo == null ? new IPackageRepository[0] : new[] { repo };
+            }
             return new[] { Environment.ProjectRepository };
         }
     }

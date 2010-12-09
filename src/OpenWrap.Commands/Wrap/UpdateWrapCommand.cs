@@ -80,24 +80,9 @@ namespace OpenWrap.Commands.Wrap
         protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
             return packageOperationResult is PackageMissingResult
-                            ? new Warning("Package {0} not found in repositories.", ((PackageMissingResult)packageOperationResult).Package.Identifier)
+                            ? null
                             : base.ToOutput(packageOperationResult);
         }
     }
 
-    public class DependenciesNotFoundInRepositories : Warning
-    {
-        public IEnumerable<ParentedDependency> Dependencies { get; set; }
-        public IEnumerable<IPackageRepository> Repositories { get; set; }
-
-        public DependenciesNotFoundInRepositories(IEnumerable<ParentedDependency> dependencies, IEnumerable<IPackageRepository> repositories)
-        {
-            Dependencies = dependencies;
-            Repositories = repositories;
-        }
-        public override string ToString()
-        {
-            return string.Format("{0} not found in '{1}'.", Dependencies.Select(x => "'" + x.Dependency.Name + "'").Distinct().Join(", "), Repositories.Select(x => x.Name).Join(", "));
-        }
-    }
 }
