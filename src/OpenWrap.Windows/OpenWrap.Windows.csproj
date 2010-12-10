@@ -68,15 +68,23 @@
     <Compile Include="Controls\PackageControl.xaml.cs">
       <DependentUpon>PackageControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PackageGroupControl.xaml.cs">
+      <DependentUpon>PackageGroupControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PackageRepositoryControl.xaml.cs">
       <DependentUpon>PackageRepositoryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="InMemoryCommandDescriptor.cs" />
+    <Compile Include="PackageGroupViewModel.cs" />
     <Compile Include="PackageRepositoryViewModel.cs" />
     <Compile Include="VerbSlice.cs" />
     <Compile Include="WrapSlice.cs" />
     <Compile Include="PackageViewModel.cs" />
     <Page Include="Controls\PackageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PackageGroupControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -15,10 +15,10 @@
             </Grid.RowDefinitions>
             
             <Label Content="{Binding Name}" />
-            <ListBox Grid.Row="1" ItemsSource="{Binding Packages}" HorizontalContentAlignment="Stretch">
+            <ListBox Grid.Row="1" ItemsSource="{Binding PackageGroups}" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Controls:PackageControl />
+                        <Controls:PackageGroupControl />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

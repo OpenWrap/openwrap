@@ -9,7 +9,6 @@ namespace OpenWrap.Windows
         public string Version { get; set; }
         public string FullName { get; set; }
         public string Description { get; set; }
-        public string GroupName { get; set; }
 
         public DateTimeOffset Created { get; set; }
         public bool Anchored { get; set; }

@@ -6,15 +6,15 @@ namespace OpenWrap.Windows
 {
     public class PackageRepositoryViewModel : ViewModelBase
     {
-        private readonly ObservableCollection<PackageViewModel> _packages = new ObservableCollection<PackageViewModel>();
+        private readonly ObservableCollection<PackageGroupViewModel> _packageGroups = new ObservableCollection<PackageGroupViewModel>();
 
         public string Name { get; set; }
 
-        public ObservableCollection<PackageViewModel> Packages
+        public ObservableCollection<PackageGroupViewModel> PackageGroups
         {
             get
             {
-                return _packages;
+                return _packageGroups;
             }
         }
     }

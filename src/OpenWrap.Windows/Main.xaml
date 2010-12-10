@@ -22,7 +22,7 @@
             </Grid>
         </TabItem>
         <TabItem Header="Remote repositories">
-            <ListBox ItemsSource="{Binding PackageRepositories}">
+            <ListBox ItemsSource="{Binding PackageRepositories}" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Controls:PackageRepositoryControl />

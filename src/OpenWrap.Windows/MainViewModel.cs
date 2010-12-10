@@ -97,26 +97,48 @@ namespace OpenWrap.Windows
 
             foreach (IGrouping<string, IPackageInfo> packageGroup in packageGroups)
             {
-                string groupName = packageGroup.Key;
                 foreach (var packageInfo in packageGroup)
                 {
-                    PackageViewModel viewModel = new PackageViewModel
-                    {
-                        Name = packageInfo.Name,
-                        FullName = packageInfo.FullName,
-                        Description = packageInfo.Description,
-                        GroupName = groupName,
-                        Version = "Version " + packageInfo.Version,
-                        Created = packageInfo.Created,
-                        Anchored = packageInfo.Anchored,
-                        Nuked = packageInfo.Nuked
-                    };
-
+                    PackageViewModel viewModel = TranslatePackage(packageInfo);
                     result.Add(viewModel);
                 }
             }
 
             return result;
+        }
+
+        private static IEnumerable<PackageGroupViewModel> TranslateAndGroupPackages(IEnumerable<IGrouping<string, IPackageInfo>> packageGroups)
+        {
+            List<PackageGroupViewModel> result = new List<PackageGroupViewModel>();
+
+            foreach (IGrouping<string, IPackageInfo> packageGroup in packageGroups)
+            {
+                PackageGroupViewModel packageGroupViewModel = new PackageGroupViewModel();
+                packageGroupViewModel.Name = packageGroup.Key;
+                foreach (var packageInfo in packageGroup)
+                {
+                    PackageViewModel viewModel = TranslatePackage(packageInfo);
+                    packageGroupViewModel.Versions.Add(viewModel);
+                }
+
+                result.Add(packageGroupViewModel);
+            }
+
+            return result;
+        }
+
+        static PackageViewModel TranslatePackage(IPackageInfo packageInfo)
+        {
+            return new PackageViewModel
+            {
+                    Name = packageInfo.Name,
+                    FullName = packageInfo.FullName,
+                    Description = packageInfo.Description,
+                    Version = "Version " + packageInfo.Version,
+                    Created = packageInfo.Created,
+                    Anchored = packageInfo.Anchored,
+                    Nuked = packageInfo.Nuked
+            };
         }
 
         private static void ReadPackages(IPackageRepository repository, ObservableCollection<PackageViewModel> viewModels)
@@ -134,8 +156,8 @@ namespace OpenWrap.Windows
                         Name = packageRepository.Name
                 };
 
-                IEnumerable<PackageViewModel> packages = TranslatePackages(packageRepository.PackagesByName.NotNull());
-                viewModel.Packages.AddRange(packages);
+                IEnumerable<PackageGroupViewModel> packages = TranslateAndGroupPackages(packageRepository.PackagesByName.NotNull());
+                viewModel.PackageGroups.AddRange(packages);
 
                 _packageRepositories.Add(viewModel);
             }
