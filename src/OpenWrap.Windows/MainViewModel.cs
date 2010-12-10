@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using OpenWrap.Commands;
-using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Windows.Framework;
 
@@ -102,8 +101,7 @@ namespace OpenWrap.Windows
                     };
 
                     _systemPackages.Add(viewModel);
-                }
-                
+                }    
             }
         }
 
