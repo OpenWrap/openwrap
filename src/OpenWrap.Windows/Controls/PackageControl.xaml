@@ -5,9 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d"
              d:DesignHeight="100" d:DesignWidth="200">
-    <StackPanel Orientation="Horizontal">
-        <Label Content="{Binding Name}" />
-        <Label Content="{Binding Version}" />
-        <Label Content="{Binding Description}" />
-    </StackPanel>
+    <Border Style="{StaticResource ListItemBorder}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="100" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Content="{Binding Name}" />
+            <Label Grid.Column="1" Content="{Binding Version}" />
+            <Label Grid.Column="2" Content="{Binding Description}" HorizontalContentAlignment="Right" />
+        </Grid>
+    </Border>
 </UserControl>
