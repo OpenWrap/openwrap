@@ -21,7 +21,7 @@
                 <ContentPresenter Grid.Column="1" Grid.Row="1" Content="{Binding SelectedNoun}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Remotes">
+        <TabItem Header="Remote repositories">
             <ListBox ItemsSource="{Binding PackageRepositories}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -32,6 +32,15 @@
         </TabItem>
         <TabItem Header="System Packages">
             <ListBox ItemsSource="{Binding SystemPackages}" HorizontalContentAlignment="Stretch">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Controls:PackageControl />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </TabItem>
+        <TabItem Header="Project Packages">
+            <ListBox ItemsSource="{Binding ProjectPackages}" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Controls:PackageControl />

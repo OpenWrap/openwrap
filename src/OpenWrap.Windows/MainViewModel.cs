@@ -10,8 +10,9 @@ namespace OpenWrap.Windows
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly ObservableCollection<PackageViewModel> _systemPackages = new ObservableCollection<PackageViewModel>();
         private readonly ObservableCollection<PackageRepositoryViewModel> _packageRepositories = new ObservableCollection<PackageRepositoryViewModel>();
+        private readonly ObservableCollection<PackageViewModel> _systemPackages = new ObservableCollection<PackageViewModel>();
+        private readonly ObservableCollection<PackageViewModel> _projectPackages = new ObservableCollection<PackageViewModel>();
 
         private IEnumerable<NounSlice> _nouns;
         private NounSlice _selectedNoun;
@@ -23,8 +24,12 @@ namespace OpenWrap.Windows
 
             var env = Services.Services.GetService<IEnvironment>();
 
-            ReadPackageRepositories(env.RemoteRepositories);
-            ReadSystemPackages(env.SystemRepository);
+            if (env != null)
+            {
+                ReadPackageRepositories(env.RemoteRepositories);
+                ReadPackages(env.SystemRepository, _systemPackages);
+                ReadPackages(env.ProjectRepository, _projectPackages);
+            }
         }
 
         public IEnumerable<NounSlice> Nouns
@@ -58,6 +63,11 @@ namespace OpenWrap.Windows
             get { return _systemPackages; }
         }
 
+        public ObservableCollection<PackageViewModel> ProjectPackages
+        {
+            get { return _projectPackages; }
+        }
+
         public ObservableCollection<PackageRepositoryViewModel> PackageRepositories
         {
             get { return _packageRepositories; }
@@ -81,12 +91,6 @@ namespace OpenWrap.Windows
             yield return new NounSlice("Test 2", new[] { new VerbSlice(new InMemoryCommandDescriptor()) });
         }
 
-        private void ReadSystemPackages(IPackageRepository systemRepository)
-        {
-            var systemPackages = TranslatePackages(systemRepository.PackagesByName.NotNull());
-            _systemPackages.AddRange(systemPackages);
-        }
-        
         private static IEnumerable<PackageViewModel> TranslatePackages(IEnumerable<IGrouping<string, IPackageInfo>> packageGroups)
         {
             List<PackageViewModel> result = new List<PackageViewModel>();
@@ -115,6 +119,12 @@ namespace OpenWrap.Windows
             return result;
         }
 
+        private static void ReadPackages(IPackageRepository repository, ObservableCollection<PackageViewModel> viewModels)
+        {
+            var packages = TranslatePackages(repository.PackagesByName.NotNull());
+            viewModels.AddRange(packages);
+        }
+        
         private void ReadPackageRepositories(IEnumerable<IPackageRepository> remoteRepositories)
         {
             foreach (var packageRepository in remoteRepositories)
@@ -130,6 +140,5 @@ namespace OpenWrap.Windows
                 _packageRepositories.Add(viewModel);
             }
         }
-
     }
 }
