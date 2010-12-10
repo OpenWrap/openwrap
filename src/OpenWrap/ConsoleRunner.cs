@@ -178,7 +178,13 @@ namespace OpenWrap
     {
         public static IEnumerable<ICommandDescriptor> Commands(this IEnvironment environment)
         {
-            return Services.Services.GetService<IPackageExporter>()
+            var packageExporter = Services.Services.GetService<IPackageExporter>();
+            if (packageExporter == null)
+            {
+                return new List<ICommandDescriptor>();
+            }
+
+            return packageExporter
                 .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
                 .SelectMany(x => x.Items)
                 .OfType<ICommandExportItem>()

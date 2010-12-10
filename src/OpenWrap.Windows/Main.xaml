@@ -31,7 +31,7 @@
             </ListBox>
         </TabItem>
         <TabItem Header="System Packages">
-            <ListBox ItemsSource="{Binding SystemPackages}">
+            <ListBox ItemsSource="{Binding SystemPackages}" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Controls:PackageControl />
