@@ -7,6 +7,7 @@ namespace OpenWrap.Windows
     {
         public string Name { get; set;  }
         public string Version { get; set; }
+        public string ShortVersion { get; set; }
         public string FullName { get; set; }
         public string Description { get; set; }
 

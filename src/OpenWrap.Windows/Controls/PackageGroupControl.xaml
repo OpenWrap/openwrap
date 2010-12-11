@@ -8,16 +8,17 @@
     <Border Style="{StaticResource ListItemBorder}">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" MinWidth="320" />
+                <ColumnDefinition Width="Auto" MinWidth="100" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Label Content="{Binding Name}" />
+            <Label Content="{Binding Name}" FontWeight="Bold" />
             <Label Grid.Column="1" Content="{Binding Description}" />
-            <ListView Grid.Row="1" Grid.ColumnSpan="1" ItemsSource="{Binding Versions}" DisplayMemberPath="Version" BorderThickness="0" >
+            <Label Grid.Row="1" Content="Versions" />
+            <ListView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Versions}" DisplayMemberPath="ShortVersion" BorderThickness="0" >
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel />

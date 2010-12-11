@@ -12,10 +12,12 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
-            <Label Content="{Binding Name}" />
-            <ListBox Grid.Row="1" ItemsSource="{Binding PackageGroups}" HorizontalContentAlignment="Stretch">
+            <Label Content="{Binding Name}" FontWeight="Bold" FontSize="16" />
+            <Label Grid.Row="1" Content="Packages" />
+            <ListBox Grid.Row="2" ItemsSource="{Binding PackageGroups}" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Controls:PackageGroupControl />

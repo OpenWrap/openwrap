@@ -12,7 +12,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Content="{Binding Name}" />
+            <Label Content="{Binding Name}" FontWeight="Bold" />
             <Label Grid.Column="1" Content="{Binding Version}" />
             <Label Grid.Column="2" Content="{Binding Description}" HorizontalContentAlignment="Right" />
         </Grid>

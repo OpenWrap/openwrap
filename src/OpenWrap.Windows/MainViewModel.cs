@@ -134,6 +134,7 @@ namespace OpenWrap.Windows
                     Name = packageInfo.Name,
                     FullName = packageInfo.FullName,
                     Description = packageInfo.Description,
+                    ShortVersion = packageInfo.Version.ToString(),
                     Version = "Version " + packageInfo.Version,
                     Created = packageInfo.Created,
                     Anchored = packageInfo.Anchored,
