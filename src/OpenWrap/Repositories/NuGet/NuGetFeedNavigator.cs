@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.ServiceModel.Syndication;
-using System.Text;
 using System.Xml;
-using OpenFileSystem.IO;
 using OpenRasta.Client;
 using OpenWrap.Repositories.Http;
 

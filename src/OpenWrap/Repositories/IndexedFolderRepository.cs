@@ -1,6 +1,6 @@
 ﻿using System;
-using OpenWrap.Repositories.Http;
 using OpenFileSystem.IO;
+using OpenWrap.Repositories.Http;
 
 namespace OpenWrap.Repositories
 {

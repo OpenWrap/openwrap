@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using OpenFileSystem.IO;
 using OpenWrap.Dependencies;
 using OpenWrap.Repositories.Http;
-using OpenFileSystem.IO;
 
 namespace OpenWrap.Repositories
 {

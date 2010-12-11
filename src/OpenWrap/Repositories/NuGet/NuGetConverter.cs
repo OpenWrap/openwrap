@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml;
 using ICSharpCode.SharpZipLib.Zip;
-using OpenFileSystem.IO;
 using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories.NuGet
