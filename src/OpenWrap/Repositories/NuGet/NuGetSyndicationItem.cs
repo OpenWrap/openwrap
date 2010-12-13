@@ -84,14 +84,14 @@ namespace OpenWrap.Repositories.NuGet
 
         IEnumerable<NuGetDependency> GetODataDependencies(string dependencyString)
         {
-            return (from dependency in dependencyString.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            return (from dependency in dependencyString.Split(new[] { ',', '|' }, StringSplitOptions.RemoveEmptyEntries)
                    let chunks = dependency.Split(':')
                    select new NuGetDependency
                    {
                            Id = chunks[0],
                            MinVersion = chunks[1],
-                           MaxVersion = chunks[2],
-                           Version = chunks[3]
+                           MaxVersion = chunks.Length > 2 ? chunks[2] : null,
+                           Version = chunks.Length > 3 ? chunks[3] : null
                    }).ToList();
         }
 
