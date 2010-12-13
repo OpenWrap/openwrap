@@ -183,6 +183,7 @@
     <Folder Include="IO\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Repositories\feedodata2.xml" />
     <Content Include="Repositories\feedodata.xml" />
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />

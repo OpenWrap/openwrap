@@ -159,15 +159,16 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        string GetOpenWrapPath(IDirectory projectPath, IDirectory wrapPath)
+        string GetOpenWrapPath(IDirectory projectPath, IDirectory rootPath)
         {
+            if (projectPath.Path == rootPath.Path) return OPENWRAP_BUILD;
             int deepness = 1;
             
             for (var current = projectPath; 
                 (current = current.Parent) != null;
                 deepness++)
             {
-                if (current.Path == wrapPath.Path)
+                if (current.Path == rootPath.Path)
                     return Enumerable.Repeat("..", deepness).Join("\\")
                            + "\\"
                            + OPENWRAP_BUILD;

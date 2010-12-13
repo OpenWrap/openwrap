@@ -80,8 +80,10 @@
   <ItemGroup>
     <Compile Include="Build\BuildEngines\BuildResult.cs" />
     <Compile Include="Build\BuildEngines\BuiltInstructionParser.cs" />
+    <Compile Include="Build\BuildEngines\AbstractProcessPackageBuilder.cs" />
     <Compile Include="Build\BuildEngines\CommandLinePackageBuilder.cs" />
-    <Compile Include="Build\BuildEngines\MSBuildBuildEngine.cs" />
+    <Compile Include="Build\BuildEngines\ErrorBuildResult.cs" />
+    <Compile Include="Build\BuildEngines\MSBuildPackageBuilder.cs" />
     <Compile Include="Build\BuildEngines\FileBuildResult.cs" />
     <Compile Include="Build\BuildEngines\IPackageBuilder.cs" />
     <Compile Include="Build\BuildEngines\MetaPackageBuilder.cs" />

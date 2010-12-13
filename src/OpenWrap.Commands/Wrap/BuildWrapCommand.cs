@@ -214,16 +214,26 @@ namespace OpenWrap.Commands.Wrap
                              let value = segment.Substring(key.Length + 1)
                              group new { key, value } by key;
 
-            _builder = commandLine.Trim().StartsWith("msbuild", StringComparison.OrdinalIgnoreCase)
-                                  ? (IPackageBuilder)new MSBuildBuildEngine(FileSystem, Environment)
-                                  : new MetaPackageBuilder(Environment);
-            foreach(var property in properties)
+            _builder = ChooseBuilderInstance(commandLine);
+            foreach (var property in properties)
             {
                 var pi = _builder.GetType().GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
                 if (pi != null)
-                    pi.SetValue(_builder, property.Select(x=>x.value).ToList(), null);
+                    pi.SetValue(_builder, property.Select(x => x.value).ToList(), null);
             }
             return null;
+        }
+
+        IPackageBuilder ChooseBuilderInstance(string commandLine)
+        {
+            commandLine = commandLine.Trim();
+            if (commandLine.StartsWithNoCase("msbuild"))
+                return new MSBuildPackageBuilder(FileSystem, Environment);
+            if (commandLine.StartsWithNoCase("files"))
+                return new FilePackageBuilder();
+            if (commandLine.StartsWithNoCase("command"))
+                return new CommandLinePackageBuilder(FileSystem, Environment);
+            return new MetaPackageBuilder(Environment);
         }
 
         string GetCurrentVersion()

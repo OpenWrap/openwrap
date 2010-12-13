@@ -7,7 +7,7 @@ using OpenFileSystem.IO;
 
 namespace OpenWrap.Build.BuildEngines
 {
-    public class MSBuildBuildEngine : CommandLinePackageBuilder
+    public class MSBuildPackageBuilder : AbstractProcessPackageBuilder
     {
         public IEnumerable<string> Profile { get; set; }
         public IEnumerable<string> Platform { get; set; }
@@ -16,7 +16,7 @@ namespace OpenWrap.Build.BuildEngines
         {
             get { return GetMSBuildExecutablePath(); }
         }
-        public MSBuildBuildEngine(IFileSystem fileSystem, IEnvironment environment)
+        public MSBuildPackageBuilder(IFileSystem fileSystem, IEnvironment environment)
             : base(fileSystem,environment)
 
         {
@@ -64,7 +64,7 @@ namespace OpenWrap.Build.BuildEngines
             }
         }
 
-        public Process CreateMSBuildProcess(IFile project, string platform, string profile, string msbuildTargets)
+        Process CreateMSBuildProcess(IFile project, string platform, string profile, string msbuildTargets)
         {
             var commandLineArgs = Environment.GetCommandLineArgs();
             var logger = commandLineArgs.FirstOrDefault(x => x.StartsWith("/logger", StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
@@ -77,8 +77,11 @@ namespace OpenWrap.Build.BuildEngines
 
             var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1} /p:t={2} {3} {4}", platform, profile, msbuildTargets, logger, additionalProperties);
 
-            var arguments = "\"" + project.Path.FullPath + "\"" + msbuildParams;
-            return CreateProcess(arguments);
+            var args = "\"" + project.Path.FullPath + "\"" + msbuildParams;
+            var msBuildProcess = CreateProcess(args);
+            msBuildProcess.StartInfo.EnvironmentVariables["TEAMCITY_BUILD_PROPERTIES_FILE"]
+                    = Process.GetCurrentProcess().StartInfo.EnvironmentVariables["TEAMCITY_BUILD_PROPERTIES_FILE"];
+            return msBuildProcess;
         }
 
         static string GetMSBuildExecutablePath()

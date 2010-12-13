@@ -21,12 +21,12 @@ namespace OpenWrap.Tests.Commands
 
             when_executing_command();
         }
-        [Test]
-        public void dependency_not_found_warning_is_produced()
-        {
-            Results.Where(x => x.Type == CommandResultType.Warning)
-                    .ShouldHaveCountOf(1);
-        }
+        //[Test]
+        //public void dependency_not_found_warning_is_produced()
+        //{
+        //    Results.Where(x => x.Type == CommandResultType.Warning)
+        //            .ShouldHaveCountOf(1);
+        //}
         [Test]
         public void no_error_should_be_reported()
         {
