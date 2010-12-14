@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using OpenWrap.Windows.Framework;
 
-namespace OpenWrap.Windows
+namespace OpenWrap.Windows.PackageRepository
 {
     public class PackageRepositoryViewModel : ViewModelBase
     {
