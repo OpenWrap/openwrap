@@ -74,6 +74,8 @@ namespace OpenWrap
         }
         public static Version ToVersion(this string version)
         {
+            if (string.IsNullOrEmpty(version) || !Regex.IsMatch(version, @"\d+\.\d+(\.\d+(\.\d+)?)?"))
+                return null;
             try
             {
                 return new Version(version);

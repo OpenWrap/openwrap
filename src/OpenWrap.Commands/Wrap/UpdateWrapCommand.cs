@@ -74,9 +74,15 @@ namespace OpenWrap.Commands.Wrap
             var sourceRepos = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }.Concat(Environment.RemoteRepositories);
             foreach (var x in (string.IsNullOrEmpty(Name) ? PackageManager.UpdateProjectPackages(sourceRepos, Environment.ProjectRepository, Environment.Descriptor)
                                                          : PackageManager.UpdateProjectPackages(sourceRepos, Environment.ProjectRepository, Environment.Descriptor, Name))
-                    .Select(ToOutput))
+                    .Select(ToOutputForProject))
                 yield return x;
         }
+         ICommandOutput ToOutputForProject(PackageOperationResult packageOperationResult)
+         {
+             return packageOperationResult is PackageMissingResult
+                            ? new PackageMissingOutput((PackageMissingResult)packageOperationResult)
+                            : ToOutput(packageOperationResult);
+         }
         protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
             return packageOperationResult is PackageMissingResult
