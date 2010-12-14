@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace OpenWrap.Configuration.remote_repositories
 {
     public class RemoteRepositories : Dictionary<string, RemoteRepository>

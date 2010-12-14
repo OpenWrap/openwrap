@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
-using OpenWrap.Services;
+using OpenWrap.Dependencies;
 
 namespace OpenWrap.Repositories
 {

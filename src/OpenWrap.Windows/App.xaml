@@ -89,5 +89,12 @@
 				</Grid>
         	</Grid>
         </DataTemplate>
+
+        <Style x:Key="ListItemBorder" TargetType="{x:Type Border}">
+            <Setter Property="Margin" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ListBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="2"/>
+       </Style>
     </Application.Resources>
 </Application>

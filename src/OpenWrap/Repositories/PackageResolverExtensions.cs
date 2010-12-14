@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Commands;
-using OpenWrap.Dependencies;
-using OpenWrap.Exports;
-using OpenWrap.Services;
 
 namespace OpenWrap.Repositories
 {

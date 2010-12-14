@@ -56,14 +56,6 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -73,6 +65,33 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controls\PackageControl.xaml.cs">
+      <DependentUpon>PackageControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PackageGroupControl.xaml.cs">
+      <DependentUpon>PackageGroupControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PackageRepositoryControl.xaml.cs">
+      <DependentUpon>PackageRepositoryControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InMemoryCommandDescriptor.cs" />
+    <Compile Include="PackageGroupViewModel.cs" />
+    <Compile Include="PackageRepositoryViewModel.cs" />
+    <Compile Include="VerbSlice.cs" />
+    <Compile Include="WrapSlice.cs" />
+    <Compile Include="PackageViewModel.cs" />
+    <Page Include="Controls\PackageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PackageGroupControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PackageRepositoryControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Main.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,6 +100,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Framework\ViewModelBase.cs" />
     <Compile Include="Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -88,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="NounSlice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

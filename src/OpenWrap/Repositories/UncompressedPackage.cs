@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using OpenWrap.Exports;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
-using OpenWrap.Repositories;
-using OpenWrap.Tasks;
+using OpenWrap.Dependencies;
+using OpenWrap.Exports;
 
 namespace OpenWrap.Repositories
 {
