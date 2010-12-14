@@ -127,7 +127,7 @@ namespace OpenWrap.Commands.Wrap
             }
             if (MinVersion != null)
             {
-                builder = builder.VersionVertex(new GreaterThenOrEqualVersionVertex(MinVersion.ToVersion()));
+                builder = builder.VersionVertex(new GreaterThanOrEqualVersionVertex(MinVersion.ToVersion()));
             }
             if (MaxVersion != null)
             {

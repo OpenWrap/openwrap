@@ -131,7 +131,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         public void dependency_version_is_greaterthan_2()
         {
             var vertex = Environment.Descriptor.Dependencies.First().VersionVertices.First();
-            var greater = vertex as GreaterThenOrEqualVersionVertex;
+            var greater = vertex as GreaterThanOrEqualVersionVertex;
             greater.Version.ShouldBe(new Version("2.0.0"));
         }
     }
@@ -154,7 +154,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         [Test]
         public void vertex_0_is_greaterthanorequal_2()
         {
-            var greater = vertices[0] as GreaterThenOrEqualVersionVertex;
+            var greater = vertices[0] as GreaterThanOrEqualVersionVertex;
             greater.Version.ShouldBe(new Version("2.0.0"));
         }
 

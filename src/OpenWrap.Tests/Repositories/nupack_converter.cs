@@ -50,9 +50,9 @@ namespace nupack_converter_specs
             Package.Version.ShouldBe("1.0.0.1234".ToVersion());
         }
         [Test]
-        public void exact_version_dependency_is_correct()
+        public void exact_version_dependency_is_per_latest()
         {
-            Package.Dependencies.First(x => x.Name == "one-ring").ToString().ShouldBe("one-ring = 1.0.0");
+            Package.Dependencies.First(x => x.Name == "one-ring").ToString().ShouldBe("one-ring >= 1.0");
         }
         [Test]
         public void min_version_dependency_is_correct()
@@ -67,6 +67,56 @@ namespace nupack_converter_specs
             exports
                     .Items.ShouldHaveCountOf(1)
                     .First().FullPath.Check(x => IOPath.GetFileName(x).ShouldBe("empty.dll"));
+        }
+    }
+    public class maven_style_version_definition : OpenWrap.Testing.context
+    {
+        [Test]
+        public void default_version()
+        {
+            version("1.0.0").ShouldBe(">= 1.0");
+        }
+        public void less_than_or_equal()
+        {
+            version("(,1.0]").ShouldBe("<= 1.0");
+        }
+        public void less_than()
+        {
+            version("(,1.0)").ShouldBe("< 1.0");
+        }
+
+        [Test]
+        public void exact_version()
+        {
+            version("[1.0]").ShouldBe("= 1.0");
+        }
+
+        [Test]
+        public void more_than_or_equal()
+        {
+            version("[1.0,)").ShouldBe(">= 1.0");
+        }
+
+        [Test]
+        public void more_than()
+        {
+            version("(1.0,)").ShouldBe("> 1.0");
+        }
+
+        [Test]
+        public void less_and_less()
+        {
+            version("(1.0,2.0)").ShouldBe("> 1.0 and < 2.0");
+        }
+
+        [Test]
+        public void less_equal_and_less_equal()
+        {
+            version("[1.0,2.0]").ShouldBe(">= 1.0 and <= 2.0");
+        }
+        string version(string s)
+        {
+            return NuGetConverter.ConvertNuGetVersionRange(s).Select(x=>x.ToString()).Join(" and ");
         }
     }
     namespace context

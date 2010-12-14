@@ -2,9 +2,9 @@ using System;
 
 namespace OpenWrap.Dependencies
 {
-    public class GreaterThenOrEqualVersionVertex : VersionVertex
+    public class GreaterThanOrEqualVersionVertex : VersionVertex
     {
-        public GreaterThenOrEqualVersionVertex(Version version)
+        public GreaterThanOrEqualVersionVertex(Version version)
             : base(version)
         {
         }

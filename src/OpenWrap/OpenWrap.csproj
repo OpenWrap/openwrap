@@ -277,7 +277,7 @@
     <Compile Include="Commands\NotEnoughParameters.cs" />
     <Compile Include="Commands\UnknownCommand.cs" />
     <Compile Include="Dependencies\AnyVersionVertex.cs" />
-    <Compile Include="Dependencies\GreaterThenOrEqualVersionVertex.cs" />
+    <Compile Include="Dependencies\GreaterThanOrEqualVersionVertex.cs" />
     <Compile Include="Dependencies\ExactVersionVertex.cs" />
     <Compile Include="Dependencies\LessThanVersionVertex.cs" />
     <Compile Include="Dependencies\VersionVertex.cs" />

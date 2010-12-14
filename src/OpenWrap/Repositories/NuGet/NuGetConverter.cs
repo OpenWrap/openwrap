@@ -154,13 +154,95 @@ namespace OpenWrap.Repositories.NuGet
             var version = xmlNode.Attributes["version"] ?? xmlNode.Attributes["version", NuSpecSchema];
             var minversion = xmlNode.Attributes["minversion"] ?? xmlNode.Attributes["minversion", NuSpecSchema];
             var maxversion = xmlNode.Attributes["maxversion"] ?? xmlNode.Attributes["maxversion", NuSpecSchema];
-            if (version != null)
-                dep.VersionVertex(new ExactVersionVertex(version.Value.ToVersion()));
-            if (minversion != null)
-                dep.VersionVertex(new GreaterThenOrEqualVersionVertex(minversion.Value.ToVersion()));
-            if (maxversion != null)
-                dep.VersionVertex(new LessThanVersionVertex(maxversion.Value.ToVersion()));
+            if (minversion != null || maxversion != null)
+            {
+                if (minversion != null)
+                    dep.VersionVertex(new GreaterThanOrEqualVersionVertex(minversion.Value.ToVersion()));
+                if (maxversion != null)
+                    dep.VersionVertex(new LessThanVersionVertex(maxversion.Value.ToVersion()));
+            }
+            else
+            {
+                dep.SetVersionVertices(ConvertNuGetVersionRange(version.Value).DefaultIfEmpty(new AnyVersionVertex()));
+            }
             return dep;
+        }
+
+        public static IEnumerable<VersionVertex> ConvertNuGetVersionRange(string value)
+        {
+            var simpleVersion = value.ToVersion();
+            if (simpleVersion != null)
+            {
+                // >= 1.0
+                yield return new GreaterThanOrEqualVersionVertex(RemoveInsignificantVersionNumbers(value));
+                yield break;
+            }
+            Version beginVersion = null;
+            Version endVersion = null;
+            StringBuilder currentIdentifier = new StringBuilder();
+            bool inclusiveBeginning = false;
+            bool inclusiveEnding = false;
+            bool endIncluded = false;
+            Action clearVer = () => currentIdentifier = new StringBuilder();
+            foreach(var ch in value)
+            {
+                if (ch == ' ') continue;
+                if (ch == '[') { inclusiveBeginning = true; clearVer(); }
+                else if (ch == '(') { inclusiveBeginning = false; clearVer(); }
+                else if (ch == ']') { inclusiveEnding = true; }
+                else if (ch == ')') { inclusiveEnding = false; }
+                else if ((ch >= '0' && ch <= '9') || ch == '.') { currentIdentifier.Append(ch); }
+                else if (ch == ',')
+                {
+                    if (currentIdentifier.Length > 0)
+                    {
+                        beginVersion = RemoveInsignificantVersionNumbers(currentIdentifier);
+                        clearVer();
+                    }
+                    endIncluded = true;
+                }
+            }
+            if (currentIdentifier.Length > 0 && endIncluded)
+                endVersion = RemoveInsignificantVersionNumbers(currentIdentifier);
+            else if (currentIdentifier.Length > 0 && endIncluded == false && beginVersion == null)
+                beginVersion = RemoveInsignificantVersionNumbers(currentIdentifier);
+
+
+            if (beginVersion != null && !endIncluded)
+            {
+                if (inclusiveBeginning && inclusiveEnding)
+                    yield return new ExactVersionVertex(beginVersion);
+                    yield break;
+            }
+            if (beginVersion != null && inclusiveBeginning)
+                yield return new GreaterThanOrEqualVersionVertex(beginVersion);
+            else if (beginVersion != null && inclusiveBeginning == false)
+                yield return new GreaterThanVersionVertex(beginVersion);
+
+            if (endVersion != null && inclusiveEnding == false)
+                yield return new LessThanVersionVertex(endVersion);
+            else if (endVersion != null && inclusiveEnding == true)
+                yield return new LessThanOrEqualVersionVertex(endVersion);
+
+
+        }
+
+        static Version RemoveInsignificantVersionNumbers(string versionString)
+        {
+            if (versionString == null)
+                return null;
+
+            var ver = versionString.ToVersion();
+            if (ver == null)
+                return null;
+            return new Version(ver.Major, ver.Minor);
+
+        }
+
+        static Version RemoveInsignificantVersionNumbers(StringBuilder currentIdentifier)
+        {
+            var versionString = currentIdentifier.ToString();
+            return RemoveInsignificantVersionNumbers(versionString);
         }
     }
 }

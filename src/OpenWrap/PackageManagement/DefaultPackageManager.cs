@@ -205,7 +205,7 @@ namespace OpenWrap.PackageManagement
             if (packageToRequest.ExactVersion != null)
                 vertices.Add(new ExactVersionVertex(packageToRequest.ExactVersion));
             if (packageToRequest.MinVersion != null)
-                vertices.Add(new GreaterThenOrEqualVersionVertex(packageToRequest.MinVersion));
+                vertices.Add(new GreaterThanOrEqualVersionVertex(packageToRequest.MinVersion));
             if (packageToRequest.MaxVersion != null)
                 vertices.Add(new LessThanVersionVertex(packageToRequest.MaxVersion));
             if (packageToRequest.ExactVersion == null && packageToRequest.MinVersion == null && packageToRequest.MaxVersion == null)

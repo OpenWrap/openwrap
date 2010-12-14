@@ -89,9 +89,10 @@ namespace OpenWrap.Repositories.NuGet
                    select new NuGetDependency
                    {
                            Id = chunks[0],
-                           MinVersion = chunks[1],
-                           MaxVersion = chunks.Length > 2 ? chunks[2] : null,
-                           Version = chunks.Length > 3 ? chunks[3] : null
+                           MinVersion = chunks.Length == 4 ? chunks[1] : null,
+                           MaxVersion = chunks.Length == 4 ? chunks[2] : null,
+                           ExactVersion = chunks.Length == 4 ? chunks[3] : null,
+                           Version = chunks.Length == 2 ? chunks[1] : null
                    }).ToList();
         }
 

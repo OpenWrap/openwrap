@@ -15,7 +15,7 @@ namespace OpenWrap.Repositories.NuGet
         public string Id { get; set; }
 
         [DataMember(Name = "version", EmitDefaultValue = false)]
-        public string Version { get; set; }
+        public string ExactVersion { get; set; }
 
         [DataMember(Name = "minVersion", EmitDefaultValue = false)]
         public string MinVersion { get; set; }
@@ -23,6 +23,7 @@ namespace OpenWrap.Repositories.NuGet
         [DataMember(Name = "maxVersion", EmitDefaultValue = false)]
         public string MaxVersion { get; set; }
 
+        public string Version { get; set; }
         public string ToPackageDependencyLine()
         {
             return new PackageDependencyBuilder(Id)
@@ -32,11 +33,17 @@ namespace OpenWrap.Repositories.NuGet
 
         IEnumerable<VersionVertex> CreateVersionVertices()
         {
+            if (Version != null)
+            {
+                foreach(var vertice in NuGetConverter.ConvertNuGetVersionRange(Version).DefaultIfEmpty(new AnyVersionVertex()))
+                    yield return vertice;
+                yield break;
+            }
             Version version = null;
-            if (!string.IsNullOrEmpty(Version) && (version = Version.ToVersion()) != null)
+            if (!string.IsNullOrEmpty(ExactVersion) && (version = ExactVersion.ToVersion()) != null)
                 yield return new ExactVersionVertex(version);
             if (!string.IsNullOrEmpty(MinVersion) && (version = MinVersion.ToVersion()) != null)
-                yield return new GreaterThenOrEqualVersionVertex(version);
+                yield return new GreaterThanOrEqualVersionVertex(version);
             if (!string.IsNullOrEmpty(MaxVersion) && (version = MaxVersion.ToVersion()) != null)
                 yield return new LessThanVersionVertex(version);
         }
