@@ -76,14 +76,16 @@
     </Compile>
     <Compile Include="Framework\CommandBase.cs" />
     <Compile Include="InMemoryCommandDescriptor.cs" />
-    <Compile Include="PackageGroupViewModel.cs" />
+    <Compile Include="Package\AddPackageCommand.cs" />
+    <Compile Include="Package\PackageGroupViewModel.cs" />
     <Compile Include="PackageRepository\AddPackageRepositoryCommand.cs" />
     <Compile Include="PackageRepository\NewPackageRepositoryViewModel.cs" />
     <Compile Include="PackageRepository\PackageRepositoryViewModel.cs" />
     <Compile Include="PackageRepository\RemovePackageRepositoryCommand.cs" />
+    <Compile Include="Package\RemovePackageCommand.cs" />
     <Compile Include="VerbSlice.cs" />
     <Compile Include="WrapSlice.cs" />
-    <Compile Include="PackageViewModel.cs" />
+    <Compile Include="Package\PackageViewModel.cs" />
     <Page Include="Controls\PackageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

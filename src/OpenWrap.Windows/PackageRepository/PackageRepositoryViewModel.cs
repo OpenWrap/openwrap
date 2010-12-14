@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using OpenWrap.Windows.Framework;
+using OpenWrap.Windows.Package;
 
 namespace OpenWrap.Windows.PackageRepository
 {

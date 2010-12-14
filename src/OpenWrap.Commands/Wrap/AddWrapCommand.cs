@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenFileSystem.IO;
 using OpenWrap.Dependencies;
 using OpenWrap.PackageManagement;
 using OpenWrap.Repositories;

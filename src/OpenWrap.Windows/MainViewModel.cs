@@ -5,6 +5,7 @@ using System.Linq;
 using OpenWrap.Commands;
 using OpenWrap.Repositories;
 using OpenWrap.Windows.Framework;
+using OpenWrap.Windows.Package;
 using OpenWrap.Windows.PackageRepository;
 
 namespace OpenWrap.Windows
