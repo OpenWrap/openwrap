@@ -74,7 +74,7 @@
     <Compile Include="Controls\PackageRepositoryControl.xaml.cs">
       <DependentUpon>PackageRepositoryControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="InMemoryCommandDescriptor.cs" />
+    <Compile Include="NullCommandDescriptor.cs" />
     <Compile Include="PackageGroupViewModel.cs" />
     <Compile Include="PackageRepositoryViewModel.cs" />
     <Compile Include="VerbSlice.cs" />

@@ -168,7 +168,6 @@ namespace OpenWrap
             eventListener.Stop();
         }
 
-        //static IEnumerable<ICommandResult> Read
         static IEnumerable<ICommandOutput> ReadTasks()
         {
             return null;
@@ -180,9 +179,7 @@ namespace OpenWrap
         {
             var packageExporter = Services.Services.GetService<IPackageExporter>();
             if (packageExporter == null)
-            {
-                return new List<ICommandDescriptor>();
-            }
+                throw new InvalidOperationException("A package exporter service hasn't been found.");
 
             return packageExporter
                 .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())

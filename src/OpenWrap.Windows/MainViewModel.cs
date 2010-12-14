@@ -87,8 +87,8 @@ namespace OpenWrap.Windows
         
         private static IEnumerable<NounSlice> MockCommands()
         {
-            yield return new NounSlice("Test 1", new[] { new VerbSlice(new InMemoryCommandDescriptor()) });
-            yield return new NounSlice("Test 2", new[] { new VerbSlice(new InMemoryCommandDescriptor()) });
+            yield return new NounSlice("Test 1", new[] { new VerbSlice(new NullCommandDescriptor()) });
+            yield return new NounSlice("Test 2", new[] { new VerbSlice(new NullCommandDescriptor()) });
         }
 
         private static IEnumerable<PackageViewModel> TranslatePackages(IEnumerable<IGrouping<string, IPackageInfo>> packageGroups)
