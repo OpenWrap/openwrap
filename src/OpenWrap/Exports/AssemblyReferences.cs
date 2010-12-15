@@ -6,13 +6,13 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Exports
 {
-    public static class AssemblyReferenceExportExtensions
+    public static class AssemblyReferences
     {
         public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageResolver resolver, bool includeContentOnly, ExecutionEnvironment exec, PackageDescriptor descriptor, params IPackageRepository[] repositories)
         {
             return GetAssemblyReferences(resolver.TryResolveDependencies(descriptor, repositories), exec, includeContentOnly);
         }
-        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageResolver resolver, ExecutionEnvironment exec, params IPackageRepository[] repositories)
+        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(ExecutionEnvironment exec, params IPackageRepository[] repositories)
         {
             return GetAssemblyReferencesFromPackages(repositories.SelectMany(x => x.PackagesByName.SelectMany(y => y)), exec);
         }

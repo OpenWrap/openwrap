@@ -50,15 +50,26 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<IPackageRepository> GetRepositoryToList()
         {
             if (System)
-                return new[] { Environment.SystemRepository };
+            {
+                if (Environment.SystemRepository != null)
+                    yield return Environment.SystemRepository;
+                yield break;
+            }
             if (_remoteSet && string.IsNullOrEmpty(Remote))
-                return Environment.RemoteRepositories;
+            {
+
+                foreach (var remote in Environment.RemoteRepositories.NotNull())
+                    yield return remote;
+            }
             if (_remoteSet)
             {
                 var repo = GetRemoteRepository(Remote);
-                return repo == null ? new IPackageRepository[0] : new[] { repo };
+                if (repo != null)
+                    yield return repo;
+                yield break;
             }
-            return new[] { Environment.ProjectRepository };
+            if (Environment.ProjectRepository != null)
+                yield return Environment.ProjectRepository;
         }
     }
 }
