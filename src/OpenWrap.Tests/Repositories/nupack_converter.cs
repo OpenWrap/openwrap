@@ -52,7 +52,7 @@ namespace nupack_converter_specs
         [Test]
         public void exact_version_dependency_is_per_latest()
         {
-            Package.Dependencies.First(x => x.Name == "one-ring").ToString().ShouldBe("one-ring >= 1.0");
+            Package.Dependencies.First(x => x.Name == "one-ring").ToString().ShouldBe("one-ring >= 1.0 and < 1.1");
         }
         [Test]
         public void min_version_dependency_is_correct()
@@ -74,8 +74,15 @@ namespace nupack_converter_specs
         [Test]
         public void default_version()
         {
-            version("1.0.0").ShouldBe(">= 1.0");
+            version("1.0.0").ShouldBe(">= 1.0 and < 1.1");
         }
+
+        [Test]
+        public void default_version_major_minor()
+        {
+            version("1.0").ShouldBe("= 1.0");
+        }
+
         public void less_than_or_equal()
         {
             version("(,1.0]").ShouldBe("<= 1.0");

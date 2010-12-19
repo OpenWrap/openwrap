@@ -41,8 +41,7 @@ namespace OpenWrap
             Services.Services.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             Services.Services.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
                 Services.Services.GetService<IPackageDeployer>(),
-                Services.Services.GetService<IPackageResolver>(),
-                Services.Services.GetService<IPackageExporter>()
+                Services.Services.GetService<IPackageResolver>()
                 ));
 
             Services.Services.RegisterService<ITaskManager>(new TaskManager());

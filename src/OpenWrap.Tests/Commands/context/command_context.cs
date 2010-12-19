@@ -40,8 +40,7 @@ namespace OpenWrap.Tests.Commands.context
             Services.Services.RegisterService<ICommandRepository>(Commands);
             Services.Services.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
                                                                                 Services.Services.GetService<IPackageDeployer>(),
-                                                                                Services.Services.GetService<IPackageResolver>(),
-                                                                                Services.Services.GetService<IPackageExporter>()));
+                                                                                Services.Services.GetService<IPackageResolver>()));
             Services.Services.RegisterService<IConfigurationManager>(new ConfigurationManager(Environment.ConfigurationDirectory));
         }
 

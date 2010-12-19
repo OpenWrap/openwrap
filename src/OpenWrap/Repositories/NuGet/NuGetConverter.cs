@@ -172,8 +172,19 @@ namespace OpenWrap.Repositories.NuGet
             var simpleVersion = value.ToVersion();
             if (simpleVersion != null)
             {
-                // >= 1.0
-                yield return new GreaterThanOrEqualVersionVertex(RemoveInsignificantVersionNumbers(value));
+                // play around with version ranges to account for NuGet not making distinction between
+                // revisions and implementation details of their tool.
+                if (simpleVersion.Build == -1)
+                {
+                    yield return new ExactVersionVertex(simpleVersion);
+                }
+                else
+                {
+                    var lowerBound = RemoveInsignificantVersionNumbers(value);
+                    var upperBound = new Version(lowerBound.Major, lowerBound.Minor + 1);
+                    yield return new GreaterThanOrEqualVersionVertex(lowerBound);
+                    yield return new LessThanVersionVertex(upperBound);
+                }
                 yield break;
             }
             Version beginVersion = null;
@@ -202,9 +213,9 @@ namespace OpenWrap.Repositories.NuGet
                 }
             }
             if (currentIdentifier.Length > 0 && endIncluded)
-                endVersion = RemoveInsignificantVersionNumbers(currentIdentifier);
+                endVersion = currentIdentifier.ToString().ToVersion();
             else if (currentIdentifier.Length > 0 && endIncluded == false && beginVersion == null)
-                beginVersion = RemoveInsignificantVersionNumbers(currentIdentifier);
+                beginVersion = currentIdentifier.ToString().ToVersion();
 
 
             if (beginVersion != null && !endIncluded)

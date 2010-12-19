@@ -169,6 +169,7 @@
     <Compile Include="PackageManagement\IPackageManager.cs" />
     <Compile Include="PackageManagement\PackageAddOptions.cs" />
     <Compile Include="PackageManagement\PackageAnchoredResult.cs" />
+    <Compile Include="PackageManagement\PackageCleanCannotDo.cs" />
     <Compile Include="PackageManagement\PackageConflictResult.cs" />
     <Compile Include="PackageManagement\PackageDescriptorDependencyUpdate.cs" />
     <Compile Include="PackageManagement\PackageDescriptorUpdateResult.cs" />
