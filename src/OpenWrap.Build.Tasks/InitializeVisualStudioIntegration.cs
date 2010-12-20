@@ -72,7 +72,7 @@ namespace OpenWrap.Build.Tasks
             EnsureWrapRepositoryIsInitialized();
             if (!EnableVisualStudioIntegration) return true;
 
-            ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository, ProjectFilePath, ExcludeAssemblies.Select(x=>x.ItemSpec).ToList());
+            ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository);
             return true;
         }
     }
