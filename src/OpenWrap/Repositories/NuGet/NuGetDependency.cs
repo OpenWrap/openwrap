@@ -35,7 +35,7 @@ namespace OpenWrap.Repositories.NuGet
         {
             if (Version != null)
             {
-                foreach(var vertice in NuGetConverter.ConvertNuGetVersionRange(Version).DefaultIfEmpty(new AnyVersionVertex()))
+                foreach(var vertice in NuSpecConverter.ConvertNuGetVersionRange(Version).DefaultIfEmpty(new AnyVersionVertex()))
                     yield return vertice;
                 yield break;
             }

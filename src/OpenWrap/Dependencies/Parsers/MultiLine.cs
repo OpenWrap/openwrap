@@ -7,9 +7,9 @@ namespace OpenWrap.Dependencies
     public class MultiLine<T> : NotificationCollection<T>
     {
         protected readonly DescriptorLineCollection _lines;
-        string _name;
-        readonly Func<T, string> _convertToString;
         readonly Func<string, T> _convertFromString;
+        readonly Func<T, string> _convertToString;
+        readonly string _name;
 
 
         public MultiLine(DescriptorLineCollection lines, string name, Func<T, string> convertToString, Func<string, T> convertFromString)
@@ -18,15 +18,8 @@ namespace OpenWrap.Dependencies
             _name = name;
             _convertToString = convertToString;
             _convertFromString = convertFromString;
-            foreach (var line in _lines.Where(x => OpenWrap.StringExtensions.EqualsNoCase(x.Name, _name)))
+            foreach (var line in _lines.Where(x => x.Name.EqualsNoCase(_name)))
                 ParseLine(line);
-        }
-
-        void ParseLine(IPackageDescriptorLine line)
-        {
-            var converted = _convertFromString(line.Value);
-            if (ReferenceEquals(converted, null) == false && converted.Equals(default(T)) == false)
-                AddItemCore(converted);
         }
 
         protected override T HandleAdd(T item)
@@ -38,6 +31,13 @@ namespace OpenWrap.Dependencies
         protected override void HandleRemove(T item)
         {
             _lines.Remove(_name, _convertToString(item));
+        }
+
+        void ParseLine(IPackageDescriptorLine line)
+        {
+            var converted = _convertFromString(line.Value);
+            if (ReferenceEquals(converted, null) == false && converted.Equals(default(T)) == false)
+                AddItemCore(converted);
         }
     }
 }

@@ -97,38 +97,43 @@ namespace OpenWrap.Preloading
             }
         }
 
-        static IEnumerable<string> GetLatestPackageDirectories(Regex regex, DirectoryInfo cachePath)
+        static IEnumerable<string> GetLatestPackageDirectories(Regex regex, IEnumerable<DirectoryInfo> cacheDirectories)
         {
-            cachePath.Refresh();
-            if (!cachePath.Exists)
-                return Enumerable.Empty<string>();
-            return (
-                           from uncompressedFolder in cachePath.GetDirectories()
-                           let match = regex.Match(uncompressedFolder.Name)
-                           where match.Success
-                           let version = new Version(match.Groups["version"].Value)
-                           let name = match.Groups["name"].Value
-                           group new { name, folder = uncompressedFolder, version } by name
-                           into tuplesByName
-                           select tuplesByName.OrderByDescending(x => x.version).First().folder.FullName
-                   ).ToList();
+            foreach (var dir in cacheDirectories)
+            {
+                var all= (
+                               from uncompressedFolder in dir.GetDirectories()
+                               let match = regex.Match(uncompressedFolder.Name)
+                               where match.Success
+                               let version = new Version(match.Groups["version"].Value)
+                               let name = match.Groups["name"].Value
+                               group new { name, folder = uncompressedFolder, version } by name
+                               into tuplesByName
+                               select tuplesByName.OrderByDescending(x => x.version).First().folder.FullName
+                         )
+                         .ToList();
+
+                if (all.Count > 0)
+                    return all;
+            }
+            return Enumerable.Empty<string>();
         }
 
         static IEnumerable<string> GetLatestPackagesForProjectRepository(Regex regex)
         {
-            var projectRepository = (from directory in GetSelfAndParents(Environment.CurrentDirectory)
+            var projectRepositories = (from directory in GetSelfAndParents(Environment.CurrentDirectory)
                                      where directory.Exists
                                      let cacheDirectory = GetCacheDirectoryFromProjectDirectory(directory)
                                      where cacheDirectory != null && cacheDirectory.Exists
-                                     select cacheDirectory).FirstOrDefault();
-            return projectRepository == null
+                                     select cacheDirectory).ToList();
+            return projectRepositories.Count == 0
                            ? Enumerable.Empty<string>()
-                           : GetLatestPackageDirectories(regex, projectRepository);
+                           : GetLatestPackageDirectories(regex, projectRepositories);
         }
 
         static IEnumerable<string> GetLatestPackagesForSystemRepository(string systemRepositoryPath, Regex regex)
         {
-            return GetLatestPackageDirectories(regex, GetCacheDirectoryFromRepositoryDirectory(new DirectoryInfo(systemRepositoryPath)));
+            return GetLatestPackageDirectories(regex, new List<DirectoryInfo> { GetCacheDirectoryFromRepositoryDirectory(new DirectoryInfo(systemRepositoryPath)) });
         }
 
         static IEnumerable<DirectoryInfo> GetSelfAndParents(string directoryPath)
@@ -159,7 +164,7 @@ namespace OpenWrap.Preloading
                                      let packageSource = (from link in packageElement.Descendants("link")
                                                           let rel = link.Attribute("rel")
                                                           let href = link.Attribute("href")
-                                                          where rel != null && rel.Value.EqualsNoCase("package")
+                                                          where rel != null && rel.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
                                                           select href.Value).FirstOrDefault()
                                      where nameAttribute != null &&
                                            versionAttribute != null &&
@@ -173,7 +178,7 @@ namespace OpenWrap.Preloading
 
             foreach (var packageName in packageNames)
             {
-                var foundPackage = packagesToDownload.FirstOrDefault(x => x.Name.EqualsNoCase(packageName));
+                var foundPackage = packagesToDownload.FirstOrDefault(x => x.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
                 if (foundPackage == null)
                     throw new FileNotFoundException(string.Format("Package '{0}' not found in repository.", packageName));
                 var fullPackageUri = foundPackage.Href;

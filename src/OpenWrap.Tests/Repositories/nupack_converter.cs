@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
@@ -19,7 +20,7 @@ using IOPath = System.IO.Path;
 
 namespace nupack_converter_specs
 {
-    public class convertings_package_from_non_seekable_stream : context.nupack_converter
+    public class convertings_package_from_non_seekable_stream : contexts.nupack_converter
     {
         public convertings_package_from_non_seekable_stream()
         {
@@ -32,7 +33,7 @@ namespace nupack_converter_specs
             Package.ShouldNotBeNull();
         }
     }
-    public class converting_package : context.nupack_converter
+    public class converting_package : contexts.nupack_converter
     {
         public converting_package()
         {
@@ -68,6 +69,47 @@ namespace nupack_converter_specs
                     .Items.ShouldHaveCountOf(1)
                     .First().FullPath.Check(x => IOPath.GetFileName(x).ShouldBe("empty.dll"));
         }
+    }
+    public class converting_description_with_line_breaks : contexts.nuspec
+
+{
+        public converting_description_with_line_breaks()
+        {
+            given_spec("one-ring", "1.0.0", "sauron, saruman", "One ring\r\nto \n\nrule \nthem all.");
+            
+        }  
+        [Test]
+        public void description_is_converted()
+        {
+            Descriptor.Description.ShouldBe("One ring to rule them all.");
+        }
+}
+
+    public class converting_required_values : contexts.nuspec
+    {
+        public converting_required_values()
+        {
+            given_spec("one-ring", "1.0.0", "sauron, saruman", "One ring to rule them all.");
+        }
+
+        [Test]
+        public void name_is_converted()
+        {
+            Descriptor.Name.ShouldBe("one-ring");
+        }
+
+        [Test]
+        public void version_is_converted()
+        {
+            Descriptor.Version.ShouldBe("1.0.0".ToVersion());
+        }
+
+
+        //[Test]
+        //public void authors_are_converted()
+        //{
+            
+        //}
     }
     public class maven_style_version_definition : OpenWrap.Testing.context
     {
@@ -123,11 +165,46 @@ namespace nupack_converter_specs
         }
         string version(string s)
         {
-            return NuGetConverter.ConvertNuGetVersionRange(s).Select(x=>x.ToString()).Join(" and ");
+            return NuSpecConverter.ConvertNuGetVersionRange(s).Select(x=>x.ToString()).Join(" and ");
         }
     }
-    namespace context
+    namespace contexts
     {
+
+        public abstract class nuspec : OpenWrap.Testing.context
+        {
+            const string template =
+                    @"<?xml version=""1.0"" encoding=""utf-8""?>
+<package>
+  <metadata>
+    <id>{0}</id>
+    <version>{1}</version>
+    <authors>{2}</authors>
+    <description>{3}</description>
+    <title>{4}</title>
+    <owners>{5}</owners>
+    <projectUrl>{6}</projectUrl>
+    <licenseUrl>{7}</licenseUrl>
+    <requireLicenseAcceptance>{8}</requireLicenseAcceptance>
+    <tags>{9}</tags>
+    <dependencies>
+      <dependency id=""first"" version=""3.0.0"" />
+      <dependency id=""second""/>
+      <dependency id=""third"" version=""[1.0.0)"" />
+    </dependencies> 
+  </metadata>
+</package>";
+
+            protected PackageDescriptor given_spec(string id, string version, string authors, string description, string title = null, string owners = null, string projectUrl = null, string licenseUrl = null, string requireLicenseAcceptance = null, string tags = null)
+            {
+                var spec = String.Format(template, id, version, authors, description, title, owners, projectUrl, licenseUrl, requireLicenseAcceptance, tags);
+                var doc = new XmlDocument();
+                doc.LoadXml(spec);
+                return Descriptor =  NuSpecConverter.ConvertSpecificationToDescriptor(doc);
+            }
+
+            protected PackageDescriptor Descriptor { get; set; }
+        }
         public abstract class nupack_converter : OpenWrap.Testing.context
         {
             IFileSystem FileSystem;
