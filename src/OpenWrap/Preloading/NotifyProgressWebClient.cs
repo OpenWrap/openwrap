@@ -12,6 +12,7 @@ namespace OpenWrap.Preloading
         readonly Dictionary<Uri, ManualResetEvent> _locks = new Dictionary<Uri, ManualResetEvent>();
         readonly INotifyDownload _notifier;
         readonly WebClient _webClient = new WebClient();
+        readonly WebProxy _webProxy = new WebProxy();
         byte[] _dataReadResult;
         Exception _error;
         int _progress;
@@ -24,6 +25,8 @@ namespace OpenWrap.Preloading
             _webClient.DownloadStringCompleted += DownloadStringCompleted;
             _webClient.DownloadDataCompleted += DownloadDataCompleted;
             _webClient.DownloadProgressChanged += DownloadProgressChanged;
+            _webProxy.UseDefaultCredentials = true;
+            _webClient.Proxy = _webProxy;
         }
 
         public byte[] DownloadData(Uri uri)

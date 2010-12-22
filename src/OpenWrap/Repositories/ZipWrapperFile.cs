@@ -57,6 +57,16 @@ namespace OpenWrap.Repositories
             get{ return System.IO.Path.GetFileNameWithoutExtension(_entry.Name); }
         }
 
+        public string Extension
+        {
+            get { return System.IO.Path.GetExtension(_entry.Name); }
+        }
+
+        public long Size
+        {
+            get {return _entry.Size; }
+        }
+
         public DateTime? LastModifiedTimeUtc
         {
             get { return _entry.DateTime; }

@@ -115,24 +115,17 @@ namespace OpenWrap.Repositories.NuGet
 
         static PackageContent ConvertSpecification(ZipFile file, ZipEntry entry)
         {
+            var inputStream = file.GetInputStream(entry);
+
             var nuspec = new XmlDocument();
-            var ns = new XmlNamespaceManager(nuspec.NameTable);
-            ns.AddNamespace("nuspec", NuSpecSchema);
-            nuspec.Load(file.GetInputStream(entry));
 
+            nuspec.Load(inputStream);
 
-            var descriptor = new PackageDescriptor
-            {
-                    Name = nuspec.Element(XPaths.PackageName, ns),
-                    Version = nuspec.Element(XPaths.PackageVersion, ns).ToVersion(),
-                    Description = nuspec.Element(XPaths.PackageDescription, ns)
-            };
-            descriptor.Dependencies.AddRange(
-                    nuspec.Elements(XPaths.PackageDependencies, ns).Select(CreateDependency)
-                    );
+            PackageDescriptor descriptor = NuSpecConverter.ConvertSpecificationToDescriptor(nuspec);
             var memoryStream = new MemoryStream();
             new PackageDescriptorReaderWriter().Write(descriptor, memoryStream);
             memoryStream.Position = 0;
+
             return new PackageContent
             {
                 FileName = System.IO.Path.GetFileNameWithoutExtension(entry.Name) + ".wrapdesc",
@@ -145,30 +138,31 @@ namespace OpenWrap.Repositories.NuGet
                 }
             };
         }
-
-        static PackageDependency CreateDependency(XmlNode xmlNode)
+    }
+    public class NuSpecConverter
+    {
+        static Version RemoveInsignificantVersionNumbers(string versionString)
         {
-            var dep = new PackageDependencyBuilder((xmlNode.Attributes["id"] ?? xmlNode.Attributes["id", NuSpecSchema]).Value);
+            if (versionString == null)
+                return null;
 
-            var version = xmlNode.Attributes["version"] ?? xmlNode.Attributes["version", NuSpecSchema];
-            var minversion = xmlNode.Attributes["minversion"] ?? xmlNode.Attributes["minversion", NuSpecSchema];
-            var maxversion = xmlNode.Attributes["maxversion"] ?? xmlNode.Attributes["maxversion", NuSpecSchema];
-            if (minversion != null || maxversion != null)
-            {
-                if (minversion != null)
-                    dep.VersionVertex(new GreaterThanOrEqualVersionVertex(minversion.Value.ToVersion()));
-                if (maxversion != null)
-                    dep.VersionVertex(new LessThanVersionVertex(maxversion.Value.ToVersion()));
-            }
-            else
-            {
-                dep.SetVersionVertices(ConvertNuGetVersionRange(version.Value).DefaultIfEmpty(new AnyVersionVertex()));
-            }
-            return dep;
+            var ver = versionString.ToVersion();
+            if (ver == null)
+                return null;
+            return new Version(ver.Major, ver.Minor);
+
+        }
+
+        static Version RemoveInsignificantVersionNumbers(StringBuilder currentIdentifier)
+        {
+            var versionString = currentIdentifier.ToString();
+            return RemoveInsignificantVersionNumbers(versionString);
         }
 
         public static IEnumerable<VersionVertex> ConvertNuGetVersionRange(string value)
         {
+            if (string.IsNullOrEmpty(value))
+                yield break;
             var simpleVersion = value.ToVersion();
             if (simpleVersion != null)
             {
@@ -222,7 +216,7 @@ namespace OpenWrap.Repositories.NuGet
             {
                 if (inclusiveBeginning && inclusiveEnding)
                     yield return new ExactVersionVertex(beginVersion);
-                    yield break;
+                yield break;
             }
             if (beginVersion != null && inclusiveBeginning)
                 yield return new GreaterThanOrEqualVersionVertex(beginVersion);
@@ -237,22 +231,54 @@ namespace OpenWrap.Repositories.NuGet
 
         }
 
-        static Version RemoveInsignificantVersionNumbers(string versionString)
+        public static PackageDescriptor ConvertSpecificationToDescriptor(XmlDocument nuspec)
         {
-            if (versionString == null)
-                return null;
+            var ns = new XmlNamespaceManager(nuspec.NameTable);
 
-            var ver = versionString.ToVersion();
-            if (ver == null)
-                return null;
-            return new Version(ver.Major, ver.Minor);
+            ns.AddNamespace("nuspec", NuGetConverter.NuSpecSchema);
 
+
+            var descriptor = new PackageDescriptor
+            {
+                    Name = nuspec.Element(XPaths.PackageName, ns),
+                    Version = nuspec.Element(XPaths.PackageVersion, ns).ToVersion(),
+                    Description = StripLines(nuspec.Element(XPaths.PackageDescription, ns))
+            };
+            descriptor.Dependencies.AddRange(
+                    nuspec.Elements(XPaths.PackageDependencies, ns).Select(CreateDependency)
+                    );
+            return descriptor;
         }
 
-        static Version RemoveInsignificantVersionNumbers(StringBuilder currentIdentifier)
+        static string StripLines(string element)
         {
-            var versionString = currentIdentifier.ToString();
-            return RemoveInsignificantVersionNumbers(versionString);
+            if (String.IsNullOrEmpty(element))
+                return element;
+            var noLineBreaks = element.Replace("\r\n", " ").Replace("\n", " ");
+            while(noLineBreaks.Contains("  "))
+                noLineBreaks = noLineBreaks.Replace("  ", " ");
+            return noLineBreaks;
+        }
+
+        static PackageDependency CreateDependency(XmlNode xmlNode)
+        {
+            var dep = new PackageDependencyBuilder((xmlNode.Attributes["id"] ?? xmlNode.Attributes["id", NuGetConverter.NuSpecSchema]).Value);
+
+            var version = xmlNode.Attributes["version"] ?? xmlNode.Attributes["version", NuGetConverter.NuSpecSchema];
+            var minversion = xmlNode.Attributes["minversion"] ?? xmlNode.Attributes["minversion", NuGetConverter.NuSpecSchema];
+            var maxversion = xmlNode.Attributes["maxversion"] ?? xmlNode.Attributes["maxversion", NuGetConverter.NuSpecSchema];
+            if (minversion != null || maxversion != null)
+            {
+                if (minversion != null)
+                    dep.VersionVertex(new GreaterThanOrEqualVersionVertex(minversion.Value.ToVersion()));
+                if (maxversion != null)
+                    dep.VersionVertex(new LessThanVersionVertex(maxversion.Value.ToVersion()));
+            }
+            else
+            {
+                dep.SetVersionVertices(ConvertNuGetVersionRange(version != null ? version.Value : null).DefaultIfEmpty(new AnyVersionVertex()));
+            }
+            return dep;
         }
     }
 }

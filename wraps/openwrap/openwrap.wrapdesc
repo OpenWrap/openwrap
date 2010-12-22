@@ -1,7 +1,7 @@
 ﻿depends: sharpziplib
 depends: openfilesystem
-depends: openwrap content
 anchored: true
 build: msbuild;profile=net35
 name: openwrap
-version: 1.0.0.23178633
+depends: openwrap content
+version: 1.0.0.23274526

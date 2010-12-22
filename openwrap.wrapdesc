@@ -3,3 +3,4 @@ depends: openfilesystem
 depends: openwrap content
 anchored: true
 build: msbuild;profile=net35
+name: openwrap

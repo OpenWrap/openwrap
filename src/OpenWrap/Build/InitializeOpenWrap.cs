@@ -21,10 +21,11 @@ namespace OpenWrap.Build
 
         public InitializeOpenWrap()
         {
-            Preloader.LoadAssemblies(
+            var loadedAssemblies = Preloader.LoadAssemblies(
                 Preloader.GetPackageFolders(Preloader.RemoteInstall.None, InstallationPaths.SystemRepositoryDirectory, "openfilesystem", "sharpziplib")
             );
-            
+            if (!loadedAssemblies.Any(x => x.Value.EndsWithNoCase("openfilesystem.dll")))
+                throw new InvalidOperationException("OpenFileSystem not found, dragons ahead.");
         }
         [Output]
         public string Name { get; set; }
