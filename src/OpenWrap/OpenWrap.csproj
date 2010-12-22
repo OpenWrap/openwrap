@@ -210,6 +210,7 @@
     <Compile Include="Repositories\IPackageDeployer.cs" />
     <Compile Include="Repositories\IPackageExporter.cs" />
     <Compile Include="Repositories\ISupportAnchoring.cs" />
+    <Compile Include="Repositories\ISupportAuthentication.cs" />
     <Compile Include="Repositories\ISupportCleaning.cs" />
     <Compile Include="Repositories\ISupportNuking.cs" />
     <Compile Include="Repositories\ISupportPublishing.cs" />
@@ -229,6 +230,7 @@
     <Compile Include="Repositories\NuGet\NuGetSyndicationItem.cs" />
     <Compile Include="Repositories\NuGet\XmlDocumentExtensions.cs" />
     <Compile Include="Repositories\NuGet\XPaths.cs" />
+    <Compile Include="Repositories\NullAuthentication.cs" />
     <Compile Include="Repositories\PackageCleanResult.cs" />
     <Compile Include="Repositories\DefaultPackageExporter.cs" />
     <Compile Include="Repositories\PackageIdentifier.cs" />

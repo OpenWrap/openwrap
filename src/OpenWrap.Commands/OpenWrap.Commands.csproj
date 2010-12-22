@@ -57,6 +57,7 @@
     <Compile Include="Core\CommandDescriptionOutput.cs" />
     <Compile Include="Core\CommandGroupResult.cs" />
     <Compile Include="Errors\FileNotFound.cs" />
+    <Compile Include="Errors\IncompleteAuthentication.cs" />
     <Compile Include="Remote\RemoteRepositoryMessage.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Wrap\DependenciesConflictMessage.cs" />
