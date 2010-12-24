@@ -4,8 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using OpenFileSystem.IO;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
@@ -101,8 +102,9 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
+            using(var publisher = _remoteRepository.Publisher())
             using (var packageStream = _packageStream())
-                _remoteRepository.Publish(_packageFileName, packageStream);
+                publisher.Publish(_packageFileName, packageStream);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap

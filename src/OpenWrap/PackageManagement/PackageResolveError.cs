@@ -1,4 +1,5 @@
-﻿using OpenWrap.Repositories;
+﻿using OpenWrap.PackageManagement.DependencyResolvers;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
 {

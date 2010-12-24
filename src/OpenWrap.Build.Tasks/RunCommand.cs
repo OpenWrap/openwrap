@@ -7,9 +7,13 @@ using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
+using OpenWrap.Collections;
 using OpenWrap.Commands;
-using OpenWrap.Exports;
+using OpenWrap.Commands.Cli;
+using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 
 namespace OpenWrap.Build.Tasks

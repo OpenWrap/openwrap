@@ -6,9 +6,14 @@ using System.Reflection;
 using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.Build;
-using OpenWrap.Build.BuildEngines;
-using OpenWrap.Dependencies;
+using OpenWrap.Build.PackageBuilders;
+using OpenWrap.Collections;
+using OpenWrap.IO;
+using OpenWrap.IO.Packaging;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
@@ -76,7 +81,7 @@ namespace OpenWrap.Commands.Wrap
                                     GenerateDescriptorFile(packageDescriptorForEmbedding)
                                  );
 
-            PackageBuilder.NewFromFiles(packageFilePath, packageContent);
+            Packager.NewFromFiles(packageFilePath, packageContent);
             yield return new GenericMessage(string.Format("Package built at '{0}'.", packageFilePath));
 
         }
@@ -228,12 +233,12 @@ namespace OpenWrap.Commands.Wrap
         {
             commandLine = commandLine.Trim();
             if (commandLine.StartsWithNoCase("msbuild"))
-                return new MSBuildPackageBuilder(FileSystem, Environment);
+                return new MSBuildPackageBuilder(FileSystem, Environment, new DefaultFileBuildResultParser());
             if (commandLine.StartsWithNoCase("files"))
                 return new FilePackageBuilder();
             if (commandLine.StartsWithNoCase("command"))
-                return new CommandLinePackageBuilder(FileSystem, Environment);
-            return new MetaPackageBuilder(Environment);
+                return new CommandLinePackageBuilder(FileSystem, Environment, new DefaultFileBuildResultParser());
+            return new NullPackageBuilder(Environment);
         }
 
         string GetCurrentVersion()

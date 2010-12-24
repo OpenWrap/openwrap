@@ -1,5 +1,6 @@
 ﻿using System;
 using OpenWrap.Commands;
+using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement

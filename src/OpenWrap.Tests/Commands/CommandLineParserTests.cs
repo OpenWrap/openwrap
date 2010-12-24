@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands;
+using OpenWrap.Commands.Cli;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands

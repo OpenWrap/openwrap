@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Serialization;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -123,7 +124,7 @@ namespace OpenWrap.Commands.Wrap
             }
             if (Version != null)
             {
-                builder = builder.VersionVertex(new ExactVersionVertex(Version.ToVersion()));
+                builder = builder.VersionVertex(new EqualVersionVertex(Version.ToVersion()));
             }
             if (MinVersion != null)
             {

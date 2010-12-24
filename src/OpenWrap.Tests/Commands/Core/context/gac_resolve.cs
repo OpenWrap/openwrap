@@ -10,8 +10,11 @@ using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Commands.Core;
-using OpenWrap.Dependencies;
+using OpenWrap.IO.Packaging;
+using OpenWrap.PackageManagement.Packages;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Dependencies
@@ -44,7 +47,7 @@ namespace OpenWrap.Tests.Dependencies
             {
                     new CachedZipPackage(
                         null,
-                        PackageBuilder.NewWithDescriptor(
+                        Packager.NewWithDescriptor(
                             PackageFile,
                             "package",
                             "1.0.0",

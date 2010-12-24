@@ -4,16 +4,25 @@ using System.IO;
 using System.Linq;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
+using OpenWrap.Collections;
 using OpenWrap.Commands;
+using OpenWrap.Commands.Cli;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Configuration;
-using OpenWrap.Configuration.remote_repositories;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
+using OpenWrap.IO.Packaging;
 using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.DependencyResolvers;
+using OpenWrap.PackageManagement.Deployers;
+using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Packages;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Testing;
+using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.Tests.Commands.context
 {
@@ -30,7 +39,7 @@ namespace OpenWrap.Tests.Commands.context
             FileSystem = given_file_system(currentDirectory);
             Environment = new InMemoryEnvironment(
                     FileSystem.GetDirectory(currentDirectory),
-                    FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory));
+                    FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory));
             Environment.DescriptorFile.MustExist();
             Services.Services.RegisterService<IFileSystem>(FileSystem);
             Services.Services.RegisterService<IEnvironment>(Environment);
@@ -41,7 +50,7 @@ namespace OpenWrap.Tests.Commands.context
             Services.Services.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
                                                                                 Services.Services.GetService<IPackageDeployer>(),
                                                                                 Services.Services.GetService<IPackageResolver>()));
-            Services.Services.RegisterService<IConfigurationManager>(new ConfigurationManager(Environment.ConfigurationDirectory));
+            Services.Services.RegisterService<IConfigurationManager>(new DefaultConfigurationManager(Environment.ConfigurationDirectory));
         }
 
         protected virtual IFileSystem given_file_system(string currentDirectory)
@@ -101,9 +110,10 @@ namespace OpenWrap.Tests.Commands.context
                 return;
             }
             var packageFileName = name + "-" + version + ".wrap";
-            var packageStream = PackageBuilder.NewWithDescriptor(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
+            var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
             using (var readStream = packageStream)
-                ((ISupportPublishing)repository).Publish(packageFileName, readStream);
+            using (var publisher = ((ISupportPublishing)repository).Publisher())
+                publisher.Publish(packageFileName, readStream);
         }
 
         protected void given_currentdirectory_package(string packageName, string version, params string[] dependencies)
@@ -118,7 +128,7 @@ namespace OpenWrap.Tests.Commands.context
             else
             {
                 var localFile = Environment.CurrentDirectory.GetFile(PackageNameUtility.PackageFileName(packageName, version.ToString())).MustExist();
-                PackageBuilder.NewWithDescriptor(localFile, packageName, version.ToString(), dependencies);
+                Packager.NewWithDescriptor(localFile, packageName, version.ToString(), dependencies);
                 
             }
         }
@@ -135,7 +145,7 @@ namespace OpenWrap.Tests.Commands.context
             var file = FileSystem.GetFile(filePath);
             using(var newFile = file.OpenWrite())
             {
-                stream.CopyTo(newFile);
+                StreamExtensions.CopyTo(stream, newFile);
             }
         }
 

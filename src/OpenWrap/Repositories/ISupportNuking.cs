@@ -1,4 +1,6 @@
-﻿namespace OpenWrap.Repositories
+﻿using OpenWrap.PackageModel;
+
+namespace OpenWrap.Repositories
 {
     public interface ISupportNuking : IPackageRepository
     {

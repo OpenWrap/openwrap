@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenWrap.Build.BuildEngines;
+using OpenWrap.Build;
+using OpenWrap.Build.PackageBuilders;
 
 namespace OpenWrap.Commands.Wrap
 {

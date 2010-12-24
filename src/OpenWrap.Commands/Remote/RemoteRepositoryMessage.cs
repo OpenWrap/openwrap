@@ -1,4 +1,4 @@
-﻿using OpenWrap.Configuration.remote_repositories;
+﻿using OpenWrap.Configuration;
 
 namespace OpenWrap.Commands.Remote
 {

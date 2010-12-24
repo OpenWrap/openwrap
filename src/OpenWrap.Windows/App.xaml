@@ -1,6 +1,6 @@
 ﻿<Application
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windows="clr-namespace:OpenWrap.Windows" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Dependencies="clr-namespace:OpenWrap.Dependencies;assembly=OpenWrap" xmlns:Repositories="clr-namespace:OpenWrap.Repositories;assembly=OpenWrap" mc:Ignorable="d" x:Class="OpenWrap.Windows.App"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Windows="clr-namespace:OpenWrap.Windows" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Repositories="clr-namespace:OpenWrap.Repositories;assembly=OpenWrap" xmlns:DependencyResolvers="clr-namespace:OpenWrap.PackageManagement.DependencyResolvers;assembly=OpenWrap" mc:Ignorable="d" x:Class="OpenWrap.Windows.App"
     StartupUri="Main.xaml">
     <Application.Resources>
 
@@ -58,7 +58,7 @@
         		</Setter.Value>
         	</Setter>
         </Style>
-        <DataTemplate DataType="{x:Type Repositories:ResolvedPackage}">
+        <DataTemplate DataType="{x:Type DependencyResolvers:ResolvedPackage}">
         	<Grid Height="Auto" Width="350">
         		<Grid.RowDefinitions>
         			<RowDefinition Height="Auto" />

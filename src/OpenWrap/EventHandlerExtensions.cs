@@ -17,7 +17,7 @@ namespace OpenWrap
         }
 
         public static void Raise<T>(this EventHandler<T> handler, object src, T args)
-            where T : EventArgs
+                where T : EventArgs
         {
             if (handler != null)
                 handler(src, args);

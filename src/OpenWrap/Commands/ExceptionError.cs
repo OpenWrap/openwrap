@@ -10,6 +10,7 @@ namespace OpenWrap.Commands
         {
             _exception = exception;
         }
+
         public override string ToString()
         {
             return _exception.Message;

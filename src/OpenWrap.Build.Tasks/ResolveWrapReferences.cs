@@ -8,15 +8,16 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
-using OpenWrap.Dependencies;
-using OpenWrap.Exports;
+using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Monitoring;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 
 namespace OpenWrap.Build.Tasks
 {
 
-    public class ResolveWrapReferences : Task, IPackageAssembliesListener
+    public class ResolveWrapReferences : Task, IResolvedAssembliesUpdateListener
     {
         readonly IFileSystem _fileSystem;
 
@@ -163,9 +164,9 @@ namespace OpenWrap.Build.Tasks
 
         bool RefreshWrapDependencies()
         {
-            var monitoringService = Services.Services.GetService<IWrapDescriptorMonitoringService>();
+            var monitoringService = Services.Services.GetService<IPackageDescriptorMonitor>();
             
-            monitoringService.ProcessWrapDescriptor(WrapDescriptorPath, PackageRepository, this);
+            monitoringService.RegisterListener(WrapDescriptorPath, PackageRepository, this);
             return true;
         }
     }

@@ -3,7 +3,8 @@ using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageManagement.Packages;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 

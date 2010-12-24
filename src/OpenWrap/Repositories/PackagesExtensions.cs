@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {

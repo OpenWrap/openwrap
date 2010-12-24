@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Persistence;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Configuration

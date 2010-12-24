@@ -5,9 +5,9 @@ namespace OpenWrap.Tasks
 {
     public class Task : ITask, ITaskChanges
     {
-        readonly string _taskName;
-        readonly string _taskDescription;
         readonly Action<ITaskChanges> _task;
+        readonly string _taskDescription;
+        readonly string _taskName;
 
         public Task(string taskName, string taskDescription, Action<ITaskChanges> task)
         {
@@ -16,9 +16,11 @@ namespace OpenWrap.Tasks
             _task = task;
         }
 
+        public event EventHandler<EventArgs> Complete;
+
         public event EventHandler<ProgressEventArgs> ProgressChanged;
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
-        public event EventHandler<EventArgs> Complete;
+
         public void Run()
         {
             try
@@ -31,8 +33,9 @@ namespace OpenWrap.Tasks
             }
         }
 
-        void NotifyProgressChanged(int i)
+        public void Progress(int progress)
         {
+            ProgressChanged.Raise(this, new ProgressEventArgs(progress));
         }
 
         public void Status(string status)
@@ -40,10 +43,8 @@ namespace OpenWrap.Tasks
             StatusChanged.Raise(this, new StatusChangedEventArgs(status));
         }
 
-        public void Progress(int progress)
+        void NotifyProgressChanged(int i)
         {
-            ProgressChanged.Raise(this, new ProgressEventArgs(progress));
         }
     }
-
 }

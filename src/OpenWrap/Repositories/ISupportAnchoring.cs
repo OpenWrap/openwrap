@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenWrap.PackageManagement;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {

@@ -11,20 +11,19 @@ namespace OpenWrap.Commands
             _value = value.ToString();
             Success = true;
         }
+
         public Result(string str, params object[] parameters)
         {
             _value = string.Format(str, parameters);
             Success = true;
-        }
-        public bool Success
-        {
-            get; set;
         }
 
         public ICommand Source
         {
             get { throw new NotImplementedException(); }
         }
+
+        public bool Success { get; set; }
 
         public CommandResultType Type
         {

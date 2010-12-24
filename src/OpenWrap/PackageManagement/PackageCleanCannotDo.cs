@@ -1,5 +1,5 @@
 ﻿using OpenWrap.Commands;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.PackageManagement
 {

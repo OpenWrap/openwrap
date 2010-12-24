@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using OpenWrap.Collections;
 using OpenWrap.Commands;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Windows.Framework;
 
 namespace OpenWrap.Windows

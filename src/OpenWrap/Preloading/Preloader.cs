@@ -101,17 +101,17 @@ namespace OpenWrap.Preloading
         {
             foreach (var dir in cacheDirectories)
             {
-                var all= (
-                               from uncompressedFolder in dir.GetDirectories()
-                               let match = regex.Match(uncompressedFolder.Name)
-                               where match.Success
-                               let version = new Version(match.Groups["version"].Value)
-                               let name = match.Groups["name"].Value
-                               group new { name, folder = uncompressedFolder, version } by name
-                               into tuplesByName
-                               select tuplesByName.OrderByDescending(x => x.version).First().folder.FullName
-                         )
-                         .ToList();
+                var all = (
+                                  from uncompressedFolder in dir.GetDirectories()
+                                  let match = regex.Match(uncompressedFolder.Name)
+                                  where match.Success
+                                  let version = new Version(match.Groups["version"].Value)
+                                  let name = match.Groups["name"].Value
+                                  group new { name, folder = uncompressedFolder, version } by name
+                                  into tuplesByName
+                                  select tuplesByName.OrderByDescending(x => x.version).First().folder.FullName
+                          )
+                        .ToList();
 
                 if (all.Count > 0)
                     return all;
@@ -122,10 +122,10 @@ namespace OpenWrap.Preloading
         static IEnumerable<string> GetLatestPackagesForProjectRepository(Regex regex)
         {
             var projectRepositories = (from directory in GetSelfAndParents(Environment.CurrentDirectory)
-                                     where directory.Exists
-                                     let cacheDirectory = GetCacheDirectoryFromProjectDirectory(directory)
-                                     where cacheDirectory != null && cacheDirectory.Exists
-                                     select cacheDirectory).ToList();
+                                       where directory.Exists
+                                       let cacheDirectory = GetCacheDirectoryFromProjectDirectory(directory)
+                                       where cacheDirectory != null && cacheDirectory.Exists
+                                       select cacheDirectory).ToList();
             return projectRepositories.Count == 0
                            ? Enumerable.Empty<string>()
                            : GetLatestPackageDirectories(regex, projectRepositories);

@@ -2,32 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using OpenWrap.Dependencies;
-using OpenWrap.Exports;
+using OpenWrap.Collections;
+using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageModel;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.Repositories
 {
     public static class GacResolver
     {
-        public class Loader : MarshalByRefObject
-        {
-            IEnumerable<AssemblyName> _loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Select(x=>x.GetName()).ToList();
-            public bool InGAC(AssemblyName assemblyName)
-            {
-                
-                if(!assemblyName.IsStronglyNamed() ||  _loadedAssemblies.Contains(assemblyName))
-                    return false;
-                try
-                {
-                    return Assembly.ReflectionOnlyLoad(assemblyName.FullName) != null;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-        }
-
         public static ILookup<IPackageInfo, AssemblyName> InGac(IEnumerable<IPackageInfo> packages, ExecutionEnvironment environment = null)
         {
             var domain = TempDomain();
@@ -58,6 +41,25 @@ namespace OpenWrap.Repositories
         static AppDomain TempDomain()
         {
             return AppDomain.CreateDomain("GAC Resolve");
+        }
+
+        public class Loader : MarshalByRefObject
+        {
+            readonly IEnumerable<AssemblyName> _loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies().Select(x => x.GetName()).ToList();
+
+            public bool InGAC(AssemblyName assemblyName)
+            {
+                if (!assemblyName.IsStronglyNamed() || _loadedAssemblies.Contains(assemblyName))
+                    return false;
+                try
+                {
+                    return Assembly.ReflectionOnlyLoad(assemblyName.FullName) != null;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
         }
     }
 }

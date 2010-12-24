@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Parsers;
 
 namespace OpenWrap.Repositories.Http
 {
@@ -10,14 +11,14 @@ namespace OpenWrap.Repositories.Http
     {
         readonly IFileSystem _fileSystem;
         readonly IHttpRepositoryNavigator _httpNavigator;
-        readonly PackageItem _package;
         readonly DateTimeOffset _lastModifiedTimeUtc;
         readonly bool _nuked;
+        readonly PackageItem _package;
 
         public HttpPackageInfo(IFileSystem fileSystem,
-                              IPackageRepository source,
-                              IHttpRepositoryNavigator httpNavigator,
-                              PackageItem package)
+                               IPackageRepository source,
+                               IHttpRepositoryNavigator httpNavigator,
+                               PackageItem package)
         {
             Source = source;
             _fileSystem = fileSystem;
@@ -26,16 +27,38 @@ namespace OpenWrap.Repositories.Http
 
             _lastModifiedTimeUtc = package.CreationTime;
             _nuked = package.Nuked;
-            
+
             Dependencies = (from dependency in _package.Dependencies
                             let strings = dependency.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                             where strings.Length >= 1
                             let dependencyName = strings[0]
                             where !string.IsNullOrEmpty(dependencyName)
                             select (PackageDependency)new PackageDependencyBuilder(dependencyName)
-                                        .SetVersionVertices(DependsParser.ParseVersions(strings.Skip(1).ToArray()))
-                            )
-                            .ToList();
+                                                              .SetVersionVertices(DependsParser.ParseVersions(strings.Skip(1).ToArray()))
+                           )
+                    .ToList();
+        }
+
+        public bool Anchored
+        {
+            get { return false; }
+        }
+
+        public DateTimeOffset Created
+        {
+            get { return _package.CreationTime; }
+        }
+
+        public ICollection<PackageDependency> Dependencies { get; set; }
+
+        public string Description
+        {
+            get { return _package.Description; }
+        }
+
+        public string FullName
+        {
+            get { return Name + "-" + Version; }
         }
 
         public PackageIdentifier Identifier
@@ -43,26 +66,22 @@ namespace OpenWrap.Repositories.Http
             get { return new PackageIdentifier(Name, Version); }
         }
 
-        public ICollection<PackageDependency> Dependencies { get; set; }
-
-        public string FullName
+        public string Name
         {
-            get { return Name + "-" + Version; }
+            get { return _package.Name; }
         }
 
-        public DateTimeOffset Created { get { return _package.CreationTime; } }
-
-        public bool Anchored
+        public bool Nuked
         {
-            get { return false; }
+            get { return _nuked; }
         }
-
-        public string Name { get{ return _package.Name;}}
 
         public IPackageRepository Source { get; private set; }
-        public Version Version { get{ return _package.Version;} }
-        public string Description { get { return _package.Description; } }
-        public bool Nuked { get { return _nuked; } }
+
+        public Version Version
+        {
+            get { return _package.Version; }
+        }
 
         public IPackage Load()
         {

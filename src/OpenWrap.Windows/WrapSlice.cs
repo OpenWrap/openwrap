@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
+using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.Windows
 {

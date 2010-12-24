@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using OpenWrap.Configuration;
-using OpenWrap.Configuration.remote_repositories;
 
 namespace OpenWrap.Commands.Remote
 {

@@ -8,8 +8,9 @@ namespace OpenWrap.Configuration
         {
             Lines = new List<ConfigurationLine>();
         }
-        public string Type { get; set; }
-        public string Name { get; set; }
+
         public ICollection<ConfigurationLine> Lines { get; private set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
     }
 }

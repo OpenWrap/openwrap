@@ -2,14 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Commands;
 
 namespace OpenWrap.Commands
 {
     public class CommandRepository : ICommandRepository
     {
-        readonly ICollection<ICommandDescriptor> _commands;
         readonly HashSet<string> _commandVerbs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        readonly ICollection<ICommandDescriptor> _commands;
         readonly HashSet<string> _nouns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         public CommandRepository(IEnumerable<ICommandDescriptor> commands)
@@ -23,6 +22,16 @@ namespace OpenWrap.Commands
         public CommandRepository()
         {
             _commands = new List<ICommandDescriptor>();
+        }
+
+        public int Count
+        {
+            get { return _commands.Count; }
+        }
+
+        public bool IsReadOnly
+        {
+            get { return _commands.IsReadOnly; }
         }
 
         public IEnumerable<string> Nouns
@@ -45,17 +54,6 @@ namespace OpenWrap.Commands
             _commands.Add(commandDescriptor);
         }
 
-        public ICommandDescriptor Get(string verb, string name)
-        {
-            return _commands.FirstOrDefault(x => x.Noun.EqualsNoCase(verb)
-                                         && x.Verb.EqualsNoCase(name));
-        }
-
-        IEnumerator<ICommandDescriptor> IEnumerable<ICommandDescriptor>.GetEnumerator()
-        {
-            return _commands.GetEnumerator();
-        }
-
         public void Clear()
         {
             _commands.Clear();
@@ -76,19 +74,20 @@ namespace OpenWrap.Commands
             return _commands.Remove(item);
         }
 
-        public int Count
+        public ICommandDescriptor Get(string verb, string name)
         {
-            get { return _commands.Count; }
-        }
-
-        public bool IsReadOnly
-        {
-            get { return _commands.IsReadOnly; }
+            return _commands.FirstOrDefault(x => x.Noun.EqualsNoCase(verb)
+                                                 && x.Verb.EqualsNoCase(name));
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<ICommandDescriptor>)this).GetEnumerator();
+        }
+
+        IEnumerator<ICommandDescriptor> IEnumerable<ICommandDescriptor>.GetEnumerator()
+        {
+            return _commands.GetEnumerator();
         }
 
         public void Initialize()

@@ -15,6 +15,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using OpenWrap.Collections;
 
 namespace OpenWrap.Testing
 {

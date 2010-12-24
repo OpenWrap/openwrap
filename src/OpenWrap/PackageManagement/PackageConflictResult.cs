@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using OpenWrap.Commands;
+using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
@@ -19,7 +20,7 @@ namespace OpenWrap.PackageManagement
 
         public override ICommandOutput ToOutput()
         {
-            var conflictingVersions = StringExtensions.Join(Package.DependencyStacks.Select(x=>"\t" + x.ToString()), Environment.NewLine);
+            var conflictingVersions = Package.DependencyStacks.Select(x => "\t" + x.ToString()).Join(Environment.NewLine);
             return new Error("Package {0} has conflicting versions:" + Environment.NewLine + conflictingVersions, Package.Identifier.Name);
         }
     }

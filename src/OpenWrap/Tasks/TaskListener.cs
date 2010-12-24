@@ -7,13 +7,14 @@ namespace OpenWrap.Tasks
     {
         readonly TaskManager _manager;
         readonly Queue<ITask> _queue = new Queue<ITask>();
-        readonly EventWaitHandle _sync = new AutoResetEvent(false);
         readonly EventWaitHandle _stop = new ManualResetEvent(false);
+        readonly EventWaitHandle _sync = new AutoResetEvent(false);
 
         public TaskListener(TaskManager manager)
         {
             _manager = manager;
         }
+
         public IEnumerable<ITask> Start()
         {
             _manager.TaskStarted += HandleTaskStarted;
@@ -30,6 +31,12 @@ namespace OpenWrap.Tasks
             } while (true);
         }
 
+        public void Stop()
+        {
+            _stop.Set();
+            _manager.TaskStarted -= HandleTaskStarted;
+        }
+
         void HandleTaskStarted(object source, TaskEventArgs e)
         {
             lock (_queue)
@@ -37,13 +44,6 @@ namespace OpenWrap.Tasks
                 _queue.Enqueue(e.Task);
                 _sync.Set();
             }
-
-        }
-
-        public void Stop()
-        {
-            _stop.Set();
-            _manager.TaskStarted -= HandleTaskStarted;
         }
     }
 }

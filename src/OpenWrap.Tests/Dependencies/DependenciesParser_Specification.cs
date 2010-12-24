@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Exports;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Repositories;
 using OpenWrap.Repositories.Wrap.Tests.Dependencies.contexts;
 using OpenWrap.Testing;
@@ -199,7 +201,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
 
         public static VersionVertex Exact(this string version)
         {
-            return new ExactVersionVertex(new Version(version));
+            return new EqualVersionVertex(new Version(version));
         }
 
         public static VersionVertex ShouldAccept(this VersionVertex vertex, string version)

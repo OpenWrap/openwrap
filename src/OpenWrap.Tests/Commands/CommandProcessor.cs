@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands;
+using OpenWrap.Commands.Cli;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Repositories.Wrap.Tests.Commands
@@ -26,7 +27,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
 
             when_parsing_input("semarillon", "traveltomordor");
 
-            Output.ShouldBeOfType<NamespaceNotFound>();
+            Output.ShouldBeOfType<NounNotFound>();
         }
         [Test]
         public void namespace_entered_partially_is_found()

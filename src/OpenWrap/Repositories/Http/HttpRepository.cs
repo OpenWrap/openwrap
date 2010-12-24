@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories.Http
 {
     public class HttpRepository : IPackageRepository, ISupportPublishing
     {
-        readonly IHttpRepositoryNavigator _navigator;
         readonly IFileSystem _fileSystem;
+        readonly IHttpRepositoryNavigator _navigator;
         readonly IEnumerable<HttpPackageInfo> _packagesQuery;
         ILookup<string, IPackageInfo> _packagesByName;
 
@@ -23,38 +23,14 @@ namespace OpenWrap.Repositories.Http
             _packagesQuery = LoadPackages(navigator, fileSystem);
         }
 
-        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
-        {
-            return PackagesByName.FindAll(dependency);
-        }
-
-        public void RefreshPackages()
-        {
-            _packagesByName = null;
-        }
-
-        IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
-        {
-            IndexDocument = navigator.Index();
-
-            if (IndexDocument == null)
-                yield break;
-            foreach (var package in IndexDocument.Packages)
-                yield return new HttpPackageInfo(fileSystem, this, navigator, package);
-        }
-
-        public bool CanPublish
-        {
-            get { return Navigator.CanPublish; }
-        }
-
         public PackageDocument IndexDocument { get; private set; }
 
         public string Name { get; private set; }
-        public override string ToString()
+        public IPackagePublisher Publisher()
         {
-            return string.Format("Remote {0} [{1}]", Name, Navigator);
+            return new PackagePublisher(Publish);
         }
+
         public IHttpRepositoryNavigator Navigator
         {
             get { return _navigator; }
@@ -69,12 +45,22 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
-        public IPackageInfo Find(PackageDependency dependency)
+        public override string ToString()
         {
-            return PackagesByName.Find(dependency);
+            return string.Format("Remote {0} [{1}]", Name, Navigator);
         }
 
-        public IPackageInfo Publish(string packageFileName, Stream packageStream)
+        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
+        {
+            return PackagesByName.FindAll(dependency);
+        }
+
+        public void RefreshPackages()
+        {
+            _packagesByName = null;
+        }
+
+        IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
             if (!Navigator.CanPublish)
                 throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));
@@ -85,10 +71,6 @@ namespace OpenWrap.Repositories.Http
             return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
         }
 
-        public void PublishCompleted()
-        {
-        }
-
         void EnsureDataLoaded()
         {
             if (_packagesByName == null)
@@ -96,15 +78,15 @@ namespace OpenWrap.Repositories.Http
                 try
                 {
                     _packagesByName = _packagesQuery
-                        .Cast<IPackageInfo>()
-                        .ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase);
+                            .Cast<IPackageInfo>()
+                            .ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase);
                 }
                 catch
                 {
                 }
                 finally
                 {
-                    _packagesByName = _packagesByName ?? Enumerable.Empty<IPackageInfo>().ToLookup(x=>string.Empty);
+                    _packagesByName = _packagesByName ?? Enumerable.Empty<IPackageInfo>().ToLookup(x => string.Empty);
                 }
             }
         }
@@ -116,8 +98,14 @@ namespace OpenWrap.Repositories.Http
             return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
         }
 
-        public bool CanDelete { get { return false; } }
+        IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
+        {
+            IndexDocument = navigator.Index();
 
-        public void Delete(IPackageInfo package) { }
+            if (IndexDocument == null)
+                yield break;
+            foreach (var package in IndexDocument.Packages)
+                yield return new HttpPackageInfo(fileSystem, this, navigator, package);
+        }
     }
 }

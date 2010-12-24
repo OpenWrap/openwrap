@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using OpenWrap.Reflection;
 
 namespace OpenWrap.Commands
 {
@@ -26,33 +27,33 @@ namespace OpenWrap.Commands
                       let inputName = values.Name ?? pi.Name
                       select (ICommandInputDescriptor)new ReflectionCommandInputDescriptor(pi)
                       {
-                          Name = inputName,
-                          IsRequired = values.IsRequired,
-                          Description = values.DisplayName ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey+"-"+inputName),
-                          Position = values.Position == -1 ? (int?)null : values.Position,
-                          IsValueRequired = values.IsValueRequired
+                              Name = inputName,
+                              IsRequired = values.IsRequired,
+                              Description = values.DisplayName ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey + "-" + inputName),
+                              Position = values.Position == -1 ? (int?)null : values.Position,
+                              IsValueRequired = values.IsValueRequired
                       }).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+        }
+
+        public string Description { get; set; }
+        public IDictionary<string, ICommandInputDescriptor> Inputs { get; set; }
+        public string Noun { get; set; }
+        public string Verb { get; set; }
+
+        public ICommand Create()
+        {
+            return (ICommand)Activator.CreateInstance(_commandType);
         }
 
         string DeductNounFromNamespace(Type commandType)
         {
             int dotIndex = commandType.Namespace.LastIndexOf('.');
-            return dotIndex != -1 ? commandType.Namespace.Substring(dotIndex=1) : commandType.Namespace;
-        }
-
-        public string Noun { get; set; }
-        public string Verb { get; set; }
-        public string Description { get; set; }
-        public IDictionary<string, ICommandInputDescriptor> Inputs { get; set; }
-        public ICommand Create()
-        {
-            return (ICommand)Activator.CreateInstance(_commandType);
-            
+            return dotIndex != -1 ? commandType.Namespace.Substring(dotIndex = 1) : commandType.Namespace;
         }
     }
 
     public class AttributeBasedCommandDescriptor<T> : AttributeBasedCommandDescriptor
-        where T:ICommand
+            where T : ICommand
     {
         public AttributeBasedCommandDescriptor() : base(typeof(T))
         {

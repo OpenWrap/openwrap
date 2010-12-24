@@ -27,19 +27,50 @@ namespace OpenWrap
                 }
 
                 builder.Append(chr);
-
             }
 
             return builder.ToString();
+        }
+
+        public static bool ContainsNoCase(this string value, string valueToSearch)
+        {
+            return value.IndexOf(valueToSearch, StringComparison.OrdinalIgnoreCase) != -1;
+        }
+
+        public static bool ContainsNoCase(this IEnumerable<string> values, string valueToSearch)
+        {
+            return values.Contains(valueToSearch, StringComparer.OrdinalIgnoreCase);
+        }
+
+        public static bool EndsWithNoCase(this string value, string valueToCompare)
+        {
+            return value.EndsWith(valueToCompare, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool EqualsNoCase(this string value, string valueToCompare)
+        {
+            if (value == null) return valueToCompare == null;
+            return value.Equals(valueToCompare, StringComparison.OrdinalIgnoreCase);
         }
 
         public static string GetCamelCaseInitials(this string str)
         {
             return new string(str.Where(char.IsUpper).ToArray());
         }
+
+        public static string Join(this IEnumerable<string> strings, string separator)
+        {
+            return string.Join(separator, strings.ToArray());
+        }
+
+        public static bool MatchesHumps(this string name, string value)
+        {
+            return name.ToUpperInvariant().MatchesHumps(0, value.ToUpperInvariant(), 0);
+        }
+
         public static IEnumerable<string> SplitCamelCase(this string str)
         {
-            StringBuilder currentValue = new StringBuilder();
+            var currentValue = new StringBuilder();
             for (int i = 0; i < str.Length; i++)
             {
                 if (i == 0 || !char.IsUpper(str[i]))
@@ -53,25 +84,18 @@ namespace OpenWrap
             if (currentValue.Length > 0)
                 yield return currentValue.ToString();
         }
-        public static bool MatchesHumps(this string name, string value)
+
+        public static bool StartsWithNoCase(this string value, string valueToCompare)
         {
-            return name.ToUpperInvariant().MatchesHumps(0, value.ToUpperInvariant(), 0);
+            return value.StartsWith(valueToCompare, StringComparison.OrdinalIgnoreCase);
         }
 
 
-        static bool MatchesHumps(this string name, int namePosition, string value, int valuePosition)
+        public static Stream ToUTF8Stream(this string value)
         {
-            if (valuePosition > value.Length-1) return false;
-            var foundPosition = value.IndexOf(name[namePosition], valuePosition);
-            return foundPosition != -1 &&
-                    (namePosition == name.Length-1 ||
-                     MatchesHumps(name, namePosition + 1, value, foundPosition + 1));
+            return new MemoryStream(Encoding.UTF8.GetBytes(value));
         }
 
-        static bool CharEq(int namePosition, string name, int valuePosition, string value)
-        {
-            return char.ToUpperInvariant(value[valuePosition]) == char.ToUpperInvariant(name[namePosition]);
-        }
         public static Version ToVersion(this string version)
         {
             if (string.IsNullOrEmpty(version) || !Regex.IsMatch(version, @"\d+\.\d+(\.\d+(\.\d+)?)?"))
@@ -79,18 +103,11 @@ namespace OpenWrap
             try
             {
                 return new Version(version);
-            }catch
+            }
+            catch
             {
                 return null;
             }
-        }
-        public static Stream ToUTF8Stream(this string value)
-        {
-            return new MemoryStream(Encoding.UTF8.GetBytes(value));
-        }
-        public static string Join(this IEnumerable<string> strings, string separator)
-        {
-            return string.Join(separator, strings.ToArray());
         }
 
         public static Regex Wildcard(this string stringValue, bool autoWrap = false)
@@ -100,26 +117,14 @@ namespace OpenWrap
             stringValue = Regex.Escape(stringValue).Replace("\\?", ".?").Replace("\\*", ".*");
             return new Regex("^" + stringValue + "$", RegexOptions.IgnoreCase);
         }
-        public static bool EqualsNoCase(this string value, string valueToCompare)
+
+        static bool MatchesHumps(this string name, int namePosition, string value, int valuePosition)
         {
-            if (value == null) return valueToCompare == null;
-            return value.Equals(valueToCompare, StringComparison.OrdinalIgnoreCase);
-        }
-        public static bool StartsWithNoCase(this string value, string valueToCompare)
-        {
-            return value.StartsWith(valueToCompare, StringComparison.OrdinalIgnoreCase);
-        }
-        public static bool EndsWithNoCase(this string value, string valueToCompare)
-        {
-            return value.EndsWith(valueToCompare, StringComparison.OrdinalIgnoreCase);
-        }
-        public static bool ContainsNoCase(this string value, string valueToSearch)
-        {
-            return value.IndexOf(valueToSearch, StringComparison.OrdinalIgnoreCase) != -1;
-        }
-        public static bool ContainsNoCase(this IEnumerable<string> values, string valueToSearch)
-        {
-            return values.Contains(valueToSearch, StringComparer.OrdinalIgnoreCase);
+            if (valuePosition > value.Length - 1) return false;
+            var foundPosition = value.IndexOf(name[namePosition], valuePosition);
+            return foundPosition != -1 &&
+                   (namePosition == name.Length - 1 ||
+                    MatchesHumps(name, namePosition + 1, value, foundPosition + 1));
         }
     }
 }

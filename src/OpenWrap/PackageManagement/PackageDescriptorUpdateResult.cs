@@ -28,7 +28,6 @@ namespace OpenWrap.PackageManagement
             if (Result == PackageDescriptorDependencyUpdate.DependencyNotFound)
                 return new Error("Could not find a package to remove from the descriptor.");
             return null;
-
         }
     }
 }

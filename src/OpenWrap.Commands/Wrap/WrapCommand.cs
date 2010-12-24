@@ -4,9 +4,12 @@ using System.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Configuration;
-using OpenWrap.Dependencies;
 using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.DependencyResolvers;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using Configurations = OpenWrap.Configuration.Configurations;
 
 namespace OpenWrap.Commands.Wrap
@@ -89,7 +92,7 @@ namespace OpenWrap.Commands.Wrap
                 possibleUri = null;
             }
             return possibleUri != null
-                           ? new RemoteRepositoryManager(FileSystem, ConfigurationManager).CreateRepositoryInstance(repositoryName, possibleUri)
+                           ? new RemoteRepositoryBuilder(FileSystem, ConfigurationManager).BuildPackageRepositoryForUri(repositoryName, possibleUri)
                            : Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(repositoryName));
         }
     }

@@ -6,7 +6,7 @@ namespace OpenWrap.Commands
     public class InvalidCommandValue : Error
     {
         public InvalidCommandValue(List<string> unnamed)
-            : base(CreateErrorMessage(unnamed))
+                : base(CreateErrorMessage(unnamed))
         {
         }
 

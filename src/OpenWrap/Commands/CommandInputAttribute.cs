@@ -10,27 +10,13 @@ namespace OpenWrap.Commands
             Position = -1;
             IsValueRequired = true;
         }
-        public bool IsRequired
-        {
-            get;
-            set;
-        }
 
-        public string Name
-        {
-            get;
-            set;
-        }
-        public string DisplayName
-        {
-            get;
-            set;
-        }
-        public int Position
-        {
-            get; set;
-        }
+        public string DisplayName { get; set; }
 
+        public bool IsRequired { get; set; }
         public bool IsValueRequired { get; set; }
+
+        public string Name { get; set; }
+        public int Position { get; set; }
     }
 }

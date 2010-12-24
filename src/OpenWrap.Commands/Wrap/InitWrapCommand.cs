@@ -6,9 +6,13 @@ using System.Text;
 using System.Xml;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems;
-using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.PackageManagement;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
+using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -239,7 +243,7 @@ namespace OpenWrap.Commands.Wrap
         {
             using (Stream versionFile = projectDirectory.GetFile("version").OpenWrite())
             {
-                versionFile.Write(Encoding.UTF8.GetBytes(("0.0.1.*")));
+                StreamExtensions.Write(versionFile, Encoding.UTF8.GetBytes(("0.0.1.*")));
             }
         }
     }

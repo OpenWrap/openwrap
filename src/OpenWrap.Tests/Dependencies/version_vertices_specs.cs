@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageModel;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Dependencies
@@ -55,7 +55,7 @@ namespace OpenWrap.Tests.Dependencies
 
         protected override VersionVertex CreateVertex(string versionvertice)
         {
-            return new ExactVersionVertex(versionvertice.ToVersion());
+            return new EqualVersionVertex(versionvertice.ToVersion());
         }
     }
     [TestFixture]
