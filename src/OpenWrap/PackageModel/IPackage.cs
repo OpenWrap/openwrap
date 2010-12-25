@@ -9,6 +9,7 @@ namespace OpenWrap.PackageModel
     /// </summary>
     public interface IPackage : IPackageInfo
     {
+        PackageDescriptor Descriptor { get; }
         IExport GetExport(string exportName, ExecutionEnvironment environment);
         Stream OpenStream();
     }

@@ -85,7 +85,14 @@ namespace OpenWrap.Repositories.Http
             VerifyLoaded();
             return _loadedPackage.OpenStream();
         }
-
+        public PackageDescriptor Descriptor
+        {
+            get
+            {
+                VerifyLoaded();
+                return _loadedPackage.Descriptor;
+            }
+        }
         public IPackage Load()
         {
             return this;

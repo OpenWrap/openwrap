@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Collections;
 using OpenWrap.PackageManagement.DependencyResolvers;
@@ -33,13 +34,21 @@ namespace OpenWrap.PackageManagement.Exporters
 
         static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferencesFromPackages(IEnumerable<IPackageInfo> packages, ExecutionEnvironment exec)
         {
-            return packages
-                    .NotNull()
-                    .GroupBy(x => x.Name)
-                    .Select(x => x.OrderByDescending(y => y.Version).First())
-                    .NotNull()
-                    .SelectMany(x => x.Load().GetExport("bin", exec).Items)
-                    .Cast<IAssemblyReferenceExportItem>();
+            return from packageInfo in packages.NotNull()
+                           .GroupBy(x => x.Name)
+                           .Select(x => x.OrderByDescending(y => y.Version).First())
+                   let package = packageInfo.Load()
+                   from assembly in package.Load().GetExport("bin", exec).Items.Cast<IAssemblyReferenceExportItem>()
+                   where MatchesReferenceSection(package, assembly)
+                   select assembly;
+        }
+
+        static bool MatchesReferenceSection(IPackage package, IAssemblyReferenceExportItem assembly)
+        {
+            var specs = package.Descriptor.ReferencedAssemblies.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+                                                               .Select(spec=>spec.Trim().Wildcard());
+            var fileName = System.IO.Path.GetFileName(assembly.FullPath);
+            return specs.Any(spec => spec.IsMatch(assembly.AssemblyName.Name) || spec.IsMatch(fileName));
         }
     }
 }

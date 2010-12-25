@@ -17,52 +17,54 @@ namespace OpenWrap.PackageManagement.Packages
     {
         static readonly TraceSource _log = new TraceSource("openwrap", SourceLevels.All);
         readonly IEnumerable<IExportBuilder> _exporters;
-        readonly IFile _originalWrapFile;
+        readonly IFile _originalPackageFile;
         Version _version;
+        PackageDescriptor _descriptor;
 
         public UncompressedPackage(IPackageRepository source,
-                                   IFile originalPackage,
+                                   IFile originalPackageFile,
                                    IDirectory wrapCacheDirectory,
                                    IEnumerable<IExportBuilder> exporters)
         {
-            _originalWrapFile = originalPackage;
+            _originalPackageFile = originalPackageFile;
             _exporters = exporters;
             BaseDirectory = wrapCacheDirectory;
             // get the descriptor file inside the package
-            var descriptorName = originalPackage.NameWithoutExtension;
+            var descriptorName = originalPackageFile.NameWithoutExtension;
             Source = source;
             var wrapDescriptor = wrapCacheDirectory.Files("*.wrapdesc").SingleOrDefault();
             if (wrapDescriptor == null)
                 throw new InvalidOperationException("Could not find descriptor in wrap cache directory, or there are multiple .wrapdesc files in the package.");
             var versionFile = wrapCacheDirectory.GetFile("version");
-            Descriptor = new DefaultPackageInfo(originalPackage.Name,
-                                                versionFile.Exists ? versionFile.Read(x => StringExtensions.ToVersion(x.ReadString())) : null,
-                                                new PackageDescriptorReaderWriter().Read(wrapDescriptor));
+            _descriptor = new PackageDescriptorReaderWriter().Read(wrapDescriptor);
+            PackageInfo = new DefaultPackageInfo(originalPackageFile.Name,
+                                                versionFile.Exists ? versionFile.Read(x => x.ReadString().ToVersion()) : null,
+                                                _descriptor);
             Identifier = new PackageIdentifier(Name, Version);
         }
 
         public bool Anchored
         {
-            get { return Descriptor.Anchored; }
+            get { return PackageInfo.Anchored; }
         }
 
         public DateTimeOffset Created
         {
             get
             {
-                if (_originalWrapFile.LastModifiedTimeUtc != null) return new DateTimeOffset(_originalWrapFile.LastModifiedTimeUtc.Value);
+                if (_originalPackageFile.LastModifiedTimeUtc != null) return new DateTimeOffset(_originalPackageFile.LastModifiedTimeUtc.Value);
                 return DateTimeOffset.UtcNow;
             }
         }
 
         public ICollection<PackageDependency> Dependencies
         {
-            get { return Descriptor.Dependencies; }
+            get { return PackageInfo.Dependencies; }
         }
 
         public string Description
         {
-            get { return Descriptor.Description; }
+            get { return PackageInfo.Description; }
         }
 
         public string FullName
@@ -74,7 +76,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public string Name
         {
-            get { return Descriptor.Name; }
+            get { return PackageInfo.Name; }
         }
 
         public bool Nuked
@@ -86,12 +88,17 @@ namespace OpenWrap.PackageManagement.Packages
 
         public Version Version
         {
-            get { return Descriptor.Version ?? _version; }
+            get { return PackageInfo.Version ?? _version; }
         }
 
         protected IDirectory BaseDirectory { get; set; }
 
-        protected DefaultPackageInfo Descriptor { get; set; }
+        protected DefaultPackageInfo PackageInfo { get; set; }
+
+        public PackageDescriptor Descriptor
+        {
+            get { return _descriptor; }
+        }
 
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
@@ -116,7 +123,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public Stream OpenStream()
         {
-            return _originalWrapFile.OpenRead();
+            return _originalPackageFile.OpenRead();
         }
 
         public IPackage Load()

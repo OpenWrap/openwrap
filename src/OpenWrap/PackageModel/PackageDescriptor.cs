@@ -19,10 +19,11 @@ namespace OpenWrap.PackageModel
         SingleBoolValue _useProjectRepository;
         SingleBoolValue _useSymLinks;
         SingleVersionValue _version;
+        SingleStringValue _referencedAssemblies;
 
-        public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> lines)
+        public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> entries)
         {
-            foreach (var line in lines)
+            foreach (var line in entries)
                 _entries.Append(line.Name, line.Value);
             InitializeHeaders();
         }
@@ -110,6 +111,11 @@ namespace OpenWrap.PackageModel
             set { _version.Value = value; }
         }
 
+        public string ReferencedAssemblies
+        {
+            get { return _referencedAssemblies.Value; }
+            set { _referencedAssemblies.Value = value; }
+        }
         public IPackage Load()
         {
             return null;
@@ -139,6 +145,7 @@ namespace OpenWrap.PackageModel
             _version = new SingleVersionValue(_entries, "version");
             _useProjectRepository = new SingleBoolValue(_entries, "use-project-repository", true);
             _useSymLinks = new SingleBoolValue(_entries, "use-symlinks", true);
+            _referencedAssemblies = new SingleStringValue(_entries, "referenced-assemblies", "*");
         }
     }
 }

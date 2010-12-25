@@ -105,6 +105,52 @@ namespace assembly_resolving_specs
                     .Check(x => x.FirstOrDefault(y => y.AssemblyName.Name == "mirkwood").ShouldNotBeNull());
         }
     }
+    [TestFixture("eastbight")]
+    [TestFixture("eastbight.dll")]
+    public class assemblies_defined_in_reference_section_are_resolved_by_assembly_name : contexts.assembly_resolving
+    {
+        public assemblies_defined_in_reference_section_are_resolved_by_assembly_name(string assemblyName)
+        {
+            given_dependency("depends: east-bight");
+            given_project_package("east-bight", "1.0.0.0", Assemblies(Assembly("eastbight", "bin-net35"), Assembly("eastbight.runner", "bin-net35")), "referenced-assemblies: " + assemblyName);
+
+            when_resolving_assemblies("anyCPU", "net35");
+        }
+
+        [Test]
+        public void included_assembly_is_referenced()
+        {
+            AssemblyReferences.ShouldHaveCountOf(1)
+                    .First().AssemblyName.Name.ShouldBe("eastbight");
+        }
+
+        [Test]
+        public void excluded_assembly_is_not_resolved()
+        {
+            AssemblyReferences.Any(x => x.AssemblyName.Name == "eastbight.runer")
+                    .ShouldBeFalse();
+        }
+    }
+    public class multiple_assemblies_defined_in_reference_section_are_resolved_by_assembly_name : contexts.assembly_resolving
+    {
+        public multiple_assemblies_defined_in_reference_section_are_resolved_by_assembly_name()
+        {
+            given_dependency("depends: east-bight");
+            given_project_package("east-bight", "1.0.0.0",
+                Assemblies(Assembly("eastbight", "bin-net35"), Assembly("eastbight.runner", "bin-net35")),
+                "referenced-assemblies: eastbight, eastbight.runner");
+
+            when_resolving_assemblies("anyCPU", "net35");
+        }
+
+        [Test]
+        public void included_assembly_is_referenced()
+        {
+            AssemblyReferences.ShouldHaveCountOf(2)
+                    .Check(x=>x.Any(asm=>asm.AssemblyName.Name == "eastbight").ShouldBeTrue())
+                    .Check(x=>x.Any(asm=>asm.AssemblyName.Name == "eastbight.runner").ShouldBeTrue());
+        }
+    }
     namespace contexts
     {
         public abstract class assembly_resolving : openwrap_context
