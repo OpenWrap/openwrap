@@ -12,7 +12,7 @@ using OpenWrap.Repositories.NuGet;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Repositories;
 
-namespace nupack_syncidcation_specs
+namespace nuget_syndication_specs
 {
     public class parsing_odata_syndication_feed : parsing_syndication_feed
     {
@@ -21,7 +21,7 @@ namespace nupack_syncidcation_specs
             return TestFiles.feedodata;
         }
     }
-    public class parsing_syndication_feed : context.nupack_syndication
+    public class parsing_syndication_feed : context.nuget_syndication
     {
         public parsing_syndication_feed()
         {
@@ -67,7 +67,7 @@ namespace nupack_syncidcation_specs
     }
     namespace context
     {
-        public abstract class nupack_syndication : OpenWrap.Testing.context
+        public abstract class nuget_syndication : OpenWrap.Testing.context
         {
             protected NuGetSyndicationFeed Feed;
             protected PackageDocument PackageDoc;

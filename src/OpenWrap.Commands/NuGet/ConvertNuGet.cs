@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using OpenFileSystem.IO;
-using OpenWrap.Commands;
 using OpenWrap.Repositories.NuGet;
-using OpenWrap.Services;
 
-namespace OpenWrap.Tests.Commands.NuPack
+namespace OpenWrap.Commands.NuGet
 {
     [Command(Noun="nuget", Verb="convert")]
     public class ConvertNuGet : AbstractCommand
     {
-        IFile _nuPackFile;
+        IFile _nugetFile;
         IFile _destinationFile;
         protected IFileSystem FileSystem { get { return Services.Services.GetService<IFileSystem>(); } }
         [CommandInput(Position=0, IsRequired=true)]
@@ -29,23 +24,23 @@ namespace OpenWrap.Tests.Commands.NuPack
 
         IEnumerable<ICommandOutput> ExecuteCore()
         {
-            using(var nuPackStream = _nuPackFile.OpenRead())
+            using(var nugetStream = _nugetFile.OpenRead())
             using(var wrapStream = _destinationFile.OpenWrite())
             {
-                NuGetConverter.Convert(nuPackStream, wrapStream);
+                NuGetConverter.Convert(nugetStream, wrapStream);
             }
             yield return new GenericMessage("Package successfully converted.");
         }
 
         IEnumerable<ICommandOutput> VerifyInputs()
         {
-            _nuPackFile = FileSystem.GetFile(Path);
-            if (!_nuPackFile.Exists)
+            _nugetFile = FileSystem.GetFile(Path);
+            if (!_nugetFile.Exists)
                 yield return new Error("File '{0}' not found.", Path);
 
             _destinationFile = Destination == null
                                        ? FileSystem.GetFile(Destination)
-                                       : _nuPackFile.Parent.GetFile(_nuPackFile.NameWithoutExtension + ".wrap");
+                                       : _nugetFile.Parent.GetFile(_nugetFile.NameWithoutExtension + ".wrap");
         }
     }
 }
