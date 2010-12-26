@@ -16,6 +16,8 @@ namespace OpenWrap.Windows
         private readonly ObservableCollection<PackageViewModel> _systemPackages = new ObservableCollection<PackageViewModel>();
         private readonly ObservableCollection<PackageViewModel> _projectPackages = new ObservableCollection<PackageViewModel>();
 
+        private readonly AddPackageRepositoryDialogCommand _addPackageRepositoryDialogCommand = new AddPackageRepositoryDialogCommand();
+
         private IEnumerable<NounSlice> _nouns;
         private NounSlice _selectedNoun;
 
@@ -58,6 +60,11 @@ namespace OpenWrap.Windows
                 _selectedNoun = value;
                 RaisePropertyChanged<MainViewModel>(o => o.SelectedNoun);
             }
+        }
+
+        public AddPackageRepositoryDialogCommand AddPackageRepositoryDialogCommand
+        {
+            get { return _addPackageRepositoryDialogCommand; }
         }
 
         public ObservableCollection<PackageViewModel> SystemPackages

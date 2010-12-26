@@ -10,7 +10,7 @@ namespace OpenWrap.Windows.PackageRepository
         {
             ORRemoveRemoteCommand removeRemoteCommand = new ORRemoveRemoteCommand
             {
-                Name = parameter.Name
+                Name = parameter.RepositoryName
             };
 
             CommandOutput = removeRemoteCommand.Execute();

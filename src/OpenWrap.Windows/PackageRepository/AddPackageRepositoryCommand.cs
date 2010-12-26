@@ -10,8 +10,8 @@ namespace OpenWrap.Windows.PackageRepository
         {
             OpenWrapAddRemoteCommand openWrapCommand = new OpenWrapAddRemoteCommand
             {
-                    Name = parameter.Name, 
-                    Href = new Uri(parameter.Uri)
+                    Name = parameter.RepositoryName, 
+                    Href = new Uri(parameter.RepositoryUrl)
             };
 
             CommandOutput = openWrapCommand.Execute();
