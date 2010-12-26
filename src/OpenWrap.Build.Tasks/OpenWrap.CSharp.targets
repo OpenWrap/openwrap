@@ -96,27 +96,26 @@
     <!-- Referenced projects -->
     <ItemGroup>
       <_OpenWrap-AssemblyReferences Include="@(Reference->'%(HintPath)')" Condition="'%(Reference.FromOpenWrap)' == 'True'" />
-
-      <_OpenWrap-CopyLocal Include="@(ReferenceCopyLocalPaths)" Exclude="@(_OpenWrap-AssemblyReferences)" />
+      <_OpenWrap-PdbFiles Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).pdb')" />
+      <_OpenWrap-SerializationFiles Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).resources.dll')" />
+      <!--<_OpenWrap-CopyLocal Include="@(ReferenceCopyLocalPaths)" Exclude="@(_OpenWrap-AssemblyReferences)" />-->
     </ItemGroup>
 
-    <Message Text="[built($(OpenWrap-ExportName),'%(_OpenWrap-CopyLocal.FullPath)')]" Condition="'@(_OpenWrap-CopyLocal)' != ''" />
-
-    <!-- Content -->
-    <Message Text="[built($(OpenWrap-ExportName),'%(Content.FullPath)')]" Condition="Exists('@(Content)')" />
-
-    <!-- Assembly output -->
-    <Message Text="[built($(OpenWrap-ExportName),'%(IntermediateAssembly.FullPath)')]" />
-    <!-- Module outputs -->
-    <Message Text="[built($(OpenWrap-ExportName),'%(AddModules.FullPath)')]" Condition="Exists('@(AddModules)')" />
-    <!-- Serialization assemblies -->
-    <Message Text="[built($(OpenWrap-ExportName),'$(OutDir)$(_SGenDllName)')]" Condition="'$(_SGenDllCreated)'=='true'" />
-    <!-- Xml documentation -->
-    <Message Text="[built($(OpenWrap-ExportName),'%(DocFileItem.FullPath)')]" Condition="'$(_DocumentationFileProduced)'=='true'" />
-    <!-- Satellite assemblies-->
-    <Message Text="[built($(OpenWrap-ExportName),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
-             Condition="Exists('@(IntermediateSatelliteAssembliesWithTargetPath)')"/>
-
+    <PublishPackageContent
+      IncludePdbs="$(OpenWrap-IncludePdbs)"
+      IncludeDocumentation="true"
+      BasePath="$(MSBuildProjectDirectory)"
+      ExportName="$(OpenWrap-ExportName)"
+      OutputAssemblyFiles="%(IntermediateAssembly.FullPath)"
+      ContentFiles="%(Content.FullPath)"
+      AllAssemblyReferenceFiles="%(ReferenceCopyLocalPaths.FullPath)"
+      OpenWrapReferenceFiles="@(_OpenWrap-AssemblyReferences)"
+      PdbFiles="@(_OpenWrap-PdbFiles)"
+      DocumentationFiles="%(DocFileItem.FullPath)"
+      SatelliteAssemblies="@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll')"
+      SerializationAssemblies="@(_OpenWrap-SerializationFiles)"
+      />
+    
     <!-- delete assembly reference cache to prevent VS from not calling the initialize task on next opening -->
     <Delete Files="$(ResolveAssemblyReferencesStateFile);$(IntermediateOutputPath)*.cache" ContinueOnError="true" />
     

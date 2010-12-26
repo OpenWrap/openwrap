@@ -336,8 +336,12 @@
       <EventHandlerPatternShort>$event$Handler</EventHandlerPatternShort>
       <ExceptionName IsNull="False">
       </ExceptionName>
-      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="MethodPropertyEvent" />
-      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="TypesAndNamespaces" />
+      <PredefinedRule Inspect="False" Prefix="" Suffix="" Style="AaBb" ElementKind="MethodPropertyEvent">
+        <ExtraRule Prefix="" Suffix="" Style="aa_bb" />
+      </PredefinedRule>
+      <PredefinedRule Inspect="False" Prefix="" Suffix="" Style="AaBb" ElementKind="TypesAndNamespaces">
+        <ExtraRule Prefix="" Suffix="" Style="aa_bb" />
+      </PredefinedRule>
       <PredefinedRule Inspect="True" Prefix="I" Suffix="" Style="AaBb" ElementKind="Interfaces" />
       <PredefinedRule Inspect="True" Prefix="T" Suffix="" Style="AaBb" ElementKind="TypeParameters" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="Locals" />

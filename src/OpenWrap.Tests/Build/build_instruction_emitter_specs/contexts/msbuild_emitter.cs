@@ -1,0 +1,81 @@
+﻿using System;
+using System.IO;
+using System.Linq;
+using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenWrap.Build.Tasks;
+using OpenWrap.Testing;
+
+namespace OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts
+{
+    public class msbuild_emitter
+    {
+        MSBuildInstructionEmitter _emitter;
+        protected ILookup<string, string> Instructions;
+        InMemoryFileSystem _fileSystem;
+
+        public msbuild_emitter()
+        {
+            _fileSystem = new InMemoryFileSystem();
+            _emitter = new MSBuildInstructionEmitter(_fileSystem);
+            _emitter.BasePath = Path.GetTempPath();
+        }
+        protected void given_assembly_reference(string path)
+        {
+            _emitter.AllAssemblyReferenceFiles.Add(path);
+        }
+        protected void given_openwrap_reference(string path)
+        {
+            _emitter.OpenWrapReferenceFiles.Add(path);
+        }
+        protected void given_content_file(string path)
+        {
+            _emitter.ContentFiles.Add(path);
+        }
+        protected void given_documentation_file(string path)
+        {
+            _emitter.DocumentationFiles.Add(path);
+        }
+        protected void given_satellite(string path)
+        {
+            _emitter.SatelliteAssemblies.Add(path);
+
+        }
+        protected void given_serialization(string path)
+        {
+            _emitter.SerializationAssemblies.Add(path);
+
+        }
+        protected void given_pdb(string path)
+        {
+            _emitter.PdbFiles.Add(path);
+        }
+        protected void when_generating_instructions()
+        {
+            Instructions = _emitter.GenerateInstructions().ToLookup(x => x.Key, x => x.Value);
+
+        }
+        protected void should_have_file(string folder, string filePath)
+        {
+            Instructions[folder].ShouldContain(RootedPath(filePath));
+        }
+        protected void should_not_have_file(string folder, string filePath)
+        {
+            Instructions[folder].ShouldNotContain(RootedPath(filePath));
+        }
+
+        protected void given_export(string exportName)
+        {
+            _emitter.ExportName = exportName;
+        }
+
+        protected string RootedPath(string fileName)
+        {
+            return Path.Combine(_emitter.BasePath, fileName);
+        }
+
+        protected void given_output_assembly(string assemblyPath)
+        {
+            _emitter.OutputAssemblyFiles.Add(RootedPath(assemblyPath));
+        }
+    }
+}
