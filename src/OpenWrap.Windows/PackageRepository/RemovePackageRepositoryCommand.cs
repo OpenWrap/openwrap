@@ -1,16 +1,16 @@
 ﻿using System;
 using OpenWrap.Windows.Framework;
-using ORRemoveRemoteCommand = OpenWrap.Commands.Remote.RemoveRemoteCommand;
+using OpenWrapRemoveRemoteCommand = OpenWrap.Commands.Remote.RemoveRemoteCommand;
 
 namespace OpenWrap.Windows.PackageRepository
 {
-    class RemovePackageRepositoryCommand : CommandBase<NewPackageRepositoryViewModel>
+    class RemovePackageRepositoryCommand : CommandBase<PackageRepositoryViewModel>
     {
-        protected override void Execute(NewPackageRepositoryViewModel parameter)
+        protected override void Execute(PackageRepositoryViewModel parameter)
         {
-            ORRemoveRemoteCommand removeRemoteCommand = new ORRemoveRemoteCommand
+            OpenWrapRemoveRemoteCommand removeRemoteCommand = new OpenWrapRemoveRemoteCommand
             {
-                Name = parameter.RepositoryName
+                Name = parameter.Name
             };
 
             CommandOutput = removeRemoteCommand.Execute();

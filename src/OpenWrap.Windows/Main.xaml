@@ -21,24 +21,6 @@
                 <ContentPresenter Grid.Column="1" Grid.Row="1" Content="{Binding SelectedNoun}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Remote repositories">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="Add remote repository" Margin="2" Padding="2" Command="{Binding AddPackageRepositoryDialogCommand}" />
-                </StackPanel>
-                <ListBox Grid.Row="1" ItemsSource="{Binding PackageRepositories}" HorizontalContentAlignment="Stretch">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Controls:PackageRepositoryControl />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
-        </TabItem>
         <TabItem Header="System Packages">
             <ListBox ItemsSource="{Binding SystemPackages}" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
@@ -56,6 +38,24 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+        </TabItem>
+        <TabItem Header="Remote repositories">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Add remote repository" Margin="2" Padding="2" Command="{Binding AddPackageRepositoryDialogCommand}" />
+                </StackPanel>
+                <ListBox Grid.Row="1" ItemsSource="{Binding PackageRepositories}" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Controls:PackageRepositoryControl />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </TabItem>
     </TabControl>
 </Window>
