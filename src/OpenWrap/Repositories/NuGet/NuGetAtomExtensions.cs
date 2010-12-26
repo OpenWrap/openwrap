@@ -15,10 +15,10 @@ namespace OpenWrap.Repositories.NuGet
         {
             return extensions.ReadNuGetExtension<T>(name).FirstOrDefault();
         }
+
         static Collection<T> ReadNuGetExtension<T>(this SyndicationElementExtensionCollection extensions, string name)
         {
             return extensions.ReadElementExtensions<T>(name, Namespaces.NuGet);
         }
-
     }
 }

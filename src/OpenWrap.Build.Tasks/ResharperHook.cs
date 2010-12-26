@@ -8,10 +8,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenFileSystem.IO;
 using System.Diagnostics;
+using OpenWrap.Runtime;
 
 
 namespace OpenWrap.Build.Tasks

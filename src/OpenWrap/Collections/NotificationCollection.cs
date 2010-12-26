@@ -1,60 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 
 namespace OpenWrap.Collections
 {
     public class NotificationCollection<T> : Collection<T>
     {
-        protected Func<T, T> AddHandler { get; private set; }
-        protected Action<T> RemoveHandler { get; private set; }
-
-        public NotificationCollection(Func<T,T> add, Action<T> remove, IEnumerable<T> source)
-            : this(add,remove)
+        public NotificationCollection(Func<T, T> add, Action<T> remove, IEnumerable<T> source)
+                : this(add, remove)
         {
-            foreach(var item in source)
+            foreach (var item in source)
             {
                 Add(item);
             }
         }
-        public NotificationCollection(Func<T,T> add, Action<T> remove)
+
+        public NotificationCollection(Func<T, T> add, Action<T> remove)
         {
             AddHandler = add;
             RemoveHandler = remove;
         }
+
         public NotificationCollection()
         {
-            
-        }
-        protected virtual T HandleAdd(T item)
-        {
-            if (AddHandler != null)
-                return AddHandler(item);
-            return default(T);
-        }
-        protected virtual void HandleRemove(T item)
-        {
-            if (RemoveHandler != null)
-                RemoveHandler(item);
-        }
-        protected override void InsertItem(int index, T item)
-        {
-            item = HandleAdd(item);
-
-            InsertItemCore(item, index);
         }
 
-        protected void InsertItemCore(T item, int index)
-        {
-            base.InsertItem(index, item);
-        }
+        protected Func<T, T> AddHandler { get; private set; }
+        protected Action<T> RemoveHandler { get; private set; }
+
         protected void AddItemCore(T item)
         {
             base.InsertItem(base.Count, item);
-
         }
+
         protected override void ClearItems()
         {
             foreach (var item in this)
@@ -65,6 +43,31 @@ namespace OpenWrap.Collections
         protected void ClearItemsCore()
         {
             base.ClearItems();
+        }
+
+        protected virtual T HandleAdd(T item)
+        {
+            if (AddHandler != null)
+                return AddHandler(item);
+            return default(T);
+        }
+
+        protected virtual void HandleRemove(T item)
+        {
+            if (RemoveHandler != null)
+                RemoveHandler(item);
+        }
+
+        protected override void InsertItem(int index, T item)
+        {
+            item = HandleAdd(item);
+
+            InsertItemCore(item, index);
+        }
+
+        protected void InsertItemCore(T item, int index)
+        {
+            base.InsertItem(index, item);
         }
 
         protected override void RemoveItem(int index)

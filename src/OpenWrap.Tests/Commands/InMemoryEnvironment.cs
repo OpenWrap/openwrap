@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 
 namespace OpenWrap.Tests.Commands

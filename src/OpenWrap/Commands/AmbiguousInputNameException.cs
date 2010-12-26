@@ -9,7 +9,7 @@ namespace OpenWrap.Commands
         readonly string _input;
         readonly string[] _potentialInputs;
 
-        public AmbiguousInputNameException(string input,string[] potentialInputs) : base("Ambiguous input name.")
+        public AmbiguousInputNameException(string input, string[] potentialInputs) : base("Ambiguous input name.")
         {
             _input = input;
             _potentialInputs = potentialInputs;
@@ -30,6 +30,7 @@ namespace OpenWrap.Commands
         {
             get { return CommandResultType.Error; }
         }
+
         public override string ToString()
         {
             return string.Format("The input '{0}' was ambiguous. Possible inputs: {1}", _input, string.Join(", ", _potentialInputs));

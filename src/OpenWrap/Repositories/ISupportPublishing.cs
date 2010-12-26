@@ -1,10 +1,15 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
     public interface ISupportPublishing : IPackageRepository
     {
-        IPackageInfo Publish(string packageFileName, Stream packageStream);
-        void PublishCompleted();
+        IPackagePublisher Publisher();
+    }
+    public interface IPackagePublisher : IDisposable
+    {
+        IPackageInfo Publish(string packageFileName, Stream packageStream);        
     }
 }

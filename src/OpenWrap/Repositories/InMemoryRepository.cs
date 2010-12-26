@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
-using OpenWrap.Dependencies;
+using OpenWrap.IO;
+using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.Packages;
+using OpenWrap.PackageModel;
+using FileExtensions = OpenFileSystem.IO.FileExtensions;
 
 namespace OpenWrap.Repositories
 {
@@ -17,9 +20,26 @@ namespace OpenWrap.Repositories
             Name = name;
         }
 
+        public bool CanDelete
+        {
+            get { return true; }
+        }
+
         public bool CanPublish
         {
             get { return true; }
+        }
+
+        public string Name { get; set; }
+
+        public IList<IPackageInfo> Packages
+        {
+            get { return _packages; }
+        }
+
+        public ILookup<string, IPackageInfo> PackagesByName
+        {
+            get { return _packages.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
         }
 
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
@@ -31,53 +51,26 @@ namespace OpenWrap.Repositories
         {
         }
 
-        public string Name
-        {
-            get; set;
-        }
-
         public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
         {
             var packagesToRemove = _packages.Where(x => !packagesToKeep.Contains(x)).ToList();
             _packages = packagesToKeep.ToList();
-            return packagesToRemove.Select(x=>new PackageCleanResult(x, true));
+            return packagesToRemove.Select(x => new PackageCleanResult(x, true));
         }
-
-        public bool CanDelete
+        public IPackagePublisher Publisher()
         {
-            get { return true; }
+            return new PackagePublisher(Publish);
         }
-
-        public void Delete(IPackageInfo packageInfo)
-        {
-            _packages.Remove(packageInfo);
-        }
-
-        public ILookup<string, IPackageInfo> PackagesByName
-        {
-            get { return _packages.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
-        }
-
-        public IList<IPackageInfo> Packages
-        {
-            get { return _packages; }
-        }
-
-        public IPackageInfo Find(PackageDependency dependency)
-        {
-            return PackagesByName.Find(dependency);
-        }
-
-        public IPackageInfo Publish(string packageFileName, Stream packageStream)
+        IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
             var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
-                                               ? System.IO.Path.GetFileNameWithoutExtension(packageFileName)
+                                               ? Path.GetFileNameWithoutExtension(packageFileName)
                                                : packageFileName;
-            if (_packages.Any(x=>x.FullName.EqualsNoCase(fileWithoutExtension)))
+            if (_packages.Any(x => x.FullName.EqualsNoCase(fileWithoutExtension)))
                 throw new InvalidOperationException("Package already exists in repository.");
 
             var inMemoryFile = new InMemoryFile("c:\\" + Guid.NewGuid());
-            using(var stream = inMemoryFile.OpenWrite())
+            using (var stream = FileExtensions.OpenWrite(inMemoryFile))
                 packageStream.CopyTo(stream);
 
             var tempFolder = new CachedZipPackage(null, inMemoryFile, null, null);
@@ -92,10 +85,6 @@ namespace OpenWrap.Repositories
             };
             _packages.Add(package);
             return package;
-        }
-
-        public void PublishCompleted()
-        {
         }
     }
 }

@@ -8,18 +8,20 @@ namespace OpenWrap.Repositories.Http
 {
     public static class RequestExtensions
     {
-        public static T Notify<T>(this T request, ITaskChanges task) where T : IProgressNotification
-        {
-            request.StatusChanged += (s, e) => task.Status(e.Message);
-            request.Progress += (s, e) => task.Progress(e.Progress);
-            return request;
-        }
         public static PackageDocument AsPackageDocument<T>(this T response) where T : IClientResponse
         {
             if (response == null)
                 return null;
             return response.AsXDocument().ParsePackageDocument();
         }
+
+        public static T Notify<T>(this T request, ITaskChanges task) where T : IProgressNotification
+        {
+            request.StatusChanged += (s, e) => task.Status(e.Message);
+            request.Progress += (s, e) => task.Progress(e.Progress);
+            return request;
+        }
+
         public static PackageDocument ParsePackageDocument(this XDocument xmlDocument)
         {
             if (xmlDocument == null)
@@ -54,6 +56,24 @@ namespace OpenWrap.Repositories.Http
             };
         }
 
+        static bool GetCanPublish(XDocument doc)
+        {
+            var wraplist = doc.Element("wraplist");
+            var canPublishNode = wraplist != null ? wraplist.Attribute("read-only") : null;
+            bool readOnly;
+            if (canPublishNode != null && bool.TryParse(canPublishNode.Value, out readOnly))
+                return !readOnly;
+            return false;
+        }
+
+        static DateTimeOffset GetModifiedTimeUtc(XAttribute attribute)
+        {
+            var now = DateTimeOffset.UtcNow;
+            if (attribute == null) return now;
+            DateTimeOffset dt;
+            return !DateTimeOffset.TryParse(attribute.Value, out dt) ? now : dt;
+        }
+
         static bool GetNuked(string s)
         {
             bool b;
@@ -74,26 +94,6 @@ namespace OpenWrap.Repositories.Http
                     let baseUri = new Uri(xmlDocument.BaseUri, UriKind.Absolute)
                     select new Uri(baseUri, hrefAttribute.Value))
                     .FirstOrDefault();
-
-            
-        }
-
-        static bool GetCanPublish(XDocument doc)
-        {
-            var wraplist = doc.Element("wraplist");
-            var canPublishNode = wraplist != null ? wraplist.Attribute("read-only") : null;
-            bool readOnly;
-            if (canPublishNode != null && bool.TryParse(canPublishNode.Value, out readOnly))
-                return !readOnly;
-            return false;
-        }
-
-        static DateTimeOffset GetModifiedTimeUtc(XAttribute attribute)
-        {
-            var now = DateTimeOffset.UtcNow;
-            if (attribute == null) return now;
-            DateTimeOffset dt;
-            return !DateTimeOffset.TryParse(attribute.Value, out dt) ? now : dt;
         }
     }
 }

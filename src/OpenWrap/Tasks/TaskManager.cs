@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using OpenWrap.Services;
 
 namespace OpenWrap.Tasks
 {
     public class TaskManager : ITaskManager
     {
+        public event EventHandler<TaskEventArgs> TaskStarted;
+
         public static ITaskManager Instance
         {
             get
@@ -15,18 +14,18 @@ namespace OpenWrap.Tasks
                 return Services.Services.GetService<ITaskManager>();
             }
         }
-        public event EventHandler<TaskEventArgs> TaskStarted;
 
+
+        public ITaskListener GetListener()
+        {
+            return new TaskListener(this);
+        }
 
         public void Run(string taskName, string taskDescription, Action<ITaskChanges> taskAction)
         {
             var task = new Task(taskName, taskDescription, taskAction);
             TaskStarted.Raise(this, new TaskEventArgs(task));
             task.Run();
-        }
-        public ITaskListener GetListener()
-        {
-            return new TaskListener(this);
         }
     }
 }

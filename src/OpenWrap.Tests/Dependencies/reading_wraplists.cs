@@ -7,10 +7,9 @@ using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using OpenFileSystem.IO.FileSystems.Local;
-using OpenWrap.Exports;
 using OpenFileSystem.IO;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
-using OpenWrap.Dependencies;
 using OpenWrap.Repositories.Http;
 using OpenWrap.Testing;
 
@@ -58,7 +57,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             core_dependency.Name.ShouldBe("castle-core");
             core_dependency.ToString().ShouldBe("castle-core = 1.1.0");
             core_dependency.VersionVertices.First().Version.ShouldBe(new Version("1.1.0"));
-            core_dependency.VersionVertices.First().ShouldBeOfType<ExactVersionVertex>();
+            core_dependency.VersionVertices.First().ShouldBeOfType<EqualVersionVertex>();
         }
     }
     namespace context

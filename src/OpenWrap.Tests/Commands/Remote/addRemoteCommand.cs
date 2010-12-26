@@ -6,7 +6,6 @@ using NUnit.Framework;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Configuration;
-using OpenWrap.Configuration.remote_repositories;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 

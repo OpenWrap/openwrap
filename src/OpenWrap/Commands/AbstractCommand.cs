@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenWrap.Commands.Remote;
+using OpenWrap.Collections;
 
 namespace OpenWrap.Commands
 {

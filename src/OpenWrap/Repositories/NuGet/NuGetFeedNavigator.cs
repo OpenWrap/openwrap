@@ -9,35 +9,13 @@ namespace OpenWrap.Repositories.NuGet
 {
     public class NuGetFeedNavigator : IHttpRepositoryNavigator
     {
-        Uri _feedUri;
-        PackageDocument _packageDocument;
+        readonly Uri _feedUri;
         readonly IHttpClient _httpClient = new HttpWebRequestBasedClient();
+        PackageDocument _packageDocument;
 
         public NuGetFeedNavigator(Uri feedUri)
         {
             _feedUri = feedUri;
-        }
-        public PackageDocument Index()
-        {
-            EnsureFeedLoaded();
-            return _packageDocument;
-        }
-
-        void EnsureFeedLoaded()
-        {
-            if (_packageDocument == null)
-                _packageDocument = SyndicationFeed.Load<NuGetSyndicationFeed>(XmlReader.Create(_feedUri.ToString())).ToPackageDocument();
-        }
-
-        public Stream LoadPackage(PackageItem packageItem)
-        {
-           var response =  _httpClient.CreateRequest(packageItem.PackageHref).Get().Send();
-           if (response.Entity == null)
-               return null;
-            var ms = new MemoryStream();
-            NuGetConverter.Convert(response.Entity.Stream, ms);
-            ms.Position = 0;
-            return ms;
         }
 
         public bool CanPublish
@@ -45,9 +23,32 @@ namespace OpenWrap.Repositories.NuGet
             get { return false; }
         }
 
+        public PackageDocument Index()
+        {
+            EnsureFeedLoaded();
+            return _packageDocument;
+        }
+
+        public Stream LoadPackage(PackageItem packageItem)
+        {
+            var response = _httpClient.CreateRequest(packageItem.PackageHref).Get().Send();
+            if (response.Entity == null)
+                return null;
+            var ms = new MemoryStream();
+            NuGetConverter.Convert(response.Entity.Stream, ms);
+            ms.Position = 0;
+            return ms;
+        }
+
         public void PushPackage(string packageFileName, Stream packageStream)
         {
             throw new NotSupportedException("Legacy NuGet feeds do not include upload support.");
+        }
+
+        void EnsureFeedLoaded()
+        {
+            if (_packageDocument == null)
+                _packageDocument = SyndicationFeed.Load<NuGetSyndicationFeed>(XmlReader.Create(_feedUri.ToString())).ToPackageDocument();
         }
     }
 }

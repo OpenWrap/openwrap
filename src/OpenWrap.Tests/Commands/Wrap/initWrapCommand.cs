@@ -8,7 +8,7 @@ using OpenFileSystem.IO;
 using OpenWrap;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands.context;

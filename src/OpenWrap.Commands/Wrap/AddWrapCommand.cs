@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenWrap.Dependencies;
+using OpenWrap.Collections;
 using OpenWrap.PackageManagement;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using SysPath = System.IO.Path;
 

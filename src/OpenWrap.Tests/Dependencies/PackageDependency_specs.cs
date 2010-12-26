@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Dependencies

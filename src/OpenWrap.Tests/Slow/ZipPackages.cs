@@ -7,8 +7,9 @@ using NUnit.Framework;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
+using OpenWrap.IO.Packaging;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
@@ -102,7 +103,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Slow
             {
                 FileSystem = LocalFileSystem.Instance;
                 RepositoryPath = FileSystem.CreateTempDirectory();
-                PackageBuilder.NewWithDescriptor(
+                Packager.NewWithDescriptor(
                     RepositoryPath.GetFile(packageName + "-1.0.0.wrap"), 
                     packageName,
                     "1.0.0",

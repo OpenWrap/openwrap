@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Testing;
 
 namespace package_descriptor_specs

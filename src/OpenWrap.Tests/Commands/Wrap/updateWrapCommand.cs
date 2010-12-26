@@ -6,7 +6,6 @@ using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
-using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 

@@ -364,6 +364,7 @@
       <Abbreviation Text="IO" />
       <Abbreviation Text="MS" />
       <Abbreviation Text="GAC" />
+      <Abbreviation Text="UTF" />
     </Naming2>
   </CodeStyleSettings>
 </Configuration>

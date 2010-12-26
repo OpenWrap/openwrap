@@ -1,6 +1,4 @@
 using System;
-using OpenWrap.Commands;
-using OpenWrap;
 
 namespace OpenWrap.Commands
 {

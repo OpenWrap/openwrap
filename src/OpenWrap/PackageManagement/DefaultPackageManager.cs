@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap.Dependencies;
+using OpenWrap.Collections;
+using OpenWrap.PackageManagement.DependencyResolvers;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
@@ -40,7 +42,7 @@ namespace OpenWrap.PackageManagement
             return new PackageAddResultIterator(CopyPackageCore(sourceRepositories, new[] { systemRepository }, ToDescriptor(packageToAdd, options), x => true));
         }
 
-        public IPackageCleanResult CleanProjectPackages(PackageDescriptor packages, IPackageRepository projectRepository)
+        public IPackageCleanResult CleanProjectPackages(PackageDescriptor packages, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default)
         {
             if (packages == null) throw new ArgumentNullException("packages");
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
@@ -50,7 +52,7 @@ namespace OpenWrap.PackageManagement
             return new PackageCleanResultIterator(CleanProjectPackagesCore(packages, repoForClean, x => true));
         }
 
-        public IPackageCleanResult CleanProjectPackages(PackageDescriptor packages, IPackageRepository projectRepository, string name)
+        public IPackageCleanResult CleanProjectPackages(PackageDescriptor packages, IPackageRepository projectRepository, string name, PackageCleanOptions options = PackageCleanOptions.Default)
         {
             if (packages == null) throw new ArgumentNullException("packages");
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
@@ -60,21 +62,21 @@ namespace OpenWrap.PackageManagement
             return new PackageCleanResultIterator(CleanProjectPackagesCore(packages, repoForClean, x => name.EqualsNoCase(x)));
         }
 
-        public IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository)
+        public IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, PackageCleanOptions options = PackageCleanOptions.Default)
         {
             var toClean = systemRepository as ISupportCleaning;
             if (toClean == null) throw new ArgumentException("The repository must implement ISupportCleaning.", "systemRepository");
             return new PackageCleanResultIterator(CleanSystemPackagesCore(toClean, x => true));
         }
 
-        public IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, string packageName)
+        public IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, string packageName, PackageCleanOptions options = PackageCleanOptions.Default)
         {
             var toClean = systemRepository as ISupportCleaning;
             if (toClean == null) throw new ArgumentException("The repository must implement ISupportCleaning.", "systemRepository");
             return new PackageCleanResultIterator(CleanSystemPackagesCore(toClean, x => packageName.EqualsNoCase(packageName)));
         }
 
-        public IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null)
+        public IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null, PackageListOptions options = PackageListOptions.Default)
         {
             return new PackageListResultIterator(ListPackagesCore(repositories, query));
         }
@@ -89,8 +91,8 @@ namespace OpenWrap.PackageManagement
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
 
             return new PackageRemoveResultIterator((packageToRemove.ExactVersion == null && !packageToRemove.LastVersion)
-                                                   ? RemoveFromDescriptor(packageToRemove, packageDescriptor, projectRepository, options)
-                                                   : RemovePackageFilesFromProjectRepo(packageToRemove, projectRepository));
+                                                           ? RemoveFromDescriptor(packageToRemove, packageDescriptor, projectRepository, options)
+                                                           : RemovePackageFilesFromProjectRepo(packageToRemove, projectRepository));
         }
 
         public IPackageRemoveResult RemoveSystemPackage(PackageRequest packageToRemove, IPackageRepository systemRepository, PackageRemoveOptions options = PackageRemoveOptions.Default)
@@ -100,7 +102,10 @@ namespace OpenWrap.PackageManagement
             return new PackageRemoveResultIterator(RemovePackageFromRepository(packageToRemove, systemRepository));
         }
 
-        public IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories, IPackageRepository projectRepository, PackageDescriptor projectDescriptor)
+        public IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories,
+                                                          IPackageRepository projectRepository,
+                                                          PackageDescriptor projectDescriptor,
+                                                          PackageUpdateOptions options = PackageUpdateOptions.Default)
         {
             if (sourceRepositories == null) throw new ArgumentNullException("sourceRepositories");
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
@@ -113,7 +118,8 @@ namespace OpenWrap.PackageManagement
         public IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories,
                                                           IPackageRepository projectRepository,
                                                           PackageDescriptor projectDescriptor,
-                                                          string packageName)
+                                                          string packageName,
+                                                          PackageUpdateOptions options = PackageUpdateOptions.Default)
         {
             if (sourceRepositories == null) throw new ArgumentNullException("sourceRepositories");
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
@@ -123,12 +129,17 @@ namespace OpenWrap.PackageManagement
             return new PackageUpdateResultIterator(CopyPackageCore(sourceRepositories, new[] { projectRepository }, projectDescriptor, x => x.EqualsNoCase(packageName)));
         }
 
-        public IPackageUpdateResult UpdateSystemPackages(IEnumerable<IPackageRepository> sourceRepositories, IPackageRepository systemRepository)
+        public IPackageUpdateResult UpdateSystemPackages(IEnumerable<IPackageRepository> sourceRepositories,
+                                                         IPackageRepository systemRepository,
+                                                         PackageUpdateOptions options = PackageUpdateOptions.Default)
         {
             return new PackageUpdateResultIterator(UpdateSystemPackageCore(sourceRepositories, systemRepository, x => true));
         }
 
-        public IPackageUpdateResult UpdateSystemPackages(IEnumerable<IPackageRepository> sourceRepositories, IPackageRepository systemRepository, string packageName)
+        public IPackageUpdateResult UpdateSystemPackages(IEnumerable<IPackageRepository> sourceRepositories,
+                                                         IPackageRepository systemRepository,
+                                                         string packageName,
+                                                         PackageUpdateOptions options = PackageUpdateOptions.Default)
         {
             return new PackageUpdateResultIterator(UpdateSystemPackageCore(sourceRepositories, systemRepository, x => x.EqualsNoCase(packageName)));
         }
@@ -146,6 +157,28 @@ namespace OpenWrap.PackageManagement
                    select anchorResult;
         }
 
+        static IEnumerable<PackageDescriptor> CreateDescriptorForEachSystemPackage(IPackageRepository repository, Func<string, bool> packageNameSelection)
+        {
+            return (
+                           from systemPackage in repository.PackagesByName
+                           let systemPackageName = systemPackage.Key
+                           where packageNameSelection(systemPackageName)
+                           let maxPackageVersion = (
+                                                           from versionedPackage in systemPackage
+                                                           orderby versionedPackage.Version descending
+                                                           select versionedPackage.Version
+                                                   ).First()
+                           select new PackageDescriptor
+                           {
+                                   Dependencies =
+                                           {
+                                                   new PackageDependencyBuilder(systemPackageName)
+                                                           .VersionVertex(new UpdatePackageVertex(maxPackageVersion))
+                                           }
+                           }
+                   ).ToList();
+        }
+
         static IPackageInfo GetBestSourcePackage(IEnumerable<IPackageRepository> sourceRepositories, IEnumerable<IPackageInfo> packages)
         {
             return (
@@ -155,6 +188,38 @@ namespace OpenWrap.PackageManagement
                            select compatiblePackage
                    )
                     .First();
+        }
+
+        static IPackageInfo GetExistingPackage(ISupportPublishing destinationRepository, ResolvedPackage foundPackage, Func<Version, bool> versionSelector)
+        {
+            return destinationRepository.PackagesByName.Contains(foundPackage.Identifier.Name)
+                           ? destinationRepository.PackagesByName[foundPackage.Identifier.Name]
+                                     .Where(x => foundPackage.Identifier.Version != null && versionSelector(x.Version))
+                                     .OrderByDescending(x => x.Version)
+                                     .FirstOrDefault()
+                           : null;
+        }
+
+        static IEnumerable<PackageOperationResult> ListPackagesCore(IEnumerable<IPackageRepository> repositories, string query)
+        {
+            var packages = repositories.SelectMany(x => x.PackagesByName.NotNull());
+            if (query != null)
+            {
+                var queryRegex = query.Wildcard(true);
+                packages = packages.Where(x => queryRegex.IsMatch(x.Key));
+            }
+            foreach (var x in packages)
+                yield return new PackageFoundResult(x);
+        }
+
+        static PackageOperationResult PackageConflict(ResolvedPackage resolvedPackage)
+        {
+            return new PackageConflictResult(resolvedPackage);
+        }
+
+        static PackageOperationResult PackageMissing(ResolvedPackage resolvedPackage)
+        {
+            return new PackageMissingResult(resolvedPackage);
         }
 
         static IEnumerable<PackageOperationResult> RemovePackageFilesFromProjectRepo(PackageRequest packageToRemove, IPackageRepository projectRepository)
@@ -203,7 +268,7 @@ namespace OpenWrap.PackageManagement
         {
             var vertices = new List<VersionVertex>();
             if (packageToRequest.ExactVersion != null)
-                vertices.Add(new ExactVersionVertex(packageToRequest.ExactVersion));
+                vertices.Add(new EqualVersionVertex(packageToRequest.ExactVersion));
             if (packageToRequest.MinVersion != null)
                 vertices.Add(new GreaterThanOrEqualVersionVertex(packageToRequest.MinVersion));
             if (packageToRequest.MaxVersion != null)
@@ -324,84 +389,31 @@ namespace OpenWrap.PackageManagement
                                                                        IEnumerable<IPackageRepository> destinationRepositories)
         {
             var publishingRepos = destinationRepositories.NotNull().OfType<ISupportPublishing>().ToList();
-            foreach (var foundPackage in resolvedPackages.SuccessfulPackages)
+            foreach (var destinationRepository in publishingRepos)
             {
-                foreach (var destinationRepository in publishingRepos)
+                using (var publisher = destinationRepository.Publisher())
                 {
-                    var existingUpToDateVersion = GetExistingPackage(destinationRepository, foundPackage, x => x >= foundPackage.Identifier.Version);
-                    if (existingUpToDateVersion == null)
+                    foreach (var foundPackage in resolvedPackages.SuccessfulPackages)
                     {
-                        var sourcePackage = GetBestSourcePackage(sourceRepositories, foundPackage.Packages);
+                        var existingUpToDateVersion = GetExistingPackage(destinationRepository, foundPackage, x => x >= foundPackage.Identifier.Version);
+                        if (existingUpToDateVersion == null)
+                        {
+                            var sourcePackage = GetBestSourcePackage(sourceRepositories, foundPackage.Packages);
 
-                        _deployer.DeployDependency(sourcePackage, destinationRepository);
-                        var existingVersion = GetExistingPackage(destinationRepository, foundPackage, x => x < foundPackage.Identifier.Version);
+                            _deployer.DeployDependency(sourcePackage, publisher);
+                            var existingVersion = GetExistingPackage(destinationRepository, foundPackage, x => x < foundPackage.Identifier.Version);
 
-                        yield return existingVersion == null
-                                             ? new PackageAddedResult(sourcePackage, destinationRepository)
-                                             : new PackageUpdatedResult(existingVersion, sourcePackage, destinationRepository);
-                    }
-                    else
-                    {
-                        yield return new PackageUpToDateResult(existingUpToDateVersion, destinationRepository);
+                            yield return existingVersion == null
+                                                 ? new PackageAddedResult(sourcePackage, destinationRepository)
+                                                 : new PackageUpdatedResult(existingVersion, sourcePackage, destinationRepository);
+                        }
+                        else
+                        {
+                            yield return new PackageUpToDateResult(existingUpToDateVersion, destinationRepository);
+                        }
                     }
                 }
             }
-            foreach (var repo in publishingRepos)
-                repo.PublishCompleted();
-        }
-
-        static IEnumerable<PackageDescriptor> CreateDescriptorForEachSystemPackage(IPackageRepository repository, Func<string, bool> packageNameSelection)
-        {
-            return (
-                           from systemPackage in repository.PackagesByName
-                           let systemPackageName = systemPackage.Key
-                           where packageNameSelection(systemPackageName)
-                           let maxPackageVersion = (
-                                                           from versionedPackage in systemPackage
-                                                           orderby versionedPackage.Version descending
-                                                           select versionedPackage.Version
-                                                   ).First()
-                           select new PackageDescriptor
-                           {
-                                   Dependencies =
-                                           {
-                                                   new PackageDependencyBuilder(systemPackageName)
-                                                           .VersionVertex(new UpdatePackageVertex(maxPackageVersion))
-                                           }
-                           }
-                   ).ToList();
-        }
-
-        static IPackageInfo GetExistingPackage(ISupportPublishing destinationRepository, ResolvedPackage foundPackage, Func<Version, bool> versionSelector)
-        {
-            return destinationRepository.PackagesByName.Contains(foundPackage.Identifier.Name)
-                           ? destinationRepository.PackagesByName[foundPackage.Identifier.Name]
-                                     .Where(x => foundPackage.Identifier.Version != null && versionSelector(x.Version))
-                                     .OrderByDescending(x => x.Version)
-                                     .FirstOrDefault()
-                           : null;
-        }
-
-        static IEnumerable<PackageOperationResult> ListPackagesCore(IEnumerable<IPackageRepository> repositories, string query)
-        {
-            var packages = repositories.SelectMany(x => x.PackagesByName.NotNull());
-            if (query != null)
-            {
-                var queryRegex = query.Wildcard(true);
-                packages = packages.Where(x => queryRegex.IsMatch(x.Key));
-            }
-            foreach (var x in packages)
-                yield return new PackageFoundResult(x);
-        }
-
-        static PackageOperationResult PackageConflict(ResolvedPackage resolvedPackage)
-        {
-            return new PackageConflictResult(resolvedPackage);
-        }
-
-        static PackageOperationResult PackageMissing(ResolvedPackage resolvedPackage)
-        {
-            return new PackageMissingResult(resolvedPackage);
         }
 
         IEnumerable<PackageOperationResult> RemoveFromDescriptor(PackageRequest packageToRemove, PackageDescriptor packageDescriptor, IPackageRepository projectRepository, PackageRemoveOptions options)

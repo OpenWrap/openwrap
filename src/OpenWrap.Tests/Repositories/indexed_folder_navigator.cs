@@ -4,10 +4,14 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenWrap.IO;
+using OpenWrap.IO.Packaging;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
+using OpenWrap.Repositories.FileSystem;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
@@ -103,7 +107,7 @@ namespace OpenWrap.Tests.Repositories
             protected InMemoryFileSystem FileSystem { get; set; }
             protected ILookup<string, IPackageInfo> PackagesByName { get; set; }
             protected IPackageInfo FoundPackage { get; set; }
-            protected XDocument IndexDocument { get { return ((NetworkShareNavigator)Repository.Navigator).IndexDocument; } }
+            protected XDocument IndexDocument { get { return ((FileSystemNavigator)Repository.Navigator).IndexDocument; } }
 
             protected void given_indexed_repository(string path)
             {
@@ -121,21 +125,22 @@ namespace OpenWrap.Tests.Repositories
                 Services.Services.RegisterService<IFileSystem>(FileSystem);
 
                 Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory),
-                    FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory));
+                    FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory));
                 Services.Services.RegisterService<IEnvironment>(Environment);
             }
 
             protected InMemoryFile Package(string wrapName, string version, params string[] wrapdescLines)
             {
                 var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
-                PackageBuilder.NewWithDescriptor(file, wrapName, version, wrapdescLines);
+                Packager.NewWithDescriptor(file, wrapName, version, wrapdescLines);
                 return file;
             }
 
             protected void when_publishing_package(InMemoryFile package)
             {
                 using (var stream = package.OpenRead())
-                    Repository.Publish(package.Name, stream);
+                using(var publisher = Repository.Publisher())
+                    publisher.Publish(package.Name, stream);
             }
 
             protected void when_nuking_package(string name, string version)

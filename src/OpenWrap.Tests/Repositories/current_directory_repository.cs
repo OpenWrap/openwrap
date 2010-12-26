@@ -7,8 +7,11 @@ using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap;
-using OpenWrap.Dependencies;
+using OpenWrap.IO.Packaging;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
@@ -99,7 +102,7 @@ namespace current_directory_specifications
                 Services.RegisterService<IFileSystem>(FileSystem);
 
                 Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory),
-                                                      FileSystem.GetDirectory(InstallationPaths.ConfigurationDirectory));
+                                                      FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory));
                 Services.RegisterService<IEnvironment>(Environment);
             }
 
@@ -124,7 +127,7 @@ namespace current_directory_specifications
             protected IFile Package(string wrapName, string version)
             {
                 var file = FileSystem.GetFile(wrapName + "-" + version + ".wrap").MustExist();
-                return PackageBuilder.NewWithDescriptor(file, wrapName, version);
+                return Packager.NewWithDescriptor(file, wrapName, version);
             }
         }
     }

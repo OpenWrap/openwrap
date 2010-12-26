@@ -5,6 +5,5 @@ namespace OpenWrap.Commands
         public UnknownCommandInput(string inputName) : base("Command input '{0}' wasn't recognized", inputName)
         {
         }
-
     }
 }

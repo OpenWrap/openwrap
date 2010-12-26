@@ -1,17 +1,15 @@
 extern alias resharper;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
-
-using OpenWrap.Build;
-using OpenWrap.Dependencies;
 using OpenFileSystem.IO;
+using OpenWrap.PackageManagement.Monitoring;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 using JetBrainsKey = resharper::JetBrains.Util.Key;
 
@@ -20,49 +18,41 @@ namespace OpenWrap.Resharper
 {
     public class ResharperIntegrationService : IService
     {
-        readonly IWrapDescriptorMonitoringService _monitor;
-        Dictionary<string, ResharperProjectUpdater> _projectFiles = new Dictionary<string, ResharperProjectUpdater>();
-        bool _isInitialized = false;
-        object _lock = new object();
+        const int RETRY_DELAY_MS = 1000;
+        const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
+        readonly object _lock = new object();
+        readonly IPackageDescriptorMonitor _monitor;
+        bool _isInitialized;
         Timer _timer;
-        public const int RETRY_DELAY_MS = 1000;
 
         public ResharperIntegrationService()
-            : this(Services.Services.GetService<IWrapDescriptorMonitoringService>())
+                : this(Services.Services.GetService<IPackageDescriptorMonitor>())
         {
-
         }
 
-        public ResharperIntegrationService(IWrapDescriptorMonitoringService monitor)
+        public ResharperIntegrationService(IPackageDescriptorMonitor monitor)
         {
             _monitor = monitor;
-        }
-
-        public void Initialize()
-        {
         }
 
         public void BootstrapSolution(Func<ExecutionEnvironment> environment, IFile descriptorPath, IPackageRepository repository)
         {
             if (!_isInitialized)
             {
-                lock(_lock)
+                lock (_lock)
                 {
                     if (_isInitialized)
                         return;
 
 
-                    IEnumerable<IPackageAssembliesListener> listeners = null;
+                    IEnumerable<IResolvedAssembliesUpdateListener> listeners = null;
                     bool success = false;
                     try
                     {
                         ResharperLocks.WriteCookie("Listing projects",
-                                                   () =>
-                                                   {
-                                                       success = TryEnumerateProjects(environment, out listeners);
-                                                   });
+                                                   () => { success = TryEnumerateProjects(environment, out listeners); });
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         ResharperLogger.Debug("Exception when updating resharper: \r\n" + e);
                         success = false;
@@ -70,21 +60,49 @@ namespace OpenWrap.Resharper
                     if (success)
                     {
                         foreach (var project in listeners)
-                            _monitor.ProcessWrapDescriptor(descriptorPath, repository, project);
+                            _monitor.RegisterListener(descriptorPath, repository, project);
+                        _isInitialized = true;
                     }
                     else
                     {
                         ResharperLogger.Debug("Import failed, rescheduling in one second.");
                         _timer = new Timer(x => BootstrapSolution(environment, descriptorPath, repository), null, RETRY_DELAY_MS, Timeout.Infinite);
-
                     }
                 }
             }
         }
 
-        bool TryEnumerateProjects(Func<ExecutionEnvironment> env, out IEnumerable<IPackageAssembliesListener> projects)
+        public void Initialize()
         {
-            projects = new IPackageAssembliesListener[0];
+        }
+
+        static bool ProjectIsOpenWrapEnabled(resharper::JetBrains.ProjectModel.IProject proj)
+        {
+            if (proj.ProjectFile == null || !File.Exists(proj.ProjectFile.Location.FullPath))
+                return false;
+            var xmlDoc = new XmlDocument();
+            var namespaceManager = new XmlNamespaceManager(xmlDoc.NameTable);
+            namespaceManager.AddNamespace("msbuild", MSBUILD_NS);
+
+            using (var projectFileStream = File.OpenRead(proj.ProjectFile.Location.FullPath))
+                xmlDoc.Load(projectFileStream);
+            var isOpenWrap = (from node in xmlDoc.SelectNodes(@"//msbuild:Import", namespaceManager).OfType<XmlElement>()
+                              let attr = node.GetAttribute("Project")
+                              where attr != null && Regex.IsMatch(attr, @"OpenWrap\..*\.targets")
+                              select node).Any();
+            var isDisabled =
+                    (
+                            from node in xmlDoc.SelectNodes(@"//msbuild:OpenWrap-EnableVisualStudioIntegration", namespaceManager).OfType<XmlElement>()
+                            let value = node.Value
+                            where value != null && value.EqualsNoCase("false")
+                            select node
+                    ).Any();
+            return isOpenWrap && !isDisabled;
+        }
+
+        static bool TryEnumerateProjects(Func<ExecutionEnvironment> env, out IEnumerable<IResolvedAssembliesUpdateListener> projects)
+        {
+            projects = new IResolvedAssembliesUpdateListener[0];
 
             if (resharper::JetBrains.ProjectModel.SolutionManager.Instance == null)
                 return false;
@@ -98,35 +116,10 @@ namespace OpenWrap.Resharper
             var monitors = (from proj in solution.GetAllProjects()
                             where ProjectIsOpenWrapEnabled(proj)
                             select new ResharperProjectUpdater(proj, env))
-                            .Cast<IPackageAssembliesListener>()
-                            .ToList();
+                    .Cast<IResolvedAssembliesUpdateListener>()
+                    .ToList();
             projects = monitors;
             return true;
-        }
-        const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
-
-        bool ProjectIsOpenWrapEnabled(resharper::JetBrains.ProjectModel.IProject proj)
-        {
-            if (proj.ProjectFile == null || !File.Exists(proj.ProjectFile.Location.FullPath))
-                return false;
-            var xmlDoc = new XmlDocument();
-            var namespaceManager = new XmlNamespaceManager(xmlDoc.NameTable);
-            namespaceManager.AddNamespace("msbuild", MSBUILD_NS);
-
-            using (var projectFileStream = File.OpenRead(proj.ProjectFile.Location.FullPath))
-                xmlDoc.Load(projectFileStream);
-            var isOpenWrap = (from node in xmlDoc.SelectNodes(@"//msbuild:Import", namespaceManager).OfType<XmlElement>()
-                                let attr = node.GetAttribute("Project")
-                                where attr != null && Regex.IsMatch(attr, @"OpenWrap\..*\.targets")
-                                select node).Any();
-            var isDisabled =
-                    (
-                            from node in xmlDoc.SelectNodes(@"//msbuild:OpenWrap-EnableVisualStudioIntegration", namespaceManager).OfType<XmlElement>()
-                            let value = node.Value
-                            where value != null && value.EqualsNoCase("false")
-                            select node
-                    ).Any();
-            return isOpenWrap && !isDisabled;
         }
     }
 }

@@ -10,31 +10,27 @@ namespace OpenWrap.Repositories.NuGet
 {
     public class NuGetSyndicationItem : SyndicationItem
     {
-        XDocument _oDataNode;
-        
-        string _oDataPackageVersion;
         IEnumerable<NuGetDependency> _oDataDependencies;
         bool? _oDataFound;
+        XDocument _oDataNode;
+
+        string _oDataPackageVersion;
         string _oDataPublished;
 
-        public string PackageName
+        public List<string> Dependencies
         {
             get
             {
-                if (ODataNode())
-                    return Title.Text;
-                return ElementExtensions.Extension<string>("packageId");
+                ODataNode();
+
+                var deps = _oDataDependencies
+                           ?? GetDependencies()
+                           ?? Enumerable.Empty<NuGetDependency>();
+
+                return deps.Select(x => x.ToPackageDependencyLine()).ToList();
             }
         }
-        public string PackageVersion
-        {
-            get
-            {
-                if (ODataNode())
-                    return _oDataPackageVersion;
-                return ElementExtensions.Extension<string>("version");
-            }
-        }
+
         public string PackageDescription
         {
             get
@@ -47,14 +43,7 @@ namespace OpenWrap.Repositories.NuGet
                                          : null;
             }
         }
-        public string PackagePublished
-        {
-            get
-            {
-                if (ODataNode()) return _oDataPublished;
-                return new DateTimeOffset(PublishDate.UtcDateTime).ToString();
-            }
-        }
+
         public Uri PackageHref
         {
             get
@@ -68,32 +57,66 @@ namespace OpenWrap.Repositories.NuGet
                 return Links.Where(x => x.RelationshipType.EqualsNoCase("enclosure")).First().GetAbsoluteUri();
             }
         }
-        public List<string> Dependencies
+
+        public string PackageName
         {
             get
             {
-                ODataNode();
-               
-                var deps = _oDataDependencies 
-                           ?? GetDependencies()
-                           ?? Enumerable.Empty<NuGetDependency>();
-
-                return deps.Select(x => x.ToPackageDependencyLine()).ToList();
+                if (ODataNode())
+                    return Title.Text;
+                return ElementExtensions.Extension<string>("packageId");
             }
+        }
+
+        public string PackagePublished
+        {
+            get
+            {
+                if (ODataNode()) return _oDataPublished;
+                return new DateTimeOffset(PublishDate.UtcDateTime).ToString();
+            }
+        }
+
+        public string PackageVersion
+        {
+            get
+            {
+                if (ODataNode())
+                    return _oDataPackageVersion;
+                return ElementExtensions.Extension<string>("version");
+            }
+        }
+
+        public PackageItem ToPackage()
+        {
+            return new PackageItem
+            {
+                    Dependencies = Dependencies,
+                    Name = PackageName,
+                    Version = PackageVersion.ToVersion(),
+                    Description = PackageDescription,
+                    PackageHref = PackageHref,
+                    CreationTime = PackagePublished == null ? default(DateTimeOffset) : DateTimeOffset.Parse(PackagePublished)
+            };
+        }
+
+        NuGetDependency[] GetDependencies()
+        {
+            return ElementExtensions.OptionalExtension<NuGetDependency[]>("dependencies");
         }
 
         IEnumerable<NuGetDependency> GetODataDependencies(string dependencyString)
         {
             return (from dependency in dependencyString.Split(new[] { ',', '|' }, StringSplitOptions.RemoveEmptyEntries)
-                   let chunks = dependency.Split(':')
-                   select new NuGetDependency
-                   {
-                           Id = chunks[0],
-                           MinVersion = chunks.Length == 4 ? chunks[1] : null,
-                           MaxVersion = chunks.Length == 4 ? chunks[2] : null,
-                           ExactVersion = chunks.Length == 4 ? chunks[3] : null,
-                           Version = chunks.Length == 2 ? chunks[1] : null
-                   }).ToList();
+                    let chunks = dependency.Split(':')
+                    select new NuGetDependency
+                    {
+                            Id = chunks[0],
+                            MinVersion = chunks.Length == 4 ? chunks[1] : null,
+                            MaxVersion = chunks.Length == 4 ? chunks[2] : null,
+                            ExactVersion = chunks.Length == 4 ? chunks[3] : null,
+                            Version = chunks.Length == 2 ? chunks[1] : null
+                    }).ToList();
         }
 
         bool ODataNode()
@@ -103,10 +126,10 @@ namespace OpenWrap.Repositories.NuGet
             if (_oDataFound == null)
             {
                 var extension = ElementExtensions.FirstOrDefault(x => x.OuterName == "properties" && x.OuterNamespace == Namespaces.AstoriaM);
-                
+
                 if ((_oDataFound = (extension != null)) == false) return false;
 
-                using(var reader = extension.GetReader())
+                using (var reader = extension.GetReader())
                 {
                     while (reader.Read())
                     {
@@ -121,24 +144,6 @@ namespace OpenWrap.Repositories.NuGet
                 }
             }
             return true;
-        }
-
-        NuGetDependency[] GetDependencies()
-        {
-            return ElementExtensions.OptionalExtension<NuGetDependency[]>("dependencies");
-        }
-
-        public PackageItem ToPackage()
-        {
-            return new PackageItem
-            {
-                Dependencies = Dependencies,
-                Name = PackageName,
-                Version = PackageVersion.ToVersion(),
-                Description = PackageDescription,
-                PackageHref = PackageHref,
-                CreationTime = PackagePublished == null ? default(DateTimeOffset) : DateTimeOffset.Parse(PackagePublished)
-            };
         }
     }
 }

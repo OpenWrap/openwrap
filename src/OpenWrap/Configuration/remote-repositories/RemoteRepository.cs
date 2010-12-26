@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace OpenWrap.Configuration.remote_repositories
+namespace OpenWrap.Configuration
 {
     public class RemoteRepository
     {
-        public string Name { get; set; }
         public Uri Href { get; set; }
+        public string Name { get; set; }
         public int Priority { get; set; }
     }
 }

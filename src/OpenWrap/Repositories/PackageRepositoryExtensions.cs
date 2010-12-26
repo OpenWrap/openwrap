@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
@@ -10,11 +10,6 @@ namespace OpenWrap.Repositories
         {
             var typedVersion = new Version(version);
             return packageRepository.PackagesByName[name].Any(x => x.Version == typedVersion);
-        }
-        public static bool HasDependency(this IPackageRepository packageRepository, string name, Version version)
-        {
-            return packageRepository.Find(
-                new PackageDependencyBuilder(name).VersionVertex(new ExactVersionVertex(version))) != null;
         }
     }
 }

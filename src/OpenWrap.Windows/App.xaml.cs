@@ -9,8 +9,12 @@ using OpenWrap.Build;
 using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.AssemblyResolvers;
+using OpenWrap.PackageManagement.DependencyResolvers;
+using OpenWrap.PackageManagement.Deployers;
+using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Repositories;
-using OpenWrap.Resolvers;
+using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Tasks;
 
@@ -30,7 +34,7 @@ namespace OpenWrap.Windows
 
             Services.Services.RegisterService<RuntimeAssemblyResolver>(new RuntimeAssemblyResolver());
             Services.Services.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
-            Services.Services.TryRegisterService<IConfigurationManager>(() => new ConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(InstallationPaths.ConfigurationDirectory)));
+            Services.Services.TryRegisterService<IConfigurationManager>(() => new DefaultConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
             Services.Services.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using NUnit.Framework;
+using OpenWrap.Collections;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Collections

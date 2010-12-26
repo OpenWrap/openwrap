@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Configuration;
-using OpenWrap.Configuration.remote_repositories;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenWrap.IO;
 using OpenWrap.Testing;
+using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.Tests.Configuration
 {
@@ -71,8 +72,8 @@ href: " + RemoteRepositories.Default["openwrap"].Href);
         }
         void when_saving_configuration(Uri uri)
         {
-            ConfigurationManager.Save(uri, Entry);
-            Entry = ConfigurationManager.LoadRemoteRepositories();
+            DefaultConfigurationManager.Save(uri, Entry);
+            Entry = DefaultConfigurationManager.LoadRemoteRepositories();
         }
 
         void given_configuration_object(RemoteRepositories remoteRepositories)
@@ -100,7 +101,7 @@ href: " + RemoteRepositories.Default["openwrap"].Href);
             where T:new()
         {
             protected T Entry;
-            protected ConfigurationManager ConfigurationManager;
+            protected DefaultConfigurationManager DefaultConfigurationManager;
             protected InMemoryFileSystem FileSystem;
             protected IDirectory ConfigurationDirectory;
 
@@ -109,14 +110,14 @@ href: " + RemoteRepositories.Default["openwrap"].Href);
                 FileSystem = new InMemoryFileSystem();
 
                 ConfigurationDirectory = FileSystem.GetDirectory(@"c:\data\config").MustExist();
-                ConfigurationManager = new ConfigurationManager(ConfigurationDirectory);
+                DefaultConfigurationManager = new DefaultConfigurationManager(ConfigurationDirectory);
             }
 
             protected void when_loading_configuration(Uri configurationUri)
             {
                 try
                 {
-                    Entry = ConfigurationManager.Load<T>(configurationUri);
+                    Entry = DefaultConfigurationManager.Load<T>(configurationUri);
                 }catch(Exception error)
                 {
                     this.Error = error;
@@ -131,7 +132,7 @@ href: " + RemoteRepositories.Default["openwrap"].Href);
                 var relativeUri = Configurations.Addresses.BaseUri.MakeRelativeUri(configurationUri).ToString();
                 var file = ConfigurationDirectory.GetFile(relativeUri);
                 using (var fs = file.OpenWrite())
-                    fs.Write(Encoding.UTF8.GetBytes(textValue));
+                    StreamExtensions.Write(fs, Encoding.UTF8.GetBytes(textValue));
 
 
             }

@@ -3,19 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenWrap.Dependencies;
+using OpenWrap.IO;
 using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.Packages;
+using OpenWrap.PackageModel;
+using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.Repositories
 {
     /// <summary>
-    /// Provides a repository that can read packages from a directory using the default structure.
+    ///   Provides a repository that can read packages from a directory using the default structure.
     /// </summary>
     public class FolderRepository : ISupportCleaning, ISupportPublishing, ISupportAnchoring
     {
-        readonly bool _useSymLinks;
         readonly bool _anchoringEnabled;
-        IDirectory _rootCacheDirectory;
+        readonly IDirectory _rootCacheDirectory;
+        readonly bool _useSymLinks;
 
         public FolderRepository(IDirectory packageBasePath, FolderRepositoryOptions options = FolderRepositoryOptions.Default)
         {
@@ -28,7 +31,21 @@ namespace OpenWrap.Repositories
 
             _rootCacheDirectory = BasePath.GetOrCreateDirectory("_cache");
             RefreshPackages();
+        }
 
+        public IDirectory BasePath { get; set; }
+        public string Name { get; set; }
+
+        public ILookup<string, IPackageInfo> PackagesByName
+        {
+            get { return Packages.Select(x => x.Package).ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
+        }
+
+        protected List<PackageLocation> Packages { get; set; }
+
+        public IPackageInfo Find(PackageDependency dependency)
+        {
+            return PackagesByName.Find(dependency);
         }
 
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
@@ -44,78 +61,17 @@ namespace OpenWrap.Repositories
                         where packageVersion != null
                         let packageCacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
                         select new PackageLocation(
-                            packageCacheDirectory,
-                            CreatePackageInstance(packageCacheDirectory, wrapFile)
-                        )).ToList();
-        }
-
-        IPackageInfo CreatePackageInstance(IDirectory cacheDirectory, IFile wrapFile)
-        {
-            if (cacheDirectory.Exists)
-                return new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All);
-            return new CachedZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All);
-        }
-
-        public IDirectory BasePath { get; set; }
-
-        protected class PackageLocation
-        {
-            public PackageLocation(IDirectory cacheDir, IPackageInfo package)
-            {
-                CacheDirectory = cacheDir;
-                Package = package;
-            }
-
-            public IDirectory CacheDirectory { get; set; }
-            public IPackageInfo Package { get; set; }
-        }
-        public ILookup<string, IPackageInfo> PackagesByName
-        {
-            get { return Packages.Select(x => x.Package).ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
-        }
-
-        protected List<PackageLocation> Packages { get; set; }
-
-        public IPackageInfo Find(PackageDependency dependency)
-        {
-            return PackagesByName.Find(dependency);
-        }
-
-        public IPackageInfo Publish(string packageFileName, Stream packageStream)
-        {
-            packageFileName = PackageNameUtility.NormalizeFileName(packageFileName);
-
-            var wrapFile = BasePath.GetFile(packageFileName);
-            if (wrapFile.Exists)
-                return null;
-
-            using (var file = wrapFile.OpenWrite())
-                packageStream.CopyTo(file);
-
-            var newPackageCacheDir = _rootCacheDirectory.GetDirectory(wrapFile.NameWithoutExtension);
-            var newPackage = new CachedZipPackage(this, wrapFile, newPackageCacheDir, ExportBuilders.All);
-            Packages.Add(new PackageLocation(newPackageCacheDir, newPackage));
-            return newPackage;
-        }
-
-        public void PublishCompleted()
-        {
-            foreach (var package in Packages) package.Package.Load();
-            RefreshPackages();
-        }
-        
-        public string Name
-        {
-            get;
-            set;
+                                packageCacheDirectory,
+                                CreatePackageInstance(packageCacheDirectory, wrapFile)
+                                )).ToList();
         }
 
         public IEnumerable<PackageAnchoredResult> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor)
         {
             if (!_anchoringEnabled)
                 yield break;
-            
-            List<IPackageInfo> failed = new List<IPackageInfo>();
+
+            var failed = new List<IPackageInfo>();
             foreach (var package in packagesToAnchor)
             {
                 if (package.Source != this)
@@ -172,18 +128,6 @@ namespace OpenWrap.Repositories
             }
         }
 
-        void Anchor(IDirectory packageDirectory, IDirectory anchoredDirectory)
-        {
-            var anchoredPath = anchoredDirectory.Path;
-            if (_useSymLinks)
-                packageDirectory.LinkTo(anchoredPath.FullPath);
-            else
-            {
-                packageDirectory.CopyTo(anchoredDirectory);
-                anchoredDirectory.GetFile(".anchored").WriteString(packageDirectory.Name);
-            }
-        }
-
         public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
         {
             packagesToKeep = packagesToKeep.ToList();
@@ -207,6 +151,63 @@ namespace OpenWrap.Repositories
                 }
                 somethingDone = true;
             }
+        }
+
+        public IPackageInfo Publish(string packageFileName, Stream packageStream)
+        {
+            packageFileName = PackageNameUtility.NormalizeFileName(packageFileName);
+
+            var wrapFile = BasePath.GetFile(packageFileName);
+            if (wrapFile.Exists)
+                return null;
+
+            using (var file = wrapFile.OpenWrite())
+                StreamExtensions.CopyTo(packageStream, file);
+
+            var newPackageCacheDir = _rootCacheDirectory.GetDirectory(wrapFile.NameWithoutExtension);
+            var newPackage = new CachedZipPackage(this, wrapFile, newPackageCacheDir, ExportBuilders.All);
+            Packages.Add(new PackageLocation(newPackageCacheDir, newPackage));
+            return newPackage;
+        }
+        public IPackagePublisher Publisher()
+        {
+            return new PackagePublisher(Publish, PublishCompleted);
+        }
+        void PublishCompleted()
+        {
+            foreach (var package in Packages) package.Package.Load();
+            RefreshPackages();
+        }
+
+        void Anchor(IDirectory packageDirectory, IDirectory anchoredDirectory)
+        {
+            var anchoredPath = anchoredDirectory.Path;
+            if (_useSymLinks)
+                packageDirectory.LinkTo(anchoredPath.FullPath);
+            else
+            {
+                packageDirectory.CopyTo(anchoredDirectory);
+                anchoredDirectory.GetFile(".anchored").WriteString(packageDirectory.Name);
+            }
+        }
+
+        IPackageInfo CreatePackageInstance(IDirectory cacheDirectory, IFile wrapFile)
+        {
+            if (cacheDirectory.Exists)
+                return new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All);
+            return new CachedZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All);
+        }
+
+        protected class PackageLocation
+        {
+            public PackageLocation(IDirectory cacheDir, IPackageInfo package)
+            {
+                CacheDirectory = cacheDir;
+                Package = package;
+            }
+
+            public IDirectory CacheDirectory { get; set; }
+            public IPackageInfo Package { get; set; }
         }
 
     }

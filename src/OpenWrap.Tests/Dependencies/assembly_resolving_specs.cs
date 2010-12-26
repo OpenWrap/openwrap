@@ -8,9 +8,12 @@ using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenFileSystem.IO.FileSystems.Local;
-using OpenWrap.Dependencies;
-using OpenWrap.Exports;
+using OpenWrap;
+using OpenWrap.IO.Packaging;
+using OpenWrap.PackageManagement.DependencyResolvers;
+using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands.context;
 
@@ -127,9 +130,10 @@ namespace assembly_resolving_specs
             protected void given_project_package(string name, string version, IEnumerable<PackageContent> content, params string[] dependencies)
             {
                 var packageFileName = name + "-" + version + ".wrap";
-                var packageStream = PackageBuilder.NewWithDescriptor(new InMemoryFile(packageFileName), name, version, content, dependencies).OpenRead();
+                var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version, content, dependencies).OpenRead();
+                using (var publisher = ((ISupportPublishing)Environment.ProjectRepository).Publisher())
                 using (var readStream = packageStream)
-                    ((ISupportPublishing)Environment.ProjectRepository).Publish(packageFileName, readStream);
+                    publisher.Publish(packageFileName, readStream);
             }
 
             protected IEnumerable<PackageContent> Assemblies(params PackageContent[] assemblies)
@@ -150,7 +154,7 @@ namespace assembly_resolving_specs
             protected InMemoryFile Package(string wrapName, string version, IEnumerable<PackageContent> content, params string[] wrapdescLines)
             {
                 var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
-                PackageBuilder.NewWithDescriptor(file, wrapName, version, content, wrapdescLines);
+                Packager.NewWithDescriptor(file, wrapName, version, content, wrapdescLines);
                 return file;
             }
 

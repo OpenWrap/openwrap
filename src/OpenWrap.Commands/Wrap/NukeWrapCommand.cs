@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.Commands.Wrap
 {

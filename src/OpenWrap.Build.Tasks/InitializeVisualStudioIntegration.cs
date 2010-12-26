@@ -2,10 +2,11 @@
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using OpenWrap.Dependencies;
 using OpenWrap.Repositories;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
+using OpenWrap.Runtime;
+using OpenWrap.Services;
 
 namespace OpenWrap.Build.Tasks
 {

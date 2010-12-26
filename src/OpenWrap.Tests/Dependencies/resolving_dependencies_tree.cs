@@ -3,7 +3,10 @@ using System.Linq;
 using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageManagement.DependencyResolvers;
+using OpenWrap.PackageManagement.Packages;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using OpenRasta.Client;
 
 namespace OpenWrap.Tasks

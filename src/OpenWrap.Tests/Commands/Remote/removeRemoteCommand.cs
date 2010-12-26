@@ -8,7 +8,6 @@ using OpenWrap.Configuration;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Commands.Remote;
-using OpenWrap.Configuration.remote_repositories;
 
 namespace OpenWrap.Tests.Commands.Remote.Remove
 {

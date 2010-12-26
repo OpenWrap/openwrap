@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using OpenFileSystem.IO;
+using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Noun="wrap", Verb="publish", Description="Publishes a package to a remote reposiory.")]
+    [Command(Noun = "wrap", Verb = "publish", Description = "Publishes a package to a remote reposiory.")]
     public class PublishWrapCommand : WrapCommand
     {
-        ISupportAuthentication _authenticationSupport;
         ISupportPublishing _remoteRepository;
 
         Func<Stream> _packageStream;
@@ -32,7 +35,8 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public string Pwd { get; set; }
-        
+
+
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(ValidateInputs()).Or(ValidatePackageDoesntExist()).Or(ExecuteCore());
@@ -54,23 +58,8 @@ namespace OpenWrap.Commands.Wrap
             {
                 yield return new Errors.UnknownRemoteRepository(Remote);
                 foreach (var _ in HintRemoteRepositories()) yield return _;
-                
-            }
-
-            if (User != null && Pwd == null)
-            {
-                yield return new Errors.IncompleteAuthentication();
                 yield break;
             }
-
-            _authenticationSupport = namedRepository as ISupportAuthentication;
-
-            if (_authenticationSupport == null)
-            {
-                yield return new Warning("Remote repository '{0}' does not support authentication, ignoring authentication info.", namedRepository.Name);
-                _authenticationSupport = new NullAuthentication();
-            }
-
             _remoteRepository = namedRepository as ISupportPublishing;
 
             if (_remoteRepository == null)
@@ -78,7 +67,6 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Error("Repository '{0}' doesn't support publishing.", namedRepository.Name);
                 yield break;
             }
-
             if (Path != null)
             {
                 var packageFile = FileSystem.GetFile(Path);
@@ -114,15 +102,13 @@ namespace OpenWrap.Commands.Wrap
             {
                 yield return new Error("Please specify either a file path using the -Path input, or a name using -Name.");
             }
-            
         }
-
         IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
+            using (var publisher = _remoteRepository.Publisher())
             using (var packageStream = _packageStream())
-            using (_authenticationSupport.WithCredentials(User,Pwd))
-                _remoteRepository.Publish(_packageFileName, packageStream);
+                publisher.Publish(_packageFileName, packageStream);
         }
     }
 }

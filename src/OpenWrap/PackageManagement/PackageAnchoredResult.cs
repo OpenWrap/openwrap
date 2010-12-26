@@ -1,15 +1,16 @@
 ﻿using System;
 using OpenWrap.Commands;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
 {
     public class PackageAnchoredResult : PackageOperationResult
     {
-        readonly ISupportAnchoring _repository;
         readonly IPackageInfo _package;
-        
-        bool _success;
+        readonly ISupportAnchoring _repository;
+
+        readonly bool _success;
 
         public PackageAnchoredResult(ISupportAnchoring repository, IPackageInfo package, bool success)
         {
@@ -27,8 +28,8 @@ namespace OpenWrap.PackageManagement
         {
             if (_success == false)
                 return new Warning("{0}: Package {1} could not be anchored.", _repository.Name, _package.Identifier);
-            
-                return new Info("{0}: Package {1} anchored.", _repository.Name, _package.Identifier);
+
+            return new Info("{0}: Package {1} anchored.", _repository.Name, _package.Identifier);
         }
     }
 }

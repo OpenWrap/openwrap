@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenWrap.Dependencies;
+using OpenWrap.PackageManagement.Packages;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Tests.Dependencies
@@ -14,7 +15,7 @@ namespace OpenWrap.Tests.Dependencies
         {
             given_package_version("1.0.0.0");
             given_nuked_package_version("1.0.0.1");
-            given_dependency(new ExactVersionVertex(new Version("1.0.0")));
+            given_dependency(new EqualVersionVertex(new Version("1.0.0")));
             when_resolving();
         }
 
@@ -31,7 +32,7 @@ namespace OpenWrap.Tests.Dependencies
         {
             given_package_version("2.1.0.0");
             given_nuked_package_version("2.1.1.0");
-            given_dependency(new ExactVersionVertex(new Version("2.1")));
+            given_dependency(new EqualVersionVertex(new Version("2.1")));
             when_resolving();
         }
 
@@ -48,7 +49,7 @@ namespace OpenWrap.Tests.Dependencies
         {
             given_package_version("2.1.0");
             given_nuked_package_version("2.1.1");
-            given_dependency(new ExactVersionVertex(new Version("2.1.1")));
+            given_dependency(new EqualVersionVertex(new Version("2.1.1")));
             when_resolving();
         }
 

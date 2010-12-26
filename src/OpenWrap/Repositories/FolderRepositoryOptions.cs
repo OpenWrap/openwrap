@@ -6,7 +6,7 @@ namespace OpenWrap.Repositories
     public enum FolderRepositoryOptions
     {
         UseSymLinks = 1,
-        AnchoringEnabled = 1<<1,
+        AnchoringEnabled = 2,
         Default = UseSymLinks
     }
 }
