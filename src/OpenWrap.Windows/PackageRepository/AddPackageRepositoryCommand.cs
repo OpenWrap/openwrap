@@ -1,6 +1,6 @@
 ﻿using System;
 using OpenWrap.Windows.Framework;
-using ORAddRemoteCommand = OpenWrap.Commands.Remote.AddRemoteCommand;
+using OpenWrapAddRemoteCommand = OpenWrap.Commands.Remote.AddRemoteCommand;
 
 namespace OpenWrap.Windows.PackageRepository
 {
@@ -8,13 +8,13 @@ namespace OpenWrap.Windows.PackageRepository
     {
         protected override void Execute(NewPackageRepositoryViewModel parameter)
         {
-            ORAddRemoteCommand orCommand = new ORAddRemoteCommand
+            OpenWrapAddRemoteCommand openWrapCommand = new OpenWrapAddRemoteCommand
             {
                     Name = parameter.Name, 
                     Href = new Uri(parameter.Uri)
             };
 
-            _commandOutput = orCommand.Execute();
+            CommandOutput = openWrapCommand.Execute();
         }
     }
 }

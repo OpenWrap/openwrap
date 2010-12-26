@@ -7,9 +7,9 @@ namespace OpenWrap.Windows.Framework
 {
     public abstract class CommandBase<T> : ICommand
     {
-        protected IEnumerable<ICommandOutput> _commandOutput;
+        public event EventHandler CanExecuteChanged;
 
-        protected abstract void Execute(T parameter);
+        public IEnumerable<ICommandOutput> CommandOutput { get; protected set; }
 
         public void Execute(object parameter)
         {
@@ -21,11 +21,6 @@ namespace OpenWrap.Windows.Framework
             return true;
         }
 
-        public event EventHandler CanExecuteChanged;
-
-        public IEnumerable<ICommandOutput> CommandOutput
-        {
-            get { return _commandOutput; }
-        }
+        protected abstract void Execute(T parameter);
     }
 }

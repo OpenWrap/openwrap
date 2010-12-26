@@ -13,7 +13,7 @@ namespace OpenWrap.Windows.PackageRepository
                 Name = parameter.Name
             };
 
-            _commandOutput = removeRemoteCommand.Execute();
+            CommandOutput = removeRemoteCommand.Execute();
         }
     }
 }

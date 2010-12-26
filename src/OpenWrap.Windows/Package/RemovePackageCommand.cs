@@ -13,7 +13,7 @@ namespace OpenWrap.Windows.Package
                 Name = parameter.Name
             };
 
-            _commandOutput = removeWrapCommand.Execute();
+            CommandOutput = removeWrapCommand.Execute();
         }
     }
 }
