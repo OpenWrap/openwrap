@@ -76,7 +76,6 @@
     <Compile Include="GenerateRevisionNumber.cs" />
     <Compile Include="InitializeVisualStudioIntegration.cs" />
     <Compile Include="MSBuildInstructionEmitter.cs" />
-    <Compile Include="PackageWrap.cs" />
     <Compile Include="PublishPackageContent.cs" />
     <Compile Include="ResharperHook.cs" />
     <Compile Include="ResolveWrapReferences.cs" />

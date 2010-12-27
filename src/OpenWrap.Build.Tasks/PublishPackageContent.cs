@@ -23,6 +23,7 @@ namespace OpenWrap.Build.Tasks
         public bool IncludeDocumentation { get; set; }
         public bool IncludePdbs { get; set; }
         public string BasePath { get; set; }
+        public bool AllowBinDuplicates { get; set; }
 
         public string ExportName { get; set; }
 
@@ -32,6 +33,7 @@ namespace OpenWrap.Build.Tasks
             WriteLow("IncludePdbs: " + IncludePdbs);
             WriteLow("BasePath: " + BasePath);
             WriteLow("ExportName: " + BasePath);
+            WriteLow("AllowBinDuplicates: " + AllowBinDuplicates);
 
             WriteFiles("OutputAssemblyFiles", OutputAssemblyFiles);
             WriteFiles("ContentFiles", ContentFiles);
@@ -63,7 +65,9 @@ namespace OpenWrap.Build.Tasks
                                                          kv.Key +
                                                          ", '" +
                                                          kv.Value +
-                                                         "')]",
+                                                         "', " + 
+                                                         AllowBinDuplicates.ToString().ToLowerInvariant() +
+                                                         ")]",
                                                          null,
                                                          "OpenWrap",
                                                          MessageImportance.Normal));

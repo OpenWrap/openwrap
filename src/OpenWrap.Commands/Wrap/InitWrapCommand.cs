@@ -212,7 +212,7 @@ namespace OpenWrap.Commands.Wrap
                 packageDescriptor.UseSymLinks = false;
             if (Meta)
             {
-                packageDescriptor.BuildCommand = "$meta";
+                packageDescriptor.Build.Add("none");
             }
             else
             {

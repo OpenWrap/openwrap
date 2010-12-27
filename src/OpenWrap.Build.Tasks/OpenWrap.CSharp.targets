@@ -28,7 +28,7 @@
     <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">AnyCPU</OpenWrap-TargetPlatform>
     <OpenWrap-ExportName Condition="'$(OpenWrap-ExportName)' == ''">bin-$(OpenWrap-TargetProfile)</OpenWrap-ExportName>
     <DefineConstants>$(DefineConstants);__OW_PLATFORM_$(OpenWrap-TargetPlatform)__;__OW_PROFILE_$(OpenWrap-TargetProfile)__;</DefineConstants>
-
+    <OpenWrap-AllowBinDuplicates Condition="'$(OpenWrap-AllowBinDuplicates)' == ''">false</OpenWrap-AllowBinDuplicates>
   </PropertyGroup>
 
 
@@ -99,7 +99,7 @@
         Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).pdb')"
         />
       <_OpenWrap-SerializationFiles Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).resources.dll')" />
-      <_OpenWrap-AllAssemblyReferenceFiles Include="@(ReferenceCopyLocalPaths->'%(FullPath)')" Condition="'%(Private)' == 'true'" />
+      <_OpenWrap-AllAssemblyReferenceFiles Include="@(ReferenceCopyLocalPaths->'%(FullPath)')" />
     </ItemGroup>
     <PropertyGroup>
 
@@ -112,6 +112,7 @@
       IncludeDocumentation="true"
       BasePath="$(MSBuildProjectDirectory)"
       ExportName="$(OpenWrap-ExportName)"
+      AllowBinDuplicates="$(OpenWrap-AllowBinDuplicates)"
 
       OutputAssemblyFiles="@(IntermediateAssembly->'%(FullPath)')"
       ContentFiles="@(Content->'%(FullPath)')"

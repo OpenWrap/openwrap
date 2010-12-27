@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Build\build_instruction_emitter_specs\assembly_reference.cs" />
     <Compile Include="Build\build_instruction_emitter_specs\contexts\msbuild_emitter.cs" />
+    <Compile Include="Build\build_result_parser_specs\build_result.cs" />
     <Compile Include="Collections\MultiThreaded_specs.cs" />
     <Compile Include="CommandsExtensions.cs" />
     <Compile Include="Commands\CommandsExtension.cs" />
