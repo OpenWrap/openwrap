@@ -9,10 +9,23 @@ namespace OpenWrap.Collections
     public class SequenceBuilder : ISequenceBuilder
     {
         readonly List<IEnumerable<ICommandOutput>> _results = new List<IEnumerable<ICommandOutput>>();
+        readonly Func<ICommandOutput, bool> _enumerationCondition;
 
-        public SequenceBuilder(IEnumerable<ICommandOutput> resultSets)
+        public SequenceBuilder(IEnumerable<ICommandOutput> resultSets) : this(resultSets, true)
+        {
+        }
+
+        /// <summary>
+        /// breakOnAny = true: Usual behaviour
+        /// breakOnAny = false: Only error output will trigger a stop of the enumeration
+        /// </summary>
+        public SequenceBuilder(IEnumerable<ICommandOutput> resultSets, bool breakOnAny)
         {
             _results.Add(resultSets);
+            _enumerationCondition = breakOnAny
+                                            ? co => co == null
+                                            : new Func<ICommandOutput, bool>(co => co.Type != CommandResultType.Error);
+
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -22,7 +35,7 @@ namespace OpenWrap.Collections
 
         IEnumerator<ICommandOutput> IEnumerable<ICommandOutput>.GetEnumerator()
         {
-            return _results.SelectMany(co => co).TakeWhileIncluding(co => !(co is Error)).GetEnumerator();
+            return _results.SelectMany(co => co).TakeWhileIncluding(_enumerationCondition).GetEnumerator();
         }
 
         public ISequenceBuilder Or(IEnumerable<ICommandOutput> returnValue)

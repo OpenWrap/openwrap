@@ -4,17 +4,17 @@ namespace OpenWrap.Repositories
 {
     public interface ISupportAuthentication
     {
-        IDisposable WithCredentials(CredentialInfo credentials);
+        IDisposable WithCredentials(Credentials credentials);
     }
 
-    public class CredentialInfo
+    public class Credentials
     {
-        public string UserName { get; private set; }
+        public string Username { get; private set; }
         public string Password { get; private set; }
 
-        public CredentialInfo(string user, string password)
+        public Credentials(string user, string password)
         {
-            UserName = user;
+            Username = user;
             Password = password;
         }
     }
