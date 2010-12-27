@@ -68,7 +68,7 @@ namespace OpenWrap.Collections
             var breakConditionMet = false;
             return items.TakeWhile(i =>
             {
-                if (breakConditionMet) return true;
+                if (breakConditionMet) return false;
                 if (!predicate(i))
                 {
                     breakConditionMet = true;
