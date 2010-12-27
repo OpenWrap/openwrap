@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Repositories;
-using OpenWrap.Runtime;
-using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -15,6 +12,7 @@ namespace OpenWrap.Commands.Wrap
     public class PublishWrapCommand : WrapCommand
     {
         ISupportPublishing _remoteRepository;
+        ISupportAuthentication _authenticationSupport;
 
         Func<Stream> _packageStream;
         string _packageFileName;
@@ -35,7 +33,6 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public string Pwd { get; set; }
-
 
         public override IEnumerable<ICommandOutput> Execute()
         {
@@ -60,6 +57,21 @@ namespace OpenWrap.Commands.Wrap
                 foreach (var _ in HintRemoteRepositories()) yield return _;
                 yield break;
             }
+
+            if (User != null && Pwd == null)
+            {
+                yield return new Errors.IncompleteAuthentication();
+                yield break;
+            }
+
+            _authenticationSupport = namedRepository as ISupportAuthentication;
+
+            if (_authenticationSupport == null)
+            {
+                yield return new Warning("Remote repository '{0}' does not support authentication, ignoring authentication info.", namedRepository.Name);
+                //_authenticationSupport = new NullAuthentication();
+            }
+
             _remoteRepository = namedRepository as ISupportPublishing;
 
             if (_remoteRepository == null)
