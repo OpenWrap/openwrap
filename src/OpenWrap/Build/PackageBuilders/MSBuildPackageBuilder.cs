@@ -46,8 +46,8 @@ namespace OpenWrap.Build.PackageBuilders
                                        : sourceDirectory.Files("*.*proj", SearchScope.SubFolders);
 
             var builds = from file in projectFiles
-                         from platform in Platform
-                         from profile in Profile
+                         from platform in Platform.DefaultIfEmpty(null)
+                         from profile in Profile.DefaultIfEmpty(null)
                          select new { file, platform, profile };
 
             yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", ExecutablePath));
@@ -88,9 +88,9 @@ namespace OpenWrap.Build.PackageBuilders
                                               argument.StartsWithNoCase("\"/property:") ||
                                               argument.StartsWithNoCase("\"/p:")
                                         select argument).Join(" ");
-
-            
-            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1} /p:OpenWrap-CurrentProjectFile={5} /p:t={2} {3} {4}",
+            platform = platform == null ? string.Empty : " /p:OpenWrap-TargetPlatform=" + platform;
+            profile = profile == null ? string.Empty : " /p:OpenWrap-TargetProfile=" + profile;
+            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true{0}{1} /p:OpenWrap-CurrentProjectFile={5} /p:t={2} {3} {4}",
                                               platform,
                                               profile,
                                               msbuildTargets,
