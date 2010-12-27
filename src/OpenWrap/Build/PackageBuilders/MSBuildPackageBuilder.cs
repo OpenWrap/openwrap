@@ -89,12 +89,14 @@ namespace OpenWrap.Build.PackageBuilders
                                               argument.StartsWithNoCase("\"/p:")
                                         select argument).Join(" ");
 
-            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1} /p:t={2} {3} {4}",
+            
+            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true /p:OpenWrap-TargetPlatform={0} /p:OpenWrap-TargetProfile={1} /p:OpenWrap-CurrentProjectFile={5} /p:t={2} {3} {4}",
                                               platform,
                                               profile,
                                               msbuildTargets,
                                               logger,
-                                              additionalProperties);
+                                              additionalProperties,
+                                              project.Path.FullPath);
 
             var args = "\"" + project.Path.FullPath + "\"" + msbuildParams;
             var msBuildProcess = CreateProcess(args);

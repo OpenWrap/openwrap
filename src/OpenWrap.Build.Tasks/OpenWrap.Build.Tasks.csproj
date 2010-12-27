@@ -84,6 +84,11 @@
     <Compile Include="RunCommand.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
+      <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
+      <Name>OpenRasta.Client</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Resharper.v450\OpenWrap.Resharper.v450.csproj">
       <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
       <Name>OpenWrap.Resharper.v450</Name>

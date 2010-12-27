@@ -28,6 +28,20 @@ namespace OpenWrap.Build.Tasks
 
         public override bool Execute()
         {
+            WriteLow("IncludeDocumentation: " + IncludeDocumentation);
+            WriteLow("IncludePdbs: " + IncludePdbs);
+            WriteLow("BasePath: " + BasePath);
+            WriteLow("ExportName: " + BasePath);
+
+            WriteFiles("OutputAssemblyFiles", OutputAssemblyFiles);
+            WriteFiles("ContentFiles", ContentFiles);
+            WriteFiles("AllAssemblyReferenceFiles", AllAssemblyReferenceFiles);
+            WriteFiles("OpenWrapReferenceFiles", OpenWrapReferenceFiles);
+            WriteFiles("PdbFiles", PdbFiles);
+            WriteFiles("DocumentationFiles", DocumentationFiles);
+            WriteFiles("SatelliteAssemblies", SatelliteAssemblies);
+            WriteFiles("SerializationAssemblies", SerializationAssemblies);
+
             var emitter = new MSBuildInstructionEmitter(LocalFileSystem.Instance)
             {
                     AllAssemblyReferenceFiles = Files(AllAssemblyReferenceFiles),
@@ -54,6 +68,24 @@ namespace OpenWrap.Build.Tasks
                                                          "OpenWrap",
                                                          MessageImportance.Normal));
             return true;
+        }
+
+        void WriteFiles(string categoryName, ITaskItem[] taskItems)
+        {
+            if (taskItems == null)
+                return;
+
+            foreach (var file in taskItems)
+                WriteLow(string.Format("{0}: {1}", categoryName, file.ItemSpec));
+        }
+
+        void WriteLow(string message)
+        {
+            BuildEngine.LogMessageEvent(new BuildMessageEventArgs(
+                                                message,
+                                                null,
+                                                "OpenWrap",
+                                                MessageImportance.Low));
         }
 
         static List<string> Files(IEnumerable<ITaskItem> specs)
