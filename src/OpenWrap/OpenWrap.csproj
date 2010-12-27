@@ -180,6 +180,7 @@
     <Compile Include="PackageManagement\Exporters\AssemblyReferences.cs" />
     <Compile Include="FuncExtensions.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
+    <Compile Include="Repositories\NullAuthentication.cs" />
     <Compile Include="Repositories\PackagePublisher.cs" />
     <Compile Include="Tasks\IProgressOutput.cs" />
     <Compile Include="Repositories\IRemoteRepositoryBuilder.cs" />
