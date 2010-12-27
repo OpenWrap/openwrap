@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 
 namespace OpenWrap.Repositories
 {
     public class NullAuthentication : ISupportAuthentication, IDisposable
     {
-        public IDisposable WithCredentials(string user, string password)
+        public IDisposable WithCredentials(Credentials credentials)
         {
             return this;
         }

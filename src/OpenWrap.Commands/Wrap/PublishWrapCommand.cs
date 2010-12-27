@@ -69,7 +69,7 @@ namespace OpenWrap.Commands.Wrap
             if (_authenticationSupport == null)
             {
                 yield return new Warning("Remote repository '{0}' does not support authentication, ignoring authentication info.", namedRepository.Name);
-                //_authenticationSupport = new NullAuthentication();
+                _authenticationSupport = new NullAuthentication();
             }
 
             _remoteRepository = namedRepository as ISupportPublishing;
@@ -118,6 +118,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
+            using (_authenticationSupport.WithCredentials(new Credentials(User, Pwd)))
             using (var publisher = _remoteRepository.Publisher())
             using (var packageStream = _packageStream())
                 publisher.Publish(_packageFileName, packageStream);
