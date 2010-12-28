@@ -48,7 +48,7 @@ namespace package_descriptor_specs
     {
         public editing_single_value()
         {
-            given_descriptor("anchored: false", "build: value");
+            given_descriptor("anchored: false", "unknown: value");
             Descriptor.Anchored = true;
             when_writing();
         }
@@ -56,7 +56,7 @@ namespace package_descriptor_specs
         [Test]
         public void value_is_edited_in_place()
         {
-            should_have_content("anchored: true\r\nbuild: value");
+            should_have_content("anchored: true\r\nunknown: value");
         }
     }
     public class setting_single_value_to_default : contexts.descriptor
@@ -80,7 +80,8 @@ namespace package_descriptor_specs
         {
             given_descriptor("anchored: false", "my-custom-value: something", "build: value");
             Descriptor.Anchored = true;
-            Descriptor.BuildCommand = "newValue";
+            Descriptor.Build.Clear();
+            Descriptor.Build.Add("newValue");
             when_writing();
         }
 
@@ -110,9 +111,9 @@ namespace package_descriptor_specs
         }
 
         [Test]
-        public void build_should_be_null()
+        public void build_should_be_empty()
         {
-            Descriptor.BuildCommand.ShouldBeNull();
+            Descriptor.Build.ShouldBeEmpty();
 
         }
 

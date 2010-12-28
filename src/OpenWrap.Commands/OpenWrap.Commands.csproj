@@ -60,6 +60,7 @@
     <Compile Include="Errors\IncompleteAuthentication.cs" />
     <Compile Include="Remote\RemoteRepositoryMessage.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />
+    <Compile Include="Wrap\BuildWrapCommand.cs" />
     <Compile Include="Wrap\DependenciesConflictMessage.cs" />
     <Compile Include="Wrap\FilePackageBuilder.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
@@ -83,7 +84,6 @@
     <Compile Include="Wrap\NukeWrapCommand.cs" />
     <Compile Include="Remote\RemoveRemoteCommand.cs" />
     <Compile Include="Wrap\AddWrapCommand.cs" />
-    <Compile Include="Wrap\BuildWrapCommand.cs" />
     <Compile Include="Wrap\CleanWrapCommand.cs" />
     <Compile Include="Wrap\ListWrapCommand.cs" />
     <Compile Include="Wrap\InitWrapCommand.cs" />

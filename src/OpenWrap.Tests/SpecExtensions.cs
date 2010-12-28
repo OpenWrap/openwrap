@@ -62,7 +62,7 @@ namespace OpenWrap.Testing
             return uri;
         }
 
-        public static KeyValuePair<TKey,TValue> ShouldBe<TKey,TValue>(this KeyValuePair<TKey,TValue> actual, TKey expectedName, TValue expectedValue)
+        public static KeyValuePair<TKey, TValue> ShouldBe<TKey, TValue>(this KeyValuePair<TKey, TValue> actual, TKey expectedName, TValue expectedValue)
         {
             actual.Key.ShouldBe(expectedName);
             actual.Value.ShouldBe(expectedValue);
@@ -170,6 +170,13 @@ namespace OpenWrap.Testing
             return list;
         }
 
+        public static IEnumerable<T> ShouldNotContain<T>(this IEnumerable<T> list, T expected)
+        {
+            if (list.Any(x=> ReferenceEquals(expected, x) || (x != null && x.Equals(expected))))
+                Assert.Fail("Found element '{0}' when none should have been", expected);
+            
+            return list;
+        }
         public static IEnumerable<T> ShouldContain<T>(this IEnumerable<T> list, T expected, Func<T, T, bool> match)
         {
             foreach (var t in list)
@@ -193,7 +200,7 @@ namespace OpenWrap.Testing
             return values;
         }
 
-        public static bool ShouldHaveSameElementsAs(this NameValueCollection expectedResult, 
+        public static bool ShouldHaveSameElementsAs(this NameValueCollection expectedResult,
                                                     NameValueCollection actualResult)
         {
             Assert.AreEqual(expectedResult.Count, actualResult.Count);
@@ -221,7 +228,7 @@ namespace OpenWrap.Testing
             return actual;
         }
 
-        public static void ShouldHaveSameElementsAs<TKey, TValue>(this IDictionary<TKey, TValue> actual, 
+        public static void ShouldHaveSameElementsAs<TKey, TValue>(this IDictionary<TKey, TValue> actual,
                                                                   IDictionary<TKey, TValue> expected)
         {
             actual.Count.ShouldBe(expected.Count);
@@ -229,8 +236,8 @@ namespace OpenWrap.Testing
                 expected[key].ShouldBe(actual[key]);
         }
 
-        public static void ShouldHaveSameElementsAs<T, V>(this IEnumerable<T> r1, 
-                                                          IEnumerable<V> r2, 
+        public static void ShouldHaveSameElementsAs<T, V>(this IEnumerable<T> r1,
+                                                          IEnumerable<V> r2,
                                                           Func<T, V, bool> comparer)
         {
             using (var enumerator1 = r1.GetEnumerator())
@@ -244,9 +251,9 @@ namespace OpenWrap.Testing
                         return;
                     if (enum1HasMoved != enum2HasMoved)
                         return;
-                    Assert.IsTrue(comparer(enumerator1.Current, enumerator2.Current), 
-                                  "Two elements didnt match:\na:\n{0}\nb:\n{1}", 
-                                  enumerator1.Current.ToString(), 
+                    Assert.IsTrue(comparer(enumerator1.Current, enumerator2.Current),
+                                  "Two elements didnt match:\na:\n{0}\nb:\n{1}",
+                                  enumerator1.Current.ToString(),
                                   enumerator2.Current.ToString());
                 }
             }
@@ -289,8 +296,8 @@ namespace OpenWrap.Testing
             catch (Exception e)
             {
                 if (!typeof(T).IsInstanceOfType(e))
-                    Assert.Fail("Expected exception of type \"{0}\" but got \"{1}\" instead.", 
-                                typeof(T).Name, 
+                    Assert.Fail("Expected exception of type \"{0}\" but got \"{1}\" instead.",
+                                typeof(T).Name,
                                 e.GetType().Name);
                 else
                     return (T)e;
@@ -300,19 +307,19 @@ namespace OpenWrap.Testing
             return null; // this never happens as Fail will throw...
         }
 
-        public static IEnumerable<T> ShouldHaveNo<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T : class
+        public static IEnumerable<T> ShouldHaveNo<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
         {
             enumerable.None(predicate).ShouldBeTrue();
             return enumerable;
         }
 
-        public static IEnumerable<T> ShouldHaveAtLeastOne<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T:class
+        public static IEnumerable<T> ShouldHaveAtLeastOne<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
         {
             enumerable.Any(predicate).ShouldBeTrue();
             return enumerable;
         }
 
-        public static IEnumerable<T> ShouldHaveAll<T>(this IEnumerable<T> enumerable, Func<T,bool> predicate) where T:class
+        public static IEnumerable<T> ShouldHaveAll<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
         {
             enumerable.All(predicate).ShouldBeTrue();
             return enumerable;
@@ -321,7 +328,7 @@ namespace OpenWrap.Testing
         public static T ShouldNotBeNull<T>(this T? obj) where T : struct
         {
             Assert.True(obj.HasValue);
-       
+
             return obj.Value;
         }
 
@@ -338,10 +345,10 @@ namespace OpenWrap.Testing
         }
 
         public static string ShouldNotBeNullOrEmpty(this string value)
-            {
-                string.IsNullOrEmpty(value).ShouldBeFalse();
-                return value;
-            }
+        {
+            string.IsNullOrEmpty(value).ShouldBeFalse();
+            return value;
+        }
     }
 }
 

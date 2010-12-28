@@ -22,8 +22,9 @@ namespace OpenWrap.Commands.Wrap
     public class BuildWrapCommand : AbstractCommand
     {
         IDirectory _destinationPath;
-        IPackageBuilder _builder;
+        //IPackageBuilder _builder;
         IList<FileBuildResult> _buildResults = new List<FileBuildResult>();
+        IEnumerable<IPackageBuilder> _builders;
 
         [CommandInput]
         public string Name { get; set; }
@@ -89,7 +90,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> TriggerBuild()
         {
             _buildResults.Clear();
-            foreach (var m in ProcessBuildResults(_builder, _buildResults.Add)) yield return m;
+            foreach (var m in ProcessBuildResults(_builders, _buildResults.Add)) yield return m;
             _buildResults = _buildResults.Distinct().ToList();
         }
 
@@ -103,22 +104,35 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<PackageContent> GeneratePackageContent(IEnumerable<FileBuildResult> buildFiles)
         {
-            return (
-                           from fileDescriptor in buildFiles
-                           let file = FileSystem.GetFile(fileDescriptor.Path.FullPath)
-                           where file.Exists
-                           select new PackageContent
-                           {
-                               FileName = file.Name,
-                               RelativePath = fileDescriptor.ExportName,
-                               Stream = () => file.OpenRead()
-                           }
-                   );
+            var binFiles = (from fileDescriptor in buildFiles
+                            where fileDescriptor.ExportName.StartsWith("bin-")
+                            let file = FileSystem.GetFile(fileDescriptor.Path.FullPath)
+                            where file.Exists
+                            select new PackageContent
+                            {
+                                    FileName = file.Name,
+                                    RelativePath = fileDescriptor.ExportName,
+                                    Stream = () => file.OpenRead()
+                            }).ToList();
+
+            var externalFiles = from fileDesc in buildFiles
+                                where fileDesc.ExportName.StartsWith("bin-") == false
+                                let file = FileSystem.GetFile(fileDesc.Path.FullPath)
+                                where file.Exists &&
+                                      (fileDesc.AllowBinDuplicate ||
+                                       binFiles.Any(x => x.FileName == file.Name) == false)
+                                select new PackageContent
+                                {
+                                        FileName = file.Name,
+                                        RelativePath = fileDesc.ExportName,
+                                        Stream = () => file.OpenRead()
+                                };
+            return binFiles.Concat(externalFiles);
         }
 
-        IEnumerable<ICommandOutput> ProcessBuildResults(IPackageBuilder packageBuilder, Action<FileBuildResult> onFound)
+        IEnumerable<ICommandOutput> ProcessBuildResults(IEnumerable<IPackageBuilder> packageBuilder, Action<FileBuildResult> onFound)
         {
-            foreach (var t in packageBuilder.Build())
+            foreach (var t in packageBuilder.SelectMany(x=>x.Build()))
             {
                 if (t is TextBuildResult && !Quiet)
                     yield return new GenericMessage(t.Message);
@@ -209,24 +223,29 @@ namespace OpenWrap.Commands.Wrap
 
         ICommandOutput CreateBuilder()
         {
-            var commandLine = Environment.Descriptor.BuildCommand;
-            if (string.IsNullOrEmpty(commandLine))
-                commandLine = "msbuild";
-            var properties = from segment in commandLine.Split(';').Skip(1)
-                             let keyValues = segment.Split('=')
-                             where keyValues.Length >= 2
-                             let key = keyValues[0]
-                             let value = segment.Substring(key.Length + 1)
-                             group new { key, value } by key;
+            _builders = (
+                                from commandLine in Environment.Descriptor.Build.DefaultIfEmpty("msbuild")
+                                let builder = ChooseBuilderInstance(commandLine)
+                                let parameters = from segment in commandLine.Split(';').Skip(1)
+                                                 let keyValues = segment.Split('=')
+                                                 where keyValues.Length >= 2
+                                                 let key = keyValues[0]
+                                                 let value = segment.Substring(key.Length + 1)
+                                                 group value by key
+                                select AssignProperties(builder, parameters)
+                        ).ToList();
+            return null;
+        }
 
-            _builder = ChooseBuilderInstance(commandLine);
+        IPackageBuilder AssignProperties(IPackageBuilder builder, IEnumerable<IGrouping<string,string>> properties)
+        {
             foreach (var property in properties)
             {
-                var pi = _builder.GetType().GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
+                var pi = builder.GetType().GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
                 if (pi != null)
-                    pi.SetValue(_builder, property.Select(x => x.value).ToList(), null);
+                    pi.SetValue(builder, property.ToList(), null);
             }
-            return null;
+            return builder;
         }
 
         IPackageBuilder ChooseBuilderInstance(string commandLine)

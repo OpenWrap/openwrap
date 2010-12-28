@@ -38,12 +38,25 @@ namespace OpenWrap.PackageManagement.Exporters
                                from type in TryGetExportedTypes(assembly)
                                where type.IsAbstract == false &&
                                      type.IsGenericTypeDefinition == false &&
-                                     type.GetInterface("ICommand") != null
-                               let loadedAssembly = Assembly.LoadFrom(file.FullPath)
-                               select loadedAssembly.GetType(type.FullName);
+                                     TryGet(()=>type.GetInterface("ICommand")) != null
+                               let loadedAssembly = TryGet(()=>Assembly.LoadFrom(file.FullPath))
+                               where loadedAssembly != null
+                               let loadedType = TryGet(()=>loadedAssembly.GetType(type.FullName))
+                               where loadedType != null
+                               select loadedType;
             return new CommandExport(commandTypes);
         }
-
+        T TryGet<T>(Func<T> func)
+        {
+            try
+            {
+                return func();
+            }
+            catch
+            {
+                return default(T);
+            }
+        }
         static string TryGetAssemblyLocation(Assembly assembly)
         {
             {

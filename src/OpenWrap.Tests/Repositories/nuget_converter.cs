@@ -20,9 +20,9 @@ using OpenWrap.Tests;
 using OpenWrap.Tests.Repositories;
 using IOPath = System.IO.Path;
 
-namespace nupack_converter_specs
+namespace nuget_converter_specs
 {
-    public class convertings_package_from_non_seekable_stream : contexts.nupack_converter
+    public class convertings_package_from_non_seekable_stream : contexts.nuget_converter
     {
         public convertings_package_from_non_seekable_stream()
         {
@@ -35,11 +35,11 @@ namespace nupack_converter_specs
             Package.ShouldNotBeNull();
         }
     }
-    public class converting_package : contexts.nupack_converter
+    public class converting_package : contexts.nuget_converter
     {
         public converting_package()
         {
-            given_nupack_package(TestFiles.TestPackageOld);
+            given_nuget_package(TestFiles.TestPackageOld);
             when_converting_package();
         }
         [Test]
@@ -207,11 +207,11 @@ namespace nupack_converter_specs
 
             protected PackageDescriptor Descriptor { get; set; }
         }
-        public abstract class nupack_converter : OpenWrap.Testing.context
+        public abstract class nuget_converter : OpenWrap.Testing.context
         {
             IFileSystem FileSystem;
 
-            public nupack_converter()
+            public nuget_converter()
             {
                 this.FileSystem = new InMemoryFileSystem();
                 //this.FileSystem = LocalFileSystem.Instance;
@@ -232,7 +232,7 @@ namespace nupack_converter_specs
             protected IPackageInfo Package { get; set; }
             protected MemoryStream NuPackage { get; set; }
 
-            protected void given_nupack_package(byte[] testPackage)
+            protected void given_nuget_package(byte[] testPackage)
             {
                 NuPackage = new MemoryStream(testPackage);
             }

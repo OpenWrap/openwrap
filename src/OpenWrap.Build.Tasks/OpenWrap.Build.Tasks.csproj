@@ -75,41 +75,47 @@
     </Compile>
     <Compile Include="GenerateRevisionNumber.cs" />
     <Compile Include="InitializeVisualStudioIntegration.cs" />
-    <Compile Include="PackageWrap.cs" />
+    <Compile Include="MSBuildInstructionEmitter.cs" />
+    <Compile Include="PublishPackageContent.cs" />
     <Compile Include="ResharperHook.cs" />
     <Compile Include="ResolveWrapReferences.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunCommand.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
+      <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
+      <Name>OpenRasta.Client</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Resharper.v450\OpenWrap.Resharper.v450.csproj">
       <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
       <Name>OpenWrap.Resharper.v450</Name>
       <Aliases>resharper450</Aliases>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Resharper.v500\OpenWrap.Resharper.v500.csproj">
       <Project>{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}</Project>
       <Name>OpenWrap.Resharper.v500</Name>
       <Aliases>resharper500</Aliases>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Resharper.v510\OpenWrap.Resharper.v510.csproj">
       <Project>{A9FA9F17-3DBE-4848-9044-DD734FDF554B}</Project>
       <Name>OpenWrap.Resharper.v510</Name>
       <Aliases>resharper510</Aliases>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Resharper.v511\OpenWrap.Resharper.v511.csproj">
       <Project>{9F5D9D90-DD43-45E9-BB70-B8EADE27FE82}</Project>
       <Name>OpenWrap.Resharper.v511</Name>
       <Aliases>resharper511</Aliases>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
       <Name>OpenWrap</Name>
-      <Private>True</Private>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -18,7 +18,7 @@ namespace OpenWrap.Tests.Commands.Wrap
             given_current_directory_repository(new CurrentDirectoryRepository());
             Environment.Descriptor.Name = packageName;
             Environment.Descriptor.Version = version;
-            Environment.Descriptor.BuildCommand = "$meta";
+            Environment.Descriptor.Build.Add("none");
             Environment.Descriptor.Version = version;
             
             when_executing_command();

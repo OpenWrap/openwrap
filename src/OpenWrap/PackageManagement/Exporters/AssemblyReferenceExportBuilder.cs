@@ -22,7 +22,7 @@ namespace OpenWrap.PackageManagement.Exporters
 
         public IExport ProcessExports(IEnumerable<IExport> exports, ExecutionEnvironment environment)
         {
-            var parsedExports = (from export in exports
+            var assemblyFileNames = (from export in exports
                                  let exportSegments =
                                          export.Name.Split(new[] { "-" }, StringSplitOptions.RemoveEmptyEntries)
                                  let platform = exportSegments.Length == 3 ? exportSegments[1] : ANYCPU
@@ -40,12 +40,12 @@ namespace OpenWrap.PackageManagement.Exporters
                     .ToLookup(x => Path.GetFileName(x.Item.FullPath));
 
             // now for each assembly, find the most compatible
-            var compatibleAssembly = parsedExports.Select(x =>
+            var compatibleAssembly = assemblyFileNames.Select(x =>
             {
                 var ordered = x.ToList();
                 ordered.Sort();
-                var item =
-                        ordered.Select(i => i.Item).FirstOrDefault();
+                var item = ordered.Select(i => i.Item)
+                                  .FirstOrDefault();
                 return item;
             });
             return new AssemblyReferenceExport(compatibleAssembly);

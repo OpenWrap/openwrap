@@ -27,9 +27,8 @@
     <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">$(Platform)</OpenWrap-TargetPlatform>
     <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">AnyCPU</OpenWrap-TargetPlatform>
     <OpenWrap-ExportName Condition="'$(OpenWrap-ExportName)' == ''">bin-$(OpenWrap-TargetProfile)</OpenWrap-ExportName>
-
-     <DefineConstants>$(DefineConstants);__OW_PLATFORM_$(OpenWrap-TargetPlatform)__;__OW_PROFILE_$(OpenWrap-TargetProfile)__;</DefineConstants>
-
+    <DefineConstants>$(DefineConstants);__OW_PLATFORM_$(OpenWrap-TargetPlatform)__;__OW_PROFILE_$(OpenWrap-TargetProfile)__;</DefineConstants>
+    <OpenWrap-AllowBinDuplicates Condition="'$(OpenWrap-AllowBinDuplicates)' == ''">false</OpenWrap-AllowBinDuplicates>
   </PropertyGroup>
 
 
@@ -41,7 +40,7 @@
   </ItemGroup>
   <Target Name="_Initialize">
     <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" >
-      <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />  
+      <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
     </InitializeOpenWrap>
 
     <InitializeVisualStudioIntegration
@@ -87,7 +86,7 @@
   </Target>
 
   <Target Name="OpenWrap-BeforeBuild" DependsOnTargets="_Initialize">
-    
+
   </Target>
 
   <Target Name="OpenWrap-AfterBuild"
@@ -96,30 +95,38 @@
     <!-- Referenced projects -->
     <ItemGroup>
       <_OpenWrap-AssemblyReferences Include="@(Reference->'%(HintPath)')" Condition="'%(Reference.FromOpenWrap)' == 'True'" />
-
-      <_OpenWrap-CopyLocal Include="@(ReferenceCopyLocalPaths)" Exclude="@(_OpenWrap-AssemblyReferences)" />
+      <_OpenWrap-PdbFiles
+        Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).pdb')"
+        />
+      <_OpenWrap-SerializationFiles Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).resources.dll')" />
+      <_OpenWrap-AllAssemblyReferenceFiles Include="@(ReferenceCopyLocalPaths->'%(FullPath)')" />
     </ItemGroup>
+    <PropertyGroup>
 
-    <Message Text="[built($(OpenWrap-ExportName),'%(_OpenWrap-CopyLocal.FullPath)')]" Condition="'@(_OpenWrap-CopyLocal)' != ''" />
+      <_OpenWrap-IsEntryPointProject Condition="'$(OpenWrap-CurrentProjectFile)' == '$(MSBuildProjectDirectory)\$(MSBuildProjectFile)'">true</_OpenWrap-IsEntryPointProject>
 
-    <!-- Content -->
-    <Message Text="[built($(OpenWrap-ExportName),'%(Content.FullPath)')]" Condition="Exists('@(Content)')" />
+    </PropertyGroup>
+    <PublishPackageContent
+      Condition="'$(_OpenWrap-IsEntryPointProject)' == 'true'"
+      IncludePdbs="$(OpenWrap-IncludePdbs)"
+      IncludeDocumentation="true"
+      BasePath="$(MSBuildProjectDirectory)"
+      ExportName="$(OpenWrap-ExportName)"
+      AllowBinDuplicates="$(OpenWrap-AllowBinDuplicates)"
 
-    <!-- Assembly output -->
-    <Message Text="[built($(OpenWrap-ExportName),'%(IntermediateAssembly.FullPath)')]" />
-    <!-- Module outputs -->
-    <Message Text="[built($(OpenWrap-ExportName),'%(AddModules.FullPath)')]" Condition="Exists('@(AddModules)')" />
-    <!-- Serialization assemblies -->
-    <Message Text="[built($(OpenWrap-ExportName),'$(OutDir)$(_SGenDllName)')]" Condition="'$(_SGenDllCreated)'=='true'" />
-    <!-- Xml documentation -->
-    <Message Text="[built($(OpenWrap-ExportName),'%(DocFileItem.FullPath)')]" Condition="'$(_DocumentationFileProduced)'=='true'" />
-    <!-- Satellite assemblies-->
-    <Message Text="[built($(OpenWrap-ExportName),@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll;'))]"
-             Condition="Exists('@(IntermediateSatelliteAssembliesWithTargetPath)')"/>
+      OutputAssemblyFiles="@(IntermediateAssembly->'%(FullPath)')"
+      ContentFiles="@(Content->'%(FullPath)')"
+      AllAssemblyReferenceFiles="@(_OpenWrap-AllAssemblyReferenceFiles)"
+      OpenWrapReferenceFiles="@(_OpenWrap-AssemblyReferences)"
+      PdbFiles="@(_OpenWrap-PdbFiles)"
+      DocumentationFiles="@(DocFileItem->'%(FullPath)')"
+      SatelliteAssemblies="@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll')"
+      SerializationAssemblies="@(_OpenWrap-SerializationFiles)"
+      />
 
     <!-- delete assembly reference cache to prevent VS from not calling the initialize task on next opening -->
     <Delete Files="$(ResolveAssemblyReferencesStateFile);$(IntermediateOutputPath)*.cache" ContinueOnError="true" />
-    
+
   </Target>
 
 

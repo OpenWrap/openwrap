@@ -17,6 +17,7 @@ namespace OpenWrap.PackageManagement.Packages
         {
             Created = DateTime.Now;
             Dependencies = new List<PackageDependency>();
+            Descriptor = new PackageDescriptor();
         }
 
         public bool Anchored { get; set; }
@@ -41,6 +42,8 @@ namespace OpenWrap.PackageManagement.Packages
         public IPackageRepository Source { get; set; }
         public Version Version { get; set; }
 
+
+        public PackageDescriptor Descriptor { get; private set; }
 
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {

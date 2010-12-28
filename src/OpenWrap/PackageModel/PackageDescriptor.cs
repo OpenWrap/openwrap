@@ -10,7 +10,6 @@ namespace OpenWrap.PackageModel
     {
         readonly PackageDescriptorEntryCollection _entries = new PackageDescriptorEntryCollection();
         SingleBoolValue _anchored;
-        SingleStringValue _buildCommand;
         SingleDateTimeOffsetValue _created;
         PackageDependencyCollection _dependencies;
         SingleStringValue _description;
@@ -19,10 +18,12 @@ namespace OpenWrap.PackageModel
         SingleBoolValue _useProjectRepository;
         SingleBoolValue _useSymLinks;
         SingleVersionValue _version;
+        SingleStringValue _referencedAssemblies;
+        MultiLine<string> _buildCommands;
 
-        public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> lines)
+        public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> entries)
         {
-            foreach (var line in lines)
+            foreach (var line in entries)
                 _entries.Append(line.Name, line.Value);
             InitializeHeaders();
         }
@@ -38,18 +39,13 @@ namespace OpenWrap.PackageModel
             set { _anchored.Value = value; }
         }
 
-        public string BuildCommand
-        {
-            get { return _buildCommand.Value; }
-            set { _buildCommand.Value = value; }
-        }
 
         public DateTimeOffset Created
         {
             get { return _created.Value; }
             private set { _created.Value = value; }
         }
-
+        public ICollection<string> Build { get { return _buildCommands; } }
         public ICollection<PackageDependency> Dependencies
         {
             get { return _dependencies; }
@@ -110,6 +106,11 @@ namespace OpenWrap.PackageModel
             set { _version.Value = value; }
         }
 
+        public string ReferencedAssemblies
+        {
+            get { return _referencedAssemblies.Value; }
+            set { _referencedAssemblies.Value = value; }
+        }
         public IPackage Load()
         {
             return null;
@@ -130,15 +131,16 @@ namespace OpenWrap.PackageModel
         {
             _dependencies = new PackageDependencyCollection(_entries);
             _overrides = new PackageNameOverrideCollection(_entries);
-
+            _buildCommands = new MultiLine<string>(_entries, "build", _ => _, _ => _);
             _anchored = new SingleBoolValue(_entries, "anchored", false);
-            _buildCommand = new SingleStringValue(_entries, "build");
+            //_buildCommand = new SingleStringValue(_entries, "build");
             _created = new SingleDateTimeOffsetValue(_entries, "created");
             _description = new SingleStringValue(_entries, "description");
             _name = new SingleStringValue(_entries, "name");
             _version = new SingleVersionValue(_entries, "version");
             _useProjectRepository = new SingleBoolValue(_entries, "use-project-repository", true);
             _useSymLinks = new SingleBoolValue(_entries, "use-symlinks", true);
+            _referencedAssemblies = new SingleStringValue(_entries, "referenced-assemblies", "*");
         }
     }
 }

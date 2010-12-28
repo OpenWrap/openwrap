@@ -60,6 +60,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\Microsoft.Build.Engine.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\nunit-2.5.5\nunit.framework.dll</HintPath>
@@ -75,6 +76,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\build_instruction_emitter_specs\assembly_reference.cs" />
+    <Compile Include="Build\build_instruction_emitter_specs\contexts\msbuild_emitter.cs" />
+    <Compile Include="Build\build_result_parser_specs\build_result.cs" />
     <Compile Include="Collections\MultiThreaded_specs.cs" />
     <Compile Include="CommandsExtensions.cs" />
     <Compile Include="Commands\CommandsExtension.cs" />
@@ -117,8 +121,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\current_directory_repository.cs" />
     <Compile Include="Repositories\indexed_folder_navigator.cs" />
-    <Compile Include="Repositories\nupack_converter.cs" />
-    <Compile Include="Repositories\nupack_syndication.cs" />
+    <Compile Include="Repositories\nuget_converter.cs" />
+    <Compile Include="Repositories\nuget_syndication.cs" />
     <Compile Include="Repositories\TestFiles.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -133,6 +137,10 @@
       <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
       <Name>OpenRasta.Client</Name>
       <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj">
+      <Project>{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}</Project>
+      <Name>OpenWrap.Build.Tasks</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Commands\OpenWrap.Commands.csproj">
       <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>

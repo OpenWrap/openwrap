@@ -103,16 +103,16 @@ namespace OpenWrap.Repositories.NuGet
 
         static string ConvertAssemblyFolder(string identifier)
         {
-            var nuPackProfile = FrameworkProfiles.Keys.FirstOrDefault(x => identifier.StartsWith(x, StringComparison.OrdinalIgnoreCase));
+            var nugetProfile = FrameworkProfiles.Keys.FirstOrDefault(x => identifier.StartsWith(x, StringComparison.OrdinalIgnoreCase));
 
-            var versionString = nuPackProfile == null ? identifier : identifier.Substring(nuPackProfile.Length);
-            var nuPackVersion = FrameworkVersions.Keys.FirstOrDefault(x => versionString.EqualsNoCase(x));
+            var versionString = nugetProfile == null ? identifier : identifier.Substring(nugetProfile.Length);
+            var nugetVersion = FrameworkVersions.Keys.FirstOrDefault(x => versionString.EqualsNoCase(x));
 
-            if (nuPackProfile != null)
-                nuPackProfile = FrameworkProfiles[nuPackProfile];
-            if (nuPackVersion != null)
-                nuPackVersion = FrameworkVersions[nuPackVersion];
-            return "bin-" + (nuPackProfile == null && nuPackVersion == null ? identifier : ((nuPackProfile ?? "net") + (nuPackVersion ?? "20")));
+            if (nugetProfile != null)
+                nugetProfile = FrameworkProfiles[nugetProfile];
+            if (nugetVersion != null)
+                nugetVersion = FrameworkVersions[nugetVersion];
+            return "bin-" + (nugetProfile == null && nugetVersion == null ? identifier : ((nugetProfile ?? "net") + (nugetVersion ?? "20")));
         }
 
         static PackageContent ConvertSpecification(ZipFile file, ZipEntry entry)
