@@ -151,7 +151,7 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        PackageContent GenerateDescriptorFile(PackageDescriptor descriptor)
+        static PackageContent GenerateDescriptorFile(PackageDescriptor descriptor)
         {
             var descriptorStream = new MemoryStream();
             new PackageDescriptorReaderWriter().Write(descriptor, descriptorStream);
@@ -164,7 +164,7 @@ namespace OpenWrap.Commands.Wrap
             };
         }
 
-        PackageContent GenerateVersionFile(Version generatedVersion)
+        static PackageContent GenerateVersionFile(Version generatedVersion)
         {
             var versionStream = generatedVersion.ToString().ToUTF8Stream();
             return new PackageContent
@@ -186,7 +186,7 @@ namespace OpenWrap.Commands.Wrap
             return new DefaultPackageInfo(string.Empty, GetVersionFromVersionFiles(buildFiles), packageDescriptorForEmbedding).Version;
         }
 
-        bool IsVersion(FileBuildResult build)
+        static bool IsVersion(FileBuildResult build)
         {
             return build.ExportName == "." && build.FileName.EqualsNoCase("version");
         }
@@ -230,8 +230,8 @@ namespace OpenWrap.Commands.Wrap
                                                  let keyValues = segment.Split('=')
                                                  where keyValues.Length >= 2
                                                  let key = keyValues[0]
-                                                 let value = segment.Substring(key.Length + 1)
-                                                 group value by key
+                                                 let value = segment.Substring(key.Length + 1).Trim()
+                                                 group value by key.Trim()
                                 select AssignProperties(builder, parameters)
                         ).ToList();
             return null;
