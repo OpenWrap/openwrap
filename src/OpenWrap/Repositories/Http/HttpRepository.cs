@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories.Http
 {
-    public class HttpRepository : IPackageRepository, ISupportPublishing
+    public class HttpRepository : IPackageRepository, ISupportPublishing, ISupportAuthentication
     {
         readonly IFileSystem _fileSystem;
         readonly IHttpRepositoryNavigator _navigator;
@@ -91,13 +90,6 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
-        DateTime? GetModifiedTimeUtc(XAttribute attribute)
-        {
-            if (attribute == null) return null;
-            DateTime dt;
-            return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
-        }
-
         IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
         {
             IndexDocument = navigator.Index();
@@ -106,6 +98,14 @@ namespace OpenWrap.Repositories.Http
                 yield break;
             foreach (var package in IndexDocument.Packages)
                 yield return new HttpPackageInfo(fileSystem, this, navigator, package);
+        }
+
+        IDisposable ISupportAuthentication.WithCredentials(Credentials credentials)
+        {
+            var auth = _navigator as ISupportAuthentication;
+            return auth == null 
+                ? new ActionOnDispose(() => { }) 
+                : auth.WithCredentials(credentials);
         }
     }
 }

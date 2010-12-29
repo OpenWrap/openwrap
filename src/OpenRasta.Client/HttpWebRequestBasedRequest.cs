@@ -7,13 +7,29 @@ namespace OpenRasta.Client
 {
     public class HttpWebRequestBasedRequest : IClientRequest
     {
-        HttpWebRequest _request;
-        HttpEntity _entity;
-        MemoryStream _emptyStream;
+        readonly HttpWebRequest _request;
+        readonly HttpEntity _entity;
+        readonly MemoryStream _emptyStream;
 
-        public HttpWebRequestBasedRequest(Uri requestUri)
+        public HttpWebRequestBasedRequest(Uri requestUri) : this()
         {
             _request = (HttpWebRequest)WebRequest.Create(requestUri);
+        }
+
+        public HttpWebRequestBasedRequest(Uri requestUri, string username, string password)
+            : this()
+        {
+            var cc = new CredentialCache
+            {
+                    { requestUri, "Digest", new NetworkCredential(username, password) }
+            };
+
+            _request = (HttpWebRequest)WebRequest.Create(requestUri);
+            _request.Credentials = cc;
+        }
+
+        private HttpWebRequestBasedRequest()
+        {
             _emptyStream = new MemoryStream();
             _entity = new HttpEntity(_emptyStream);
         }
