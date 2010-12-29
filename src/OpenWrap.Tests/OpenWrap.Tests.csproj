@@ -96,6 +96,7 @@
     <Compile Include="Commands\InMemoryEnvironment.cs" />
     <Compile Include="Commands\Wrap\buildWrapCommand.cs" />
     <Compile Include="Commands\Wrap\cleanWrapCommand.cs" />
+    <Compile Include="Commands\Wrap\buildwrap\from_files_without_space.cs" />
     <Compile Include="Commands\Wrap\listWrapCommand.cs" />
     <Compile Include="Commands\Wrap\nukeWrapCommand.cs" />
     <Compile Include="Commands\Wrap\publishWrapCommand.cs" />

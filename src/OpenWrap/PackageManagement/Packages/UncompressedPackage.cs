@@ -109,7 +109,7 @@ namespace OpenWrap.PackageManagement.Packages
             if (exporter != null)
                 directories = directories.Where(x => exporter.CanProcessExport(x.Name));
             else
-                directories = directories.Take(1);
+                directories = directories.Where(x => x.Name.EqualsNoCase(exportName));
             var exports = from directory in directories
                           select (IExport)new FolderExport(directory.Name)
                           {
