@@ -60,7 +60,7 @@ namespace OpenWrap.Runtime
             ExecutionEnvironment = new ExecutionEnvironment
             {
                     Platform = IntPtr.Size == 4 ? "x86" : "x64",
-                    Profile = "net35"
+                    Profile = Environment.Version.Major >= 4 ? "net40" : "net35"
             };
         }
 

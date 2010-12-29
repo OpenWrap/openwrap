@@ -23,6 +23,7 @@ namespace OpenWrap.Commands.Wrap
         const string OPENWRAP_BUILD = @"wraps\openwrap\build\OpenWrap.CSharp.targets";
         bool? _allProjects;
         IEnumerable<IFile> _projectsToPatch;
+        IFile _packageDescriptorFile;
 
         public InitWrapCommand()
         {
@@ -52,6 +53,9 @@ namespace OpenWrap.Commands.Wrap
         public bool Bazaar { get; set; }
 
         [CommandInput]
+        public bool Svn { get; set; }
+
+        [CommandInput]
         public bool NoSymLinks { get; set; }
 
         [CommandInput]
@@ -74,7 +78,7 @@ namespace OpenWrap.Commands.Wrap
         {
             return VerifyArguments()
                     .Concat(SetupDirectoriesAndDescriptor())
-                    .Concat(ModifyProjects());
+                    .Concat(ModifyProjects(_packageDescriptorFile ?? Environment.DescriptorFile));
         }
 
         public IEnumerable<ICommandOutput> VerifyArguments()
@@ -100,13 +104,6 @@ namespace OpenWrap.Commands.Wrap
                 IgnoreFileName = ".svnignore";
                 NoSymLinks = true;
             }
-        }
-
-        protected bool Svn { get; set; }
-
-        void AddOpenWrapDependency(PackageDescriptor packageDescriptor)
-        {
-            packageDescriptor.Dependencies.Add(new PackageDependencyBuilder("openwrap").Content().Anchored());
         }
 
         void AddPackageFolders(IDirectory projectDirectory)
@@ -147,7 +144,7 @@ namespace OpenWrap.Commands.Wrap
                                      .Select(x => Environment.CurrentDirectory.GetFile(x));
         }
 
-        IEnumerable<ICommandOutput> ModifyProjects()
+        IEnumerable<ICommandOutput> ModifyProjects(IFile descriptorFile)
         {
             foreach (IFile project in _projectsToPatch)
             {
@@ -167,7 +164,7 @@ namespace OpenWrap.Commands.Wrap
                 else
                 {
                     // TODO: Detect path of openwrap directory and generate correct relative path from there
-                    csharpTarget.Attributes["Project"].Value = GetOpenWrapPath(project.Parent, Environment.DescriptorFile.Parent);
+                    csharpTarget.Attributes["Project"].Value = GetOpenWrapPath(project.Parent, descriptorFile.Parent);
                     using (Stream projectFileStream = project.OpenWrite())
                         xmlDoc.Save(projectFileStream);
                     yield return new GenericMessage(string.Format("Project '{0}' updated to use OpenWrap.", project.Path.FullPath));
@@ -200,10 +197,10 @@ namespace OpenWrap.Commands.Wrap
 
             string packageName = Target == "." ? Environment.CurrentDirectory.Name : Target;
 
-            IFile packageDescriptorFile = projectDirectory.GetFile(packageName + ".wrapdesc");
-            if (packageDescriptorFile.Exists)
+            _packageDescriptorFile = projectDirectory.GetFile(packageName + ".wrapdesc");
+            if (_packageDescriptorFile.Exists)
             {
-                yield return new GenericMessage("Package descriptor found.");
+                yield return new GenericMessage("Package descriptor present.");
                 yield break;
             }
 
@@ -221,7 +218,7 @@ namespace OpenWrap.Commands.Wrap
                 foreach (ICommandOutput m in CopyOpenWrap(packageDescriptor, projectDirectory)) yield return m;
             }
             WriteVersionFile(projectDirectory);
-            WriteDescriptor(packageDescriptorFile, packageDescriptor);
+            WriteDescriptor(_packageDescriptorFile, packageDescriptor);
             yield return new GenericMessage("Package '{0}' initialized. Start adding packages by using the 'add-wrap' command.", packageName);
         }
 

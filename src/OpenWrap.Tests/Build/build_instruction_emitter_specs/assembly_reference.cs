@@ -19,6 +19,94 @@ namespace OpenWrap.Tests.Build.build_instruction_emitter_specs
             should_have_file("bin-net35", "sauron.dll");
         }
     }
+    public class output_assembly_with_pdb : msbuild_emitter
+    {
+        public output_assembly_with_pdb()
+        {
+            given_export("bin-net35");
+            given_output_assembly("sauron.dll");
+            given_pdb("sauron.pdb");
+            when_generating_instructions();
+        }
+
+        [Test]
+        public void pdb_is_exported()
+        {
+            should_have_file("bin-net35", "sauron.pdb");
+        }
+
+        [Test]
+        public void assembly_is_exported()
+        {
+            should_have_file("bin-net35", "sauron.dll");            
+        }
+    }
+    public class output_assembly_with_doc : msbuild_emitter
+    {
+        public output_assembly_with_doc()
+        {
+            given_export("bin-net35");
+            given_output_assembly("sauron.dll");
+            given_documentation_file("sauron.xml");
+            when_generating_instructions();
+        }
+
+        [Test]
+        public void doc_is_exported()
+        {
+            should_have_file("bin-net35", "sauron.xml");
+        }
+
+        [Test]
+        public void assembly_is_exported()
+        {
+            should_have_file("bin-net35", "sauron.dll");
+        }
+    }
+    public class output_assembly_with_resource : msbuild_emitter
+    {
+        public output_assembly_with_resource()
+        {
+            given_export("bin-net35");
+            given_output_assembly("sauron.dll");
+            given_satellite("sauron.resources.dll");
+            when_generating_instructions();
+        }
+
+        [Test]
+        public void resource_is_exported()
+        {
+            should_have_file("bin-net35", "sauron.resources.dll");
+        }
+
+        [Test]
+        public void assembly_is_exported()
+        {
+            should_have_file("bin-net35", "sauron.dll");
+        }
+    }
+    public class output_assembly_with_serialization : msbuild_emitter
+    {
+        public output_assembly_with_serialization()
+        {
+            given_export("bin-net35");
+            given_output_assembly("sauron.dll");
+            given_serialization("sauron.xmlserializers.dll");
+            when_generating_instructions();
+        }
+
+        [Test]
+        public void serialization_assembly_is_exported()
+        {
+            should_have_file("bin-net35", "sauron.xmlserializers.dll");
+        }
+
+        [Test]
+        public void assembly_is_exported()
+        {
+            should_have_file("bin-net35", "sauron.dll");
+        }
+    }
     public class assembly_reference : msbuild_emitter
     {
         public assembly_reference()
