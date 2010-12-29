@@ -52,8 +52,10 @@ namespace OpenWrap.Build.Tasks
             var includedAssemblies = AllAssemblyReferenceFiles
                 .Where(x=>!openWrapRefs.Contains(x))
                 .Select(baseDir.GetFile)
+                .Concat(OutputAssemblyFiles.Select(baseDir.GetFile))
                 .ToList();
-            foreach(var file in includedAssemblies.Concat(OutputAssemblyFiles.Select(baseDir.GetFile)))
+
+            foreach(var file in includedAssemblies)
                 yield return Key(ExportName, file.Path.FullPath);
 
             foreach (var content in ContentFiles)
@@ -64,33 +66,33 @@ namespace OpenWrap.Build.Tasks
             foreach(var associated in PdbFiles.Concat(DocumentationFiles).Concat(SatelliteAssemblies))
             {
                 var associatedFile = baseDir.GetFile(associated);
-                if (ShouldIncludeExternalReference(includedAssemblies, associatedFile, _=>_))
+                if (ShouldIncludeRelatedFiles(includedAssemblies, associatedFile, _=>_))
                     yield return Key(ExportName, associatedFile.Path.FullPath);
             }
             foreach (var satellite in SatelliteAssemblies)
             {
                 var relativePath = new Path(ExportName).Combine(new Path(satellite).MakeRelative(baseDir.Path).FullPath).DirectoryName;
                 var associatedFile = baseDir.GetFile(satellite);
-                if (ShouldIncludeExternalReference(includedAssemblies, associatedFile, x=>RemoveSuffix(x, ".resources")))
+                if (ShouldIncludeRelatedFiles(includedAssemblies, associatedFile, x=>RemoveSuffix(x, ".resources")))
                     yield return Key(relativePath, associatedFile.Path.FullPath);
             }
             foreach (var serializationAssemblyPath in SerializationAssemblies)
             {
                 
                 var associatedFile = baseDir.GetFile(serializationAssemblyPath);
-                if (ShouldIncludeExternalReference(includedAssemblies, associatedFile, x => RemoveSuffix(x, ".XmlSerializers")))
+                if (ShouldIncludeRelatedFiles(includedAssemblies, associatedFile, x => RemoveSuffix(x, ".XmlSerializers")))
                     yield return Key(ExportName, associatedFile.Path.FullPath);
             }
         }
 
         static string RemoveSuffix(string arg, string suffix)
         {
-            return arg.EndsWith(suffix)
+            return arg.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)
                            ? arg.Substring(0, arg.Length - suffix.Length)
                            : null;
         }
 
-        static bool ShouldIncludeExternalReference(IEnumerable<IFile> includedAssemblies, IFile file, Func<string,string> converter)
+        static bool ShouldIncludeRelatedFiles(IEnumerable<IFile> includedAssemblies, IFile file, Func<string,string> converter)
         {
             var converted = converter(file.NameWithoutExtension);
 
