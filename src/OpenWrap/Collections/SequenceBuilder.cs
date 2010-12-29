@@ -23,8 +23,8 @@ namespace OpenWrap.Collections
         {
             _results.Add(resultSets);
             _enumerationCondition = breakOnAny
-                                            ? co => co == null
-                                            : new Func<ICommandOutput, bool>(co => co.Type != CommandResultType.Error);
+                                            ? co => true
+                                            : new Func<ICommandOutput, bool>(co => co.Type == CommandResultType.Error);
 
         }
 
@@ -35,7 +35,20 @@ namespace OpenWrap.Collections
 
         IEnumerator<ICommandOutput> IEnumerable<ICommandOutput>.GetEnumerator()
         {
-            return _results.SelectMany(co => co).TakeWhileIncluding(_enumerationCondition).GetEnumerator();
+            foreach (var resultSet in _results)
+            {
+                var hadValue = false;
+                var enumerator = resultSet.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    if (enumerator.Current == null)
+                        continue;
+                    hadValue = _enumerationCondition(enumerator.Current);
+                    yield return enumerator.Current;
+                }
+                if (hadValue)
+                    yield break;
+            }
         }
 
         public ISequenceBuilder Or(IEnumerable<ICommandOutput> returnValue)
