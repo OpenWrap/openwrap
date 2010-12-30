@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenWrap.Windows.Framework;
 
-namespace OpenWrap.Windows
+namespace OpenWrap.Windows.Package
 {
     public class PackageViewModel : ViewModelBase
     {
