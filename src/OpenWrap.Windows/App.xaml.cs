@@ -51,6 +51,7 @@ namespace OpenWrap.Windows
         private void ShowMainWindow()
         {
             MainViewModel viewModel = new MainViewModel();
+            viewModel.PopulateData();
 
             Main mainWindow = new Main();
             mainWindow.DataContext = viewModel;
