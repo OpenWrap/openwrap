@@ -103,6 +103,7 @@
         />
       <_OpenWrap-SerializationFiles Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).resources.dll')" />
       <_OpenWrap-AllAssemblyReferenceFiles Include="@(ReferenceCopyLocalPaths->'%(FullPath)')" />
+      <_OpenWrap-DeleteAnnoyingVsOptimizationFiles Include="$(IntermediateOutputPath)*.cache" />
     </ItemGroup>
     <PropertyGroup>
 
@@ -128,7 +129,7 @@
       />
 
     <!-- delete assembly reference cache to prevent VS from not calling the initialize task on next opening -->
-    <Delete Files="$(ResolveAssemblyReferencesStateFile);$(IntermediateOutputPath)*.cache" ContinueOnError="true" />
+    <Delete Files="$(ResolveAssemblyReferencesStateFile);@(_OpenWrap-DeleteAnnoyingVsOptimizationFiles)" ContinueOnError="true" />
 
   </Target>
 

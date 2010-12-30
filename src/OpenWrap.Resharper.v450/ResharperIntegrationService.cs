@@ -23,7 +23,9 @@ namespace OpenWrap.Resharper
         readonly object _lock = new object();
         readonly IPackageDescriptorMonitor _monitor;
         bool _isInitialized;
+// ReSharper disable UnaccessedField.Local
         Timer _timer;
+// ReSharper restore UnaccessedField.Local
 
         public ResharperIntegrationService()
                 : this(Services.Services.GetService<IPackageDescriptorMonitor>())
@@ -51,6 +53,7 @@ namespace OpenWrap.Resharper
                     {
                         ResharperLocks.WriteCookie("Listing projects",
                                                    () => { success = TryEnumerateProjects(environment, out listeners); });
+                        listeners = listeners ?? Enumerable.Empty<IResolvedAssembliesUpdateListener>();
                     }
                     catch (Exception e)
                     {
