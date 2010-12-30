@@ -2,6 +2,6 @@
 depends: openfilesystem
 depends: openwrap content
 anchored: true
-build: msbuild;profile=net35
+build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj; project=src\OpenWrap.Commands\OpenWrap.Commands.csproj; project=src\OpenWrap.Tests\OpenWrap.Tests.csproj;
 name: openwrap
-version: 1.0.0.23653697
+version: 1.0.0.47636484
