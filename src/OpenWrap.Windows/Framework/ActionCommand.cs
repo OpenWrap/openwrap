@@ -11,6 +11,7 @@ namespace OpenWrap.Windows.Framework
         {
             _executeAction = executeAction;
         }
+
         public event EventHandler CanExecuteChanged;
 
         public void Execute(object parameter)

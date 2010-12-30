@@ -8,6 +8,7 @@ using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Windows.Framework;
+using OpenWrap.Windows.NounVerb;
 using OpenWrap.Windows.Package;
 using OpenWrap.Windows.PackageRepository;
 
