@@ -83,7 +83,7 @@ namespace OpenWrap.Commands.Wrap
                 // get latest version of the Named package
                 if (!Environment.CurrentDirectoryRepository.PackagesByName.Contains(Name))
                 {
-                    yield return new Error("No package named '{0}' was found.");
+                    yield return new Error("No package named '{0}' was found.", Name);
                     yield break;
                 }
                 var packageToCopy = Environment.CurrentDirectoryRepository.PackagesByName[Name].OrderByDescending(x=>x.Version).First();
