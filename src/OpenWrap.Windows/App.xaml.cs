@@ -11,6 +11,7 @@ using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Runtime;
 using OpenWrap.Tasks;
+using OpenWrap.Windows.MainWindow;
 
 namespace OpenWrap.Windows
 {
