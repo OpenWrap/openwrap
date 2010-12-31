@@ -16,7 +16,7 @@ namespace OpenWrap.Windows.Framework
             }
         }
 
-        protected void RaisePropertyChanged<T>(Expression<Func<T, object>> propertyLambda)
+        protected void RaisePropertyChanged<T>(Expression<Func<T>> propertyLambda)
         {
             if (PropertyChanged != null)
             {
@@ -25,7 +25,7 @@ namespace OpenWrap.Windows.Framework
             }
         }
 
-        private static string ExtractPropertyNameFromExpresssion<T>(Expression<Func<T, object>> propertyLambda)
+        private static string ExtractPropertyNameFromExpresssion<T>(Expression<Func<T>> propertyLambda)
         {
             if (propertyLambda.NodeType != ExpressionType.Lambda)
             {

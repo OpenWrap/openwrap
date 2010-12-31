@@ -52,7 +52,7 @@ namespace OpenWrap.Windows.MainWindow
             set
             {
                 _selectedNoun = value;
-                RaisePropertyChanged<MainViewModel>(o => o.SelectedNoun);
+                RaisePropertyChanged(() => this.SelectedNoun);
             }
         }
 

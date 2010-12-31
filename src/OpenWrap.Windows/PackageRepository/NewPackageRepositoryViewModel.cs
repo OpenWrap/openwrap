@@ -38,7 +38,7 @@ namespace OpenWrap.Windows.PackageRepository
                 if (_repositoryUrl != value)
                 {
                     _repositoryUrl = value;
-                    RaisePropertyChanged<NewPackageRepositoryViewModel>(o => o.RepositoryUrl);
+                    RaisePropertyChanged(() => this.RepositoryUrl);
                 }
             }
         }
@@ -54,7 +54,7 @@ namespace OpenWrap.Windows.PackageRepository
                 if (_repositoryName != value)
                 {
                     _repositoryName = value;
-                    RaisePropertyChanged<NewPackageRepositoryViewModel>(o => o.RepositoryName);
+                    RaisePropertyChanged(() => this.RepositoryName);
                 }
             }
         }
