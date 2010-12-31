@@ -7,37 +7,43 @@ using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Build;
 using OpenWrap.Build.PackageBuilders;
 using OpenWrap.Runtime;
-using OpenWrap.Tests.Build.package_builder_specs.context;
+using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
 
 namespace OpenWrap.Tests.Build.package_builder_specs
 {
-    public class msbuild_builder_spec : msbuild_builder
+    public class building_for_implicit_projects_without_source_folder : contexts.msbuild_builder
     {
-        [Test]
-        public void does_require_src_folder_for_implicit_projects()
+        public building_for_implicit_projects_without_source_folder()
         {
-            given_a_working_dir_without_src_folder();
+            given_working_dir_without_source_folder();
             given_an_existing_file_in_working_dir("test1.csproj");
 
             when_building_package();
-
-            should_contain_error_about_src();
         }
 
         [Test]
-        public void doesnt_require_src_folder_for_explicit_projects()
+        public void soource_folder_is_not_required()
         {
-            given_a_working_dir_without_src_folder();
+            SrcRelatedErrorResults.ShouldNotBeEmpty();
+        }
+    }
+    public class building_for_explicit_projects_without_source_folder : contexts.msbuild_builder
+    {
+        public building_for_explicit_projects_without_source_folder()
+        {
+            given_working_dir_without_source_folder();
             given_an_existing_file_in_working_dir("test1.csproj");
 
             when_building_package_for("test1.csproj");
-
-            should_not_contain_error_about_src();
+        }
+        [Test]
+        public void source_folder_is_required()
+        {
+            SrcRelatedErrorResults.ShouldBeEmpty();
         }
     }
-
-    namespace context
+    namespace contexts
     {
         public abstract class msbuild_builder
         {
@@ -45,48 +51,30 @@ namespace OpenWrap.Tests.Build.package_builder_specs
             IFileSystem _fileSystem;
             IDirectory _testDir;
 
-            IEnumerable<ErrorBuildResult> SrcRelatedErrorResults
+            protected IEnumerable<ErrorBuildResult> SrcRelatedErrorResults
             {
                 get
                 {
-                    return (from r in _buildResults
-                            where r is ErrorBuildResult && r.Message != null && r.Message.Contains("src")
-                            select (ErrorBuildResult)r);
+                    return _buildResults.OfType<ErrorBuildResult>().Where(r => r.Message != null && r.Message.Contains("src"));
                 }
             }
 
-            [SetUp]
-            public void Init()
+
+            public msbuild_builder()
             {
-                _testDir = null;
                 _fileSystem = new InMemoryFileSystem();
+                _testDir = _fileSystem.CreateDirectory("testdir");
             }
 
-            protected void given_a_working_dir_without_src_folder()
+            protected void given_working_dir_without_source_folder()
             {
-                Assert.IsNull(_testDir, "Test directory already initialized");
-                _testDir = _fileSystem.CreateDirectory("testdir");
                 _testDir.GetFile("test.wrapdesc").MustExist();
             }
 
             protected void given_an_existing_file_in_working_dir(string fileName)
             {
-                Assert.IsNotNull(_testDir, "Working dir was not initialized");
+                _testDir = _fileSystem.CreateDirectory("testdir");
                 _testDir.GetFile(fileName).MustExist();
-            }
-
-            protected void should_contain_error_about_src()
-            {
-                Assert.IsNotNull(_buildResults, "Build results were not initialized");
-                var srcErrors = SrcRelatedErrorResults.ToList();
-                Assert.IsNotEmpty(srcErrors, "Got build error: {0}", (srcErrors.FirstOrDefault() ?? new ErrorBuildResult("no error?!")).Message);
-            }
-
-            protected void should_not_contain_error_about_src()
-            {
-                Assert.IsNotNull(_buildResults, "Build results were not initialized");
-                var srcErrors = SrcRelatedErrorResults.ToList();
-                Assert.IsEmpty(srcErrors, "Got build error: {0}", (srcErrors.FirstOrDefault() ?? new ErrorBuildResult("no error?!")).Message);
             }
 
             protected void when_building_package()
