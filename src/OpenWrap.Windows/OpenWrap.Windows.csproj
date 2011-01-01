@@ -67,10 +67,10 @@
     </ApplicationDefinition>
     <Compile Include="MainWindow\PopulateMainData.cs" />
     <Compile Include="NounVerb\NullCommandDescriptor.cs" />
-    <Compile Include="PackageRepository\AddRepositoryWindow.xaml.cs">
-      <DependentUpon>AddRepositoryWindow.xaml</DependentUpon>
+    <Compile Include="PackageRepository\AddPackageRepositoryWindow.xaml.cs">
+      <DependentUpon>AddPackageRepositoryWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PackageRepository\NewPackageRepositoryViewModel.cs" />
+    <Compile Include="PackageRepository\AddPackageRepositoryViewModel.cs" />
     <Compile Include="Controls\PackageControl.xaml.cs">
       <DependentUpon>PackageControl.xaml</DependentUpon>
     </Compile>
@@ -92,7 +92,7 @@
     <Compile Include="NounVerb\VerbSlice.cs" />
     <Compile Include="NounVerb\WrapSlice.cs" />
     <Compile Include="Package\PackageViewModel.cs" />
-    <Page Include="PackageRepository\AddRepositoryWindow.xaml">
+    <Page Include="PackageRepository\AddPackageRepositoryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5,9 +5,9 @@ using OpenWrapAddRemoteCommand = OpenWrap.Commands.Remote.AddRemoteCommand;
 
 namespace OpenWrap.Windows.PackageRepository
 {
-    public class AddPackageRepositoryCommand : CommandBase<NewPackageRepositoryViewModel>
+    public class AddPackageRepositoryCommand : CommandBase<AddPackageRepositoryViewModel>
     {
-        protected override void Execute(NewPackageRepositoryViewModel parameter)
+        protected override void Execute(AddPackageRepositoryViewModel parameter)
         {
             OpenWrapAddRemoteCommand openWrapCommand = new OpenWrapAddRemoteCommand
             {

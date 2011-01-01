@@ -1,20 +1,27 @@
-﻿using System.Windows.Input;
-using OpenWrap.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Input;
 using OpenWrap.Windows.Framework;
 
 namespace OpenWrap.Windows.PackageRepository
 {
-    public class NewPackageRepositoryViewModel : ViewModelBase
+    public class AddPackageRepositoryViewModel : ViewModelBase
     {
-        private readonly ICommand _cancelCommand;
+        private readonly ICommand _closeCommand;
         private readonly ICommand _addRepositoryCommand = new AddPackageRepositoryCommand();
+        private readonly ICommand _addRepositoryAndCloseCommand;
 
         private string _repositoryUrl;
         private string _repositoryName;
 
-        public NewPackageRepositoryViewModel()
+        public AddPackageRepositoryViewModel()
         {
-            _cancelCommand = new ActionCommand<AddRepositoryWindow>(w => w.Close());
+            _closeCommand = new ActionCommand<Window>(w => w.Close());
+            _addRepositoryAndCloseCommand = new ActionCommand<AddPackageRepositoryWindow>(AddRepositoryAndClose);
+        }
+
+        public ICommand AddRepositoryAndCloseCommand
+        {
+            get { return _addRepositoryAndCloseCommand; }
         }
 
         public ICommand AddRepositoryCommand
@@ -22,9 +29,9 @@ namespace OpenWrap.Windows.PackageRepository
             get { return _addRepositoryCommand; }
         }
 
-        public ICommand CancelCommand
+        public ICommand CloseCommand
         {
-            get { return _cancelCommand; }
+            get { return _closeCommand; }
         }
 
         public string RepositoryUrl
@@ -57,6 +64,13 @@ namespace OpenWrap.Windows.PackageRepository
                     RaisePropertyChanged(() => this.RepositoryName);
                 }
             }
+        }
+
+        static void AddRepositoryAndClose(AddPackageRepositoryWindow window)
+        {
+            AddPackageRepositoryViewModel vm = (AddPackageRepositoryViewModel)window.DataContext;
+            vm.AddRepositoryCommand.Execute(vm);
+            window.Close();
         }
     }
 }
