@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Windows.Framework;
 
@@ -13,7 +14,7 @@ namespace OpenWrap.Windows.Package
                     Name = parameter.Name
             };
 
-            CommandOutput = addWrapCommand.Execute();
+            CommandOutput = addWrapCommand.Execute().ToList();
         }
     }
 }

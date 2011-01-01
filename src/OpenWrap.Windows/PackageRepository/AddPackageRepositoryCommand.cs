@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OpenWrap.Windows.Framework;
 using OpenWrapAddRemoteCommand = OpenWrap.Commands.Remote.AddRemoteCommand;
 
@@ -14,7 +15,7 @@ namespace OpenWrap.Windows.PackageRepository
                     Href = new Uri(parameter.RepositoryUrl)
             };
 
-            CommandOutput = openWrapCommand.Execute();
+            CommandOutput = openWrapCommand.Execute().ToList();
         }
     }
 }

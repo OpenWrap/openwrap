@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using OpenWrap.Windows.Framework;
 using OpenWrapRemoveRemoteCommand = OpenWrap.Commands.Remote.RemoveRemoteCommand;
 
@@ -13,7 +14,7 @@ namespace OpenWrap.Windows.PackageRepository
                 Name = parameter.Name
             };
 
-            CommandOutput = removeRemoteCommand.Execute();
+            CommandOutput = removeRemoteCommand.Execute().ToList();
         }
     }
 }
