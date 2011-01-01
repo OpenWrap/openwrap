@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using OpenWrap.Windows.Framework;
+using OpenWrap.Windows.Framework.Messaging;
 using OpenWrap.Windows.NounVerb;
 using OpenWrap.Windows.Package;
 using OpenWrap.Windows.PackageRepository;
@@ -19,6 +20,11 @@ namespace OpenWrap.Windows.MainWindow
         private readonly ICommand _populateDataCommand = new PopulateMainData();
 
         private NounSlice _selectedNoun;
+
+        public MainViewModel()
+        {
+            Messenger.Default.Subcribe("PackageListChanged", this, PackageListChanged);
+        }
 
         public ObservableCollection<NounSlice> Nouns
         {
@@ -64,6 +70,11 @@ namespace OpenWrap.Windows.MainWindow
         public void PopulateData()
         {
             _populateDataCommand.Execute(this);
+        }
+
+        private void PackageListChanged()
+        {
+            PopulateData();
         }
     }
 }

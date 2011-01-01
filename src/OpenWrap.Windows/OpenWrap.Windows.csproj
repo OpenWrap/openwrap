@@ -65,6 +65,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommandOutput\CommandOutputControl.xaml.cs">
+      <DependentUpon>CommandOutputControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CommandOutput\CommandOutputControlViewModel.cs" />
+    <Compile Include="Framework\Messaging\Recipient.cs" />
+    <Compile Include="Framework\Messaging\Messenger.cs" />
+    <Compile Include="Framework\Messaging\RecipientGeneric.cs" />
+    <Compile Include="Framework\Messaging\Recipients.cs" />
     <Compile Include="MainWindow\PopulateMainData.cs" />
     <Compile Include="NounVerb\NullCommandDescriptor.cs" />
     <Compile Include="PackageRepository\AddPackageRepositoryWindow.xaml.cs">
@@ -92,6 +100,10 @@
     <Compile Include="NounVerb\VerbSlice.cs" />
     <Compile Include="NounVerb\WrapSlice.cs" />
     <Compile Include="Package\PackageViewModel.cs" />
+    <Page Include="CommandOutput\CommandOutputControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PackageRepository\AddPackageRepositoryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

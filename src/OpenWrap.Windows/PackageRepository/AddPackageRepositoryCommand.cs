@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using OpenWrap.Windows.Framework;
+using OpenWrap.Windows.Framework.Messaging;
 using OpenWrapAddRemoteCommand = OpenWrap.Commands.Remote.AddRemoteCommand;
 
 namespace OpenWrap.Windows.PackageRepository
@@ -16,6 +17,8 @@ namespace OpenWrap.Windows.PackageRepository
             };
 
             CommandOutput = openWrapCommand.Execute().ToList();
+
+            Messenger.Default.Send("PackageListChanged");
         }
     }
 }

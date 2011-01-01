@@ -26,18 +26,18 @@ namespace OpenWrap.Windows.MainWindow
             parameter.Nouns.Clear();
             parameter.Nouns.AddRange(nouns);
 
-            var env = Services.Services.GetService<IEnvironment>();
+            var environment = Services.Services.GetService<IEnvironment>();
 
-            if (env != null)
+            if (environment != null)
             {
                 parameter.PackageRepositories.Clear();
-                parameter.PackageRepositories.AddRange(ReadPackageRepositories(env.RemoteRepositories));
+                parameter.PackageRepositories.AddRange(ReadPackageRepositories(environment.RemoteRepositories));
 
                 parameter.SystemPackages.Clear();
-                parameter.SystemPackages.AddRange(ReadPackages(env.SystemRepository));
+                parameter.SystemPackages.AddRange(ReadPackages(environment.SystemRepository));
 
                 parameter.ProjectPackages.Clear();
-                parameter.ProjectPackages.AddRange(ReadPackages(env.ProjectRepository));
+                parameter.ProjectPackages.AddRange(ReadPackages(environment.ProjectRepository));
             }
         }
 
