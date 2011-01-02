@@ -69,6 +69,7 @@
       <DependentUpon>CommandOutputControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="CommandOutput\CommandOutputControlViewModel.cs" />
+    <Compile Include="Framework\Messaging\CommandHelper.cs" />
     <Compile Include="Framework\Messaging\Recipient.cs" />
     <Compile Include="Framework\Messaging\Messenger.cs" />
     <Compile Include="Framework\Messaging\RecipientGeneric.cs" />

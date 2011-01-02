@@ -15,8 +15,7 @@ namespace OpenWrap.Windows.PackageRepository
                 Name = parameter.Name
             };
 
-            CommandOutput = removeRemoteCommand.Execute().ToList();
-
+            CommandHelper.ExecuteAndSend(removeRemoteCommand);
             Messenger.Default.Send("PackageListChanged");
         }
     }

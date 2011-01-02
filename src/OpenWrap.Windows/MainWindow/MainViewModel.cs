@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
+using OpenWrap.Windows.CommandOutput;
 using OpenWrap.Windows.Framework;
 using OpenWrap.Windows.Framework.Messaging;
 using OpenWrap.Windows.NounVerb;
@@ -15,6 +16,8 @@ namespace OpenWrap.Windows.MainWindow
         private readonly ObservableCollection<PackageViewModel> _systemPackages = new ObservableCollection<PackageViewModel>();
         private readonly ObservableCollection<PackageViewModel> _projectPackages = new ObservableCollection<PackageViewModel>();
         private readonly ObservableCollection<NounSlice> _nouns = new ObservableCollection<NounSlice>();
+
+        readonly CommandOutputControlViewModel _commandOutput = new CommandOutputControlViewModel();
 
         private readonly ICommand _addPackageRepositoryDialogCommand = new AddPackageRepositoryDialogCommand();
         private readonly ICommand _populateDataCommand = new PopulateMainData();
@@ -65,6 +68,11 @@ namespace OpenWrap.Windows.MainWindow
         public ICommand AddPackageRepositoryDialogCommand
         {
             get { return _addPackageRepositoryDialogCommand; }
+        }
+
+        public CommandOutputControlViewModel CommandOutput
+        {
+            get { return _commandOutput; }
         }
 
         public void PopulateData()

@@ -10,14 +10,13 @@ namespace OpenWrap.Windows.PackageRepository
     {
         protected override void Execute(AddPackageRepositoryViewModel parameter)
         {
-            OpenWrapAddRemoteCommand openWrapCommand = new OpenWrapAddRemoteCommand
+            OpenWrapAddRemoteCommand addRemoteCommand = new OpenWrapAddRemoteCommand
             {
                     Name = parameter.RepositoryName, 
                     Href = new Uri(parameter.RepositoryUrl)
             };
 
-            CommandOutput = openWrapCommand.Execute().ToList();
-
+            CommandHelper.ExecuteAndSend(addRemoteCommand);
             Messenger.Default.Send("PackageListChanged");
         }
     }
