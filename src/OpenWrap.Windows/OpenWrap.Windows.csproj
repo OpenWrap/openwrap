@@ -86,7 +86,7 @@
     <Compile Include="Controls\PackageGroupControl.xaml.cs">
       <DependentUpon>PackageGroupControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PackageRepositoryControl.xaml.cs">
+    <Compile Include="PackageRepository\PackageRepositoryControl.xaml.cs">
       <DependentUpon>PackageRepositoryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\ActionCommand.cs" />
@@ -117,7 +117,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PackageRepositoryControl.xaml">
+    <Page Include="PackageRepository\PackageRepositoryControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

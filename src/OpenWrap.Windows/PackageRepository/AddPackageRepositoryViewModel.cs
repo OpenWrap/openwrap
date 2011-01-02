@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using OpenWrap.Windows.Framework;
 
@@ -16,7 +17,7 @@ namespace OpenWrap.Windows.PackageRepository
         public AddPackageRepositoryViewModel()
         {
             _closeCommand = new ActionCommand<Window>(w => w.Close());
-            _addRepositoryAndCloseCommand = new ActionCommand<AddPackageRepositoryWindow>(AddRepositoryAndClose);
+            _addRepositoryAndCloseCommand = new ActionCommand<AddPackageRepositoryWindow>(AddRepositoryAndClose, CanAddRepositoryAndClose);
         }
 
         public ICommand AddRepositoryAndCloseCommand
@@ -66,11 +67,22 @@ namespace OpenWrap.Windows.PackageRepository
             }
         }
 
-        static void AddRepositoryAndClose(AddPackageRepositoryWindow window)
+        private static void AddRepositoryAndClose(AddPackageRepositoryWindow window)
         {
             AddPackageRepositoryViewModel vm = (AddPackageRepositoryViewModel)window.DataContext;
             vm.AddRepositoryCommand.Execute(vm);
             window.Close();
+        }
+
+        private static bool CanAddRepositoryAndClose(AddPackageRepositoryWindow window)
+        {
+            if (window == null)
+            {
+                return false;
+            }
+
+            AddPackageRepositoryViewModel vm = (AddPackageRepositoryViewModel)window.DataContext;
+            return vm.AddRepositoryCommand.CanExecute(vm);
         }
     }
 }

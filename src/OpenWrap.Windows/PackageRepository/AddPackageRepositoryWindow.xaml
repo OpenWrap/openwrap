@@ -16,9 +16,9 @@
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0" Grid.ColumnSpan="2" Content="Enter new Repository" HorizontalAlignment="Center" />
         <Label Grid.Row="1" Grid.Column="0" Content="Name:" />
-        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="100" Margin="2" Text="{Binding RepositoryName}" />
+        <TextBox Grid.Row="1" Grid.Column="1" MinWidth="100" Margin="2" Text="{Binding RepositoryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Label Grid.Row="2" Grid.Column="0" Content="Url:" />
-        <TextBox Grid.Row="2" Grid.Column="1" MinWidth="100" Margin="2" Text="{Binding RepositoryUrl}" />
+        <TextBox Grid.Row="2" Grid.Column="1" MinWidth="100" Margin="2" Text="{Binding RepositoryUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="3" Grid.ColumnSpan="2">
             <Button Content="Add" IsDefault="True" Width="50" Margin="2" Padding="2" 
                     Command="{Binding AddRepositoryAndCloseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />

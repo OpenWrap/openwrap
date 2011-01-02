@@ -135,6 +135,7 @@ namespace OpenWrap.Windows.MainWindow
 
                 IEnumerable<PackageGroupViewModel> packages = TranslateAndGroupPackages(packageRepository.PackagesByName.NotNull());
                 viewModel.PackageGroups.AddRange(packages);
+                viewModel.UpdatePackagesCountText();
 
                 results.Add(viewModel);
             }
