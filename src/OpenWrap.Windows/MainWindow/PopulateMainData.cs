@@ -26,7 +26,7 @@ namespace OpenWrap.Windows.MainWindow
             parameter.Nouns.Clear();
             parameter.Nouns.AddRange(nouns);
 
-            var environment = Services.Services.GetService<IEnvironment>();
+            IEnvironment environment = GetEnvironment();
 
             if (environment != null)
             {
@@ -39,6 +39,13 @@ namespace OpenWrap.Windows.MainWindow
                 parameter.ProjectPackages.Clear();
                 parameter.ProjectPackages.AddRange(ReadPackages(environment.ProjectRepository));
             }
+        }
+
+        private static IEnvironment GetEnvironment()
+        {
+            var environment = new CurrentDirectoryEnvironment();
+            environment.Initialize();
+            return environment;
         }
 
         private static NounSlice CreateNounSlice(IGrouping<string, ICommandDescriptor> x)
@@ -95,7 +102,7 @@ namespace OpenWrap.Windows.MainWindow
             return result;
         }
 
-        static PackageViewModel TranslatePackage(IPackageInfo packageInfo)
+        private static PackageViewModel TranslatePackage(IPackageInfo packageInfo)
         {
             return new PackageViewModel
             {
