@@ -48,7 +48,9 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal">
-                        <Button Content="Add package repository" Margin="2" Padding="2" Command="{Binding AddPackageRepositoryDialogCommand}" />
+                        <Button Content="Add package repository" Margin="2" Padding="2" 
+                            Command="{Binding AddPackageRepositoryDialogCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
                     </StackPanel>
                     <ListBox Grid.Row="1" ItemsSource="{Binding PackageRepositories}" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
