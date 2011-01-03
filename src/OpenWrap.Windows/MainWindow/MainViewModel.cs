@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using OpenWrap.Windows.CommandOutput;
 using OpenWrap.Windows.Framework;
-using OpenWrap.Windows.Framework.Messaging;
 using OpenWrap.Windows.NounVerb;
 using OpenWrap.Windows.Package;
 using OpenWrap.Windows.PackageRepository;
@@ -12,22 +11,16 @@ namespace OpenWrap.Windows.MainWindow
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly ObservableCollection<PackageRepositoryViewModel> _packageRepositories = new ObservableCollection<PackageRepositoryViewModel>();
         private readonly ObservableCollection<PackageViewModel> _systemPackages = new ObservableCollection<PackageViewModel>();
         private readonly ObservableCollection<PackageViewModel> _projectPackages = new ObservableCollection<PackageViewModel>();
         private readonly ObservableCollection<NounSlice> _nouns = new ObservableCollection<NounSlice>();
+        readonly PackageRepositoriesViewModel _packageRepositoriesViewModel = new PackageRepositoriesViewModel();
 
         readonly CommandOutputControlViewModel _commandOutput = new CommandOutputControlViewModel();
 
-        private readonly ICommand _addPackageRepositoryDialogCommand = new AddPackageRepositoryDialogCommand();
         private readonly ICommand _populateDataCommand = new PopulateMainData();
 
         private NounSlice _selectedNoun;
-
-        public MainViewModel()
-        {
-            Messenger.Default.Subcribe("PackageListChanged", this, PackageListChanged);
-        }
 
         public ObservableCollection<NounSlice> Nouns
         {
@@ -47,11 +40,6 @@ namespace OpenWrap.Windows.MainWindow
             get { return _projectPackages; }
         }
 
-        public ObservableCollection<PackageRepositoryViewModel> PackageRepositories
-        {
-            get { return _packageRepositories; }
-        }
-
         public NounSlice SelectedNoun
         {
             get
@@ -65,24 +53,19 @@ namespace OpenWrap.Windows.MainWindow
             }
         }
 
-        public ICommand AddPackageRepositoryDialogCommand
-        {
-            get { return _addPackageRepositoryDialogCommand; }
-        }
-
         public CommandOutputControlViewModel CommandOutput
         {
             get { return _commandOutput; }
         }
 
+        public PackageRepositoriesViewModel PackageRepositoriesViewModel
+        {
+            get { return _packageRepositoriesViewModel; }
+        }
+
         public void PopulateData()
         {
             _populateDataCommand.Execute(this);
-        }
-
-        private void PackageListChanged()
-        {
-            PopulateData();
         }
     }
 }

@@ -11,6 +11,7 @@ using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Runtime;
 using OpenWrap.Tasks;
+using OpenWrap.Windows.Framework.Messaging;
 using OpenWrap.Windows.MainWindow;
 
 namespace OpenWrap.Windows
@@ -24,7 +25,13 @@ namespace OpenWrap.Windows
         {
             RegisterServices();
             ShowMainWindow();
+            SendInitalDataPopulationMessage();
             base.OnStartup(e);
+        }
+
+        private static void SendInitalDataPopulationMessage()
+        {
+            Messenger.Default.Send("PackageListChanged");
         }
 
         private static void RegisterServices()

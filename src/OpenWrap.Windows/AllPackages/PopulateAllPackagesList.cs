@@ -26,7 +26,7 @@ namespace OpenWrap.Windows.AllPackages
                 foreach (IGrouping<string, IPackageInfo> packageGroup in repository.PackagesByName.NotNull())
                 {
                     IPackage latestVersion = GetLatestVersion(packageGroup);
-                    PackageViewModel packageViewModel = new PackageViewModel()
+                    PackageViewModel packageViewModel = new PackageViewModel
                         {
                             Name = latestVersion.Name,
                             Description = latestVersion.Description,

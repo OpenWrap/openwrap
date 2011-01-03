@@ -19,7 +19,6 @@ namespace OpenWrap.Windows.MainWindow
         protected override void Execute(MainViewModel parameter)
         {
             // todo: constructor-inject some services
-            // also, this could be more than once command since it sets up various data
             var commands = Services.Services.GetService<ICommandRepository>();
             var nouns = commands != null ? RealCommands(commands) : MockCommands();
 
@@ -30,9 +29,6 @@ namespace OpenWrap.Windows.MainWindow
 
             if (environment != null)
             {
-                parameter.PackageRepositories.Clear();
-                parameter.PackageRepositories.AddRange(ReadPackageRepositories(environment.RemoteRepositories));
-
                 parameter.SystemPackages.Clear();
                 parameter.SystemPackages.AddRange(ReadPackages(environment.SystemRepository));
 
@@ -82,26 +78,6 @@ namespace OpenWrap.Windows.MainWindow
             return result;
         }
 
-        private static IEnumerable<PackageGroupViewModel> TranslateAndGroupPackages(IEnumerable<IGrouping<string, IPackageInfo>> packageGroups)
-        {
-            List<PackageGroupViewModel> result = new List<PackageGroupViewModel>();
-
-            foreach (IGrouping<string, IPackageInfo> packageGroup in packageGroups)
-            {
-                PackageGroupViewModel packageGroupViewModel = new PackageGroupViewModel();
-                packageGroupViewModel.Name = packageGroup.Key;
-                foreach (var packageInfo in packageGroup)
-                {
-                    PackageViewModel viewModel = TranslatePackage(packageInfo);
-                    packageGroupViewModel.Versions.Add(viewModel);
-                }
-
-                result.Add(packageGroupViewModel);
-            }
-
-            return result;
-        }
-
         private static PackageViewModel TranslatePackage(IPackageInfo packageInfo)
         {
             return new PackageViewModel
@@ -120,27 +96,6 @@ namespace OpenWrap.Windows.MainWindow
         private static IEnumerable<PackageViewModel> ReadPackages(IPackageRepository repository)
         {
             return TranslatePackages(repository.PackagesByName.NotNull());
-        }
-
-        private static IEnumerable<PackageRepositoryViewModel> ReadPackageRepositories(IEnumerable<IPackageRepository> remoteRepositories)
-        {
-            List<PackageRepositoryViewModel> results = new List<PackageRepositoryViewModel>();
-
-            foreach (var packageRepository in remoteRepositories)
-            {
-                PackageRepositoryViewModel viewModel = new PackageRepositoryViewModel
-                {
-                    Name = packageRepository.Name
-                };
-
-                IEnumerable<PackageGroupViewModel> packages = TranslateAndGroupPackages(packageRepository.PackagesByName.NotNull());
-                viewModel.PackageGroups.AddRange(packages);
-                viewModel.UpdatePackagesCountText();
-
-                results.Add(viewModel);
-            }
-
-            return results;
         }
     }
 }

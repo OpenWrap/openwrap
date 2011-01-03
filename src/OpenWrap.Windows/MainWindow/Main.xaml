@@ -23,6 +23,15 @@
                     <ContentPresenter Grid.Column="1" Grid.Row="1" Content="{Binding SelectedNoun}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 </Grid>
             </TabItem>
+            <TabItem Header="All Packages">
+                <ListBox ItemsSource="{Binding AllPackages}" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Controls:PackageControl />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </TabItem>
             <TabItem Header="System Packages">
                 <ListBox ItemsSource="{Binding SystemPackages}" HorizontalContentAlignment="Stretch">
                     <ListBox.ItemTemplate>
@@ -49,10 +58,10 @@
                     </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal">
                         <Button Content="Add package repository" Margin="2" Padding="2" 
-                            Command="{Binding AddPackageRepositoryDialogCommand}"
+                            Command="{Binding PackageRepositoriesViewModel.AddPackageRepositoryDialogCommand}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
                     </StackPanel>
-                    <ListBox Grid.Row="1" ItemsSource="{Binding PackageRepositories}" HorizontalContentAlignment="Stretch">
+                    <ListBox Grid.Row="1" ItemsSource="{Binding PackageRepositoriesViewModel.PackageRepositories}" HorizontalContentAlignment="Stretch">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <PackageRepository:PackageRepositoryControl />

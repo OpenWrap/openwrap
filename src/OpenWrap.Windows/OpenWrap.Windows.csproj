@@ -89,12 +89,14 @@
     <Compile Include="PackageRepository\AddPackageRepositoryWindow.xaml.cs">
       <DependentUpon>AddPackageRepositoryWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PackageRepository\PackageRepositoriesViewModel.cs" />
     <Compile Include="PackageRepository\PackageRepositoryControl.xaml.cs">
       <DependentUpon>PackageRepositoryControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Framework\ActionCommand.cs" />
     <Compile Include="Framework\CommandBase.cs" />
     <Compile Include="PackageRepository\AddPackageRepositoryDialogCommand.cs" />
+    <Compile Include="PackageRepository\PopulateRepositoryData.cs" />
     <Compile Include="Package\AddPackageCommand.cs" />
     <Compile Include="AllPackages\PackageViewModel.cs" />
     <Compile Include="Package\PackageGroupViewModel.cs" />
