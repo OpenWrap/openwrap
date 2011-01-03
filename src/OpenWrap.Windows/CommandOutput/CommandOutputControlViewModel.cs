@@ -16,7 +16,7 @@ namespace OpenWrap.Windows.CommandOutput
         
         public CommandOutputControlViewModel()
         {
-            Messenger.Default.Subcribe<IEnumerable<ICommandOutput>>("CommandOutput", this, ReadCommandOutput);
+            Messenger.Default.Subcribe<IEnumerable<ICommandOutput>>(MessageNames.CommandOutput, this, ReadCommandOutput);
         }
 
         public string CommandOutput

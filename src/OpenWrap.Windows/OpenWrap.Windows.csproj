@@ -65,6 +65,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AllPackages\AllPackagesControl.xaml.cs">
+      <DependentUpon>AllPackagesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AllPackages\AllPackagesViewModel.cs" />
     <Compile Include="AllPackages\PopulateAllPackagesList.cs" />
     <Compile Include="CommandOutput\CommandOutputControl.xaml.cs">
@@ -78,6 +81,7 @@
     <Compile Include="Framework\Messaging\Recipients.cs" />
     <Compile Include="Framework\WpfHelpers.cs" />
     <Compile Include="MainWindow\PopulateMainData.cs" />
+    <Compile Include="MessageNames.cs" />
     <Compile Include="NounVerb\NullCommandDescriptor.cs" />
     <Compile Include="PackageRepository\AddPackageRepositoryViewModel.cs" />
     <Compile Include="Controls\PackageControl.xaml.cs">
@@ -97,6 +101,9 @@
     <Compile Include="Framework\CommandBase.cs" />
     <Compile Include="PackageRepository\AddPackageRepositoryDialogCommand.cs" />
     <Compile Include="PackageRepository\PopulateRepositoryData.cs" />
+    <Compile Include="PackageRepository\PackageRepositoriesControl.xaml.cs">
+      <DependentUpon>PackageRepositoriesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Package\AddPackageCommand.cs" />
     <Compile Include="AllPackages\PackageViewModel.cs" />
     <Compile Include="Package\PackageGroupViewModel.cs" />
@@ -107,6 +114,10 @@
     <Compile Include="NounVerb\VerbSlice.cs" />
     <Compile Include="NounVerb\WrapSlice.cs" />
     <Compile Include="Package\PackageViewModel.cs" />
+    <Page Include="AllPackages\AllPackagesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CommandOutput\CommandOutputControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -140,6 +151,10 @@
       <DependentUpon>Main.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="PackageRepository\PackageRepositoriesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindow\MainViewModel.cs" />

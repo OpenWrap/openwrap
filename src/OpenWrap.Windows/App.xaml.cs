@@ -31,7 +31,7 @@ namespace OpenWrap.Windows
 
         private static void SendInitalDataPopulationMessage()
         {
-            Messenger.Default.Send("PackageListChanged");
+            Messenger.Default.Send(MessageNames.RepositoryListChanged);
         }
 
         private static void RegisterServices()

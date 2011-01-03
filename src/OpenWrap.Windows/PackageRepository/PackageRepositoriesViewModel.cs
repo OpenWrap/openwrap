@@ -15,7 +15,7 @@ namespace OpenWrap.Windows.PackageRepository
 
         public PackageRepositoriesViewModel()
         {
-            Messenger.Default.Subcribe("PackageListChanged", this, PackageListChanged);
+            Messenger.Default.Subcribe(MessageNames.RepositoryListChanged, this, PackageListChanged);
         }
 
         public ObservableCollection<PackageRepositoryViewModel> PackageRepositories
