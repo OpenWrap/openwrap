@@ -33,7 +33,6 @@ namespace OpenWrap.Commands.Wrap
                 _remoteSet = true;
             }
         }
-        protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {
             var repoToList = GetRepositoryToList();

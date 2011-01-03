@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using OpenWrap.Configuration;
-using OpenWrap.Services;
+
 
 namespace OpenWrap.Commands.Remote
 {
@@ -36,7 +35,8 @@ namespace OpenWrap.Commands.Remote
         IEnumerable<ICommandOutput> AddRemote()
         {
             var repositories = ConfigurationManager.LoadRemoteRepositories();
-            int position = GetNewRemotePosition(repositories); repositories[Name] = new RemoteRepository
+            int position = GetNewRemotePosition(repositories); 
+            repositories[Name] = new RemoteRepository
             {
                 Href = Href,
                 Name = Name,

@@ -11,7 +11,7 @@ namespace OpenWrap.Repositories.NuGet
             return new PackageDocument
             {
                     CanPublish = false,
-                    Packages = this.Items.Cast<NuGetSyndicationItem>().Select(x => x.ToPackage()).ToList()
+                    Packages = Items.Cast<NuGetSyndicationItem>().Select(x => x.ToPackage()).ToList()
             };
         }
 

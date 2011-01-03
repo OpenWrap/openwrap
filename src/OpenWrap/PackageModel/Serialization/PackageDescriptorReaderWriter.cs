@@ -16,7 +16,7 @@ namespace OpenWrap.PackageModel.Serialization
 
         // TODO: Read-retry should be part of an extension method that can be reused for reading the index in indexed folder repositories.
 
-        static readonly Regex _lineParser = new Regex(@"^\s*(?<fieldname>[0-9a-zA-Z\-\.]*)\s*:\s*(?<fieldvalue>.*)\s*$", RegexOptions.Compiled);
+        static readonly Regex _lineParser = new Regex(@"^\s*(?<fieldname>[0-9a-zA-Z\-\.]*?)\s*:\s*(?<fieldvalue>.*?)\s*$", RegexOptions.Compiled);
 
         public PackageDescriptor Read(IFile filePath)
         {

@@ -82,6 +82,7 @@
     <Compile Include="Build\PackageBuilders\AbstractProcessPackageBuilder.cs" />
     <Compile Include="Build\PackageBuilders\CommandLinePackageBuilder.cs" />
     <Compile Include="Build\ErrorBuildResult.cs" />
+    <Compile Include="Build\PackageBuilders\FilePackageBuilder.cs" />
     <Compile Include="Build\PackageBuilders\MSBuildPackageBuilder.cs" />
     <Compile Include="Build\FileBuildResult.cs" />
     <Compile Include="Build\PackageBuilders\IPackageBuilder.cs" />

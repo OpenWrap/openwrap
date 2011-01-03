@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Xml;
 using OpenRasta.Client;
@@ -48,7 +50,24 @@ namespace OpenWrap.Repositories.NuGet
         void EnsureFeedLoaded()
         {
             if (_packageDocument == null)
-                _packageDocument = SyndicationFeed.Load<NuGetSyndicationFeed>(XmlReader.Create(_feedUri.ToString())).ToPackageDocument();
+            {
+                var feed = LoadFeed(_feedUri.ToString());
+                var packages = new List<PackageItem>(feed.ToPackageDocument().Packages);
+                
+                SyndicationLink nextLink;
+                while ((nextLink = feed.Links.SingleOrDefault(x => x.RelationshipType.EqualsNoCase("next"))) != null)
+                {
+                    feed = LoadFeed(nextLink.GetAbsoluteUri().ToString());
+                    packages.AddRange(feed.ToPackageDocument().Packages);
+                }
+                _packageDocument = new PackageDocument() { Packages = packages.AsReadOnly() };
+            }
+        }
+
+        NuGetSyndicationFeed LoadFeed(string feedUri)
+        {
+            using(var xmlReader = XmlReader.Create(feedUri))
+                return SyndicationFeed.Load<NuGetSyndicationFeed>(xmlReader);
         }
     }
 }

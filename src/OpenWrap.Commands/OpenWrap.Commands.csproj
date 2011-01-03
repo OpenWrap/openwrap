@@ -62,7 +62,6 @@
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
     <Compile Include="Wrap\DependenciesConflictMessage.cs" />
-    <Compile Include="Wrap\FilePackageBuilder.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
     <Compile Include="Wrap\UpdatePackageVertex.cs" />
     <Compile Include="Wrap\WrapCommand.cs" />

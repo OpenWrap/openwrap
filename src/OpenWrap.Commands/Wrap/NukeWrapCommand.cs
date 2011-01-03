@@ -19,8 +19,6 @@ namespace OpenWrap.Commands.Wrap
         public string Version { get; set; }
 
 
-        protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
-
         public override IEnumerable<ICommandOutput> Execute()
         {
             IPackageRepository repo = GetRemoteRepository(Remote);

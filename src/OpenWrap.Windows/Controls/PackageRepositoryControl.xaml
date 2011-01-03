@@ -14,8 +14,11 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
-            <Label Content="{Binding Name}" FontWeight="Bold" FontSize="16" />
+    
+            <StackPanel Orientation="Horizontal">    
+              <Label Content="{Binding Name}" FontWeight="Bold" FontSize="16" />
+              <Button Content="Remove" Command="{Binding RemoveCommand}" CommandParameter="{Binding}" />
+            </StackPanel>
             <Label Grid.Row="1" Content="Packages" />
             <ListBox Grid.Row="2" ItemsSource="{Binding PackageGroups}" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
