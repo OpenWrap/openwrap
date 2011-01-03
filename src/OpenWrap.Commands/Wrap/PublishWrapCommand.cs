@@ -36,7 +36,7 @@ namespace OpenWrap.Commands.Wrap
 
         public override IEnumerable<ICommandOutput> Execute()
         {
-            return AnyErrorBreaks(ValidateInputs()).Or(ValidatePackageDoesntExist()).Or(ExecuteCore());
+            return RelaxedEither(ValidateInputs()).Or(ValidatePackageDoesntExist()).Or(ExecuteCore());
         }
 
         IEnumerable<ICommandOutput> ValidatePackageDoesntExist()

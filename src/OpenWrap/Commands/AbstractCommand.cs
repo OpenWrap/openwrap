@@ -13,7 +13,7 @@ namespace OpenWrap.Commands
             return new SequenceBuilder(returnValue);
         }
 
-        protected ISequenceBuilder AnyErrorBreaks(IEnumerable<ICommandOutput> returnValue)
+        protected ISequenceBuilder RelaxedEither(IEnumerable<ICommandOutput> returnValue)
         {
             return new SequenceBuilder(returnValue, false);
         }
