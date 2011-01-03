@@ -53,6 +53,7 @@ namespace OpenWrap.Build.Tasks
                 .Where(x=>!openWrapRefs.Contains(x))
                 .Select(baseDir.GetFile)
                 .Concat(OutputAssemblyFiles.Select(baseDir.GetFile))
+                .Where(IsNetAssembly)
                 .ToList();
 
             foreach(var file in includedAssemblies)
@@ -63,7 +64,7 @@ namespace OpenWrap.Build.Tasks
                 var relativePath = new Path(ExportName).Combine(new Path(content).MakeRelative(baseDir.Path).FullPath).DirectoryName;
                 yield return Key(relativePath, baseDir.GetFile(content).Path.FullPath);
             }
-            foreach(var associated in PdbFiles.Concat(DocumentationFiles).Concat(SatelliteAssemblies))
+            foreach(var associated in PdbFiles.Concat(DocumentationFiles))
             {
                 var associatedFile = baseDir.GetFile(associated);
                 if (ShouldIncludeRelatedFiles(includedAssemblies, associatedFile, _=>_))
@@ -78,11 +79,16 @@ namespace OpenWrap.Build.Tasks
             }
             foreach (var serializationAssemblyPath in SerializationAssemblies)
             {
-                
                 var associatedFile = baseDir.GetFile(serializationAssemblyPath);
                 if (ShouldIncludeRelatedFiles(includedAssemblies, associatedFile, x => RemoveSuffix(x, ".XmlSerializers")))
                     yield return Key(ExportName, associatedFile.Path.FullPath);
             }
+        }
+
+        bool IsNetAssembly(IFile file)
+        {
+            return file.Extension.EqualsNoCase(".dll")
+                   || file.Extension.EqualsNoCase(".exe");
         }
 
         static string RemoveSuffix(string arg, string suffix)

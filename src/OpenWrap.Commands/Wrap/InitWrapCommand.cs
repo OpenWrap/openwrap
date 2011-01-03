@@ -78,7 +78,7 @@ namespace OpenWrap.Commands.Wrap
         {
             return VerifyArguments()
                     .Concat(SetupDirectoriesAndDescriptor())
-                    .Concat(ModifyProjects(_packageDescriptorFile ?? Environment.DescriptorFile));
+                    .Concat(ModifyProjects(Environment.DescriptorFile));
         }
 
         public IEnumerable<ICommandOutput> VerifyArguments()
@@ -106,7 +106,7 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        void AddPackageFolders(IDirectory projectDirectory)
+        static void AddPackageFolders(IDirectory projectDirectory)
         {
             projectDirectory.GetDirectory("src").MustExist();
             projectDirectory.GetDirectory("wraps").GetDirectory("_cache").MustExist();
@@ -146,6 +146,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> ModifyProjects(IFile descriptorFile)
         {
+            descriptorFile = _packageDescriptorFile ?? descriptorFile;
             foreach (IFile project in _projectsToPatch)
             {
                 var xmlDoc = new XmlDocument();
