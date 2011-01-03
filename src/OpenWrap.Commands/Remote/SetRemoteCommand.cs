@@ -18,6 +18,9 @@ namespace OpenWrap.Commands.Remote
             set { _position = value; }
         }
 
+        [CommandInput]
+        public string NewName { get; set; }
+
         IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
 
         public override IEnumerable<ICommandOutput> Execute()
@@ -33,6 +36,16 @@ namespace OpenWrap.Commands.Remote
             if (_position.HasValue)
             {
                 remote.Priority = _position.Value;
+            }
+
+            if (!string.IsNullOrEmpty(NewName))
+            {
+                if (repositories.ContainsKey(NewName))
+                {
+                    yield return new Error("Repository with name '{0}' already present.");
+                    yield break;
+                }
+                remote.Name = NewName;
             }
 
             ConfigurationManager.SaveRemoteRepositories(repositories);
