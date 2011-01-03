@@ -18,8 +18,9 @@ namespace OpenWrap.Tests.Commands.Remote.Set
                 given_remote_configuration(
                            new RemoteRepositories
                     {
-                            { "paralox", new RemoteRepository { Name = "paralox", Priority = 1 } },
-                            { "es", new RemoteRepository { Name = "es", Priority = 2 } }
+                            { "primus", new RemoteRepository { Name = "primus", Priority = 1 } },
+                            { "secundus", new RemoteRepository { Name = "secundus", Priority = 2 } },
+                            { "terz", new RemoteRepository { Name = "terz", Priority = 3 } }
                     });
             }
 
@@ -37,13 +38,13 @@ namespace OpenWrap.Tests.Commands.Remote.Set
     {
         public when_changing_remote_priority()
         {
-            when_executing_command("es", "-priority", "1");
+            when_executing_command("secundus", "-priority", "1");
         }
 
         [Test]
         public void the_second_repository_has_new_priority()
         {
-            var remote = TryGetRepository("es");
+            var remote = TryGetRepository("secundus");
             remote.Priority.ShouldBe(1);
         }
     }
@@ -52,13 +53,13 @@ namespace OpenWrap.Tests.Commands.Remote.Set
     {
         public when_changing_repository_name()
         {
-            when_executing_command("es", "-newname", "vamu");
+            when_executing_command("secundus", "-newname", "vamu");
         }
 
         [Test]
         public void the_second_repository_has_new_name()
         {
-            var remote = TryGetRepository("es");
+            var remote = TryGetRepository("secundus");
             remote.Name.ShouldBe("vamu");
         }
     }
@@ -67,7 +68,7 @@ namespace OpenWrap.Tests.Commands.Remote.Set
     {
         public when_changing_repository_name_to_existing()
         {
-            when_executing_command("es", "-newname", "paralox");
+            when_executing_command("secundus", "-newname", "primus");
         }
 
         [Test]
@@ -76,5 +77,68 @@ namespace OpenWrap.Tests.Commands.Remote.Set
             Results.ShouldContain<Error>();
         }
     }
-    
+
+    public class moving_repository_to_new_priority_case1 : set_remote
+    {
+        public moving_repository_to_new_priority_case1()
+        {
+            when_executing_command("terz", "-priority", "1");
+        }
+
+        [Test]
+        public void rearranges_priorities()
+        {
+            TryGetRepository("terz").Priority.ShouldBe(1);
+            TryGetRepository("primus").Priority.ShouldBe(2);
+            TryGetRepository("secundus").Priority.ShouldBe(3);
+        }
+    }
+
+    public class moving_repository_to_new_priority_case2 : set_remote
+    {
+        public moving_repository_to_new_priority_case2()
+        {
+            when_executing_command("secundus", "-priority", "1");
+        }
+
+        [Test]
+        public void rearranges_priorities()
+        {
+            TryGetRepository("secundus").Priority.ShouldBe(1);
+            TryGetRepository("primus").Priority.ShouldBe(2);
+            TryGetRepository("terz").Priority.ShouldBe(3);
+        }
+    }
+
+    public class moving_repository_to_new_priority_case3 : set_remote
+    {
+        public moving_repository_to_new_priority_case3()
+        {
+            when_executing_command("primus", "-priority", "2");
+        }
+
+        [Test]
+        public void rearranges_priorities()
+        {
+            TryGetRepository("secundus").Priority.ShouldBe(1);
+            TryGetRepository("primus").Priority.ShouldBe(2);
+            TryGetRepository("terz").Priority.ShouldBe(3);
+        }
+    }
+
+    public class moving_repository_to_new_priority_case4 : set_remote
+    {
+        public moving_repository_to_new_priority_case4()
+        {
+            when_executing_command("secundus", "-priority", "3");
+        }
+
+        [Test]
+        public void rearranges_priorities()
+        {
+            TryGetRepository("primus").Priority.ShouldBe(1);
+            TryGetRepository("terz").Priority.ShouldBe(2);
+            TryGetRepository("secundus").Priority.ShouldBe(3);
+        }
+    }
 }

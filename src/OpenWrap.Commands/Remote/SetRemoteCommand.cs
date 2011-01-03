@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OpenWrap.Configuration;
+using System.Linq;
+using OpenWrap.Collections;
 
 namespace OpenWrap.Commands.Remote
 {
@@ -26,6 +29,7 @@ namespace OpenWrap.Commands.Remote
         public override IEnumerable<ICommandOutput> Execute()
         {
             var repositories = ConfigurationManager.LoadRemoteRepositories();
+
             RemoteRepository remote;
             if (!repositories.TryGetValue(Name, out remote))
             {
@@ -33,10 +37,7 @@ namespace OpenWrap.Commands.Remote
                 yield break;
             }
 
-            if (_position.HasValue)
-            {
-                remote.Priority = _position.Value;
-            }
+            HandlePrioritySetting(repositories, remote);
 
             if (!string.IsNullOrEmpty(NewName))
             {
@@ -49,6 +50,47 @@ namespace OpenWrap.Commands.Remote
             }
 
             ConfigurationManager.SaveRemoteRepositories(repositories);
+            
         }
+
+        void HandlePrioritySetting(RemoteRepositories repositories, RemoteRepository remote)
+        {
+            if (!_position.HasValue || remote.Priority == _position)
+                return;
+            
+            var prioHasIncreased = remote.Priority > _position;
+            
+            var otherRepositories = repositories.Values.Except(remote.ToEnumerable());
+
+            var vars = prioHasIncreased
+                                        ? new
+                                        {
+                                            RelevantRepositories = otherRepositories.OrderBy(r => r.Priority).ToList(),
+                                            SkipCondition = new Func<RemoteRepository, bool>(r => r.Priority < _position),
+                                            PriorityMutator = new Func<int, int>(i => i + 1)
+                                        }
+                                        : new
+                                        {
+                                            RelevantRepositories = otherRepositories.OrderByDescending(r => r.Priority).ToList(),
+                                            SkipCondition = new Func<RemoteRepository, bool>(r => r.Priority > _position),
+                                            PriorityMutator = new Func<int, int>(i => i - 1)
+                                        };
+
+            if (!vars.RelevantRepositories.Any(r => r.Priority == _position))
+                return;
+            
+            var lastPriority = (int)_position;
+
+            foreach (var repository in vars.RelevantRepositories.SkipWhile(vars.SkipCondition))
+            {
+                if (repository.Priority == lastPriority)
+                    repository.Priority = (lastPriority = vars.PriorityMutator(lastPriority));
+                else
+                    break;
+            }
+
+            remote.Priority = _position.Value;
+        }
+
     }
 }
