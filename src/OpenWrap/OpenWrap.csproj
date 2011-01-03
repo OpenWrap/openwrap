@@ -96,6 +96,8 @@
     <Compile Include="Commands\Info.cs" />
     <Compile Include="Commands\Warning.cs" />
     <Compile Include="Configuration\Persistence\StreamWriterExtensions.cs" />
+    <Compile Include="IO\PathSegment.cs" />
+    <Compile Include="IO\TemplatePathSegment.cs" />
     <Compile Include="PackageManagement\AbstractPackageOperation.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageMissingOutput.cs" />
     <Compile Include="PackageManagement\IPackageAddResult.cs" />

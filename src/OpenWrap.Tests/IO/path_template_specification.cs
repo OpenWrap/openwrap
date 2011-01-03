@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
+using OpenWrap.IO;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.IO
@@ -13,60 +13,54 @@ namespace OpenWrap.Tests.IO
         [Test]
         public void var_name_is_correct()
         {
-            PathTemplate.TryParse("{source}").Name.ShouldBe("source");
+            Template("{source}", "source").Name.ShouldBe("source");
         }
         [Test]
         public void simple_parameter_is_parsed()
         {
-            PathTemplate.TryParse("{source}").Value("src").ShouldBe("src");
+            Template("{source}", "src").Value.ShouldBe("src");
         }
         [Test]
         public void parameter_with_value_is_parsed()
         {
-            PathTemplate.TryParse("{source: src}").Value("src").ShouldBe("src");
-            PathTemplate.TryParse("{source: src}").Value("source").ShouldBe(null);
+            Template("{source: src}", "src").Value.ShouldBe("src");
+            Template("{source: src}", "source").Value.ShouldBe(null);
         }
         [Test]
         public void parameter_with_value_is_replaced_with_transform()
         {
-            PathTemplate.TryParse("{source: src=source}").Value("src").ShouldBe("source");
-            PathTemplate.TryParse("{source: src=source}").Value("source").ShouldBe(null);
+            Template("{source: src=source}", "src").Value.ShouldBe("source");
+            Template("{source: src=source}", "source").Value.ShouldBe(null);
+        }
+        class TemplateResult
+        {
+            public TemplateResult(bool success, IDictionary<string,string> dic)
+            {
+                var key = dic.FirstOrDefault();
+                
+                Name = key.Key;
+                Value = key.Value;
+                Success = success;
+            }
+            public string Name;
+            public string Value;
+            public bool Success;
+        }
+        TemplateResult Template(string template, string segment)
+        {
+            var parser = TemplatePathSegment.TryParse(template);
+            var dic = new Dictionary<string, string>();
+            var currentSeg = new LinkedListNode<string>(segment);
+            var success = parser.TryParse(dic, new LinkedListNode<PathSegment>(parser), ref currentSeg);
+            return new TemplateResult(success, dic);
         }
     }
-
-    public class PathTemplate
+    public class path_template_processor_specification : context
     {
-        public string Name { get; private set; }
-        readonly string _val;
-        readonly string _transformed;
-        readonly string _source;
-        static Regex _regex = new Regex(@"^\s* {\s* (?<var>[a-zA-Z][a-zA-Z0-9]*) \s* (:?\s* [""']? (?<val>.+?) [""']?  ( \s* = \s*  (?<valTransformed>.+?))? )? \s*} \s*$", RegexOptions.IgnorePatternWhitespace);
-
-        public static PathTemplate TryParse(string templateString)
+        [Test]
+        public void files_are_found()
         {
-            var match = _regex.Match(templateString);
-            if (!match.Success) return null;
-
-            var var = match.Groups["var"].Value;
-            var val = match.Groups["val"].Success ? match.Groups["val"].Value : null;
-            var transformed = match.Groups["valTransformed"].Success ? match.Groups["valTransformed"].Value : null;
-            return new PathTemplate(var, val, transformed);
-        }
-
-        PathTemplate(string var, string val, string transformed)
-        {
-            Name = var;
-            _val = val;
-            _transformed = transformed;
-        }
-
-        public string Value(string input)
-        {
-            if (_val == null)
-                return input;
-            if (input.EqualsNoCase(_val))
-                return _transformed ?? _val;
-            return null;
+            
         }
     }
 }
