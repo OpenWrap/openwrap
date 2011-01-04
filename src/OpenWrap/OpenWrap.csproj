@@ -110,6 +110,7 @@
     <Compile Include="PackageManagement\PackageListResultIterator.cs" />
     <Compile Include="PackageManagement\PackageRemoveResultIterator.cs" />
     <Compile Include="PackageManagement\PackageUpdateResultIterator.cs" />
+    <Compile Include="PackageModel\CommentDescriptorEntry.cs" />
     <Compile Include="PackageModel\LessThanOrEqualVersionVertex.cs" />
     <Compile Include="Repositories\NuGet\NuSpecConverter.cs" />
     <Compile Include="PackageManagement\Monitoring\IResolvedAssembliesUpdateListener.cs" />

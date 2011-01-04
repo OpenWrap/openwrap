@@ -24,7 +24,7 @@ namespace OpenWrap.PackageModel
         public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> entries)
         {
             foreach (var line in entries)
-                _entries.Append(line.Name, line.Value);
+                _entries.Append(line);
             InitializeHeaders();
         }
 

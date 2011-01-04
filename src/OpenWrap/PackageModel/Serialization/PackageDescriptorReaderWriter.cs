@@ -59,14 +59,15 @@ namespace OpenWrap.PackageModel.Serialization
         {
             var streamWriter = new StreamWriter(descriptorStream, Encoding.UTF8);
             foreach (var line in descriptor)
-            {
-                streamWriter.Write(line.Name + ": " + line.Value + "\r\n");
-            }
+                line.Write(streamWriter);
             streamWriter.Flush();
         }
 
         IPackageDescriptorEntry ParseLine(string line)
         {
+            if (line.TrimStart(' ').StartsWith("#"))
+                return new CommentDescriptorEntry(line);
+
             var match = _lineParser.Match(line);
             return !match.Success
                            ? null
