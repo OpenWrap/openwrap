@@ -7,5 +7,6 @@ namespace OpenWrap.Windows
         public const string PackageListChanged = "PackageListChanged";
         public const string RepositoryListChanged = "RepositoryListChanged";
         public const string CommandOutput = "CommandOutput";
+        public const string NounsVerbsChanged = "NounsVerbsChanged";
     }
 }

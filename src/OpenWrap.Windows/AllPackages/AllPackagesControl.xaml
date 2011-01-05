@@ -7,7 +7,7 @@
              d:DesignHeight="200" d:DesignWidth="500">
     <UserControl.Resources>
         <DataTemplate x:Key="DescriptionStyle">
-            <TextBlock VerticalAlignment="Center" Margin="2" Padding="2" 
+            <TextBlock VerticalAlignment="Center" Margin="1" Padding="1" 
               Text="{Binding Path=DescriptionShort}" ToolTip="{Binding Path=Description}" />
         </DataTemplate>
     </UserControl.Resources>

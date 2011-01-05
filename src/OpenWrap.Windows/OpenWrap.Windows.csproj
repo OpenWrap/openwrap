@@ -80,8 +80,12 @@
     <Compile Include="Framework\Messaging\RecipientGeneric.cs" />
     <Compile Include="Framework\Messaging\Recipients.cs" />
     <Compile Include="Framework\WpfHelpers.cs" />
-    <Compile Include="MainWindow\PopulateMainData.cs" />
+    <Compile Include="NounVerb\PopulateNounVerb.cs" />
     <Compile Include="MessageNames.cs" />
+    <Compile Include="NounVerb\NounVerbControl.xaml.cs">
+      <DependentUpon>NounVerbControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NounVerb\NounVerbViewModel.cs" />
     <Compile Include="NounVerb\NullCommandDescriptor.cs" />
     <Compile Include="PackageRepository\AddPackageRepositoryViewModel.cs" />
     <Compile Include="Controls\PackageControl.xaml.cs">
@@ -127,6 +131,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PackageGroupControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NounVerb\NounVerbControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

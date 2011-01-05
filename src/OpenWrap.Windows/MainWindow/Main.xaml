@@ -3,8 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:CommandOutput="clr-namespace:OpenWrap.Windows.CommandOutput" 
     xmlns:PackageRepository="clr-namespace:OpenWrap.Windows.PackageRepository" 
-    xmlns:AllPackages="clr-namespace:OpenWrap.Windows.AllPackages" 
-    Title="OpenWrap Console" Height="500" Width="800">
+    xmlns:AllPackages="clr-namespace:OpenWrap.Windows.AllPackages" xmlns:NounVerb="clr-namespace:OpenWrap.Windows.NounVerb" Title="OpenWrap Console" Height="500" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -12,19 +11,7 @@
         </Grid.RowDefinitions>
         <TabControl>
             <TabItem Header="Nouns and verbs">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MinWidth="200" />
-                        <ColumnDefinition Width="733*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Label Grid.ColumnSpan="2">OpenWrap Console</Label>
-                    <ListBox Grid.Row="1" ItemsSource="{Binding Nouns}" SelectedItem="{Binding SelectedNoun, Mode=OneWayToSource}" DisplayMemberPath="Noun" />
-                    <ContentPresenter Grid.Column="1" Grid.Row="1" Content="{Binding SelectedNoun}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                </Grid>
+                <NounVerb:NounVerbControl DataContext="{Binding NounVerb}" />
             </TabItem>
             <TabItem Header="All Packages">
                 <AllPackages:AllPackagesControl DataContext="{Binding AllPackages}" />

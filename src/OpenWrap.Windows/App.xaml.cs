@@ -31,6 +31,7 @@ namespace OpenWrap.Windows
 
         private static void SendInitalDataPopulationMessage()
         {
+            Messenger.Default.Send(MessageNames.NounsVerbsChanged);
             Messenger.Default.Send(MessageNames.RepositoryListChanged);
         }
 
@@ -58,7 +59,6 @@ namespace OpenWrap.Windows
         private void ShowMainWindow()
         {
             MainViewModel viewModel = new MainViewModel();
-            viewModel.PopulateData();
 
             Main mainWindow = new Main();
             mainWindow.DataContext = viewModel;

@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using OpenWrap.Collections;
 using OpenWrap.Commands;
 using OpenWrap.Windows.Framework;
-using OpenWrap.Windows.NounVerb;
 
-namespace OpenWrap.Windows.MainWindow
+namespace OpenWrap.Windows.NounVerb
 {
-    public class PopulateMainData : CommandBase<MainViewModel>
+    public class PopulateNounVerb : CommandBase<NounVerbViewModel>
     {
-        protected override void Execute(MainViewModel parameter)
+        protected override void Execute(NounVerbViewModel parameter)
         {
             // todo: constructor-inject some services
             var commands = Services.Services.GetService<ICommandRepository>();
