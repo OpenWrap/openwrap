@@ -4,7 +4,7 @@
     xmlns:CommandOutput="clr-namespace:OpenWrap.Windows.CommandOutput" 
     xmlns:PackageRepository="clr-namespace:OpenWrap.Windows.PackageRepository" 
     xmlns:AllPackages="clr-namespace:OpenWrap.Windows.AllPackages" 
-    Title="OpenWrap Console" Height="500" Width="660">
+    Title="OpenWrap Console" Height="500" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
