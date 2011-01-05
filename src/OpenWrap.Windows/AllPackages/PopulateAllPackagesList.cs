@@ -58,7 +58,7 @@ namespace OpenWrap.Windows.AllPackages
                             LatestVersion = latestVersion.Version
                         };
 
-                    results.Add(packageViewModel);
+                    WpfHelpers.DispatchToMainThread(() => results.Add(packageViewModel));
                 }
             }
         }

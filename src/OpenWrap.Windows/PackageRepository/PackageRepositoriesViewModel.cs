@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows.Input;
 using OpenWrap.Runtime;
 using OpenWrap.Windows.Framework;
@@ -15,7 +16,7 @@ namespace OpenWrap.Windows.PackageRepository
 
         public PackageRepositoriesViewModel()
         {
-            Messenger.Default.Subcribe(MessageNames.RepositoryListChanged, this, PackageListChanged);
+            Messenger.Default.Subcribe(MessageNames.RepositoryListChanged, this, Populate);
         }
 
         public ObservableCollection<PackageRepositoryViewModel> PackageRepositories
@@ -35,7 +36,12 @@ namespace OpenWrap.Windows.PackageRepository
             return environment;
         }
 
-        private void PackageListChanged()
+        private void Populate()
+        {
+            ThreadPool.QueueUserWorkItem(PopulateAsync);
+        }
+
+        private void PopulateAsync(object required)
         {
             PopulateRepositoryData populateRepositoryData = new PopulateRepositoryData(GetEnvironment());
             populateRepositoryData.Execute(this);

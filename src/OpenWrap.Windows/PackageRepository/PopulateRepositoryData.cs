@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Collections;
 using OpenWrap.PackageModel;
@@ -22,14 +23,15 @@ namespace OpenWrap.Windows.PackageRepository
         {
             if (_environment != null)
             {
-                parameter.PackageRepositories.Clear();
-                parameter.PackageRepositories.AddRange(ReadPackageRepositories(_environment.RemoteRepositories));
+                WpfHelpers.DispatchToMainThread(() => parameter.PackageRepositories.Clear());
+                ReadPackageRepositories(_environment.RemoteRepositories, parameter.PackageRepositories);
             }
         }
 
-        private static IEnumerable<PackageRepositoryViewModel> ReadPackageRepositories(IEnumerable<IPackageRepository> remoteRepositories)
+        private static void ReadPackageRepositories(
+            IEnumerable<IPackageRepository> remoteRepositories,
+            IList<PackageRepositoryViewModel> results)
         {
-            List<PackageRepositoryViewModel> results = new List<PackageRepositoryViewModel>();
 
             foreach (var packageRepository in remoteRepositories)
             {
@@ -42,10 +44,8 @@ namespace OpenWrap.Windows.PackageRepository
                 viewModel.PackageGroups.AddRange(packages);
                 viewModel.UpdatePackagesCountText();
 
-                results.Add(viewModel);
+                 WpfHelpers.DispatchToMainThread(() => results.Add(viewModel));
             }
-
-            return results;
         }
 
         private static IEnumerable<PackageGroupViewModel> TranslateAndGroupPackages(IEnumerable<IGrouping<string, IPackageInfo>> packageGroups)

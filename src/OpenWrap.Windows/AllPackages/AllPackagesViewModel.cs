@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading;
 using OpenWrap.Windows.Framework;
 using OpenWrap.Windows.Framework.Messaging;
 
@@ -17,7 +18,12 @@ namespace OpenWrap.Windows.AllPackages
 
         public ObservableCollection<PackageViewModel> AllPackages { get { return _allPackages; } }
 
-        public void Populate()
+        private void Populate()
+        {
+            ThreadPool.QueueUserWorkItem(PopulateAsync);
+        }
+
+        private void PopulateAsync(object required)
         {
             PopulateAllPackagesList command = new PopulateAllPackagesList();
             command.Execute(this);
