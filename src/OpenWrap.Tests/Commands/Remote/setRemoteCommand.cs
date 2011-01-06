@@ -64,6 +64,21 @@ namespace OpenWrap.Tests.Commands.Remote.Set
         }
     }
 
+    public class when_changing_repository_href : set_remote
+    {
+        public when_changing_repository_href()
+        {
+            when_executing_command("secundus", "-href", "http://awesomereps.net");
+        }
+
+        [Test]
+        public void the_second_repository_has_new_href()
+        {
+            var remote = TryGetRepository("secundus");
+            remote.Href.ShouldBe("http://awesomereps.net");
+        }
+    }
+
     public class when_changing_repository_name_to_existing : set_remote
     {
         public when_changing_repository_name_to_existing()

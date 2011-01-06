@@ -304,6 +304,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="set-remote" xml:space="preserve">
     <value>Updates a remote repository's metadata.</value>
   </data>
+  <data name="set-remote-href" xml:space="preserve">
+    <value>Specify a new href for an existing repository.</value>
+  </data>
   <data name="set-remote-name" xml:space="preserve">
     <value>Specifies the name of the remote repository to update.</value>
   </data>

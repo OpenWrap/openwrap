@@ -24,6 +24,9 @@ namespace OpenWrap.Commands.Remote
         [CommandInput]
         public string NewName { get; set; }
 
+        [CommandInput]
+        public Uri Href { get; set; }
+
         IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
 
         public override IEnumerable<ICommandOutput> Execute()
@@ -47,6 +50,11 @@ namespace OpenWrap.Commands.Remote
                     yield break;
                 }
                 remote.Name = NewName;
+            }
+
+            if (Href != null)
+            {
+                remote.Href = Href;
             }
 
             ConfigurationManager.SaveRemoteRepositories(repositories);
