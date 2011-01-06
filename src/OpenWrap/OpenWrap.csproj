@@ -182,6 +182,7 @@
     <Compile Include="FuncExtensions.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
     <Compile Include="Repositories\PackagePublisher.cs" />
+    <Compile Include="Runtime\FrameworkVersioning.cs" />
     <Compile Include="Tasks\IProgressOutput.cs" />
     <Compile Include="Repositories\IRemoteRepositoryBuilder.cs" />
     <Compile Include="Lazy.cs" />

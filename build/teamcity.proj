@@ -12,28 +12,6 @@
       <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
     </InitializeOpenWrap>
 
-    <PropertyGroup>
-      <RemoveRemoteRepository>
-        <Name>cs</Name>
-      </RemoveRemoteRepository>
-      <AddRemoteRepository>
-        <Name>cs</Name>
-        <Href>$(RepositoryHref)</Href>
-      </AddRemoteRepository>
-    </PropertyGroup>
-
-    <RunCommand
-      Verb="remove"
-      Noun="remote"
-      Args="$(RemoveRemoteRepository)"
-      ContinueOnError="true"
-      />
-    <RunCommand
-      Verb="add"
-      Noun="remote"
-      Args="$(AddRemoteRepository)"
-      ContinueOnError="true"
-      />
 
   </Target>
   <Target Name="Build" DependsOnTargets="_Initialize">
@@ -56,7 +34,7 @@
     <PropertyGroup>
       <PublishArguments>
         <Name>$(OpenWrap-PackageName)</Name>
-        <RemoteRepository>cs</RemoteRepository>
+        <Remote>file://galaxy.caffeine-it.net/packages</Remote>
       </PublishArguments>
     </PropertyGroup>
 

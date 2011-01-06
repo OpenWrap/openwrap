@@ -11,7 +11,7 @@
 
 
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == ''">false</OpenWrap-EnableVisualStudioIntegration>
-    <!-- We detect the root path based on the existence of a .wraps folder -->
+    <!-- We detect the root path based on the existence of a /wraps folder -->
     <OpenWrap-ProjectRepositoryPath Condition="'$(OpenWrap-ProjectRepositoryPath)' == ''">$(MSBuildProjectDirectory)\..\wraps</OpenWrap-ProjectRepositoryPath>
     <OpenWrap-ProjectRepositoryPath Condition="!Exists('$(OpenWrap-ProjectRepositoryPath)')">$(MSBuildProjectDirectory)\..\..\wraps</OpenWrap-ProjectRepositoryPath>
     <OpenWrap-ProjectRepositoryPath Condition="!Exists('$(OpenWrap-ProjectRepositoryPath)')">$(MSBuildProjectDirectory)\..\..\..\wraps</OpenWrap-ProjectRepositoryPath>
@@ -20,10 +20,12 @@
 
     <RootSolutionDirectory>$(OpenWrap-ProjectRepositoryPath)\..</RootSolutionDirectory>
 
+    <!-- These properties are defined so we can default the build when ran outside of the msbuild runner (ie within VS). -->
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v2.0'">net20</OpenWrap-TargetProfile>
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v3.0'">net30</OpenWrap-TargetProfile>
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v3.5'">net35</OpenWrap-TargetProfile>
     <OpenWrap-TargetProfile Condition="'$(OpenWrap-TargetProfile)' == '' and '$(TargetFrameworkVersion)' == 'v4.0'">net40</OpenWrap-TargetProfile>
+    
     <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">$(Platform)</OpenWrap-TargetPlatform>
     <OpenWrap-TargetPlatform Condition="'$(OpenWrap-TargetPlatform)' == ''">AnyCPU</OpenWrap-TargetPlatform>
     <OpenWrap-ExportName Condition="'$(OpenWrap-ExportName)' == ''">bin-$(OpenWrap-TargetProfile)</OpenWrap-ExportName>
@@ -103,6 +105,7 @@
         />
       <_OpenWrap-SerializationFiles Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).resources.dll')" />
       <_OpenWrap-AllAssemblyReferenceFiles Include="@(ReferenceCopyLocalPaths->'%(FullPath)')" />
+      <_OpenWrap-DeleteAnnoyingVsOptimizationFiles Include="$(IntermediateOutputPath)*.cache" />
     </ItemGroup>
     <PropertyGroup>
 
@@ -128,7 +131,7 @@
       />
 
     <!-- delete assembly reference cache to prevent VS from not calling the initialize task on next opening -->
-    <Delete Files="$(ResolveAssemblyReferencesStateFile);$(IntermediateOutputPath)*.cache" ContinueOnError="true" />
+    <Delete Files="$(ResolveAssemblyReferencesStateFile);@(_OpenWrap-DeleteAnnoyingVsOptimizationFiles)" ContinueOnError="true" />
 
   </Target>
 
