@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System;
 using System.Linq;
@@ -71,20 +72,25 @@ namespace OpenWrap.Commands.Wrap
             packageDescriptorForEmbedding.Version = generatedVersion;
             packageDescriptorForEmbedding.Name = packageName;
 
-            foreach (var file in _buildResults)
-                yield return new GenericMessage(string.Format("Copying: {0} - {1}", file.ExportName, file.Path));
-
             var packageFilePath = destinationPath.GetFile(
                 PackageNameUtility.PackageFileName(packageName, generatedVersion.ToString()));
 
             var packageContent = GeneratePackageContent(_buildResults).Concat(
                                     GenerateVersionFile(generatedVersion),
                                     GenerateDescriptorFile(packageDescriptorForEmbedding)
-                                 );
+                                 ).ToList();
+            foreach (var item in packageContent)
+                yield return new GenericMessage(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
 
             Packager.NewFromFiles(packageFilePath, packageContent);
             yield return new GenericMessage(string.Format("Package built at '{0}'.", packageFilePath));
 
+        }
+
+        string FormatBytes(long? size)
+        {
+            if (size == null) return string.Empty;
+            return string.Format(" ({0} bytes)", ((long)size).ToString("N0"));
         }
 
         IEnumerable<ICommandOutput> TriggerBuild()
@@ -106,39 +112,42 @@ namespace OpenWrap.Commands.Wrap
         {
             var binFiles = (from fileDescriptor in buildFiles
                             where fileDescriptor.ExportName.StartsWith("bin-")
-                            let file = FileSystem.GetFile(fileDescriptor.Path.FullPath)
+                            from file in FileSystem.Files(fileDescriptor.Path.FullPath)
                             where file.Exists
                             select new PackageContent
                             {
                                     FileName = file.Name,
                                     RelativePath = fileDescriptor.ExportName,
+                                    Size = file.Size,
                                     Stream = () => file.OpenRead()
                             }).ToList();
 
             var externalFiles = from fileDesc in buildFiles
                                 where fileDesc.ExportName.StartsWith("bin-") == false
-                                let file = FileSystem.GetFile(fileDesc.Path.FullPath)
+                                from file in FileSystem.Files(fileDesc.Path.FullPath)
                                 where file.Exists &&
                                       (fileDesc.AllowBinDuplicate ||
                                        binFiles.Any(x => x.FileName == file.Name) == false)
                                 select new PackageContent
                                 {
                                         FileName = file.Name,
+                                        Size = file.Size,
                                         RelativePath = fileDesc.ExportName,
                                         Stream = () => file.OpenRead()
                                 };
             return binFiles.Concat(externalFiles);
         }
 
-        IEnumerable<ICommandOutput> ProcessBuildResults(IEnumerable<IPackageBuilder> packageBuilder, Action<FileBuildResult> onFound)
+        IEnumerable<ICommandOutput> ProcessBuildResults(IEnumerable<IPackageBuilder> packageBuilders, Action<FileBuildResult> onFound)
         {
-            foreach (var t in packageBuilder.SelectMany(x=>x.Build()))
+            foreach (var t in packageBuilders.SelectMany(x=>x.Build()))
             {
                 if (t is TextBuildResult && !Quiet)
                     yield return new GenericMessage(t.Message);
                 else if (t is FileBuildResult)
                 {
                     var buildResult = (FileBuildResult)t;
+
                     onFound(buildResult);
                     if (!Quiet)
                         yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
