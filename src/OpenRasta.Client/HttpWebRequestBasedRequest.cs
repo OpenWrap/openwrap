@@ -36,12 +36,14 @@ namespace OpenRasta.Client
 
         void SendRequestStream()
         {
-            var streamToWriteTo = _request.GetRequestStream();
             if (_entity.Stream.CanSeek)
-            {
                 _request.ContentLength = _entity.Stream.Length;
+
+            var streamToWriteTo = _request.GetRequestStream();
+
+            if (_entity.Stream.CanSeek)
                 streamToWriteTo = new ProgressStream(_entity.Stream.Length, RaiseProgress, streamToWriteTo);
-            }
+
             _entity.Stream.CopyTo(streamToWriteTo);
         }
 

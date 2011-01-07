@@ -49,7 +49,7 @@ namespace OpenRasta.Client
         {
             var reader = response.AsXmlReader<T>();
             if (reader == null) return null;
-            return XDocument.Load(reader);
+            return XDocument.Load(reader, LoadOptions.SetBaseUri);
         }
     }
 }
