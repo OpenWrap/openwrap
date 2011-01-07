@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionOnDispose.cs" />
+    <Compile Include="Build\BuildInitializer.cs" />
     <Compile Include="Build\BuildResult.cs" />
     <Compile Include="Build\DefaultFileBuildResultParser.cs" />
     <Compile Include="Build\IFileBuildResultParser.cs" />
@@ -88,7 +89,6 @@
     <Compile Include="Build\PackageBuilders\IPackageBuilder.cs" />
     <Compile Include="Build\PackageBuilders\NullPackageBuilder.cs" />
     <Compile Include="Build\TextBuildResult.cs" />
-    <Compile Include="Build\InitializeOpenWrap.cs" />
     <Compile Include="Collections\MultiThreadedEnumerable.cs" />
     <Compile Include="Collections\MultiThreadedEnumerator.cs" />
     <Compile Include="Commands\CommandDocumentation.cs" />
@@ -96,6 +96,7 @@
     <Compile Include="Commands\Info.cs" />
     <Compile Include="Commands\Warning.cs" />
     <Compile Include="Configuration\Persistence\StreamWriterExtensions.cs" />
+    <Compile Include="IO\TemplatePathSegment.cs" />
     <Compile Include="PackageManagement\AbstractPackageOperation.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageMissingOutput.cs" />
     <Compile Include="PackageManagement\IPackageAddResult.cs" />

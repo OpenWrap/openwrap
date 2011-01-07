@@ -63,6 +63,10 @@ namespace OpenWrap
             return string.Join(separator, strings.ToArray());
         }
 
+        public static string Join(this IEnumerable<string> strings, char separator)
+        {
+            return string.Join(separator + string.Empty, strings.ToArray());
+        }
         public static bool MatchesHumps(this string name, string value)
         {
             return name.ToUpperInvariant().MatchesHumps(0, value.ToUpperInvariant(), 0);

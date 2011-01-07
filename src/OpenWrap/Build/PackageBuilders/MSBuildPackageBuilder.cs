@@ -32,18 +32,24 @@ namespace OpenWrap.Build.PackageBuilders
         public override IEnumerable<BuildResult> Build()
         {
             var currentDirectory = _environment.CurrentDirectory;
-            var sourceDirectory = currentDirectory.GetDirectory("src");
-            if (!sourceDirectory.Exists)
-            {
-                yield return
-                        new ErrorBuildResult(string.Format("Could not locate a /src folder in current directory '{0}'. Make sure you use the default layout for project code.",
-                                                           _environment.CurrentDirectory.Path.FullPath));
-                yield break;
-            }
 
-            var projectFiles = (Project.Count() > 0)
-                                       ? Project.Select(x => _fileSystem.GetFile(_environment.DescriptorFile.Parent.Path.Combine(x).FullPath)).Where(x => x.Exists)
-                                       : sourceDirectory.Files("*.*proj", SearchScope.SubFolders);
+            IEnumerable<IFile> projectFiles;
+            if (Project.Count() > 0)
+            {
+                projectFiles = Project.Select(x => _fileSystem.GetFile(_environment.DescriptorFile.Parent.Path.Combine(x).FullPath)).Where(x => x.Exists);
+            }
+            else
+            {
+                var sourceDirectory = currentDirectory.GetDirectory("src");
+                if (!sourceDirectory.Exists)
+                {
+                    yield return
+                            new ErrorBuildResult(string.Format("Could not locate a /src folder in current directory '{0}'. Make sure you use the default layout for project code.",
+                                                               _environment.CurrentDirectory.Path.FullPath));
+                    yield break;
+                }
+                projectFiles = sourceDirectory.Files("*.*proj", SearchScope.SubFolders);
+            }
 
             var builds = from file in projectFiles
                          from platform in Platform.DefaultIfEmpty(null)

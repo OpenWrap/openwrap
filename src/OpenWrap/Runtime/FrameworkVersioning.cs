@@ -21,7 +21,7 @@ namespace OpenWrap.Runtime
         public static MSBuildTargetFramework OpenWrapToMSBuild(string openWrapProfile)
         {
             if (_openWrapToTargetFrameworkVersion.ContainsKey(openWrapProfile) == false)
-                throw new ArgumentException("The OpenWrap profile in use is unknown.", "openWrapProfile");
+                throw new ArgumentException(string.Format("The OpenWrap profile '{0}' is unknown.", openWrapProfile), "openWrapProfile");
             return _openWrapToTargetFrameworkVersion[openWrapProfile];
         
         }

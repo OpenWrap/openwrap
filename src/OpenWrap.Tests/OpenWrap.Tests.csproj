@@ -81,6 +81,7 @@
     <Compile Include="Build\build_instruction_emitter_specs\assembly_reference.cs" />
     <Compile Include="Build\build_instruction_emitter_specs\contexts\msbuild_emitter.cs" />
     <Compile Include="Build\build_result_parser_specs\build_result.cs" />
+    <Compile Include="Build\package_builder_specs\msbuild_builder_spec.cs" />
     <Compile Include="Collections\MultiThreaded_specs.cs" />
     <Compile Include="CommandsExtensions.cs" />
     <Compile Include="Commands\CommandsExtension.cs" />
@@ -121,6 +122,8 @@
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
     <Compile Include="Dependencies\version_vertices_specs.cs" />
     <Compile Include="Extensions\CamelToSpacedName.cs" />
+    <Compile Include="IO\path_template_specification.cs" />
+    <Compile Include="IO\template_processor\parsing_path_with_absolute_template.cs" />
     <Compile Include="NonSeekableMemoryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\current_directory_repository.cs" />
