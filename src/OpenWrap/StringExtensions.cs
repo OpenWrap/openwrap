@@ -118,6 +118,15 @@ namespace OpenWrap
             return new Regex("^" + stringValue + "$", RegexOptions.IgnoreCase);
         }
 
+        public static string TrimNullSafe(this string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
+
+            return value.Trim();
+        }
         static bool MatchesHumps(this string name, int namePosition, string value, int valuePosition)
         {
             if (valuePosition > value.Length - 1) return false;

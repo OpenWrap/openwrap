@@ -1,6 +1,6 @@
 ﻿using OpenWrap.Commands;
 
-namespace OpenWrap.Windows
+namespace OpenWrap.Windows.NounVerb
 {
     public class VerbSlice
     {

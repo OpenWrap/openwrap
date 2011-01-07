@@ -12,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace OpenWrap.Windows.Controls
+namespace OpenWrap.Windows.NounVerb
 {
     /// <summary>
-    /// Interaction logic for PackageRepositoryControl.xaml
+    /// Interaction logic for NounVerbControl.xaml
     /// </summary>
-    public partial class PackageRepositoryControl : UserControl
+    public partial class NounVerbControl : UserControl
     {
-        public PackageRepositoryControl()
+        public NounVerbControl()
         {
             InitializeComponent();
         }

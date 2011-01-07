@@ -1,20 +1,42 @@
 ﻿using System;
+using OpenWrap.Commands.Remote;
 using OpenWrap.Windows.Framework;
-using OpenWrapAddRemoteCommand = OpenWrap.Commands.Remote.AddRemoteCommand;
+using OpenWrap.Windows.Framework.Messaging;
 
 namespace OpenWrap.Windows.PackageRepository
 {
-    public class AddPackageRepositoryCommand : CommandBase<NewPackageRepositoryViewModel>
+    public class AddPackageRepositoryCommand : CommandBase<AddPackageRepositoryViewModel>
     {
-        protected override void Execute(NewPackageRepositoryViewModel parameter)
+        protected override bool CanExecute(AddPackageRepositoryViewModel parameter)
         {
-            OpenWrapAddRemoteCommand openWrapCommand = new OpenWrapAddRemoteCommand
+            if (parameter == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(parameter.RepositoryName.TrimNullSafe()))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(parameter.RepositoryUrl.TrimNullSafe()))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        protected override void Execute(AddPackageRepositoryViewModel parameter)
+        {
+            AddRemoteCommand addRemoteCommand = new AddRemoteCommand
             {
                     Name = parameter.RepositoryName, 
                     Href = new Uri(parameter.RepositoryUrl)
             };
 
-            CommandOutput = openWrapCommand.Execute();
+            CommandHelper.ExecuteAndSend(addRemoteCommand);
+            Messenger.Default.Send(MessageNames.RepositoryListChanged);
         }
     }
 }
