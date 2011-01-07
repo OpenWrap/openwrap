@@ -78,7 +78,7 @@ namespace OpenWrap.PackageManagement
 
         public IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null, PackageListOptions options = PackageListOptions.Default)
         {
-            return new PackageListResultIterator(ListPackagesCore(repositories, query));
+            return new PackageListResultIterator(ListPackagesCore(repositories, query, options));
         }
 
         public IPackageRemoveResult RemoveProjectPackage(PackageRequest packageToRemove,
@@ -200,7 +200,7 @@ namespace OpenWrap.PackageManagement
                            : null;
         }
 
-        static IEnumerable<PackageOperationResult> ListPackagesCore(IEnumerable<IPackageRepository> repositories, string query)
+        static IEnumerable<PackageOperationResult> ListPackagesCore(IEnumerable<IPackageRepository> repositories, string query, PackageListOptions options)
         {
             var packages = repositories.SelectMany(x => x.PackagesByName.NotNull());
             if (query != null)
@@ -209,7 +209,7 @@ namespace OpenWrap.PackageManagement
                 packages = packages.Where(x => queryRegex.IsMatch(x.Key));
             }
             foreach (var x in packages)
-                yield return new PackageFoundResult(x);
+                yield return new PackageFoundResult(x, options);
         }
 
         static PackageOperationResult PackageConflict(ResolvedPackage resolvedPackage)

@@ -68,4 +68,22 @@ namespace listWrap_specs
         }
     }
 
+    public class specifying_detailed_flag_when_listing_packages : command_context<ListWrapCommand>
+    {
+        public specifying_detailed_flag_when_listing_packages()
+        {
+            given_remote_repository("first");
+            given_remote_detailed_package("first", "one-ring", "1.0.0", "This is one to rule them all");
+
+            when_executing_command("ring", "-remote", "first", "-detailed");
+        }
+
+        [Test]
+        public void description_is_output()
+        {
+            Results.OfType<PackageFoundCommandOutput>().ShouldHaveCountOf(1);
+            ((PackageFoundCommandOutput)Results[0]).Message.Contains("This is one to rule them all").ShouldBe(true);
+        }
+    }
+
 }

@@ -67,7 +67,7 @@ namespace OpenWrap.Tests.Commands.context
         protected void given_project_package(string name, string version, params string[] dependencies)
         {
             given_project_repository(new InMemoryRepository("Project repository"));
-            AddPackage(Environment.ProjectRepository, name, version, dependencies);
+            AddPackage(Environment.ProjectRepository, new PackageArgs(name, version), dependencies);
         }
 
         protected void given_project_repository(IPackageRepository repository)
@@ -83,34 +83,40 @@ namespace OpenWrap.Tests.Commands.context
 
         protected void given_remote_package(string name, string version, params string[] dependencies)
         {
-            AddPackage(Environment.RemoteRepository, name, version, dependencies);
+            AddPackage(Environment.RemoteRepository, new PackageArgs(name, version), dependencies);
         }
 
         protected void given_remote_package(string repositoryName, string name, string version, params string[] dependencies)
         {
-            AddPackage(Environment.RemoteRepositories.First(x=>x.Name == repositoryName), name, version, dependencies);
+            AddPackage(Environment.RemoteRepositories.First(x => x.Name == repositoryName), new PackageArgs(name, version), dependencies);
+        }
+
+        protected void given_remote_detailed_package(string repositoryName, string name, string version, string description)
+        {
+            AddPackage(Environment.RemoteRepositories.First(x => x.Name == repositoryName), new PackageArgs(name, version, description), new string[0]);
         }
 
         protected void given_system_package(string name, string version, params string[] dependencies)
         {
-            AddPackage(Environment.SystemRepository, name, version, dependencies);
+            AddPackage(Environment.SystemRepository, new PackageArgs(name, version), dependencies);
         }
 
-        protected static void AddPackage(IPackageRepository repository, string name, string version, string[] dependencies)
+        private static void AddPackage(IPackageRepository repository, PackageArgs package, string[] dependencies)
         {
             if (repository is InMemoryRepository)
             {
                 ((InMemoryRepository)repository).Packages.Add(new InMemoryPackage
                 {
-                        Name = name,
+                        Name = package.Name,
                         Source = repository,
-                        Version = version.ToVersion(),
+                        Version = package.Version.ToVersion(),
+                        Description = package.Description,
                         Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies).ToList()
                 });
                 return;
             }
-            var packageFileName = name + "-" + version + ".wrap";
-            var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
+            var packageFileName = package.Name + "-" + package.Version + ".wrap";
+            var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), package.Name, package.Version, dependencies).OpenRead();
             using (var readStream = packageStream)
             using (var publisher = ((ISupportPublishing)repository).Publisher())
                 publisher.Publish(packageFileName, readStream);
@@ -124,7 +130,7 @@ namespace OpenWrap.Tests.Commands.context
         protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
         {
             if (Environment.CurrentDirectoryRepository is InMemoryRepository)
-                AddPackage(Environment.CurrentDirectoryRepository, packageName, version.ToString(), dependencies);
+                AddPackage(Environment.CurrentDirectoryRepository, new PackageArgs(packageName, version.ToString()), dependencies);
             else
             {
                 var localFile = Environment.CurrentDirectory.GetFile(PackageNameUtility.PackageFileName(packageName, version.ToString())).MustExist();
@@ -165,6 +171,25 @@ namespace OpenWrap.Tests.Commands.context
         protected void given_descriptor(PackageDescriptor packageDescriptor)
         {
             Environment.Descriptor = packageDescriptor;
+        }
+
+        private class PackageArgs
+        {
+            public string Name;
+            public string Version;
+            public string Description;
+
+            public PackageArgs(string name, string version, string description)
+            {
+                Version = version;
+                Name = name;
+                Description = description;
+            }
+
+            public PackageArgs(string name, string version) : this (name, version, null)
+            {
+                
+            }
         }
     }
 
