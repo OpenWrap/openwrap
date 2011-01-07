@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using OpenFileSystem.IO;
+using OpenWrap.IO;
 using OpenWrap.Runtime;
 using Path = System.IO.Path;
 
@@ -58,19 +60,27 @@ namespace OpenWrap.Build.PackageBuilders
 
             yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", ExecutablePath));
 
-            foreach (var m in builds
-                    .SelectMany(project => ExecuteEngine(CreateMSBuildProcess(project.file, project.platform, project.profile, "Clean"))))
-                yield return m;
+            foreach(var project in builds)
+            {
+                using(var responseFile = _fileSystem.CreateTempFile())
+                {
+                    foreach (var value in ExecuteEngine(CreateMSBuildProcess(responseFile, project.file, project.platform, project.profile, "Clean")))
+                        yield return value;
+                }
+            }
 
             foreach (var project in builds)
             {
-                var msbuildProcess = CreateMSBuildProcess(project.file, project.platform, project.profile, "Build");
-                yield return new TextBuildResult(string.Format("Building '{0}'...", project.file.Path.FullPath));
+                using (var responseFile = _fileSystem.CreateTempFile())
+                {
+                    var msbuildProcess = CreateMSBuildProcess(responseFile, project.file, project.platform, project.profile, "Build");
+                    yield return new TextBuildResult(string.Format("Building '{0}'...", project.file.Path.FullPath));
 
 
-                foreach (var m in ExecuteEngine(msbuildProcess)) yield return m;
+                    foreach (var m in ExecuteEngine(msbuildProcess)) yield return m;
 
-                yield return new TextBuildResult("Build complete.");
+                    yield return new TextBuildResult("Build complete.");
+                }
             }
         }
 
@@ -84,41 +94,54 @@ namespace OpenWrap.Build.PackageBuilders
             return versionedFolders.FirstOrDefault();
         }
 
-        Process CreateMSBuildProcess(IFile project, string platform, string profile, string msbuildTargets)
+        Process CreateMSBuildProcess(IFile responseFile, IFile project, string platform, string profile, string msbuildTargets)
         {
-            var commandLineArgs = Environment.GetCommandLineArgs();
-            var logger = commandLineArgs.FirstOrDefault(x => x.StartsWith("/logger", StringComparison.OrdinalIgnoreCase)) ?? string.Empty;
-            var additionalProperties = (from argument in commandLineArgs
-                                        where argument.StartsWithNoCase("/p:") ||
-                                              argument.StartsWithNoCase("/property:") ||
-                                              argument.StartsWithNoCase("\"/property:") ||
-                                              argument.StartsWithNoCase("\"/p:")
-                                        select argument).Join(" ");
-            platform = platform == null ? string.Empty : " /p:OpenWrap-TargetPlatform=" + platform;
-            if (profile == null) profile = string.Empty;
-            else
+            using (var stream = responseFile.OpenWrite())
+            using (var writer = new StreamWriter(stream, Encoding.UTF8))
             {
-                var msbuildVersioning = FrameworkVersioning.OpenWrapToMSBuild(profile);
-                profile = string.Format(" /p:OpenWrap-TargetProfile={0} /p:TargetFrameworkVersion={1} /p:TargetFrameworkIdentifier={2} /p:TargetFrameworkProfile={3}",
-                                        profile,
-                                        msbuildVersioning.Version,
-                                        msbuildVersioning.Identifier,
-                                        msbuildVersioning.Profile);
-            }
-            ;
-            var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true{0}{1} /p:OpenWrap-CurrentProjectFile={5} /p:t={2} {3} {4}",
-                                              platform,
-                                              profile,
-                                              msbuildTargets,
-                                              logger,
-                                              additionalProperties,
-                                              project.Path.FullPath);
+                var existingResponseFile = Environment.GetCommandLineArgs()
+                        .Select(x => x.Trim())
+                        .Where(x => x.StartsWith("@"))
+                        .Select(x => _fileSystem.GetFile(x.Substring(1)))
+                        .FirstOrDefault(x=>x.Exists);
+                if (existingResponseFile != null && existingResponseFile.Exists)
+                {
+                    foreach (var line in existingResponseFile.ReadLines().Where(NotTarget))
+                        writer.WriteLine(line);
+                }
+                if (platform != null) writer.WriteLine("/p:OpenWrap-TargetPlatform=" + platform);
+                if (profile != null)
+                {
+                    var msbuildVersioning = FrameworkVersioning.OpenWrapToMSBuild(profile);
+                    writer.WriteLine("/p:OpenWrap-TargetProfile=" + profile);
+                    writer.WriteLine("/p:TargetFrameworkVersion=" + msbuildVersioning.Version);
+                    writer.WriteLine("/p:TargetFrameworkIdentifier=" + msbuildVersioning.Identifier);
+                    writer.WriteLine("/p:TargetFrameworkProfile=" + msbuildVersioning.Profile);
+                }
+                writer.WriteLine("/p:OpenWrap-EmitOutputInstructions=true");
+                writer.WriteLine("/p:OpenWrap-CurrentProjectFile=" + project.Path.FullPath);
+                if (msbuildTargets != null)
+                    writer.WriteLine("/t:" + msbuildTargets);
 
-            var args = "\"" + project.Path.FullPath + "\"" + msbuildParams;
-            var msBuildProcess = CreateProcess(args);
-            msBuildProcess.StartInfo.EnvironmentVariables["TEAMCITY_BUILD_PROPERTIES_FILE"]
-                    = Process.GetCurrentProcess().StartInfo.EnvironmentVariables["TEAMCITY_BUILD_PROPERTIES_FILE"];
-            return msBuildProcess;
+                var args = string.Format(@"@""{1}"" ""{0}""", project.Path.FullPath, responseFile.Path.FullPath);
+                var msBuildProcess = CreateProcess(args);
+                CopyEnvVars(Process.GetCurrentProcess(), msBuildProcess);
+                writer.Flush();
+                return msBuildProcess;
+            }
+        }
+
+        void CopyEnvVars(Process getCurrentProcess, Process msBuildProcess)
+        {
+            foreach(string key in getCurrentProcess.StartInfo.EnvironmentVariables.Keys)
+            {
+                msBuildProcess.StartInfo.EnvironmentVariables[key] = getCurrentProcess.StartInfo.EnvironmentVariables[key];
+            }
+        }
+        static bool NotTarget(string str)
+        {
+            str = str.TrimStart();
+            return str.StartsWithNoCase("/t") == false && str.StartsWithNoCase("\"t") == false;
         }
     }
 }
