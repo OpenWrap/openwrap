@@ -17,8 +17,9 @@
             <GridView>
                 <GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Name" />
                 <GridViewColumn CellTemplate="{StaticResource DescriptionStyle}" Header="Description" />
-                <GridViewColumn DisplayMemberBinding="{Binding Source}" Header="Source" />
+                <GridViewColumn DisplayMemberBinding="{Binding Source}" Header="Source"  />
                 <GridViewColumn DisplayMemberBinding="{Binding LatestVersion}" Header="LatestVersion" />
+                <GridViewColumn DisplayMemberBinding="{Binding VersionCount}" Header="Versions" />
                 <GridViewColumn DisplayMemberBinding="{Binding CreatedDisplay}" Header="Created" />
                 <GridViewColumn DisplayMemberBinding="{Binding IsInstalledSystem}" Header="Installed system" />
                 <GridViewColumn DisplayMemberBinding="{Binding IsInstalledInDirectory}" Header="Installed in directory" />

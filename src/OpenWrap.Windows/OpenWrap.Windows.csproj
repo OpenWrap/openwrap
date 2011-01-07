@@ -69,7 +69,10 @@
       <DependentUpon>AllPackagesControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="AllPackages\AllPackagesViewModel.cs" />
-    <Compile Include="AllPackages\PopulateAllPackagesList.cs" />
+    <Compile Include="AllPackages\LoadedPackagesFromRepository.cs" />
+    <Compile Include="AllPackages\ReadPackagesForRepositories.cs" />
+    <Compile Include="AllPackages\ReadPackagesForRepository.cs" />
+    <Compile Include="AllPackages\ReadPackageLocalStateCommand.cs" />
     <Compile Include="CommandOutput\CommandOutputControl.xaml.cs">
       <DependentUpon>CommandOutputControl.xaml</DependentUpon>
     </Compile>

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading;
+using System.Linq;
 using System.Windows.Input;
 using OpenWrap.Runtime;
+using OpenWrap.Windows.AllPackages;
 using OpenWrap.Windows.Framework;
 using OpenWrap.Windows.Framework.Messaging;
 
@@ -17,6 +18,7 @@ namespace OpenWrap.Windows.PackageRepository
         public PackageRepositoriesViewModel()
         {
             Messenger.Default.Subcribe(MessageNames.RepositoryListChanged, this, Populate);
+            Messenger.Default.Subcribe<LoadedPackagesFromRepository>(MessageNames.LoadedPackagesFromRepository, this, LoadedPackages);
         }
 
         public ObservableCollection<PackageRepositoryViewModel> PackageRepositories
@@ -38,13 +40,18 @@ namespace OpenWrap.Windows.PackageRepository
 
         private void Populate()
         {
-            ThreadPool.QueueUserWorkItem(PopulateAsync);
-        }
-
-        private void PopulateAsync(object required)
-        {
             PopulateRepositoryData populateRepositoryData = new PopulateRepositoryData(GetEnvironment());
             populateRepositoryData.Execute(this);
+        }
+
+        private void LoadedPackages(LoadedPackagesFromRepository data)
+        {
+            PackageRepositoryViewModel repositoryViewModel = _packageRepositories.FirstOrDefault(repo => repo.Name == data.Repository.Name);
+
+            if (repositoryViewModel != null)
+            {
+                WpfHelpers.DispatchToMainThread(() => repositoryViewModel.SetPackages(data.Packages));
+            }
         }
     }
 }

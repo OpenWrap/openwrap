@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Threading;
+using OpenWrap.Collections;
 using OpenWrap.Windows.Framework;
 using OpenWrap.Windows.Framework.Messaging;
 
@@ -14,19 +14,24 @@ namespace OpenWrap.Windows.AllPackages
         {
             Messenger.Default.Subcribe(MessageNames.PackageListChanged, this, Populate);
             Messenger.Default.Subcribe(MessageNames.RepositoryListChanged, this, Populate);
+            Messenger.Default.Subcribe<LoadedPackagesFromRepository>(MessageNames.LoadedPackagesFromRepository, this, LoadedPackages);
         }
 
         public ObservableCollection<PackageViewModel> AllPackages { get { return _allPackages; } }
 
         private void Populate()
         {
-            ThreadPool.QueueUserWorkItem(PopulateAsync);
+            // this command is async, data comes back via LoadedPackagesFromRepository messages
+            ReadPackagesForRepositories command = new ReadPackagesForRepositories();
+            command.Execute(this);
         }
 
-        private void PopulateAsync(object required)
+        private void LoadedPackages(LoadedPackagesFromRepository data)
         {
-            PopulateAllPackagesList command = new PopulateAllPackagesList();
-            command.Execute(this);
+            ReadPackageLocalStateCommand localStateCommand = new ReadPackageLocalStateCommand();
+            localStateCommand.Execute(data);
+
+            WpfHelpers.DispatchToMainThread(() => _allPackages.AddRange(data.Packages));
         }
     }
 }

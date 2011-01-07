@@ -1,25 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using OpenWrap.Collections;
 using OpenWrap.Windows.Framework;
-using OpenWrap.Windows.Package;
+using OpenWrap.Windows.AllPackages;
 
 namespace OpenWrap.Windows.PackageRepository
 {
     public class PackageRepositoryViewModel : ViewModelBase
     {
-        private readonly ObservableCollection<PackageGroupViewModel> _packageGroups = new ObservableCollection<PackageGroupViewModel>();
+        private readonly ObservableCollection<PackageViewModel> _packages = new ObservableCollection<PackageViewModel>();
         private readonly ICommand _removeCommand;
         private string _packagesCountText;
  
         public PackageRepositoryViewModel()
         {
             _removeCommand = new RemovePackageRepositoryCommand();
+            UpdatePackagesCountText();
         }
 
         public string Name { get; set; }
+        public bool PackagesLoaded { get; set; }
         
         public string PackagesCountText 
         { 
@@ -42,11 +46,11 @@ namespace OpenWrap.Windows.PackageRepository
             get { return IsSystemRepo() ? Visibility.Hidden : Visibility.Visible; }
         }
 
-        public ObservableCollection<PackageGroupViewModel> PackageGroups
+        public ObservableCollection<PackageViewModel> Packages
         {
             get
             {
-                return _packageGroups;
+                return _packages;
             }
         }
 
@@ -58,7 +62,15 @@ namespace OpenWrap.Windows.PackageRepository
             }
         }
 
-        public void UpdatePackagesCountText()
+        public void SetPackages(IEnumerable<PackageViewModel> packages)
+        {
+            Packages.Clear();
+            Packages.AddRange(packages);
+            PackagesLoaded = true;
+            UpdatePackagesCountText();
+        }
+
+        private void UpdatePackagesCountText()
         {
             PackagesCountText = GeneratePackagesCountText();
         }
@@ -70,8 +82,13 @@ namespace OpenWrap.Windows.PackageRepository
         
         private string GeneratePackagesCountText()
         {
-            int packageCount = PackageGroups.Count;
-            int allVersionsCount = PackageGroups.Sum(pg => pg.Versions.Count);
+            if (! PackagesLoaded)
+            {
+                return "Packages not yet loaded";
+            }
+
+            int packageCount = Packages.Count;
+            int allVersionsCount = Packages.Sum(pack => pack.VersionCount);
             string versions = allVersionsCount == 1 ? "version" : "versions";
             string packageGroups = packageCount == 1 ? "package" : "packages";
 

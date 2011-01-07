@@ -9,6 +9,8 @@ namespace OpenWrap.Windows.AllPackages
 
         public string Name { get; set; }
         public Version LatestVersion { get; set; }
+        public int VersionCount { get; set; }
+
         public string Description { get; set; }
         public string DescriptionShort
         {
