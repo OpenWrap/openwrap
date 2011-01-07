@@ -41,6 +41,11 @@ namespace OpenWrap.Collections
             return input.Where(x => !string.IsNullOrEmpty(x));
         }
 
+        public static IEnumerable<T> ToEnumerable<T>(this T item)
+        {
+            return new[] { item };
+        }
+
         public static MoveNextResult TryMoveNext<T, TException>(this IEnumerator<T> enumerator, out T value, out TException error)
                 where TException : Exception
         {
