@@ -2,16 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using OpenWrap.Commands;
+using System.Linq;
 
 namespace OpenWrap.Collections
 {
     public class SequenceBuilder : ISequenceBuilder
     {
-        readonly List<IEnumerable<ICommandOutput>> results = new List<IEnumerable<ICommandOutput>>();
+        readonly List<IEnumerable<ICommandOutput>> _results = new List<IEnumerable<ICommandOutput>>();
+        readonly Func<ICommandOutput, bool> _enumerationCondition;
 
-        public SequenceBuilder(IEnumerable<ICommandOutput> resultSets)
+        public SequenceBuilder(IEnumerable<ICommandOutput> resultSets) : this(resultSets, true)
         {
-            results.Add(resultSets);
+        }
+
+        /// <summary>
+        /// breakOnAny = true: Usual behaviour
+        /// breakOnAny = false: Only error output will trigger a stop of the enumeration
+        /// </summary>
+        public SequenceBuilder(IEnumerable<ICommandOutput> resultSets, bool breakOnAny)
+        {
+            _results.Add(resultSets);
+            _enumerationCondition = breakOnAny
+                                            ? co => true
+                                            : new Func<ICommandOutput, bool>(co => co.Type == CommandResultType.Error);
+
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -21,7 +35,7 @@ namespace OpenWrap.Collections
 
         IEnumerator<ICommandOutput> IEnumerable<ICommandOutput>.GetEnumerator()
         {
-            foreach (var resultSet in results)
+            foreach (var resultSet in _results)
             {
                 var hadValue = false;
                 var enumerator = resultSet.GetEnumerator();
@@ -29,7 +43,7 @@ namespace OpenWrap.Collections
                 {
                     if (enumerator.Current == null)
                         continue;
-                    hadValue = true;
+                    hadValue = _enumerationCondition(enumerator.Current);
                     yield return enumerator.Current;
                 }
                 if (hadValue)
@@ -39,13 +53,13 @@ namespace OpenWrap.Collections
 
         public ISequenceBuilder Or(IEnumerable<ICommandOutput> returnValue)
         {
-            results.Add(returnValue);
+            _results.Add(returnValue);
             return this;
         }
 
         public ISequenceBuilder Or(Func<ICommandOutput> returnValue)
         {
-            results.Add(returnValue.AsEnumerable());
+            _results.Add(returnValue.AsEnumerable());
             return this;
         }
     }

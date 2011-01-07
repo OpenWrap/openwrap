@@ -9,7 +9,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Configuration
 {
-    public class configuration_parser_spec : Testing.context
+    public class configuration_parser_spec : OpenWrap.Testing.context
     {
         [Test]
         public void section_without_name_is_parsed()

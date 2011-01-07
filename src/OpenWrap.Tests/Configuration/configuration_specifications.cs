@@ -97,7 +97,7 @@ href: " + RemoteRepositories.Default["openwrap"].Href);
     namespace context
     {
 
-        public abstract class configuration_entry<T> : Testing.context
+        public abstract class configuration_entry<T> : OpenWrap.Testing.context
             where T:new()
         {
             protected T Entry;

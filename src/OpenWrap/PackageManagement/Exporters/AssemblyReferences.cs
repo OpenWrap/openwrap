@@ -17,12 +17,12 @@ namespace OpenWrap.PackageManagement.Exporters
                                                                                       PackageDescriptor descriptor,
                                                                                       params IPackageRepository[] repositories)
         {
-            return GetAssemblyReferences(resolver.TryResolveDependencies(descriptor, repositories), exec, includeContentOnly);
+            return GetAssemblyReferences(resolver.TryResolveDependencies(descriptor, repositories.NotNull()), exec, includeContentOnly);
         }
 
         public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(ExecutionEnvironment exec, params IPackageRepository[] repositories)
         {
-            return GetAssemblyReferencesFromPackages(repositories.SelectMany(x => x.PackagesByName.SelectMany(y => y)), exec);
+            return GetAssemblyReferencesFromPackages(repositories.NotNull().SelectMany(x => x.PackagesByName.SelectMany(y => y)), exec);
         }
 
         static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(DependencyResolutionResult resolveResult, ExecutionEnvironment exec, bool includeContentOnly)

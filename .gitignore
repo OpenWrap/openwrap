@@ -5,6 +5,7 @@ scratch
 scratch/*
 deploy
 deploy/*
+NDependOut
 _ReSharper.*
 *.csproj.user
 *.resharper.user
@@ -18,3 +19,6 @@ Thumbs.db
 .svn
 *.pidb
 *.user
+*.ndproj
+*.xls
+*.htm

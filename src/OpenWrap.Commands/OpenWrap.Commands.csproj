@@ -57,11 +57,13 @@
     <Compile Include="Core\CommandDescriptionOutput.cs" />
     <Compile Include="Core\CommandGroupResult.cs" />
     <Compile Include="Errors\FileNotFound.cs" />
+    <Compile Include="Errors\IncompleteAuthentication.cs" />
     <Compile Include="Remote\RemoteRepositoryMessage.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
     <Compile Include="Wrap\DependenciesConflictMessage.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
+    <Compile Include="Wrap\TestWrapCommand.cs" />
     <Compile Include="Wrap\UpdatePackageVertex.cs" />
     <Compile Include="Wrap\WrapCommand.cs" />
   </ItemGroup>
@@ -91,6 +93,11 @@
     <Compile Include="Wrap\UpdateWrapCommand.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenWrap.Testing\OpenWrap.Testing.csproj">
+      <Project>{C8271D09-7581-4DC5-B47B-6763062506C2}</Project>
+      <Name>OpenWrap.Testing</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
       <Name>OpenWrap</Name>

@@ -54,6 +54,7 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="Testing\finding_runner\runner_in_referenced_package_is_found.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Engine, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -63,6 +64,7 @@
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <Private>false</Private>
       <HintPath>..\..\lib\nunit-2.5.5\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -87,6 +89,7 @@
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
     <Compile Include="Commands\Help\getHelpCommand.cs" />
     <Compile Include="Commands\Remote\addRemoteCommand.cs" />
+    <Compile Include="Commands\Remote\setRemoteCommand.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
     <Compile Include="Commands\Wrap\addWrapCommand.cs" />
@@ -183,6 +186,7 @@
     <EmbeddedResource Include="Repositories\TestPackageOld.nupkg" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="contexts\" />
     <Folder Include="IO\" />
   </ItemGroup>
   <ItemGroup>

@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories.Http
 {
-    public class HttpRepository : IPackageRepository, ISupportPublishing
+    public class HttpRepository : IPackageRepository, ISupportPublishing, ISupportAuthentication
     {
         readonly IFileSystem _fileSystem;
         readonly IHttpRepositoryNavigator _navigator;
@@ -26,10 +25,6 @@ namespace OpenWrap.Repositories.Http
         public PackageDocument IndexDocument { get; private set; }
 
         public string Name { get; private set; }
-        public IPackagePublisher Publisher()
-        {
-            return new PackagePublisher(Publish);
-        }
 
         public IHttpRepositoryNavigator Navigator
         {
@@ -60,15 +55,17 @@ namespace OpenWrap.Repositories.Http
             _packagesByName = null;
         }
 
-        IPackageInfo Publish(string packageFileName, Stream packageStream)
+        IDisposable ISupportAuthentication.WithCredentials(Credentials credentials)
         {
-            if (!Navigator.CanPublish)
-                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));
+            var auth = _navigator as ISupportAuthentication;
+            return auth == null
+                           ? new ActionOnDispose(() => { })
+                           : auth.WithCredentials(credentials);
+        }
 
-            Navigator.PushPackage(packageFileName, packageStream);
-            _packagesByName = null;
-            EnsureDataLoaded();
-            return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
+        public IPackagePublisher Publisher()
+        {
+            return new PackagePublisher(Publish);
         }
 
         void EnsureDataLoaded()
@@ -91,13 +88,6 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
-        DateTime? GetModifiedTimeUtc(XAttribute attribute)
-        {
-            if (attribute == null) return null;
-            DateTime dt;
-            return !DateTime.TryParse(attribute.Value, out dt) ? (DateTime?)null : dt;
-        }
-
         IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
         {
             IndexDocument = navigator.Index();
@@ -106,6 +96,17 @@ namespace OpenWrap.Repositories.Http
                 yield break;
             foreach (var package in IndexDocument.Packages)
                 yield return new HttpPackageInfo(fileSystem, this, navigator, package);
+        }
+
+        IPackageInfo Publish(string packageFileName, Stream packageStream)
+        {
+            if (!Navigator.CanPublish)
+                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));
+
+            Navigator.PushPackage(packageFileName, packageStream);
+            _packagesByName = null;
+            EnsureDataLoaded();
+            return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
         }
     }
 }

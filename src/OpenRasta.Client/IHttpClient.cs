@@ -8,5 +8,6 @@ namespace OpenRasta.Client
     public interface IHttpClient
     {
         IClientRequest CreateRequest(Uri uri);
+        IHttpClient WithCredentials(string username, string password);
     }
 }

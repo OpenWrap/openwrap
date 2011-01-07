@@ -32,7 +32,7 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
             if (_assemblyReferences != null)
                 return;
 
-            _assemblyReferences = Environment.Descriptor == null
+            _assemblyReferences = Environment.Descriptor == null || Environment.Descriptor.UseProjectRepository == false
                                           ? AssemblyReferences.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name)
                                           : PackageResolver.GetAssemblyReferences(true,
                                                                                   Environment.ExecutionEnvironment,

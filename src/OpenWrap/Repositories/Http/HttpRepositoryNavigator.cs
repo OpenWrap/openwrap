@@ -5,28 +5,31 @@ using OpenWrap.Tasks;
 
 namespace OpenWrap.Repositories.Http
 {
-    public class HttpRepositoryNavigator : IHttpRepositoryNavigator
+    public class HttpRepositoryNavigator : IHttpRepositoryNavigator, ISupportAuthentication
     {
         readonly Uri _baseUri;
         readonly IHttpClient _httpClient = new HttpWebRequestBasedClient();
+        readonly Func<IHttpClient> _httpClientGetter;
         readonly Uri _requestUri;
         PackageDocument _fileList;
+        Credentials _availableCredentials;
+
+
 
         public HttpRepositoryNavigator(Uri baseUri)
         {
             _baseUri = baseUri;
             _requestUri = new Uri(baseUri, new Uri("index.wraplist", UriKind.Relative));
+            _httpClientGetter = () => _availableCredentials != null
+                                              ? _httpClient.WithCredentials(_availableCredentials.Username, _availableCredentials.Password)
+                                              : _httpClient;
         }
 
         public bool CanPublish
         {
             get
             {
-                if (_fileList == null)
-                {
-                    return false;
-                }
-                return _fileList.CanPublish;
+                return _fileList != null && _fileList.CanPublish;
             }
         }
 
@@ -39,7 +42,7 @@ namespace OpenWrap.Repositories.Http
 
         public Stream LoadPackage(PackageItem packageItem)
         {
-            var response = _httpClient.CreateRequest(packageItem.PackageHref.BaseUri(_baseUri))
+            var response = _httpClientGetter().CreateRequest(packageItem.PackageHref.BaseUri(_baseUri))
                     .Get()
                     .Send();
 
@@ -53,7 +56,7 @@ namespace OpenWrap.Repositories.Http
             TaskManager.Instance.Run(string.Format("Publishing package '{0}'...", packageFileName),
                                      request =>
                                      {
-                                         var response = _httpClient.CreateRequest(_fileList.PublishHref)
+                                         var response = _httpClientGetter().CreateRequest(_fileList.PublishHref)
                                                  .Content(packageStream)
                                                  .Post()
                                                  .Notify(request)
@@ -72,7 +75,7 @@ namespace OpenWrap.Repositories.Http
                 TaskManager.Instance.Run("Loading wrap index file.",
                                          x =>
                                          {
-                                             _fileList = _httpClient.CreateRequest(_requestUri)
+                                             _fileList = _httpClientGetter().CreateRequest(_requestUri)
                                                      .Get()
                                                      .Notify(x)
                                                      .Send()
@@ -80,6 +83,12 @@ namespace OpenWrap.Repositories.Http
                                                      .AsPackageDocument();
                                          });
             }
+        }
+
+        IDisposable ISupportAuthentication.WithCredentials(Credentials credentials)
+        {
+            _availableCredentials = credentials;
+            return new ActionOnDispose(() => _availableCredentials = null);
         }
     }
 }

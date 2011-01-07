@@ -89,7 +89,17 @@ namespace OpenWrap.Build.PackageBuilders
                                               argument.StartsWithNoCase("\"/p:")
                                         select argument).Join(" ");
             platform = platform == null ? string.Empty : " /p:OpenWrap-TargetPlatform=" + platform;
-            profile = profile == null ? string.Empty : " /p:OpenWrap-TargetProfile=" + profile;
+            if (profile == null) profile = string.Empty;
+            else
+            {
+                var msbuildVersioning = FrameworkVersioning.OpenWrapToMSBuild(profile);
+                profile = string.Format(" /p:OpenWrap-TargetProfile={0} /p:TargetFrameworkVersion={1} /p:TargetFrameworkIdentifier={2} /p:TargetFrameworkProfile={3}",
+                                        profile,
+                                        msbuildVersioning.Version,
+                                        msbuildVersioning.Identifier,
+                                        msbuildVersioning.Profile);
+            }
+            ;
             var msbuildParams = string.Format(" /p:OpenWrap-EmitOutputInstructions=true{0}{1} /p:OpenWrap-CurrentProjectFile={5} /p:t={2} {3} {4}",
                                               platform,
                                               profile,

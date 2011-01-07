@@ -25,5 +25,4 @@ namespace OpenWrap
         {
             get { return Path.Combine(SystemDirectory, "wraps"); }
         }
-    }
-}
+    }}

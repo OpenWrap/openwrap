@@ -34,23 +34,5 @@ namespace OpenWrap.PackageManagement.Packages
         }
 
         // TODO: Replace with clean OFS-based zip methods
-        static void ExtractPackage(IFile wrapFile, IDirectory destinationDirectory)
-        {
-            var nt = new WindowsNameTransform(destinationDirectory.Path.FullPath);
-            using (var zipFile = new ZipFile(wrapFile.OpenRead()))
-            {
-                foreach (ZipEntry zipEntry in zipFile)
-                {
-                    if (zipEntry.IsFile)
-                    {
-                        var filePath = nt.TransformFile(zipEntry.Name);
-                        using (var targetFile = destinationDirectory.FileSystem.GetFile(filePath).MustExist().OpenWrite())
-                        using (var sourceFile = zipFile.GetInputStream(zipEntry))
-                            StreamExtensions.CopyTo(sourceFile, targetFile);
-                        // TODO: restore last write time here by adding it to OFS
-                    }
-                }
-            }
-        }
     }
 }

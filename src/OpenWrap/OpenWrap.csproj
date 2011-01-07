@@ -181,7 +181,9 @@
     <Compile Include="PackageManagement\Exporters\AssemblyReferences.cs" />
     <Compile Include="FuncExtensions.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
+    <Compile Include="Repositories\NullAuthentication.cs" />
     <Compile Include="Repositories\PackagePublisher.cs" />
+    <Compile Include="Runtime\FrameworkVersioning.cs" />
     <Compile Include="Tasks\IProgressOutput.cs" />
     <Compile Include="Repositories\IRemoteRepositoryBuilder.cs" />
     <Compile Include="Lazy.cs" />
@@ -233,6 +235,7 @@
     <Compile Include="PackageManagement\IPackageDeployer.cs" />
     <Compile Include="PackageManagement\IPackageExporter.cs" />
     <Compile Include="Repositories\ISupportAnchoring.cs" />
+    <Compile Include="Repositories\ISupportAuthentication.cs" />
     <Compile Include="Repositories\ISupportCleaning.cs" />
     <Compile Include="Repositories\ISupportNuking.cs" />
     <Compile Include="Repositories\ISupportPublishing.cs" />

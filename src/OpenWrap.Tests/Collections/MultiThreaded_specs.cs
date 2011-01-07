@@ -9,7 +9,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Collections
 {
-    public class when_enumerating_from_multiple_inputs : Testing.context
+    public class when_enumerating_from_multiple_inputs : OpenWrap.Testing.context
     {
         [Test]
         public void the_outputs_are_returned_in_order()

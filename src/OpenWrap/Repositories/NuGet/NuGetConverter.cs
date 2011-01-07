@@ -14,7 +14,7 @@ namespace OpenWrap.Repositories.NuGet
     public static class NuGetConverter
     {
         public const string NuSpecSchema = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd";
-
+        // TODO: Move all framework profile stuff into FrameworkVersioning.cs
         static readonly Dictionary<string, string> FrameworkProfiles = new Dictionary<string, string>
         {
                 { "NET", "net" },

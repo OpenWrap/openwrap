@@ -3,7 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
 	ProjectSection(SolutionItems) = preProject
-		..\build\build.proj = ..\build\build.proj
 		..\build\openwrap.proj = ..\build\openwrap.proj
 		..\build\self-build.test = ..\build\self-build.test
 		..\version = ..\version
@@ -40,6 +39,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.v511", "OpenWrap.Resharper.v511\OpenWrap.Resharper.v511.csproj", "{9F5D9D90-DD43-45E9-BB70-B8EADE27FE82}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Windows", "OpenWrap.Windows\OpenWrap.Windows.csproj", "{4798E62B-EDF7-411B-9369-98D1850E114D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Testing", "OpenWrap.Testing\OpenWrap.Testing.csproj", "{C8271D09-7581-4DC5-B47B-6763062506C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +96,10 @@ Global
 		{4798E62B-EDF7-411B-9369-98D1850E114D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4798E62B-EDF7-411B-9369-98D1850E114D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4798E62B-EDF7-411B-9369-98D1850E114D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8271D09-7581-4DC5-B47B-6763062506C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8271D09-7581-4DC5-B47B-6763062506C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8271D09-7581-4DC5-B47B-6763062506C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8271D09-7581-4DC5-B47B-6763062506C2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

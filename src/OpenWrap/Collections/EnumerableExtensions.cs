@@ -41,6 +41,11 @@ namespace OpenWrap.Collections
             return input.Where(x => !string.IsNullOrEmpty(x));
         }
 
+        public static IEnumerable<T> ToEnumerable<T>(this T item)
+        {
+            return new[] { item };
+        }
+
         public static MoveNextResult TryMoveNext<T, TException>(this IEnumerator<T> enumerator, out T value, out TException error)
                 where TException : Exception
         {
@@ -61,6 +66,21 @@ namespace OpenWrap.Collections
                 error = e;
                 return MoveNextResult.Error;
             }
+        }
+
+        public static IEnumerable<T> TakeWhileIncluding<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            var breakConditionMet = false;
+            return items.TakeWhile(i =>
+            {
+                if (breakConditionMet) return false;
+                if (!predicate(i))
+                {
+                    breakConditionMet = true;
+                    return true;
+                }
+                return !breakConditionMet;
+            });
         }
     }
 }
