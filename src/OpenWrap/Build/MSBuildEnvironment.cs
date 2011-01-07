@@ -6,8 +6,8 @@ namespace OpenWrap.Build
 {
     public class MSBuildEnvironment : CurrentDirectoryEnvironment
     {
-        public MSBuildEnvironment(InitializeOpenWrap initializeOpenWrap, string currentDirectory) 
-            : base(Path.GetDirectoryName(initializeOpenWrap.BuildEngine.ProjectFileOfTaskNode))
+        public MSBuildEnvironment(string projectFileDirectory, string currentDirectory) 
+            : base(projectFileDirectory)
         {
             if (currentDirectory != null)
                 CurrentDirectory = LocalFileSystem.Instance.GetDirectory(currentDirectory);

@@ -94,7 +94,7 @@ namespace OpenWrap.Tests.Build.package_builder_specs
                 return new MSBuildPackageBuilder(_fileSystem,
                                                  new InMemoryEnvironment(_testDir, _testDir)
                                                  {
-                                                         ExecutionEnvironment = new ExecutionEnvironment("AnyCPU", "net-3.5")
+                                                         ExecutionEnvironment = new ExecutionEnvironment("AnyCPU", "net35")
                                                  },
                                                  new ResultParserStub());
             }

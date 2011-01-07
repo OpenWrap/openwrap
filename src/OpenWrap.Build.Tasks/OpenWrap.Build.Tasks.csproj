@@ -88,6 +88,10 @@
       <Name>OpenRasta.Client</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Build.Bootstrap\OpenWrap.Build.Bootstrap.csproj">
+      <Project>{DFF6974F-5148-4B2C-8D76-190C3D92D9FF}</Project>
+      <Name>OpenWrap.Build.Bootstrap</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Resharper.v450\OpenWrap.Resharper.v450.csproj">
       <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
       <Name>OpenWrap.Resharper.v450</Name>
