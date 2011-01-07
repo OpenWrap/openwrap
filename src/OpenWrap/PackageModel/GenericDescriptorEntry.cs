@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace OpenWrap.PackageModel
 {
@@ -15,6 +16,11 @@ namespace OpenWrap.PackageModel
 
         public string Name { get; set; }
         public string Value { get; set; }
+
+        public void Write(TextWriter writer)
+        {
+            writer.Write(Name + ": " + Value + "\r\n");
+        }
 
         public static bool operator ==(GenericDescriptorEntry left, GenericDescriptorEntry right)
         {

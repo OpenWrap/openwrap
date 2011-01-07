@@ -8,26 +8,22 @@ namespace OpenWrap.PackageModel
 {
     public class PackageDescriptorEntryCollection : IEnumerable<IPackageDescriptorEntry>
     {
-        readonly Dictionary<string, List<GenericDescriptorEntry>> _byName = new Dictionary<string, List<GenericDescriptorEntry>>(StringComparer.OrdinalIgnoreCase);
-        readonly List<GenericDescriptorEntry> _headers = new List<GenericDescriptorEntry>();
+        readonly Dictionary<string, List<IPackageDescriptorEntry>> _byName = new Dictionary<string, List<IPackageDescriptorEntry>>(StringComparer.OrdinalIgnoreCase);
+        readonly List<IPackageDescriptorEntry> _headers = new List<IPackageDescriptorEntry>();
 
-        public PackageDescriptorEntryCollection(IEnumerable<KeyValuePair<string, string>> descriptorLines)
+        
+        public IPackageDescriptorEntry Append(IPackageDescriptorEntry entry)
         {
-            foreach (var value in descriptorLines)
-                Append(value.Key, value.Value);
-        }
-
-        public PackageDescriptorEntryCollection()
-        {
+            if (!_headers.Contains(entry))
+                _headers.Add(entry);
+            GetOrAddValueList(entry.Name).Add(entry);
+            return entry;
         }
 
         public IPackageDescriptorEntry Append(string name, string value)
         {
             var header = new GenericDescriptorEntry(name, value);
-            if (!_headers.Contains(header))
-                _headers.Add(header);
-            GetOrAddValueList(name).Add(header);
-            return header;
+            return Append(header);
         }
 
         public void Remove(string name)
@@ -78,11 +74,11 @@ namespace OpenWrap.PackageModel
                 yield return val;
         }
 
-        List<GenericDescriptorEntry> GetOrAddValueList(string name)
+        List<IPackageDescriptorEntry> GetOrAddValueList(string name)
         {
-            List<GenericDescriptorEntry> values;
+            List<IPackageDescriptorEntry> values;
             if (!_byName.TryGetValue(name, out values))
-                _byName[name] = values = new List<GenericDescriptorEntry>();
+                _byName[name] = values = new List<IPackageDescriptorEntry>();
             return values;
         }
     }

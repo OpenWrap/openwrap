@@ -137,6 +137,29 @@ namespace package_descriptor_specs
             should_have_content("use-symlinks: false");
         }
     }
+
+    public class having_comments : contexts.descriptor
+    {
+        public having_comments()
+        {
+            given_descriptor("   # Love will find a way, if you want it to", "anchored: false", "# What I meant to say is that build, blabla", "build: value");
+            when_writing();
+        }
+
+        [Test]
+        public void lines_are_preserved()
+        {
+            Descriptor.Anchored.ShouldBe(false);
+            Descriptor.Build.First().ShouldBe("value");
+        }
+
+        [Test]
+        public void comments_are_preserved()
+        {
+            should_have_content("# Love will find a way, if you want it to\r\nanchored: false\r\n# What I meant to say is that build, blabla\r\nbuild: value");
+        }
+    }
+
     namespace contexts
     {
         public abstract class descriptor : context
@@ -146,16 +169,24 @@ namespace package_descriptor_specs
 
             protected void when_writing()
             {
-                Content = Descriptor.Select(x => x.Name + ": " + x.Value).Join("\r\n") ?? string.Empty;
+                var sb = new StringBuilder();
+                using (var sw = new StringWriter(sb))
+                  foreach (var l in Descriptor)
+                    l.Write(sw);
+                Content = sb.ToString();
 
             }
             protected void should_have_content(params string[] expectedContent)
             {
-                Content.ShouldBe(expectedContent.Join("\r\n") ?? string.Empty);
+                var joinedContent = expectedContent.Join("\r\n");
+                if (!string.IsNullOrEmpty(joinedContent))
+                    joinedContent += "\r\n";
+                Content.ShouldBe(joinedContent);
             }
             protected void given_descriptor(params string[] lines)
             {
-                Descriptor = new PackageDescriptorReaderWriter().Read(new MemoryStream(Encoding.UTF8.GetBytes(string.Join("\r\n", lines))));
+                var lineChars = string.Join("\r\n", lines);
+                Descriptor = new PackageDescriptorReaderWriter().Read(new MemoryStream(Encoding.UTF8.GetBytes(lineChars)));
             }
         }
     }
