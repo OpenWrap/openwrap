@@ -10,13 +10,12 @@ using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
-using Configurations = OpenWrap.Configuration.Configurations;
 
 namespace OpenWrap.Commands.Wrap
 {
     public abstract class WrapCommand : AbstractCommand
     {
-        public WrapCommand()
+        protected WrapCommand()
         {
             Successful = true;
         }
@@ -74,7 +73,7 @@ namespace OpenWrap.Commands.Wrap
         protected IEnumerable<ICommandOutput> HintRemoteRepositories()
         {
             yield return new Info("The list of configured repositories can be seen using the 'list-remote' command. The currently configured repositories are:");
-            foreach(var m in Configurations.LoadRemoteRepositories(ConfigurationManager)
+            foreach(var m in ConfigurationManager.LoadRemoteRepositories()
                     .OrderBy(x => x.Value.Priority)
                     .Select(x => new RemoteRepositoryMessage(this, x.Key, x.Value)))
                 yield return m;

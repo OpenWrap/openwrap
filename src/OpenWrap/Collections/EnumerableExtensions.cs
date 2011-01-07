@@ -62,5 +62,20 @@ namespace OpenWrap.Collections
                 return MoveNextResult.Error;
             }
         }
+
+        public static IEnumerable<T> TakeWhileIncluding<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        {
+            var breakConditionMet = false;
+            return items.TakeWhile(i =>
+            {
+                if (breakConditionMet) return false;
+                if (!predicate(i))
+                {
+                    breakConditionMet = true;
+                    return true;
+                }
+                return !breakConditionMet;
+            });
+        }
     }
 }

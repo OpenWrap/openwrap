@@ -271,8 +271,14 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="publish-wrap-path" xml:space="preserve">
     <value>Specifies the package's file path to publish.</value>
   </data>
+  <data name="publish-wrap-pwd" xml:space="preserve">
+    <value>Password for authentication against a remote repository.</value>
+  </data>
   <data name="publish-wrap-remote" xml:space="preserve">
     <value>Specifies the name of the remote repository to which the package is to be published.</value>
+  </data>
+  <data name="publish-wrap-user" xml:space="preserve">
+    <value>User for authentication against a remote repository. Also set password when using. The value may contain domain information.</value>
   </data>
   <data name="remove-remote" xml:space="preserve">
     <value>Removes a remote repository.</value>
