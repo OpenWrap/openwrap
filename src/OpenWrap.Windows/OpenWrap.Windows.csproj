@@ -91,12 +91,6 @@
     <Compile Include="NounVerb\NounVerbViewModel.cs" />
     <Compile Include="NounVerb\NullCommandDescriptor.cs" />
     <Compile Include="PackageRepository\AddPackageRepositoryViewModel.cs" />
-    <Compile Include="Controls\PackageControl.xaml.cs">
-      <DependentUpon>PackageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PackageGroupControl.xaml.cs">
-      <DependentUpon>PackageGroupControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="PackageRepository\AddPackageRepositoryWindow.xaml.cs">
       <DependentUpon>AddPackageRepositoryWindow.xaml</DependentUpon>
     </Compile>
@@ -111,29 +105,17 @@
     <Compile Include="PackageRepository\PackageRepositoriesControl.xaml.cs">
       <DependentUpon>PackageRepositoriesControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Package\AddPackageCommand.cs" />
     <Compile Include="AllPackages\PackageViewModel.cs" />
-    <Compile Include="Package\PackageGroupViewModel.cs" />
     <Compile Include="PackageRepository\AddPackageRepositoryCommand.cs" />
     <Compile Include="PackageRepository\PackageRepositoryViewModel.cs" />
     <Compile Include="PackageRepository\RemovePackageRepositoryCommand.cs" />
-    <Compile Include="Package\RemovePackageCommand.cs" />
     <Compile Include="NounVerb\VerbSlice.cs" />
     <Compile Include="NounVerb\WrapSlice.cs" />
-    <Compile Include="Package\PackageViewModel.cs" />
     <Page Include="AllPackages\AllPackagesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CommandOutput\CommandOutputControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\PackageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\PackageGroupControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
