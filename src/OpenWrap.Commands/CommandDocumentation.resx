@@ -337,6 +337,12 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="set-wrap-version" xml:space="preserve">
     <value>The exact version of the dependency</value>
   </data>
+  <data name="test-wrap" xml:space="preserve">
+    <value>Runs all unit tests defined in a package.</value>
+  </data>
+  <data name="test-wrap-name" xml:space="preserve">
+    <value>The name of the package to test.</value>
+  </data>
   <data name="update-wrap" xml:space="preserve">
     <value>Updates packages to their latest versions in local repositories.</value>
   </data>
