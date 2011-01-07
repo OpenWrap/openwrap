@@ -6,6 +6,5 @@ namespace OpenWrap.PackageModel
     {
         string Name { get; }
         string Value { get; }
-        void Write(TextWriter writer);
     }
 }

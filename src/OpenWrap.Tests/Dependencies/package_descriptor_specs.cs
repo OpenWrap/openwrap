@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap;
+using OpenWrap.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Testing;
@@ -169,12 +170,10 @@ namespace package_descriptor_specs
 
             protected void when_writing()
             {
-                var sb = new StringBuilder();
-                using (var sw = new StringWriter(sb))
-                  foreach (var l in Descriptor)
-                    l.Write(sw);
-                Content = sb.ToString();
-
+                var memString = new MemoryStream();
+                new PackageDescriptorReaderWriter().Write(Descriptor, memString);
+                memString.Position = 0;
+                Content = memString.ReadString();
             }
             protected void should_have_content(params string[] expectedContent)
             {
