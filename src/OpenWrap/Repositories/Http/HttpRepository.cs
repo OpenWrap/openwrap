@@ -25,10 +25,6 @@ namespace OpenWrap.Repositories.Http
         public PackageDocument IndexDocument { get; private set; }
 
         public string Name { get; private set; }
-        public IPackagePublisher Publisher()
-        {
-            return new PackagePublisher(Publish);
-        }
 
         public IHttpRepositoryNavigator Navigator
         {
@@ -59,15 +55,17 @@ namespace OpenWrap.Repositories.Http
             _packagesByName = null;
         }
 
-        IPackageInfo Publish(string packageFileName, Stream packageStream)
+        IDisposable ISupportAuthentication.WithCredentials(Credentials credentials)
         {
-            if (!Navigator.CanPublish)
-                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));
+            var auth = _navigator as ISupportAuthentication;
+            return auth == null
+                           ? new ActionOnDispose(() => { })
+                           : auth.WithCredentials(credentials);
+        }
 
-            Navigator.PushPackage(packageFileName, packageStream);
-            _packagesByName = null;
-            EnsureDataLoaded();
-            return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
+        public IPackagePublisher Publisher()
+        {
+            return new PackagePublisher(Publish);
         }
 
         void EnsureDataLoaded()
@@ -100,12 +98,15 @@ namespace OpenWrap.Repositories.Http
                 yield return new HttpPackageInfo(fileSystem, this, navigator, package);
         }
 
-        IDisposable ISupportAuthentication.WithCredentials(Credentials credentials)
+        IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            var auth = _navigator as ISupportAuthentication;
-            return auth == null 
-                ? new ActionOnDispose(() => { }) 
-                : auth.WithCredentials(credentials);
+            if (!Navigator.CanPublish)
+                throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));
+
+            Navigator.PushPackage(packageFileName, packageStream);
+            _packagesByName = null;
+            EnsureDataLoaded();
+            return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
         }
     }
 }
