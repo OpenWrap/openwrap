@@ -46,7 +46,8 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Error("Package not found.");
                 yield break;
             }
-            var testRunner = new TestRunnerManager(_fileSystem, _environment, _resolver, _exporter);
+            var testRunner = new TestRunnerManager(new[]{new TdnetTestRunnerFactory(_fileSystem)}, _environment, _resolver);
+            yield return new GenericMessage("Starting testing package {0}...", package.Identifier);
             foreach (var result in testRunner.ExecuteAllTests(_environment.ExecutionEnvironment, package.Load()))
             {
                 if (result.Value == true)
