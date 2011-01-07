@@ -16,6 +16,7 @@ namespace OpenWrap.Windows.Framework
         {
             if (Application.Current == null)
             {
+                // app is shutting down. Notifications are not wanted any more
                 return;
             }
 

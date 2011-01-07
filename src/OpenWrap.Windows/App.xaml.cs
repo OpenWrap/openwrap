@@ -29,12 +29,6 @@ namespace OpenWrap.Windows
             base.OnStartup(e);
         }
 
-        private static void SendInitalDataPopulationMessage()
-        {
-            Messenger.Default.Send(MessageNames.NounsVerbsChanged);
-            Messenger.Default.Send(MessageNames.RepositoryListChanged);
-        }
-
         private static void RegisterServices()
         {
             Services.Services.RegisterService(new RuntimeAssemblyResolver());
@@ -65,6 +59,12 @@ namespace OpenWrap.Windows
 
             MainWindow = mainWindow;
             mainWindow.Show();
+        }
+
+        private static void SendInitalDataPopulationMessage()
+        {
+            Messenger.Default.Send(MessageNames.NounsVerbsChanged);
+            Messenger.Default.Send(MessageNames.RepositoryListChanged);
         }
     }
 }

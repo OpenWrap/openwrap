@@ -3,6 +3,11 @@ using System.Windows.Input;
 
 namespace OpenWrap.Windows.Framework
 {
+    /// <summary>
+    /// AKA "RelayCommand" 
+    /// Used to wrap up actions or lambdas as a WPF command
+    /// </summary>
+    /// <typeparam name="T">The command param type</typeparam>
     public class ActionCommand<T> : ICommand
     {
         private readonly Action<T> _executeAction;

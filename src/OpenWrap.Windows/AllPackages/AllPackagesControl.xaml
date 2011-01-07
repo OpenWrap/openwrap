@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Framework="clr-namespace:OpenWrap.Windows.Framework" 
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
     <UserControl.Resources>
@@ -10,6 +11,7 @@
             <TextBlock VerticalAlignment="Center" Margin="1" Padding="1" 
               Text="{Binding Path=DescriptionShort}" ToolTip="{Binding Path=Description}" />
         </DataTemplate>
+        <Framework:BoolToYesNoConverter x:Key="BoolToYesNo" />
     </UserControl.Resources>
     <ListView ItemsSource="{Binding AllPackages}">
 
@@ -21,8 +23,8 @@
                 <GridViewColumn DisplayMemberBinding="{Binding LatestVersion}" Header="LatestVersion" />
                 <GridViewColumn DisplayMemberBinding="{Binding VersionCount}" Header="Versions" />
                 <GridViewColumn DisplayMemberBinding="{Binding CreatedDisplay}" Header="Created" />
-                <GridViewColumn DisplayMemberBinding="{Binding IsInstalledSystem}" Header="Installed system" />
-                <GridViewColumn DisplayMemberBinding="{Binding IsInstalledInDirectory}" Header="Installed in directory" />
+                <GridViewColumn DisplayMemberBinding="{Binding Path=IsInstalledSystem, Converter={StaticResource BoolToYesNo}}" Header="Installed system" />
+                <GridViewColumn DisplayMemberBinding="{Binding Path=IsInstalledInDirectory, Converter={StaticResource BoolToYesNo}}" Header="Installed in directory" />
             </GridView>
         </ListView.View>
     </ListView>

@@ -5,7 +5,7 @@ namespace OpenWrap.Windows.Framework.Messaging
 {
     /// <summary>
     /// messaging system is inspired by MVVMLight
-    /// but is has less stuff in it
+    /// but with less stuff in it
     /// </summary>
     public class Messenger
     {

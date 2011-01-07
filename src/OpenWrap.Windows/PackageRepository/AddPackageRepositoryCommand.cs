@@ -1,7 +1,7 @@
 ﻿using System;
+using OpenWrap.Commands.Remote;
 using OpenWrap.Windows.Framework;
 using OpenWrap.Windows.Framework.Messaging;
-using OpenWrapAddRemoteCommand = OpenWrap.Commands.Remote.AddRemoteCommand;
 
 namespace OpenWrap.Windows.PackageRepository
 {
@@ -29,7 +29,7 @@ namespace OpenWrap.Windows.PackageRepository
 
         protected override void Execute(AddPackageRepositoryViewModel parameter)
         {
-            OpenWrapAddRemoteCommand addRemoteCommand = new OpenWrapAddRemoteCommand
+            AddRemoteCommand addRemoteCommand = new AddRemoteCommand
             {
                     Name = parameter.RepositoryName, 
                     Href = new Uri(parameter.RepositoryUrl)
