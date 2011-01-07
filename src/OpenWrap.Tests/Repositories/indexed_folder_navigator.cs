@@ -100,7 +100,7 @@ namespace OpenWrap.Tests.Repositories
 
     namespace context
     {
-        public abstract class indexed_folder_repository : Testing.context
+        public abstract class indexed_folder_repository : OpenWrap.Testing.context
         {
             protected IndexedFolderRepository Repository { get; set; }
             protected InMemoryEnvironment Environment { get; set; }

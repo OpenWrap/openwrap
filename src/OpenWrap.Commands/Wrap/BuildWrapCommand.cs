@@ -59,6 +59,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> Build()
         {
+            
             var packageName = Name ?? Environment.Descriptor.Name;
             var destinationPath = _destinationPath ?? Environment.CurrentDirectory;
 
@@ -112,7 +113,7 @@ namespace OpenWrap.Commands.Wrap
         {
             var binFiles = (from fileDescriptor in buildFiles
                             where fileDescriptor.ExportName.StartsWith("bin-")
-                            from file in FileSystem.Files(fileDescriptor.Path.FullPath)
+                            from file in ResolveFiles(fileDescriptor)
                             where file.Exists
                             select new PackageContent
                             {
@@ -124,7 +125,7 @@ namespace OpenWrap.Commands.Wrap
 
             var externalFiles = from fileDesc in buildFiles
                                 where fileDesc.ExportName.StartsWith("bin-") == false
-                                from file in FileSystem.Files(fileDesc.Path.FullPath)
+                                from file in ResolveFiles(fileDesc)
                                 where file.Exists &&
                                       (fileDesc.AllowBinDuplicate ||
                                        binFiles.Any(x => x.FileName == file.Name) == false)
@@ -136,6 +137,13 @@ namespace OpenWrap.Commands.Wrap
                                         Stream = () => file.OpenRead()
                                 };
             return binFiles.Concat(externalFiles);
+        }
+
+        IEnumerable<IFile> ResolveFiles(FileBuildResult fileDescriptor)
+        {
+            return fileDescriptor.Path.FullPath.Contains("*")
+                           ? FileSystem.Files(fileDescriptor.Path.FullPath)
+                           : new[]{FileSystem.GetFile(fileDescriptor.Path.FullPath)};
         }
 
         IEnumerable<ICommandOutput> ProcessBuildResults(IEnumerable<IPackageBuilder> packageBuilders, Action<FileBuildResult> onFound)

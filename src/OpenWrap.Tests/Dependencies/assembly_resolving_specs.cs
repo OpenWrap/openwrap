@@ -173,13 +173,14 @@ namespace assembly_resolving_specs
                 TempDirectory = LocalFileSystem.Instance.CreateTempDirectory();
                 return LocalFileSystem.Instance;
             }
-            protected void given_project_package(string name, string version, IEnumerable<PackageContent> content, params string[] dependencies)
+            protected void given_project_package(string name, string version, IEnumerable<PackageContent> content, params string[] descriptorLines)
             {
-                var packageFileName = name + "-" + version + ".wrap";
-                var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version, content, dependencies).OpenRead();
+                
+                var packageFile = Package(name, version, content, descriptorLines);
+                var packageStream = packageFile.OpenRead();
                 using (var publisher = ((ISupportPublishing)Environment.ProjectRepository).Publisher())
                 using (var readStream = packageStream)
-                    publisher.Publish(packageFileName, readStream);
+                    publisher.Publish(packageFile.Name, readStream);
             }
 
             protected IEnumerable<PackageContent> Assemblies(params PackageContent[] assemblies)
@@ -191,16 +192,18 @@ namespace assembly_resolving_specs
                 var assemblyFile = TempDirectory.GetFile(assemblyName + ".dll");
                 var asmName = new AssemblyName(assemblyName);
                 var asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.Save | AssemblyBuilderAccess.ReflectionOnly, assemblyFile.Parent.Path.FullPath);
+                
                 var mb = asmBuilder.DefineDynamicModule(assemblyName + ".dll");
+                
                 asmBuilder.Save(assemblyFile.Name);
 
                 return new PackageContent { FileName = assemblyFile.Name, RelativePath = content, Stream = () => assemblyFile.OpenRead(), Size = new System.IO.FileInfo(assemblyFile.Path.FullPath).Length };
 
             }
-            protected InMemoryFile Package(string wrapName, string version, IEnumerable<PackageContent> content, params string[] wrapdescLines)
+            protected InMemoryFile Package(string name, string version, IEnumerable<PackageContent> content, params string[] descriptorLines)
             {
-                var file = new InMemoryFile(wrapName + "-" + version + ".wrap");
-                Packager.NewWithDescriptor(file, wrapName, version, content, wrapdescLines);
+                var file = new InMemoryFile(name + "-" + version + ".wrap");
+                Packager.NewWithDescriptor(file, name, version, content, descriptorLines);
                 return file;
             }
 

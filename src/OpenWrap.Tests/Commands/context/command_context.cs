@@ -26,7 +26,7 @@ using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.Tests.Commands.context
 {
-    public abstract class openwrap_context : Testing.context
+    public abstract class openwrap_context : OpenWrap.Testing.context
     {
         protected CommandRepository Commands;
         protected InMemoryEnvironment Environment;

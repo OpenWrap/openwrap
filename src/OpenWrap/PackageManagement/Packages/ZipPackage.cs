@@ -8,6 +8,7 @@ using OpenWrap.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
+using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.PackageManagement.Packages
 {
@@ -83,7 +84,9 @@ namespace OpenWrap.PackageManagement.Packages
 
         public virtual IPackage Load()
         {
-            return null;
+            var tempDirectory = PackageFile.FileSystem.CreateTempDirectory();
+            ExtractPackage(PackageFile, tempDirectory);
+            return new UncompressedPackage(this.Source, PackageFile, tempDirectory, ExportBuilders.All);
         }
 
         void LoadDescriptor()
@@ -104,6 +107,25 @@ namespace OpenWrap.PackageManagement.Packages
 
                 if (Descriptor.Version == null)
                     throw new InvalidOperationException("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.");
+            }
+        }
+
+        protected static void ExtractPackage(IFile wrapFile, IDirectory destinationDirectory)
+        {
+            var nt = new WindowsNameTransform(destinationDirectory.Path.FullPath);
+            using (var zipFile = new ZipFile(wrapFile.OpenRead()))
+            {
+                foreach (ZipEntry zipEntry in zipFile)
+                {
+                    if (zipEntry.IsFile)
+                    {
+                        var filePath = nt.TransformFile(zipEntry.Name);
+                        using (var targetFile = destinationDirectory.FileSystem.GetFile(filePath).MustExist().OpenWrite())
+                        using (var sourceFile = zipFile.GetInputStream(zipEntry))
+                            StreamExtensions.CopyTo(sourceFile, targetFile);
+                        // TODO: restore last write time here by adding it to OFS
+                    }
+                }
             }
         }
     }
