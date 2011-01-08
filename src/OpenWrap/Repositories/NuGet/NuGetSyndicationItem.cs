@@ -16,6 +16,9 @@ namespace OpenWrap.Repositories.NuGet
 
         string _oDataPackageVersion;
         string _oDataPublished;
+        string _odataId;
+        string _odataAuthors;
+        string _odataSummary;
 
         public List<string> Dependencies
         {
@@ -37,10 +40,10 @@ namespace OpenWrap.Repositories.NuGet
             {
                 TextSyndicationContent content = null;
                 return ODataNode()
-                               ? Summary.Text
+                    ? _odataSummary ?? (Summary != null ? Summary.Text : string.Empty)
                                : ((content = Content as TextSyndicationContent) != null)
                                          ? content.Text
-                                         : null;
+                                         : String.Empty;
             }
         }
 
@@ -63,7 +66,7 @@ namespace OpenWrap.Repositories.NuGet
             get
             {
                 if (ODataNode())
-                    return Title.Text;
+                    return _odataId ?? (Title == null ? string.Empty : Title.Text);
                 return ElementExtensions.Extension<string>("packageId");
             }
         }
@@ -140,6 +143,14 @@ namespace OpenWrap.Repositories.NuGet
                             _oDataDependencies = GetODataDependencies(reader.ReadElementContentAsString());
                         else if (reader.LocalName == "Published")
                             _oDataPublished = reader.ReadElementContentAsString();
+                        else if (reader.LocalName == "Id")
+                            _odataId = reader.ReadElementContentAsString();
+                        else if (reader.LocalName == "Version")
+                            _oDataPackageVersion = reader.ReadElementContentAsString();
+                        else if (reader.LocalName == "Authors")
+                            _odataAuthors = reader.ReadElementContentAsString();
+                        else if (reader.LocalName == "Summary")
+                            _odataSummary = reader.ReadElementContentAsString();
                     }
                 }
             }
