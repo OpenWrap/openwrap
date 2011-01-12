@@ -8,6 +8,7 @@ using OpenWrap.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
+using Path = OpenFileSystem.IO.Path;
 using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.PackageManagement.Packages
@@ -119,8 +120,14 @@ namespace OpenWrap.PackageManagement.Packages
                 {
                     if (zipEntry.IsFile)
                     {
-                        var filePath = nt.TransformFile(zipEntry.Name);
-                        using (var targetFile = destinationDirectory.FileSystem.GetFile(filePath).MustExist().OpenWrite())
+                        IFile destinationFile;
+
+                        if (System.IO.Path.DirectorySeparatorChar == '\\')
+                            destinationFile = destinationDirectory.FileSystem.GetFile(nt.TransformFile(zipEntry.Name));
+                        else
+                            destinationFile = destinationDirectory.GetFile(zipEntry.Name);
+
+                        using (var targetFile = destinationFile.MustExist().OpenWrite())
                         using (var sourceFile = zipFile.GetInputStream(zipEntry))
                             StreamExtensions.CopyTo(sourceFile, targetFile);
                         // TODO: restore last write time here by adding it to OFS
