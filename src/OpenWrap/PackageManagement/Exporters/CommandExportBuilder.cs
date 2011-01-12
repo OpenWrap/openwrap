@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using OpenWrap.Collections;
 using OpenWrap.Runtime;
 
 namespace OpenWrap.PackageManagement.Exporters
@@ -28,24 +29,33 @@ namespace OpenWrap.PackageManagement.Exporters
                     .Where(x => x.loc != null)
                     .ToLookup(x => x.loc, x => x.asm, StringComparer.OrdinalIgnoreCase);
 
-            var commandTypes = from folder in exports
-                               from file in folder.Items
-                               where file.FullPath.EndsWith(".dll")
-                               let assembly = loadedAssemblyPaths.Contains(file.FullPath)
-                                                      ? loadedAssemblyPaths[file.FullPath].First()
-                                                      : TryReflectionOnlyLoad(file)
-                               where assembly != null
-                               from type in TryGetExportedTypes(assembly)
-                               where type.IsAbstract == false &&
-                                     type.IsGenericTypeDefinition == false &&
-                                     TryGet(()=>type.GetInterface("ICommand")) != null
-                               let loadedAssembly = TryGet(()=>Assembly.LoadFrom(file.FullPath))
-                               where loadedAssembly != null
-                               let loadedType = TryGet(()=>loadedAssembly.GetType(type.FullName))
-                               where loadedType != null
-                               select loadedType;
+            var reflectionOnlyContext = (from folder in exports
+                                         from file in folder.Items
+                                         where file.FullPath.EndsWith(".dll")
+                                         let assembly = loadedAssemblyPaths.Contains(file.FullPath)
+                                                               ? loadedAssemblyPaths[file.FullPath].First()
+                                                               : TryReflectionOnlyLoad(file)
+                                         where assembly != null
+                                         select new { file, assembly }).ToList();
+
+            var commandTypes = from commands in
+                                   (from asmFile in reflectionOnlyContext.ToList()
+                                    let types = from type in TryGetExportedTypes(asmFile.assembly)
+                                                where type.IsAbstract == false &&
+                                                type.IsGenericTypeDefinition == false &&
+                                                TryGet(() => type.GetInterface("ICommand")) != null
+                                                select type
+                                    where types.Any()
+                                    let assembly = TryGet(() => Assembly.LoadFrom(asmFile.file.FullPath))
+                                    where assembly != null
+                                    select new { assembly, asmFile.file, types = types.NotNull().ToList() }).ToList()
+                               from type in commands.types
+                               let loadFromContextType = TryGet(() => commands.assembly.GetType(type.FullName))
+                               where loadFromContextType != null
+                               select loadFromContextType;
             return new CommandExport(commandTypes);
         }
+
         T TryGet<T>(Func<T> func)
         {
             try
@@ -85,9 +95,11 @@ namespace OpenWrap.PackageManagement.Exporters
 
         Assembly TryReflectionOnlyLoad(IExportItem file)
         {
+
             try
             {
-                return Assembly.ReflectionOnlyLoadFrom(file.FullPath);
+                var loadedAsm = Assembly.ReflectionOnlyLoadFrom(file.FullPath);
+                return loadedAsm;
             }
             catch
             {
