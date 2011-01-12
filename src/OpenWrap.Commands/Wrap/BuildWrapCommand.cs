@@ -101,7 +101,7 @@ namespace OpenWrap.Commands.Wrap
             _buildResults = _buildResults.Distinct().ToList();
         }
 
-        PackageDescriptor GetCurrentPackageDescriptor()
+        IPackageDescriptor GetCurrentPackageDescriptor()
         {
             foreach (var file in _buildResults.Where(x => x.ExportName == "." && x.FileName.EndsWithNoCase(".wrapdesc")).ToList())
                 _buildResults.Remove(file);

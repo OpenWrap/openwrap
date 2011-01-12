@@ -20,5 +20,10 @@ namespace OpenWrap.PackageModel.Parsers
         {
             return arg == default(DateTimeOffset) ? null : arg.ToString();
         }
+
+        public static SingleDateTimeOffsetValue New(PackageDescriptorEntryCollection entries, string name, DateTimeOffset defaultVal)
+        {
+            return new SingleDateTimeOffsetValue(entries, name);
+        }
     }
 }

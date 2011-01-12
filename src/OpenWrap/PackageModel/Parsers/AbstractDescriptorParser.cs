@@ -16,7 +16,7 @@ namespace OpenWrap.PackageModel.Parsers
 
         protected string Header { get; set; }
 
-        public void Parse(string line, PackageDescriptor descriptor)
+        public void Parse(string line, IPackageDescriptor descriptor)
         {
             var match = _regex.Match(line);
             if (!match.Success)
@@ -31,7 +31,7 @@ namespace OpenWrap.PackageModel.Parsers
             return content.Select(x => Header + ": " + x);
         }
 
-        protected abstract void ParseContent(string content, PackageDescriptor descriptor);
+        protected abstract void ParseContent(string content, IPackageDescriptor descriptor);
         protected abstract IEnumerable<string> WriteContent(PackageDescriptor descriptor);
     }
 }

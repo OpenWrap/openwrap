@@ -6,7 +6,6 @@ namespace OpenWrap.PackageModel.Parsers
     public class SingleValue<T>
     {
         readonly T _defaultValue;
-        readonly Func<string, T> _fromString;
         readonly Func<T, bool> _isDefault;
         readonly PackageDescriptorEntryCollection _entries;
         readonly string _name;
@@ -18,13 +17,14 @@ namespace OpenWrap.PackageModel.Parsers
             _entries = entries;
             _name = name;
             _toString = toString;
-            _fromString = fromString;
             _defaultValue = defaultValue;
             _currentValue = defaultValue;
             _isDefault = isDefault ?? (x => ReferenceEquals(_defaultValue, null) == false && _defaultValue.Equals(x));
-            var exist = entries.FirstOrDefault(x => x.Name.EqualsNoCase(name));
-            _currentValue = exist != null ? fromString(exist.Value) : defaultValue;
+            var existing = entries.FirstOrDefault(x => x.Name.EqualsNoCase(name));
+            _currentValue = existing != null ? fromString(existing.Value) : defaultValue;
         }
+
+        public bool HasValue{get { return _entries.Any(x => x.Name.EqualsNoCase(_name)); }}
 
         public T Value
         {
@@ -39,6 +39,11 @@ namespace OpenWrap.PackageModel.Parsers
                 else
                     _entries.Set(_name, stringValue);
             }
+        }
+
+        public void ForceValue(T value)
+        {
+            _entries.Set(_name, _toString(value));
         }
     }
 }

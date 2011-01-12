@@ -6,5 +6,6 @@ namespace OpenWrap.PackageModel
     {
         string Name { get; }
         string Value { get; }
+        bool IncludeInPackage { get; }
     }
 }

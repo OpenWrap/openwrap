@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 
@@ -10,20 +9,26 @@ namespace OpenWrap.PackageManagement
         IPackageUpdateResult UpdateSystemPackages(IEnumerable<IPackageRepository> sourceRepositories,
                                                   IPackageRepository systemRepository,
                                                   PackageUpdateOptions options = PackageUpdateOptions.Default);
-        IPackageUpdateResult UpdateSystemPackages(IEnumerable<IPackageRepository> sourceRepositories, IPackageRepository systemRepository, string packageName,
-                                                  PackageUpdateOptions options = PackageUpdateOptions.Default);
-        IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories, IPackageRepository projectRepository, PackageDescriptor projectDescriptor,
+
+        IPackageUpdateResult UpdateSystemPackages(IEnumerable<IPackageRepository> sourceRepositories,
+                                                  IPackageRepository systemRepository,
+                                                  string packageName,
                                                   PackageUpdateOptions options = PackageUpdateOptions.Default);
 
         IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories,
                                                    IPackageRepository projectRepository,
-                                                   PackageDescriptor projectDescriptor,
+                                                   IPackageDescriptor projectDescriptor,
+                                                   PackageUpdateOptions options = PackageUpdateOptions.Recurse);
+
+        IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories,
+                                                   IPackageRepository projectRepository,
+                                                   IPackageDescriptor projectDescriptor,
                                                    string packageName,
-                                                  PackageUpdateOptions options = PackageUpdateOptions.Default);
+                                                   PackageUpdateOptions options = PackageUpdateOptions.Default);
 
         IPackageAddResult AddProjectPackage(PackageRequest packageToAdd,
                                             IEnumerable<IPackageRepository> sourceRepositories,
-                                            PackageDescriptor projectDescriptor,
+                                            IPackageDescriptor projectDescriptor,
                                             IPackageRepository projectRepository,
                                             PackageAddOptions options = PackageAddOptions.Default);
 
@@ -33,33 +38,22 @@ namespace OpenWrap.PackageManagement
                                            PackageAddOptions options = PackageAddOptions.Default);
 
         IPackageRemoveResult RemoveProjectPackage(PackageRequest packageToRemove,
-                                                  PackageDescriptor packageDescriptor,
+                                                  IPackageDescriptor packageDescriptor,
                                                   IPackageRepository projectRepository,
                                                   PackageRemoveOptions optiosn = PackageRemoveOptions.Default);
 
         IPackageRemoveResult RemoveSystemPackage(PackageRequest packageToRemove, IPackageRepository systemRepository, PackageRemoveOptions options = PackageRemoveOptions.Default);
 
-        IPackageCleanResult CleanProjectPackages(PackageDescriptor projectDescriptor, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default);
-        IPackageCleanResult CleanProjectPackages(PackageDescriptor projectDescriptor, IPackageRepository projectRepository, string packageName, PackageCleanOptions options = PackageCleanOptions.Default);
+        IPackageCleanResult CleanProjectPackages(IPackageDescriptor projectDescriptor, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default);
+
+        IPackageCleanResult CleanProjectPackages(IPackageDescriptor projectDescriptor,
+                                                 IPackageRepository projectRepository,
+                                                 string packageName,
+                                                 PackageCleanOptions options = PackageCleanOptions.Default);
+
         IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, PackageCleanOptions options = PackageCleanOptions.Default);
         IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, string packageName, PackageCleanOptions options = PackageCleanOptions.Default);
 
         IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null, PackageListOptions options = PackageListOptions.Default);
-    }
-    [Flags]
-    public enum PackageUpdateOptions
-    {
-        Recurse = 1,
-        Default = Recurse
-    }
-    [Flags]
-    public enum PackageCleanOptions
-    {
-        Default
-    }
-    [Flags]
-    public enum PackageListOptions
-    {
-        Default
     }
 }

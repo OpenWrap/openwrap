@@ -9,6 +9,7 @@ using OpenWrap.PackageManagement.AssemblyResolvers;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.Preloading;
 using OpenWrap.Runtime;
 using OpenWrap.Tasks;
 using OpenWrap.Windows.Framework.Messaging;
@@ -23,6 +24,9 @@ namespace OpenWrap.Windows
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            Preloader.LoadAssemblies(
+                    Preloader.GetPackageFolders(Preloader.RemoteInstall.None, DefaultInstallationPaths.SystemRepositoryDirectory, "openfilesystem", "sharpziplib")
+                    );
             RegisterServices();
             ShowMainWindow();
             SendInitalDataPopulationMessage();

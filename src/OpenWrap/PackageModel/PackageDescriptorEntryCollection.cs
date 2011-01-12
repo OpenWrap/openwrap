@@ -11,7 +11,15 @@ namespace OpenWrap.PackageModel
         readonly Dictionary<string, List<IPackageDescriptorEntry>> _byName = new Dictionary<string, List<IPackageDescriptorEntry>>(StringComparer.OrdinalIgnoreCase);
         readonly List<IPackageDescriptorEntry> _headers = new List<IPackageDescriptorEntry>();
 
-        
+        public PackageDescriptorEntryCollection()
+        {
+            
+        }
+
+        public PackageDescriptorEntryCollection(IEnumerable<IPackageDescriptorEntry> entry)
+        {
+            
+        }
         public IPackageDescriptorEntry Append(IPackageDescriptorEntry entry)
         {
             if (!_headers.Contains(entry))

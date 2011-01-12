@@ -47,7 +47,12 @@ namespace OpenWrap.Tests.Commands
 
         public IFile DescriptorFile { get; set; }
 
-        public PackageDescriptor Descriptor { get; set; }
+        public IDictionary<string, IPackageDescriptor> ScopedDescriptors
+        {
+            get { return null; }
+        }
+
+        public IPackageDescriptor Descriptor { get; set; }
 
         IEnumerable<IPackageRepository> IEnvironment.RemoteRepositories
         {

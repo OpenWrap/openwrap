@@ -6,7 +6,6 @@ namespace OpenWrap
     {
         public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {
-            TValue outValue;
             return dictionary.ContainsKey(key) ? dictionary[key] : default(TValue);
         }
 

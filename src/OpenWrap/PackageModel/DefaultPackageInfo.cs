@@ -62,7 +62,7 @@ namespace OpenWrap.PackageModel
 
         public IPackageRepository Source
         {
-            get { return _descriptor.Source; }
+            get { return null; }
         }
 
         public Version Version
@@ -73,7 +73,7 @@ namespace OpenWrap.PackageModel
 
         public IPackage Load()
         {
-            return _descriptor.Load();
+            return null;
         }
     }
 }

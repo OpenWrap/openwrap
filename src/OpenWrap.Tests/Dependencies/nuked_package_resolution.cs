@@ -66,25 +66,26 @@ namespace OpenWrap.Tests.Dependencies
         {
             protected string ResolvedVersion;
             private PackageDependencyBuilder _packageDependency
-                = new PackageDependencyBuilder(packageName);
-            private List<IPackageInfo> _versions = new List<IPackageInfo>(); 
+                = new PackageDependencyBuilder(PACKAGE_NAME);
+            private readonly List<IPackageInfo> _versions = new List<IPackageInfo>();
+            InMemoryRepository _repo = new InMemoryRepository("in-mem");
 
-            const string packageName="test";
+            const string PACKAGE_NAME="test";
 
             protected void given_package_version(string version)
             {
-                _versions.Add(new InMemoryPackage()
+                _repo.Packages.Add(new InMemoryPackage()
                 {
-                    Name = packageName,
+                    Name = PACKAGE_NAME,
                     Version = new Version(version)
                 });
             }
 
             protected void given_nuked_package_version(string version)
             {
-                _versions.Add(new InMemoryPackage()
+                _repo.Packages.Add(new InMemoryPackage()
                 {
-                    Name = packageName,
+                    Name = PACKAGE_NAME,
                     Version = new Version(version),
                     Nuked = true
                 });
@@ -97,7 +98,7 @@ namespace OpenWrap.Tests.Dependencies
 
             protected void when_resolving()
             {
-                ResolvedVersion = _versions.ToLookup(x=>x.Name)
+                ResolvedVersion = _repo
                     .Find(_packageDependency)
                     .Version.ToString();
             }

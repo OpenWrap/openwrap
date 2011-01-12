@@ -46,18 +46,9 @@ namespace OpenWrap.Repositories
             get { return Services.Services.GetService<IFileSystem>(); }
         }
 
-        public void Delete(IPackageInfo package)
-        {
-        }
-
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
             throw new NotSupportedException();
-        }
-
-        public IPackageInfo Find(PackageDependency dependency)
-        {
-            return PackagesByName.Find(dependency);
         }
 
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)

@@ -1,0 +1,153 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using OpenWrap.PackageModel.Parsers;
+
+namespace OpenWrap.PackageModel
+{
+    public partial class PackageDescriptor
+    {
+
+        public class ScopedPackageDescriptor : IPackageDescriptor
+        {
+            readonly PackageDescriptorEntryCollection _entries = new PackageDescriptorEntryCollection();
+
+            DelegatedValue<bool> _anchored;
+            DelegatedValue<DateTimeOffset> _created;
+            DelegatedValue<string> _description;
+            DelegatedValue<string> _name;
+            DelegatedValue<bool> _useProjectRepository;
+            DelegatedValue<bool> _useSymLinks;
+            DelegatedValue<Version> _version;
+            DelegatedValue<string> _referencedAssemblies;
+
+            ScopedPackageNameOverrideCollection _overrides;
+            ScopedPackageDependencyCollection _dependencies;
+            DelegatedMultiLine<string> _buildCommands;
+            readonly PackageDescriptor _parent;
+
+            public ScopedPackageDescriptor(PackageDescriptor parent, IEnumerable<IPackageDescriptorEntry> entries)
+                : this(parent)
+            {
+                foreach (var line in entries)
+                    _entries.Append(line);
+                InitializeHeaders();
+            }
+
+            public ScopedPackageDescriptor(PackageDescriptor parent)
+            {
+                _parent = parent;
+            }
+
+            public bool Anchored
+            {
+                get { return _anchored.Value; }
+                set { _anchored.Value = value; }
+            }
+
+
+            public virtual DateTimeOffset Created
+            {
+                get { return _created.Value; }
+                private set { _created.Value = value; }
+            }
+            public virtual ICollection<string> Build { get { return _buildCommands; } }
+            public virtual ICollection<PackageDependency> Dependencies
+            {
+                get { return _dependencies; }
+            }
+
+            public virtual string Description
+            {
+                get { return _description.Value; }
+                set { _description.Value = value; }
+            }
+
+            public string FullName
+            {
+                get { return Name + "-" + Version; }
+            }
+
+            public PackageIdentifier Identifier
+            {
+                get { return new PackageIdentifier(Name, Version); }
+            }
+
+            public virtual string Name
+            {
+                get { return _name.Value; }
+                set { _name.Value = value; }
+            }
+
+            public virtual ICollection<PackageNameOverride> Overrides
+            {
+                get { return _overrides; }
+            }
+
+            public bool UseProjectRepository
+            {
+                get { return _useProjectRepository.Value; }
+                set { _useProjectRepository.Value = value; }
+            }
+
+            public bool UseSymLinks
+            {
+                get { return _useSymLinks.Value; }
+                set { _useSymLinks.Value = value; }
+            }
+
+            public virtual Version Version
+            {
+                get { return _version.Value; }
+                set { _version.Value = value; }
+            }
+
+            public virtual string ReferencedAssemblies
+            {
+                get { return _referencedAssemblies.Value; }
+                set { _referencedAssemblies.Value = value; }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return ((IEnumerable<IPackageDescriptorEntry>)this).GetEnumerator();
+            }
+
+            IEnumerator<IPackageDescriptorEntry> IEnumerable<IPackageDescriptorEntry>.GetEnumerator()
+            {
+                foreach (var line in _entries)
+                    yield return line;
+            }
+
+            void InitializeHeaders()
+            {
+                _dependencies = new ScopedPackageDependencyCollection(_parent._dependencies, new PackageDependencyCollection(_entries));
+                _overrides = new ScopedPackageNameOverrideCollection(_parent._overrides, new PackageNameOverrideCollection(_entries));
+                _buildCommands = new DelegatedMultiLine<string>(
+                    new MultiLine<string>(_parent.Entries, "build", _ => _, _ => _),
+                    new MultiLine<string>(_entries, "build", _ => _, _ => _)
+                    );
+
+
+                _anchored = CreateDelegated("anchored", SingleBoolValue.New, false);
+
+
+                _created = CreateDelegated<DateTimeOffset>("created", SingleDateTimeOffsetValue.New);
+                _description = CreateDelegated<string>("description", SingleStringValue.New);
+
+                _name = CreateDelegated<string>("name", SingleStringValue.New);
+                _version = CreateDelegated<Version>("version", SingleVersionValue.New);
+                _useProjectRepository = CreateDelegated("use-project-repository", SingleBoolValue.New, true);
+                _useSymLinks = CreateDelegated("use-symlinks", SingleBoolValue.New, true);
+                _referencedAssemblies = CreateDelegated("referenced-assemblies", SingleStringValue.New, "*");
+            }
+
+            DelegatedValue<T> CreateDelegated<T>(string name, Func<PackageDescriptorEntryCollection, string, T, SingleValue<T>> ctor, T defaultValue = default(T))
+            {
+                return new DelegatedValue<T>(
+                        ctor(_parent.Entries, name, defaultValue),
+                        ctor(_entries, name, defaultValue));
+            }
+        }
+    }
+}

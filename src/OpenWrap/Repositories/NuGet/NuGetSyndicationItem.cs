@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel.Syndication;
 using System.Xml;
-using System.Xml.Linq;
 using OpenWrap.Repositories.Http;
 
 namespace OpenWrap.Repositories.NuGet
@@ -12,7 +11,6 @@ namespace OpenWrap.Repositories.NuGet
     {
         IEnumerable<NuGetDependency> _oDataDependencies;
         bool? _oDataFound;
-        XDocument _oDataNode;
 
         string _oDataPackageVersion;
         string _oDataPublished;

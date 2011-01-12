@@ -8,7 +8,6 @@ namespace OpenWrap.PackageManagement
 {
     public interface IPackageResolver : IService
     {
-        DependencyResolutionResult TryResolveDependencies(PackageDescriptor packageDescriptor,
-                                                          IEnumerable<IPackageRepository> repositoriesToQuery);
+        DependencyResolutionResult TryResolveDependencies(IPackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repositoriesToQuery);
     }
 }

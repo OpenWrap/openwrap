@@ -145,7 +145,7 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        void RewriteDescriptorFile(PackageDescriptor descriptor)
+        void RewriteDescriptorFile(IPackageDescriptor descriptor)
         {
             using (var destinationStream = Environment.DescriptorFile.OpenWrite())
             {

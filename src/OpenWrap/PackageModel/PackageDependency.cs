@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace OpenWrap.PackageModel
 {
-    public class PackageDependency : IPackageDependency
+    public class PackageDependency
     {
         public PackageDependency(
                 string name,

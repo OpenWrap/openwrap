@@ -6,5 +6,9 @@
                 : base(entries, name, x => x.ToString().ToLower(), bool.Parse, defaultValue: defaultValue)
         {
         }
+        public static SingleBoolValue New(PackageDescriptorEntryCollection entries, string name, bool value)
+        {
+            return new SingleBoolValue(entries, name, value);
+        }
     }
 }

@@ -116,7 +116,7 @@ namespace current_directory_specifications
                 var dep = new PackageDescriptor();
                 new DependsParser().Parse(dependency, dep);
 
-                FoundPackage = Repository.Find(dep.Dependencies.First());
+                FoundPackage = Repository.FindAll(dep.Dependencies.First()).FirstOrDefault();
             }
 
             protected void when_getting_package_names()

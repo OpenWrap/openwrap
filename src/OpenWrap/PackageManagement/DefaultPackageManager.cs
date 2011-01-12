@@ -20,11 +20,7 @@ namespace OpenWrap.PackageManagement
             _resolver = resolver;
         }
 
-        public IPackageAddResult AddProjectPackage(PackageRequest packageToAdd,
-                                                   IEnumerable<IPackageRepository> sourceRepositories,
-                                                   PackageDescriptor projectDescriptor,
-                                                   IPackageRepository projectRepository,
-                                                   PackageAddOptions options = PackageAddOptions.Default)
+        public IPackageAddResult AddProjectPackage(PackageRequest packageToAdd, IEnumerable<IPackageRepository> sourceRepositories, IPackageDescriptor projectDescriptor, IPackageRepository projectRepository, PackageAddOptions options = PackageAddOptions.Default)
         {
             Check.NotNull(packageToAdd, "packageToAdd");
             Check.NoNullElements(sourceRepositories, "sourceRepositories");
@@ -42,7 +38,7 @@ namespace OpenWrap.PackageManagement
             return new PackageAddResultIterator(CopyPackageCore(sourceRepositories, new[] { systemRepository }, ToDescriptor(packageToAdd, options), x => true));
         }
 
-        public IPackageCleanResult CleanProjectPackages(PackageDescriptor packages, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default)
+        public IPackageCleanResult CleanProjectPackages(IPackageDescriptor packages, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default)
         {
             if (packages == null) throw new ArgumentNullException("packages");
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
@@ -52,7 +48,7 @@ namespace OpenWrap.PackageManagement
             return new PackageCleanResultIterator(CleanProjectPackagesCore(packages, repoForClean, x => true));
         }
 
-        public IPackageCleanResult CleanProjectPackages(PackageDescriptor packages, IPackageRepository projectRepository, string name, PackageCleanOptions options = PackageCleanOptions.Default)
+        public IPackageCleanResult CleanProjectPackages(IPackageDescriptor packages, IPackageRepository projectRepository, string name, PackageCleanOptions options = PackageCleanOptions.Default)
         {
             if (packages == null) throw new ArgumentNullException("packages");
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
@@ -81,10 +77,7 @@ namespace OpenWrap.PackageManagement
             return new PackageListResultIterator(ListPackagesCore(repositories, query));
         }
 
-        public IPackageRemoveResult RemoveProjectPackage(PackageRequest packageToRemove,
-                                                         PackageDescriptor packageDescriptor,
-                                                         IPackageRepository projectRepository,
-                                                         PackageRemoveOptions options = PackageRemoveOptions.Default)
+        public IPackageRemoveResult RemoveProjectPackage(PackageRequest packageToRemove, IPackageDescriptor packageDescriptor, IPackageRepository projectRepository, PackageRemoveOptions options = PackageRemoveOptions.Default)
         {
             if (packageToRemove == null) throw new ArgumentNullException("packageToRemove");
             if (packageDescriptor == null) throw new ArgumentNullException("packageDescriptor");
@@ -102,10 +95,7 @@ namespace OpenWrap.PackageManagement
             return new PackageRemoveResultIterator(RemovePackageFromRepository(packageToRemove, systemRepository));
         }
 
-        public IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories,
-                                                          IPackageRepository projectRepository,
-                                                          PackageDescriptor projectDescriptor,
-                                                          PackageUpdateOptions options = PackageUpdateOptions.Default)
+        public IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories, IPackageRepository projectRepository, IPackageDescriptor projectDescriptor, PackageUpdateOptions options = PackageUpdateOptions.Recurse)
         {
             if (sourceRepositories == null) throw new ArgumentNullException("sourceRepositories");
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
@@ -117,7 +107,7 @@ namespace OpenWrap.PackageManagement
 
         public IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories,
                                                           IPackageRepository projectRepository,
-                                                          PackageDescriptor projectDescriptor,
+                                                          IPackageDescriptor projectDescriptor,
                                                           string packageName,
                                                           PackageUpdateOptions options = PackageUpdateOptions.Default)
         {
@@ -250,7 +240,7 @@ namespace OpenWrap.PackageManagement
                     .Content((options & PackageAddOptions.Content) == PackageAddOptions.Content);
         }
 
-        static PackageDescriptor ToDescriptor(PackageRequest package, PackageAddOptions options)
+        static IPackageDescriptor ToDescriptor(PackageRequest package, PackageAddOptions options)
         {
             return new PackageDescriptor
             {
@@ -280,7 +270,7 @@ namespace OpenWrap.PackageManagement
 
         IEnumerable<PackageOperationResult> AddProjectPackageCore(PackageRequest packageToAdd,
                                                                   IEnumerable<IPackageRepository> sourceRepositories,
-                                                                  PackageDescriptor projectDescriptor,
+                                                                  IPackageDescriptor projectDescriptor,
                                                                   IPackageRepository projectRepository,
                                                                   PackageAddOptions options)
         {
@@ -304,7 +294,7 @@ namespace OpenWrap.PackageManagement
                 yield return m;
         }
 
-        IEnumerable<PackageOperationResult> CleanProjectPackagesCore(PackageDescriptor projectDescriptor, ISupportCleaning projectRepository, Func<string, bool> packageName)
+        IEnumerable<PackageOperationResult> CleanProjectPackagesCore(IPackageDescriptor projectDescriptor, ISupportCleaning projectRepository, Func<string, bool> packageName)
         {
             var resolvedPackages = _resolver.TryResolveDependencies(projectDescriptor, new[] { projectRepository });
             if (resolvedPackages.SuccessfulPackages.Any() == false)
@@ -344,7 +334,7 @@ namespace OpenWrap.PackageManagement
 
         IEnumerable<PackageOperationResult> CopyPackageCore(IEnumerable<IPackageRepository> sourceRepositories,
                                                             IEnumerable<IPackageRepository> destinationRepositories,
-                                                            PackageDescriptor descriptor,
+                                                            IPackageDescriptor descriptor,
                                                             Func<string, bool> nameSelector)
         {
             var updateDescriptor = new PackageDescriptor(descriptor);
@@ -416,7 +406,7 @@ namespace OpenWrap.PackageManagement
             }
         }
 
-        IEnumerable<PackageOperationResult> RemoveFromDescriptor(PackageRequest packageToRemove, PackageDescriptor packageDescriptor, IPackageRepository projectRepository, PackageRemoveOptions options)
+        IEnumerable<PackageOperationResult> RemoveFromDescriptor(PackageRequest packageToRemove, IPackageDescriptor packageDescriptor, IPackageRepository projectRepository, PackageRemoveOptions options)
         {
             var dependency = packageDescriptor.Dependencies.FirstOrDefault(x => x.Name.EqualsNoCase(packageToRemove.Name));
             if (dependency == null)

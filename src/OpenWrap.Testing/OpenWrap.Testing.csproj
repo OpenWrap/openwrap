@@ -41,8 +41,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ITestRunner.cs" />
+    <Compile Include="ITestRunnerFactory.cs" />
+    <Compile Include="ITestRunnerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AppDomainTestRunner.cs" />
+    <Compile Include="TdnetTestRunnerFactory.cs" />
     <Compile Include="TestRunnerManager.cs" />
     <Compile Include="TestRunnerProxy.cs" />
   </ItemGroup>

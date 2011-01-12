@@ -12,7 +12,6 @@ namespace OpenWrap.IO
         public string Name { get; private set; }
         readonly string _val;
         readonly string _transformed;
-        readonly string _source;
         static Regex _regex = new Regex(@"^\s* {\s* (?<var>[a-zA-Z][a-zA-Z0-9]*) \s* (:?\s* [""']? (?<val>.+?) [""']?  ( \s* = \s*  (?<valTransformed>.+?))? )? \s*} \s*$", RegexOptions.IgnorePatternWhitespace);
 
         public static PathSegment TryParse(string templateString)

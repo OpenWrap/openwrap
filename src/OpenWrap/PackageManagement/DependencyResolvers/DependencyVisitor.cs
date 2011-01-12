@@ -31,7 +31,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             _repositories = repositories;
             _selectionContext = selectionContext;
             _nameOverrides = nameOverrides;
-            _hints = hints.Where(x => x.VersionVertices.OfType<AnyVersionVertex>().Count() == 0).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+            _hints = hints.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
             _notFound = new List<KeyValuePair<PackageDependency, CallStack>>();
         }
 

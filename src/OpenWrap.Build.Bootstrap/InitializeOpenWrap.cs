@@ -24,6 +24,8 @@ namespace OpenWrap.Build
             var asm = Preloader.LoadAssemblies(
                     Preloader.GetPackageFolders(Preloader.RemoteInstall.None, DefaultInstallationPaths.SystemRepositoryDirectory,"openwrap", "openfilesystem", "sharpziplib")
                     );
+            foreach (var assembly in asm.Select(x => x.Key))
+                this.Log.LogMessage(MessageImportance.Low, "Pre-loaded assembly " + assembly);
             var openWrapAssembly = asm.Select(x=>x.Key).First(x => x.GetName().Name.Equals("openwrap", StringComparison.OrdinalIgnoreCase));
             var initializer = openWrapAssembly.GetType("OpenWrap.Build.BuildInitializer");
             var method = initializer.GetMethod("Initialize", BindingFlags.Static | BindingFlags.Public);

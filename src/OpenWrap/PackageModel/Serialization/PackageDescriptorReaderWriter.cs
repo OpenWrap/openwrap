@@ -54,7 +54,15 @@ namespace OpenWrap.PackageModel.Serialization
 
             return new PackageDescriptor(lines.Select(ParseLine));
         }
-
+        public T Read<T>(Stream content, Func<IEnumerable<IPackageDescriptorEntry>,T> ctor = null)
+            where T: class, IPackageDescriptor
+        {
+            var stringReader = new StreamReader(content, true);
+            var lines = stringReader.ReadToEnd().GetUnfoldedLines();
+            if (ctor != null)
+                return ctor(lines.Select(ParseLine));
+            return new PackageDescriptor(lines.Select(ParseLine)) as T;
+        }
         public void Write(IEnumerable<IPackageDescriptorEntry> descriptor, Stream descriptorStream)
         {
             var streamWriter = new StreamWriter(descriptorStream, Encoding.UTF8);

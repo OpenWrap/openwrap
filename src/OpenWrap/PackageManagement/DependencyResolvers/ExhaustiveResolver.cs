@@ -10,9 +10,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
     {
         const int MAX_RETRIES = 5000;
 
-        public DependencyResolutionResult TryResolveDependencies(
-                PackageDescriptor packageDescriptor,
-                IEnumerable<IPackageRepository> repositoriesToQuery)
+        public DependencyResolutionResult TryResolveDependencies(IPackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repositoriesToQuery)
         {
             var packageSelection = new PackageSelectionContext();
 

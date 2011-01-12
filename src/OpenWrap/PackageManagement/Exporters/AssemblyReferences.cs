@@ -14,7 +14,7 @@ namespace OpenWrap.PackageManagement.Exporters
         public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageResolver resolver,
                                                                                       bool includeContentOnly,
                                                                                       ExecutionEnvironment exec,
-                                                                                      PackageDescriptor descriptor,
+                                                                                      IPackageDescriptor descriptor,
                                                                                       params IPackageRepository[] repositories)
         {
             return GetAssemblyReferences(resolver.TryResolveDependencies(descriptor, repositories.NotNull()), exec, includeContentOnly);

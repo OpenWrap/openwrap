@@ -5,9 +5,9 @@ namespace OpenWrap.PackageManagement
 {
     public class PackageCleanCannotDo : PackageOperationResult
     {
-        readonly PackageDescriptor _projectDescriptor;
+        readonly IPackageDescriptor _projectDescriptor;
 
-        public PackageCleanCannotDo(PackageDescriptor projectDescriptor)
+        public PackageCleanCannotDo(IPackageDescriptor projectDescriptor)
         {
             _projectDescriptor = projectDescriptor;
         }

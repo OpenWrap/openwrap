@@ -43,11 +43,6 @@ namespace OpenWrap.Repositories
 
         protected List<PackageLocation> Packages { get; set; }
 
-        public IPackageInfo Find(PackageDependency dependency)
-        {
-            return PackagesByName.Find(dependency);
-        }
-
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
         {
             return PackagesByName.FindAll(dependency);
@@ -132,7 +127,6 @@ namespace OpenWrap.Repositories
         {
             packagesToKeep = packagesToKeep.ToList();
             var packagesToRemove = Packages.Where(x => !packagesToKeep.Contains(x.Package)).ToList();
-            bool somethingDone = false;
             foreach (var packageInfo in packagesToRemove)
             {
                 if (!Packages.Contains(packageInfo))
@@ -149,7 +143,6 @@ namespace OpenWrap.Repositories
                 {
                     yield return new PackageCleanResult(packageInfo.Package, false);
                 }
-                somethingDone = true;
             }
         }
 

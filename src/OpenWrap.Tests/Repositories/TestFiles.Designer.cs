@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OpenWrap.Tests.Repositories {
+namespace OpenWrap.Repositories {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace OpenWrap.Tests.Repositories {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OpenWrap.Tests.Repositories.TestFiles", typeof(TestFiles).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("OpenWrap.Repositories.TestFiles", typeof(TestFiles).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

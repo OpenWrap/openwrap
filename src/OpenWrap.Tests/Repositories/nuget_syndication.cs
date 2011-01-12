@@ -7,6 +7,7 @@ using System.Text;
 using System.Xml;
 using NUnit.Framework;
 using OpenWrap;
+using OpenWrap.Repositories;
 using OpenWrap.Repositories.Http;
 using OpenWrap.Repositories.NuGet;
 using OpenWrap.Testing;

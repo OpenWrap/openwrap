@@ -27,7 +27,12 @@ namespace OpenWrap.Runtime
 
         public IPackageRepository CurrentDirectoryRepository { get; set; }
 
-        public PackageDescriptor Descriptor { get; set; }
+        public IDictionary<string, IPackageDescriptor> ScopedDescriptors
+        {
+            get { return null; }
+        }
+
+        public IPackageDescriptor Descriptor { get; set; }
         public IFile DescriptorFile { get; private set; }
         public ExecutionEnvironment ExecutionEnvironment { get; private set; }
         public IFileSystem FileSystem { get; set; }

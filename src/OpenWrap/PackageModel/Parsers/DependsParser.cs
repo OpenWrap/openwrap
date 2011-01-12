@@ -58,7 +58,7 @@ namespace OpenWrap.PackageModel.Parsers
             }
         }
 
-        protected override void ParseContent(string content, PackageDescriptor descriptor)
+        protected override void ParseContent(string content, IPackageDescriptor descriptor)
         {
             var dependency = ParseDependsValue(content);
             if (dependency != null)

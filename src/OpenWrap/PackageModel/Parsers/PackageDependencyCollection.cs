@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace OpenWrap.PackageModel.Parsers
+﻿namespace OpenWrap.PackageModel.Parsers
 {
     public class PackageDependencyCollection : MultiLine<PackageDependency>
     {

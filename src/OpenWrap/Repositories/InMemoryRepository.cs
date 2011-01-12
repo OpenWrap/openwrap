@@ -13,7 +13,7 @@ namespace OpenWrap.Repositories
 {
     public class InMemoryRepository : IPackageRepository, ISupportPublishing, ISupportCleaning
     {
-        IList<IPackageInfo> _packages = new List<IPackageInfo>();
+        ICollection<IPackageInfo> _packages = new List<IPackageInfo>();
 
         public InMemoryRepository(string name)
         {
@@ -32,14 +32,14 @@ namespace OpenWrap.Repositories
 
         public string Name { get; set; }
 
-        public IList<IPackageInfo> Packages
+        public ICollection<IPackageInfo> Packages
         {
             get { return _packages; }
         }
 
         public ILookup<string, IPackageInfo> PackagesByName
         {
-            get { return _packages.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
+            get { return Packages.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
         }
 
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
@@ -53,7 +53,7 @@ namespace OpenWrap.Repositories
 
         public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
         {
-            var packagesToRemove = _packages.Where(x => !packagesToKeep.Contains(x)).ToList();
+            var packagesToRemove = Packages.Where(x => !packagesToKeep.Contains(x)).ToList();
             _packages = packagesToKeep.ToList();
             return packagesToRemove.Select(x => new PackageCleanResult(x, true));
         }
@@ -66,7 +66,7 @@ namespace OpenWrap.Repositories
             var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
                                                ? Path.GetFileNameWithoutExtension(packageFileName)
                                                : packageFileName;
-            if (_packages.Any(x => x.FullName.EqualsNoCase(fileWithoutExtension)))
+            if (Packages.Any(x => x.FullName.EqualsNoCase(fileWithoutExtension)))
                 throw new InvalidOperationException("Package already exists in repository.");
 
             var inMemoryFile = new InMemoryFile("c:\\" + Guid.NewGuid());
@@ -83,7 +83,7 @@ namespace OpenWrap.Repositories
                     Dependencies = tempFolder.Dependencies.ToList(),
                     Anchored = tempFolder.Anchored
             };
-            _packages.Add(package);
+            Packages.Add(package);
             return package;
         }
     }

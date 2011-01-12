@@ -15,7 +15,6 @@ namespace OpenWrap.Preloading
         readonly WebProxy _webProxy = new WebProxy();
         byte[] _dataReadResult;
         Exception _error;
-        int _progress;
         string _stringReadResult;
 
         public NotifyProgressWebClient(INotifyDownload notifier)

@@ -9,7 +9,7 @@
     <ProjectGuid>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenWrap.Tests</RootNamespace>
+    <RootNamespace>OpenWrap</RootNamespace>
     <AssemblyName>OpenWrap.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -54,6 +54,16 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="PackageModel\descriptors\adding_a_multiline_value.cs" />
+    <Compile Include="PackageModel\descriptors\default_values_in_descriptor.cs" />
+    <Compile Include="PackageModel\descriptors\contexts\descriptor.cs" />
+    <Compile Include="PackageModel\descriptors\editing_single_value.cs" />
+    <Compile Include="PackageModel\descriptors\having_comments.cs" />
+    <Compile Include="PackageModel\descriptors\scoped\setting_existing_single_value_to_default.cs" />
+    <Compile Include="PackageModel\descriptors\scoped\setting_inexistant_single_value.cs" />
+    <Compile Include="PackageModel\descriptors\setting_single_value_to_default.cs" />
+    <Compile Include="PackageModel\descriptors\setting_symlinks.cs" />
+    <Compile Include="PackageModel\descriptors\unknown_lines_in_descriptor.cs" />
     <Compile Include="Testing\finding_runner\runner_in_referenced_package_is_found.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -117,7 +127,7 @@
     <Compile Include="Commands\Core\context\gac_resolve.cs" />
     <Compile Include="Dependencies\nuked_package_resolution.cs" />
     <Compile Include="Dependencies\PackageDependency_specs.cs" />
-    <Compile Include="Dependencies\package_descriptor_specs.cs" />
+    <Compile Include="PackageModel\descriptors\removing_a_multiline_value.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
     <Compile Include="Dependencies\version_vertices_specs.cs" />
@@ -190,7 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="contexts\" />
-    <Folder Include="IO\" />
+    <Folder Include="descriptors\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Repositories\feedodata2.xml" />

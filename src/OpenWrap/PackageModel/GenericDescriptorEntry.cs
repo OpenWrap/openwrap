@@ -17,6 +17,11 @@ namespace OpenWrap.PackageModel
         public string Name { get; set; }
         public string Value { get; set; }
 
+        public bool IncludeInPackage
+        {
+            get { return true; }
+        }
+
         public static bool operator ==(GenericDescriptorEntry left, GenericDescriptorEntry right)
         {
             return Equals(left, right);
