@@ -17,7 +17,7 @@ namespace package_descriptor_specs
         public void lines_are_preserved()
         {
             Descriptor.Anchored.ShouldBe(false);
-            SpecExtensions.ShouldBe<string>(Descriptor.Build.First(), "value");
+            Descriptor.Build.First().ShouldBe("value");
         }
 
         [Test]

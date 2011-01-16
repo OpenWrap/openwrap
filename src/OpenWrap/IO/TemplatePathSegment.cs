@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using OpenFileSystem.IO;
 using OpenWrap.Collections;
 
 namespace OpenWrap.IO
@@ -12,17 +11,54 @@ namespace OpenWrap.IO
         public string Name { get; private set; }
         readonly string _val;
         readonly string _transformed;
-        static Regex _regex = new Regex(@"^\s* {\s* (?<var>[a-zA-Z][a-zA-Z0-9]*) \s* (:?\s* [""']? (?<val>.+?) [""']?  ( \s* = \s*  (?<valTransformed>.+?))? )? \s*} \s*$", RegexOptions.IgnorePatternWhitespace);
+        static Regex _regex = new Regex(@"{\s* (?<var>[a-zA-Z][a-zA-Z0-9]*?) \s* (:\s* [""']? (?<val>.+?) [""']?  ( \s* = \s*  (?<valTransformed>.+?))? )? \s*}", RegexOptions.IgnorePatternWhitespace);
 
         public static PathSegment TryParse(string templateString)
         {
-            var match = _regex.Match(templateString);
-            if (!match.Success) return null;
+            
+            var matches = _regex.Matches(templateString);
+            var templateGroups = (from match in matches.OfType<Match>()
+                                  where match.Success
+                                  let var = match.Groups["var"].Value
+                                  let val = match.Groups["val"].Success ? match.Groups["val"].Value : null
+                                  let transformed = match.Groups["valTransformed"].Success ? match.Groups["valTransformed"].Value : null
+                                  select new{ 
+                                      VarName = var,
+                                      Value = val,
+                                      Transformed = transformed,
+                                      Left = match.Index,
+                                      Right = match.Index + match.Length
+                                  }).ToList();
+            if (templateGroups.Count == 0) return null;
+            if (templateGroups.Count == 1 &&
+                templateGroups[0].Left == 0 &&
+                templateGroups[0].Right == templateString.Length)
+                return new TemplatePathSegment(templateGroups[0].VarName, templateGroups[0].Value, templateGroups[0].Transformed);
 
-            var var = match.Groups["var"].Value;
-            var val = match.Groups["val"].Success ? match.Groups["val"].Value : null;
-            var transformed = match.Groups["valTransformed"].Success ? match.Groups["valTransformed"].Value : null;
-            return new TemplatePathSegment(var, val, transformed);
+            int lastPosition = 0;
+            string parserRegex = string.Empty;
+            var transformedValues = new Dictionary<string, string>();
+
+            for (int i = 0; i < templateGroups.Count; i++)
+            {
+                
+                var template = templateGroups[i];
+                if (template.Transformed != null)
+                    transformedValues[template.VarName] = template.Transformed;
+                if (template.Left - lastPosition > 0)
+                    parserRegex += Regex.Escape(templateString.Substring(lastPosition, template.Left - lastPosition));
+
+                parserRegex += string.Format("(?<{0}>{1})", template.VarName, template.Value != null ? Regex.Escape(template.Value) : ".*?");
+                lastPosition = template.Right;
+                string leftover = templateString.Length - template.Right > 0
+                    ? templateString.Substring(template.Right) 
+                    : null;
+                if (i == templateGroups.Count-1 && leftover != null)
+                {
+                    parserRegex += leftover;
+                }
+            }
+            return new CompoundTemplatePathSegment("^" + parserRegex + "$", templateGroups.Select(x=>x.VarName), transformedValues);
         }
 
         TemplatePathSegment(string var, string val, string transformed)
@@ -44,159 +80,31 @@ namespace OpenWrap.IO
             return true;
         }
     }
-    public class LiteralPathSegment : PathSegment
+    public class CompoundTemplatePathSegment : PathSegment
     {
-        readonly string _path;
+        readonly ICollection<string> _varNames;
+        readonly IDictionary<string, string> _transformedValues;
+        Regex _regex;
 
-        public LiteralPathSegment(string path)
+        public CompoundTemplatePathSegment(string parserRegex, IEnumerable<string> varNames, IDictionary<string, string> transformedValues)
         {
-            _path = path;
+            _varNames = varNames.ToList();
+            _transformedValues = transformedValues;
+            _regex = new Regex(parserRegex, RegexOptions.IgnoreCase);
         }
 
         public override bool TryParse(IDictionary<string, string> properties, LinkedListNode<PathSegment> currentParser, ref LinkedListNode<string> currentSegment)
         {
-            bool success = currentSegment != null && currentSegment.Value.EqualsNoCase(_path);
-            if (success)
-                currentSegment = currentSegment.Next;
-            return success;
-        }
-    }
-    public class PathSegmentResult
-    {
-        public PathSegmentResult(string name, string value)
-        {
-            Name = name;
-            Value = value;
-        }
+            var match = _regex.Match(currentSegment.Value);
+            if (match.Success == false) return false;
 
-        public string Name { get; private set; }
-        public string Value { get; private set; }
-    }
-    public class PathTemplateProcessor
-    {
-        LinkedList<PathSegment> _segments;
-        string _searchString;
+            foreach (var val in from var in _varNames
+                                let parsedValue = match.Groups[var].Value
+                                select new { var, value = _transformedValues.ContainsKey(var) ? _transformedValues[var] : parsedValue })
+                properties[val.var] = val.value;
 
-        public PathTemplateProcessor(string path)
-        {
-            var segments = new List<PathSegment>();
-            var searchPath = new List<string>();
-            var pathSegments = path.Split(new[] { '/', '\\' });
-
-            if (pathSegments[0] != "**")
-                segments.Add(new WildcardPathSegment());
-
-            foreach (var seg in pathSegments)
-            {
-                var templateSegment = TemplatePathSegment.TryParse(seg);
-                PathSegment segment;
-                string searchSegment;
-                if (seg == "**")
-                {
-                    segment = new WildcardPathSegment();
-                    searchSegment = "**";
-                }
-                else if (templateSegment != null)
-                {
-                    segment = templateSegment;
-                    searchSegment = "*";
-                }
-                else
-                {
-                    segment = new LiteralPathSegment(seg);
-                    searchSegment = seg;
-                }
-                segments.Add(segment);
-                searchPath.Add(searchSegment);
-            }
-            _segments = new LinkedList<PathSegment>(segments);
-            _searchString = searchPath.Join(System.IO.Path.DirectorySeparatorChar);
-        }
-        
-        public bool TryParsePath(Path path, out IDictionary<string,string> properties)
-        {
-            if (!path.IsRooted)
-                throw new ArgumentException("'path' should be rooted.", "path");
-
-            var segments = SkipToFirstSearchSegment(path);
-            var parsers = _segments;
-            properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            if (segments.Count == 0)
-                return false;
-
-            var currentSegment = segments.First;
-            var currentParser = parsers.First;
-            do
-            {
-                if (!currentParser.Value.TryParse(properties, currentParser, ref currentSegment))
-                    return false;
-
-                currentParser = currentParser.Next;
-                if (currentParser == null && currentSegment != null)
-                    return false;
-            } while (currentParser != null);
-
+            currentSegment = currentSegment.Next;
             return true;
         }
-
-        LinkedList<string> SkipToFirstSearchSegment(Path path)
-        {
-            return new LinkedList<string>(path.Segments);
-        }
-
-        public IEnumerable<PathTemplateItem<IDirectory>> Directories(IDirectory baseDirectory)
-        {
-            IDictionary<string, string> var = null;
-            return from dir in baseDirectory.Directories(_searchString)
-                   where TryParsePath(dir.Path, out var)
-                   let dirVars = new Dictionary<string, string>(var, StringComparer.OrdinalIgnoreCase)
-                   select new PathTemplateItem<IDirectory>(dir, dirVars);
-        }
-    }
-
-    public class WildcardPathSegment : PathSegment
-    {
-        public override bool TryParse(IDictionary<string, string> properties, LinkedListNode<PathSegment> currentParser, ref LinkedListNode<string> currentSegment)
-        {
-            if (currentParser.Next == null)
-                throw new ArgumentException("A wildcard segment cannot be at the end of a path.");
-
-            var emptyProperties = new Dictionary<string, string>();
-            var nextParser = currentParser.Next;
-            var pathNode = currentSegment;
-
-            while(pathNode != null)
-            {
-                var localPathNode = pathNode;
-                var success = nextParser.Value.TryParse(emptyProperties, nextParser, ref localPathNode);
-                if (!success)
-                {
-                    pathNode = pathNode.Next;
-                }
-                else
-                {
-                    currentSegment = pathNode;
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
-
-    public class PathTemplateItem<T> where T:IFileSystemItem
-    {
-        public PathTemplateItem(T item, IDictionary<string, string> parameters)
-        {
-            Item = item;
-            Parameters = parameters;
-        }
-
-        public T Item { get; private set; }
-        public IDictionary<string, string> Parameters { get; private set; }
-    }
-
-    public abstract class PathSegment
-    {
-        public abstract bool TryParse(IDictionary<string, string> properties, LinkedListNode<PathSegment> currentParser, ref LinkedListNode<string> currentSegment);
     }
 }

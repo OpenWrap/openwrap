@@ -12,14 +12,15 @@ namespace OpenWrap.Preloading
 {
     public static class Preloader
     {
-        public static IEnumerable<string> GetPackageFolders(RemoteInstall remote, string systemRepositoryPath, params string[] packageNamesToLoad)
+        public static IEnumerable<string> GetPackageFolders(RemoteInstall remote, string currentDirectory, string systemRepositoryPath, params string[] packageNamesToLoad)
         {
             var regex = new Regex(string.Format(@"^(?<name>{0})-(?<version>\d+(\.\d+(\.\d+(\.\d+)?)?)?)$", string.Join("|", packageNamesToLoad.ToArray())), RegexOptions.IgnoreCase);
-            EnsurePackagesUnzippedInProjectRepository();
+            EnsurePackagesUnzippedInProjectRepository(Environment.CurrentDirectory);
 
-            var bootstrapAssemblies = GetLatestPackagesForProjectRepository(regex);
-            return bootstrapAssemblies.Count() == 0
-                           ? ((bootstrapAssemblies = GetLatestPackagesForSystemRepository(systemRepositoryPath, regex)).Count() == 0 && remote.Enabled
+
+            var bootstrapAssemblies = currentDirectory != null ? GetLatestPackagesForProjectRepository(regex, currentDirectory) : new string[0];
+            return bootstrapAssemblies.Count() != packageNamesToLoad.Length
+                           ? ((bootstrapAssemblies = GetLatestPackagesForSystemRepository(systemRepositoryPath, regex)).Count() != packageNamesToLoad.Length && remote.Enabled
                                       ? TryDownloadPackages(systemRepositoryPath, packageNamesToLoad, regex, remote)
                                       : bootstrapAssemblies)
                            : bootstrapAssemblies;
@@ -31,7 +32,7 @@ namespace OpenWrap.Preloading
                            from asm in packageFolders
                            from assemblyPath in CombinePaths(asm, "bin-net35", "bin-net40")
                            where Directory.Exists(assemblyPath)
-                           from file in Directory.GetFiles(assemblyPath, "*.dll")
+                           from file in Directory.GetFiles(assemblyPath, "*.dll").Concat(Directory.GetFiles(assemblyPath, "*.exe"))
                            let assembly = TryLoadAssembly(file)
                            where assembly != null
                            select new KeyValuePair<Assembly, string>(assembly, file)
@@ -43,9 +44,9 @@ namespace OpenWrap.Preloading
             return subFolders.Select(x => Path.Combine(packageFolder, x));
         }
 
-        static void EnsurePackagesUnzippedInProjectRepository()
+        static void EnsurePackagesUnzippedInProjectRepository(string currentDirectory)
         {
-            foreach (var extraction in from directory in GetSelfAndParents(Environment.CurrentDirectory)
+            foreach (var extraction in from directory in GetSelfAndParents(currentDirectory)
                                        where directory.Exists
                                        let wrapDirectoryInfo = new DirectoryInfo(Path.Combine(directory.FullName, "wraps"))
                                        where wrapDirectoryInfo.Exists
@@ -103,13 +104,15 @@ namespace OpenWrap.Preloading
             {
                 var all = (
                                   from uncompressedFolder in dir.GetDirectories()
+                                  let wrapFile = dir.Parent.GetFiles(uncompressedFolder.Name + ".wrap").FirstOrDefault()
+                                  where wrapFile != null && wrapFile.Exists
                                   let match = regex.Match(uncompressedFolder.Name)
                                   where match.Success
                                   let version = new Version(match.Groups["version"].Value)
                                   let name = match.Groups["name"].Value
                                   group new { name, folder = uncompressedFolder, version } by name
-                                  into tuplesByName
-                                  select tuplesByName.OrderByDescending(x => x.version).First().folder.FullName
+                                      into tuplesByName
+                                      select tuplesByName.OrderByDescending(x => x.version).First().folder.FullName
                           )
                         .ToList();
 
@@ -119,9 +122,9 @@ namespace OpenWrap.Preloading
             return Enumerable.Empty<string>();
         }
 
-        static IEnumerable<string> GetLatestPackagesForProjectRepository(Regex regex)
+        static IEnumerable<string> GetLatestPackagesForProjectRepository(Regex regex, string currentDirectory)
         {
-            var projectRepositories = (from directory in GetSelfAndParents(Environment.CurrentDirectory)
+            var projectRepositories = (from directory in GetSelfAndParents(currentDirectory)
                                        where directory.Exists
                                        let cacheDirectory = GetCacheDirectoryFromProjectDirectory(directory)
                                        where cacheDirectory != null && cacheDirectory.Exists
@@ -152,59 +155,66 @@ namespace OpenWrap.Preloading
             if (!systemRepositoryCacheDirectory.Exists)
                 systemRepositoryCacheDirectory.Create();
 
-
-            var indexUri = new Uri(new Uri(remote.ServerUri, UriKind.Absolute), "index.wraplist");
-
-            var content = remote.Client.DownloadData(indexUri);
-            XDocument document = XDocument.Load(new XmlTextReader(new MemoryStream(content)));
-
-            var packagesToDownload = from packageElement in document.Descendants("wrap")
-                                     let nameAttribute = packageElement.Attribute("name")
-                                     let versionAttribute = packageElement.Attribute("version")
-                                     let packageSource = (from link in packageElement.Descendants("link")
-                                                          let rel = link.Attribute("rel")
-                                                          let href = link.Attribute("href")
-                                                          where rel != null && rel.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
-                                                          select href.Value).FirstOrDefault()
-                                     where nameAttribute != null &&
-                                           versionAttribute != null &&
-                                           packageSource != null &&
-                                           packageNames.Contains(nameAttribute.Value, StringComparer.OrdinalIgnoreCase)
-                                     group new { Name = nameAttribute.Value, Version = versionAttribute.Value, Href = packageSource } by nameAttribute.Value
-                                     into byNameGroup
-                                     select byNameGroup.OrderByDescending(x => x.Version)
-                                             .Select(x => new { x.Name, Href = new Uri(x.Href, UriKind.RelativeOrAbsolute) })
-                                             .FirstOrDefault();
-
-            foreach (var packageName in packageNames)
+            XDocument document;
+            try
             {
-                var foundPackage = packagesToDownload.FirstOrDefault(x => x.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
-                if (foundPackage == null)
-                    throw new FileNotFoundException(string.Format("Package '{0}' not found in repository.", packageName));
-                var fullPackageUri = foundPackage.Href;
-                if (!fullPackageUri.IsAbsoluteUri)
-                    fullPackageUri = new Uri(new Uri(remote.ServerUri, UriKind.Absolute), fullPackageUri);
+                var indexUri = new Uri(new Uri(remote.ServerUri, UriKind.Absolute), "index.wraplist");
 
-                var fileName = fullPackageUri.Segments.Last();
-                string wrapFilePath = Path.Combine(systemRepositoryPath, fileName);
+                var content = remote.Client.DownloadData(indexUri);
+                document = XDocument.Load(new XmlTextReader(new MemoryStream(content)));
+                var packagesToDownload = from packageElement in document.Descendants("wrap")
+                                         let nameAttribute = packageElement.Attribute("name")
+                                         let versionAttribute = packageElement.Attribute("version")
+                                         let packageSource = (from link in packageElement.Descendants("link")
+                                                              let rel = link.Attribute("rel")
+                                                              let href = link.Attribute("href")
+                                                              where rel != null && rel.Value.Equals("package", StringComparison.OrdinalIgnoreCase)
+                                                              select href.Value).FirstOrDefault()
+                                         where nameAttribute != null &&
+                                               versionAttribute != null &&
+                                               packageSource != null &&
+                                               packageNames.Contains(nameAttribute.Value, StringComparer.OrdinalIgnoreCase)
+                                         group new { Name = nameAttribute.Value, Version = versionAttribute.Value, Href = packageSource } by nameAttribute.Value
+                                             into byNameGroup
+                                             select byNameGroup.OrderByDescending(x => x.Version)
+                                                     .Select(x => new { x.Name, Href = new Uri(x.Href, UriKind.RelativeOrAbsolute) })
+                                                     .FirstOrDefault();
+
+                foreach (var packageName in packageNames)
+                {
+                    var foundPackage = packagesToDownload.FirstOrDefault(x => x.Name.Equals(packageName, StringComparison.OrdinalIgnoreCase));
+                    if (foundPackage == null)
+                        throw new FileNotFoundException(string.Format("Package '{0}' not found in repository.", packageName));
+                    var fullPackageUri = foundPackage.Href;
+                    if (!fullPackageUri.IsAbsoluteUri)
+                        fullPackageUri = new Uri(new Uri(remote.ServerUri, UriKind.Absolute), fullPackageUri);
+
+                    var fileName = fullPackageUri.Segments.Last();
+                    string wrapFilePath = Path.Combine(systemRepositoryPath, fileName);
 
 
-                if (File.Exists(wrapFilePath))
-                    File.Delete(wrapFilePath);
+                    if (File.Exists(wrapFilePath))
+                        File.Delete(wrapFilePath);
 
-                remote.Client.DownloadFile(fullPackageUri, wrapFilePath);
+                    remote.Client.DownloadFile(fullPackageUri, wrapFilePath);
 
-                var extractFolder = Path.Combine(systemRepositoryCacheDirectory.FullName, Path.GetFileNameWithoutExtension(fileName));
+                    var extractFolder = Path.Combine(systemRepositoryCacheDirectory.FullName, Path.GetFileNameWithoutExtension(fileName));
 
-                if (Directory.Exists(extractFolder))
-                    Directory.Delete(extractFolder, true);
+                    if (Directory.Exists(extractFolder))
+                        Directory.Delete(extractFolder, true);
 
-                Directory.CreateDirectory(extractFolder);
+                    Directory.CreateDirectory(extractFolder);
 
-                using (var wrapFileStream = File.OpenRead(wrapFilePath))
-                    ZipArchive.Extract(wrapFileStream, extractFolder);
+                    using (var wrapFileStream = File.OpenRead(wrapFilePath))
+                        ZipArchive.Extract(wrapFileStream, extractFolder);
+                }
+                return GetLatestPackagesForSystemRepository(systemRepositoryPath, regex);
+
             }
-            return GetLatestPackagesForSystemRepository(systemRepositoryPath, regex);
+            catch
+            {
+                return new string[0];
+            }
         }
 
         static Assembly TryLoadAssembly(string asm)
@@ -221,25 +231,26 @@ namespace OpenWrap.Preloading
 
         public class RemoteInstall
         {
-            RemoteInstall(bool enabled, string uri, INotifyDownload notifier)
+            RemoteInstall(bool enabled, string uri, INotifyDownload notifier, string proxyAddress, string proxyUsername, string proxyPassword)
             {
                 Enabled = enabled;
                 ServerUri = uri;
-                Client = new NotifyProgressWebClient(notifier);
+                Client = new NotifyProgressWebClient(notifier, proxyAddress, proxyUsername, proxyPassword);
+
             }
 
             public static RemoteInstall None
             {
-                get { return new RemoteInstall(false, null, null); }
+                get { return new RemoteInstall(false, null, null, null, null, null); }
             }
 
             public NotifyProgressWebClient Client { get; set; }
             public bool Enabled { get; set; }
             public string ServerUri { get; set; }
 
-            public static RemoteInstall FromServer(string uri, INotifyDownload notifier)
+            public static RemoteInstall FromServer(string uri, INotifyDownload notifier, string proxyAddress, string proxyUsername, string proxyPassword)
             {
-                return new RemoteInstall(true, uri, notifier);
+                return new RemoteInstall(true, uri, notifier, proxyAddress, proxyUsername, proxyPassword);
             }
         }
     }

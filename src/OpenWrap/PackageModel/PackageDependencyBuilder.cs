@@ -62,7 +62,22 @@ namespace OpenWrap.PackageModel
                 _tags.RemoveAt(index);
             return this;
         }
+        public PackageDependencyBuilder Version(string version)
+        {
+            _versions.Add(new EqualVersionVertex(version.ToVersion()));
+            return this;
+        }
 
+        public PackageDependencyBuilder MinVersion(string version)
+        {
+            _versions.Add(new GreaterThanOrEqualVersionVertex(version.ToVersion()));
+            return this;
+        }
+        public PackageDependencyBuilder MaxVersion(string version)
+        {
+            _versions.Add(new LessThanVersionVertex(version.ToVersion()));
+            return this;
+        }
         public PackageDependencyBuilder SetVersionVertices(IEnumerable<VersionVertex> vertices)
         {
             _versions.Clear();

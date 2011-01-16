@@ -42,17 +42,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\OpenWrap\Preloading\INotifyDownload.cs">
+      <Link>Preloading\INotifyDownload.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\NotifyProgressWebClient.cs">
+      <Link>Preloading\NotifyProgressWebClient.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\Preloader.cs">
+      <Link>Preloading\Preloader.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipArchive.cs">
+      <Link>Preloading\TinySharpZip\ZipArchive.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipDirectoryEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipDirectoryEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipFileEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipFileEntry.cs</Link>
+    </Compile>
     <Compile Include="DefaultInstallationPaths.cs" />
     <Compile Include="InitializeOpenWrap.cs" />
-    <Compile Include="Preloading\INotifyDownload.cs" />
-    <Compile Include="Preloading\NotifyProgressWebClient.cs" />
-    <Compile Include="Preloading\Preloader.cs" />
-    <Compile Include="Preloading\TinySharpZip\ZipArchive.cs" />
-    <Compile Include="Preloading\TinySharpZip\ZipDirectoryEntry.cs" />
-    <Compile Include="Preloading\TinySharpZip\ZipEntry.cs" />
-    <Compile Include="Preloading\TinySharpZip\ZipFileEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

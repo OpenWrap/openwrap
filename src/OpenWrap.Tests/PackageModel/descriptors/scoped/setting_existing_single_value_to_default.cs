@@ -25,7 +25,6 @@ namespace OpenWrap.PackageModel.descriptors.scoped
         public void value_is_preserved_in_default()
         {
             descriptor_should_be("anchored: true");
-
         }
     }
 }

@@ -96,7 +96,12 @@
     <Compile Include="Commands\Info.cs" />
     <Compile Include="Commands\Warning.cs" />
     <Compile Include="Configuration\Persistence\StreamWriterExtensions.cs" />
+    <Compile Include="IO\LiteralPathSegment.cs" />
+    <Compile Include="IO\PathSegment.cs" />
+    <Compile Include="IO\PathTemplateItem.cs" />
+    <Compile Include="IO\PathTemplateProcessor.cs" />
     <Compile Include="IO\TemplatePathSegment.cs" />
+    <Compile Include="IO\WildcardPathSegment.cs" />
     <Compile Include="PackageManagement\AbstractPackageOperation.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageMissingOutput.cs" />
     <Compile Include="PackageManagement\IPackageAddResult.cs" />

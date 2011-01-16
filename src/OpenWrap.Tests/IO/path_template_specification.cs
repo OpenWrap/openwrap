@@ -8,45 +8,39 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.IO
 {
-    public class path_template_specification : context
+    public abstract class template_path_segment : context
     {
-        [Test]
-        public void var_name_is_correct()
+        public class TemplateResult
         {
-            Template("{source}", "source").Name.ShouldBe("source");
-        }
-        [Test]
-        public void simple_parameter_is_parsed()
-        {
-            Template("{source}", "src").Value.ShouldBe("src");
-        }
-        [Test]
-        public void parameter_with_value_is_parsed()
-        {
-            Template("{source: src}", "src").Value.ShouldBe("src");
-            Template("{source: src}", "source").Value.ShouldBe(null);
-        }
-        [Test]
-        public void parameter_with_value_is_replaced_with_transform()
-        {
-            Template("{source: src=source}", "src").Value.ShouldBe("source");
-            Template("{source: src=source}", "source").Value.ShouldBe(null);
-        }
-        class TemplateResult
-        {
-            public TemplateResult(bool success, IDictionary<string,string> dic)
+            public TemplateResult(bool success, IDictionary<string, string> dic)
             {
-                var key = dic.FirstOrDefault();
-                
-                Name = key.Key;
-                Value = key.Value;
                 Success = success;
+                _dic = dic;
             }
-            public string Name;
-            public string Value;
+
             public bool Success;
+            readonly IDictionary<string, string> _dic;
+
+            public TemplateResult ShouldNotHaveName(string name)
+            {
+                _dic.ContainsKey(name).ShouldBeFalse();
+                return this;
+            }
+            public TemplateResult ShouldHaveName(string name)
+            {
+                _dic.ContainsKey(name).ShouldBeTrue();
+                return this;
+            }
+            public TemplateResult ShouldHaveValue(string name, string value)
+            {
+                _dic.ContainsKey(name).ShouldBeTrue();
+                _dic[name].ShouldBe(value);
+
+                return this;
+            }
         }
-        TemplateResult Template(string template, string segment)
+
+        protected TemplateResult Template(string template, string segment)
         {
             var parser = TemplatePathSegment.TryParse(template);
             var dic = new Dictionary<string, string>();
@@ -55,12 +49,32 @@ namespace OpenWrap.Tests.IO
             return new TemplateResult(success, dic);
         }
     }
-    public class path_template_processor_specification : context
+
+    public class template_path_segment_specs : template_path_segment
     {
         [Test]
-        public void files_are_found()
+        public void var_name_is_correct()
         {
-            
+            Template("{source}", "source").ShouldHaveName("source");
+        }
+        [Test]
+        public void simple_parameter_is_parsed()
+        {
+            Template("{source}", "src").ShouldHaveValue("source", "src");
+        }
+        [Test]
+        public void parameter_with_value_is_parsed()
+        {
+            Template("{source: src}", "src")
+                .ShouldHaveName("source")
+                .ShouldHaveValue("source", "src");
+            Template("{source: src}", "source").ShouldNotHaveName("source");
+        }
+        [Test]
+        public void parameter_with_value_is_replaced_with_transform()
+        {
+            Template("{source: src=source}", "src").ShouldHaveValue("source", "source");
+            Template("{source: src=source}", "source").ShouldNotHaveName("source");
         }
     }
 }

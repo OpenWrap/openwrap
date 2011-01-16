@@ -54,11 +54,15 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="IO\compound_template_path_segment_specs.cs" />
     <Compile Include="PackageModel\descriptors\adding_a_multiline_value.cs" />
     <Compile Include="PackageModel\descriptors\default_values_in_descriptor.cs" />
     <Compile Include="PackageModel\descriptors\contexts\descriptor.cs" />
     <Compile Include="PackageModel\descriptors\editing_single_value.cs" />
     <Compile Include="PackageModel\descriptors\having_comments.cs" />
+    <Compile Include="PackageModel\descriptors\scoped\adding_dependency.cs" />
+    <Compile Include="PackageModel\descriptors\scoped\adding_to_multiline_value.cs" />
+    <Compile Include="PackageModel\descriptors\scoped\overriding_dependency.cs" />
     <Compile Include="PackageModel\descriptors\scoped\setting_existing_single_value_to_default.cs" />
     <Compile Include="PackageModel\descriptors\scoped\setting_inexistant_single_value.cs" />
     <Compile Include="PackageModel\descriptors\setting_single_value_to_default.cs" />
