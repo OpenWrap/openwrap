@@ -119,7 +119,7 @@ namespace OpenWrap.Build.PackageBuilders
                     writer.WriteLine("/p:TargetFrameworkProfile=" + msbuildVersioning.Profile);
                 }
                 writer.WriteLine("/p:OpenWrap-EmitOutputInstructions=true");
-                writer.WriteLine("/p:OpenWrap-CurrentProjectFile=" + project.Path.FullPath);
+                writer.WriteLine("/p:OpenWrap-CurrentProjectFile=\"" + project.Path.FullPath + "\"");
                 if (msbuildTargets != null)
                     writer.WriteLine("/t:" + msbuildTargets);
 
