@@ -17,8 +17,8 @@ namespace OpenWrap.Build.PackageBuilders
                 : base(fileSystem, environment, parser)
 
         {
-            Profile = new List<string> { environment.ExecutionEnvironment.Profile };
-            Platform = new List<string> { environment.ExecutionEnvironment.Platform };
+            Profile = new List<string>();
+            Platform = new List<string>();
             Project = new List<string>();
         }
 
