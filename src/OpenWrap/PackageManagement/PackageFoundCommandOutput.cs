@@ -8,7 +8,7 @@ namespace OpenWrap.PackageManagement
         readonly PackageFoundResult _result;
 
         public PackageFoundCommandOutput(PackageFoundResult result)
-                : base(" - {0} (available: {1})", result.Name, StringExtensions.Join(result.Packages.Select(x => x.Version + (x.Nuked ? " [nuked]" : string.Empty)), ", "))
+                : base(" - {0} (available: {1})", result.Name, result.Packages.Select(x => x.Version + (x.Nuked ? " [nuked]" : string.Empty)).Join(", "))
         {
             _result = result;
         }

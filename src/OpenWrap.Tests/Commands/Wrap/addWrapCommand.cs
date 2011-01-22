@@ -391,7 +391,7 @@ namespace OpenWrap.Tests.Commands
         public class add_wrap_context : context.command_context<AddWrapCommand>
         {
             protected IDirectory ProjectRepositoryDir;
-            protected PackageDescriptor PostExecutionDescriptor;
+            protected IPackageDescriptor PostExecutionDescriptor;
 
             protected override void when_executing_command(params string[] parameters)
             {

@@ -7,8 +7,7 @@ namespace OpenWrap.PackageModel
 {
     public partial class PackageDescriptor
     {
-
-        public class ScopedPackageDescriptor : IPackageDescriptor
+        sealed class ScopedPackageDescriptor : IPackageDescriptor
         {
             readonly PackageDescriptorEntryCollection _entries = new PackageDescriptorEntryCollection();
 
@@ -46,18 +45,18 @@ namespace OpenWrap.PackageModel
             }
 
 
-            public virtual DateTimeOffset Created
+            public DateTimeOffset Created
             {
                 get { return _created.Value; }
                 private set { _created.Value = value; }
             }
-            public virtual ICollection<string> Build { get { return _buildCommands; } }
-            public virtual ICollection<PackageDependency> Dependencies
+            public ICollection<string> Build { get { return _buildCommands; } }
+            public ICollection<PackageDependency> Dependencies
             {
                 get { return _dependencies; }
             }
 
-            public virtual string Description
+            public string Description
             {
                 get { return _description.Value; }
                 set { _description.Value = value; }
@@ -73,13 +72,13 @@ namespace OpenWrap.PackageModel
                 get { return new PackageIdentifier(Name, Version); }
             }
 
-            public virtual string Name
+            public string Name
             {
                 get { return _name.Value; }
                 set { _name.Value = value; }
             }
 
-            public virtual ICollection<PackageNameOverride> Overrides
+            public ICollection<PackageNameOverride> Overrides
             {
                 get { return _overrides; }
             }
@@ -96,13 +95,13 @@ namespace OpenWrap.PackageModel
                 set { _useSymLinks.Value = value; }
             }
 
-            public virtual Version Version
+            public Version Version
             {
                 get { return _version.Value; }
                 set { _version.Value = value; }
             }
 
-            public virtual string ReferencedAssemblies
+            public string ReferencedAssemblies
             {
                 get { return _referencedAssemblies.Value; }
                 set { _referencedAssemblies.Value = value; }

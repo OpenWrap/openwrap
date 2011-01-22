@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
 
@@ -10,8 +11,8 @@ namespace OpenWrap.Runtime
     {
         IPackageRepository ProjectRepository { get; }
         IPackageRepository CurrentDirectoryRepository { get; }
+        IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors { get; }
         IFile DescriptorFile { get; }
-        IDictionary<string, IPackageDescriptor> ScopedDescriptors { get; }
         IPackageDescriptor Descriptor { get; }
         IEnumerable<IPackageRepository> RemoteRepositories { get; }
         IPackageRepository SystemRepository { get; }

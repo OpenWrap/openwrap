@@ -6,11 +6,11 @@ namespace OpenWrap.PackageModel
 {
     public class DefaultPackageInfo : IPackageInfo
     {
-        readonly PackageDescriptor _descriptor;
+        readonly IPackageDescriptor _descriptor;
         readonly string _packageName;
         readonly Version _packageVersion;
 
-        public DefaultPackageInfo(string packageFileName, Version versionFileContent, PackageDescriptor descriptor)
+        public DefaultPackageInfo(string packageFileName, Version versionFileContent, IPackageDescriptor descriptor)
         {
             _descriptor = descriptor;
             _packageVersion = versionFileContent

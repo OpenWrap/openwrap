@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
+using OpenWrap.contexts;
 using OpenWrap.PackageModel;
-using OpenWrap.PackageModel.descriptors.contexts;
 
 namespace package_descriptor_specs
 {

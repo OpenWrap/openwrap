@@ -18,7 +18,8 @@ namespace OpenWrap.PackageModel.Serialization
 
         static readonly Regex _lineParser = new Regex(@"^\s*(?<fieldname>[0-9a-zA-Z\-\.]*?)\s*:\s*(?<fieldvalue>.*?)\s*$", RegexOptions.Compiled);
 
-        public PackageDescriptor Read(IFile filePath)
+
+        public IPackageDescriptor Read(IFile filePath)
         {
             if (!filePath.Exists)
                 return null;
@@ -47,7 +48,7 @@ namespace OpenWrap.PackageModel.Serialization
             throw ioException;
         }
 
-        public PackageDescriptor Read(Stream content)
+        public IPackageDescriptor Read(Stream content)
         {
             var stringReader = new StreamReader(content, true);
             var lines = stringReader.ReadToEnd().GetUnfoldedLines();
@@ -59,9 +60,9 @@ namespace OpenWrap.PackageModel.Serialization
         {
             var stringReader = new StreamReader(content, true);
             var lines = stringReader.ReadToEnd().GetUnfoldedLines();
-            if (ctor != null)
-                return ctor(lines.Select(ParseLine));
-            return new PackageDescriptor(lines.Select(ParseLine)) as T;
+            return ctor != null
+                ? ctor(lines.Select(ParseLine))
+                : new PackageDescriptor(lines.Select(ParseLine)) as T;
         }
         public void Write(IEnumerable<IPackageDescriptorEntry> descriptor, Stream descriptorStream)
         {

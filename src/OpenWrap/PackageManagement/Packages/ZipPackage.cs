@@ -102,7 +102,7 @@ namespace OpenWrap.PackageManagement.Packages
 
                 ZipEntry versionFile = entries.SingleOrDefault(x => x.Name.EqualsNoCase("version"));
                 Version versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => StringExtensions.ToVersion(x.ReadString())) : null;
-                PackageDescriptor descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReaderWriter().Read(x));
+                var descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReaderWriter().Read(x));
 
                 _descriptor = new DefaultPackageInfo(PackageFile.Name, versionFromVersionFile, descriptor);
 

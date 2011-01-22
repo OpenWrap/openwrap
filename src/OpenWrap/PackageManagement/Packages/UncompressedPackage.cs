@@ -19,7 +19,7 @@ namespace OpenWrap.PackageManagement.Packages
         readonly IEnumerable<IExportBuilder> _exporters;
         readonly IFile _originalPackageFile;
         Version _version;
-        PackageDescriptor _descriptor;
+        IPackageDescriptor _descriptor;
 
         public UncompressedPackage(IPackageRepository source,
                                    IFile originalPackageFile,
@@ -95,7 +95,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         protected DefaultPackageInfo PackageInfo { get; set; }
 
-        public PackageDescriptor Descriptor
+        public IPackageDescriptor Descriptor
         {
             get { return _descriptor; }
         }

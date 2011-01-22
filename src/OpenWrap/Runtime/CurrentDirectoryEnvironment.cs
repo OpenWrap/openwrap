@@ -27,22 +27,20 @@ namespace OpenWrap.Runtime
 
         public IPackageRepository CurrentDirectoryRepository { get; set; }
 
-        public IDictionary<string, IPackageDescriptor> ScopedDescriptors
-        {
-            get { return null; }
-        }
+        public IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors { get; private set; }
 
-        public IPackageDescriptor Descriptor { get; set; }
+        public IPackageDescriptor Descriptor { get; private set; }
         public IFile DescriptorFile { get; private set; }
         public ExecutionEnvironment ExecutionEnvironment { get; private set; }
         public IFileSystem FileSystem { get; set; }
-        public IPackageRepository ProjectRepository { get; set; }
-        public IEnumerable<IPackageRepository> RemoteRepositories { get; set; }
-        public IPackageRepository SystemRepository { get; set; }
+        public IPackageRepository ProjectRepository { get; private set; }
+        public IEnumerable<IPackageRepository> RemoteRepositories { get; private set; }
+        public IPackageRepository SystemRepository { get; private set; }
 
         public void Initialize()
         {
             FileSystem = LocalFileSystem.Instance;
+            S
             DescriptorFile = CurrentDirectory
                     .AncestorsAndSelf()
                     .SelectMany(x => x.Files("*.wrapdesc"))

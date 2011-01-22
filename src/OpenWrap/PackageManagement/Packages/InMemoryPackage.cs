@@ -43,7 +43,7 @@ namespace OpenWrap.PackageManagement.Packages
         public Version Version { get; set; }
 
 
-        public PackageDescriptor Descriptor { get; private set; }
+        public IPackageDescriptor Descriptor { get; private set; }
 
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {

@@ -45,13 +45,13 @@ namespace OpenWrap.PackageModel
             get { return _created.Value; }
             private set { _created.Value = value; }
         }
-        public virtual ICollection<string> Build { get { return _buildCommands; } }
-        public virtual ICollection<PackageDependency> Dependencies
+        public ICollection<string> Build { get { return _buildCommands; } }
+        public ICollection<PackageDependency> Dependencies
         {
             get { return _dependencies; }
         }
 
-        public virtual string Description
+        public string Description
         {
             get { return _description.Value; }
             set { _description.Value = value; }
@@ -67,13 +67,13 @@ namespace OpenWrap.PackageModel
             get { return new PackageIdentifier(Name, Version); }
         }
 
-        public virtual string Name
+        public string Name
         {
             get { return _name.Value; }
             set { _name.Value = value; }
         }
 
-        public virtual ICollection<PackageNameOverride> Overrides
+        public ICollection<PackageNameOverride> Overrides
         {
             get { return _overrides; }
         }
@@ -90,13 +90,13 @@ namespace OpenWrap.PackageModel
             set { _useSymLinks.Value = value; }
         }
 
-        public virtual Version Version
+        public Version Version
         {
             get { return _version.Value; }
             set { _version.Value = value; }
         }
 
-        public virtual string ReferencedAssemblies
+        public string ReferencedAssemblies
         {
             get { return _referencedAssemblies.Value; }
             set { _referencedAssemblies.Value = value; }
@@ -132,7 +132,7 @@ namespace OpenWrap.PackageModel
             _useSymLinks = new SingleBoolValue(Entries, "use-symlinks", true);
             _referencedAssemblies = new SingleStringValue(Entries, "referenced-assemblies", "*");
         }
-        public IPackageDescriptor CreateScoped(string scopeName, IEnumerable<IPackageDescriptorEntry> scopedEntries)
+        public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)
         {
             return new ScopedPackageDescriptor(this, scopedEntries);
         }

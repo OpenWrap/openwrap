@@ -217,7 +217,7 @@ namespace OpenWrap.Tests.Commands
         public abstract class remove_wrap : command_context<RemoveWrapCommand>
         {
 
-            protected PackageDescriptor PostCommandDescriptor;
+            protected IPackageDescriptor PostCommandDescriptor;
             protected override void when_executing_command(params string[] parameters)
             {
                 base.when_executing_command(parameters);

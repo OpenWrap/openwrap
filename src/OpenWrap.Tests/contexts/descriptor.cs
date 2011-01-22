@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using OpenWrap.IO;
+using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Testing;
 
-namespace OpenWrap.PackageModel.descriptors.contexts
+namespace OpenWrap.contexts
 {
     public abstract class descriptor : context
     {
@@ -18,7 +19,7 @@ namespace OpenWrap.PackageModel.descriptors.contexts
             DescriptorContent = WriteDescriptor(Descriptor);
         }
 
-        protected string WriteDescriptor(IPackageDescriptor descriptor)
+        protected static string WriteDescriptor(IPackageDescriptor descriptor)
         {
             var memString = new MemoryStream();
             new PackageDescriptorReaderWriter().Write(descriptor, memString);
@@ -45,28 +46,6 @@ namespace OpenWrap.PackageModel.descriptors.contexts
             return new PackageDescriptorReaderWriter().Read(
                 new MemoryStream(Encoding.UTF8.GetBytes(lineChars)),
                 ctor);
-        }
-    }
-    public abstract class scoped_descriptor : descriptor
-    {
-        protected IPackageDescriptor ScopedDescriptor;
-        protected string ScopedDescriptorContent;
-
-        protected override void when_writing()
-        {
-            base.when_writing();
-            ScopedDescriptorContent = WriteDescriptor(ScopedDescriptor);
-        }
-        protected void given_scoped_descriptor(params string[] lines)
-        {
-            ScopedDescriptor = ReadDescriptor(lines, x=>new PackageDescriptor.ScopedPackageDescriptor(Descriptor, x));
-        }
-        protected void scoped_descriptor_should_be(params string[] expectedContent)
-        {
-            var joinedContent = expectedContent.Join("\r\n");
-            if (!string.IsNullOrEmpty(joinedContent))
-                joinedContent += "\r\n";
-            ScopedDescriptorContent.ShouldBe(joinedContent);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
@@ -47,7 +48,7 @@ namespace OpenWrap.Tests.Commands
 
         public IFile DescriptorFile { get; set; }
 
-        public IDictionary<string, IPackageDescriptor> ScopedDescriptors
+        public IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors
         {
             get { return null; }
         }

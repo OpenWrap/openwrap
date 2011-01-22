@@ -126,6 +126,7 @@
     <Compile Include="PackageModel\Parsers\ScopedPackageDependencyCollection.cs" />
     <Compile Include="PackageModel\Parsers\ScopedPackageNameOverrideCollection.cs" />
     <Compile Include="PackageModel\ScopedPackageDescriptor.cs" />
+    <Compile Include="PackageModel\Serialization\PackageDescriptorReader.cs" />
     <Compile Include="Repositories\NuGet\NuSpecConverter.cs" />
     <Compile Include="PackageManagement\Monitoring\IResolvedAssembliesUpdateListener.cs" />
     <Compile Include="Build\MSBuildEnvironment.cs" />
