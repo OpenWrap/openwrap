@@ -40,14 +40,15 @@ namespace OpenWrap.Runtime
         public void Initialize()
         {
             FileSystem = LocalFileSystem.Instance;
-            S
-            DescriptorFile = CurrentDirectory
-                    .AncestorsAndSelf()
-                    .SelectMany(x => x.Files("*.wrapdesc"))
-                    .FirstOrDefault();
-            if (DescriptorFile != null)
-                Descriptor = new PackageDescriptorReaderWriter().Read(DescriptorFile);
 
+            var descriptors = new PackageDescriptorReader().ReadAll(CurrentDirectory);
+            if (descriptors.ContainsKey(string.Empty))
+            {
+                DescriptorFile = descriptors[string.Empty].File;
+                Descriptor = descriptors[string.Empty].Value;
+            }
+
+            ScopedDescriptors = descriptors;
             TryInitializeProjectRepository();
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();

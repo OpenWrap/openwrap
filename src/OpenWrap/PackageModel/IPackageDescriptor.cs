@@ -18,5 +18,6 @@ namespace OpenWrap.PackageModel
         bool UseSymLinks { get; set; }
         Version Version { get; set; }
         string ReferencedAssemblies { get; set; }
+        IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read);
     }
 }

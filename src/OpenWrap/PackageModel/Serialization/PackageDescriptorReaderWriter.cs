@@ -16,7 +16,6 @@ namespace OpenWrap.PackageModel.Serialization
 
         // TODO: Read-retry should be part of an extension method that can be reused for reading the index in indexed folder repositories.
 
-        static readonly Regex _lineParser = new Regex(@"^\s*(?<fieldname>[0-9a-zA-Z\-\.]*?)\s*:\s*(?<fieldvalue>.*?)\s*$", RegexOptions.Compiled);
 
 
         public IPackageDescriptor Read(IFile filePath)
@@ -31,7 +30,7 @@ namespace OpenWrap.PackageModel.Serialization
                 {
                     using (var fileStream = filePath.OpenRead())
                     {
-                        var descriptor = Read(fileStream);
+                        var descriptor = new PackageDescriptorReader().Read(fileStream);
                         if (descriptor.Name == null)
                             descriptor.Name = PackageNameUtility.GetName(filePath.NameWithoutExtension);
                         return descriptor;
@@ -48,22 +47,6 @@ namespace OpenWrap.PackageModel.Serialization
             throw ioException;
         }
 
-        public IPackageDescriptor Read(Stream content)
-        {
-            var stringReader = new StreamReader(content, true);
-            var lines = stringReader.ReadToEnd().GetUnfoldedLines();
-
-            return new PackageDescriptor(lines.Select(ParseLine));
-        }
-        public T Read<T>(Stream content, Func<IEnumerable<IPackageDescriptorEntry>,T> ctor = null)
-            where T: class, IPackageDescriptor
-        {
-            var stringReader = new StreamReader(content, true);
-            var lines = stringReader.ReadToEnd().GetUnfoldedLines();
-            return ctor != null
-                ? ctor(lines.Select(ParseLine))
-                : new PackageDescriptor(lines.Select(ParseLine)) as T;
-        }
         public void Write(IEnumerable<IPackageDescriptorEntry> descriptor, Stream descriptorStream)
         {
             var streamWriter = new StreamWriter(descriptorStream, Encoding.UTF8);
@@ -73,18 +56,5 @@ namespace OpenWrap.PackageModel.Serialization
             streamWriter.Flush();
         }
 
-        IPackageDescriptorEntry ParseLine(string line)
-        {
-            var trimmedLine = line.TrimStart();
-            if (trimmedLine.StartsWith("#"))
-                return new GenericDescriptorEntry("Comment",trimmedLine.Substring(1).TrimStart());
-
-            var match = _lineParser.Match(line);
-            return !match.Success
-                           ? null
-                           : new GenericDescriptorEntry(
-                                     match.Groups["fieldname"].Value,
-                                     match.Groups["fieldvalue"].Value);
-        }
     }
 }

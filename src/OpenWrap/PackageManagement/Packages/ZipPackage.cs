@@ -101,8 +101,8 @@ namespace OpenWrap.PackageManagement.Packages
                     throw new InvalidOperationException(String.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", PackageFile.Name));
 
                 ZipEntry versionFile = entries.SingleOrDefault(x => x.Name.EqualsNoCase("version"));
-                Version versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => StringExtensions.ToVersion(x.ReadString())) : null;
-                var descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReaderWriter().Read(x));
+                Version versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().ToVersion()) : null;
+                var descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReader().Read(x));
 
                 _descriptor = new DefaultPackageInfo(PackageFile.Name, versionFromVersionFile, descriptor);
 

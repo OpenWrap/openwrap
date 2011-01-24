@@ -43,7 +43,7 @@ namespace OpenWrap.contexts
             where T : class, IPackageDescriptor
         {
             var lineChars = string.Join("\r\n", lines);
-            return new PackageDescriptorReaderWriter().Read(
+            return new PackageDescriptorReader().Read(
                 new MemoryStream(Encoding.UTF8.GetBytes(lineChars)),
                 ctor);
         }
