@@ -62,7 +62,9 @@
     <Compile Include="PackageModel\descriptors\default_values_in_descriptor.cs" />
     <Compile Include="PackageModel\descriptors\editing_single_value.cs" />
     <Compile Include="PackageModel\descriptors\having_comments.cs" />
+    <Compile Include="PackageModel\descriptors\readers\ignores_differently_named_descriptors.cs" />
     <Compile Include="PackageModel\descriptors\readers\reads_default_descriptor.cs" />
+    <Compile Include="PackageModel\descriptors\readers\reads_scoped_descirptor.cs" />
     <Compile Include="PackageModel\descriptors\scoped\adding_dependency.cs" />
     <Compile Include="PackageModel\descriptors\scoped\adding_to_multiline_value.cs" />
     <Compile Include="PackageModel\descriptors\scoped\overriding_dependency.cs" />

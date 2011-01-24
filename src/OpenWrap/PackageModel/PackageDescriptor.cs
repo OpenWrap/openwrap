@@ -20,6 +20,8 @@ namespace OpenWrap.PackageModel
         SingleVersionValue _version;
         SingleStringValue _referencedAssemblies;
         MultiLine<string> _buildCommands;
+        MultiLine<string> _directoryStructure;
+        SingleStringValue _title;
 
         public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> entries)
         {
@@ -51,6 +53,11 @@ namespace OpenWrap.PackageModel
             get { return _dependencies; }
         }
 
+        public string Title
+        {
+            get { return _title.Value; }
+            set { _title.Value = value; }
+        }
         public string Description
         {
             get { return _description.Value; }
@@ -102,6 +109,11 @@ namespace OpenWrap.PackageModel
             set { _referencedAssemblies.Value = value; }
         }
 
+        public ICollection<string> DirectoryStructure
+        {
+            get { return _directoryStructure; }
+        }
+
         public PackageDescriptorEntryCollection Entries
         {
             get { return _entries; }
@@ -131,6 +143,7 @@ namespace OpenWrap.PackageModel
             _useProjectRepository = new SingleBoolValue(Entries, "use-project-repository", true);
             _useSymLinks = new SingleBoolValue(Entries, "use-symlinks", true);
             _referencedAssemblies = new SingleStringValue(Entries, "referenced-assemblies", "*");
+            _directoryStructure = new MultiLine<string>(Entries, "directory-structure", _ => _, _ => _);
         }
         public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)
         {

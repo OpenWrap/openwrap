@@ -9,6 +9,7 @@ namespace OpenWrap.PackageModel
         DateTimeOffset Created { get; }
         ICollection<string> Build { get; }
         ICollection<PackageDependency> Dependencies { get; }
+        string Title { get; set; }
         string Description { get; set; }
         string FullName { get; }
         PackageIdentifier Identifier { get; }
@@ -18,6 +19,7 @@ namespace OpenWrap.PackageModel
         bool UseSymLinks { get; set; }
         Version Version { get; set; }
         string ReferencedAssemblies { get; set; }
+        ICollection<string> DirectoryStructure { get; }
         IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read);
     }
 }

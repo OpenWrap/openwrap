@@ -23,7 +23,9 @@ namespace OpenWrap.PackageModel
             ScopedPackageNameOverrideCollection _overrides;
             ScopedPackageDependencyCollection _dependencies;
             DelegatedMultiLine<string> _buildCommands;
+            DelegatedMultiLine<string> _directoryStructures;
             readonly PackageDescriptor _parent;
+            DelegatedValue<string> _title;
 
             public ScopedPackageDescriptor(PackageDescriptor parent, IEnumerable<IPackageDescriptorEntry> entries)
                 : this(parent)
@@ -54,6 +56,12 @@ namespace OpenWrap.PackageModel
             public ICollection<PackageDependency> Dependencies
             {
                 get { return _dependencies; }
+            }
+
+            public string Title
+            {
+                get { return _title.Value; }
+                set { _title.Value = value; }
             }
 
             public string Description
@@ -107,6 +115,11 @@ namespace OpenWrap.PackageModel
                 set { _referencedAssemblies.Value = value; }
             }
 
+            public ICollection<string> DirectoryStructure
+            {
+                get { throw new NotImplementedException(); }
+            }
+
             public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read)
             {
                 throw new InvalidOperationException("Can only have one level of nesting for scoped descriptors.");
@@ -132,7 +145,6 @@ namespace OpenWrap.PackageModel
                     new MultiLine<string>(_entries, "build", _ => _, _ => _)
                     );
 
-
                 _anchored = CreateDelegated("anchored", SingleBoolValue.New, false);
 
 
@@ -144,6 +156,12 @@ namespace OpenWrap.PackageModel
                 _useProjectRepository = CreateDelegated("use-project-repository", SingleBoolValue.New, true);
                 _useSymLinks = CreateDelegated("use-symlinks", SingleBoolValue.New, true);
                 _referencedAssemblies = CreateDelegated("referenced-assemblies", SingleStringValue.New, "*");
+                _title = CreateDelegated<string>("title", SingleStringValue.New);
+
+                _directoryStructures = new DelegatedMultiLine<string>(
+                    new MultiLine<string>(_parent.Entries, "directory-structure", _=>_,_=>_),
+                    new MultiLine<string>(_entries, "directory-structure", _=>_,_=>_)
+                    );
             }
 
             DelegatedValue<T> CreateDelegated<T>(string name, Func<PackageDescriptorEntryCollection, string, T, SingleValue<T>> ctor, T defaultValue = default(T))

@@ -86,4 +86,17 @@ namespace OpenWrap.IO
                    select new PathTemplateItem<IDirectory>(dir, dirVars);
         }
     }
+    public class PathFinder
+    {
+        public static IDirectory GetSourceDirectory(string[] templates, IDirectory dir)
+        {
+            IDictionary<string, string> parsedProperties;
+            return (from t in templates
+                    let processor = new PathTemplateProcessor(t)
+                    from directory in processor.Directories(dir)
+                    where directory.Parameters.ContainsKey("source") &&
+                          directory.Parameters.Count == 1
+                    select directory.Item).FirstOrDefault();
+        }
+    }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using OpenFileSystem.IO;
 using OpenWrap.IO;
@@ -53,7 +52,8 @@ namespace OpenWrap.PackageModel.Serialization
                 ? ctor(lines.Select(ParseLine))
                 : new PackageDescriptor(lines.Select(ParseLine)) as T;
         }
-        IPackageDescriptorEntry ParseLine(string line)
+
+        static IPackageDescriptorEntry ParseLine(string line)
         {
             var trimmedLine = line.TrimStart();
             if (trimmedLine.StartsWith("#"))
