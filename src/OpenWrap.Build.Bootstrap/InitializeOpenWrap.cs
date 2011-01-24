@@ -22,7 +22,7 @@ namespace OpenWrap.Build
             if (StartDebug)
                 Debugger.Launch();
             var asm = Preloader.LoadAssemblies(
-                    Preloader.GetPackageFolders(Preloader.RemoteInstall.None, DefaultInstallationPaths.SystemRepositoryDirectory,"openwrap", "openfilesystem", "sharpziplib")
+                    Preloader.GetPackageFolders(Preloader.RemoteInstall.None, null, DefaultInstallationPaths.SystemRepositoryDirectory, "openwrap",  "openfilesystem", "sharpziplib")
                     );
             foreach (var assembly in asm.Select(x => x.Key))
                 this.Log.LogMessage(MessageImportance.Low, "Pre-loaded assembly " + assembly);
