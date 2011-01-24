@@ -44,7 +44,7 @@
   </ItemGroup>
   <Target Name="_Initialize">
     <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" >
-      <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />L
+      <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
     </InitializeOpenWrap>
 
     <InitializeVisualStudioIntegration
