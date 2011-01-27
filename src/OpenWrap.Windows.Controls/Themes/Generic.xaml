@@ -12,7 +12,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <DockPanel>
-                            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Focusable="false" Name="PART_ScrollViewer">
+                            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Focusable="false"  Name="PART_ScrollViewer" local:PaneNavigator.HorizontalScrollIsAttached="true">
                                 <ItemsPresenter />
                             </ScrollViewer>
                         </DockPanel>
@@ -24,6 +24,7 @@
             <Setter.Value>
                 <Style>
                     <Setter Property="FrameworkElement.Width" Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:PaneNavigator}, Path=PaneWidth}" />
+                    <Setter Property="FrameworkElement.Height"  Value="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=local:PaneNavigator}, Path=ActualHeight}" />
                 </Style>
                 
             </Setter.Value>
@@ -31,7 +32,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
+                    <StackPanel Orientation="Horizontal" MinWidth="0"/>
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>

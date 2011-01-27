@@ -2,6 +2,6 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:Controls="clr-namespace:OpenWrap.Windows.Controls;assembly=OpenWrap.Windows.Controls" Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Controls:PaneNavigator ItemsSource="{Binding Values}" IsSynchronizedWithCurrentItem="True" />
+        <Controls:PaneNavigator FirstPane="{Binding First}" IsSynchronizedWithCurrentItem="True" />
     </Grid>
 </Window>   

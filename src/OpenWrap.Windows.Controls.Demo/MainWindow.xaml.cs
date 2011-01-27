@@ -22,14 +22,15 @@ namespace OpenWrap.Windows.Controls.Demo
     public partial class MainWindow : Window
     {
         private ObservableCollection<object> _values;
+        private DemoType1 _first = new DemoType1();
 
         public MainWindow()
         {
             InitializeComponent();
-            _values = new ObservableCollection<object> {new DemoType1() };
+            _values = new ObservableCollection<object> {_first };
             DataContext = this;
         }
-
+        public object First { get { return _first; } }
         public ICollection Values { get { return _values; } }
     }
 }
