@@ -2,10 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace OpenWrap.Windows.Controls
 {
@@ -23,6 +25,7 @@ namespace OpenWrap.Windows.Controls
         public double DestinationScrollOffset { get; set; }
     }
     [TemplatePart(Name = "PART_ScrollViewer", Type = typeof(ScrollViewer))]
+    [TemplatePart(Name = "PART_ScrollAnimation", Type = typeof(Storyboard))]
     public class PaneNavigator : Selector
     {
         public static readonly DependencyPropertyKey PaneWidthPropertyKey;
@@ -31,10 +34,12 @@ namespace OpenWrap.Windows.Controls
         public static readonly DependencyPropertyKey IsCurrentPanePropertyKey;
         public static readonly DependencyProperty IsCurrentPaneProperty;
         private int? _previousSelected;
-        public static readonly RoutedEvent PaneScrollStartEvent;
-        private static DependencyProperty HorizontalScrollIsAttachedProperty;
-        private static DependencyProperty HorizontalScrollOffsetProperty;
+        public static readonly RoutedEvent PaneScrollForwardEvent;
+        public static readonly DependencyProperty HorizontalScrollIsAttachedProperty;
+        public static readonly DependencyProperty HorizontalScrollOffsetProperty;
         public static readonly DependencyProperty FirstPaneProperty;
+        private Storyboard _scrollAnimation;
+        public static readonly RoutedEvent PaneScrollBackEvent;
 
 
         static PaneNavigator()
@@ -69,11 +74,18 @@ namespace OpenWrap.Windows.Controls
                                                                                                                    AffectsMeasure,
                                                                                                                HorizontalScrollChanged));
             IsCurrentPaneProperty = IsCurrentPanePropertyKey.DependencyProperty;
-            PaneScrollStartEvent = EventManager.RegisterRoutedEvent("PaneScrollStart", RoutingStrategy.Bubble, typeof(RoutedEventHandler<PaneScrollStartEventArgs>),
+            PaneScrollForwardEvent = EventManager.RegisterRoutedEvent("PaneScrollForward", RoutingStrategy.Bubble, typeof(RoutedEventHandler),
                                              typeof(PaneNavigator));
-
+            PaneScrollBackEvent = EventManager.RegisterRoutedEvent("PaneScrollBack", RoutingStrategy.Bubble, typeof(RoutedEventHandler),
+                                             typeof(PaneNavigator));
             FirstPaneProperty = DependencyProperty.Register("FirstPane", typeof (object), typeof (PaneNavigator),
                                                             new PropertyMetadata(HandleFirstPaneChanged));
+
+        }
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            _scrollAnimation = Template.Resources["PART_ScrollAnimation"] as Storyboard;
 
         }
 
@@ -87,14 +99,24 @@ namespace OpenWrap.Windows.Controls
             set{ SetValue(FirstPaneProperty, value);
             }
         }
-        public event RoutedEventHandler<PaneScrollStartEventArgs> PaneScrollStart
+        public event RoutedEventHandler PaneScrollForward
         {
-            add { AddHandler(PaneScrollStartEvent, value); }
-            remove { RemoveHandler(PaneScrollStartEvent, value); }
+            add { AddHandler(PaneScrollForwardEvent, value); }
+            remove { RemoveHandler(PaneScrollForwardEvent, value); }
         }
-        protected virtual void RaisePaneScrollStart(double from, double to)
+        
+        public event RoutedEventHandler PaneScrollBack
         {
-            RaiseEvent(new PaneScrollStartEventArgs(this, PaneScrollStartEvent, from, to));
+            add { AddHandler(PaneScrollBackEvent, value); }
+            remove { RemoveHandler(PaneScrollBackEvent, value); }
+        }
+        protected virtual void RaisePaneScrollForward()
+        {
+            RaiseEvent(new RoutedEventArgs(PaneScrollForwardEvent, this));
+        }
+        protected virtual void RaisePaneScrollBack()
+        {
+                        RaiseEvent(new RoutedEventArgs(PaneScrollBackEvent, this));
         }
         public static bool GetHorizontalScrollIsAttached(DependencyObject obj)
         {
@@ -116,7 +138,7 @@ namespace OpenWrap.Windows.Controls
         {
             var scrollViewer = d as ScrollViewer;
             if (scrollViewer == null) return;
-            if ((bool)property.NewValue == true)
+            if ((bool)property.NewValue)
                 scrollViewer.ScrollChanged += (s, e) => SetHorizontalScrollOffset(scrollViewer, scrollViewer.ContentHorizontalOffset);
         }
         private static void HorizontalScrollChanged(DependencyObject d, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
@@ -252,12 +274,34 @@ namespace OpenWrap.Windows.Controls
             if (viewer == null) return;
 
             if (fe != null)
-            {
                 fe.Focus();
-            }
+
             var to = Math.Max(0, SelectedIndex - 1) * PaneWidth;
-            RaisePaneScrollStart(GetHorizontalScrollOffset(viewer), to); 
+            ScrollTo(viewer, to);
             SetHorizontalScrollOffset(viewer, to);
+        }
+
+        private void ScrollTo(ScrollViewer viewer, double to)
+        {
+            var anim = new DoubleAnimation
+                           {
+                               To = to,
+                               Duration = TimeSpan.FromSeconds(1),
+                               EasingFunction = new PowerEase
+                                                    {
+                                                        Power = 30,
+                                                        EasingMode = EasingMode.EaseOut
+                                                    }
+                           };
+            Storyboard.SetTargetName(anim, "PART_ScrollViewer");
+            Storyboard.SetTargetProperty(anim, new PropertyPath(HorizontalScrollOffsetProperty));
+            
+
+            var storyboard = new Storyboard
+                                 {
+                                     Children = { anim }
+                                 };
+            storyboard.Begin(viewer);
         }
 
         protected override Size ArrangeOverride(Size arrangeBounds)
