@@ -27,9 +27,11 @@ namespace OpenWrap.Tests.Commands
             RemoteRepository = new InMemoryRepository("Remote repository");
             CurrentDirectoryRepository = new InMemoryRepository("Current directory repository"); 
             RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };
-            DescriptorFile = CurrentDirectory.GetFile("descriptor.wrapdesc");
+            DescriptorFile = CurrentDirectory.GetFile("descriptor.wrapdesc").MustExist();
             Descriptor = new PackageDescriptor();
             ConfigurationDirectory = configDirectory;
+            ScopedDescriptors = new Dictionary<string, FileBased<IPackageDescriptor>>(StringComparer.OrdinalIgnoreCase);
+            ScopedDescriptors[string.Empty] = FileBased.New(DescriptorFile, Descriptor);
         }
 
         void IService.Initialize()
@@ -48,10 +50,7 @@ namespace OpenWrap.Tests.Commands
 
         public IFile DescriptorFile { get; set; }
 
-        public IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors
-        {
-            get { return null; }
-        }
+        public IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors { get; private set; }
 
         public IPackageDescriptor Descriptor { get; set; }
 

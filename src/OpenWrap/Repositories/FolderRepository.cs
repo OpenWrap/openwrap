@@ -66,12 +66,13 @@ namespace OpenWrap.Repositories
             if (!_anchoringEnabled)
                 yield break;
 
-            var failed = new List<IPackageInfo>();
+            new List<IPackageInfo>();
             foreach (var package in packagesToAnchor)
             {
                 if (package.Source != this)
                     continue;
-                package.Load();
+                if (package.Load() == null)
+                    yield return new PackageAnchoredResult(package.Source as ISupportAnchoring, package, false);
                 var anchoredDirectory = BasePath.GetDirectory(package.Name);
                 var packageDirectory = Packages.First(x => x.Package == package).CacheDirectory;
                 if (anchoredDirectory.Exists)

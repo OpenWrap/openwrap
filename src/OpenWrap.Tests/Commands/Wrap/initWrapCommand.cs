@@ -7,6 +7,7 @@ using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenWrap;
 using OpenWrap.Commands;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;

@@ -55,19 +55,18 @@ namespace OpenWrap.Commands.Wrap
         protected virtual ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
             var output = packageOperationResult.ToOutput();
-//            this.Successful = this.Successful && (output.Type != CommandResultType.Info || output.Type == CommandResultType.Data || output.Type == CommandResultType.Verbose);
-            this.Successful = this.Successful && (output.Type != CommandResultType.Error);
+            Successful = Successful && (output.Type != CommandResultType.Error);
             return output;
         }
 
         protected bool Successful { get; private set; }
 
 
-        protected void TrySaveDescriptorFile()
+        protected void TrySaveDescriptorFile(FileBased<IPackageDescriptor> targetDescriptor)
         {
             if (!Successful) return;
-            using (var descriptor = Environment.DescriptorFile.OpenWrite())
-                new PackageDescriptorReaderWriter().Write(Environment.Descriptor, descriptor);
+            using (var descriptorStream = targetDescriptor.File.OpenWrite())
+                new PackageDescriptorReaderWriter().Write(targetDescriptor.Value, descriptorStream);
         }
 
         protected IEnumerable<ICommandOutput> HintRemoteRepositories()

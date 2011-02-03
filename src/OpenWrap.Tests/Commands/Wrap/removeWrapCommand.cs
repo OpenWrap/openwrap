@@ -4,6 +4,7 @@ using System.Linq;
 using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenWrap.Commands;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;

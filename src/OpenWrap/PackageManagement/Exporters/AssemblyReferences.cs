@@ -34,10 +34,9 @@ namespace OpenWrap.PackageManagement.Exporters
 
         static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferencesFromPackages(IEnumerable<IPackageInfo> packages, ExecutionEnvironment exec)
         {
-            return from packageInfo in packages.NotNull()
+            return from package in packages.NotNull()
                            .GroupBy(x => x.Name)
-                           .Select(x => x.OrderByDescending(y => y.Version).First())
-                   let package = packageInfo.Load()
+                           .Select(x => x.OrderByDescending(y => y.Version).Select(y=>y.Load()).NotNull().First())
                    from assembly in package.Load().GetExport("bin", exec).Items.Cast<IAssemblyReferenceExportItem>()
                    where MatchesReferenceSection(package, assembly)
                    select assembly;

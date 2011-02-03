@@ -144,6 +144,7 @@ namespace OpenWrap.PackageModel
             _useSymLinks = new SingleBoolValue(Entries, "use-symlinks", true);
             _referencedAssemblies = new SingleStringValue(Entries, "referenced-assemblies", "*");
             _directoryStructure = new MultiLine<string>(Entries, "directory-structure", _ => _, _ => _);
+            _title = new SingleStringValue(Entries, "title");
         }
         public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)
         {

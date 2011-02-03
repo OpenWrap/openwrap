@@ -2,6 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Commands;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
@@ -10,7 +11,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands.Wrap
 {
-    class set_wrap_content_true : context.command_context<SetWrapCommand>
+    class set_wrap_content_true : command_context<SetWrapCommand>
     {
         public set_wrap_content_true()
         {
@@ -33,7 +34,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    class set_wrap_anchored_true : context.command_context<SetWrapCommand>
+    class set_wrap_anchored_true : command_context<SetWrapCommand>
     {
         public set_wrap_anchored_true()
         {
@@ -56,7 +57,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    class set_wrap_anchored_false : context.command_context<SetWrapCommand>
+    class set_wrap_anchored_false : command_context<SetWrapCommand>
     {
         public set_wrap_anchored_false()
         {
@@ -74,7 +75,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    class set_wrap_version_to_2 : context.command_context<SetWrapCommand>
+    class set_wrap_version_to_2 : command_context<SetWrapCommand>
     {
         public set_wrap_version_to_2()
         {
@@ -100,7 +101,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    class set_wrap_version_to_any : context.command_context<SetWrapCommand>
+    class set_wrap_version_to_any : command_context<SetWrapCommand>
     {
         public set_wrap_version_to_any()
         {
@@ -118,7 +119,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    class set_wrap_minversion_2 : context.command_context<SetWrapCommand>
+    class set_wrap_minversion_2 : command_context<SetWrapCommand>
     {
         public set_wrap_minversion_2()
         {
@@ -138,7 +139,7 @@ namespace OpenWrap.Tests.Commands.Wrap
     }
 
 
-    class set_wrap_minversion_2_maxversion_3 : context.command_context<SetWrapCommand>
+    class set_wrap_minversion_2_maxversion_3 : command_context<SetWrapCommand>
     {
         public set_wrap_minversion_2_maxversion_3()
         {
@@ -167,7 +168,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    class set_wrap_conflicting_version_inputs : context.command_context<SetWrapCommand>
+    class set_wrap_conflicting_version_inputs : command_context<SetWrapCommand>
     {
         public set_wrap_conflicting_version_inputs()
         {

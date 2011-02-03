@@ -9,6 +9,8 @@ namespace OpenWrap.PackageManagement.Deployers
                                      IPackagePublisher publisher)
         {
             var source = resolvedPackage.Load();
+            if (source == null)
+                throw new InvalidPackageException("The package could not be opened.");
             using (var packageStream = source.OpenStream())
                 publisher.Publish(resolvedPackage.FullName + ".wrap", packageStream);
         }

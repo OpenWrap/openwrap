@@ -25,6 +25,9 @@ namespace OpenWrap.Commands.Wrap
         public bool Content { get; set; }
 
         [CommandInput]
+        public string Scope { get; set; }
+
+        [CommandInput]
         public string MaxVersion { get; set; }
 
         [CommandInput]
@@ -123,11 +126,15 @@ namespace OpenWrap.Commands.Wrap
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
 
-            var sourceRepositories = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }.Concat(Environment.RemoteRepositories).NotNull();
+            var sourceRepositories = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }
+                .Concat(Environment.RemoteRepositories)
+                .Concat(Environment.ProjectRepository)
+                .NotNull();
+            var targetDescriptor = Environment.GetOrCreateScopedDescriptor(Scope ?? string.Empty);
             if (Project && System)
             {
                 var sysToAdd = new List<PackageIdentifier>();
-                foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, Environment.Descriptor, Environment.ProjectRepository, AddOptions))
+                foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, Environment.ProjectRepository, AddOptions))
                 {
                     yield return ToOutput(m);
                     ParseSuccess(m, sysToAdd.Add);
@@ -138,7 +145,7 @@ namespace OpenWrap.Commands.Wrap
             }
             else if (Project)
             {
-                foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, Environment.Descriptor, Environment.ProjectRepository, AddOptions))
+                foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, Environment.ProjectRepository, AddOptions))
                 {
                     yield return ToOutput(m);
                 }
@@ -158,7 +165,7 @@ namespace OpenWrap.Commands.Wrap
                     yield return ToOutput(m);
             }
             if (ShouldUpdateDescriptor)
-                TrySaveDescriptorFile();
+                TrySaveDescriptorFile(targetDescriptor);
         }
 
         IEnumerable<ICommandOutput> ValidateInputs()
@@ -197,6 +204,11 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Error("Project repository doesn't exist but -project has been specified.");
                 yield break;
             }
+            if (!string.IsNullOrEmpty(Scope) && !Project)
+            {
+                yield return new Error("Cannot specify a scope when adding to a system package.");
+                yield break;
+            }
         }
 
 
@@ -205,8 +217,8 @@ namespace OpenWrap.Commands.Wrap
             if (NoDescriptorUpdate)
                 return new GenericMessage("Wrap descriptor ignored.");
             return Environment.Descriptor == null
-                           ? new GenericMessage(@"No wrap descriptor found, installing locally.")
-                           : new GenericMessage("Wrap descriptor found.");
+                           ? new GenericMessage(@"Wrap descriptor absent.")
+                           : new GenericMessage("Wrap descriptor present.");
         }
 
         ICommandOutput VeryfyWrapRepository()

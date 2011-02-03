@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
@@ -11,7 +12,7 @@ namespace OpenWrap.Tests.Commands.Wrap
 {
     [TestFixture("test.txt", "files; file=bin-net35->test.txt")]
     [TestFixture("test.txt", "files; file = bin-net35 -> test.txt ")]
-    public class from_existing_files : context.command_context<BuildWrapCommand>
+    public class from_existing_files : command_context<BuildWrapCommand>
     {
         readonly string _filePath;
 

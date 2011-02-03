@@ -5,13 +5,14 @@ using System.Text;
 using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Commands;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
-    public class update_package_not_existing_anywhere_but_in_project : context.command_context<UpdateWrapCommand>
+    public class update_package_not_existing_anywhere_but_in_project : command_context<UpdateWrapCommand>
     {
         public update_package_not_existing_anywhere_but_in_project()
         {
@@ -26,7 +27,7 @@ namespace OpenWrap.Tests.Commands
             Results.ShouldHaveError();
         }
     }
-    public class update_package_by_name_in_project : context.command_context<UpdateWrapCommand>
+    public class update_package_by_name_in_project : command_context<UpdateWrapCommand>
     {
         public update_package_by_name_in_project()
         {
@@ -50,7 +51,7 @@ namespace OpenWrap.Tests.Commands
             Environment.ProjectRepository.ShouldNotHavePackage("goldberry", "2.1");
         }
     }
-    public class update_package_by_name_in_system : context.command_context<UpdateWrapCommand>
+    public class update_package_by_name_in_system : command_context<UpdateWrapCommand>
     {
         public update_package_by_name_in_system()
         {
@@ -72,7 +73,7 @@ namespace OpenWrap.Tests.Commands
             Environment.SystemRepository.ShouldNotHavePackage("goldberry", "2.1");
         }
     }
-    public class when_updating_packages_in_project_folder : context.command_context<UpdateWrapCommand>
+    public class when_updating_packages_in_project_folder : command_context<UpdateWrapCommand>
     {
         public when_updating_packages_in_project_folder()
         {
@@ -97,7 +98,7 @@ namespace OpenWrap.Tests.Commands
             Environment.ProjectRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
         }
     }
-    public class when_not_in_project_folder_and_package_can_be_updated : context.command_context<UpdateWrapCommand>
+    public class when_not_in_project_folder_and_package_can_be_updated : command_context<UpdateWrapCommand>
     {
         public when_not_in_project_folder_and_package_can_be_updated()
         {
@@ -117,7 +118,7 @@ namespace OpenWrap.Tests.Commands
             Environment.SystemRepository.ShouldHavePackage("goldberry", "2.0.0");
         }
     }
-    public class system_flag_is_specified : context.command_context<UpdateWrapCommand>
+    public class system_flag_is_specified : command_context<UpdateWrapCommand>
     {
         public system_flag_is_specified()
         {
@@ -132,7 +133,7 @@ namespace OpenWrap.Tests.Commands
             Environment.ProjectRepository.ShouldHavePackage("goldberry","2.0.0");
         }
     }
-    public class project_and_system_defaults : context.command_context<UpdateWrapCommand>
+    public class project_and_system_defaults : command_context<UpdateWrapCommand>
     {
         UpdateWrapCommand CommandInstance;
 
@@ -150,7 +151,7 @@ namespace OpenWrap.Tests.Commands
             CommandInstance.System.ShouldBeFalse();
         }
     }
-    public class project_is_selected_system_isnt : context.command_context<UpdateWrapCommand>
+    public class project_is_selected_system_isnt : command_context<UpdateWrapCommand>
     {
         UpdateWrapCommand CommandInstance;
 
@@ -169,7 +170,7 @@ namespace OpenWrap.Tests.Commands
             CommandInstance.System.ShouldBeFalse();
         }
     }
-    public class project_is_not_selected_system_is : context.command_context<UpdateWrapCommand>
+    public class project_is_not_selected_system_is : command_context<UpdateWrapCommand>
     {
         UpdateWrapCommand CommandInstance;
 
@@ -188,7 +189,7 @@ namespace OpenWrap.Tests.Commands
             CommandInstance.System.ShouldBeTrue();
         }
     }
-    public class project_and_system_flags_specified : context.command_context<UpdateWrapCommand>
+    public class project_and_system_flags_specified : command_context<UpdateWrapCommand>
     {
         
         public project_and_system_flags_specified()

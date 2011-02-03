@@ -111,29 +111,38 @@ namespace OpenWrap.PackageManagement.Packages
             }
         }
 
-        protected static void ExtractPackage(IFile wrapFile, IDirectory destinationDirectory)
+        protected static bool ExtractPackage(IFile wrapFile, IDirectory destinationDirectory)
         {
-            var nt = new WindowsNameTransform(destinationDirectory.Path.FullPath);
-            using (var zipFile = new ZipFile(wrapFile.OpenRead()))
+
+            try
             {
-                foreach (ZipEntry zipEntry in zipFile)
+                var nt = new WindowsNameTransform(destinationDirectory.Path.FullPath);
+                using (var zipFile = new ZipFile(wrapFile.OpenRead()))
                 {
-                    if (zipEntry.IsFile)
+                    foreach (ZipEntry zipEntry in zipFile)
                     {
-                        IFile destinationFile;
+                        if (zipEntry.IsFile)
+                        {
+                            IFile destinationFile;
 
-                        if (System.IO.Path.DirectorySeparatorChar == '\\')
-                            destinationFile = destinationDirectory.FileSystem.GetFile(nt.TransformFile(zipEntry.Name));
-                        else
-                            destinationFile = destinationDirectory.GetFile(zipEntry.Name);
+                            if (System.IO.Path.DirectorySeparatorChar == '\\')
+                                destinationFile = destinationDirectory.FileSystem.GetFile(nt.TransformFile(zipEntry.Name));
+                            else
+                                destinationFile = destinationDirectory.GetFile(zipEntry.Name);
 
-                        using (var targetFile = destinationFile.MustExist().OpenWrite())
-                        using (var sourceFile = zipFile.GetInputStream(zipEntry))
-                            StreamExtensions.CopyTo(sourceFile, targetFile);
-                        // TODO: restore last write time here by adding it to OFS
+                            using (var targetFile = destinationFile.MustExist().OpenWrite())
+                            using (var sourceFile = zipFile.GetInputStream(zipEntry))
+                                StreamExtensions.CopyTo(sourceFile, targetFile);
+                            // TODO: restore last write time here by adding it to OFS
+                        }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -3,13 +3,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands.Wrap
 {
-    public class building_a_meta_package : context.command_context<BuildWrapCommand>
+    public class building_a_meta_package : command_context<BuildWrapCommand>
     {
         static Version version = new Version("1.2.3.4");
         const string packageName = "mypackage";

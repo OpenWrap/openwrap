@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Configuration;
 using OpenWrap.Services;
 using OpenWrap.Testing;
@@ -11,7 +12,7 @@ using OpenWrap.Commands.Remote;
 
 namespace OpenWrap.Tests.Commands.Remote.Remove
 {
-    public class when_removing_a_non_existing_command : context.command_context<RemoveRemoteCommand>
+    public class when_removing_a_non_existing_command : command_context<RemoveRemoteCommand>
     {
         public when_removing_a_non_existing_command()
         {
@@ -25,7 +26,7 @@ namespace OpenWrap.Tests.Commands.Remote.Remove
         }
     }
     public class when_removing_an_existing_command
-        : context.command_context<RemoveRemoteCommand>
+        : command_context<RemoveRemoteCommand>
     {
         public when_removing_an_existing_command()
         {

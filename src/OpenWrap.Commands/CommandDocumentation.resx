@@ -154,6 +154,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="add-wrap-project" xml:space="preserve">
     <value>Specifies that the dependency will only be added to the current project.</value>
   </data>
+  <data name="add-wrap-scope" xml:space="preserve">
+    <value>Spcifies which scope the package is to be added to.</value>
+  </data>
   <data name="add-wrap-system" xml:space="preserve">
     <value>Specifies that the dependency will only be installed in the system repository.</value>
   </data>
@@ -300,6 +303,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   </data>
   <data name="remove-wrap-project" xml:space="preserve">
     <value>Specifies that the package is to be removed from the project repository. This is the default.</value>
+  </data>
+  <data name="remove-wrap-scope" xml:space="preserve">
+    <value>Specifies which scope the package definition is to be removed from.</value>
   </data>
   <data name="remove-wrap-system" xml:space="preserve">
     <value>Specifies that the package is to be removed from the system repository. If specified, the project repository will not be affected.</value>

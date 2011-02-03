@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenFileSystem.IO.FileSystems.InMemory;
-using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap.Collections;
-using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
-using OpenWrap.Commands.Wrap;
 using OpenWrap.Configuration;
 using OpenFileSystem.IO;
 using OpenWrap.IO.Packaging;
@@ -20,11 +17,10 @@ using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
-using OpenWrap.Services;
 using OpenWrap.Testing;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
+using OpenWrap.Tests.Commands;
 
-namespace OpenWrap.Tests.Commands.context
+namespace OpenWrap.Commands.contexts
 {
     public abstract class openwrap_context : OpenWrap.Testing.context
     {
@@ -58,9 +54,15 @@ namespace OpenWrap.Tests.Commands.context
             return new InMemoryFileSystem() { CurrentDirectory = currentDirectory };
         }
 
+        protected void given_dependency(string scope, string dependency)
+        {
+            new DependsParser().Parse(dependency, Environment.GetOrCreateScopedDescriptor(scope).Value);
+        }
+        
         protected void given_dependency(string dependency)
         {
-            new DependsParser().Parse(dependency, Environment.Descriptor);
+            given_dependency(string.Empty, dependency);
+
         }
 
 
@@ -96,7 +98,7 @@ namespace OpenWrap.Tests.Commands.context
             AddPackage(Environment.SystemRepository, name, version, dependencies);
         }
 
-        protected static void AddPackage(IPackageRepository repository, string name, string version, string[] dependencies)
+        static void AddPackage(IPackageRepository repository, string name, string version, string[] dependencies)
         {
             if (repository is InMemoryRepository)
             {
@@ -183,7 +185,8 @@ namespace OpenWrap.Tests.Commands.context
 
         protected virtual void when_executing_command(params string[] parameters)
         {
-
+            foreach (var descriptor in Environment.ScopedDescriptors.Values)
+                descriptor.Save();
             var allParams = new[] { Command.Noun, Command.Verb }.Concat(parameters);
             Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
         }

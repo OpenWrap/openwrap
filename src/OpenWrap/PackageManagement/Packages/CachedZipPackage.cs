@@ -26,13 +26,11 @@ namespace OpenWrap.PackageManagement.Packages
         {
             if (_cachedPackage == null)
             {
-                ExtractPackage(PackageFile, _cacheDirectoryPathPath);
+                if (!ExtractPackage(PackageFile, _cacheDirectoryPathPath)) return null;
 
                 _cachedPackage = new UncompressedPackage(Source, PackageFile, _cacheDirectoryPathPath, _builders);
             }
             return _cachedPackage;
         }
-
-        // TODO: Replace with clean OFS-based zip methods
     }
 }

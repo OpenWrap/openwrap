@@ -9,6 +9,7 @@ using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap;
+using OpenWrap.Commands.contexts;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Exporters;

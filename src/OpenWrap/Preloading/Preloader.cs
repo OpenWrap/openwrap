@@ -100,7 +100,7 @@ namespace OpenWrap.Preloading
 
         static IEnumerable<string> GetLatestPackageDirectories(Regex regex, IEnumerable<DirectoryInfo> cacheDirectories)
         {
-            foreach (var dir in cacheDirectories)
+            foreach (var dir in cacheDirectories.Where(x=>x.Exists))
             {
                 var all = (
                                   from uncompressedFolder in dir.GetDirectories()

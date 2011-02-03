@@ -96,6 +96,7 @@
     <Compile Include="Commands\Info.cs" />
     <Compile Include="Commands\Warning.cs" />
     <Compile Include="Configuration\Persistence\StreamWriterExtensions.cs" />
+    <Compile Include="FileBased.cs" />
     <Compile Include="IO\LiteralPathSegment.cs" />
     <Compile Include="IO\PathSegment.cs" />
     <Compile Include="IO\PathTemplateItem.cs" />
@@ -119,8 +120,10 @@
     <Compile Include="PackageManagement\PackageRemoveResultIterator.cs" />
     <Compile Include="PackageManagement\PackageUpdateOptions.cs" />
     <Compile Include="PackageManagement\PackageUpdateResultIterator.cs" />
+    <Compile Include="PackageModel\InvalidPackageException.cs" />
     <Compile Include="PackageModel\IPackageDescriptor.cs" />
     <Compile Include="PackageModel\LessThanOrEqualVersionVertex.cs" />
+    <Compile Include="PackageModel\PackageDescriptorExtensions.cs" />
     <Compile Include="PackageModel\Parsers\DelegatedMultiLine.cs" />
     <Compile Include="PackageModel\Parsers\DelegatedValue.cs" />
     <Compile Include="PackageModel\Parsers\ScopedPackageDependencyCollection.cs" />

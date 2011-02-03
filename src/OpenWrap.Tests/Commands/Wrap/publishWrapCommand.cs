@@ -2,6 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Commands;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Errors;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;

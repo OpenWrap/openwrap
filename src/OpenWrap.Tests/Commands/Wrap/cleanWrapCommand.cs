@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenRasta.Wrap.Tests.Dependencies.context;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
@@ -12,7 +13,7 @@ using OpenWrap.Commands;
 
 namespace OpenWrap.Tests.Commands.Wrap
 {
-    public class cleaning_a_non_existing_wrap : context.command_context<CleanWrapCommand>
+    public class cleaning_a_non_existing_wrap : command_context<CleanWrapCommand>
     {
         public cleaning_a_non_existing_wrap()
         {
@@ -38,7 +39,7 @@ namespace OpenWrap.Tests.Commands.Wrap
 
     }
 
-    public class cleaning_a_wrap_with_one_version : context.command_context<CleanWrapCommand>
+    public class cleaning_a_wrap_with_one_version : command_context<CleanWrapCommand>
     {
         public cleaning_a_wrap_with_one_version()
         {
@@ -64,7 +65,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    public class cleaning_a_wrap_with_two_versions : context.command_context<CleanWrapCommand>
+    public class cleaning_a_wrap_with_two_versions : command_context<CleanWrapCommand>
     {
         static readonly string LionelVersion = "1.0.0.123";
         public cleaning_a_wrap_with_two_versions()
@@ -91,7 +92,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    public class cleaning_package_from_system_repository : context.command_context<CleanWrapCommand>
+    public class cleaning_package_from_system_repository : command_context<CleanWrapCommand>
     {
         static readonly string LionelVersion = "1.0.0.123";
 
@@ -132,7 +133,7 @@ namespace OpenWrap.Tests.Commands.Wrap
         }
     }
 
-    public class cleaning_package_from_both_repositories : context.command_context<CleanWrapCommand>
+    public class cleaning_package_from_both_repositories : command_context<CleanWrapCommand>
     {
         static readonly string LionelVersion = "1.0.0.123";
 
