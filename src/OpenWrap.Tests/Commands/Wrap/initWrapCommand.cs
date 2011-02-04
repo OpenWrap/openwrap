@@ -12,7 +12,6 @@ using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
-using OpenWrap.Tests.Commands.context;
 
 namespace init_wrap_specs
 {

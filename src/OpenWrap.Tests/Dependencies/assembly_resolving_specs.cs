@@ -16,7 +16,6 @@ using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Testing;
-using OpenWrap.Tests.Commands.context;
 
 namespace assembly_resolving_specs
 {
@@ -154,7 +153,7 @@ namespace assembly_resolving_specs
     }
     namespace contexts
     {
-        public abstract class assembly_resolving : openwrap_context
+        public abstract class assembly_resolving : command
         {
             protected IEnumerable<IAssemblyReferenceExportItem> AssemblyReferences;
             ITemporaryDirectory TempDirectory;

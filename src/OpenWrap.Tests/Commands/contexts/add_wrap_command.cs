@@ -17,11 +17,7 @@ namespace OpenWrap.Commands.contexts
 
             PostExecutionDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);
         }
-        public IPackageDescriptor WrittenDescriptor(string scope = null)
-        {
-            scope = scope ?? string.Empty;
-            return new PackageDescriptorReaderWriter().Read(Environment.ScopedDescriptors[scope].File);
-        }
+
         protected void given_file_based_project_repository()
         {
             ProjectRepositoryDir = FileSystem.GetDirectory(@"c:\repo");

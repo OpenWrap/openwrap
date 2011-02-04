@@ -5,7 +5,6 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Configuration;
 using OpenWrap.Testing;
-using OpenWrap.Tests.Commands.context;
 using OpenWrap.Tests.Commands.Remote.Set.context;
 
 namespace OpenWrap.Tests.Commands.Remote.Set

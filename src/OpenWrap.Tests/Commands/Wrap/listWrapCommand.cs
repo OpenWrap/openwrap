@@ -7,7 +7,6 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.Testing;
-using OpenWrap.Tests.Commands.context;
 
 namespace listWrap_specs
 {

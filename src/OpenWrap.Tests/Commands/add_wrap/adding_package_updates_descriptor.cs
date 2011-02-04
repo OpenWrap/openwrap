@@ -3,7 +3,6 @@ using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
-using OpenWrap.Tests.Commands.context;
 
 namespace OpenWrap.Commands.add_wrap
 {

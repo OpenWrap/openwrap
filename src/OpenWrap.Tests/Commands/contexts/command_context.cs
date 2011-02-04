@@ -15,6 +15,7 @@ using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Parsers;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Testing;
@@ -22,13 +23,13 @@ using OpenWrap.Tests.Commands;
 
 namespace OpenWrap.Commands.contexts
 {
-    public abstract class openwrap_context : OpenWrap.Testing.context
+    public abstract class command : OpenWrap.Testing.context
     {
         protected CommandRepository Commands;
         protected InMemoryEnvironment Environment;
         protected IFileSystem FileSystem;
 
-        protected openwrap_context()
+        protected command()
         {
             Services.Services.Clear();
             var currentDirectory = System.Environment.CurrentDirectory;
@@ -170,7 +171,7 @@ namespace OpenWrap.Commands.contexts
         }
     }
 
-    public abstract class command_context<T> : openwrap_context where T : ICommand
+    public abstract class command_context<T> : command where T : ICommand
     {
         protected AttributeBasedCommandDescriptor<T> Command;
         protected List<ICommandOutput> Results;
@@ -204,6 +205,12 @@ namespace OpenWrap.Commands.contexts
             repository.PackagesByName[packageName]
                 .ShouldHaveCountOf(1)
                 .First().Version.ShouldBe(packageVersion);
+        }
+
+        public IPackageDescriptor WrittenDescriptor(string scope = null)
+        {
+            scope = scope ?? string.Empty;
+            return new PackageDescriptorReaderWriter().Read(Environment.ScopedDescriptors[scope].File);
         }
     }
 }

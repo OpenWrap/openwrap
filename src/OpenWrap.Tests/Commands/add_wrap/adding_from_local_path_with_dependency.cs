@@ -6,9 +6,9 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Commands
 {
-    class adding_wrap_from_local_path_with_dependency : command_context<AddWrapCommand>
+    class adding_from_local_path_with_dependency : command_context<AddWrapCommand>
     {
-        public adding_wrap_from_local_path_with_dependency()
+        public adding_from_local_path_with_dependency()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
 

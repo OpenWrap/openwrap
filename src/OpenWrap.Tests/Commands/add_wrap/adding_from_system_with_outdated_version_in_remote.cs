@@ -5,9 +5,9 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Tests.Commands
 {
-    class adding_wrap_from_system_package_with_outdated_version_in_remote : command_context<AddWrapCommand>
+    class adding_from_system_with_outdated_version_in_remote : command_context<AddWrapCommand>
     {
-        public adding_wrap_from_system_package_with_outdated_version_in_remote()
+        public adding_from_system_with_outdated_version_in_remote()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
             given_project_package("sauron", "1.0.0.0");
