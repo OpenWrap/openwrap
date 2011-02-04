@@ -27,13 +27,17 @@ namespace OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts
         {
             _emitter.OpenWrapReferenceFiles.Add(path);
         }
+        protected void given_source_file(string path)
+        {
+            _emitter.SourceFiles.Add(path);
+        }
         protected void given_content_file(string path)
         {
             _emitter.ContentFiles.Add(path);
         }
         protected void given_documentation_file(string path)
         {
-            _emitter.DocumentationFiles.Add(path);
+            _emitter.CodeDocFiles.Add(path);
         }
         protected void given_satellite(string path)
         {
@@ -63,7 +67,7 @@ namespace OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts
             Instructions[folder].ShouldNotContain(RootedPath(filePath));
         }
 
-        protected void given_export(string exportName)
+        protected void given_export_name(string exportName)
         {
             _emitter.ExportName = exportName;
         }
@@ -76,6 +80,17 @@ namespace OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts
         protected void given_output_assembly(string assemblyPath)
         {
             _emitter.OutputAssemblyFiles.Add(RootedPath(assemblyPath));
+        }
+
+        protected void given_base_path(string basePath)
+        {
+            _emitter.BasePath = basePath;
+        }
+        protected void given_includes(bool? pdbs = null, bool? source = null, bool? codeDoc = null)
+        {
+            if (pdbs != null) _emitter.IncludePdbFiles = pdbs.Value;
+            if (source != null) _emitter.IncludeSourceFiles = source.Value;
+            if (codeDoc != null) _emitter.IncludeCodeDocFiles = codeDoc.Value;
         }
     }
 }

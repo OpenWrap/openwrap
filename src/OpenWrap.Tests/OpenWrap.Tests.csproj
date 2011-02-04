@@ -54,6 +54,27 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="Build\build_instruction_emitter\content.cs" />
+    <Compile Include="Build\build_instruction_emitter\content_in_subfolder.cs" />
+    <Compile Include="Build\build_instruction_emitter\doc_for_openwrap_assembly.cs" />
+    <Compile Include="Build\build_instruction_emitter\doc_for_referenced_assembly.cs" />
+    <Compile Include="Build\build_instruction_emitter\doc_for_unreferenced_assembly.cs" />
+    <Compile Include="Build\build_instruction_emitter\openwrap_reference.cs" />
+    <Compile Include="Build\build_instruction_emitter\output_assembly.cs" />
+    <Compile Include="Build\build_instruction_emitter\output_assembly_with_doc.cs" />
+    <Compile Include="Build\build_instruction_emitter\output_assembly_with_pdb.cs" />
+    <Compile Include="Build\build_instruction_emitter\output_assembly_with_resource.cs" />
+    <Compile Include="Build\build_instruction_emitter\output_assembly_with_serialization.cs" />
+    <Compile Include="Build\build_instruction_emitter\pdb_for_openwrap_assembly.cs" />
+    <Compile Include="Build\build_instruction_emitter\pdb_for_referenced_assembly.cs" />
+    <Compile Include="Build\build_instruction_emitter\pdb_for_unreferenced_assembly.cs" />
+    <Compile Include="Build\build_instruction_emitter\satellite_assembly_for_openwrap_assemblies.cs" />
+    <Compile Include="Build\build_instruction_emitter\satellite_assembly_for_referenced_assemblies.cs" />
+    <Compile Include="Build\build_instruction_emitter\satellite_assembly_for_unreferenced_assemblies.cs" />
+    <Compile Include="Build\build_instruction_emitter\serializer_assembly_for_openwrap_assemblies.cs" />
+    <Compile Include="Build\build_instruction_emitter\serializer_assembly_for_referenced_assemblies.cs" />
+    <Compile Include="Build\build_instruction_emitter\serializer_assembly_for_unreferenced_assemblies.cs" />
+    <Compile Include="Build\build_instruction_emitter\including_source_files.cs" />
     <Compile Include="Commands\add_wrap\adding_anchored_dependency.cs" />
     <Compile Include="Commands\add_wrap\adding_dependency_already_present.cs" />
     <Compile Include="Commands\add_wrap\adding_exact_version.cs" />
@@ -128,8 +149,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Build\build_instruction_emitter_specs\assembly_reference.cs" />
-    <Compile Include="Build\build_instruction_emitter_specs\contexts\msbuild_emitter.cs" />
+    <Compile Include="Build\build_instruction_emitter\assembly_reference.cs" />
+    <Compile Include="Build\build_instruction_emitter\contexts\msbuild_emitter.cs" />
     <Compile Include="Build\build_result_parser_specs\build_result.cs" />
     <Compile Include="Build\package_builder_specs\msbuild_builder_spec.cs" />
     <Compile Include="Collections\MultiThreaded_specs.cs" />

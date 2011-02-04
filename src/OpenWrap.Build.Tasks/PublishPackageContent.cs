@@ -1,4 +1,5 @@
 ﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable MemberCanBePrivate.Global
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,12 +17,14 @@ namespace OpenWrap.Build.Tasks
         public ITaskItem[] AllAssemblyReferenceFiles { get; set; }
         public ITaskItem[] OpenWrapReferenceFiles { get; set; }
         public ITaskItem[] PdbFiles { get; set; }
-        public ITaskItem[] DocumentationFiles { get; set; }
+        public ITaskItem[] CodeDocFiles { get; set; }
         public ITaskItem[] SatelliteAssemblies { get; set; }
         public ITaskItem[] SerializationAssemblies { get; set; }
+        public ITaskItem[] SourceFiles { get; set; }
 
-        public bool IncludeDocumentation { get; set; }
-        public bool IncludePdbs { get; set; }
+        public bool IncludeCodeDocFiles { get; set; }
+        public bool IncludePdbFiles { get; set; }
+        public bool IncludeSourceFiles { get; set; }
         public string BasePath { get; set; }
         public bool AllowBinDuplicates { get; set; }
 
@@ -29,8 +32,8 @@ namespace OpenWrap.Build.Tasks
 
         public override bool Execute()
         {
-            WriteLow("IncludeDocumentation: " + IncludeDocumentation);
-            WriteLow("IncludePdbs: " + IncludePdbs);
+            WriteLow("IncludeDocumentation: " + IncludeCodeDocFiles);
+            WriteLow("IncludePdbs: " + IncludePdbFiles);
             WriteLow("BasePath: " + BasePath);
             WriteLow("ExportName: " + BasePath);
             WriteLow("AllowBinDuplicates: " + AllowBinDuplicates);
@@ -40,7 +43,7 @@ namespace OpenWrap.Build.Tasks
             WriteFiles("AllAssemblyReferenceFiles", AllAssemblyReferenceFiles);
             WriteFiles("OpenWrapReferenceFiles", OpenWrapReferenceFiles);
             WriteFiles("PdbFiles", PdbFiles);
-            WriteFiles("DocumentationFiles", DocumentationFiles);
+            WriteFiles("CodeDocFiles", CodeDocFiles);
             WriteFiles("SatelliteAssemblies", SatelliteAssemblies);
             WriteFiles("SerializationAssemblies", SerializationAssemblies);
 
@@ -50,12 +53,12 @@ namespace OpenWrap.Build.Tasks
                     ContentFiles = Files(ContentFiles),
                     OpenWrapReferenceFiles = Files(OpenWrapReferenceFiles),
                     PdbFiles = Files(PdbFiles),
-                    DocumentationFiles = Files(DocumentationFiles),
+                    CodeDocFiles = Files(CodeDocFiles),
                     SatelliteAssemblies = Files(SatelliteAssemblies),
                     SerializationAssemblies = Files(SerializationAssemblies),
                     OutputAssemblyFiles = Files(OutputAssemblyFiles),
-                    IncludePdbs = IncludePdbs,
-                    IncludeDocumentation = IncludeDocumentation,
+                    IncludePdbFiles = IncludePdbFiles,
+                    IncludeCodeDocFiles = IncludeCodeDocFiles,
                     BasePath = BasePath,
                     ExportName = ExportName
             };
@@ -74,7 +77,7 @@ namespace OpenWrap.Build.Tasks
             return true;
         }
 
-        void WriteFiles(string categoryName, ITaskItem[] taskItems)
+        void WriteFiles(string categoryName, IEnumerable<ITaskItem> taskItems)
         {
             if (taskItems == null)
                 return;
@@ -103,3 +106,4 @@ namespace OpenWrap.Build.Tasks
     }
 }
 // ReSharper restore UnusedAutoPropertyAccessor.Global
+// ReSharper restore MemberCanBePrivate.Global
