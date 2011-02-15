@@ -26,7 +26,7 @@ namespace OpenWrap.Tests.Commands.Remote.Set
 
             public RemoteRepository TryGetRepository(string name)
             {
-                var repositories = Services.Services.GetService<IConfigurationManager>().LoadRemoteRepositories();
+                var repositories = Services.ServiceLocator.GetService<IConfigurationManager>().LoadRemoteRepositories();
                 RemoteRepository rep;
                 repositories.TryGetValue(name, out rep);
                 return rep;

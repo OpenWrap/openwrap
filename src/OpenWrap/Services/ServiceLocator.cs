@@ -4,11 +4,11 @@ using OpenWrap.PackageManagement.Monitoring;
 
 namespace OpenWrap.Services
 {
-    public static class Services
+    public static class ServiceLocator
     {
         static readonly Dictionary<Type, object> _services = new Dictionary<Type, object>();
 
-        static Services()
+        static ServiceLocator()
         {
             Clear();
         }

@@ -7,7 +7,7 @@ using OpenRasta.Wrap.Tests.Dependencies.context;
 
 namespace OpenWrap.Tests.Dependencies
 {
-    public class when_dependency_is_anchored : dependency_manager_context
+    public class when_dependency_is_anchored : dependency_resolver_context
     {
         public when_dependency_is_anchored()
         {

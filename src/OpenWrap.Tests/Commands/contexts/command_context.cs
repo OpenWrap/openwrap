@@ -31,23 +31,30 @@ namespace OpenWrap.Commands.contexts
 
         protected command()
         {
-            Services.Services.Clear();
+            Services.ServiceLocator.Clear();
             var currentDirectory = System.Environment.CurrentDirectory;
             FileSystem = given_file_system(currentDirectory);
             Environment = new InMemoryEnvironment(
                     FileSystem.GetDirectory(currentDirectory),
                     FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory));
             Environment.DescriptorFile.MustExist();
-            Services.Services.RegisterService<IFileSystem>(FileSystem);
-            Services.Services.RegisterService<IEnvironment>(Environment);
-            Services.Services.RegisterService<IPackageResolver>(new ExhaustiveResolver());
-            Services.Services.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
-            Services.Services.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
-            Services.Services.RegisterService<ICommandRepository>(Commands);
-            Services.Services.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
-                                                                                Services.Services.GetService<IPackageDeployer>(),
-                                                                                Services.Services.GetService<IPackageResolver>()));
-            Services.Services.RegisterService<IConfigurationManager>(new DefaultConfigurationManager(Environment.ConfigurationDirectory));
+            Services.ServiceLocator.RegisterService<IFileSystem>(FileSystem);
+            Services.ServiceLocator.RegisterService<IEnvironment>(Environment);
+            Services.ServiceLocator.RegisterService<IPackageResolver>(new ExhaustiveResolver());
+            Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
+            Services.ServiceLocator.RegisterService<ICommandRepository>(Commands);
+            
+            Services.ServiceLocator.TryRegisterService<IPackageManager>(PackageManagerFactory());
+            
+            Services.ServiceLocator.RegisterService<IConfigurationManager>(new DefaultConfigurationManager(Environment.ConfigurationDirectory));
+        }
+
+        protected virtual Func<IPackageManager> PackageManagerFactory()
+        {
+            return () => new DefaultPackageManager(
+                                 Services.ServiceLocator.GetService<IPackageDeployer>(),
+                                 Services.ServiceLocator.GetService<IPackageResolver>());
         }
 
         protected virtual IFileSystem given_file_system(string currentDirectory)
@@ -71,6 +78,11 @@ namespace OpenWrap.Commands.contexts
         {
             given_project_repository(new InMemoryRepository("Project repository"));
             AddPackage(Environment.ProjectRepository, name, version, dependencies);
+        }
+
+        protected void given_project_repository()
+        {
+            given_project_repository(new InMemoryRepository("Project repository"));
         }
 
         protected void given_project_repository(IPackageRepository repository)
@@ -138,7 +150,7 @@ namespace OpenWrap.Commands.contexts
 
         protected void given_remote_configuration(RemoteRepositories remoteRepositories)
         {
-            Services.Services.GetService<IConfigurationManager>()
+            Services.ServiceLocator.GetService<IConfigurationManager>()
                     .Save(Configurations.Addresses.RemoteRepositories, remoteRepositories);
         }
 

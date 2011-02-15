@@ -60,7 +60,7 @@ namespace OpenWrap.Runtime
 
             ConfigurationDirectory = FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory);
 
-            RemoteRepositories = new RemoteRepositoryBuilder(FileSystem, Services.Services.GetService<IConfigurationManager>()).GetConfiguredPackageRepositories().ToList();
+            RemoteRepositories = new RemoteRepositoryBuilder(FileSystem, Services.ServiceLocator.GetService<IConfigurationManager>()).GetConfiguredPackageRepositories().ToList();
             ExecutionEnvironment = new ExecutionEnvironment
             {
                     Platform = IntPtr.Size == 4 ? "x86" : "x64",

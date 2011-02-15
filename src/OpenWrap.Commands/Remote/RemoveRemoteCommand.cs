@@ -10,7 +10,7 @@ namespace OpenWrap.Commands.Remote
         [CommandInput(Position=0, IsRequired=true)]
         public string Name { get; set; }
 
-        IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
+        IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(NameDoesntExist())

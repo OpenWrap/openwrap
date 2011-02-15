@@ -91,6 +91,7 @@
     <Compile Include="Build\TextBuildResult.cs" />
     <Compile Include="Collections\MultiThreadedEnumerable.cs" />
     <Compile Include="Collections\MultiThreadedEnumerator.cs" />
+    <Compile Include="Commands\Cli\ICommandLineHandler.cs" />
     <Compile Include="Commands\CommandDocumentation.cs" />
     <Compile Include="Commands\CommandOutputExtensions.cs" />
     <Compile Include="Commands\Info.cs" />
@@ -103,7 +104,7 @@
     <Compile Include="IO\PathTemplateProcessor.cs" />
     <Compile Include="IO\TemplatePathSegment.cs" />
     <Compile Include="IO\WildcardPathSegment.cs" />
-    <Compile Include="PackageManagement\AbstractPackageOperation.cs" />
+    <Compile Include="PackageManagement\AbstractPackageOperationResultIterator.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageMissingOutput.cs" />
     <Compile Include="PackageManagement\IPackageAddResult.cs" />
     <Compile Include="PackageManagement\IPackageCleanResult.cs" />
@@ -309,7 +310,7 @@
     <Compile Include="Services\IService.cs" />
     <Compile Include="PackageManagement\Monitoring\IPackageDescriptorMonitor.cs" />
     <Compile Include="PackageManagement\Monitoring\PackageDescriptorMonitor.cs" />
-    <Compile Include="Services\Services.cs" />
+    <Compile Include="Services\ServiceLocator.cs" />
     <Compile Include="Commands\Cli\CommandLineProcessor.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandOutput.cs" />

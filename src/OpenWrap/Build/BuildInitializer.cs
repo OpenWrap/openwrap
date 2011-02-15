@@ -21,20 +21,20 @@ namespace OpenWrap.Build
     {
         public static string Initialize(string projectFile, string currentDirectory)
         {   
-            Services.Services.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
-            Services.Services.TryRegisterService<IConfigurationManager>(
-                    () => new DefaultConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
-            Services.Services.TryRegisterService<IEnvironment>(() => new MSBuildEnvironment(System.IO.Path.GetDirectoryName(projectFile), currentDirectory));
+            Services.ServiceLocator.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
+            Services.ServiceLocator.TryRegisterService<IConfigurationManager>(
+                    () => new DefaultConfigurationManager(Services.ServiceLocator.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
+            Services.ServiceLocator.TryRegisterService<IEnvironment>(() => new MSBuildEnvironment(System.IO.Path.GetDirectoryName(projectFile), currentDirectory));
 
-            Services.Services.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
-            Services.Services.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
-            Services.Services.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
-            Services.Services.TryRegisterService(()=>new RuntimeAssemblyResolver());
-            Services.Services.TryRegisterService<ITaskManager>(()=>new TaskManager());
+            Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
+            Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
+            Services.ServiceLocator.TryRegisterService(()=>new RuntimeAssemblyResolver());
+            Services.ServiceLocator.TryRegisterService<ITaskManager>(()=>new TaskManager());
 
-            Services.Services.GetService<RuntimeAssemblyResolver>().Initialize();
+            Services.ServiceLocator.GetService<RuntimeAssemblyResolver>().Initialize();
 
-            return Services.Services.GetService<IEnvironment>().Descriptor.Name;
+            return Services.ServiceLocator.GetService<IEnvironment>().Descriptor.Name;
         }
     }
 }

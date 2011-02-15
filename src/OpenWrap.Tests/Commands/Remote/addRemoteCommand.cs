@@ -37,7 +37,7 @@ namespace OpenWrap.Tests.Commands.Remote.Add
         [Test]
         public void remote_is_added_to_the_list()
         {
-            Services.Services.GetService<IConfigurationManager>()
+            Services.ServiceLocator.GetService<IConfigurationManager>()
                     .LoadRemoteRepositories()
                     .ContainsKey("iron-hills")
                     .ShouldBeTrue();
@@ -45,7 +45,7 @@ namespace OpenWrap.Tests.Commands.Remote.Add
         [Test]
         public void remote_has_position_1()
         {
-            var remote = Services.Services.GetService<IConfigurationManager>().LoadRemoteRepositories()["iron-hills"];
+            var remote = Services.ServiceLocator.GetService<IConfigurationManager>().LoadRemoteRepositories()["iron-hills"];
             remote.Priority.ShouldBe(1);
         }
     }

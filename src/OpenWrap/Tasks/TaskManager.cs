@@ -10,8 +10,8 @@ namespace OpenWrap.Tasks
         {
             get
             {
-                Services.Services.TryRegisterService<ITaskManager>(() => new TaskManager());
-                return Services.Services.GetService<ITaskManager>();
+                Services.ServiceLocator.TryRegisterService<ITaskManager>(() => new TaskManager());
+                return Services.ServiceLocator.GetService<ITaskManager>();
             }
         }
 

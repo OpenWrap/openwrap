@@ -32,7 +32,7 @@ namespace OpenWrap.Windows.NounVerb
             }
         }
 
-        protected IEnvironment Environment { get { return Services.Services.GetService<IEnvironment>(); } }
-        protected IPackageResolver PackageResolver { get { return Services.Services.GetService<IPackageResolver>(); } }
+        protected IEnvironment Environment { get { return Services.ServiceLocator.GetService<IEnvironment>(); } }
+        protected IPackageResolver PackageResolver { get { return Services.ServiceLocator.GetService<IPackageResolver>(); } }
     }
 }

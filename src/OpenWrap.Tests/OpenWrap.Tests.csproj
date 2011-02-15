@@ -94,6 +94,7 @@
     <Compile Include="Commands\add_wrap\adding_from_system_with_outdated_version_in_remote.cs" />
     <Compile Include="Commands\add_wrap\adding_wrap_with_incompatible_arguments.cs" />
     <Compile Include="Commands\add_wrap\adding_package_updates_descriptor.cs" />
+    <Compile Include="Commands\add_wrap\hooks\successful_add_to_project.cs" />
     <Compile Include="Commands\contexts\add_wrap_command.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
     <Compile Include="Commands\remove_wrap\removing_from_existing_scope.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="contexts\descriptor.cs" />
     <Compile Include="contexts\descriptor_readers.cs" />
     <Compile Include="contexts\scoped_descriptor.cs" />
+    <Compile Include="Dependencies\hooks\successful_add.cs" />
     <Compile Include="IO\compound_template_path_segment_specs.cs" />
     <Compile Include="PackageModel\descriptors\adding_a_multiline_value.cs" />
     <Compile Include="PackageModel\descriptors\default_values_in_descriptor.cs" />
@@ -169,7 +171,7 @@
     <Compile Include="Commands\CommandProcessor.cs" />
     <Compile Include="Commands\contexts\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
-    <Compile Include="Commands\Wrap\buildWrapCommand.cs" />
+    <Compile Include="Commands\build_wrap\buildWrapCommand.cs" />
     <Compile Include="Commands\Wrap\cleanWrapCommand.cs" />
     <Compile Include="Commands\Wrap\buildwrap\from_files_without_space.cs" />
     <Compile Include="Commands\Wrap\listWrapCommand.cs" />
@@ -186,7 +188,7 @@
     <Compile Include="Dependencies\assembly_resolving_specs.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Commands\Core\context\gac_resolve.cs" />
-    <Compile Include="Dependencies\nuked_package_resolution.cs" />
+    <Compile Include="Dependencies\nuked\nuked_package_resolution.cs" />
     <Compile Include="Dependencies\PackageDependency_specs.cs" />
     <Compile Include="PackageModel\descriptors\removing_a_multiline_value.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />

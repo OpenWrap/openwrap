@@ -15,7 +15,7 @@ namespace OpenWrap.Commands.Core
 
         protected ICommandRepository CommandRepository
         {
-            get { return Services.Services.GetService<ICommandRepository>(); }
+            get { return Services.ServiceLocator.GetService<ICommandRepository>(); }
         }
 
         public IEnumerable<ICommandOutput> Execute()

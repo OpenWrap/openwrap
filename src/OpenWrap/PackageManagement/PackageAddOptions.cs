@@ -10,6 +10,7 @@ namespace OpenWrap.PackageManagement
         Anchor = 4,
         Force = 8,
         Test = 16,
-        Default = Test | UpdateDescriptor
+        Hooks = 32,
+        Default = Test | UpdateDescriptor | Hooks
     }
 }

@@ -18,7 +18,7 @@ namespace OpenWrap.PackageManagement.Monitoring
 
         IPackageResolver PackageResolver
         {
-            get { return Services.Services.GetService<IPackageResolver>(); }
+            get { return Services.ServiceLocator.GetService<IPackageResolver>(); }
         }
 
         public void Initialize()

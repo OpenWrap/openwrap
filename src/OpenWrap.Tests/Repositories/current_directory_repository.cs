@@ -99,11 +99,11 @@ namespace current_directory_specifications
                 {
                         CurrentDirectory = currentDirectory
                 };
-                Services.RegisterService<IFileSystem>(FileSystem);
+                ServiceLocator.RegisterService<IFileSystem>(FileSystem);
 
                 Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory),
                                                       FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory));
-                Services.RegisterService<IEnvironment>(Environment);
+                ServiceLocator.RegisterService<IEnvironment>(Environment);
             }
 
             protected void given_packages(params IFile[] packages)

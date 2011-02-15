@@ -17,13 +17,13 @@ using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 
+
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Noun = "wrap", Verb = "build", Description = "Builds all projects and creates a wrap package.")]
     public class BuildWrapCommand : AbstractCommand
     {
         IDirectory _destinationPath;
-        //IPackageBuilder _builder;
         IList<FileBuildResult> _buildResults = new List<FileBuildResult>();
         IEnumerable<IPackageBuilder> _builders;
 
@@ -36,16 +36,23 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool Quiet { get; set; }
 
-        protected IEnvironment Environment
-        {
-            get { return Services.Services.GetService<IEnvironment>(); }
-        }
+        [CommandInput]
+        public IEnumerable<string> Flavour { get; set; }
 
-        protected IFileSystem FileSystem
-        {
-            get { return Services.Services.GetService<IFileSystem>(); }
-        }
+        readonly IEnvironment _environment;
 
+        readonly IFileSystem _fileSystem;
+
+        public BuildWrapCommand()
+            : this(ServiceLocator.GetService<IFileSystem>(), ServiceLocator.GetService<IEnvironment>())
+        {
+            
+        }
+        public BuildWrapCommand(IFileSystem fileSystem, IEnvironment environment)
+        {
+            _fileSystem = fileSystem;
+            _environment = environment;
+        }
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(NoDescriptorFound)
@@ -60,8 +67,8 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> Build()
         {
             
-            var packageName = Name ?? Environment.Descriptor.Name;
-            var destinationPath = _destinationPath ?? Environment.CurrentDirectory;
+            var packageName = Name ?? _environment.Descriptor.Name;
+            var destinationPath = _destinationPath ?? _environment.CurrentDirectory;
 
             var packageDescriptorForEmbedding = new PackageDescriptor(GetCurrentPackageDescriptor());
 
@@ -106,7 +113,7 @@ namespace OpenWrap.Commands.Wrap
             foreach (var file in _buildResults.Where(x => x.ExportName == "." && x.FileName.EndsWithNoCase(".wrapdesc")).ToList())
                 _buildResults.Remove(file);
 
-            return Environment.Descriptor;
+            return _environment.Descriptor;
         }
 
         IEnumerable<PackageContent> GeneratePackageContent(IEnumerable<FileBuildResult> buildFiles)
@@ -142,8 +149,8 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<IFile> ResolveFiles(FileBuildResult fileDescriptor)
         {
             return fileDescriptor.Path.FullPath.Contains("*")
-                           ? FileSystem.Files(fileDescriptor.Path.FullPath)
-                           : new[]{FileSystem.GetFile(fileDescriptor.Path.FullPath)};
+                           ? _fileSystem.Files(fileDescriptor.Path.FullPath)
+                           : new[]{_fileSystem.GetFile(fileDescriptor.Path.FullPath)};
         }
 
         IEnumerable<ICommandOutput> ProcessBuildResults(IEnumerable<IPackageBuilder> packageBuilders, Action<FileBuildResult> onFound)
@@ -212,7 +219,7 @@ namespace OpenWrap.Commands.Wrap
 
             var generatedVersion = (from buildContent in buildFiles
                                     where IsVersion(buildContent)
-                                    let file = FileSystem.GetFile(buildContent.Path.FullPath)
+                                    let file = _fileSystem.GetFile(buildContent.Path.FullPath)
                                     where file.Exists
                                     from line in file.ReadLines()
                                     let version = line.GenerateVersionNumber().ToVersion()
@@ -227,8 +234,8 @@ namespace OpenWrap.Commands.Wrap
                 buildFiles.Remove(generatedVersion.buildContent);
                 return generatedVersion.version;
             }
-            var versionFile = Environment.DescriptorFile != null && Environment.DescriptorFile.Exists
-                                  ? Environment.DescriptorFile.Parent.GetFile("version")
+            var versionFile = _environment.DescriptorFile != null && _environment.DescriptorFile.Exists
+                                  ? _environment.DescriptorFile.Parent.GetFile("version")
                                   : null;
             return versionFile == null || versionFile.Exists == false
                            ? null
@@ -241,7 +248,7 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput CreateBuilder()
         {
             _builders = (
-                                from commandLine in Environment.Descriptor.Build.DefaultIfEmpty("msbuild")
+                                from commandLine in _environment.Descriptor.Build.DefaultIfEmpty("msbuild")
                                 let builder = ChooseBuilderInstance(commandLine)
                                 let parameters = from segment in commandLine.Split(';').Skip(1)
                                                  let keyValues = segment.Split('=')
@@ -269,18 +276,18 @@ namespace OpenWrap.Commands.Wrap
         {
             commandLine = commandLine.Trim();
             if (commandLine.StartsWithNoCase("msbuild"))
-                return new MSBuildPackageBuilder(FileSystem, Environment, new DefaultFileBuildResultParser());
+                return new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
             if (commandLine.StartsWithNoCase("files"))
                 return new FilePackageBuilder();
             if (commandLine.StartsWithNoCase("command"))
-                return new CommandLinePackageBuilder(FileSystem, Environment, new DefaultFileBuildResultParser());
-            return new NullPackageBuilder(Environment);
+                return new CommandLinePackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
+            return new NullPackageBuilder(_environment);
         }
 
         string GetCurrentVersion()
         {
             var version = ReadVersionFile()
-                          ?? (Environment.Descriptor.Version != null ? Environment.Descriptor.Version.ToString() : null);
+                          ?? (_environment.Descriptor.Version != null ? _environment.Descriptor.Version.ToString() : null);
 
             if (version == null)
                 throw new InvalidOperationException("No package version found either in the descriptor or version file.");
@@ -289,14 +296,14 @@ namespace OpenWrap.Commands.Wrap
 
         ICommandOutput NoDescriptorFound()
         {
-            return Environment.Descriptor == null
+            return _environment.Descriptor == null
                            ? new Error("Could not find a wrap descriptor. Are you in a project directory?")
                            : null;
         }
 
         string ReadVersionFile()
         {
-            var versionFile = Environment.CurrentDirectory.GetFile("version");
+            var versionFile = _environment.CurrentDirectory.GetFile("version");
             if (versionFile.Exists)
                 using (var stream = versionFile.OpenRead())
                 using (var streamReader = new StreamReader(stream, Encoding.UTF8))
@@ -308,7 +315,7 @@ namespace OpenWrap.Commands.Wrap
         {
             if (Path != null)
             {
-                _destinationPath = FileSystem.GetDirectory(Path);
+                _destinationPath = _fileSystem.GetDirectory(Path);
                 if (_destinationPath.Exists == false)
                     return new Error("Path '{0}' doesn't exist.", Path);
             }

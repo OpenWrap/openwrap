@@ -50,7 +50,7 @@ namespace OpenWrap.Build.Tasks
             if (Debug) Debugger.Launch();
 
             _success = true;
-            var commandProcessor = new CommandLineProcessor(new CommandRepository(ReadCommands(Services.Services.GetService<IEnvironment>())));
+            var commandProcessor = new CommandLineProcessor(new CommandRepository(ReadCommands(Services.ServiceLocator.GetService<IEnvironment>())));
 
             foreach (var cmd in commandProcessor.Execute(new[] { Noun, Verb }.Concat(GetArguments()).ToList()))
                 ProcessOutput(cmd);
@@ -60,7 +60,7 @@ namespace OpenWrap.Build.Tasks
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            return Services.Services.GetService<IPackageExporter>()
+            return Services.ServiceLocator.GetService<IPackageExporter>()
                     .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
                     .SelectMany(x => x.Items)
                     .OfType<ICommandExportItem>()

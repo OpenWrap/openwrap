@@ -24,7 +24,7 @@ namespace OpenWrap.Commands.Remote
             set { _position = value; }
         }
 
-        IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
+        IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
         public override IEnumerable<ICommandOutput> Execute()
         {
             return Either(InvalidName())

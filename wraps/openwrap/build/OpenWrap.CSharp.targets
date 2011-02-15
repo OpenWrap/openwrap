@@ -38,9 +38,9 @@
   <ItemGroup>
     <_WrapFile Include="$(OpenWrap-DescriptorPath)" Condition="'$(OpenWrap-DescriptorPath)' == ''" />
     <_WrapFile Include="$(MSBuildProjectDirectory)\*.wrapdesc" />
-    <_WrapFile Include="$(MSBuildProjectDirectory)\..\*.wrapdesc" Condition="!Exists(@(_WrapFile->'%(FullPath)'))" />
-    <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\*.wrapdesc" Condition="!Exists(@(_WrapFile->'%(FullPath)'))" />
-    <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\..\*.wrapdesc" Condition="!Exists(@(_WrapFile->'%(FullPath)'))" />
+    <_WrapFile Include="$(MSBuildProjectDirectory)\..\*.wrapdesc" Condition="!Exists('@(_WrapFile->'%(FullPath)')')" />
+    <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\*.wrapdesc" Condition="!Exists('@(_WrapFile->'%(FullPath)')')" />
+    <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\..\*.wrapdesc" Condition="!Exists('@(_WrapFile->'%(FullPath)')')" />
   </ItemGroup>
   <Target Name="_Initialize">
     <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" >

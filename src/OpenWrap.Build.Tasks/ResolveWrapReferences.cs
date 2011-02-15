@@ -164,7 +164,7 @@ namespace OpenWrap.Build.Tasks
 
         bool RefreshWrapDependencies()
         {
-            var monitoringService = Services.Services.GetService<IPackageDescriptorMonitor>();
+            var monitoringService = Services.ServiceLocator.GetService<IPackageDescriptorMonitor>();
             
             monitoringService.RegisterListener(WrapDescriptorPath, PackageRepository, this);
             return true;

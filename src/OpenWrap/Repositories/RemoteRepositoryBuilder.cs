@@ -15,7 +15,7 @@ namespace OpenWrap.Repositories
         readonly IFileSystem _fileSystem;
 
         public RemoteRepositoryBuilder()
-                : this(Services.Services.GetService<IFileSystem>(), Services.Services.GetService<IConfigurationManager>())
+                : this(Services.ServiceLocator.GetService<IFileSystem>(), Services.ServiceLocator.GetService<IConfigurationManager>())
         {
         }
 

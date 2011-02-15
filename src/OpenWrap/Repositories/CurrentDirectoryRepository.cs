@@ -38,12 +38,12 @@ namespace OpenWrap.Repositories
 
         protected IEnvironment Environment
         {
-            get { return Services.Services.GetService<IEnvironment>(); }
+            get { return Services.ServiceLocator.GetService<IEnvironment>(); }
         }
 
         protected IFileSystem FileSystem
         {
-            get { return Services.Services.GetService<IFileSystem>(); }
+            get { return Services.ServiceLocator.GetService<IFileSystem>(); }
         }
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)

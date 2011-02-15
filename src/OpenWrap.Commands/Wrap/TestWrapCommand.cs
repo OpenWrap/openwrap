@@ -19,10 +19,10 @@ namespace OpenWrap.Commands.Wrap
         IPackageExporter _exporter;
 
         public TestWrapCommand()
-            : this(Services.Services.GetService<IFileSystem>(),
-            Services.Services.GetService<IPackageResolver>(),
-            Services.Services.GetService<IEnvironment>(),
-            Services.Services.GetService<IPackageExporter>())
+            : this(Services.ServiceLocator.GetService<IFileSystem>(),
+            Services.ServiceLocator.GetService<IPackageResolver>(),
+            Services.ServiceLocator.GetService<IEnvironment>(),
+            Services.ServiceLocator.GetService<IPackageExporter>())
         {
         }
         public TestWrapCommand(IFileSystem fileSystem,IPackageResolver resolver, IEnvironment environment, IPackageExporter exporter)

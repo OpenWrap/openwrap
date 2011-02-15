@@ -12,7 +12,7 @@ using OpenWrap.Testing;
 
 namespace OpenRasta.Wrap.Tests.Dependencies
 {
-    public class dependency_stacks : dependency_manager_context
+    public class dependency_stacks : dependency_resolver_context
     {
         public dependency_stacks()
         {
@@ -43,7 +43,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     .DependencyStacks.ShouldHaveAtLeastOne(x => x.ToString() == "openfilesystem -> openfilesystem-1.0.0.0 -> openwrap -> openwrap-1.0.0.1");
         }
     }
-    public class latest_version_resolving_between_packages_with_different_sub_dependencies : dependency_manager_context
+    public class latest_version_resolving_between_packages_with_different_sub_dependencies : dependency_resolver_context
     {
         public latest_version_resolving_between_packages_with_different_sub_dependencies()
         {
@@ -62,7 +62,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             Resolve.IsSuccess.ShouldBeTrue();
         }
     }
-    public class resolving_sub_builds_from_current_directory : dependency_manager_context
+    public class resolving_sub_builds_from_current_directory : dependency_resolver_context
     {
         public resolving_sub_builds_from_current_directory()
         {
@@ -83,7 +83,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
     }
 
-    public class dependency_leveling_across_dependencies : dependency_manager_context
+    public class dependency_leveling_across_dependencies : dependency_resolver_context
     {
         public dependency_leveling_across_dependencies()
         {
@@ -111,7 +111,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             Resolve.IsSuccess.ShouldBeTrue();
         }
     }
-    public class resolving_unavailable_sub_dependencies : dependency_manager_context
+    public class resolving_unavailable_sub_dependencies : dependency_resolver_context
     {
         public resolving_unavailable_sub_dependencies()
         {
@@ -132,7 +132,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
                     .First().Identifier.Name.ShouldBe("unknown");
         }
     }
-    public class resolving_unavailable_dependencies : dependency_manager_context
+    public class resolving_unavailable_dependencies : dependency_resolver_context
     {
         public resolving_unavailable_dependencies()
         {
@@ -160,7 +160,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class cyclic_dependency_in_packages : dependency_manager_context
+    public class cyclic_dependency_in_packages : dependency_resolver_context
     {
         public cyclic_dependency_in_packages()
         {
@@ -189,7 +189,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class versions_in_conflict_and_dependency_override : dependency_manager_context
+    public class versions_in_conflict_and_dependency_override : dependency_resolver_context
     {
         public versions_in_conflict_and_dependency_override()
         {
@@ -216,7 +216,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class when_versions_are_in_conflict : dependency_manager_context
+    public class when_versions_are_in_conflict : dependency_resolver_context
     {
         public when_versions_are_in_conflict()
         {
@@ -246,7 +246,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class dependencies_in_conflict_wtith_local_definition : dependency_manager_context
+    public class dependencies_in_conflict_wtith_local_definition : dependency_resolver_context
     {
         public dependencies_in_conflict_wtith_local_definition()
         {
@@ -278,7 +278,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class resolving_package_from_remote_repository : dependency_manager_context
+    public class resolving_package_from_remote_repository : dependency_resolver_context
     {
         public resolving_package_from_remote_repository()
         {
@@ -298,7 +298,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class resolving_package_from_system_repository : dependency_manager_context
+    public class resolving_package_from_system_repository : dependency_resolver_context
     {
         public resolving_package_from_system_repository()
         {
@@ -317,7 +317,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class resolvig_package_existing_in_local_and_remote : dependency_manager_context
+    public class resolvig_package_existing_in_local_and_remote : dependency_resolver_context
     {
         public resolvig_package_existing_in_local_and_remote()
         {
@@ -341,7 +341,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class resolving_package_existing_in_local : dependency_manager_context
+    public class resolving_package_existing_in_local : dependency_resolver_context
     {
         public resolving_package_existing_in_local()
         {
@@ -359,7 +359,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class resolving_latest_package_in_system_with_outdated_remote_version : dependency_manager_context
+    public class resolving_latest_package_in_system_with_outdated_remote_version : dependency_resolver_context
     {
         public resolving_latest_package_in_system_with_outdated_remote_version()
         {
@@ -387,7 +387,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
         }
     }
 
-    public class when_overriding_dependency : dependency_manager_context
+    public class when_overriding_dependency : dependency_resolver_context
     {
         public when_overriding_dependency()
         {
@@ -446,7 +446,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
 
     namespace context
     {
-        public abstract class dependency_manager_context : OpenWrap.Testing.context
+        public abstract class dependency_resolver_context : OpenWrap.Testing.context
         {
             protected InMemoryRepository CurrentDirectoryRepository;
             protected PackageDescriptor DependencyDescriptor;
@@ -455,7 +455,7 @@ namespace OpenRasta.Wrap.Tests.Dependencies
             protected DependencyResolutionResult Resolve;
             protected InMemoryRepository SystemRepository;
 
-            public dependency_manager_context()
+            public dependency_resolver_context()
             {
                 DependencyDescriptor = new PackageDescriptor
                 {

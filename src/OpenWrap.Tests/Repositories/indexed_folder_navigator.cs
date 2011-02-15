@@ -122,11 +122,11 @@ namespace OpenWrap.Tests.Repositories
                     CurrentDirectory = currentDirectory
                 };
 
-                Services.Services.RegisterService<IFileSystem>(FileSystem);
+                Services.ServiceLocator.RegisterService<IFileSystem>(FileSystem);
 
                 Environment = new InMemoryEnvironment(FileSystem.GetDirectory(currentDirectory),
                     FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory));
-                Services.Services.RegisterService<IEnvironment>(Environment);
+                Services.ServiceLocator.RegisterService<IEnvironment>(Environment);
             }
 
             protected InMemoryFile Package(string wrapName, string version, params string[] wrapdescLines)

@@ -2,7 +2,7 @@
 
 namespace OpenWrap.PackageManagement
 {
-    public class PackageRemoveResultIterator : AbstractPackageOperation, IPackageRemoveResult
+    public class PackageRemoveResultIterator : AbstractPackageOperationResultIterator, IPackageRemoveResult
     {
         public PackageRemoveResultIterator(IEnumerable<PackageOperationResult> root) : base(root)
         {

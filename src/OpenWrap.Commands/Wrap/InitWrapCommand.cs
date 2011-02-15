@@ -66,12 +66,12 @@ namespace OpenWrap.Commands.Wrap
 
         IEnvironment Environment
         {
-            get { return Services.Services.GetService<IEnvironment>(); }
+            get { return Services.ServiceLocator.GetService<IEnvironment>(); }
         }
 
         IFileSystem FileSystem
         {
-            get { return Services.Services.GetService<IFileSystem>(); }
+            get { return Services.ServiceLocator.GetService<IFileSystem>(); }
         }
 
         public override IEnumerable<ICommandOutput> Execute()
@@ -114,7 +114,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> CopyOpenWrap(PackageDescriptor projectDescriptor, IDirectory projectDirectory)
         {
-            var packageManager = Services.Services.GetService<IPackageManager>();
+            var packageManager = Services.ServiceLocator.GetService<IPackageManager>();
 
             var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
             if (projectDescriptor.UseSymLinks)

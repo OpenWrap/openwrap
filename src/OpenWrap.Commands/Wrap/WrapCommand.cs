@@ -21,31 +21,31 @@ namespace OpenWrap.Commands.Wrap
         }
         public IEnvironment Environment
         {
-            get { return Services.Services.GetService<IEnvironment>(); }
+            get { return Services.ServiceLocator.GetService<IEnvironment>(); }
 
         }
         protected IPackageManager PackageManager
         {
-            get { return Services.Services.GetService<IPackageManager>(); }
+            get { return Services.ServiceLocator.GetService<IPackageManager>(); }
         }
         protected IPackageResolver PackageResolver
         {
-            get { return Services.Services.GetService<IPackageResolver>(); }
+            get { return Services.ServiceLocator.GetService<IPackageResolver>(); }
         }
 
         protected IPackageExporter PackageExporter
         {
-            get { return Services.Services.GetService<IPackageExporter>(); }
+            get { return Services.ServiceLocator.GetService<IPackageExporter>(); }
         }
         protected IPackageDeployer PackageDeployer
         {
-            get { return Services.Services.GetService<IPackageDeployer>(); }
+            get { return Services.ServiceLocator.GetService<IPackageDeployer>(); }
         }
         protected IFileSystem FileSystem
         {
-            get { return Services.Services.GetService<IFileSystem>(); }
+            get { return Services.ServiceLocator.GetService<IFileSystem>(); }
         }
-        protected IConfigurationManager ConfigurationManager { get { return Services.Services.GetService<IConfigurationManager>(); } }
+        protected IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
 
         protected DependencyResolutionResult ResolveDependencies(PackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repos)
         {

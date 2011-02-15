@@ -40,6 +40,9 @@ namespace OpenWrap.Commands.Wrap
         public bool NoDescriptorUpdate { get; set; }
 
         [CommandInput]
+        public bool NoHooks { get; set; }
+
+        [CommandInput]
         public bool Project
         {
             get { return _project ?? (_system == null); }
@@ -67,6 +70,8 @@ namespace OpenWrap.Commands.Wrap
                     addOptions |= PackageAddOptions.Content;
                 if (!NoDescriptorUpdate)
                     addOptions |= PackageAddOptions.UpdateDescriptor;
+                if (!NoHooks)
+                    addOptions |= PackageAddOptions.Hooks;
                 return addOptions;
             }
         }

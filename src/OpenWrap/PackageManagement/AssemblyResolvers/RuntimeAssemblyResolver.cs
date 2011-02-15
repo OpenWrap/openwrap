@@ -13,12 +13,12 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
 
         protected IEnvironment Environment
         {
-            get { return Services.Services.GetService<IEnvironment>(); }
+            get { return Services.ServiceLocator.GetService<IEnvironment>(); }
         }
 
         protected IPackageResolver PackageResolver
         {
-            get { return Services.Services.GetService<IPackageResolver>(); }
+            get { return Services.ServiceLocator.GetService<IPackageResolver>(); }
         }
 
         public void Initialize()

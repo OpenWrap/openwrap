@@ -9,7 +9,7 @@ namespace OpenWrap.Commands.NuGet
     {
         IFile _nugetFile;
         IFile _destinationFile;
-        protected IFileSystem FileSystem { get { return Services.Services.GetService<IFileSystem>(); } }
+        protected IFileSystem FileSystem { get { return Services.ServiceLocator.GetService<IFileSystem>(); } }
         [CommandInput(Position=0, IsRequired=true)]
         public string Path { get; set; }
 

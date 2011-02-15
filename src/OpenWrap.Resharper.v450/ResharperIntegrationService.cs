@@ -28,7 +28,7 @@ namespace OpenWrap.Resharper
 // ReSharper restore UnaccessedField.Local
 
         public ResharperIntegrationService()
-                : this(Services.Services.GetService<IPackageDescriptorMonitor>())
+                : this(Services.ServiceLocator.GetService<IPackageDescriptorMonitor>())
         {
         }
 

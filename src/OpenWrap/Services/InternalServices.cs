@@ -6,7 +6,7 @@ namespace OpenWrap.Services
     {
         public static void Initialize()
         {
-            Services.TryRegisterService<IPackageDescriptorMonitor>(() => new PackageDescriptorMonitor());
+            ServiceLocator.TryRegisterService<IPackageDescriptorMonitor>(() => new PackageDescriptorMonitor());
         }
     }
 }

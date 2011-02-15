@@ -12,7 +12,7 @@ namespace OpenWrap.Commands
     {
         public static IEnumerable<ICommandDescriptor> Commands(this IEnvironment environment)
         {
-            var packageExporter = Services.Services.GetService<IPackageExporter>();
+            var packageExporter = Services.ServiceLocator.GetService<IPackageExporter>();
             if (packageExporter == null)
                 throw new InvalidOperationException("A package exporter service hasn't been found.");
 

@@ -12,7 +12,7 @@ namespace OpenWrap.Windows.NounVerb
         protected override void Execute(NounVerbViewModel parameter)
         {
             // todo: constructor-inject some services
-            var commands = Services.Services.GetService<ICommandRepository>();
+            var commands = Services.ServiceLocator.GetService<ICommandRepository>();
             var nouns = commands != null ? RealCommands(commands) : MockCommands();
 
             parameter.Nouns.Clear();

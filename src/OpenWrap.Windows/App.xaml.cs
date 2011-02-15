@@ -35,23 +35,23 @@ namespace OpenWrap.Windows
 
         private static void RegisterServices()
         {
-            Services.Services.RegisterService(new RuntimeAssemblyResolver());
-            Services.Services.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
-            Services.Services.TryRegisterService<IConfigurationManager>(() => new DefaultConfigurationManager(Services.Services.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
-            Services.Services.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
+            Services.ServiceLocator.RegisterService(new RuntimeAssemblyResolver());
+            Services.ServiceLocator.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
+            Services.ServiceLocator.TryRegisterService<IConfigurationManager>(() => new DefaultConfigurationManager(Services.ServiceLocator.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
+            Services.ServiceLocator.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            Services.Services.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
-            Services.Services.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
-            Services.Services.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
-            Services.Services.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
-                Services.Services.GetService<IPackageDeployer>(),
-                Services.Services.GetService<IPackageResolver>()));
+            Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
+            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
+            Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            Services.ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
+                Services.ServiceLocator.GetService<IPackageDeployer>(),
+                Services.ServiceLocator.GetService<IPackageResolver>()));
 
-            Services.Services.RegisterService<ITaskManager>(new TaskManager());
+            Services.ServiceLocator.RegisterService<ITaskManager>(new TaskManager());
 
-            var repo = new CommandRepository(Services.Services.GetService<IEnvironment>().Commands());
+            var repo = new CommandRepository(Services.ServiceLocator.GetService<IEnvironment>().Commands());
 
-            Services.Services.TryRegisterService<ICommandRepository>(() => repo);
+            Services.ServiceLocator.TryRegisterService<ICommandRepository>(() => repo);
         }
 
         private void ShowMainWindow()
