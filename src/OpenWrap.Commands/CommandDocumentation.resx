@@ -151,6 +151,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="add-wrap-nodescriptorupdate" xml:space="preserve">
     <value>Prevents the descriptor file from being updated with a 'depends:' clause.</value>
   </data>
+  <data name="add-wrap-nohooks" xml:space="preserve">
+    <value>Prevents post-install hooks from running</value>
+  </data>
   <data name="add-wrap-project" xml:space="preserve">
     <value>Specifies that the dependency will only be added to the current project.</value>
   </data>
@@ -165,6 +168,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   </data>
   <data name="build-wrap" xml:space="preserve">
     <value>Builds the current package, using the build provider specified in the descriptor, or the default convention-based msbuild builder.</value>
+  </data>
+  <data name="build-wrap-flavour" xml:space="preserve">
+    <value>Defines the flavour to build the project for, which defines what will be included in the package. Can be a combination of "src", "bin", "codedoc" and "pdb". Multiple values separated by a coma will trigger multiple builds.</value>
   </data>
   <data name="build-wrap-name" xml:space="preserve">
     <value>Sets the name of the package to create. If not present, the name specified in the descriptor is used.</value>

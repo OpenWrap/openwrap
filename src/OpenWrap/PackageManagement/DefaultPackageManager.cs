@@ -167,13 +167,15 @@ namespace OpenWrap.PackageManagement
 
             var result = AddProjectPackageCore(packageToAdd, sourceRepositories, projectDescriptor, projectRepository, options);
             if ((options & PackageAddOptions.Hooks) == PackageAddOptions.Hooks && _hooks != null)
-            {
-                
-                Func<IEnumerable<IPackageInfo>> currentPackageFactory =()=>  GetSelectedPackages(_resolver.TryResolveDependencies(projectDescriptor, new[]{projectRepository})).ToList();
-                var currentPackages = currentPackageFactory();
-                result = new Hooks("project", result, _hooks, () => currentPackages, currentPackageFactory);
-            }
+                result = WrapWithHooks(result, projectDescriptor, projectRepository, "project");
             return new PackageAddResultIterator(result);
+        }
+
+        IEnumerable<PackageOperationResult> WrapWithHooks(IEnumerable<PackageOperationResult> result, IPackageDescriptor descriptor, IPackageRepository destinationRepository, string repositoryType)
+        {
+            Func<IEnumerable<IPackageInfo>> currentPackageFactory =()=>  GetSelectedPackages(_resolver.TryResolveDependencies(descriptor, new[]{destinationRepository})).ToList();
+            var currentPackages = currentPackageFactory();
+            return new Hooks(repositoryType, result, _hooks, () => currentPackages, currentPackageFactory);
         }
 
         public IPackageAddResult AddSystemPackage(PackageRequest packageToAdd,
@@ -181,13 +183,20 @@ namespace OpenWrap.PackageManagement
                                                   IPackageRepository systemRepository,
                                                   PackageAddOptions options = PackageAddOptions.Default)
         {
-            return new PackageAddResultIterator(AddSystemPackageCore(sourceRepositories, systemRepository, packageToAdd, options));
+            Check.NotNull(packageToAdd, "packageToAdd");
+            Check.NoNullElements(sourceRepositories, "sourceRepositories");
+            Check.NotNull(systemRepository, "systemRepository");
+
+            var returnValue = AddSystemPackageCore(sourceRepositories, systemRepository, packageToAdd, options);
+            if ((options & PackageAddOptions.Hooks) == PackageAddOptions.Hooks && _hooks != null)
+                returnValue = WrapWithHooks(returnValue, ToDescriptor(packageToAdd, options), systemRepository, "system");
+            return new PackageAddResultIterator(returnValue);
         }
 
         public IPackageCleanResult CleanProjectPackages(IPackageDescriptor packages, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default)
         {
             if (packages == null) throw new ArgumentNullException("packages");
-            if (projectRepository == null) throw new ArgumentNullException("projectRepository");
+            if (projectRepository == null) throw new ArgumentNullException("Repository");
 
             var repoForClean = projectRepository as ISupportCleaning;
             if (repoForClean == null) throw new ArgumentException("projectRepository must implement ISupportCleaning");
