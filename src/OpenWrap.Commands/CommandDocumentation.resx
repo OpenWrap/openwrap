@@ -229,6 +229,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="init-wrap-nosymlinks" xml:space="preserve">
     <value>Specifies that OpenWrap should use file copies instead of symlinks, typically used for source-control systems that have issues with symlinks such as subversion.</value>
   </data>
+  <data name="init-wrap-packagename" xml:space="preserve">
+    <value>Specifies the package name to initialize. If -Target is specified, the default is the directory name specified there, otherwise the default is the current directory name.</value>
+  </data>
   <data name="init-wrap-projects" xml:space="preserve">
     <value>Specifies a semi-column-separated paths to msbuild files to update to use OpenWrap for assembly resolution.</value>
   </data>

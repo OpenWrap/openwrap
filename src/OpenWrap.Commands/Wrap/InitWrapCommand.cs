@@ -24,6 +24,7 @@ namespace OpenWrap.Commands.Wrap
         bool? _allProjects;
         IEnumerable<IFile> _projectsToPatch;
         IFile _packageDescriptorFile;
+        string _packageName;
 
         public InitWrapCommand()
         {
@@ -63,6 +64,13 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput(Position = 0)]
         public string Target { get; set; }
+
+        [CommandInput (Position = 1)]
+        public string PackageName
+        {
+            get { return _packageName ?? (Target == "." ? Environment.CurrentDirectory.Name : Target); }
+            set { _packageName = value; }
+        }
 
         IEnvironment Environment
         {
@@ -196,7 +204,7 @@ namespace OpenWrap.Commands.Wrap
 
             IDirectory projectDirectory = Target == "." ? currentDirectory : currentDirectory.GetDirectory(Target);
 
-            string packageName = Target == "." ? Environment.CurrentDirectory.Name : Target;
+            string packageName = PackageName;
 
             _packageDescriptorFile = projectDirectory.GetFile(packageName + ".wrapdesc");
             if (_packageDescriptorFile.Exists)
