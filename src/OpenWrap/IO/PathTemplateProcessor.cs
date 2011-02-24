@@ -88,9 +88,8 @@ namespace OpenWrap.IO
     }
     public class PathFinder
     {
-        public static IDirectory GetSourceDirectory(string[] templates, IDirectory dir)
+        public static IDirectory GetSourceDirectory(IEnumerable<string> templates, IDirectory dir)
         {
-            IDictionary<string, string> parsedProperties;
             return (from t in templates
                     let processor = new PathTemplateProcessor(t)
                     from directory in processor.Directories(dir)
@@ -98,5 +97,38 @@ namespace OpenWrap.IO
                           directory.Parameters.Count == 1
                     select directory.Item).FirstOrDefault();
         }
+        public static string GetCurrentScope(IEnumerable<string> templates, Path projectFilePath)
+        {
+            return (
+                        from template in templates
+                        let processor = new PathTemplateProcessor(AppendWildcardIfNecessary(template))
+                        let scope = GetScope(processor, projectFilePath)
+                        where scope != null
+                        select scope
+                   ).DefaultIfEmpty(string.Empty)
+                    .FirstOrDefault();
+        }
+
+        static string GetScope(PathTemplateProcessor processor, Path projectFilePath)
+        {
+            IDictionary<string, string> properties;
+            var parseOk = processor.TryParsePath(projectFilePath, out properties);
+            return parseOk &&
+                   properties.ContainsKey("source") &&
+                   properties.ContainsKey("scope")
+                           ? properties["scope"]
+                           : null;
+        }
+
+        static string AppendWildcardIfNecessary(string template)
+        {
+            if (!template.EndsWith("**"))
+                return template.EndsWith("/") || template.EndsWith("\\")
+                    ? template + "**" 
+                    : template + "\\**";
+
+            return template;
+        }
     }
+
 }

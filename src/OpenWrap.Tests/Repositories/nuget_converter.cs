@@ -18,6 +18,7 @@ using OpenWrap.Runtime;
 using OpenWrap.Testing;
 using OpenWrap.Tests;
 using OpenWrap.Tests.Repositories;
+using Tests.Repositories;
 using IOPath = System.IO.Path;
 
 namespace nuget_converter_specs

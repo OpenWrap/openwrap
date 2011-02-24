@@ -8,7 +8,7 @@
     <ProjectGuid>{DFF6974F-5148-4B2C-8D76-190C3D92D9FF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenWrap.Build.Bootstrap</RootNamespace>
+    <RootNamespace>OpenWrap.Build</RootNamespace>
     <AssemblyName>OpenWrap.Build.Bootstrap</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

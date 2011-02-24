@@ -9,7 +9,7 @@
     <ProjectGuid>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenWrap</RootNamespace>
+    <RootNamespace>Tests</RootNamespace>
     <AssemblyName>OpenWrap.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -54,6 +54,7 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="AssemblyBuildingExtensions.cs" />
     <Compile Include="Build\build_instruction_emitter\content.cs" />
     <Compile Include="Build\build_instruction_emitter\content_in_subfolder.cs" />
     <Compile Include="Build\build_instruction_emitter\doc_for_openwrap_assembly.cs" />
@@ -95,6 +96,8 @@
     <Compile Include="Commands\add_wrap\adding_wrap_with_incompatible_arguments.cs" />
     <Compile Include="Commands\add_wrap\adding_package_updates_descriptor.cs" />
     <Compile Include="Commands\add_wrap\hooks\successful_add_to_project.cs" />
+    <Compile Include="Commands\add_wrap\hooks\successful_add_to_system.cs" />
+    <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_update.cs" />
     <Compile Include="Commands\contexts\add_wrap_command.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
     <Compile Include="Commands\remove_wrap\removing_from_existing_scope.cs" />
@@ -112,6 +115,8 @@
     <Compile Include="contexts\scoped_descriptor.cs" />
     <Compile Include="Dependencies\hooks\successful_add.cs" />
     <Compile Include="IO\compound_template_path_segment_specs.cs" />
+    <Compile Include="IO\determining_scope.cs" />
+    <Compile Include="IO\template_path_segment_specs.cs" />
     <Compile Include="PackageModel\descriptors\adding_a_multiline_value.cs" />
     <Compile Include="PackageModel\descriptors\default_values_in_descriptor.cs" />
     <Compile Include="PackageModel\descriptors\editing_single_value.cs" />
@@ -195,7 +200,7 @@
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
     <Compile Include="Dependencies\version_vertices_specs.cs" />
     <Compile Include="Extensions\CamelToSpacedName.cs" />
-    <Compile Include="IO\path_template_specification.cs" />
+    <Compile Include="IO\template_path_segment.cs" />
     <Compile Include="IO\template_processor\parsing_path_with_absolute_template.cs" />
     <Compile Include="NonSeekableMemoryStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

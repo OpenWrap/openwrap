@@ -187,17 +187,10 @@ namespace assembly_resolving_specs
             {
                 return assemblies;
             }
-            protected PackageContent Assembly(string assemblyName, string content)
+            protected PackageContent Assembly(string assemblyName, string relativePath)
             {
-                var assemblyFile = TempDirectory.GetFile(assemblyName + ".dll");
-                var asmName = new AssemblyName(assemblyName);
-                var asmBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(asmName, AssemblyBuilderAccess.Save | AssemblyBuilderAccess.ReflectionOnly, assemblyFile.Parent.Path.FullPath);
-                
-                var mb = asmBuilder.DefineDynamicModule(assemblyName + ".dll");
-                
-                asmBuilder.Save(assemblyFile.Name);
-
-                return new PackageContent { FileName = assemblyFile.Name, RelativePath = content, Stream = () => assemblyFile.OpenRead(), Size = new System.IO.FileInfo(assemblyFile.Path.FullPath).Length };
+                var assemblyFile = TempDirectory.CreateEmptyAssembly(assemblyName);
+                return new PackageContent { FileName = assemblyFile.Name, RelativePath = relativePath, Stream = () => assemblyFile.OpenRead(), Size = assemblyFile.Size };
 
             }
             protected InMemoryFile Package(string name, string version, IEnumerable<PackageContent> content, params string[] descriptorLines)

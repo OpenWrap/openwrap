@@ -12,6 +12,7 @@ using OpenWrap.Repositories.Http;
 using OpenWrap.Repositories.NuGet;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Repositories;
+using Tests.Repositories;
 
 namespace nuget_syndication_specs
 {

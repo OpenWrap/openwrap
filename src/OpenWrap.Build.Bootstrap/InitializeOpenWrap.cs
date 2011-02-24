@@ -22,14 +22,14 @@ namespace OpenWrap.Build
             if (StartDebug)
                 Debugger.Launch();
             var asm = Preloader.LoadAssemblies(
-                    Preloader.GetPackageFolders(Preloader.RemoteInstall.None, DefaultInstallationPaths.SystemRepositoryDirectory,"openwrap", "openfilesystem", "sharpziplib")
+                    Preloader.GetPackageFolders(Preloader.RemoteInstall.None, Environment.CurrentDirectory, DefaultInstallationPaths.SystemRepositoryDirectory,"openwrap", "openfilesystem", "sharpziplib")
                     );
             foreach (var assembly in asm.Select(x => x.Key))
-                this.Log.LogMessage(MessageImportance.Low, "Pre-loaded assembly " + assembly);
+                Log.LogMessage(MessageImportance.Low, "Pre-loaded assembly " + assembly);
             var openWrapAssembly = asm.Select(x=>x.Key).First(x => x.GetName().Name.Equals("openwrap", StringComparison.OrdinalIgnoreCase));
             var initializer = openWrapAssembly.GetType("OpenWrap.Build.BuildInitializer");
             var method = initializer.GetMethod("Initialize", BindingFlags.Static | BindingFlags.Public);
-            Name = method.Invoke(null, new object[] { this.BuildEngine.ProjectFileOfTaskNode, CurrentDirectory }) as string;
+            Name = method.Invoke(null, new object[] { BuildEngine.ProjectFileOfTaskNode, CurrentDirectory }) as string;
 
             return true;
         }
