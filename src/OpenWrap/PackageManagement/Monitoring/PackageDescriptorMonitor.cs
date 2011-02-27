@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.PackageManagement.Exporters;
@@ -25,27 +26,40 @@ namespace OpenWrap.PackageManagement.Monitoring
         {
         }
 
-        public void RegisterListener(IFile wrapFile, IPackageRepository packageRepository, IResolvedAssembliesUpdateListener listener)
+        public void RegisterListener(IFile wrapFile, IPackageRepository projectRepository, IResolvedAssembliesUpdateListener listener)
         {
             if (!wrapFile.Exists)
                 return;
 
-            if (packageRepository == null) throw new ArgumentNullException("packageRepository");
+            if (projectRepository == null) throw new ArgumentNullException("projectRepository");
             if (listener == null) throw new ArgumentNullException("listener");
 
-            var descriptor = GetDescriptor(wrapFile, packageRepository);
+            var descriptor = GetDescriptor(wrapFile, projectRepository);
             if (listener.IsLongRunning)
                 descriptor.Clients.Add(listener);
 
             NotifyClient(wrapFile, listener);
         }
+        public void UnregisterListener(IResolvedAssembliesUpdateListener listener)
+        {
+            List<DescriptorSubscriptions> registrationsForClient;
+            lock(_notificationClients)
+            {
+                registrationsForClient = _notificationClients.Values.Where(x=>x.Clients.Contains(listener)).ToList();
+            }
+            foreach (var registraiton in registrationsForClient)
+                registraiton.Clients.Remove(listener);
+        }
 
         DescriptorSubscriptions GetDescriptor(IFile wrapPath, IPackageRepository packageRepository)
         {
-            DescriptorSubscriptions descriptorSubscriptions;
-            if (!_notificationClients.TryGetValue(wrapPath.Path, out descriptorSubscriptions))
-                _notificationClients.Add(wrapPath.Path, descriptorSubscriptions = new DescriptorSubscriptions(wrapPath, packageRepository, HandleWrapFileUpdate));
-            return descriptorSubscriptions;
+            lock (_notificationClients)
+            {
+                DescriptorSubscriptions descriptorSubscriptions;
+                if (!_notificationClients.TryGetValue(wrapPath.Path, out descriptorSubscriptions))
+                    _notificationClients.Add(wrapPath.Path, descriptorSubscriptions = new DescriptorSubscriptions(wrapPath, packageRepository, HandleWrapFileUpdate));
+                return descriptorSubscriptions;
+            }
         }
 
         void HandleWrapFileUpdate(object sender, FileSystemEventArgs e)
@@ -55,23 +69,31 @@ namespace OpenWrap.PackageManagement.Monitoring
 
         void NotifyAllClients(IFile wrapPath)
         {
-            if (!_notificationClients.ContainsKey(wrapPath.Path))
-                return;
-            var d = _notificationClients[wrapPath.Path];
-            d.Repository.RefreshPackages();
-            var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
-
-            foreach (var client in d.Clients)
+            DescriptorSubscriptions d;
+            lock (_notificationClients)
             {
-                client.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, client.Environment, parsedDescriptor, d.Repository));
+                if (!_notificationClients.ContainsKey(wrapPath.Path))
+                    return;
+                d = _notificationClients[wrapPath.Path];
             }
+            d.Repository.RefreshPackages();
+                var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
+
+                foreach (var client in d.Clients)
+                {
+                    client.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, client.Environment, parsedDescriptor, d.Repository));
+                }
         }
 
         void NotifyClient(IFile wrapPath, IResolvedAssembliesUpdateListener listener)
         {
-            if (!_notificationClients.ContainsKey(wrapPath.Path))
-                return;
-            var d = _notificationClients[wrapPath.Path];
+            DescriptorSubscriptions d;
+            lock (_notificationClients)
+            {
+                if (!_notificationClients.ContainsKey(wrapPath.Path))
+                    return;
+                d = _notificationClients[wrapPath.Path];
+            }
             d.Repository.RefreshPackages();
             var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
 

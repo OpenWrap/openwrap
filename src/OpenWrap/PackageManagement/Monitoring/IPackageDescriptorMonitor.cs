@@ -6,6 +6,7 @@ namespace OpenWrap.PackageManagement.Monitoring
 {
     public interface IPackageDescriptorMonitor : IService
     {
-        void RegisterListener(IFile descriptorFile, IPackageRepository packageRepository, IResolvedAssembliesUpdateListener listener);
+        void RegisterListener(IFile descriptorFile, IPackageRepository projectRepository, IResolvedAssembliesUpdateListener listener);
+        void UnregisterListener(IResolvedAssembliesUpdateListener listener);
     }
 }
