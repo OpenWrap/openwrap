@@ -122,7 +122,7 @@ namespace OpenWrap.Build.Tasks
         {
             ResharperLogger.Debug("ExecuteBootstrapSolutionMethod: executing.");
 
-            _instance.GetType().GetMethod("BootstrapSolution").Invoke(_instance, new object[] { environment, descriptorPath, packageRepository });
+            _instance.GetType().GetMethod("BootstrapSolution").Invoke(_instance, new object[] { environment, packageRepository });
         }
 
         class NotificationRegistration

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
-using OpenFileSystem.IO;
 using OpenWrap.PackageManagement.Monitoring;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
@@ -18,26 +17,49 @@ namespace OpenWrap.Resharper
 {
     public class ResharperIntegrationService : IService
     {
-        const int RETRY_DELAY_MS = 1000;
         const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
+        const int REFRESH_DELAY_MS = 500;
+        const int RETRY_DELAY_MS = 1000;
         readonly object _lock = new object();
         readonly IPackageDescriptorMonitor _monitor;
-        bool _isInitialized;
-// ReSharper disable UnaccessedField.Local
-        Timer _timer;
-// ReSharper restore UnaccessedField.Local
+        readonly Timer _refreshTimer;
 
+        Func<ExecutionEnvironment> _environment;
+// ReSharper disable UnaccessedField.Local
+        Timer _initializeTimer;
+// ReSharper restore UnaccessedField.Local
+        bool _isInitialized;
+        List<ResharperProjectUpdater> _knownProjects;
+        IPackageRepository _projectRepository;
+
+// ReSharper disable UnusedMember.Global
         public ResharperIntegrationService()
-                : this(Services.ServiceLocator.GetService<IPackageDescriptorMonitor>())
+// ReSharper restore UnusedMember.Global
+                : this(ServiceLocator.GetService<IPackageDescriptorMonitor>())
         {
         }
 
+// ReSharper disable MemberCanBePrivate.Global
         public ResharperIntegrationService(IPackageDescriptorMonitor monitor)
+// ReSharper restore MemberCanBePrivate.Global
         {
             _monitor = monitor;
+            _refreshTimer = new Timer(_ => Refresh(), null, Timeout.Infinite, Timeout.Infinite);
         }
 
-        public void BootstrapSolution(Func<ExecutionEnvironment> environment, IFile descriptorPath, IPackageRepository repository)
+        static resharper::JetBrains.ProjectModel.ISolution Solution
+        {
+            get { return resharper::JetBrains.ProjectModel.SolutionManager.Instance.CurrentSolution; }
+        }
+
+        static resharper::JetBrains.ProjectModel.SolutionManager SolutionManager
+        {
+            get { return resharper::JetBrains.ProjectModel.SolutionManager.Instance; }
+        }
+
+// ReSharper disable UnusedMember.Global
+        public void BootstrapSolution(Func<ExecutionEnvironment> environment, IPackageRepository projectRepository)
+// ReSharper restore UnusedMember.Global
         {
             if (!_isInitialized)
             {
@@ -45,32 +67,65 @@ namespace OpenWrap.Resharper
                 {
                     if (_isInitialized)
                         return;
+                    _environment = environment;
+                    _projectRepository = projectRepository;
 
 
-                    IEnumerable<IResolvedAssembliesUpdateListener> listeners = null;
-                    bool success = false;
+                    IEnumerable<ResharperProjectUpdater> listeners = null;
+                    bool success;
                     try
                     {
-                        ResharperLocks.WriteCookie("Listing projects",
-                                                   () => { success = TryEnumerateProjects(environment, out listeners); });
-                        listeners = listeners ?? Enumerable.Empty<IResolvedAssembliesUpdateListener>();
+                        success = ListProjects(environment, out listeners);
                     }
                     catch (Exception e)
                     {
                         ResharperLogger.Debug("Exception when updating resharper: \r\n" + e);
                         success = false;
                     }
+
                     if (success)
                     {
+                        RegisterChangeMonitor();
                         foreach (var project in listeners)
-                            _monitor.RegisterListener(descriptorPath, repository, project);
+                        {
+                            _monitor.RegisterListener(project.Descriptor, projectRepository, project);
+                        }
+                        _knownProjects = listeners.ToList();
                         _isInitialized = true;
                     }
                     else
                     {
                         ResharperLogger.Debug("Import failed, rescheduling in one second.");
-                        _timer = new Timer(x => BootstrapSolution(environment, descriptorPath, repository), null, RETRY_DELAY_MS, Timeout.Infinite);
+                        _initializeTimer = new Timer(x => BootstrapSolution(environment, projectRepository), null, RETRY_DELAY_MS, Timeout.Infinite);
                     }
+                }
+            }
+        }
+
+        void Refresh()
+        {
+            lock (_lock)
+            {
+                ResharperLogger.Debug("Refreshing list of projects.");
+
+                IEnumerable<ResharperProjectUpdater> tempCurrentProjects;
+                ListProjects(_environment, out tempCurrentProjects);
+                var currentProjects = tempCurrentProjects.ToList();
+                var knownProjects = _knownProjects.ToList();
+                foreach (var project in currentProjects.ToList())
+                {
+                    var existing = currentProjects.FirstOrDefault(x => string.Equals(x.ProjectPath, project.ProjectPath, StringComparison.OrdinalIgnoreCase));
+                    if (existing != null)
+                    {
+                        currentProjects.Remove(project);
+                        continue;
+                    }
+                    _monitor.RegisterListener(project.Descriptor, _projectRepository, project);
+                    _knownProjects.Add(project);
+                }
+                foreach (var oldProject in knownProjects)
+                {
+                    _monitor.UnregisterListener(oldProject);
                 }
             }
         }
@@ -103,26 +158,82 @@ namespace OpenWrap.Resharper
             return isOpenWrap && !isDisabled;
         }
 
-        static bool TryEnumerateProjects(Func<ExecutionEnvironment> env, out IEnumerable<IResolvedAssembliesUpdateListener> projects)
+        bool HasProjectChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
         {
-            projects = new IResolvedAssembliesUpdateListener[0];
+            var children = solutionChanges.GetChildren();
+            foreach (var child in children)
+            {
+                if (child.IsAdded || child.IsRemoved)
+                    return true;
+            }
+            return false;
+        }
 
-            if (resharper::JetBrains.ProjectModel.SolutionManager.Instance == null)
+        bool HasSolutionChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
+        {
+            return solutionChanges.IsAdded ||
+                   solutionChanges.IsRemoved ||
+                   solutionChanges.IsOpeningSolution ||
+                   solutionChanges.IsClosingSolution;
+        }
+
+        bool ListProjects(Func<ExecutionEnvironment> environment, out IEnumerable<ResharperProjectUpdater> projects)
+        {
+            bool success = false;
+            IEnumerable<ResharperProjectUpdater> readProjects = null;
+            ResharperLocks.WriteCookie("Listing projects",
+                                       () => { success = TryEnumerateProjects(environment, out readProjects); });
+            projects = readProjects ?? Enumerable.Empty<ResharperProjectUpdater>();
+            return success;
+        }
+
+        void RegisterChangeMonitor()
+        {
+            resharper::JetBrains.Application.ChangeManager.Instance.Changed += HandleChanges;
+        }
+
+        void ScheduleRefresh()
+        {
+            _refreshTimer.Change(REFRESH_DELAY_MS, Timeout.Infinite);
+        }
+
+        bool TryEnumerateProjects(Func<ExecutionEnvironment> env, out IEnumerable<ResharperProjectUpdater> projects)
+        {
+            projects = new ResharperProjectUpdater[0];
+
+            if (SolutionManager == null)
                 return false;
 
             ResharperLogger.Debug("SolutionManager found");
 
-            resharper::JetBrains.ProjectModel.ISolution solution = resharper::JetBrains.ProjectModel.SolutionManager.Instance.CurrentSolution;
+            var solution = Solution;
             if (solution == null) return false;
 
+
             ResharperLogger.Debug("Solution found");
-            var monitors = (from proj in solution.GetAllProjects()
-                            where ProjectIsOpenWrapEnabled(proj)
-                            select new ResharperProjectUpdater(proj, env))
-                    .Cast<IResolvedAssembliesUpdateListener>()
-                    .ToList();
+            var monitors = (
+                                   from proj in solution.GetAllProjects()
+                                   where ProjectIsOpenWrapEnabled(proj)
+                                   select new ResharperProjectUpdater(proj, env)
+                           ).ToList();
             projects = monitors;
             return true;
+        }
+
+        void HandleChanges(object sender, resharper::JetBrains.Application.ChangeEventArgs changeeventargs)
+        {
+            var solutionChanges = changeeventargs.ChangeMap.GetChange(Solution) as resharper::JetBrains.ProjectModel.SolutionChange;
+            if (solutionChanges == null)
+            {
+                ResharperLogger.Debug("Unknown solution change");
+                return;
+            }
+            if (HasSolutionChanges(solutionChanges) ||
+                HasProjectChanges(solutionChanges))
+            {
+                ResharperLogger.Debug("Scheduled refresh of projects");
+                ScheduleRefresh();
+            }
         }
     }
 }

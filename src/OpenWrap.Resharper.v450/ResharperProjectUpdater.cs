@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using OpenFileSystem.IO;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageManagement.Monitoring;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 using JetBrainsKey = resharper::JetBrains.Util.Key;
 
 
@@ -25,7 +27,7 @@ namespace OpenWrap.Resharper
             _ignoredAssemblies = ReadIgnoredAssemblies();
             _env = env;
         }
-
+        public string ProjectPath { get { return _project.ProjectFile.Location.FullPath; } }
         public ExecutionEnvironment Environment
         {
             get { return _env(); }
@@ -34,6 +36,15 @@ namespace OpenWrap.Resharper
         public bool IsLongRunning
         {
             get { return true; }
+        }
+
+        public IFile Descriptor
+        {
+            get
+            {
+                // TODO: Detect which file is currently being monitored by the project
+                return ServiceLocator.GetService<IEnvironment>().DescriptorFile;
+            }
         }
 
         public void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblies)

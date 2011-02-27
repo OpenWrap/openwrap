@@ -16,7 +16,6 @@ namespace OpenWrap.PackageManagement.Monitoring
     {
         readonly Dictionary<Path, DescriptorSubscriptions> _notificationClients = new Dictionary<Path, DescriptorSubscriptions>();
 
-
         IPackageResolver PackageResolver
         {
             get { return Services.ServiceLocator.GetService<IPackageResolver>(); }
