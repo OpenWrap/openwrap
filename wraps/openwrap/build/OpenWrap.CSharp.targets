@@ -31,7 +31,11 @@
     <OpenWrap-ExportName Condition="'$(OpenWrap-ExportName)' == ''">bin-$(OpenWrap-TargetProfile)</OpenWrap-ExportName>
     <DefineConstants>$(DefineConstants);__OW_PLATFORM_$(OpenWrap-TargetPlatform)__;__OW_PROFILE_$(OpenWrap-TargetProfile)__;</DefineConstants>
     <OpenWrap-AllowBinDuplicates Condition="'$(OpenWrap-AllowBinDuplicates)' == ''">false</OpenWrap-AllowBinDuplicates>
-    <OpenWrap-CopyLocal Condition="'$(OpenWrap-CopyLocal)' == ''">false</OpenWrap-CopyLocal>
+    <OpenWrap-CopyLocal Condition="'$(OpenWrap-CopyLocal)' == ''">true</OpenWrap-CopyLocal>
+
+    <OpenWrap-IncludePdbFiles Condition="'$(OpenWrap-IncludePdbFiles)' == ''">true</OpenWrap-IncludePdbFiles>
+  	<OpenWrap-IncludeCodeDocFiles Condition="'$(OpenWrap-IncludeCodeDocFiles)' == ''">true</OpenWrap-IncludeCodeDocFiles>
+  	<OpenWrap-IncludeSourceFiles Condition="'$(OpenWrap-IncludeSourceFiles)' == ''">false</OpenWrap-IncludeSourceFiles>
   </PropertyGroup>
 
 
@@ -108,6 +112,7 @@
       <_OpenWrap-SerializationFiles Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).resources.dll')" />
       <_OpenWrap-AllAssemblyReferenceFiles Include="@(ReferenceCopyLocalPaths->'%(FullPath)')" />
       <_OpenWrap-DeleteAnnoyingVsOptimizationFiles Include="$(IntermediateOutputPath)*.cache" />
+      <_OpenWrap-SourceFiles Include="@(Compile->'%(RootDir)%(Directory)%(Filename).%(FileExtension)')"/>
     </ItemGroup>
     <PropertyGroup>
 
@@ -116,8 +121,10 @@
     </PropertyGroup>
     <PublishPackageContent
       Condition="'$(_OpenWrap-IsEntryPointProject)' == 'true'"
-      IncludePdbs="$(OpenWrap-IncludePdbs)"
-      IncludeDocumentation="true"
+      IncludePdbFiles="$(OpenWrap-IncludePdbFiles)"
+      IncludeCodeDocFiles="$(OpenWrap-IncludeCodeDocFiles)"
+      IncludeSourceFiles="$(OpenWRap-IncludeSourceFiles)"
+      
       BasePath="$(MSBuildProjectDirectory)"
       ExportName="$(OpenWrap-ExportName)"
       AllowBinDuplicates="$(OpenWrap-AllowBinDuplicates)"
@@ -127,9 +134,10 @@
       AllAssemblyReferenceFiles="@(_OpenWrap-AllAssemblyReferenceFiles)"
       OpenWrapReferenceFiles="@(_OpenWrap-AssemblyReferences)"
       PdbFiles="@(_OpenWrap-PdbFiles)"
-      DocumentationFiles="@(DocFileItem->'%(FullPath)')"
+      CodeDocFiles="@(DocFileItem->'%(FullPath)')"
       SatelliteAssemblies="@(IntermediateSatelliteAssembliesWithTargetPath->'$(OutDir)%(Culture)\$(TargetName).resources.dll')"
       SerializationAssemblies="@(_OpenWrap-SerializationFiles)"
+      SourceFiles="@(_OpenWrap-SourceFiles)"
       />
 
     <!-- delete assembly reference cache to prevent VS from not calling the initialize task on next opening -->
