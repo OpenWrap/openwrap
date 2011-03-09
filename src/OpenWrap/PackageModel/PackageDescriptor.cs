@@ -141,7 +141,7 @@ namespace OpenWrap.PackageModel
             _name = new SingleStringValue(Entries, "name");
             _version = new SingleVersionValue(Entries, "version");
             _useProjectRepository = new SingleBoolValue(Entries, "use-project-repository", true);
-            _useSymLinks = new SingleBoolValue(Entries, "use-symlinks", true);
+            _useSymLinks = new SingleBoolValue(Entries, "use-symlinks", false);
             _referencedAssemblies = new SingleStringValue(Entries, "referenced-assemblies", "*");
             _directoryStructure = new MultiLine<string>(Entries, "directory-structure", _ => _, _ => _);
             _title = new SingleStringValue(Entries, "title");

@@ -154,7 +154,7 @@ namespace OpenWrap.PackageModel
                 _name = CreateDelegated<string>("name", SingleStringValue.New);
                 _version = CreateDelegated<Version>("version", SingleVersionValue.New);
                 _useProjectRepository = CreateDelegated("use-project-repository", SingleBoolValue.New, true);
-                _useSymLinks = CreateDelegated("use-symlinks", SingleBoolValue.New, true);
+                _useSymLinks = CreateDelegated("use-symlinks", SingleBoolValue.New, false);
                 _referencedAssemblies = CreateDelegated("referenced-assemblies", SingleStringValue.New, "*");
                 _title = CreateDelegated<string>("title", SingleStringValue.New);
 

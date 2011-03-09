@@ -8,13 +8,13 @@ namespace package_descriptor_specs
         public setting_symlinks()
         {
             given_descriptor();
-            Descriptor.UseSymLinks = false;
+            Descriptor.UseSymLinks = true;
             when_writing();
         }
         [Test]
-        public void symlinks_are_disabled()
+        public void symlinks_are_enabled()
         {
-            descriptor_should_be("use-symlinks: false");
+            descriptor_should_be("use-symlinks: true");
         }
     }
 }

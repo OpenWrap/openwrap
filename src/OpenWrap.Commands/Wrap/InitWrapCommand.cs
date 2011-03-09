@@ -56,7 +56,7 @@ namespace OpenWrap.Commands.Wrap
         public bool Svn { get; set; }
 
         [CommandInput]
-        public bool NoSymLinks { get; set; }
+        public bool SymLinks { get; set; }
 
         [CommandInput]
         public string IgnoreFileName { get; set; }
@@ -102,7 +102,7 @@ namespace OpenWrap.Commands.Wrap
             if (Svn)
             {
                 IgnoreFileName = ".svnignore";
-                NoSymLinks = true;
+                SymLinks = true;
             }
         }
 
@@ -206,8 +206,8 @@ namespace OpenWrap.Commands.Wrap
             }
 
             var packageDescriptor = new PackageDescriptor(){Name = packageName};
-            if (NoSymLinks)
-                packageDescriptor.UseSymLinks = false;
+            if (SymLinks)
+                packageDescriptor.UseSymLinks = true;
             if (Meta)
             {
                 packageDescriptor.Build.Add("none");

@@ -12,9 +12,9 @@ namespace package_descriptor_specs
         }
 
         [Test]
-        public void use_symlink_is_true()
+        public void use_symlink_is_false()
         {
-            Descriptor.UseSymLinks.ShouldBeTrue();
+            Descriptor.UseSymLinks.ShouldBeFalse();
         }
 
         [Test]
