@@ -35,8 +35,8 @@ namespace OpenWrap.Tests.Commands
             given_dependency("depends: one-ring = 1");
             given_project_package("goldberry", "2.0");
             given_project_package("one-ring", "1.0");
-            given_remote_package("one-ring", "1.1");
-            given_remote_package("goldberry", "2.1");
+            given_remote_package("one-ring", "1.1".ToVersion());
+            given_remote_package("goldberry", "2.1".ToVersion());
 
             when_executing_command("one-ring", "-project");
         }
@@ -57,8 +57,8 @@ namespace OpenWrap.Tests.Commands
         {
             given_system_package("goldberry", "2.0");
             given_system_package("one-ring", "1.0");
-            given_remote_package("one-ring", "1.1");
-            given_remote_package("goldberry", "2.1");
+            given_remote_package("one-ring", "1.1".ToVersion());
+            given_remote_package("goldberry", "2.1".ToVersion());
 
             when_executing_command("one-ring", "-sys");
         }
@@ -81,7 +81,7 @@ namespace OpenWrap.Tests.Commands
 
             given_project_package("goldberry", "2.0.0");
             given_system_package("goldberry", "2.1.0");
-            given_remote_package("goldberry", "2.2.0");
+            given_remote_package("goldberry", "2.2.0".ToVersion());
 
             when_executing_command();
         }
@@ -103,7 +103,7 @@ namespace OpenWrap.Tests.Commands
         public when_not_in_project_folder_and_package_can_be_updated()
         {
             given_system_package("goldberry", "2.0.0");
-            given_remote_package("goldberry", "2.1.0");
+            given_remote_package("goldberry", "2.1.0".ToVersion());
 
             when_executing_command();
         }
@@ -199,7 +199,7 @@ namespace OpenWrap.Tests.Commands
 
             given_project_package("goldberry", "2.0.0");
             given_system_package("goldberry", "2.0.0");
-            given_remote_package("goldberry", "3.0.0");
+            given_remote_package("goldberry", "3.0.0".ToVersion());
 
 
             when_executing_command("-system","-project");

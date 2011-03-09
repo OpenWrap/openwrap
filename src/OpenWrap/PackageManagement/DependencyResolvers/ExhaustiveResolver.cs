@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
@@ -14,13 +15,13 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         {
             var packageSelection = new PackageSelectionContext();
 
+                Debug.WriteLine("Resolving descriptor " + packageDescriptor.Dependencies.Select(x => x.ToString()).Join(", "));
             for (int i = 0; i < MAX_RETRIES; i++)
             {
                 var exclusionList = packageSelection.IncompatiblePackageVersions.Select(x => x.Key);
 
                 var visitor = new DependencyVisitor(repositoriesToQuery, packageSelection, packageDescriptor.Dependencies, packageDescriptor.Overrides);
-                var resolutionSucceeded = visitor
-                        .VisitDependencies(packageDescriptor.Dependencies);
+                var resolutionSucceeded = visitor.VisitDependencies(packageDescriptor.Dependencies);
 
                 if (resolutionSucceeded == false)
                 {

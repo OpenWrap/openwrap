@@ -97,8 +97,11 @@
     <Compile Include="Commands\add_wrap\adding_package_updates_descriptor.cs" />
     <Compile Include="Commands\add_wrap\hooks\successful_add_to_project.cs" />
     <Compile Include="Commands\add_wrap\hooks\successful_add_to_system.cs" />
-    <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_update.cs" />
+    <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_dependent_downgrade.cs" />
+    <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_dependent_upgrade.cs" />
+    <Compile Include="Commands\add_wrap\hooks\successful_add_triggers_dependent_removal.cs" />
     <Compile Include="Commands\contexts\add_wrap_command.cs" />
+    <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
     <Compile Include="Commands\remove_wrap\removing_from_existing_scope.cs" />
     <Compile Include="Commands\remove_wrap\removing_unknown_package_in_project.cs" />
@@ -267,6 +270,7 @@
     <EmbeddedResource Include="Repositories\TestPackageOld.nupkg" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Commands\remove_wrap\hooks\" />
     <Folder Include="descriptors\" />
   </ItemGroup>
   <ItemGroup>

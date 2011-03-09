@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using OpenWrap;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
-namespace OpenWrap.Commands.add_wrap.hooks
+namespace Tests.Commands.add_wrap.hooks
 {
     [TestFixture]
-    class successful_add_to_project : contexts.add_wrap_with_hooks
+    class successful_add_to_project : add_wrap_with_hooks
     {
         public successful_add_to_project()
         {
             given_project_repository();
-            given_remote_package("sauron", "1.0.0");
+            given_remote_package("sauron", "1.0.0".ToVersion());
 
             when_executing_command("sauron", "-project");
         }

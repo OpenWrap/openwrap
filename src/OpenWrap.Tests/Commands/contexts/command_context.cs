@@ -95,15 +95,16 @@ namespace OpenWrap.Commands.contexts
         {
             Environment.CurrentDirectoryRepository = repository;
         }
-
-        protected void given_remote_package(string name, string version, params string[] dependencies)
+       
+        protected void given_remote_package(string name, Version version, params string[] dependencies)
         {
-            AddPackage(Environment.RemoteRepository, name, version, dependencies);
+            // note Version is a version type because of overload resolution...
+            AddPackage(Environment.RemoteRepository, name, version.ToString(), dependencies);
         }
 
-        protected void given_remote_package(string repositoryName, string name, string version, params string[] dependencies)
+        protected void given_remote_package(string repositoryName, string name, Version version, params string[] dependencies)
         {
-            AddPackage(Environment.RemoteRepositories.First(x=>x.Name == repositoryName), name, version, dependencies);
+            AddPackage(Environment.RemoteRepositories.First(x=>x.Name == repositoryName), name, version.ToString(), dependencies);
         }
 
         protected void given_system_package(string name, string version, params string[] dependencies)

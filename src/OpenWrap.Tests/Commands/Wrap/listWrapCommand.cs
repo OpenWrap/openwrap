@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using OpenWrap;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement;
@@ -52,8 +53,8 @@ namespace listWrap_specs
         {
             given_remote_repository("first");
             given_remote_repository("second");
-            given_remote_package("first", "one-ring", "1.0.0");
-            given_remote_package("second", "ring-of-power", "1.0.0");
+            given_remote_package("first", "one-ring", "1.0.0".ToVersion());
+            given_remote_package("second", "ring-of-power", "1.0.0".ToVersion());
 
             when_executing_command("ring", "-remote");
         }

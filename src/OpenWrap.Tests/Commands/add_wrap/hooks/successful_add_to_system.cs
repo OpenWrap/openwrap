@@ -1,13 +1,14 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Commands.add_wrap.hooks
 {
-    class successful_add_to_system : contexts.add_wrap_with_hooks
+    class successful_add_to_system : add_wrap_with_hooks
     {
         public successful_add_to_system()
         {
-            given_remote_package("sauron", "1.0.0");
+            given_remote_package("sauron", "1.0.0".ToVersion());
 
             when_executing_command("sauron", "-system");
         }

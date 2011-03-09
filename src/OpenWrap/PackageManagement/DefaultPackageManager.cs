@@ -101,6 +101,7 @@ namespace OpenWrap.PackageManagement
             if (success == true)
             {
                 var resolvedAfter = _after();
+                // TODO: process removes, then process adds and updates based on a dependency tree
                 foreach (var output in Removed(resolvedBefore, resolvedAfter, _hooks).Concat(Added(resolvedBefore, resolvedAfter, _hooks)).Concat(Updated(resolvedBefore, resolvedAfter, _hooks)))
                     yield return new PackageHookResult(output);
             }
@@ -173,11 +174,15 @@ namespace OpenWrap.PackageManagement
 
         IEnumerable<PackageOperationResult> WrapWithHooks(IEnumerable<PackageOperationResult> result, IPackageDescriptor descriptor, IPackageRepository destinationRepository, string repositoryType)
         {
-            Func<IEnumerable<IPackageInfo>> currentPackageFactory =()=>  GetSelectedPackages(_resolver.TryResolveDependencies(descriptor, new[]{destinationRepository})).ToList();
+            Func<IEnumerable<IPackageInfo>> currentPackageFactory = () =>
+            {
+                destinationRepository.RefreshPackages();
+                return GetSelectedPackages(_resolver.TryResolveDependencies(descriptor, new[] { destinationRepository })).ToList();
+            };
             var currentPackages = currentPackageFactory();
             return new Hooks(repositoryType, result, _hooks, () => currentPackages, currentPackageFactory);
         }
-
+        
         public IPackageAddResult AddSystemPackage(PackageRequest packageToAdd,
                                                   IEnumerable<IPackageRepository> sourceRepositories,
                                                   IPackageRepository systemRepository,
@@ -557,13 +562,16 @@ namespace OpenWrap.PackageManagement
                 {
                     foreach (var foundPackage in resolvedPackages.SuccessfulPackages)
                     {
-                        var existingUpToDateVersion = GetExistingPackage(destinationRepository, foundPackage, x => x >= foundPackage.Identifier.Version);
+                        if (foundPackage == null) throw new InvalidOperationException("A null package was selected in the package resolution phase. Something's gone badly wrong.");
+                        var package = foundPackage;
+
+                        var existingUpToDateVersion = GetExistingPackage(destinationRepository, package, x => x == package.Identifier.Version);
                         if (existingUpToDateVersion == null)
                         {
-                            var sourcePackage = GetBestSourcePackage(sourceRepositories, foundPackage.Packages);
+                            var sourcePackage = GetBestSourcePackage(sourceRepositories, package.Packages);
 
                             _deployer.DeployDependency(sourcePackage, publisher);
-                            var existingVersion = GetExistingPackage(destinationRepository, foundPackage, x => x < foundPackage.Identifier.Version);
+                            var existingVersion = GetExistingPackage(destinationRepository, package, x => x != package.Identifier.Version);
 
                             yield return existingVersion == null
                                                  ? new PackageAddedResult(sourcePackage, destinationRepository)

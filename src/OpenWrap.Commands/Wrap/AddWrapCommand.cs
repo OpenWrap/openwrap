@@ -165,9 +165,16 @@ namespace OpenWrap.Commands.Wrap
 
             if (_packageNotFound)
             {
-                yield return new Info("Did you mean one of the following package?", Name);
+                var hit = false;
                 foreach (var m in PackageManager.ListPackages(sourceRepositories, Name))
+                {
+                    if (!hit)
+                    {
+                        yield return new Info("Did you mean one of the following package?", Name);
+                        hit = true;
+                    }
                     yield return ToOutput(m);
+                }
             }
             if (ShouldUpdateDescriptor)
                 TrySaveDescriptorFile(targetDescriptor);

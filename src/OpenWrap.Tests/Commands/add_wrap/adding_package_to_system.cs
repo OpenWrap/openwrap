@@ -7,7 +7,7 @@ namespace OpenWrap.Tests.Commands
     {
         public adding_package_to_system()
         {
-            given_remote_package("sauron", "1.0.0");
+            given_remote_package("sauron", "1.0.0".ToVersion());
             given_project_repository(null);
             given_descriptor(null);
             when_executing_command("sauron", "-system");

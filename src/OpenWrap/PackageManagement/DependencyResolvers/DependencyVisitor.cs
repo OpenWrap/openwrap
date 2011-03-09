@@ -47,19 +47,21 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         public bool VisitDependencies(IEnumerable<PackageDependency> dependencies)
         {
-            foreach (var dependency in dependencies)
-            {
-                if (dependency == null)
-                    throw new InvalidOperationException("One of the dependencies is null.");
+                foreach (var dependency in dependencies)
+                {
+                    if (dependency == null)
+                        throw new InvalidOperationException("One of the dependencies is null.");
 
-                if (!VisitDependency(dependency)) return false;
-            }
-            return true;
+                    if (!VisitDependency(dependency)) return false;
+                }
+                return true;
         }
 
         PackageDependency ApplyPackageHintOverride(PackageDependency originalDependency)
         {
-            return _hints.ContainsKey(originalDependency.Name) ? _hints[originalDependency.Name] : originalDependency;
+            // TODO: Investigate being smarter in how overrides are applied
+            return _hints.ContainsKey(originalDependency.Name) && _hints[originalDependency.Name].VersionVertices.OfType<AnyVersionVertex>().Any() == false
+                ? _hints[originalDependency.Name] : originalDependency;
         }
 
         PackageDependency ApplyPackageNameOverride(PackageDependency originalDependency)
@@ -109,7 +111,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                 var existing = _selectionContext.SelectedPackageByName(dependency.Name);
                 if (existing != null && existing.IsCompatibleWith(dependency))
                 {
-                    WriteDebug("VisitDependencies existing version compatible");
+                    WriteDebug("current package selection matches dependency");
                     PushStack(existing);
                     _selectionContext.ExistingPackageCompatible(existing, CurrentCallStack);
                     PopStack();
@@ -120,13 +122,13 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                     _selectionContext.Trying(existing);
                     _selectionContext.PackageConflicts(existing, CurrentCallStack);
 
-                    WriteDebug("VisitDependencies existing version failed");
+                    WriteDebug("current package selection incompatible with dependency");
                     return false;
                 }
 
                 if (!VisitPackageVersions(dependency))
                 {
-                    WriteDebug("VisitDependencies failed");
+                    //WriteDebug("VisitDependencies failed");
                     return false;
                 }
                 return true;
@@ -151,15 +153,15 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                 if (package != null && VisitDependencies(package.Dependencies))
                 {
                     _selectionContext.PackageSucceeds(packageVersion.Value.Key, CurrentCallStack);
+                    WriteDebug("dependency: version found");
                     PopStack();
-                    WriteDebug("VisitPackage version Succeeded");
                     return true;
                 }
                 _selectionContext.PackageHasChildrenConflicting(packageVersion.Value.Key);
+                WriteDebug("dependency: version didn't match");
                 PopStack();
-                WriteDebug("VisitPackage version failed");
             }
-            WriteDebug("VisitPackage failed");
+            WriteDebug("dependency: no version matches");
             if (seen.Empty())
             {
                 _notFound.Add(new KeyValuePair<PackageDependency, CallStack>(dependency, CurrentCallStack));
