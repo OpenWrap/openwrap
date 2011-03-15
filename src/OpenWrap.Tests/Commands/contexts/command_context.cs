@@ -178,7 +178,7 @@ namespace OpenWrap.Commands.contexts
 
         }
 
-        protected void given_descriptor(PackageDescriptor packageDescriptor)
+        protected void given_default_descriptor(PackageDescriptor packageDescriptor)
         {
             Environment.Descriptor = packageDescriptor;
         }

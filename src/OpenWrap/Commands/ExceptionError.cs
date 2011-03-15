@@ -13,7 +13,7 @@ namespace OpenWrap.Commands
 
         public override string ToString()
         {
-            return _exception.Message;
+            return _exception.ToString();
         }
     }
 }

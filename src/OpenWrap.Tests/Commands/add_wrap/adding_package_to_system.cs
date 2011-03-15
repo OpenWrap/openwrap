@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.contexts;
+using Tests.Commands;
 
 namespace OpenWrap.Tests.Commands
 {
@@ -9,7 +10,7 @@ namespace OpenWrap.Tests.Commands
         {
             given_remote_package("sauron", "1.0.0".ToVersion());
             given_project_repository(null);
-            given_descriptor(null);
+            given_default_descriptor(null);
             when_executing_command("sauron", "-system");
         }
 

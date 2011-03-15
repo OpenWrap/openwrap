@@ -25,10 +25,6 @@ namespace OpenWrap.Tests.Commands.Wrap
             when_executing_command();
         }
 
-        [Test]
-        public void wrapdescriptor_included_in_package()
-        {
-        }
 
         [Test]
         public void wrap_exists()
@@ -45,7 +41,6 @@ namespace OpenWrap.Tests.Commands.Wrap
                     .PackagesByName[packageName]
                     .ShouldHaveCountOf(1)
                     .First().Version.ShouldBe(version);
-
         }
     }
 }

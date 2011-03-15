@@ -9,6 +9,7 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands;
 
 namespace OpenWrap.Tests.Commands
 {

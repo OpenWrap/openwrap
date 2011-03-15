@@ -8,7 +8,7 @@ namespace OpenWrap.Build.PackageBuilders
     public class CommandLinePackageBuilder : AbstractProcessPackageBuilder
     {
         public CommandLinePackageBuilder(IFileSystem fileSystem, IEnvironment environment, IFileBuildResultParser resultParser)
-            : base(fileSystem, environment, resultParser)
+            : base(fileSystem, resultParser)
         {
 
         }

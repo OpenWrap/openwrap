@@ -2,19 +2,16 @@
 using System.Diagnostics;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenWrap.Runtime;
 
 namespace OpenWrap.Build.PackageBuilders
 {
     public abstract class AbstractProcessPackageBuilder : IPackageBuilder
     {
-        protected IEnvironment _environment;
         protected IFileSystem _fileSystem;
 
-        protected AbstractProcessPackageBuilder(IFileSystem fileSystem, IEnvironment environment, IFileBuildResultParser fileBuildResultParser)
+        protected AbstractProcessPackageBuilder(IFileSystem fileSystem, IFileBuildResultParser fileBuildResultParser)
         {
             _fileSystem = fileSystem;
-            _environment = environment;
             FileBuildParser = fileBuildResultParser;
         }
 

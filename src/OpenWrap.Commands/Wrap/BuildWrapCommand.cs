@@ -37,11 +37,15 @@ namespace OpenWrap.Commands.Wrap
         public bool Quiet { get; set; }
 
         [CommandInput]
+        public string From { get; set; }
+
+        [CommandInput]
         public IEnumerable<string> Flavour { get; set; }
 
-        readonly IEnvironment _environment;
+        IEnvironment _environment;
 
         readonly IFileSystem _fileSystem;
+        IDirectory _currentDirectory;
 
         public BuildWrapCommand()
             : this(ServiceLocator.GetService<IFileSystem>(), ServiceLocator.GetService<IEnvironment>())
@@ -52,10 +56,12 @@ namespace OpenWrap.Commands.Wrap
         {
             _fileSystem = fileSystem;
             _environment = environment;
+            _currentDirectory = environment.CurrentDirectory;
         }
         public override IEnumerable<ICommandOutput> Execute()
         {
-            return Either(NoDescriptorFound)
+            return Either(FromEnvironmentNotFound)
+                    .Or(NoDescriptorFound)
                     .Or(VerifyPath)
                     .Or(CreateBuilder)
                     .Or(
@@ -68,7 +74,7 @@ namespace OpenWrap.Commands.Wrap
         {
             
             var packageName = Name ?? _environment.Descriptor.Name;
-            var destinationPath = _destinationPath ?? _environment.CurrentDirectory;
+            var destinationPath = _destinationPath ?? _currentDirectory;
 
             var packageDescriptorForEmbedding = new PackageDescriptor(GetCurrentPackageDescriptor());
 
@@ -99,6 +105,22 @@ namespace OpenWrap.Commands.Wrap
         {
             if (size == null) return string.Empty;
             return string.Format(" ({0} bytes)", ((long)size).ToString("N0"));
+        }
+        ICommandOutput FromEnvironmentNotFound()
+        {
+            if (From != null)
+            {
+                var directory = _fileSystem.GetDirectory(From);
+                if (directory.Exists == false)
+                    return new Error("Directory '{0}' not found.", From);
+                var newEnv = new CurrentDirectoryEnvironment(directory);
+                newEnv.Initialize();
+                if (newEnv.ScopedDescriptors.Any() == false)
+                    return new Error("No descriptor found in directory '{0}'.", From);
+                _environment = newEnv;
+                //return new Info("Building package at '{0}'.", From);
+            }
+            return null;
         }
 
         IEnumerable<ICommandOutput> TriggerBuild()
@@ -296,8 +318,8 @@ namespace OpenWrap.Commands.Wrap
 
         ICommandOutput NoDescriptorFound()
         {
-            return _environment.Descriptor == null
-                           ? new Error("Could not find a wrap descriptor. Are you in a project directory?")
+            return _environment.ScopedDescriptors.Any() == false
+                           ? new Error("Could not find any descriptor. Are you in a project directory?")
                            : null;
         }
 

@@ -13,10 +13,13 @@ namespace OpenWrap.Build.PackageBuilders
 {
     public class MSBuildPackageBuilder : AbstractProcessPackageBuilder
     {
+        readonly IEnvironment _environment;
+
         public MSBuildPackageBuilder(IFileSystem fileSystem, IEnvironment environment, IFileBuildResultParser parser)
-                : base(fileSystem, environment, parser)
+                : base(fileSystem, parser)
 
         {
+            _environment = environment;
             Profile = new List<string>();
             Platform = new List<string>();
             Project = new List<string>();

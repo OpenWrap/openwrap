@@ -2,6 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.Commands;
 
 namespace OpenWrap.Commands.add_wrap
 {

@@ -7,7 +7,7 @@ namespace OpenWrap.Build
     public class MSBuildEnvironment : CurrentDirectoryEnvironment
     {
         public MSBuildEnvironment(string projectFileDirectory, string currentDirectory) 
-            : base(projectFileDirectory)
+            : base(LocalFileSystem.Instance.GetDirectory(projectFileDirectory))
         {
             if (currentDirectory != null)
                 CurrentDirectory = LocalFileSystem.Instance.GetDirectory(currentDirectory);

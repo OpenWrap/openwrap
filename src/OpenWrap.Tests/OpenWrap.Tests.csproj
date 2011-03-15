@@ -100,6 +100,7 @@
     <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_dependent_downgrade.cs" />
     <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_dependent_upgrade.cs" />
     <Compile Include="Commands\add_wrap\hooks\successful_add_triggers_dependent_removal.cs" />
+    <Compile Include="Commands\build_wrap\building_from_different_directory.cs" />
     <Compile Include="Commands\contexts\add_wrap_command.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />

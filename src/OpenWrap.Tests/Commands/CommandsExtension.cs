@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using OpenWrap.Commands;
 using OpenWrap.Testing;
 
-namespace OpenWrap
+namespace Tests.Commands
 {
     public static class CommandsExtension
     {
