@@ -164,12 +164,18 @@ namespace OpenWrap.Resharper
         bool HasProjectChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
         {
             var children = solutionChanges.GetChildren();
-            foreach (var child in children)
+            foreach (var child in children.OfType<resharper::JetBrains.ProjectModel.ProjectItemChange>())
             {
-                if (child.IsAdded || child.IsRemoved)
+                if (child.IsAdded || child.IsRemoved ||child.IsExternallyChanged || (child.IsSubtreeChanged && HasProjectItemChanges(child)))
                     return true;
             }
             return false;
+        }
+
+        bool HasProjectItemChanges(resharper::JetBrains.ProjectModel.ProjectItemChange child)
+        {
+            var children = child.GetChildren();
+            return children.OfType<resharper::JetBrains.ProjectModel.AssemblyChange>().Any();
         }
 
         bool HasSolutionChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)

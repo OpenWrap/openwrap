@@ -220,24 +220,25 @@ namespace OpenWrap.PackageManagement
             return new PackageAddResultIterator(returnValue);
         }
 
-        public IPackageCleanResult CleanProjectPackages(IPackageDescriptor packages, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default)
+        public IPackageCleanResult CleanProjectPackages(IEnumerable<IPackageDescriptor> projectDescriptors, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default)
         {
-            if (packages == null) throw new ArgumentNullException("packages");
+            Check.NoNullElements(projectDescriptors, "projectDescriptors");
             if (projectRepository == null) throw new ArgumentNullException("Repository");
 
             var repoForClean = projectRepository as ISupportCleaning;
             if (repoForClean == null) throw new ArgumentException("projectRepository must implement ISupportCleaning");
-            return new PackageCleanResultIterator(CleanProjectPackagesCore(packages, repoForClean, x => true));
+            return new PackageCleanResultIterator(CleanProjectPackagesCore(projectDescriptors, repoForClean, x => true));
         }
 
-        public IPackageCleanResult CleanProjectPackages(IPackageDescriptor packages, IPackageRepository projectRepository, string name, PackageCleanOptions options = PackageCleanOptions.Default)
+        public IPackageCleanResult CleanProjectPackages(IEnumerable<IPackageDescriptor> projectDescriptors, IPackageRepository projectRepository, string name, PackageCleanOptions options = PackageCleanOptions.Default)
         {
-            if (packages == null) throw new ArgumentNullException("packages");
+            Check.NoNullElements(projectDescriptors, "projectDescriptors");
+
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
 
             var repoForClean = projectRepository as ISupportCleaning;
             if (repoForClean == null) throw new ArgumentException("projectRepository must implement ISupportCleaning");
-            return new PackageCleanResultIterator(CleanProjectPackagesCore(packages, repoForClean, x => name.EqualsNoCase(x)));
+            return new PackageCleanResultIterator(CleanProjectPackagesCore(projectDescriptors, repoForClean, x => name.EqualsNoCase(x)));
         }
 
         public IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, PackageCleanOptions options = PackageCleanOptions.Default)
@@ -488,15 +489,17 @@ namespace OpenWrap.PackageManagement
             return  CopyPackageCore(sourceRepositories, new[] { systemRepository }, ToDescriptor(packageToAdd, options), x => true);
         }
 
-        IEnumerable<PackageOperationResult> CleanProjectPackagesCore(IPackageDescriptor projectDescriptor, ISupportCleaning projectRepository, Func<string, bool> packageName)
+        IEnumerable<PackageOperationResult> CleanProjectPackagesCore(IEnumerable<IPackageDescriptor> projectDescriptors, ISupportCleaning projectRepository, Func<string, bool> packageName)
         {
-            var resolvedPackages = _resolver.TryResolveDependencies(projectDescriptor, new[] { projectRepository });
-            if (resolvedPackages.SuccessfulPackages.Any() == false)
+            var resolvedPackages = projectDescriptors.Select(projectDescriptor=>new{projectDescriptor, result = _resolver.TryResolveDependencies(projectDescriptor, new[] { projectRepository })});
+
+            var failing = resolvedPackages.FirstOrDefault(x=>x.result.SuccessfulPackages.Any() == false);
+            if (failing != null)
             {
-                yield return new PackageCleanCannotDo(projectDescriptor);
+                yield return new PackageCleanCannotDo(failing.projectDescriptor);
                 yield break;
             }
-            var projectPackagesInUse = from successfulPackageStack in resolvedPackages.SuccessfulPackages
+            var projectPackagesInUse = from successfulPackageStack in resolvedPackages.SelectMany(x=>x.result.SuccessfulPackages)
                                        from package in successfulPackageStack.Packages
                                        where packageName(package.Identifier.Name)
                                        select package;
@@ -510,8 +513,6 @@ namespace OpenWrap.PackageManagement
 
             foreach (var cleanedPackage in projectRepository.Clean(packagesInUse))
                 yield return cleanedPackage;
-            foreach (var anchored in AnchorPackages(resolvedPackages, new[] { projectRepository }))
-                yield return anchored;
         }
 
         IEnumerable<PackageOperationResult> CleanSystemPackagesCore(ISupportCleaning systemRepository, Func<string, bool> packageNameSelector)
@@ -620,9 +621,6 @@ namespace OpenWrap.PackageManagement
                 yield break;
             }
             packageDescriptor.Dependencies.Remove(dependency);
-            if ((options & PackageRemoveOptions.Clean) == PackageRemoveOptions.Clean)
-                foreach (var cleaned in CleanProjectPackages(packageDescriptor, projectRepository, packageToRemove.Name))
-                    yield return cleaned;
         }
 
         IEnumerable<PackageOperationResult> RemoveProjectPackageCore(PackageRequest packageToRemove,

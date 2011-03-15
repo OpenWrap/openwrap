@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenFileSystem.IO;
 
@@ -12,6 +13,26 @@ namespace OpenWrap.IO
         public static T Read<T>(this IFile file, Func<Stream, T> read)
         {
             return Read(() => file.OpenRead(), read);
+        }
+
+        public static T ReadRetry<T>(this IFile file, Func<Stream, T> read, int retries = 10, int wait = 50)
+        {
+            Exception exception = null;
+
+            for (int retry = 0; ; )
+            {
+                try
+                {
+                    return Read(() => file.OpenRead(), read);
+                }
+                catch
+                {
+                    if (retry++ > retries)
+                        throw;
+
+                    Thread.Sleep(wait);
+                }
+            }
         }
 
         public static IEnumerable<string> ReadLines(this IFile file)

@@ -45,7 +45,7 @@ namespace OpenWrap.Build
 
             Log.LogMessage(MessageImportance.Normal, "OpenWrap correctly initialized.");
             foreach(var kv in values)
-                Log.LogMessage(MessageImportance.Low, "{0}: {1}", kv.Key, kv.Value);
+                Log.LogMessage(MessageImportance.Normal, "{0}: {1}", kv.Key, kv.Value);
 
             return true;
         }

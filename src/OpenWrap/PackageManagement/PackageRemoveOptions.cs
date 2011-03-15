@@ -6,7 +6,7 @@ namespace OpenWrap.PackageManagement
     public enum PackageRemoveOptions
     {
         Recurse = 1,
-        Clean = 2,
-        Default
+        //Clean = 2,
+        Default = Recurse
     }
 }

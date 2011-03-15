@@ -44,9 +44,9 @@ namespace OpenWrap.PackageManagement
 
         IPackageRemoveResult RemoveSystemPackage(PackageRequest packageToRemove, IPackageRepository systemRepository, PackageRemoveOptions options = PackageRemoveOptions.Default);
 
-        IPackageCleanResult CleanProjectPackages(IPackageDescriptor projectDescriptor, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default);
+        IPackageCleanResult CleanProjectPackages(IEnumerable<IPackageDescriptor> projectDescriptors, IPackageRepository projectRepository, PackageCleanOptions options = PackageCleanOptions.Default);
 
-        IPackageCleanResult CleanProjectPackages(IPackageDescriptor projectDescriptor,
+        IPackageCleanResult CleanProjectPackages(IEnumerable<IPackageDescriptor> projectDescriptors,
                                                  IPackageRepository projectRepository,
                                                  string packageName,
                                                  PackageCleanOptions options = PackageCleanOptions.Default);

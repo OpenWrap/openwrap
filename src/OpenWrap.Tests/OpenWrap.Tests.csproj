@@ -101,6 +101,11 @@
     <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_dependent_upgrade.cs" />
     <Compile Include="Commands\add_wrap\hooks\successful_add_triggers_dependent_removal.cs" />
     <Compile Include="Commands\build_wrap\building_from_different_directory.cs" />
+    <Compile Include="Commands\clean_wrap\cleaning_across_two_scopes.cs" />
+    <Compile Include="Commands\clean_wrap\cleaning_a_wrap_with_one_version.cs" />
+    <Compile Include="Commands\clean_wrap\cleaning_a_wrap_with_two_versions.cs" />
+    <Compile Include="Commands\clean_wrap\cleaning_package_from_both_repositories.cs" />
+    <Compile Include="Commands\clean_wrap\cleaning_package_from_system_repository.cs" />
     <Compile Include="Commands\contexts\add_wrap_command.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
@@ -180,8 +185,8 @@
     <Compile Include="Commands\CommandProcessor.cs" />
     <Compile Include="Commands\contexts\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
-    <Compile Include="Commands\build_wrap\buildWrapCommand.cs" />
-    <Compile Include="Commands\Wrap\cleanWrapCommand.cs" />
+    <Compile Include="Commands\build_wrap\building_a_meta_package.cs" />
+    <Compile Include="Commands\clean_wrap\cleaning_a_non_existing_wrap.cs" />
     <Compile Include="Commands\Wrap\buildwrap\from_files_without_space.cs" />
     <Compile Include="Commands\Wrap\listWrapCommand.cs" />
     <Compile Include="Commands\Wrap\nukeWrapCommand.cs" />

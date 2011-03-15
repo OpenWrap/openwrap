@@ -83,8 +83,8 @@ namespace OpenWrap.Commands.Wrap
             get
             {
                 var options = PackageRemoveOptions.Default;
-                if (Clean)
-                    options |= PackageRemoveOptions.Clean;
+                //if (Clean)
+                //    options |= PackageRemoveOptions.Clean;
                 return options;
             }
         }

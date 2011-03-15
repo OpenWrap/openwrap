@@ -24,7 +24,7 @@ namespace OpenWrap.PackageModel.Serialization
                 return all;
 
             var root = descriptorFiles.First();
-            var rootDescriptor = root.Read(Read);
+            var rootDescriptor = root.ReadRetry(Read);
             all[string.Empty] = FileBased.New(root, rootDescriptor);
             foreach (var descriptor in descriptorFiles.Skip(1))
             {

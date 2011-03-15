@@ -1,14 +1,12 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Tests.Commands.Wrap
+namespace Tests.Commands.build_wrap
 {
     public class building_a_meta_package : command_context<BuildWrapCommand>
     {
