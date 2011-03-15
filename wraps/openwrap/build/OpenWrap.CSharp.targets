@@ -47,7 +47,7 @@
     <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\..\*.wrapdesc" Condition="!Exists('@(_WrapFile->'%(FullPath)')')" />
   </ItemGroup>
   <Target Name="_Initialize">
-    <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" >
+    <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" CurrentProjectFile="$(MSBuildProjectFullPath)" >
       <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
     </InitializeOpenWrap>
 

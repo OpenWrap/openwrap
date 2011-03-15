@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Testing;
 
@@ -6,6 +7,8 @@ namespace OpenWrap.Commands.add_wrap
 {
     class adding_to_new_scope : contexts.add_wrap_command
     {
+        DateTimeOffset? DefaultDescriptorTimeStamp;
+        DateTimeOffset? ScopedDescriptorTimeStamp;
         public adding_to_new_scope()
         {
             given_system_package("sauron", "1.0.0");
@@ -13,6 +16,8 @@ namespace OpenWrap.Commands.add_wrap
             
             given_dependency("depends: one-ring");
 
+            DefaultDescriptorTimeStamp = Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc;
+            ScopedDescriptorTimeStamp = Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc;
             when_executing_command("sauron", "-scope", "tests");
         }
         [Test]
@@ -33,6 +38,18 @@ namespace OpenWrap.Commands.add_wrap
         {
             WrittenDescriptor("tests").Dependencies.ShouldHaveCountOf(1)
                     .First().Name.ShouldBe("sauron");
+        }
+        [Test]
+        public void default_descriptor_timestamp_is_updated()
+        {
+            (Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc > DefaultDescriptorTimeStamp).ShouldBeTrue();
+
+        }
+
+        [Test]
+        public void scoped_descriptor_timestamp_is_updated()
+        {
+            (Environment.ScopedDescriptors["tests"].File.LastModifiedTimeUtc > ScopedDescriptorTimeStamp).ShouldBeTrue();
         }
     }
 }

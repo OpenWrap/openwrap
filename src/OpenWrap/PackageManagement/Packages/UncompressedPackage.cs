@@ -52,7 +52,7 @@ namespace OpenWrap.PackageManagement.Packages
         {
             get
             {
-                if (_originalPackageFile.LastModifiedTimeUtc != null) return new DateTimeOffset(_originalPackageFile.LastModifiedTimeUtc.Value);
+                if (_originalPackageFile.LastModifiedTimeUtc != null) return _originalPackageFile.LastModifiedTimeUtc.Value;
                 return DateTimeOffset.UtcNow;
             }
         }

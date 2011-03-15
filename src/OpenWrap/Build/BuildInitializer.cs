@@ -6,11 +6,13 @@ using System.Text;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Configuration;
+using OpenWrap.IO;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.AssemblyResolvers;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
 using OpenWrap.Tasks;
 
@@ -19,7 +21,7 @@ namespace OpenWrap.Build
 
     public static class BuildInitializer
     {
-        public static string Initialize(string projectFile, string currentDirectory)
+        public static IDictionary<string,string> Initialize(string projectFile, string currentDirectory)
         {   
             Services.ServiceLocator.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
             Services.ServiceLocator.TryRegisterService<IConfigurationManager>(
@@ -33,8 +35,16 @@ namespace OpenWrap.Build
             Services.ServiceLocator.TryRegisterService<ITaskManager>(()=>new TaskManager());
 
             Services.ServiceLocator.GetService<RuntimeAssemblyResolver>().Initialize();
+            var env = Services.ServiceLocator.GetService<IEnvironment>();
+            var scope = PathFinder.GetCurrentScope(env.Descriptor.DirectoryStructure, new Path(projectFile));
 
-            return Services.ServiceLocator.GetService<IEnvironment>().Descriptor.Name;
+            var currentDescriptor = env.GetOrCreateScopedDescriptor(scope);
+            return new Dictionary<string, string>
+            {
+                    { BuildConstants.PACKAGE_NAME, currentDescriptor.Value.Name },
+                    { BuildConstants.PROJECT_SCOPE, scope },
+                    {BuildConstants.DESCRIPTOR_PATH, currentDescriptor.File.Path.FullPath}
+            };
         }
     }
 }

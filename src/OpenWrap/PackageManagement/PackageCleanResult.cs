@@ -22,8 +22,8 @@ namespace OpenWrap.PackageManagement
 
         public override ICommandOutput ToOutput()
         {
-            if (Success) return new Info("Package {0} removed.", Package.Identifier);
-            return new Error("Package {0} could not be removed. If Visual Studio, notepad or a folder is still open, please close them and try the command again.", Package.Identifier);
+            if (Success) return new Info("Package file {0} removed.", Package.Identifier);
+            return new Warning("Package file {0} could not be removed. If Visual Studio, notepad or a folder window is still open, it could could be holding a lock on a file. Please close it and try the command again.", Package.Identifier);
         }
     }
 }

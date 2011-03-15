@@ -9,6 +9,9 @@ namespace OpenWrap.Commands.add_wrap
 {
     class adding_to_existing_scope : contexts.add_wrap_command
     {
+        DateTimeOffset? DefaultDescriptorTimeStamp;
+        DateTimeOffset? ScopedDescriptorTimeStamp;
+
         public adding_to_existing_scope()
         {
             given_system_package("sauron", "1.0.0");
@@ -16,6 +19,8 @@ namespace OpenWrap.Commands.add_wrap
             
             given_dependency("tests", "depends: one-ring");
 
+            DefaultDescriptorTimeStamp = Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc;
+            ScopedDescriptorTimeStamp = Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc;
             when_executing_command("sauron", "-scope", "tests");
         }
 
@@ -29,7 +34,19 @@ namespace OpenWrap.Commands.add_wrap
         public void scoped_descriptor_is_updated()
         {
             WrittenDescriptor("tests").Dependencies.ShouldHaveCountOf(2);
+        }
 
+        [Test]
+        public void default_descriptor_timestamp_is_updated()
+        {
+            (Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc > DefaultDescriptorTimeStamp).ShouldBeTrue();
+
+        }
+
+        [Test]
+        public void scoped_descriptor_timestamp_is_updated()
+        {
+            (Environment.ScopedDescriptors["tests"].File.LastModifiedTimeUtc > ScopedDescriptorTimeStamp).ShouldBeTrue();
         }
     }
 }

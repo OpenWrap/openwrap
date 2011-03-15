@@ -30,8 +30,6 @@ namespace OpenWrap.Build.Tasks
         
         public bool CopyLocal { get; set; }
 
-        public bool EnableVisualStudioIntegration { get; set; }
-
         public ITaskItem[] InputReferences { get; set; }
         public ExecutionEnvironment Environment
         {
@@ -56,10 +54,6 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string Profile { get; set; }
 
-        [Required]
-        public string ProjectFilePath { get; set; }
-
-        
         public ITaskItem[] ExcludeAssemblies { get; set; }
 
         [Output]
@@ -87,7 +81,7 @@ namespace OpenWrap.Build.Tasks
         {
             try
             {
-                EnsureWrapRepositoryIsInitialized();
+                EnsurePackageRepositoryIsInitialized();
             }
             catch (FileNotFoundException e)
             {
@@ -150,7 +144,7 @@ namespace OpenWrap.Build.Tasks
             }
         }
 
-        void EnsureWrapRepositoryIsInitialized()
+        void EnsurePackageRepositoryIsInitialized()
         {
             if (PackageRepository != null)
             {

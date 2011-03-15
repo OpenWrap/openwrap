@@ -8,7 +8,6 @@ using OpenWrap.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
-using Path = OpenFileSystem.IO.Path;
 using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.PackageManagement.Packages
@@ -31,7 +30,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public DateTimeOffset Created
         {
-            get { return PackageFile.LastModifiedTimeUtc != null ? new DateTimeOffset(PackageFile.LastModifiedTimeUtc.Value) : DateTimeOffset.UtcNow; }
+            get { return PackageFile.LastModifiedTimeUtc != null ? PackageFile.LastModifiedTimeUtc.Value : DateTimeOffset.UtcNow; }
         }
 
         public ICollection<PackageDependency> Dependencies

@@ -55,6 +55,9 @@ namespace OpenWrap.PackageManagement
         IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, string packageName, PackageCleanOptions options = PackageCleanOptions.Default);
 
         IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null, PackageListOptions options = PackageListOptions.Default);
-        void SetHooks(InstallHooksProvider hooks);
+        
+        event PackageUpdated PackageUpdated;
+        event PackageChanged PackageAdded;
+        event PackageChanged PackageRemoved;
     }
 }

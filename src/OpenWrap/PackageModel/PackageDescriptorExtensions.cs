@@ -25,5 +25,9 @@ namespace OpenWrap.PackageModel
             using (var writeStream = descriptor.File.OpenWrite())
                 new PackageDescriptorReaderWriter().Write(descriptor.Value, writeStream);
         }
+        public static void Touch(this IFile file)
+        {
+            file.MustExist().LastModifiedTimeUtc = DateTimeOffset.UtcNow;
+        }
     }
 }

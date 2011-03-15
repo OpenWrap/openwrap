@@ -93,5 +93,37 @@ namespace OpenWrap.Commands.Wrap
                            ? new RemoteRepositoryBuilder(FileSystem, ConfigurationManager).BuildPackageRepositoryForUri(repositoryName, possibleUri)
                            : Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(repositoryName));
         }
+        protected IDisposable ChangeMonitor(FileBased<IPackageDescriptor> descriptor)
+        {
+                bool packagesChanged = false;
+                PackageChanged change = (a, b, c, d) =>
+                {
+                    packagesChanged = true;
+                    return Enumerable.Empty<object>();
+                };
+                PackageUpdated update = (a, b, c, d, e) =>
+                {
+                    packagesChanged = true;
+                    return Enumerable.Empty<object>();
+                };
+                var listener = PackageManager.Monitor(change, change, update);
+                return new ActionOnDispose(()=>
+                {
+                    listener.Dispose();
+                    if (packagesChanged)
+                    {
+                        if (Environment.Descriptor != descriptor.Value)
+                        {
+                            descriptor.File.Touch();
+                            Environment.DescriptorFile.Touch();
+                        }
+                        else
+                        {
+                            foreach (var file in Environment.ScopedDescriptors.Select(x => x.Value.File))
+                                file.Touch();
+                        }
+                    }
+                });
+        }
     }
 }

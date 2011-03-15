@@ -23,61 +23,55 @@ namespace OpenWrap.PackageManagement
             }
         }
     }
-    public delegate IEnumerable<object> ScopedPackageUpdated(string repository, string name, string scope, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages);
-    public delegate IEnumerable<object> ScopedPackageChanged(string repository, string name, string scope, Version version, IEnumerable<IPackageInfo> packages);
-        
-    public class InstallHooksProvider
+
+    public delegate IEnumerable<object> PackageUpdated(string repository, string name, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages);
+
+    public delegate IEnumerable<object> PackageChanged(string repository, string name, Version version, IEnumerable<IPackageInfo> packages);
+
+
+    public class HooksStore
     {
-        readonly string _scope;
-        readonly IEnumerable<PackageChanged> _removeHook;
-        readonly IEnumerable<PackageChanged> _installHook;
-        readonly IEnumerable<PackageUpdated> _updateHook;
+        public event PackageChanged PackageAdded;
+        public event PackageChanged PackageRemoved;
+        public event PackageUpdated PackageUpdated;
 
-        delegate IEnumerable<object> PackageUpdated(string repository, string name, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages);
-        delegate IEnumerable<object> PackageChanged(string repository, string name, Version version, IEnumerable<IPackageInfo> packages);
-
-        public InstallHooksProvider(string scope,
-            IEnumerable<ScopedPackageChanged> installHook,
-            IEnumerable<ScopedPackageUpdated> updateHook,
-            IEnumerable<ScopedPackageChanged> removeHook)
-        {
-            _scope = scope;
-            _removeHook = removeHook.Select(Scope).ToList().AsReadOnly();
-            _installHook = installHook.Select(Scope).ToList().AsReadOnly();
-            _updateHook = updateHook.Select(Scope).ToList().AsReadOnly();
-        }
-
-        PackageChanged Scope(ScopedPackageChanged packageChanged)
-        {
-            return (repo, name, version, packages) => packageChanged(repo, name, _scope, version, packages);
-        }
-
-        PackageUpdated Scope(ScopedPackageUpdated packageChanged)
-        {
-            return (repo, name, fromVersion, toVersion, packages) => packageChanged(repo, name, _scope, fromVersion, toVersion, packages);
+        public HooksStore()
+        {   
         }
         public IEnumerable<object> Installed(string repository, string packageName, Version version, IEnumerable<IPackageInfo> packages)
         {
-            return _installHook.SelectMany(x => x(repository, packageName, version, packages));
+            var hooks = PackageAdded;
+            if (hooks != null)
+                return hooks.GetInvocationList().SelectMany(x => (IEnumerable<object>)x.DynamicInvoke(repository, packageName, version, packages));
+                //return hooks.I((repository, packageName, version, packages);
+            return Enumerable.Empty<object>();
         }
         public IEnumerable<object> Updated(string repository, string packageName, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages)
         {
-            return _updateHook.SelectMany(x => x(repository, packageName, fromVersion, toVersion, packages));
+            var hooks = PackageUpdated;
+            if (hooks != null)
+                return hooks.GetInvocationList().SelectMany(x => (IEnumerable<object>)x.DynamicInvoke(repository, packageName, fromVersion, toVersion, packages));
+
+            return Enumerable.Empty<object>();
         }
         public IEnumerable<object> Removed(string repository, string packageName, Version version, IEnumerable<IPackageInfo> packages)
         {
-            return _removeHook.SelectMany(x => x(repository, packageName, version, packages));
+            var hooks = PackageRemoved;
+            if (hooks != null)
+                return hooks.GetInvocationList().SelectMany(x => (IEnumerable<object>)x.DynamicInvoke(repository, packageName, version, packages));
+
+            return Enumerable.Empty<object>();
         }
     }
-    public class Hooks : IEnumerable<PackageOperationResult>
+    public class HookedPackageOperationResults : IEnumerable<PackageOperationResult>
     {
         readonly string _repository;
         readonly IEnumerable<PackageOperationResult> _results;
-        readonly InstallHooksProvider _hooks;
+        readonly HooksStore _hooks;
         readonly Func<IEnumerable<IPackageInfo>> _before;
         readonly Func<IEnumerable<IPackageInfo>> _after;
 
-        public Hooks(string repository, IEnumerable<PackageOperationResult> results, InstallHooksProvider hooks, Func<IEnumerable<IPackageInfo>> before, Func<IEnumerable<IPackageInfo>> after)
+        public HookedPackageOperationResults(string repository, IEnumerable<PackageOperationResult> results, HooksStore hooks, Func<IEnumerable<IPackageInfo>> before, Func<IEnumerable<IPackageInfo>> after)
         {
             _repository = repository;
             _results = results;
@@ -102,11 +96,11 @@ namespace OpenWrap.PackageManagement
             {
                 var resolvedAfter = _after();
                 // TODO: process removes, then process adds and updates based on a dependency tree
-                foreach (var output in Removed(resolvedBefore, resolvedAfter, _hooks).Concat(Added(resolvedBefore, resolvedAfter, _hooks)).Concat(Updated(resolvedBefore, resolvedAfter, _hooks)))
+                foreach (var output in GetRemoved(resolvedBefore, resolvedAfter, _hooks).Concat(GetAdded(resolvedBefore, resolvedAfter, _hooks)).Concat(GetUpdated(resolvedBefore, resolvedAfter, _hooks)))
                     yield return new PackageHookResult(output);
             }
         }
-        IEnumerable<object> Updated(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, InstallHooksProvider hooks)
+        IEnumerable<object> GetUpdated(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, HooksStore hooks)
         {
             var afterByName = after.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
             return from oldPackage in before
@@ -117,7 +111,7 @@ namespace OpenWrap.PackageManagement
                    select output;
         }
 
-        IEnumerable<object> Added(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, InstallHooksProvider hooks)
+        IEnumerable<object> GetAdded(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, HooksStore hooks)
         {
             var beforeByName = before.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
             return from newPackage in after
@@ -125,7 +119,7 @@ namespace OpenWrap.PackageManagement
                    from output in hooks.Installed(_repository, newPackage.Name, newPackage.Version, after)
                    select output;
         }
-        IEnumerable<object> Removed(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, InstallHooksProvider hooks)
+        IEnumerable<object> GetRemoved(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, HooksStore hooks)
         {
             var afterByName = after.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
             return from oldPackage in before
@@ -139,21 +133,49 @@ namespace OpenWrap.PackageManagement
             return ((IEnumerable<PackageOperationResult>)this).GetEnumerator();
         }
     }
+    public static class PackageManagerExtensions
+    {
+        public static IDisposable Monitor(this IPackageManager manager, PackageChanged add  = null, PackageChanged remove = null, PackageUpdated update = null)
+        {
+            if (add != null) manager.PackageAdded += add;
+            if (remove != null) manager.PackageRemoved += remove;
+            if (update != null) manager.PackageUpdated += update;
+            return new ActionOnDispose(() =>
+            {
+                if (add != null) manager.PackageAdded -= add;
+                if (remove != null) manager.PackageRemoved -= remove;
+                if (update != null) manager.PackageUpdated -= update;
+            });
+        }
+    }
     public class DefaultPackageManager : IPackageManager
     {
         readonly IPackageDeployer _deployer;
 
         readonly IPackageResolver _resolver;
-        InstallHooksProvider _hooks;
+        readonly HooksStore _hooks = new HooksStore();
+
+
+        public event PackageUpdated PackageUpdated
+        {
+            add { _hooks.PackageUpdated += value; }
+            remove { _hooks.PackageUpdated -= value; }
+        }
+        public event PackageChanged PackageAdded
+        {
+            add { _hooks.PackageAdded += value; }
+            remove { _hooks.PackageAdded -= value; }
+        }
+        public event PackageChanged PackageRemoved
+        {
+            add { _hooks.PackageRemoved += value; }
+            remove { _hooks.PackageRemoved -= value; }
+        }
 
         public DefaultPackageManager(IPackageDeployer deployer, IPackageResolver resolver)
         {
             _deployer = deployer;
             _resolver = resolver;
-        }
-        public void SetHooks(InstallHooksProvider hooks)
-        {
-            _hooks = hooks;
         }
         public IPackageAddResult AddProjectPackage(PackageRequest packageToAdd,
                                                    IEnumerable<IPackageRepository> sourceRepositories,
@@ -180,7 +202,7 @@ namespace OpenWrap.PackageManagement
                 return GetSelectedPackages(_resolver.TryResolveDependencies(descriptor, new[] { destinationRepository })).ToList();
             };
             var currentPackages = currentPackageFactory();
-            return new Hooks(repositoryType, result, _hooks, () => currentPackages, currentPackageFactory);
+            return new HookedPackageOperationResults(repositoryType, result, _hooks, () => currentPackages, currentPackageFactory);
         }
         
         public IPackageAddResult AddSystemPackage(PackageRequest packageToAdd,

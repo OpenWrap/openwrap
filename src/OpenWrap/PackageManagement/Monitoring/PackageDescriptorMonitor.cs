@@ -42,9 +42,9 @@ namespace OpenWrap.PackageManagement.Monitoring
         public void UnregisterListener(IResolvedAssembliesUpdateListener listener)
         {
             List<DescriptorSubscriptions> registrationsForClient;
-            lock(_notificationClients)
+            lock (_notificationClients)
             {
-                registrationsForClient = _notificationClients.Values.Where(x=>x.Clients.Contains(listener)).ToList();
+                registrationsForClient = _notificationClients.Values.Where(x => x.Clients.Contains(listener)).ToList();
             }
             foreach (var registraiton in registrationsForClient)
                 registraiton.Clients.Remove(listener);
@@ -66,38 +66,48 @@ namespace OpenWrap.PackageManagement.Monitoring
             NotifyAllClients(LocalFileSystem.Instance.GetFile(e.FullPath));
         }
 
-        void NotifyAllClients(IFile wrapPath)
+        DescriptorSubscriptions GetSubsriptionsFor(IFile wrapPath)
         {
             DescriptorSubscriptions d;
             lock (_notificationClients)
             {
                 if (!_notificationClients.ContainsKey(wrapPath.Path))
-                    return;
-                d = _notificationClients[wrapPath.Path];
+                    return null;
+                return _notificationClients[wrapPath.Path];
             }
-            d.Repository.RefreshPackages();
-                var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
+            return d;
+        }
 
-                foreach (var client in d.Clients)
-                {
-                    client.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, client.Environment, parsedDescriptor, d.Repository));
-                }
+        void NotifyAllClients(IFile wrapPath)
+        {
+            var subscriptions = GetSubsriptionsFor(wrapPath);
+            if (subscriptions == null) return;
+
+            subscriptions.Repository.RefreshPackages();
+            var descriptor = new PackageDescriptorReader()
+                    .ReadAll(wrapPath.Parent)
+                    .Where(x => x.Value.File.Path == wrapPath.Path)
+                    .Select(x=>x.Value.Value)
+                    .Single();
+
+            foreach (var client in subscriptions.Clients)
+                client.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, client.Environment, descriptor, subscriptions.Repository));
         }
 
         void NotifyClient(IFile wrapPath, IResolvedAssembliesUpdateListener listener)
         {
-            DescriptorSubscriptions d;
-            lock (_notificationClients)
-            {
-                if (!_notificationClients.ContainsKey(wrapPath.Path))
-                    return;
-                d = _notificationClients[wrapPath.Path];
-            }
-            d.Repository.RefreshPackages();
-            var parsedDescriptor = new PackageDescriptorReaderWriter().Read(wrapPath);
+            var subscriptions = GetSubsriptionsFor(wrapPath);
+            if (subscriptions == null) return;
+
+            subscriptions.Repository.RefreshPackages();
+            var descriptor = new PackageDescriptorReader()
+                    .ReadAll(wrapPath.Parent)
+                    .Where(x => x.Value.File.Path == wrapPath.Path)
+                    .Select(x => x.Value.Value)
+                    .Single();
 
 
-            listener.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, listener.Environment, parsedDescriptor, d.Repository));
+            listener.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, listener.Environment, descriptor, subscriptions.Repository));
         }
 
         class DescriptorSubscriptions
@@ -108,7 +118,7 @@ namespace OpenWrap.PackageManagement.Monitoring
                 Clients = new List<IResolvedAssembliesUpdateListener>();
                 FileSystemWatcher = new FileSystemWatcher(System.IO.Path.GetDirectoryName(path.Path.FullPath), System.IO.Path.GetFileName(path.Path.FullPath))
                 {
-                        NotifyFilter = NotifyFilters.LastWrite
+                    NotifyFilter = NotifyFilters.LastWrite
                 };
                 FileSystemWatcher.Changed += handler;
                 FileSystemWatcher.EnableRaisingEvents = true;

@@ -64,14 +64,17 @@ namespace OpenWrap.Commands.Wrap
             if (Project && Version != null)
                 yield return new Warning("Because you have selected a specific version to remove from the project repository, your descriptor file will not be updated. To remove the dependency from your descriptor, either do not specify a version or use the set-wrap command to update the version of a package in use by your project.");
             var targetDescriptor = Environment.GetOrCreateScopedDescriptor(Scope);
+
             if (Project)
             {
-                foreach (var m in PackageManager.RemoveProjectPackage(PackageRequest, targetDescriptor.Value, Environment.ProjectRepository, options)) yield return ToOutput(m);
+                using (ChangeMonitor(targetDescriptor))
+                {
+                    foreach (var m in PackageManager.RemoveProjectPackage(PackageRequest, targetDescriptor.Value, Environment.ProjectRepository, options)) yield return ToOutput(m);
+                    if (Successful) TrySaveDescriptorFile(targetDescriptor);
+                }
             }
             if (System)
                 foreach (var m in PackageManager.RemoveSystemPackage(PackageRequest, Environment.SystemRepository, Options)) yield return ToOutput(m);
-
-            if (Successful && Project) TrySaveDescriptorFile(targetDescriptor);
         }
 
 

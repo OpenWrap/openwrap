@@ -12,6 +12,14 @@ namespace OpenWrap.Tests.IO
                 .ShouldHaveName("source")
                 .ShouldHaveValue("source", "ning");
         }
+        [Test]
+        public void can_use_wildcard_prefix()
+        {
+            Template("*{source: tests=course}", "how about some tests")
+                    .ShouldHaveName("source")
+                    .ShouldHaveValue("source", "course");
+
+        }
 
         [Test]
         public void can_have_suffix()

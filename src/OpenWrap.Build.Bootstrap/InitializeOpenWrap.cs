@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,14 @@ namespace OpenWrap.Build
         [Output]
         public string Name { get; set; }
 
+        [Output]
+        public string Scope { get; set; }
+
+        [Output]
+        public string DescriptorPath { get; set; }
+
+        public string CurrentProjectFile { get; set; }
+
         public bool StartDebug { get; set; }
 
         public override bool Execute()
@@ -29,7 +38,14 @@ namespace OpenWrap.Build
             var openWrapAssembly = asm.Select(x=>x.Key).First(x => x.GetName().Name.Equals("openwrap", StringComparison.OrdinalIgnoreCase));
             var initializer = openWrapAssembly.GetType("OpenWrap.Build.BuildInitializer");
             var method = initializer.GetMethod("Initialize", BindingFlags.Static | BindingFlags.Public);
-            Name = method.Invoke(null, new object[] { BuildEngine.ProjectFileOfTaskNode, CurrentDirectory }) as string;
+            var values = method.Invoke(null, new object[] { CurrentProjectFile, CurrentDirectory }) as IDictionary<string,string>;
+            Name = values[BuildConstants.PACKAGE_NAME];
+            Scope = values[BuildConstants.PROJECT_SCOPE];
+            DescriptorPath = values[BuildConstants.DESCRIPTOR_PATH];
+
+            Log.LogMessage(MessageImportance.Normal, "OpenWrap correctly initialized.");
+            foreach(var kv in values)
+                Log.LogMessage(MessageImportance.Low, "{0}: {1}", kv.Key, kv.Value);
 
             return true;
         }

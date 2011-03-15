@@ -26,10 +26,12 @@ namespace Tests.Commands.contexts
         protected void given_scope(string scope)
         {
             Scope = scope;
-            ServiceLocator.GetService<IPackageManager>().SetHooks(new InstallHooksProvider(scope,
-                                                                                           new ScopedPackageChanged[]{Add},
-                                                                                           new ScopedPackageUpdated[]{Update},
-                                                                                           new ScopedPackageChanged[]{Removed}));
+
+            var manager = ServiceLocator.GetService<IPackageManager>();
+            manager.PackageAdded += (repo, name, version, packages) => Add(repo, name, scope, version, packages);
+
+            manager.PackageRemoved += (repo, name, version, packages) => Removed(repo, name, scope, version, packages);
+            manager.PackageUpdated += (repo, name, fromVersion, toVersion, packages) => Update(repo, name, scope, fromVersion, toVersion, packages);
         }
 
         IEnumerable<object> Removed(string repository, string name, string scope, Version version, IEnumerable<IPackageInfo> packages)

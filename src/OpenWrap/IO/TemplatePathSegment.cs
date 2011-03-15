@@ -46,7 +46,7 @@ namespace OpenWrap.IO
                 if (template.Transformed != null)
                     transformedValues[template.VarName] = template.Transformed;
                 if (template.Left - lastPosition > 0)
-                    parserRegex += Regex.Escape(templateString.Substring(lastPosition, template.Left - lastPosition));
+                    parserRegex += Regex.Escape(templateString.Substring(lastPosition, template.Left - lastPosition)).Replace(@"\*", ".*").Replace(@"\?", @"\.?");
 
                 parserRegex += string.Format("(?<{0}>{1})", template.VarName, template.Value != null ? Regex.Escape(template.Value) : ".*?");
                 lastPosition = template.Right;
@@ -55,7 +55,7 @@ namespace OpenWrap.IO
                     : null;
                 if (i == templateGroups.Count-1 && leftover != null)
                 {
-                    parserRegex += leftover;
+                    parserRegex += Regex.Escape(leftover).Replace(@"\*", ".*").Replace(@"\?", @"\.?");
                 }
             }
             return new CompoundTemplatePathSegment("^" + parserRegex + "$", templateGroups.Select(x=>x.VarName), transformedValues);

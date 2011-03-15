@@ -1,4 +1,5 @@
 ﻿using OpenFileSystem.IO;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap
 {
@@ -17,7 +18,6 @@ namespace OpenWrap
             return fileBased.Value;
         }
     }
-
     public static class FileBased
     {
         public static FileBased<T> New<T>(IFile file, T value) where T : class

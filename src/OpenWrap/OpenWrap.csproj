@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionOnDispose.cs" />
+    <Compile Include="Build\BuildConstants.cs" />
     <Compile Include="Build\BuildInitializer.cs" />
     <Compile Include="Build\BuildResult.cs" />
     <Compile Include="Build\DefaultFileBuildResultParser.cs" />

@@ -65,65 +65,84 @@ namespace OpenWrap.Repositories
         {
             if (!_anchoringEnabled)
                 yield break;
+            AnchorageStrategy anchorageStrategy = _useSymLinks ? (AnchorageStrategy)new SymLinkAnchorageStrategy() : new DirectoryCopyAnchorageStrategy();
 
-            new List<IPackageInfo>();
+
             foreach (var package in packagesToAnchor)
             {
                 if (package.Source != this)
                     continue;
                 if (package.Load() == null)
                     yield return new PackageAnchoredResult(package.Source as ISupportAnchoring, package, false);
-                var anchoredDirectory = BasePath.GetDirectory(package.Name);
-                var packageDirectory = Packages.First(x => x.Package == package).CacheDirectory;
-                if (anchoredDirectory.Exists)
-                {
-                    if (_useSymLinks)
-                    {
-                        if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(packageDirectory))
-                            continue;
-                    }
-                    else
-                    {
-                        var anchorFile = anchoredDirectory.GetFile(".anchored");
-                        if (anchorFile.Exists)
-                        {
-                            var content = anchorFile.ReadString();
-                            if (content == packageDirectory.Name)
-                                continue;
-                        }
-                    }
-                    bool success = true;
-                    var temporaryDirectoryPath = anchoredDirectory.Parent.GetDirectory(anchoredDirectory.Name + ".old");
-                    try
-                    {
-                        anchoredDirectory.MoveTo(temporaryDirectoryPath);
 
-                        Anchor(packageDirectory, anchoredDirectory);
-                    }
-                    catch (Exception)
-                    {
-                        success = false;
-                    }
-                    if (success)
-                    {
-                        try
-                        {
-                            temporaryDirectoryPath.Delete();
-                        }
-                        catch (Exception)
-                        {
-                            success = false;
-                        }
-                    }
-                    yield return new PackageAnchoredResult(this, package, success);
-                }
-                else
-                {
-                    Anchor(packageDirectory, anchoredDirectory);
-                }
+                var success = anchorageStrategy.Anchor(BasePath, Packages.First(x => x.Package == package).CacheDirectory, package.Name);
+                if (success != null)
+                    yield return new PackageAnchoredResult(this, package, (bool)success);
             }
         }
 
+        public abstract class AnchorageStrategy
+        {
+            public abstract bool? Anchor(IDirectory packagesDirectory, IDirectory packageDirectory, string anchorName);
+        }
+        class DirectoryCopyAnchorageStrategy : AnchorageStrategy
+        {
+            public override bool? Anchor(IDirectory packagesDirectory, IDirectory packageDirectory, string anchorName)
+            {
+                var anchoredDirectory = packagesDirectory.GetDirectory(anchorName);
+
+                if (anchoredDirectory.Exists && anchoredDirectory.IsHardLink && !SafeDelete(anchoredDirectory))
+                    return false;
+                anchoredDirectory = packagesDirectory.GetDirectory(anchorName);
+                if (anchoredDirectory.Exists)
+                {
+                    var anchorFile = anchoredDirectory.GetFile(".anchored");
+                    if (anchorFile.Exists && anchorFile.ReadString() == packageDirectory.Name) return null;
+
+                    if (!SafeDelete(anchoredDirectory)) return false;
+                }
+                packageDirectory.CopyTo(anchoredDirectory);
+                anchoredDirectory.GetFile(".anchored").WriteString(packageDirectory.Name);
+                return true;
+            }
+        }
+        public class SymLinkAnchorageStrategy : AnchorageStrategy
+        {
+            public override bool? Anchor(IDirectory packagesDirectory, IDirectory packageDirectory, string anchorName)
+            {
+                var anchoredDirectory = packagesDirectory.GetDirectory(anchorName);
+             
+                
+                if (anchoredDirectory.Exists)
+                {
+                    if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(packageDirectory))
+                        return null;
+                    if (!SafeDelete(anchoredDirectory)) return false;
+                }
+                packageDirectory.LinkTo(anchoredDirectory.Path.FullPath);
+                return true;
+            }
+        }
+        static bool SafeDelete(IDirectory directory)
+        {
+            try
+            {
+                int count = 0;
+                IDirectory deleteableDirectory;
+                do
+                {
+                    deleteableDirectory = directory.Parent.GetDirectory("_" + directory.Name + "." + count++ + ".deleteme");
+                } while (deleteableDirectory.Exists);
+
+                directory.MoveTo(deleteableDirectory);
+                deleteableDirectory.Delete();
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+            return true;
+        }
         public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
         {
             packagesToKeep = packagesToKeep.ToList();
@@ -173,17 +192,6 @@ namespace OpenWrap.Repositories
             RefreshPackages();
         }
 
-        void Anchor(IDirectory packageDirectory, IDirectory anchoredDirectory)
-        {
-            var anchoredPath = anchoredDirectory.Path;
-            if (_useSymLinks)
-                packageDirectory.LinkTo(anchoredPath.FullPath);
-            else
-            {
-                packageDirectory.CopyTo(anchoredDirectory);
-                anchoredDirectory.GetFile(".anchored").WriteString(packageDirectory.Name);
-            }
-        }
 
         IPackageInfo CreatePackageInstance(IDirectory cacheDirectory, IFile wrapFile)
         {

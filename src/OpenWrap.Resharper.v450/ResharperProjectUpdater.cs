@@ -21,10 +21,11 @@ namespace OpenWrap.Resharper
         readonly object _lock = new object();
         readonly resharper::JetBrains.ProjectModel.IProject _project;
 
-        public ResharperProjectUpdater(resharper::JetBrains.ProjectModel.IProject project, Func<ExecutionEnvironment> env)
+        public ResharperProjectUpdater(IFile descriptor, resharper::JetBrains.ProjectModel.IProject project, Func<ExecutionEnvironment> env)
         {
             _project = project;
             _ignoredAssemblies = ReadIgnoredAssemblies();
+            Descriptor = descriptor;
             _env = env;
         }
         public string ProjectPath { get { return _project.ProjectFile.Location.FullPath; } }
@@ -38,31 +39,25 @@ namespace OpenWrap.Resharper
             get { return true; }
         }
 
-        public IFile Descriptor
-        {
-            get
-            {
-                // TODO: Detect which file is currently being monitored by the project
-                return ServiceLocator.GetService<IEnvironment>().DescriptorFile;
-            }
-        }
+        public IFile Descriptor { get; private set; }
 
-        public void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblies)
+        public void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> resolvedAssemblies)
         {
             ResharperLocks.WriteCookie("Updating references...",
                                        () =>
                                        {
                                            string projectFilePath = _project.ProjectFile.GetPresentableProjectPath();
 
-                                           var allAssemblyPaths = assemblies.Select(x => x.FullPath).ToList();
+                                           var resolvedAssemblyPaths = resolvedAssemblies.Select(x => x.FullPath).ToList();
 
-                                           var openwrapAssemblyReferences = _project.GetAssemblyReferences()
+                                           var owProjectAssemblyReferences = _project.GetAssemblyReferences()
                                                    .Where(x => x.GetProperty(ISWRAP) != null).ToList();
-                                           var openwrapAssemblyPaths = openwrapAssemblyReferences
+
+                                           var owProjectAssemblyReferencePaths = owProjectAssemblyReferences
                                                    .Select(x => x.HintLocation.FullPath).ToList();
 
-                                           foreach (var path in allAssemblyPaths
-                                                   .Where(x => openwrapAssemblyPaths.Contains(x) == false &&
+                                           foreach (var path in resolvedAssemblyPaths
+                                                   .Where(x => !owProjectAssemblyReferencePaths.Contains(x) &&
                                                                _ignoredAssemblies.Any(i => x.Contains(i + ".dll")) == false))
                                            {
                                                ResharperLogger.Debug("Adding reference {0} to {1}", projectFilePath, path);
@@ -70,13 +65,13 @@ namespace OpenWrap.Resharper
                                                var assembly = _project.AddAssemblyReference(path);
                                                assembly.SetProperty(ISWRAP, true);
                                            }
-                                           foreach (var toRemove in openwrapAssemblyPaths.Where(x => !allAssemblyPaths.Contains(x)))
+                                           foreach (var toRemove in owProjectAssemblyReferencePaths.Where(x => !resolvedAssemblyPaths.Contains(x)))
                                            {
                                                ResharperLogger.Debug("Removing reference {0} to {1}",
                                                                      projectFilePath,
                                                                      toRemove);
                                                _project.RemoveModuleReference(
-                                                       openwrapAssemblyReferences.First(
+                                                       owProjectAssemblyReferences.First(
                                                                x => x.HintLocation.FullPath == toRemove));
                                            }
                                        });

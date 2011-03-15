@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
+using OpenWrap.IO;
 using OpenWrap.PackageManagement.Monitoring;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
@@ -22,6 +23,7 @@ namespace OpenWrap.Resharper
         const int RETRY_DELAY_MS = 1000;
         readonly object _lock = new object();
         readonly IPackageDescriptorMonitor _monitor;
+        readonly IEnvironment _env;
         readonly Timer _refreshTimer;
 
         Func<ExecutionEnvironment> _environment;
@@ -35,15 +37,16 @@ namespace OpenWrap.Resharper
 // ReSharper disable UnusedMember.Global
         public ResharperIntegrationService()
 // ReSharper restore UnusedMember.Global
-                : this(ServiceLocator.GetService<IPackageDescriptorMonitor>())
+                : this(ServiceLocator.GetService<IPackageDescriptorMonitor>(), ServiceLocator.GetService<IEnvironment>())
         {
         }
 
 // ReSharper disable MemberCanBePrivate.Global
-        public ResharperIntegrationService(IPackageDescriptorMonitor monitor)
+        public ResharperIntegrationService(IPackageDescriptorMonitor monitor, IEnvironment env)
 // ReSharper restore MemberCanBePrivate.Global
         {
             _monitor = monitor;
+            _env = env;
             _refreshTimer = new Timer(_ => Refresh(), null, Timeout.Infinite, Timeout.Infinite);
         }
 
@@ -111,7 +114,7 @@ namespace OpenWrap.Resharper
                 IEnumerable<ResharperProjectUpdater> tempCurrentProjects;
                 ListProjects(_environment, out tempCurrentProjects);
                 var currentProjects = tempCurrentProjects.ToList();
-                var knownProjects = _knownProjects.ToList();
+                
                 foreach (var project in currentProjects.ToList())
                 {
                     var existing = currentProjects.FirstOrDefault(x => string.Equals(x.ProjectPath, project.ProjectPath, StringComparison.OrdinalIgnoreCase));
@@ -123,7 +126,7 @@ namespace OpenWrap.Resharper
                     _monitor.RegisterListener(project.Descriptor, _projectRepository, project);
                     _knownProjects.Add(project);
                 }
-                foreach (var oldProject in knownProjects)
+                foreach (var oldProject in currentProjects)
                 {
                     _monitor.UnregisterListener(oldProject);
                 }
@@ -211,10 +214,13 @@ namespace OpenWrap.Resharper
 
 
             ResharperLogger.Debug("Solution found");
+            
             var monitors = (
                                    from proj in solution.GetAllProjects()
                                    where ProjectIsOpenWrapEnabled(proj)
-                                   select new ResharperProjectUpdater(proj, env)
+                                   let scope = PathFinder.GetCurrentScope(_env.Descriptor.DirectoryStructure, new OpenFileSystem.IO.Path(proj.ProjectFile.Location.FullPath))
+                                   let descriptor = _env.ScopedDescriptors.ContainsKey(scope) ? _env.ScopedDescriptors[scope] : _env.ScopedDescriptors[string.Empty]
+                                   select new ResharperProjectUpdater(descriptor.File, proj, env)
                            ).ToList();
             projects = monitors;
             return true;

@@ -118,6 +118,8 @@ namespace OpenWrap.Build.PackageBuilders
                     writer.WriteLine("/p:TargetFrameworkIdentifier=" + msbuildVersioning.Identifier);
                     writer.WriteLine("/p:TargetFrameworkProfile=" + msbuildVersioning.Profile);
                 }
+                if (Debugger.IsAttached)
+                    writer.WriteLine("/p:OpenWrap-StartDebug=true");
                 writer.WriteLine("/p:OpenWrap-EmitOutputInstructions=true");
                 writer.WriteLine("/p:OpenWrap-CurrentProjectFile=\"" + project.Path.FullPath + "\"");
                 if (msbuildTargets != null)

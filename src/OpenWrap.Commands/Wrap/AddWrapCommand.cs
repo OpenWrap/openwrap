@@ -130,29 +130,36 @@ namespace OpenWrap.Commands.Wrap
 
             yield return VerifyWrapFile();
             yield return VeryfyWrapRepository();
-
             var sourceRepositories = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }
-                .Concat(Environment.RemoteRepositories)
-                .Concat(Environment.ProjectRepository)
-                .NotNull();
+                        .Concat(Environment.RemoteRepositories)
+                        .Concat(Environment.ProjectRepository)
+                        .NotNull();
             var targetDescriptor = Environment.GetOrCreateScopedDescriptor(Scope ?? string.Empty);
+            
+
             if (Project && System)
             {
-                var sysToAdd = new List<PackageIdentifier>();
-                foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, Environment.ProjectRepository, AddOptions))
+                    var sysToAdd = new List<PackageIdentifier>();
+                using (ChangeMonitor(targetDescriptor))
                 {
-                    yield return ToOutput(m);
-                    ParseSuccess(m, sysToAdd.Add);
-                }
-                foreach (var identifier in sysToAdd)
-                    foreach (var m in PackageManager.AddSystemPackage(PackageRequest.Exact(identifier.Name, identifier.Version), sourceRepositories, Environment.SystemRepository))
+                    foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, Environment.ProjectRepository, AddOptions))
+                    {
                         yield return ToOutput(m);
+                        ParseSuccess(m, sysToAdd.Add);
+                    }
+                    foreach (var identifier in sysToAdd)
+                        foreach (var m in PackageManager.AddSystemPackage(PackageRequest.Exact(identifier.Name, identifier.Version), sourceRepositories, Environment.SystemRepository))
+                            yield return ToOutput(m);
+                }
             }
             else if (Project)
             {
-                foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, Environment.ProjectRepository, AddOptions))
+                using(ChangeMonitor(targetDescriptor))
                 {
-                    yield return ToOutput(m);
+                    foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, Environment.ProjectRepository, AddOptions))
+                    {
+                        yield return ToOutput(m);
+                    }
                 }
             }
             else if (System)
@@ -179,6 +186,7 @@ namespace OpenWrap.Commands.Wrap
             if (ShouldUpdateDescriptor)
                 TrySaveDescriptorFile(targetDescriptor);
         }
+
 
         IEnumerable<ICommandOutput> ValidateInputs()
         {
