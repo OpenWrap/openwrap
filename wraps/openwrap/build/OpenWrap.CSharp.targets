@@ -9,7 +9,6 @@
     <!-- Emit output information post-build for OpenWrap to create packages -->
     <OpenWrap-EmitOutputInstructions Condition="'$(OpenWrap-EmitOutputInstructions)' == ''">false</OpenWrap-EmitOutputInstructions>
 
-
     <OpenWrap-EnableVisualStudioIntegration Condition="'$(OpenWrap-EnableVisualStudioIntegration)' == ''">false</OpenWrap-EnableVisualStudioIntegration>
     <!-- We detect the root path based on the existence of a /wraps folder -->
     <OpenWrap-ProjectRepositoryPath Condition="'$(OpenWrap-ProjectRepositoryPath)' == ''">$(MSBuildProjectDirectory)\..\wraps</OpenWrap-ProjectRepositoryPath>
@@ -38,21 +37,15 @@
   	<OpenWrap-IncludeSourceFiles Condition="'$(OpenWrap-IncludeSourceFiles)' == ''">false</OpenWrap-IncludeSourceFiles>
   </PropertyGroup>
 
-
-  <ItemGroup>
-    <_WrapFile Include="$(OpenWrap-DescriptorPath)" Condition="'$(OpenWrap-DescriptorPath)' == ''" />
-    <_WrapFile Include="$(MSBuildProjectDirectory)\*.wrapdesc" />
-    <_WrapFile Include="$(MSBuildProjectDirectory)\..\*.wrapdesc" Condition="!Exists('@(_WrapFile->'%(FullPath)')')" />
-    <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\*.wrapdesc" Condition="!Exists('@(_WrapFile->'%(FullPath)')')" />
-    <_WrapFile Include="$(MSBuildProjectDirectory)\..\..\..\*.wrapdesc" Condition="!Exists('@(_WrapFile->'%(FullPath)')')" />
-  </ItemGroup>
   <Target Name="_Initialize">
     <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" CurrentProjectFile="$(MSBuildProjectFullPath)" >
       <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
+      <Output TaskParameter="Scope" PropertyName="OpenWrap-Scope" Condition="'$(OpenWrap-Scope)' == ''" />
+      <Output TaskParameter="DescriptorPath" PropertyName="OpenWrap-DescriptorPath" Condition="'$(OpenWrap-DescriptorPath)' == ''" />
     </InitializeOpenWrap>
 
     <InitializeVisualStudioIntegration
-      WrapDescriptor="@(_WrapFile)"
+      WrapDescriptor="$(OpenWrap-DescriptorPath)"
       WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
       Platform="$(OpenWrap-TargetPlatform)"
       Profile="$(OpenWrap-TargetProfile)"
@@ -60,7 +53,7 @@
       EnableVisualStudioIntegration="$(OpenWrap-EnableVisualStudioIntegration)"
       ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)" />
     <!-- Sanity checks -->
-    <Error Condition="!Exists('%(_WrapFile.FullPath)')" Text="Could not locate the .wrapdesc file '%(FullPath)'." />
+    
     <Error Condition="'$(OutputType)' != 'winexe' and '$(OutputType)' != 'exe' and '$(OutputType)' != 'library'" Text="The project type '$(OutputType)' is not supported." />
 
   </Target>
@@ -75,22 +68,16 @@
 
   <Target Name="OpenWrap-ResolveReferences">
     <ResolveWrapReferences
-      WrapDescriptor="@(_WrapFile)"
+      WrapDescriptor="$(OpenWrap-DescriptorPath)"
       WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
       Platform="$(OpenWrap-TargetPlatform)"
       Profile="$(OpenWrap-TargetProfile)"
-      ProjectFilePath="$(MSBuildProjectFullPath)"
       ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)"
       InputReferences="@(Reference)"
       CopyLocal="$(OpenWrap-CopyLocal)">
       <Output TaskParameter="OutputReferences" ItemName="Reference" />
 
     </ResolveWrapReferences>
-  </Target>
-
-  <Target Name="_ViewPaths" DependsOnTargets="_Initialize;">
-    <Message Text="OpenWrap wraps directory at $(OpenWrap-ProjectRepositoryPath)" />
-    <Message Text="Visual Studio output path is $(OutputPath)" />
   </Target>
 
   <Target Name="OpenWrap-BeforeBuild" DependsOnTargets="_Initialize">
