@@ -98,7 +98,6 @@
     <Compile Include="Commands\add_wrap\from_path\directory.cs" />
     <Compile Include="Commands\add_wrap\from_path\directory_with_unknown_file_and_file_in_current_directory.cs" />
     <Compile Include="Commands\add_wrap\from_path\folder_with_package_in_current_directory.cs" />
-    <Compile Include="Commands\add_wrap\from_path\from_current_directory_with_compatible_remote_packages.cs" />
     <Compile Include="Commands\add_wrap\from_path\from_directory_with_dependencies_avaiable_elsewhere.cs" />
     <Compile Include="Commands\add_wrap\from_path\from_directory_with_name_being_absolute_path.cs" />
     <Compile Include="Commands\add_wrap\from_path\unknown_directory.cs" />
@@ -149,6 +148,7 @@
     <Compile Include="PackageModel\descriptors\setting_single_value_to_default.cs" />
     <Compile Include="PackageModel\descriptors\setting_symlinks.cs" />
     <Compile Include="PackageModel\descriptors\unknown_lines_in_descriptor.cs" />
+    <Compile Include="resolving_dependency_trees\resolving_content_branches.cs" />
     <Compile Include="resolving_dependency_trees\resolving_namespaced_dependency.cs" />
     <Compile Include="Testing\finding_runner\runner_in_referenced_package_is_found.cs" />
   </ItemGroup>

@@ -30,4 +30,4 @@ namespace Tests.Commands.add_wrap.from_path
             Results.ShouldHaveError();            
         }
     }
-}§
+}

@@ -6,4 +6,4 @@ build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src
 name: openwrap
 depends: tdnet-framework
 use-symlinks: true
-version: 1.0.0.57540944
+version: 1.1.0.57857518
