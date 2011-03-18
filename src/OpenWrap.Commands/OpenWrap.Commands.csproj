@@ -65,6 +65,7 @@
     <Compile Include="Wrap\SetWrapCommand.cs" />
     <Compile Include="Wrap\TestWrapCommand.cs" />
     <Compile Include="Wrap\UpdatePackageVertex.cs" />
+    <Compile Include="Wrap\ViewWrapCommand.cs" />
     <Compile Include="Wrap\WrapCommand.cs" />
   </ItemGroup>
   <ItemGroup>

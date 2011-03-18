@@ -119,6 +119,7 @@
     <Compile Include="Commands\remove_wrap\removing_by_version_and_last.cs" />
     <Compile Include="Commands\remove_wrap\removing_by_version_in_project.cs" />
     <Compile Include="Commands\remove_wrap\removing_by_version_in_system.cs" />
+    <Compile Include="Commands\Wrap\viewWrapCommand.cs" />
     <Compile Include="contexts\descriptor.cs" />
     <Compile Include="contexts\descriptor_readers.cs" />
     <Compile Include="contexts\scoped_descriptor.cs" />

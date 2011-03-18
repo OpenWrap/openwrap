@@ -122,6 +122,7 @@
     <Compile Include="PackageManagement\PackageRemoveResultIterator.cs" />
     <Compile Include="PackageManagement\PackageUpdateOptions.cs" />
     <Compile Include="PackageManagement\PackageUpdateResultIterator.cs" />
+    <Compile Include="PackageManagement\ViewWrapCommandOutput.cs" />
     <Compile Include="PackageModel\InvalidPackageException.cs" />
     <Compile Include="PackageModel\IPackageDescriptor.cs" />
     <Compile Include="PackageModel\LessThanOrEqualVersionVertex.cs" />
