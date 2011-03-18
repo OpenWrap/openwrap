@@ -6,7 +6,6 @@ using System.Text;
 using NUnit.Framework;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenFileSystem.IO.FileSystems.Local;
-using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenFileSystem.IO;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageModel;

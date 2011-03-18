@@ -33,13 +33,13 @@ namespace OpenWrap.Commands.Wrap
             IEnumerable<ICommandOutput> outputs = Enumerable.Empty<ICommandOutput>();
             if (IncludeProject)
                 outputs = outputs.Concat((string.IsNullOrEmpty(Name)
-                                                ? PackageManager.CleanProjectPackages(Environment.ScopedDescriptors.Select(x=>x.Value.Value), Environment.ProjectRepository)
-                                                : PackageManager.CleanProjectPackages(Environment.ScopedDescriptors.Select(x => x.Value.Value), Environment.ProjectRepository, Name))
+                                                ? PackageManager.CleanProjectPackages(HostEnvironment.ScopedDescriptors.Select(x=>x.Value.Value), HostEnvironment.ProjectRepository)
+                                                : PackageManager.CleanProjectPackages(HostEnvironment.ScopedDescriptors.Select(x => x.Value.Value), HostEnvironment.ProjectRepository, Name))
                                           .Select(ToOutput));
             if (System)
                 outputs = outputs.Concat((string.IsNullOrEmpty(Name)
-                                                ? PackageManager.CleanSystemPackages(Environment.SystemRepository)
-                                                : PackageManager.CleanSystemPackages(Environment.SystemRepository, Name))
+                                                ? PackageManager.CleanSystemPackages(HostEnvironment.SystemRepository)
+                                                : PackageManager.CleanSystemPackages(HostEnvironment.SystemRepository, Name))
                                           .Select(ToOutput));
 
             return outputs;

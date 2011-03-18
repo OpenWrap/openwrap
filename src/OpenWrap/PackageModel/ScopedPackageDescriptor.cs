@@ -64,6 +64,11 @@ namespace OpenWrap.PackageModel
                 set { _title.Value = value; }
             }
 
+            public string Namespace
+            {
+                get { return _parent.Namespace; }
+            }
+
             public string Description
             {
                 get { return _description.Value; }

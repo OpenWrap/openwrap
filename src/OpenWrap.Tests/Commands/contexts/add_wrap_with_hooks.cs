@@ -10,7 +10,7 @@ using OpenWrap.Testing;
 
 namespace Tests.Commands.contexts
 {
-    public class add_wrap_with_hooks : add_wrap_command
+    public class add_wrap_with_hooks : add_wrap
     {
         string Scope;
         protected List<ChangedCall> AddCalls = new List<ChangedCall>();

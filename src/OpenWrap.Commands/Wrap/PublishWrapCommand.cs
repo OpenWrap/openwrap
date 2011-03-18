@@ -99,12 +99,12 @@ namespace OpenWrap.Commands.Wrap
             else if (Name != null)
             {
                 // get latest version of the Named package
-                if (!Environment.CurrentDirectoryRepository.PackagesByName.Contains(Name))
+                if (!HostEnvironment.CurrentDirectoryRepository.PackagesByName.Contains(Name))
                 {
                     yield return new Error("No package named '{0}' was found.", Name);
                     yield break;
                 }
-                var packageToCopy = Environment.CurrentDirectoryRepository.PackagesByName[Name].OrderByDescending(x => x.Version).First();
+                var packageToCopy = HostEnvironment.CurrentDirectoryRepository.PackagesByName[Name].OrderByDescending(x => x.Version).First();
                 _packageStream = () => packageToCopy.Load().OpenStream();
                 _packageFileName = packageToCopy.FullName + ".wrap";
                 _packageName = packageToCopy.Name;

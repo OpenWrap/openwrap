@@ -5,7 +5,6 @@ using current_directory_specifications.context;
 using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
-using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenWrap;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageModel;

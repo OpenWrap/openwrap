@@ -10,15 +10,16 @@ namespace OpenWrap.PackageModel
         ICollection<string> Build { get; }
         ICollection<PackageDependency> Dependencies { get; }
         string Title { get; set; }
-        string Description { get; set; }
+        string Namespace { get; }
+        string Description { get; }
         string FullName { get; }
         PackageIdentifier Identifier { get; }
         string Name { get; set; }
         ICollection<PackageNameOverride> Overrides { get; }
-        bool UseProjectRepository { get; set; }
-        bool UseSymLinks { get; set; }
+        bool UseProjectRepository { get; }
+        bool UseSymLinks { get; }
         Version Version { get; set; }
-        string ReferencedAssemblies { get; set; }
+        string ReferencedAssemblies { get; }
         ICollection<string> DirectoryStructure { get; }
         IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read);
     }

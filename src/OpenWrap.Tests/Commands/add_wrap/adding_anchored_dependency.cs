@@ -1,10 +1,11 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Tests.Commands
 {
-    public class adding_anchored_dependency : add_wrap_command
+    public class adding_anchored_dependency : add_wrap
     {
         public adding_anchored_dependency()
         {

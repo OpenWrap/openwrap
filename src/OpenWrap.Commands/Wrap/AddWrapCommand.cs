@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using OpenFileSystem.IO;
 using OpenWrap.Collections;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 using SysPath = System.IO.Path;
 
 namespace OpenWrap.Commands.Wrap
@@ -17,6 +19,7 @@ namespace OpenWrap.Commands.Wrap
         bool? _project;
 
         bool? _system;
+        FolderRepository _userSpecifiedRepository;
 
         [CommandInput]
         public bool Anchored { get; set; }
@@ -41,6 +44,9 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public bool NoHooks { get; set; }
+
+        [CommandInput]
+        public string From { get; set; }
 
         [CommandInput]
         public bool Project
@@ -92,7 +98,7 @@ namespace OpenWrap.Commands.Wrap
             get
             {
                 return NoDescriptorUpdate == false &&
-                       Environment.Descriptor != null;
+                       HostEnvironment.Descriptor != null;
             }
         }
 
@@ -121,42 +127,38 @@ namespace OpenWrap.Commands.Wrap
                 onFailure();
         }
 
+
         IEnumerable<ICommandOutput> ExecuteCore()
         {
-            if (Name.EndsWith(".wrap", StringComparison.OrdinalIgnoreCase))
-            {
-                yield return WrapFileToPackageDescriptor();
-            }
+            var targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope ?? string.Empty);
 
-            yield return VerifyWrapFile();
-            yield return VeryfyWrapRepository();
-            var sourceRepositories = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }
-                        .Concat(Environment.RemoteRepositories)
-                        .Concat(Environment.ProjectRepository)
-                        .NotNull();
-            var targetDescriptor = Environment.GetOrCreateScopedDescriptor(Scope ?? string.Empty);
-            
+            yield return VerifyDescriptor(targetDescriptor);
+            yield return VerifyProjectRepository();
+
+            yield return SetupEnvironmentForAdd();
+            var sourceRepositories = GetSourceRepositories();
+
 
             if (Project && System)
             {
-                    var sysToAdd = new List<PackageIdentifier>();
+                var sysToAdd = new List<PackageIdentifier>();
                 using (ChangeMonitor(targetDescriptor))
                 {
-                    foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, Environment.ProjectRepository, AddOptions))
+                    foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, HostEnvironment.ProjectRepository, AddOptions))
                     {
                         yield return ToOutput(m);
                         ParseSuccess(m, sysToAdd.Add);
                     }
                     foreach (var identifier in sysToAdd)
-                        foreach (var m in PackageManager.AddSystemPackage(PackageRequest.Exact(identifier.Name, identifier.Version), sourceRepositories, Environment.SystemRepository))
+                        foreach (var m in PackageManager.AddSystemPackage(PackageRequest.Exact(identifier.Name, identifier.Version), sourceRepositories, HostEnvironment.SystemRepository))
                             yield return ToOutput(m);
                 }
             }
             else if (Project)
             {
-                using(ChangeMonitor(targetDescriptor))
+                using (ChangeMonitor(targetDescriptor))
                 {
-                    foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, Environment.ProjectRepository, AddOptions))
+                    foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, HostEnvironment.ProjectRepository, AddOptions))
                     {
                         yield return ToOutput(m);
                     }
@@ -164,7 +166,7 @@ namespace OpenWrap.Commands.Wrap
             }
             else if (System)
             {
-                foreach (var m in PackageManager.AddSystemPackage(PackageRequest, sourceRepositories, Environment.SystemRepository, AddOptions))
+                foreach (var m in PackageManager.AddSystemPackage(PackageRequest, sourceRepositories, HostEnvironment.SystemRepository, AddOptions))
                 {
                     yield return ToOutput(m);
                 }
@@ -185,6 +187,14 @@ namespace OpenWrap.Commands.Wrap
             }
             if (ShouldUpdateDescriptor)
                 TrySaveDescriptorFile(targetDescriptor);
+        }
+
+        IEnumerable<IPackageRepository> GetSourceRepositories()
+        {
+              return new[] { _userSpecifiedRepository, HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }
+                    .Concat(HostEnvironment.RemoteRepositories)
+                    .Concat(HostEnvironment.ProjectRepository)
+                    .NotNull();
         }
 
 
@@ -219,7 +229,7 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
-            if (Project && Environment.ProjectRepository == null)
+            if (Project && HostEnvironment.ProjectRepository == null)
             {
                 yield return new Error("Project repository doesn't exist but -project has been specified.");
                 yield break;
@@ -232,41 +242,49 @@ namespace OpenWrap.Commands.Wrap
         }
 
 
-        ICommandOutput VerifyWrapFile()
+        ICommandOutput VerifyDescriptor(FileBased<IPackageDescriptor> descriptor)
         {
             if (NoDescriptorUpdate)
-                return new GenericMessage("Wrap descriptor ignored.");
-            return Environment.Descriptor == null
-                           ? new GenericMessage(@"Wrap descriptor absent.")
-                           : new GenericMessage("Wrap descriptor present.");
+                return new GenericMessage("Descriptor file will not be updated.");
+            return descriptor.File.Exists
+                           ? new GenericMessage(@"Using descriptor {0}.", descriptor.File.Name)
+                           : new GenericMessage("Creating descriptor {0}.", descriptor.File.Name);
         }
 
-        ICommandOutput VeryfyWrapRepository()
+        ICommandOutput VerifyProjectRepository()
         {
-            return Environment.ProjectRepository != null
+            return HostEnvironment.ProjectRepository != null
                            ? new GenericMessage("Project repository present.")
                            : new GenericMessage("Project repository absent.");
         }
 
-        ICommandOutput WrapFileToPackageDescriptor()
+        ICommandOutput SetupEnvironmentForAdd()
         {
-            if (SysPath.GetExtension(Name).EqualsNoCase(".wrap") && Environment.CurrentDirectory.GetFile(SysPath.GetFileName(Name)).Exists)
+            var directory = HostEnvironment.CurrentDirectory;
+
+            var fromDirectory = string.IsNullOrEmpty(From) ? null : FileSystem.GetDirectory(From);
+            if (fromDirectory != null && fromDirectory.Exists)
+            {
+                if (SysPath.GetExtension(Name).EqualsNoCase(".wrap") &&
+                    SysPath.IsPathRooted(Name) &&
+                    FileSystem.GetDirectory(SysPath.GetDirectoryName(Name)) != fromDirectory)
+                {
+                    return new Error("You provided both -From and -Name, but -Name is a path. Try removing the -From parameter.");
+                }
+                directory = fromDirectory;
+                _userSpecifiedRepository = new FolderRepository(directory, FolderRepositoryOptions.Default);
+            }
+
+
+            if (SysPath.GetExtension(Name).EqualsNoCase(".wrap") && directory.GetFile(SysPath.GetFileName(Name)).Exists)
             {
                 var originalName = Name;
                 Name = PackageNameUtility.GetName(SysPath.GetFileNameWithoutExtension(Name));
                 Version = PackageNameUtility.GetVersion(SysPath.GetFileNameWithoutExtension(originalName)).ToString();
-                return
-                        new GenericMessage(
-                                string.Format(
-                                        "The requested package contained '.wrap' in the name. Assuming you pointed to the file in the current directory and meant a package named '{0}' with version qualifier '{1}'.",
-                                        Name,
-                                        Version)) { Type = CommandResultType.Warning };
-            }
-            if (File.Exists(Name))
-            {
-                return
-                        new Error(
-                                "You have given a path to a .wrap file that is not in the current directory but exists on disk. This is not currently supported. Go to the directory, and re-issue the command.");
+
+                return new Warning("The requested package contained '.wrap' in the name. Assuming you pointed to a file name and meant a package named '{0}' with version qualifier '{1}'.",
+                                    Name,
+                                    Version);
             }
             return null;
         }

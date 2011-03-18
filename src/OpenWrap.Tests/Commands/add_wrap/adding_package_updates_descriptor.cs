@@ -6,7 +6,7 @@ using OpenWrap.Testing;
 
 namespace OpenWrap.Commands.add_wrap
 {
-    public class adding_package_updates_descriptor : add_wrap_command
+    public class adding_package_updates_descriptor : global::Tests.Commands.contexts.add_wrap
     {
         public adding_package_updates_descriptor()
         {

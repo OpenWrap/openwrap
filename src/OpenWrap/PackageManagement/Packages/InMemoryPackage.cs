@@ -45,6 +45,8 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageDescriptor Descriptor { get; private set; }
 
+        public string Namespace { get; set; }
+
         public IExport GetExport(string exportName, ExecutionEnvironment environment)
         {
             return null;
