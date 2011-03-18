@@ -12,7 +12,7 @@ namespace Tests.Commands.add_wrap.hooks
         public successful_add_triggers_dependent_removal()
         {
             given_project_repository();
-            given_project_package("one-ring", "1.0.0", "depends: fire = 1.0");
+            given_project_package("one-ring", "1.0.0", string.Empty, "depends: fire = 1.0");
             given_project_package("fire", "1.0");
             given_dependency("depends: one-ring");
 

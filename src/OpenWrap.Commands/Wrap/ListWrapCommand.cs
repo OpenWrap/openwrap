@@ -5,6 +5,8 @@ using System.Text;
 using OpenWrap.Collections;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Configuration;
+using OpenWrap.PackageManagement;
+using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
@@ -19,6 +21,9 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public bool System { get; set; }
+
+        [CommandInput(IsValueRequired = false)]
+        public bool Detailed { get; set; }
 
         string _remote;
         bool _remoteSet;
@@ -44,8 +49,15 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
-            foreach (var m in PackageManager.ListPackages(repoToList, Query))
+            var currentPackages = CurrentPackages();
+
+            foreach (var m in PackageManager.ListPackages(repoToList, Query, Detailed ? PackageListOptions.Detailed : PackageListOptions.Default, currentPackages))
                 yield return ToOutput(m);
+        }
+
+        IEnumerable<IPackageInfo> CurrentPackages()
+        {
+            return Environment.ProjectRepository != null ? Environment.ProjectRepository.PackagesByName.NotNull().SelectMany(x => x) :  Enumerable.Empty<IPackageInfo>();
         }
 
         IEnumerable<IPackageRepository> GetRepositoryToList()

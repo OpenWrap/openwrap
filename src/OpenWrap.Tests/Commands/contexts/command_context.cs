@@ -77,7 +77,13 @@ namespace OpenWrap.Commands.contexts
         protected void given_project_package(string name, string version, params string[] dependencies)
         {
             given_project_repository(new InMemoryRepository("Project repository"));
-            AddPackage(Environment.ProjectRepository, name, version, dependencies);
+            AddPackage(Environment.ProjectRepository, name, version, dependencies, string.Empty);
+        }
+
+        protected void given_project_package(string name, string version, string description, params string[] dependencies)
+        {
+            given_project_repository(new InMemoryRepository("Project repository"));
+            AddPackage(Environment.ProjectRepository, name, version, dependencies, description);
         }
 
         protected void given_project_repository()
@@ -99,20 +105,21 @@ namespace OpenWrap.Commands.contexts
         protected void given_remote_package(string name, Version version, params string[] dependencies)
         {
             // note Version is a version type because of overload resolution...
-            AddPackage(Environment.RemoteRepository, name, version.ToString(), dependencies);
+            AddPackage(Environment.RemoteRepository, name, version.ToString(), dependencies, string.Empty);
         }
 
         protected void given_remote_package(string repositoryName, string name, Version version, params string[] dependencies)
         {
-            AddPackage(Environment.RemoteRepositories.First(x=>x.Name == repositoryName), name, version.ToString(), dependencies);
+            AddPackage(Environment.RemoteRepositories.First(x => x.Name == repositoryName), name, version.ToString(), dependencies, string.Empty);
         }
 
         protected void given_system_package(string name, string version, params string[] dependencies)
         {
-            AddPackage(Environment.SystemRepository, name, version, dependencies);
+            AddPackage(Environment.SystemRepository, name, version, dependencies, string.Empty);
         }
 
-        static void AddPackage(IPackageRepository repository, string name, string version, string[] dependencies)
+
+        static void AddPackage(IPackageRepository repository, string name, string version, string[] dependencies, string description)
         {
             if (repository is InMemoryRepository)
             {
@@ -121,6 +128,7 @@ namespace OpenWrap.Commands.contexts
                         Name = name,
                         Source = repository,
                         Version = version.ToVersion(),
+                        Description = description,
                         Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies).ToList()
                 });
                 return;
@@ -140,7 +148,7 @@ namespace OpenWrap.Commands.contexts
         protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
         {
             if (Environment.CurrentDirectoryRepository is InMemoryRepository)
-                AddPackage(Environment.CurrentDirectoryRepository, packageName, version.ToString(), dependencies);
+                AddPackage(Environment.CurrentDirectoryRepository, packageName, version.ToString(), dependencies,string.Empty);
             else
             {
                 var localFile = Environment.CurrentDirectory.GetFile(PackageNameUtility.PackageFileName(packageName, version.ToString())).MustExist();

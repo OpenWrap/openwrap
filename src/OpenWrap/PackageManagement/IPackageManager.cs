@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 
@@ -54,7 +55,7 @@ namespace OpenWrap.PackageManagement
         IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, PackageCleanOptions options = PackageCleanOptions.Default);
         IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, string packageName, PackageCleanOptions options = PackageCleanOptions.Default);
 
-        IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null, PackageListOptions options = PackageListOptions.Default);
+        IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null, PackageListOptions options = PackageListOptions.Default, IEnumerable<IPackageInfo> currentPackages = null);
         
         event PackageUpdated PackageUpdated;
         event PackageChanged PackageAdded;

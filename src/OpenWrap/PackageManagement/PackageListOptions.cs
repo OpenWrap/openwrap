@@ -5,6 +5,7 @@ namespace OpenWrap.PackageManagement
     [Flags]
     public enum PackageListOptions
     {
-        Default
+        Default,
+        Detailed
     }
 }
