@@ -5,10 +5,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Tests.Commands
 {
-    class adding_wrap_from_local_package_in_project_path_without_descriptor_update : add_wrap_command
+    class adding_wrap_from_local_package_in_project_path_without_descriptor_update : add_wrap
     {
         
         public adding_wrap_from_local_package_in_project_path_without_descriptor_update()

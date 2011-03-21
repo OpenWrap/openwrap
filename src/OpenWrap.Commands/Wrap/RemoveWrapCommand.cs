@@ -52,9 +52,9 @@ namespace OpenWrap.Commands.Wrap
         {
             if (Version != null && Last)
                 yield return new Error("Cannot use '-Last' and '-Version' together.");
-            if (System && !Environment.SystemRepository.PackagesByName[Name].Any())
+            if (System && !HostEnvironment.SystemRepository.PackagesByName[Name].Any())
                 yield return new Error("Cannot find package named '{0}' in system repository.", Name);
-            if (Project && Environment.ProjectRepository == null)
+            if (Project && HostEnvironment.ProjectRepository == null)
                 yield return new Error("Not in a package directory.");
         }
 
@@ -63,18 +63,18 @@ namespace OpenWrap.Commands.Wrap
             var options = Options;
             if (Project && Version != null)
                 yield return new Warning("Because you have selected a specific version to remove from the project repository, your descriptor file will not be updated. To remove the dependency from your descriptor, either do not specify a version or use the set-wrap command to update the version of a package in use by your project.");
-            var targetDescriptor = Environment.GetOrCreateScopedDescriptor(Scope);
+            var targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope);
 
             if (Project)
             {
                 using (ChangeMonitor(targetDescriptor))
                 {
-                    foreach (var m in PackageManager.RemoveProjectPackage(PackageRequest, targetDescriptor.Value, Environment.ProjectRepository, options)) yield return ToOutput(m);
+                    foreach (var m in PackageManager.RemoveProjectPackage(PackageRequest, targetDescriptor.Value, HostEnvironment.ProjectRepository, options)) yield return ToOutput(m);
                     if (Successful) TrySaveDescriptorFile(targetDescriptor);
                 }
             }
             if (System)
-                foreach (var m in PackageManager.RemoveSystemPackage(PackageRequest, Environment.SystemRepository, Options)) yield return ToOutput(m);
+                foreach (var m in PackageManager.RemoveSystemPackage(PackageRequest, HostEnvironment.SystemRepository, Options)) yield return ToOutput(m);
         }
 
 

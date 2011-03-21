@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.contexts;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Tests.Commands
 {
-    class adding_exact_version : add_wrap_command
+    class adding_exact_version : add_wrap
     {
         public adding_exact_version()
         {

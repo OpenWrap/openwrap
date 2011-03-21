@@ -4,6 +4,7 @@ using System.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -51,8 +52,9 @@ namespace OpenWrap.Commands.Wrap
 
         PackageDependency FindDependencyByName()
         {
-            return Environment.Descriptor.Dependencies.FirstOrDefault(d => d.Name.EqualsNoCase(Name));
+            return HostEnvironment.Descriptor.Dependencies.FirstOrDefault(d => d.Name.EqualsNoCase(Name));
         }
+
 
         IEnumerable<ICommandOutput> ValidateInputs()
         {
@@ -97,9 +99,9 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> ExecuteCore()
         {
             var newDependency = UpdatedDependency(_dependency);
-            Environment.Descriptor.Dependencies.Remove(_dependency);
-            Environment.Descriptor.Dependencies.Add(newDependency);
-            RewriteDescriptorFile(Environment.Descriptor);
+            HostEnvironment.Descriptor.Dependencies.Remove(_dependency);
+            HostEnvironment.Descriptor.Dependencies.Add(newDependency);
+            RewriteDescriptorFile(HostEnvironment.Descriptor);
             yield break;
         }
 
@@ -147,7 +149,7 @@ namespace OpenWrap.Commands.Wrap
 
         void RewriteDescriptorFile(IPackageDescriptor descriptor)
         {
-            using (var destinationStream = Environment.DescriptorFile.OpenWrite())
+            using (var destinationStream = HostEnvironment.DescriptorFile.OpenWrite())
             {
                 new PackageDescriptorReaderWriter().Write(descriptor, destinationStream);
             }

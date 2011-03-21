@@ -38,11 +38,11 @@ namespace OpenWrap.Commands.Wrap
 
             if ( System )
             {
-                item = PackageInfo(Environment.SystemRepository.PackagesByName[Name]);
+                item = PackageInfo(HostEnvironment.SystemRepository.PackagesByName[Name]);
             }
             if (Project)
             {
-                item = PackageInfo(Environment.ProjectRepository.PackagesByName[Name]);
+                item = PackageInfo(HostEnvironment.ProjectRepository.PackagesByName[Name]);
             }
 
             if (item == null)
@@ -53,11 +53,11 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> VerifyInputs()
         {
-            if (System && !Environment.SystemRepository.PackagesByName[Name].Any())
+            if (System && !HostEnvironment.SystemRepository.PackagesByName[Name].Any())
                 yield return new Error("Cannot find package named '{0}' in system repository.", Name);
-            if (Project && Environment.ProjectRepository == null)
+            if (Project && HostEnvironment.ProjectRepository == null)
                 yield return new Error("Not in a package directory.");
-            if (Project && Environment.ProjectRepository != null && !Environment.ProjectRepository.PackagesByName[Name].Any())
+            if (Project && HostEnvironment.ProjectRepository != null && !HostEnvironment.ProjectRepository.PackagesByName[Name].Any())
                 yield return new Error("Cannot find package named '{0}' in project repository.", Name);
         }
 

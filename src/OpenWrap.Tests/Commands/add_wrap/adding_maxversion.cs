@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.contexts;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Tests.Commands
 {
-    class adding_maxversion : add_wrap_command
+    class adding_maxversion : add_wrap
     {
         public adding_maxversion()
         {

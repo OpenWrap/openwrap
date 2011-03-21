@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenRasta.Wrap.Tests.Dependencies.context;
+using Tests.contexts;
 
 namespace OpenWrap.Tests.Dependencies
 {

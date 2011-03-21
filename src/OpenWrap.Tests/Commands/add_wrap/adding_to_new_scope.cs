@@ -6,7 +6,7 @@ using Tests.Commands;
 
 namespace OpenWrap.Commands.add_wrap
 {
-    class adding_to_new_scope : contexts.add_wrap_command
+    class adding_to_new_scope : global::Tests.Commands.contexts.add_wrap
     {
         DateTimeOffset? DefaultDescriptorTimeStamp;
         DateTimeOffset? ScopedDescriptorTimeStamp;

@@ -57,21 +57,21 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<IPackageInfo> CurrentPackages()
         {
-            return Environment.ProjectRepository != null ? Environment.ProjectRepository.PackagesByName.NotNull().SelectMany(x => x) :  Enumerable.Empty<IPackageInfo>();
+            return HostEnvironment.ProjectRepository != null ? HostEnvironment.ProjectRepository.PackagesByName.NotNull().SelectMany(x => x) : Enumerable.Empty<IPackageInfo>();
         }
 
         IEnumerable<IPackageRepository> GetRepositoryToList()
         {
             if (System)
             {
-                if (Environment.SystemRepository != null)
-                    yield return Environment.SystemRepository;
+                if (HostEnvironment.SystemRepository != null)
+                    yield return HostEnvironment.SystemRepository;
                 yield break;
             }
             if (_remoteSet && string.IsNullOrEmpty(Remote))
             {
 
-                foreach (var remote in Environment.RemoteRepositories.NotNull())
+                foreach (var remote in HostEnvironment.RemoteRepositories.NotNull())
                     yield return remote;
             }
             if (_remoteSet)
@@ -81,8 +81,8 @@ namespace OpenWrap.Commands.Wrap
                     yield return repo;
                 yield break;
             }
-            if (Environment.ProjectRepository != null)
-                yield return Environment.ProjectRepository;
+            if (HostEnvironment.ProjectRepository != null)
+                yield return HostEnvironment.ProjectRepository;
         }
     }
 }

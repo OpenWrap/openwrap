@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using OpenRasta.Wrap.Tests.Dependencies.context;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;

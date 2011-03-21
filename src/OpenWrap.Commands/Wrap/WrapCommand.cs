@@ -19,7 +19,7 @@ namespace OpenWrap.Commands.Wrap
         {
             Successful = true;
         }
-        public IEnvironment Environment
+        public IEnvironment HostEnvironment
         {
             get { return Services.ServiceLocator.GetService<IEnvironment>(); }
 
@@ -78,20 +78,20 @@ namespace OpenWrap.Commands.Wrap
                 yield return m;
         }
 
-        protected IPackageRepository GetRemoteRepository(string repositoryName)
+        protected IPackageRepository GetRemoteRepository(string repository)
         {
             Uri possibleUri;
             try
             {
-                possibleUri = new Uri(repositoryName, UriKind.Absolute);
+                possibleUri = new Uri(repository, UriKind.Absolute);
             }
             catch
             {
                 possibleUri = null;
             }
             return possibleUri != null
-                           ? new RemoteRepositoryBuilder(FileSystem, ConfigurationManager).BuildPackageRepositoryForUri(repositoryName, possibleUri)
-                           : Environment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(repositoryName));
+                           ? new RemoteRepositoryBuilder(FileSystem, ConfigurationManager).BuildPackageRepositoryForUri(repository, possibleUri)
+                           : HostEnvironment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(repository));
         }
         protected IDisposable ChangeMonitor(FileBased<IPackageDescriptor> descriptor)
         {
@@ -112,14 +112,14 @@ namespace OpenWrap.Commands.Wrap
                     listener.Dispose();
                     if (packagesChanged)
                     {
-                        if (Environment.Descriptor != descriptor.Value)
+                        if (HostEnvironment.Descriptor != descriptor.Value)
                         {
                             descriptor.File.Touch();
-                            Environment.DescriptorFile.Touch();
+                            HostEnvironment.DescriptorFile.Touch();
                         }
                         else
                         {
-                            foreach (var file in Environment.ScopedDescriptors.Select(x => x.Value.File))
+                            foreach (var file in HostEnvironment.ScopedDescriptors.Select(x => x.Value.File))
                                 file.Touch();
                         }
                     }

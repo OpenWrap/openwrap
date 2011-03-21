@@ -46,7 +46,7 @@ namespace OpenWrap.Commands.Wrap
         }
         ICommandOutput VerifyInputs()
         {
-            if (Project && Environment.ProjectRepository == null)
+            if (Project && HostEnvironment.ProjectRepository == null)
                 return new Error("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
             return null;
         }
@@ -57,11 +57,11 @@ namespace OpenWrap.Commands.Wrap
             yield return new Result("Searching for updated packages...");
 
 
-            var sourceRepos = new[] { Environment.CurrentDirectoryRepository }.Concat(Environment.RemoteRepositories).ToList();
+            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository }.Concat(HostEnvironment.RemoteRepositories).ToList();
 
             foreach (var x in (string.IsNullOrEmpty(Name)
-                ? PackageManager.UpdateSystemPackages(sourceRepos, Environment.SystemRepository)
-                : PackageManager.UpdateSystemPackages(sourceRepos, Environment.SystemRepository, Name))
+                ? PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository)
+                : PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository, Name))
                 .Select(ToOutput))
                 yield return x;
         }
@@ -71,9 +71,9 @@ namespace OpenWrap.Commands.Wrap
             if (!Project)
                 yield break;
 
-            var sourceRepos = new[] { Environment.CurrentDirectoryRepository, Environment.SystemRepository }.Concat(Environment.RemoteRepositories);
-            foreach (var x in (string.IsNullOrEmpty(Name) ? PackageManager.UpdateProjectPackages(sourceRepos, Environment.ProjectRepository, Environment.Descriptor)
-                                                         : PackageManager.UpdateProjectPackages(sourceRepos, Environment.ProjectRepository, Environment.Descriptor, Name))
+            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(HostEnvironment.RemoteRepositories);
+            foreach (var x in (string.IsNullOrEmpty(Name) ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor)
+                                                         : PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor, Name))
                     .Select(ToOutputForProject))
                 yield return x;
         }

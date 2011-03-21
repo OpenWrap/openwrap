@@ -1,12 +1,14 @@
 ﻿using OpenFileSystem.IO;
+using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.IO.Packaging;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 
-namespace OpenWrap.Commands.contexts
+namespace Tests.Commands.contexts
 {
-    public class add_wrap_command : command_context<AddWrapCommand>
+    public class add_wrap : command_context<AddWrapCommand>
     {
         protected IDirectory ProjectRepositoryDir;
         protected IPackageDescriptor PostExecutionDescriptor;
@@ -22,6 +24,11 @@ namespace OpenWrap.Commands.contexts
         {
             ProjectRepositoryDir = FileSystem.GetDirectory(@"c:\repo");
             given_project_repository(new FolderRepository(ProjectRepositoryDir, FolderRepositoryOptions.UseSymLinks | FolderRepositoryOptions.AnchoringEnabled));
+        }
+
+        protected void given_file_package(string directory, string name, string version, params string[] lines)
+        {
+            Packager.NewWithDescriptor(FileSystem.GetDirectory(directory).GetFile(PackageNameUtility.PackageFileName(name, version)), name, version, lines);
         }
     }
 }

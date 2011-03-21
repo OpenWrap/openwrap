@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using OpenWrap;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
-using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Tests.Commands.Wrap
+namespace Tests.Commands.build_wrap
 {
     [TestFixture("test.txt", "files; file=bin-net35->test.txt")]
     [TestFixture("test.txt", "files; file = bin-net35 -> test.txt ")]
