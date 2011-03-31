@@ -12,5 +12,9 @@ namespace OpenWrap.PackageModel
         {
             return Version.Equals(version);
         }
+        public override string ToString()
+        {
+            return "≡ " + Version;
+        }
     }
 }

@@ -21,10 +21,10 @@ namespace OpenWrap.Commands
         {
         }
 
-        ICommand ICommandOutput.Source
-        {
-            get { return null; }
-        }
+        //ICommand ICommandOutput.Source
+        //{
+        //    get { return null; }
+        //}
 
         CommandResultType ICommandOutput.Type
         {

@@ -71,15 +71,15 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
                 .Source.ShouldBeOfType<TravelToMordor>()
                     .HasRing.ShouldBeTrue();
         }
-        [Test]
-        public void parameter_is_assigned_when_starting_with_correct_value()
-        {
-            given_command<TravelToMordor>();
-            when_parsing_input("lotr", "travel", "-has", "true");
+        //[Test]
+        //public void parameter_is_assigned_when_starting_with_correct_value()
+        //{
+        //    given_command<TravelToMordor>();
+        //    when_parsing_input("lotr", "travel", "-has", "true");
 
-            Output.Source.ShouldBeOfType<TravelToMordor>()
-                    .HasRing.ShouldBeTrue();
-        }
+        //    Output.Source.ShouldBeOfType<TravelToMordor>()
+        //            .HasRing.ShouldBeTrue();
+        //}
         [Test]
         public void one_parameter_is_assigned_by_order()
         {
@@ -105,16 +105,16 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             command.HasRing.ShouldBeFalse();
             command.IsDangerous.ShouldBeTrue();
         }
-        [Test]
-        public void bool_parameters_are_considered_switches()
-        {
-            given_command<TravelToMordor>();
+        //[Test]
+        //public void bool_parameters_are_considered_switches()
+        //{
+        //    given_command<TravelToMordor>();
 
-            when_parsing_input("lotr", "travel", "-IsDangerous");
+        //    when_parsing_input("lotr", "travel", "-IsDangerous");
 
-            Output.Source.ShouldBeOfType<TravelToMordor>()
-                .IsDangerous.ShouldBeTrue();
-        }
+        //    Output.Source.ShouldBeOfType<TravelToMordor>()
+        //        .IsDangerous.ShouldBeTrue();
+        //}
         [Test]
         public void parameter_is_assigned_using_beginning_of_input_name()
         {

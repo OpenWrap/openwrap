@@ -13,7 +13,7 @@ namespace Tests.resolving_dependency_trees
             when_resolving_packages();
         }
 
-        [Test]
+        [Test, Ignore("unfinished")]
         public void resolve_is_successful()
         {
             Resolve.IsSuccess.ShouldBeTrue();

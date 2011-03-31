@@ -73,6 +73,7 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionOnDispose.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="IO\TemplatePathSegment.cs" />
     <Compile Include="IO\WildcardPathSegment.cs" />
     <Compile Include="PackageManagement\AbstractPackageOperationResultIterator.cs" />
+    <Compile Include="PackageManagement\PackageGraphVisitor.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageMissingOutput.cs" />
     <Compile Include="PackageManagement\IPackageAddResult.cs" />
     <Compile Include="PackageManagement\IPackageCleanResult.cs" />
@@ -135,7 +137,6 @@
     <Compile Include="Repositories\NuGet\NuSpecConverter.cs" />
     <Compile Include="PackageManagement\Monitoring\IResolvedAssembliesUpdateListener.cs" />
     <Compile Include="Build\MSBuildEnvironment.cs" />
-    <Compile Include="Build\VersionExtensions.cs" />
     <Compile Include="Check.cs" />
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\NotificationCollection.cs" />

@@ -125,9 +125,25 @@
     <Compile Include="Commands\remove_wrap\removing_by_version_and_last.cs" />
     <Compile Include="Commands\remove_wrap\removing_by_version_in_project.cs" />
     <Compile Include="Commands\remove_wrap\removing_by_version_in_system.cs" />
+    <Compile Include="Commands\update_wrap\command_flags\project_and_system_flag_specified.cs" />
+    <Compile Include="Commands\update_wrap\project\from_system.cs" />
+    <Compile Include="Commands\update_wrap\command_flags\defaults.cs" />
+    <Compile Include="Commands\update_wrap\project_and_system\from_remote.cs" />
+    <Compile Include="Commands\update_wrap\command_flags\system_flag_specified.cs" />
+    <Compile Include="Commands\update_wrap\command_flags\project_flag_specified.cs" />
+    <Compile Include="Commands\update_wrap\RepositoryAssertions.cs" />
+    <Compile Include="Commands\update_wrap\system\from_remote_with_missing_dependents.cs" />
+    <Compile Include="Commands\update_wrap\system\from_remote_with_revision_change.cs" />
+    <Compile Include="Commands\update_wrap\system\from_current_directory.cs" />
+    <Compile Include="Commands\update_wrap\system\from_remote.cs" />
+    <Compile Include="Commands\update_wrap\project\from_remote_by_name.cs" />
+    <Compile Include="Commands\update_wrap\system\from_remote_by_name.cs" />
+    <Compile Include="Commands\update_wrap\project\not_in_project.cs" />
+    <Compile Include="Commands\update_wrap\project\from_remote.cs" />
     <Compile Include="contexts\dependency_manager_context.cs" />
     <Compile Include="contexts\descriptor.cs" />
     <Compile Include="contexts\descriptor_readers.cs" />
+    <Compile Include="contexts\package_graph_visitor.cs" />
     <Compile Include="contexts\scoped_descriptor.cs" />
     <Compile Include="Dependencies\hooks\successful_add.cs" />
     <Compile Include="IO\compound_template_path_segment_specs.cs" />
@@ -148,9 +164,14 @@
     <Compile Include="PackageModel\descriptors\setting_single_value_to_default.cs" />
     <Compile Include="PackageModel\descriptors\setting_symlinks.cs" />
     <Compile Include="PackageModel\descriptors\unknown_lines_in_descriptor.cs" />
-    <Compile Include="resolving_dependency_trees\resolving_content_branches.cs" />
+    <Compile Include="resolving_dependency_trees\resolving_package_depending_on_content_package.cs" />
+    <Compile Include="resolving_dependency_trees\resolving_content_branch_for_package_mared_as_content.cs" />
+    <Compile Include="resolving_dependency_trees\resolving_content_branch_for_package_with_mixed_content.cs" />
     <Compile Include="resolving_dependency_trees\resolving_namespaced_dependency.cs" />
     <Compile Include="Testing\finding_runner\runner_in_referenced_package_is_found.cs" />
+    <Compile Include="visiting_package_graphs\visiting_from_node.cs" />
+    <Compile Include="visiting_package_graphs\visiting_linear_package_graph.cs" />
+    <Compile Include="visiting_package_graphs\visiting_non_linear_package_graph.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Engine, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -203,7 +224,7 @@
     <Compile Include="Commands\remove_wrap\removing_from_project_when_not_in_project.cs" />
     <Compile Include="Commands\Wrap\initWrapCommand.cs" />
     <Compile Include="Commands\Wrap\setWrapCommand.cs" />
-    <Compile Include="Commands\Wrap\updateWrapCommand.cs" />
+    <Compile Include="Commands\update_wrap\project\package_only_in_project.cs" />
     <Compile Include="Configuration\configuration_parser_spec.cs" />
     <Compile Include="Configuration\configuration_specifications.cs" />
     <Compile Include="context.cs" />
