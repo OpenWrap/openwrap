@@ -16,8 +16,10 @@ using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Parsers;
 using OpenWrap.PackageModel.Serialization;
+using OpenWrap.Reflection;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
 
@@ -42,7 +44,9 @@ namespace OpenWrap.Commands.contexts
             Services.ServiceLocator.RegisterService<IEnvironment>(Environment);
             Services.ServiceLocator.RegisterService<IPackageResolver>(new ExhaustiveResolver());
             Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
-            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
+            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new IExportProvider[]{
+                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment)
+                }));
             Services.ServiceLocator.RegisterService<ICommandRepository>(Commands);
             
             Services.ServiceLocator.TryRegisterService<IPackageManager>(PackageManagerFactory());
@@ -54,7 +58,8 @@ namespace OpenWrap.Commands.contexts
         {
             return () => new DefaultPackageManager(
                                  Services.ServiceLocator.GetService<IPackageDeployer>(),
-                                 Services.ServiceLocator.GetService<IPackageResolver>());
+                                 Services.ServiceLocator.GetService<IPackageResolver>(),
+                                 Services.ServiceLocator.GetService<IPackageExporter>());
         }
 
         protected virtual IFileSystem given_file_system(string currentDirectory)
@@ -191,7 +196,7 @@ namespace OpenWrap.Commands.contexts
 
         public command_context()
         {
-            Command = new AttributeBasedCommandDescriptor<T>();
+            Command = new AttributeBasedCommandDescriptor<T>(typeof(T).GetAttribute<CommandAttribute>());
             Commands = new CommandRepository { Command };
 
             

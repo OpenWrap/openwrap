@@ -132,7 +132,7 @@
     <Compile Include="Commands\update_wrap\command_flags\system_flag_specified.cs" />
     <Compile Include="Commands\update_wrap\command_flags\project_flag_specified.cs" />
     <Compile Include="Commands\update_wrap\RepositoryAssertions.cs" />
-    <Compile Include="Commands\update_wrap\system\from_remote_with_missing_dependents.cs" />
+    <Compile Include="Commands\update_wrap\system\by_name_from_remote_with_missing_dependents.cs" />
     <Compile Include="Commands\update_wrap\system\from_remote_with_revision_change.cs" />
     <Compile Include="Commands\update_wrap\system\from_current_directory.cs" />
     <Compile Include="Commands\update_wrap\system\from_remote.cs" />
@@ -308,8 +308,10 @@
   <ItemGroup>
     <Folder Include="Commands\add_wrap\from_remote\" />
     <Folder Include="Commands\remove_wrap\hooks\" />
+    <Folder Include="Commands\repository\" />
     <Folder Include="Commands\Wrap\buildwrap\" />
     <Folder Include="descriptors\" />
+    <Folder Include="Exporters\content\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Repositories\feedodata2.xml" />

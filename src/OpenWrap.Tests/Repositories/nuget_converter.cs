@@ -67,10 +67,8 @@ namespace nuget_converter_specs
         public void assembly_is_in_bin_folder()
         {
             var package = Package.Load();
-            var exports = package.GetExport("bin-net20", new ExecutionEnvironment { Platform = "AnyCPU", Profile = "net20" });
-            exports
-                    .Items.ShouldHaveCountOf(1)
-                    .First().FullPath.Check(x => IOPath.GetFileName(x).ShouldBe("empty.dll"));
+            package.Content.Single(x=>x.Key == "bin-net20").ShouldHaveCountOf(1)
+                    .First().File.Name.ShouldBe("empty.dll");
         }
     }
     public class converting_description_with_line_breaks : contexts.nuspec
@@ -227,7 +225,7 @@ namespace nuget_converter_specs
                 using(var openWrapPackage = wrapFile.OpenWrite())
                     NuGetConverter.Convert(NuPackage, openWrapPackage);
                 
-                Package = new CachedZipPackage(null, wrapFile, cacheDir, new IExportBuilder[0]);
+                Package = new CachedZipPackage(null, wrapFile, cacheDir);
             }
 
             protected IPackageInfo Package { get; set; }

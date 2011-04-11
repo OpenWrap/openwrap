@@ -1,37 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using OpenWrap.Commands.Core;
+using OpenWrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
-using OpenWrap.Repositories;
-using OpenWrap.Services;
-using OpenWrap;
+
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Verb = "update", Noun = "wrap")]
     public class UpdateWrapCommand : WrapCommand
     {
+        bool? _project;
         bool? _system;
 
         [CommandInput(Position = 0)]
         public string Name { get; set; }
 
         [CommandInput]
-        public bool System
-        {
-            get { return _system != null ? (bool)_system : false; }
-            set { _system = value; }
-        }
-
-        bool? _project;
-
-        [CommandInput]
         public bool Project
         {
             get { return _project == true || (_project == null && _system != true); }
             set { _project = value; }
+        }
+
+        [CommandInput]
+        public bool System
+        {
+            get { return _system != null ? (bool)_system : false; }
+            set { _system = value; }
         }
 
         public override IEnumerable<ICommandOutput> Execute()
@@ -44,52 +40,12 @@ namespace OpenWrap.Commands.Wrap
             return Either(VerifyInputs)
                     .Or(update);
         }
-        ICommandOutput VerifyInputs()
+
+        protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
-            if (Project && HostEnvironment.ProjectRepository == null)
-                return new Error("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
-            return null;
-        }
-        IEnumerable<ICommandOutput> UpdateSystemPackages()
-        {
-            yield return new Result("Updating system packages...");
-
-
-            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository }.Concat(HostEnvironment.RemoteRepositories).ToList();
-
-            var missings = new List<PackageMissingResult>();
-            var conflicts = new List<PackageConflictResult>();
-
-            foreach (var x in (string.IsNullOrEmpty(Name)
-                ? PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository)
-                : PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository, Name)))
-                if (x is PackageMissingResult) missings.Add((PackageMissingResult)x);
-                else if (x is PackageConflictResult) conflicts.Add((PackageConflictResult)x);
-                else yield return x.ToOutput();
-            var stacks = (from missing in missings
-                          from trace in missing.Package.DependencyStacks
-                          select new
-                          {
-                              who = trace.First(),
-                              value = string.Format("not found: {0} (trace: {1})",
-                                                    missing.Package.Identifier.Name,
-                                                    trace)
-                          }).Union(
-                                  from conflict in conflicts
-                                  from trace in conflict.Package.DependencyStacks
-                                  select new
-                                  {
-                                      who = trace.First(),
-                                      value = string.Format("conflict: {0} (trace: {1})",
-                                                            conflict.Package.Identifier.Name,
-                                                            trace)
-                                  }
-                    ).ToLookup(x => x.who, x => x.value);
-            foreach (var failed in stacks)
-            {
-                yield return new Warning("{0} could not be updated:\r\n\t{1}", failed.Key,
-                    failed.Join("\r\n\t"));
-            }
+            if (packageOperationResult is PackageMissingResult)
+                return new Warning("Cannot update package because of missing packages: {0}.", ((PackageMissingResult)packageOperationResult).Package.Identifier);
+            else return base.ToOutput(packageOperationResult);
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
@@ -97,27 +53,60 @@ namespace OpenWrap.Commands.Wrap
             yield return new Result("Updating project packages...");
 
             var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(HostEnvironment.RemoteRepositories);
-            var operation = string.IsNullOrEmpty(Name)
-                ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor)
-                : PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor, Name);
+            var errors = new List<PackageOperationResult>();
+            foreach (var x in (string.IsNullOrEmpty(Name)
+                                       ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor)
+                                       : PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor, Name)))
+                if (x is PackageMissingResult || x is PackageConflictResult) errors.Add(x);
+                else yield return x.ToOutput();
 
-            //List<PackageMissingResult> missing = new List<PackageMissingResult>();
-            //var incompatible = new List<PackageMissingResult>();
-            foreach (var x in operation)
-                yield return x.ToOutput();//If<PackageMissingResult>(_=>new Warning("{0}: Dependency not found: {1}.", _.Package.DependencyStacks.));
+            foreach (var failed in errors.GetFailures())
+            {
+
+                var errorMessage = "{0} could not be updated\r\n{1}";
+
+                var details = new[] { " - " + failed.First() }.Concat(failed.Skip(1).Select(x => "   " + x));
+
+                yield return new Error(errorMessage, failed.Key, details.Join(@"\r\n"));
+            }
         }
-        ICommandOutput ToOutputForProject(PackageOperationResult packageOperationResult)
+
+        IEnumerable<ICommandOutput> UpdateSystemPackages()
         {
-            return packageOperationResult is PackageMissingResult
-                           ? new PackageMissingOutput((PackageMissingResult)packageOperationResult)
-                           : ToOutput(packageOperationResult);
+            var isByName = !string.IsNullOrEmpty(Name);
+            yield return new Result(isByName
+                                            ? "Updating system packages..."
+                                            : string.Format("Updating system package '{0}'", Name));
+
+
+
+            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository }.Concat(HostEnvironment.RemoteRepositories).ToList();
+
+            var errors = new List<PackageOperationResult>();
+
+            foreach (var x in (isByName ? PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository, Name)
+                                        : PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository)))
+                if (x is PackageMissingResult || x is PackageConflictResult) errors.Add(x);
+                else yield return x.ToOutput();
+            var stacks = errors.GetFailures();
+            foreach (var failed in stacks)
+            {
+                var key = failed.Key;
+                var errorTraces = failed.SelectMany(_=>new[] { " - " + _.First() }.Concat(_.Skip(1).Select(x => "   " + x))).Join("\r\n");
+                var errorMessage = "{0} could not be updated:\r\n{1}";
+
+                if (isByName)
+                    yield return new Error(errorMessage, failed.Key, errorTraces);
+                else
+                    yield return new Warning(errorMessage, failed.Key, errorTraces);
+            }
         }
-        protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
+
+        ICommandOutput VerifyInputs()
         {
-            if (packageOperationResult is PackageMissingResult)
-                return new Warning("Cannot update package because of missing packages: {0}.", ((PackageMissingResult)packageOperationResult).Package.Identifier);
-            else return base.ToOutput(packageOperationResult);
+            if (Project && HostEnvironment.ProjectRepository == null)
+                return new Error("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
+            return null;
         }
     }
-
 }

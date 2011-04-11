@@ -1,17 +1,27 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using OpenWrap.Build.Tasks.Hooks;
+using OpenWrap.Collections;
+using OpenWrap.Commands;
+using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Repositories;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
+using OpenWrap.VisualStudio.Hooks;
 
 namespace OpenWrap.Build.Tasks
 {
     public class InitializeVisualStudioIntegration : Task
     {
+        static UICommands _commands;
         public bool EnableVisualStudioIntegration { get; set; }
 
         [Required]
@@ -71,10 +81,33 @@ namespace OpenWrap.Build.Tasks
         {
             ResharperLogger.Debug("Initialize called on " + ProjectFilePath);
             EnsureWrapRepositoryIsInitialized();
+            
             if (!EnableVisualStudioIntegration) return true;
-
             ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository);
+            SolutionAddIn.Initialize();
+            if (_commands == null)
+            {
+                lock (this)
+                    if (_commands == null)
+                    {
+                        var repository = new CommandRepository(ReadCommands(Services.ServiceLocator.GetService<IEnvironment>()));
+                        _commands = new UICommands(repository);
+                        _commands.Initialize();
+                    }
+            }
             return true;
         }
+
+        static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
+        {
+            throw new NotImplementedException();
+            //return Services.ServiceLocator.GetService<IPackageExporter>()
+            //        .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
+            //        .SelectMany(x => x.Items)
+            //        .OfType<ICommandExportItem>()
+            //        .Select(x => x.Descriptor).ToList();
+        }
+
     }
+
 }

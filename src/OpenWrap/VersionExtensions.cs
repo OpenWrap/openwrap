@@ -8,8 +8,9 @@ namespace OpenWrap
         static readonly DateTime FROM = new DateTime(2010, 01, 01);
         public static Version IgnoreRevision(this Version version)
         {
-            return new Version(version.Major, version.Minor, version.Build);
+            return version.Build >= 0 ? new Version(version.Major, version.Minor, version.Build) : new Version(version.Major, version.Minor);
         }
+
         public static string GenerateVersionNumber(this string version)
         {
             var match = Regex.Match(version, @"^(?<version>\d+\.\d+\.\d+)(?<revision>\..*$)?");

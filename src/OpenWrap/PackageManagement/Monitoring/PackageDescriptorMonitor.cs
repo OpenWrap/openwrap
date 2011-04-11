@@ -20,6 +20,10 @@ namespace OpenWrap.PackageManagement.Monitoring
         {
             get { return Services.ServiceLocator.GetService<IPackageResolver>(); }
         }
+        IPackageManager PackageManager
+        {
+            get { return Services.ServiceLocator.GetService<IPackageManager>(); }
+        }
 
         public void Initialize()
         {
@@ -91,7 +95,7 @@ namespace OpenWrap.PackageManagement.Monitoring
                     .Single();
 
             foreach (var client in subscriptions.Clients)
-                client.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, client.Environment, descriptor, subscriptions.Repository));
+                client.AssembliesUpdated(PackageManager.GetAssemblyReferences(descriptor, subscriptions.Repository, false));
         }
 
         void NotifyClient(IFile wrapPath, IResolvedAssembliesUpdateListener listener)
@@ -107,7 +111,7 @@ namespace OpenWrap.PackageManagement.Monitoring
                     .Single();
 
 
-            listener.AssembliesUpdated(PackageResolver.GetAssemblyReferences(false, listener.Environment, descriptor, subscriptions.Repository));
+            listener.AssembliesUpdated(PackageManager.GetAssemblyReferences(descriptor, subscriptions.Repository, false));
         }
 
         class DescriptorSubscriptions

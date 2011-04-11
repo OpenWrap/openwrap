@@ -73,6 +73,14 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="Commands\Cli\AliasCommandLineHandler.cs" />
+    <Compile Include="Commands\Cli\CommandLineHandler.cs" />
+    <Compile Include="Commands\Cli\NounVerbCommandLineHandler.cs" />
+    <Compile Include="Commands\Cli\VerbNounCommandLineHandler.cs" />
+    <Compile Include="Commands\IUICommand.cs" />
+    <Compile Include="Commands\IUICommandDescriptor.cs" />
+    <Compile Include="Commands\IUICommandRepository.cs" />
+    <Compile Include="Commands\UICommandContext.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -238,16 +246,13 @@
     <Compile Include="Reflection\ReflectionExtensions.cs" />
     <Compile Include="Repositories\RemoteRepositoryBuilder.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\CallStack.cs" />
-    <Compile Include="PackageManagement\Exporters\CommandExport.cs" />
     <Compile Include="PackageManagement\Exporters\CommandExportBuilder.cs" />
-    <Compile Include="PackageManagement\Exporters\CommandExportItem.cs" />
     <Compile Include="Repositories\CurrentDirectoryRepository.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\DependencyNode.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageConflictsOutput.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\DependencyVisitor.cs" />
     <Compile Include="DictionaryExtensions.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ExhaustiveResolver.cs" />
-    <Compile Include="Repositories\ExportBuilders.cs" />
     <Compile Include="AssemblyNameExtensions.cs" />
     <Compile Include="Repositories\FolderRepositoryOptions.cs" />
     <Compile Include="Repositories\GacResolver.cs" />
@@ -329,15 +334,9 @@
     <Compile Include="PackageModel\Serialization\PackageDescriptorReaderWriter.cs" />
     <Compile Include="Runtime\ExecutionEnvironment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PackageManagement\Exporters\AssemblyReferenceExport.cs" />
-    <Compile Include="PackageManagement\Exporters\AssemblyReferenceExportBuilder.cs" />
-    <Compile Include="PackageManagement\Exporters\AssemblyReferenceExportItem.cs" />
     <Compile Include="PackageManagement\Exporters\EnvironmentDependentFile.cs" />
     <Compile Include="PackageManagement\Exporters\FileExportItem.cs" />
-    <Compile Include="PackageManagement\Exporters\FolderExport.cs" />
     <Compile Include="PackageManagement\Packages\UncompressedPackage.cs" />
-    <Compile Include="PackageManagement\Exporters\IAssemblyReferenceExportItem.cs" />
-    <Compile Include="PackageManagement\IExportBuilder.cs" />
     <Compile Include="PackageModel\IPackage.cs" />
     <Compile Include="Reflection\SharedReflectionExtensions.cs" />
     <Compile Include="IO\StreamExtensions.cs" />
@@ -399,4 +398,9 @@
   -->
   <Target Name="AfterBuild">
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\openwrap\build\ /y
+copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\_cache\openwrap-1.1.0.57857518\bin-net35\ /y
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

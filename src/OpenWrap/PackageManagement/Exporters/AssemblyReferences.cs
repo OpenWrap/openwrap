@@ -11,43 +11,21 @@ namespace OpenWrap.PackageManagement.Exporters
 {
     public static class AssemblyReferences
     {
-        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(this IPackageResolver resolver,
-                                                                                      bool includeContentOnly,
-                                                                                      ExecutionEnvironment exec,
-                                                                                      IPackageDescriptor descriptor,
-                                                                                      params IPackageRepository[] repositories)
+
+        public static IEnumerable<Exports.IAssembly> GetAssemblyReferences(this IPackageManager manager,
+                                                                                    IPackageDescriptor descriptor,
+                                                                                    IPackageRepository repository,
+                                                                                    bool includeContentOnly)
         {
-            return GetAssemblyReferences(resolver.TryResolveDependencies(descriptor, repositories.NotNull()), exec, includeContentOnly);
+            var sourcePackages = manager.ListProjectPackages(descriptor, repository);
+            var assemblies = manager.GetProjectExports<Exports.IAssembly>(descriptor, repository)
+                    .SelectMany(x => x);
+
+            if (!includeContentOnly) return assemblies;
+
+            var packagesToInclude = sourcePackages.InContentBranch(descriptor.Dependencies).ToList();
+            return assemblies.Where(x => packagesToInclude.Contains(x.Package));
         }
 
-        public static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(ExecutionEnvironment exec, params IPackageRepository[] repositories)
-        {
-            return GetAssemblyReferencesFromPackages(repositories.NotNull().SelectMany(x => x.PackagesByName.SelectMany(y => y)), exec);
-        }
-
-        static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferences(DependencyResolutionResult resolveResult, ExecutionEnvironment exec, bool includeContentOnly)
-        {
-            var packages = resolveResult.SuccessfulPackages.Where(resolvedPackage => includeContentOnly || !resolvedPackage.IsInContentBranch).SelectMany(x => x.Packages);
-            return GetAssemblyReferencesFromPackages(packages, exec);
-        }
-
-
-        static IEnumerable<IAssemblyReferenceExportItem> GetAssemblyReferencesFromPackages(IEnumerable<IPackageInfo> packages, ExecutionEnvironment exec)
-        {
-            return from package in packages.NotNull()
-                           .GroupBy(x => x.Name)
-                           .Select(x => x.OrderByDescending(y => y.Version).Select(y=>y.Load()).NotNull().First())
-                   from assembly in package.Load().GetExport("bin", exec).Items.Cast<IAssemblyReferenceExportItem>()
-                   where MatchesReferenceSection(package, assembly)
-                   select assembly;
-        }
-
-        static bool MatchesReferenceSection(IPackage package, IAssemblyReferenceExportItem assembly)
-        {
-            var specs = package.Descriptor.ReferencedAssemblies.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
-                                                               .Select(spec=>spec.Trim().Wildcard());
-            var fileName = System.IO.Path.GetFileName(assembly.FullPath);
-            return specs.Any(spec => spec.IsMatch(assembly.AssemblyName.Name) || spec.IsMatch(fileName));
-        }
     }
 }

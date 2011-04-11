@@ -58,6 +58,7 @@
     <Compile Include="Core\CommandGroupResult.cs" />
     <Compile Include="Errors\FileNotFound.cs" />
     <Compile Include="Errors\IncompleteAuthentication.cs" />
+    <Compile Include="Gui\InvokeCommand.cs" />
     <Compile Include="Remote\RemoteRepositoryMessage.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />

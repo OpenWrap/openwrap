@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 
@@ -55,6 +56,9 @@ namespace OpenWrap.PackageManagement
         IPackageCleanResult CleanSystemPackages(IPackageRepository systemRepository, string packageName, PackageCleanOptions options = PackageCleanOptions.Default);
 
         IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null, PackageListOptions options = PackageListOptions.Default);
+
+        IEnumerable<IPackageInfo> ListProjectPackages(IPackageDescriptor descriptor, IPackageRepository projectRepository);
+        IEnumerable<IGrouping<string, TItem>>  GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository) where TItem:IExportItem;
         
         event PackageUpdated PackageUpdated;
         event PackageChanged PackageAdded;

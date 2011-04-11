@@ -178,18 +178,9 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
 
     public class InMemItem : IExportItem
     {
-        public string FullPath { get; set; }
-    }
+        public string Path { get; set; }
 
-    public class InMemExport : IExport
-    {
-        public InMemExport()
-        {
-            Items = new List<IExportItem>();
-        }
-
-        public IEnumerable<IExportItem> Items { get; set; }
-        public string Name { get; set; }
+        public IPackage Package { get; set; }
     }
 
     public static class TestExtensions

@@ -23,6 +23,7 @@ namespace OpenWrap.Build.Tasks
             Debugger.Log(0, "resharper", DateTime.Now.ToShortTimeString() + ":" + string.Format(text, args) + "\r\n");
         }
     }
+
     public static class ResharperHook
     {
         const int WAIT_RETRY_MS = 5000;
@@ -48,7 +49,6 @@ namespace OpenWrap.Build.Tasks
             {
                 if (_called)
                     return;
-
                 TryCreateIntegrationService();
                 TryRegisterProjectToResharper(() => environment, descriptorPath, packageRepository);
             }

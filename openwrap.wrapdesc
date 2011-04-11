@@ -6,3 +6,4 @@ build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src
 name: openwrap
 depends: tdnet-framework
 use-symlinks: true
+depends: mono.cecil

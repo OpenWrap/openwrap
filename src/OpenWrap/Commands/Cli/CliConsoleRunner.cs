@@ -12,6 +12,7 @@ using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 using OpenWrap.Tasks;
 
 namespace OpenWrap.Commands.Cli
@@ -31,11 +32,14 @@ namespace OpenWrap.Commands.Cli
             Services.ServiceLocator.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
             Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
-            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
+            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new IExportProvider[]{
+                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment)
+                }));
             Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             Services.ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
                                                                                 Services.ServiceLocator.GetService<IPackageDeployer>(),
-                                                                                Services.ServiceLocator.GetService<IPackageResolver>()
+                                                                                Services.ServiceLocator.GetService<IPackageResolver>(),
+                                                                                Services.ServiceLocator.GetService<IPackageExporter>()
                                                                                 ));
 
             Services.ServiceLocator.RegisterService<ITaskManager>(new TaskManager());

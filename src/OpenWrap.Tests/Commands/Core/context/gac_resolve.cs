@@ -11,10 +11,13 @@ using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Commands.Core;
 using OpenWrap.IO.Packaging;
+using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Tests.Dependencies
@@ -28,7 +31,14 @@ namespace OpenWrap.Tests.Dependencies
             FileSystem = LocalFileSystem.Instance;
             PackageFile = FileSystem.CreateTempFile();
             PackageFileDirectory = FileSystem.CreateTempDirectory();
+            Exporter = new DefaultPackageExporter(new IExportProvider[]
+            {
+                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment)
+            });
         }
+
+        protected DefaultPackageExporter Exporter { get; set; }
+
         [TestFixtureTearDown]
         void DeleteTemp()
         {
@@ -43,7 +53,7 @@ namespace OpenWrap.Tests.Dependencies
 
         protected void when_loading_assembly_in_gac()
         {
-            result = GacResolver.InGac(new[]
+            result = Exporter.InGac(new[]
             {
                     new CachedZipPackage(
                         null,
@@ -60,8 +70,7 @@ namespace OpenWrap.Tests.Dependencies
                                             Stream = () => File.OpenRead(typeof(XmlDocument).Assembly.Location)
                                     }
                             }),
-                        PackageFileDirectory,
-                        ExportBuilders.All)
+                        PackageFileDirectory)
             }, new ExecutionEnvironment{ Profile="net20", Platform="x86" });
         }
     }

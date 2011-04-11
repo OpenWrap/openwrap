@@ -66,9 +66,9 @@ namespace OpenWrap.Tests.Configuration
             ConfigurationDirectory.FindFile(
                     Configurations.Addresses.BaseUri.MakeRelativeUri(Configurations.Addresses.RemoteRepositories).ToString())
                     .ShouldNotBeNull()
-                    .OpenRead().ReadString(Encoding.UTF8).ShouldContain(
-@"[remoterepository openwrap]
-href: " + RemoteRepositories.Default["openwrap"].Href);
+                    .OpenRead().ReadString(Encoding.UTF8)
+                        .ShouldContain(@"[remoterepository openwrap]")
+                        .ShouldContain("href: " + RemoteRepositories.Default["openwrap"].Href);
         }
         void when_saving_configuration(Uri uri)
         {

@@ -11,6 +11,7 @@ using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Preloading;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 using OpenWrap.Tasks;
 using OpenWrap.Windows.Framework.Messaging;
 using OpenWrap.Windows.MainWindow;
@@ -18,7 +19,7 @@ using OpenWrap.Windows.MainWindow;
 namespace OpenWrap.Windows
 {
     /// <summary>
-    /// Interaction logic for applicatiiion
+    ///   Interaction logic for applicatiiion
     /// </summary>
     public partial class App : Application
     {
@@ -33,28 +34,40 @@ namespace OpenWrap.Windows
             base.OnStartup(e);
         }
 
-        private static void RegisterServices()
+        static void RegisterServices()
         {
-            Services.ServiceLocator.RegisterService(new RuntimeAssemblyResolver());
-            Services.ServiceLocator.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
-            Services.ServiceLocator.TryRegisterService<IConfigurationManager>(() => new DefaultConfigurationManager(Services.ServiceLocator.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
-            Services.ServiceLocator.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
+            ServiceLocator.RegisterService(new RuntimeAssemblyResolver());
+            ServiceLocator.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
+            ServiceLocator.TryRegisterService<IConfigurationManager>(
+                    () => new DefaultConfigurationManager(ServiceLocator.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
+            ServiceLocator.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
-            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
-            Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
-            Services.ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
-                Services.ServiceLocator.GetService<IPackageDeployer>(),
-                Services.ServiceLocator.GetService<IPackageResolver>()));
+            ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
+            ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(
+                                                                              new IExportProvider[]
+                                                                              {
+                                                                                      new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment)
+                                                                              }));
+            ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
+                                                                             ServiceLocator.GetService<IPackageDeployer>(),
+                                                                             ServiceLocator.GetService<IPackageResolver>(),
+                                                                             ServiceLocator.GetService<IPackageExporter>()));
 
-            Services.ServiceLocator.RegisterService<ITaskManager>(new TaskManager());
+            ServiceLocator.RegisterService<ITaskManager>(new TaskManager());
 
-            var repo = new CommandRepository(Services.ServiceLocator.GetService<IEnvironment>().Commands());
+            var repo = new CommandRepository(ServiceLocator.GetService<IEnvironment>().Commands());
 
-            Services.ServiceLocator.TryRegisterService<ICommandRepository>(() => repo);
+            ServiceLocator.TryRegisterService<ICommandRepository>(() => repo);
         }
 
-        private void ShowMainWindow()
+        static void SendInitalDataPopulationMessage()
+        {
+            Messenger.Default.Send(MessageNames.NounsVerbsChanged);
+            Messenger.Default.Send(MessageNames.RepositoryListChanged);
+        }
+
+        void ShowMainWindow()
         {
             MainViewModel viewModel = new MainViewModel();
 
@@ -63,12 +76,6 @@ namespace OpenWrap.Windows
 
             MainWindow = mainWindow;
             mainWindow.Show();
-        }
-
-        private static void SendInitalDataPopulationMessage()
-        {
-            Messenger.Default.Send(MessageNames.NounsVerbsChanged);
-            Messenger.Default.Send(MessageNames.RepositoryListChanged);
         }
     }
 }
