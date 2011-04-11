@@ -1,14 +1,21 @@
+using System;
 using OpenFileSystem.IO;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.PackageManagement.Exporters
 {
-    public class FileExportItem : IExportItem
+    public class FileExportItem : Exports.IFile
     {
-        public FileExportItem(IFile filePath)
+        public FileExportItem(Path relativePath, IFile file, IPackage sourcePackage)
         {
-            FullPath = filePath.Path.FullPath;
+            Path = relativePath.ToString();
+            File = file;
         }
 
-        public string FullPath { get; set; }
+        public string Path { get; private set; }
+
+        public IPackage Package { get; private set; }
+
+        public IFile File { get; private set; }
     }
 }

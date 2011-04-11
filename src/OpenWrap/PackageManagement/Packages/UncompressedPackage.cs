@@ -10,24 +10,22 @@ using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
+using Path = OpenFileSystem.IO.Path;
 
 namespace OpenWrap.PackageManagement.Packages
 {
     public class UncompressedPackage : IPackage
     {
         static readonly TraceSource _log = new TraceSource("openwrap", SourceLevels.All);
-        readonly IEnumerable<IExportBuilder> _exporters;
         readonly IFile _originalPackageFile;
         Version _version;
         IPackageDescriptor _descriptor;
 
         public UncompressedPackage(IPackageRepository source,
                                    IFile originalPackageFile,
-                                   IDirectory wrapCacheDirectory,
-                                   IEnumerable<IExportBuilder> exporters)
+                                   IDirectory wrapCacheDirectory)
         {
             _originalPackageFile = originalPackageFile;
-            _exporters = exporters;
             BaseDirectory = wrapCacheDirectory;
             // get the descriptor file inside the package
             var descriptorName = originalPackageFile.NameWithoutExtension;
@@ -95,30 +93,20 @@ namespace OpenWrap.PackageManagement.Packages
 
         protected DefaultPackageInfo PackageInfo { get; set; }
 
+        public IEnumerable<IGrouping<string, Exports.IFile>> Content
+        {
+            get
+            {
+                return BaseDirectory.Directories()
+                    .SelectMany(directory => directory.Files("**\\*"), (directory, file) => new { directory, file })
+                    .Select(@t => new { @t, relativePath = @t.file.Path.MakeRelative(@t.directory.Path) })
+                    .ToLookup(@t => @t.t.directory.Name, @t => (Exports.IFile)new FileExportItem(new Path(@t.relativePath),@t.t.file, this));
+            }
+        }
+
         public IPackageDescriptor Descriptor
         {
             get { return _descriptor; }
-        }
-
-        public IExport GetExport(string exportName, ExecutionEnvironment environment)
-        {
-            var exporter =
-                    _exporters.FirstOrDefault(x => x.ExportName.EqualsNoCase(exportName));
-
-            var directories = BaseDirectory.Directories();
-            if (exporter != null)
-                directories = directories.Where(x => exporter.CanProcessExport(x.Name));
-            else
-                directories = directories.Where(x => x.Name.EqualsNoCase(exportName));
-            var exports = from directory in directories
-                          select (IExport)new FolderExport(directory.Name)
-                          {
-                                  Items = directory.Files()
-                                          .Select(x => (IExportItem)new FileExportItem(x))
-                                          .ToList()
-                          };
-
-            return exporter != null ? exporter.ProcessExports(exports, environment) : exports.FirstOrDefault();
         }
 
         public Stream OpenStream()

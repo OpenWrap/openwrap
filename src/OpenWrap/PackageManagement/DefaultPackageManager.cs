@@ -153,8 +153,19 @@ namespace OpenWrap.PackageManagement
         readonly IPackageDeployer _deployer;
 
         readonly IPackageResolver _resolver;
+        readonly IPackageExporter _exporter;
         readonly HooksStore _hooks = new HooksStore();
 
+
+        public IEnumerable<IPackageInfo> ListProjectPackages(IPackageDescriptor descriptor, IPackageRepository projectRepository)
+        {
+            return _resolver.TryResolveDependencies(descriptor, new[] { projectRepository }).SuccessfulPackages.Select(_ => _.Packages.First());
+        }
+
+        public IEnumerable<IGrouping<string, TItem>> GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository) where TItem : IExportItem
+        {
+            return ListProjectPackages(descriptor, projectRepository).SelectMany(x => _exporter.Exports<TItem>(x.Load()));
+        }
 
         public event PackageUpdated PackageUpdated
         {
@@ -172,9 +183,10 @@ namespace OpenWrap.PackageManagement
             remove { _hooks.PackageRemoved -= value; }
         }
 
-        public DefaultPackageManager(IPackageDeployer deployer, IPackageResolver resolver)
+        public DefaultPackageManager(IPackageDeployer deployer, IPackageResolver resolver, IPackageExporter exporter)
         {
             _deployer = deployer;
+            _exporter = exporter;
             _resolver = resolver;
         }
         public IPackageAddResult AddProjectPackage(PackageRequest packageToAdd,
@@ -549,7 +561,7 @@ namespace OpenWrap.PackageManagement
 
             var packagesForGacDetection = GetSelectedPackages(resolvedPackages);
 
-            foreach (var conflict in from errors in GacResolver.InGac(packagesForGacDetection)
+            foreach (var conflict in from errors in _exporter.InGac(packagesForGacDetection)
                                      select new PackageGacConflictResult(errors.Key, errors))
                 yield return conflict;
 
@@ -683,7 +695,7 @@ namespace OpenWrap.PackageManagement
             }
             public override string ToString()
             {
-                return "update " + Version;
+                return string.Empty;
             }
         }
     }

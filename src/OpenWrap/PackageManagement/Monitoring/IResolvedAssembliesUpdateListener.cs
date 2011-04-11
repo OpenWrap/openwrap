@@ -6,7 +6,7 @@ namespace OpenWrap.PackageManagement.Monitoring
 {
     public interface IResolvedAssembliesUpdateListener
     {
-        void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths);
+        void AssembliesUpdated(IEnumerable<Exports.IAssembly> assemblyPaths);
         ExecutionEnvironment Environment { get; }
         bool IsLongRunning { get; }
     }

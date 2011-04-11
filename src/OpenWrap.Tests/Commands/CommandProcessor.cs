@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
+using OpenWrap.Reflection;
 using OpenWrap.Testing;
 
 namespace OpenWrap.Repositories.Wrap.Tests.Commands
@@ -181,8 +182,8 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             }
             protected void given_command<T>()
             {
-                
-                commands.Add(new AttributeBasedCommandDescriptor(typeof(T)));
+                throw new NotImplementedException();
+                //commands.Add(new AttributeBasedCommandDescriptor(typeof(T), typeof(T).GetAttribute<CommandAttribute>()));
             }
             protected List<ICommandOutput> results;
             protected ICommandOutput Output { get { return results.Last(); } }

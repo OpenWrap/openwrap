@@ -12,6 +12,7 @@ using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 using OpenWrap.Tasks;
 
 namespace OpenWrap.Commands.Cli
@@ -24,11 +25,10 @@ namespace OpenWrap.Commands.Cli
             return Main(StripExecutableName(Environment.CommandLine));
         }
 
-        static string StripExecutableName(string commandLine)
+	static string StripExecutableName(string commandLine)
         {
             return commandLine;
         }
-
         public static int Main(string argumentsLine)
         {
             throw new NotImplementedException();

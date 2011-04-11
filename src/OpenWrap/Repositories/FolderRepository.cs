@@ -178,7 +178,7 @@ namespace OpenWrap.Repositories
                 StreamExtensions.CopyTo(packageStream, file);
 
             var newPackageCacheDir = _rootCacheDirectory.GetDirectory(wrapFile.NameWithoutExtension);
-            var newPackage = new CachedZipPackage(this, wrapFile, newPackageCacheDir, ExportBuilders.All);
+            var newPackage = new CachedZipPackage(this, wrapFile, newPackageCacheDir);
             Packages.Add(new PackageLocation(newPackageCacheDir, newPackage));
             return newPackage;
         }
@@ -196,8 +196,8 @@ namespace OpenWrap.Repositories
         IPackageInfo CreatePackageInstance(IDirectory cacheDirectory, IFile wrapFile)
         {
             if (cacheDirectory.Exists)
-                return new UncompressedPackage(this, wrapFile, cacheDirectory, ExportBuilders.All);
-            return new CachedZipPackage(this, wrapFile, cacheDirectory, ExportBuilders.All);
+                return new UncompressedPackage(this, wrapFile, cacheDirectory);
+            return new CachedZipPackage(this, wrapFile, cacheDirectory);
         }
 
         protected class PackageLocation

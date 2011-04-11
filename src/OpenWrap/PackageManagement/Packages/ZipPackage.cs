@@ -86,7 +86,7 @@ namespace OpenWrap.PackageManagement.Packages
         {
             var tempDirectory = PackageFile.FileSystem.CreateTempDirectory();
             ExtractPackage(PackageFile, tempDirectory);
-            return new UncompressedPackage(this.Source, PackageFile, tempDirectory, ExportBuilders.All);
+            return new UncompressedPackage(this.Source, PackageFile, tempDirectory);
         }
 
         void LoadDescriptor()

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
@@ -60,11 +61,12 @@ namespace OpenWrap.Build.Tasks
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            return Services.ServiceLocator.GetService<IPackageExporter>()
-                    .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
-                    .SelectMany(x => x.Items)
-                    .OfType<ICommandExportItem>()
-                    .Select(x => x.Descriptor).ToList();
+            throw new NotImplementedException();
+            //return Services.ServiceLocator.GetService<IPackageExporter>()
+            //        .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
+            //        .SelectMany(x => x.Items)
+            //        .OfType<ICommandExportItem>()
+            //        .Select(x => x.Descriptor).ToList();
         }
 
         IEnumerable<string> GetArguments()

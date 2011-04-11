@@ -1,7 +1,10 @@
+using OpenWrap.PackageModel;
+
 namespace OpenWrap.PackageManagement
 {
     public interface IExportItem
     {
-        string FullPath { get; }
+        string Path { get; }
+        IPackage Package { get; }
     }
 }

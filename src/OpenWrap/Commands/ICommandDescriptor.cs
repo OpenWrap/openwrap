@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace OpenWrap.Commands
@@ -12,4 +13,9 @@ namespace OpenWrap.Commands
 
         ICommand Create();
     }
+    public interface ICommandDescriptorProvider
+    {
+        ICommandDescriptor TryGet(Type type);
+    }
+    
 }

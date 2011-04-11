@@ -1,0 +1,29 @@
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+namespace OpenWrap.VisualStudio.Interop
+{
+    [ComImport, InterfaceType((short)1), Guid("3A83904D-4540-4C51-95A7-618B32A9A9C0")]
+    public interface IVsProfferCommands3
+    {
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int AddNamedCommand([In] ref Guid pguidPackage, [In] ref Guid pguidCmdGroup, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameCanonical, [ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] out uint pdwCmdId, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameLocalized, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszBtnText, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdTooltip, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszSatelliteDLL, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwBitmapResourceId, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwBitmapImageIndex, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwCmdFlagsDefault, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint cUIContexts, [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 11)] Guid[] rgguidUIContexts);
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int RemoveNamedCommand([In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameCanonical);
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int RenameNamedCommand([In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameCanonical, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameCanonicalNew, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameLocalizedNew);
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int AddCommandBarControl([In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameCanonical, [In, MarshalAs(UnmanagedType.IDispatch)] object pCmdBarParent, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwIndex, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwCmdType, [MarshalAs(UnmanagedType.IDispatch)] out object ppCmdBarCtrl);
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int RemoveCommandBarControl([In, MarshalAs(UnmanagedType.IDispatch)] object pCmdBarCtrl);
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int AddCommandBar([In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdBarName, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwType, [In, MarshalAs(UnmanagedType.IDispatch)] object pCmdBarParent, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwIndex, [MarshalAs(UnmanagedType.IDispatch)] out object ppCmdBar);
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int RemoveCommandBar([In, MarshalAs(UnmanagedType.IDispatch)] object pCmdBar);
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int FindCommandBar([In, MarshalAs(UnmanagedType.IUnknown)] object pToolbarSet, [In] ref Guid pguidCmdGroup, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwMenuId, [MarshalAs(UnmanagedType.IDispatch)] out object ppdispCmdBar);
+        [PreserveSig, MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        int AddNamedCommand2([In] ref Guid pguidPackage, [In] ref Guid pguidCmdGroup, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameCanonical, [ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] out uint pdwCmdId, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdNameLocalized, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszBtnText, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszCmdTooltip, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.LPCOLESTR"), MarshalAs(UnmanagedType.LPWStr)] string pszSatelliteDLL, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwBitmapResourceId, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwBitmapImageIndex, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwCmdFlagsDefault, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint cUIContexts, [In, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 11)] Guid[] rgguidUIContexts, [In, ComAliasName("Microsoft.VisualStudio.OLE.Interop.DWORD")] uint dwUIElementType);
+    }
+}

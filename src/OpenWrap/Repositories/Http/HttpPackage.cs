@@ -75,16 +75,17 @@ namespace OpenWrap.Repositories.Http
             get { return _package.Version; }
         }
 
-        public IExport GetExport(string exportName, ExecutionEnvironment environment)
-        {
-            return null;
-        }
-
         public Stream OpenStream()
         {
             VerifyLoaded();
             return _loadedPackage.OpenStream();
         }
+
+        public IEnumerable<IGrouping<string, Exports.IFile>> Content
+        {
+            get { return Enumerable.Empty<IGrouping<string, Exports.IFile>>(); }
+        }
+
         public IPackageDescriptor Descriptor
         {
             get
@@ -107,7 +108,7 @@ namespace OpenWrap.Repositories.Http
             using (var destinationStream = temporaryFile.OpenWrite())
                 StreamExtensions.CopyTo(sourceStream, destinationStream);
 
-            _loadedPackage = new CachedZipPackage(Source, temporaryFile, _fileSystem.CreateTempDirectory(), Enumerable.Empty<IExportBuilder>()).Load();
+            _loadedPackage = new CachedZipPackage(Source, temporaryFile, _fileSystem.CreateTempDirectory()).Load();
         }
     }
 }

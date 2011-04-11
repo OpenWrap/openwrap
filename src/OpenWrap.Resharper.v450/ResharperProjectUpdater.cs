@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Monitoring;
 using OpenWrap.Runtime;
-using OpenWrap.Services;
 using JetBrainsKey = resharper::JetBrains.Util.Key;
 
 
@@ -18,7 +17,6 @@ namespace OpenWrap.Resharper
         static readonly JetBrainsKey ISWRAP = new JetBrainsKey("FromOpenWrap");
         readonly Func<ExecutionEnvironment> _env;
         readonly IEnumerable<string> _ignoredAssemblies;
-        readonly object _lock = new object();
         readonly resharper::JetBrains.ProjectModel.IProject _project;
 
         public ResharperProjectUpdater(IFile descriptor, resharper::JetBrains.ProjectModel.IProject project, Func<ExecutionEnvironment> env)
@@ -28,7 +26,9 @@ namespace OpenWrap.Resharper
             Descriptor = descriptor;
             _env = env;
         }
-        public string ProjectPath { get { return _project.ProjectFile.Location.FullPath; } }
+
+        public IFile Descriptor { get; private set; }
+
         public ExecutionEnvironment Environment
         {
             get { return _env(); }
@@ -39,16 +39,21 @@ namespace OpenWrap.Resharper
             get { return true; }
         }
 
-        public IFile Descriptor { get; private set; }
-
-        public void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> resolvedAssemblies)
+        public string ProjectPath
         {
+            get { return _project.ProjectFile == null ? string.Empty : _project.ProjectFile.Location.FullPath; }
+        }
+
+        public void AssembliesUpdated(IEnumerable<Exports.IAssembly> resolvedAssemblies)
+        {
+
             ResharperLocks.WriteCookie("Updating references...",
                                        () =>
                                        {
+                                           if (_project.ProjectFile == null) return;
                                            string projectFilePath = _project.ProjectFile.GetPresentableProjectPath();
 
-                                           var resolvedAssemblyPaths = resolvedAssemblies.Select(x => x.FullPath).ToList();
+                                           var resolvedAssemblyPaths = resolvedAssemblies.Select(x => x.File.Path.FullPath).ToList();
 
                                            var owProjectAssemblyReferences = _project.GetAssemblyReferences()
                                                    .Where(x => x.GetProperty(ISWRAP) != null).ToList();
@@ -67,12 +72,13 @@ namespace OpenWrap.Resharper
                                            }
                                            foreach (var toRemove in owProjectAssemblyReferencePaths.Where(x => !resolvedAssemblyPaths.Contains(x)))
                                            {
+                                               string remove = toRemove;
                                                ResharperLogger.Debug("Removing reference {0} to {1}",
                                                                      projectFilePath,
                                                                      toRemove);
                                                _project.RemoveModuleReference(
                                                        owProjectAssemblyReferences.First(
-                                                               x => x.HintLocation.FullPath == toRemove));
+                                                               x => x.HintLocation.FullPath == remove));
                                            }
                                        });
         }

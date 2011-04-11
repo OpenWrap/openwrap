@@ -73,7 +73,7 @@ namespace OpenWrap.Repositories
             using (var stream = FileExtensions.OpenWrite(inMemoryFile))
                 packageStream.CopyTo(stream);
 
-            var tempFolder = new CachedZipPackage(null, inMemoryFile, null, null);
+            var tempFolder = new CachedZipPackage(null, inMemoryFile, null);
 
             var package = new InMemoryPackage
             {

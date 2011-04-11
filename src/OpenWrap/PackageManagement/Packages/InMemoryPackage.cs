@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,16 +42,25 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageRepository Source { get; set; }
         public Version Version { get; set; }
-
+        Dictionary<string, List<Exports.IFile>> _content = new Dictionary<string, List<Exports.IFile>>();
+        public ICollection<Exports.IFile> this[string exportName]
+        {
+            get
+            { 
+                List<Exports.IFile> outValue;
+                if (!_content.TryGetValue(exportName, out outValue))
+                    _content[exportName] = outValue = new List<Exports.IFile>();
+                return outValue;
+            }
+        }
+        public IEnumerable<IGrouping<string, Exports.IFile>> Content
+        {
+            get { return _content.SelectMany(x => x.Value.GroupBy(_ => x.Key)); }
+        }
 
         public IPackageDescriptor Descriptor { get; private set; }
 
         public string Namespace { get; set; }
-
-        public IExport GetExport(string exportName, ExecutionEnvironment environment)
-        {
-            return null;
-        }
 
         public Stream OpenStream()
         {

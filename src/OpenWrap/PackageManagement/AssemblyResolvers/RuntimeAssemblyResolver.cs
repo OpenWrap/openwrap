@@ -9,7 +9,7 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
 {
     public class RuntimeAssemblyResolver : IService
     {
-        ILookup<string, IAssemblyReferenceExportItem> _assemblyReferences;
+        ILookup<string, Exports.IAssembly> _assemblyReferences;
 
         protected IEnvironment Environment
         {
@@ -31,33 +31,32 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
         {
             if (_assemblyReferences != null)
                 return;
-
-            _assemblyReferences = Environment.Descriptor == null || Environment.Descriptor.UseProjectRepository == false
-                                          ? AssemblyReferences.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name)
-                                          : PackageResolver.GetAssemblyReferences(true,
-                                                                                  Environment.ExecutionEnvironment,
-                                                                                  Environment.Descriptor,
-                                                                                  Environment.ProjectRepository,
-                                                                                  Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name);
+            throw new NotImplementedException();
+            //_assemblyReferences = Environment.Descriptor == null || Environment.Descriptor.UseProjectRepository == false
+            //                              ? AssemblyReferences.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name)
+            //                              : PackageResolver.GetAssemblyReferences(true,
+            //                                                                      Environment.Descriptor,
+            //                                                                      Environment.ProjectRepository,
+            //                                                                      Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name);
         }
 
-        Assembly TryResolveAssembly(object sender, ResolveEventArgs args)
+        System.Reflection.Assembly TryResolveAssembly(object sender, ResolveEventArgs args)
         {
             EnsureAssemblyReferencesAreLoaded();
             var simpleName = new AssemblyName(args.Name).Name;
             if (_assemblyReferences.Contains(simpleName))
-                return Assembly.LoadFrom(_assemblyReferences[simpleName].First().FullPath);
+                return System.Reflection.Assembly.LoadFrom(_assemblyReferences[simpleName].First().File.Path.FullPath);
 
             return null;
         }
 
-        Assembly TryResolveReflectionOnlyAssembly(object sender, ResolveEventArgs args)
+        System.Reflection.Assembly TryResolveReflectionOnlyAssembly(object sender, ResolveEventArgs args)
         {
             EnsureAssemblyReferencesAreLoaded();
             // get the simple name of the assembly
             var simpleName = new AssemblyName(args.Name).Name;
             if (_assemblyReferences.Contains(simpleName))
-                return Assembly.ReflectionOnlyLoadFrom(_assemblyReferences[simpleName].First().FullPath);
+                return System.Reflection.Assembly.ReflectionOnlyLoadFrom(_assemblyReferences[simpleName].First().File.Path.FullPath);
 
             return null;
         }

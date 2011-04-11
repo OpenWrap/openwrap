@@ -11,6 +11,10 @@ namespace Tests.Commands
         {
             return results.ShouldHaveNo(x => x.Type == CommandResultType.Error);
         }
+        public static IEnumerable<ICommandOutput> ShouldHaveNoWarning(this IEnumerable<ICommandOutput> results)
+        {
+            return results.ShouldHaveNo(x => x.Type == CommandResultType.Warning);
+        }
         public static IEnumerable<ICommandOutput> ShouldHaveError(this IEnumerable<ICommandOutput> results)
         {
             return results.ShouldHaveAtLeastOne(x => x.Type == CommandResultType.Error);

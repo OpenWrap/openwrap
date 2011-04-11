@@ -6,6 +6,7 @@ using OpenFileSystem.IO;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 
 namespace OpenWrap.Repositories
 {
@@ -30,7 +31,7 @@ namespace OpenWrap.Repositories
                 if (_packages == null)
                     _packages = (from wrapFile in Environment.CurrentDirectory.Files("*.wrap")
                                  let tempFolder = FileSystem.GetTempDirectory().GetDirectory(Guid.NewGuid().ToString())
-                                 select (IPackageInfo)new CachedZipPackage(this, wrapFile, tempFolder, ExportBuilders.All))
+                                 select (IPackageInfo)new CachedZipPackage(this, wrapFile, tempFolder))
                             .ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase);
                 return _packages;
             }
@@ -38,12 +39,12 @@ namespace OpenWrap.Repositories
 
         protected IEnvironment Environment
         {
-            get { return Services.ServiceLocator.GetService<IEnvironment>(); }
+            get { return ServiceLocator.GetService<IEnvironment>(); }
         }
 
         protected IFileSystem FileSystem
         {
-            get { return Services.ServiceLocator.GetService<IFileSystem>(); }
+            get { return ServiceLocator.GetService<IFileSystem>(); }
         }
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)

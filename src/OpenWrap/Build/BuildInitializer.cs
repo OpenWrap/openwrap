@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
+using OpenWrap.Commands;
 using OpenWrap.Configuration;
 using OpenWrap.IO;
 using OpenWrap.PackageManagement;
@@ -14,6 +15,7 @@ using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 using OpenWrap.Tasks;
 
 namespace OpenWrap.Build
@@ -30,7 +32,9 @@ namespace OpenWrap.Build
 
             Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
             Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
-            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
+            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new IExportProvider[]{
+                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment)
+                }));
             Services.ServiceLocator.TryRegisterService(()=>new RuntimeAssemblyResolver());
             Services.ServiceLocator.TryRegisterService<ITaskManager>(()=>new TaskManager());
 

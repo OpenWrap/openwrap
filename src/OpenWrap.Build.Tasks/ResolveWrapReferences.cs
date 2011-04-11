@@ -8,6 +8,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
+using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageManagement.Monitoring;
 using OpenWrap.Repositories;
@@ -96,7 +97,7 @@ namespace OpenWrap.Build.Tasks
             return RefreshWrapDependencies();
         }
         
-        public void AssembliesUpdated(IEnumerable<IAssemblyReferenceExportItem> assemblyPaths)
+        public void AssembliesUpdated(IEnumerable<Exports.IAssembly> assemblyPaths)
         {
             
 
@@ -109,17 +110,17 @@ namespace OpenWrap.Build.Tasks
             {
                 if (excludedAssemblies.Contains(assemblyRef.AssemblyName.Name, StringComparer.OrdinalIgnoreCase))
                 {
-                    Log.LogMessage("Ignoring OpenWrap reference to '{0}'", assemblyRef.FullPath);
+                    Log.LogMessage("Ignoring OpenWrap reference to '{0}'", assemblyRef.File.Path.FullPath);
                     continue;
                 }
                 if (InputReferences.Any(x=>string.Equals(x.ItemSpec, assemblyRef.AssemblyName.Name, StringComparison.OrdinalIgnoreCase)))
                 {
-                    Log.LogMessage("OpenWrap reference to '{0}' already added", assemblyRef.FullPath);
+                    Log.LogMessage("OpenWrap reference to '{0}' already added", assemblyRef.File.Path.FullPath);
                     continue;
                 }
-                Log.LogMessage("Adding OpenWrap reference to '{0}'", assemblyRef.FullPath);
+                Log.LogMessage("Adding OpenWrap reference to '{0}'", assemblyRef.File.Path.FullPath);
                 var item = new TaskItem(assemblyRef.AssemblyName.FullName);
-                item.SetMetadata("HintPath", assemblyRef.FullPath);
+                item.SetMetadata("HintPath", assemblyRef.File.Path.FullPath);
                 item.SetMetadata("Private", CopyLocal ? "True" : "False");
                 item.SetMetadata("FromOpenWrap", "True");
                 items.Add(item);
@@ -127,15 +128,15 @@ namespace OpenWrap.Build.Tasks
             OutputReferences = items.ToArray();
         }
 
-        class PathComparer : IEqualityComparer<IAssemblyReferenceExportItem>
+        class PathComparer : IEqualityComparer<Exports.IAssembly>
         {
 
-            public bool Equals(IAssemblyReferenceExportItem x, IAssemblyReferenceExportItem y)
+            public bool Equals(Exports.IAssembly x, Exports.IAssembly y)
             {
                 return x != null && y != null && x.AssemblyName.Name == y.AssemblyName.Name;
             }
 
-            public int GetHashCode(IAssemblyReferenceExportItem obj)
+            public int GetHashCode(Exports.IAssembly obj)
             {
 
                 return ReferenceEquals(obj, null) || obj.AssemblyName == null || obj.AssemblyName.Name == null

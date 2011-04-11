@@ -3,6 +3,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using OpenFileSystem.IO;
+using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
 
 namespace OpenWrap.Testing
@@ -16,11 +17,11 @@ namespace OpenWrap.Testing
             _fileSystem = fileSystem;
         }
 
-        public IEnumerable<ITestRunner> GetTestRunners(IEnumerable<IAssemblyReferenceExportItem> allReferencedAssemblies)
+        public IEnumerable<ITestRunner> GetTestRunners(IEnumerable<Exports.IAssembly> allReferencedAssemblies)
         {
             var referencedAssemblies = allReferencedAssemblies;
             return from assembly in referencedAssemblies
-                   let tdnet = _fileSystem.GetFile(assembly.FullPath + ".tdnet")
+                   let tdnet = _fileSystem.GetFile(assembly.File.Path.FullPath + ".tdnet")
                    where tdnet.Exists
                    let runner = LoadRunner(tdnet)
                    where runner != null

@@ -33,11 +33,11 @@ namespace Tests.Commands.build_wrap
         public void file_is_imported()
         {
             var packageInfo = Environment.CurrentDirectoryRepository.PackagesByName["package"].First();
-            var export = packageInfo.Load().GetExport("bin-net35", new ExecutionEnvironment())
+            var export = packageInfo.Load().Content.FirstOrDefault(x=>x.Key == "bin-net35")
                     .ShouldNotBeNull();
-            var exports= export.Items;
-            exports.ShouldHaveCountOf(1)
-                    .Select(x => FileSystem.GetFile(x.FullPath)).First()
+            export.Select(x=>x.File)
+                .ShouldHaveCountOf(1)
+                .First()
                     .Name.ShouldBe(System.IO.Path.GetFileName(_filePath));
         }
     }

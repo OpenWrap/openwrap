@@ -10,6 +10,7 @@ namespace OpenWrap
         {
             return version.Build >= 0 ? new Version(version.Major, version.Minor, version.Build) : new Version(version.Major, version.Minor);
         }
+
         public static string GenerateVersionNumber(this string version)
         {
             var match = Regex.Match(version, @"^(?<version>\d+\.\d+\.\d+)(?<revision>\..*$)?");

@@ -11,10 +11,10 @@ using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap;
 using OpenWrap.Commands.contexts;
 using OpenWrap.IO.Packaging;
+using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Repositories;
-using OpenWrap.Runtime;
 using OpenWrap.Testing;
 
 namespace assembly_resolving_specs
@@ -155,7 +155,7 @@ namespace assembly_resolving_specs
     {
         public abstract class assembly_resolving : command
         {
-            protected IEnumerable<IAssemblyReferenceExportItem> AssemblyReferences;
+            protected IEnumerable<Exports.IAssembly> AssemblyReferences;
             ITemporaryDirectory TempDirectory;
 
             public assembly_resolving()
@@ -202,7 +202,8 @@ namespace assembly_resolving_specs
 
             protected void when_resolving_assemblies(string platform, string profile)
             {
-                AssemblyReferences = PackageResolver.GetAssemblyReferences(false, new ExecutionEnvironment(platform, profile), Environment.Descriptor, Environment.ProjectRepository);
+                throw new NotImplementedException();
+                //AssemblyReferences = PackageResolver.GetAssemblyReferences(false, Environment.Descriptor, Environment.ProjectRepository);
             }
             [TestFixtureTearDown]
             public void Dispose()
