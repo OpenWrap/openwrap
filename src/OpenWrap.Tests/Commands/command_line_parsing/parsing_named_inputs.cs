@@ -85,8 +85,9 @@ namespace Tests.Commands.command_line_parsing
                 if (current == '`')
                 {
                     if (value.Length - (position + 1) == 0) throw new InputParserException("Incomplete command. The escape character '`' is at the end of the line.");
-                    
-                    appendCharacter(value[++position]);
+
+                    var c = value[++position];
+                    appendCharacter(ConvertToSpecialCharacter(c));
                     
                     continue;
                 }
@@ -141,6 +142,22 @@ namespace Tests.Commands.command_line_parsing
             commitInput();
             return inputs;
         }
+        
+        char ConvertToSpecialCharacter(char c)
+        {
+            switch(c)
+            {
+                case '0': return '\0';
+                case 'a': return '\a';
+                case 'b': return '\b';
+                case 'f': return '\f';
+                case 'r': return '\r';
+                case 'n': return '\n';
+                case 't': return '\t';
+                case 'v': return '\v';
+            }
+            return c;
+        }
 
         bool IsNameCharacter(char current)
         {
@@ -168,7 +185,30 @@ namespace Tests.Commands.command_line_parsing
         {
         }
     }
+    [TestFixture("`0", "\0")]
+    [TestFixture("`a", "\a")]
+    [TestFixture("`b", "\b")]
+    [TestFixture("`f", "\f")]
+    [TestFixture("`n", "\n")]
+    [TestFixture("`r", "\r")]
+    [TestFixture("`t", "\t")]
+    [TestFixture("`v", "\v")]
+    class escape_special_characters : contexts.input_parser
+    {
+        readonly string _expected;
 
+        public escape_special_characters(string line, string expected)
+        {
+            _expected = expected;
+            when_parsing(line);
+        }
+
+        [Test]
+        public void special_character_appended()
+        {
+            Result.Single().ShouldBeOfType<SingleValueInput>().Value.ShouldBe(_expected);
+        }
+    }
     [TestFixture(@"`-named", "", "-named")]
     [TestFixture(@"-named `""value", "named", "\"value")]
     [TestFixture("-named \"tom `\"bombadil`\"\"", "named", "tom \"bombadil\"")]
