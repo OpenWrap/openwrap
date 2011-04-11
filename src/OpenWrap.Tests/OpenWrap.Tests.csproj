@@ -112,6 +112,7 @@
     <Compile Include="Commands\clean_wrap\cleaning_a_wrap_with_two_versions.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_package_from_both_repositories.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_package_from_system_repository.cs" />
+    <Compile Include="Commands\command_line_parsing\parsing_named_inputs.cs" />
     <Compile Include="Commands\contexts\add_wrap.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
