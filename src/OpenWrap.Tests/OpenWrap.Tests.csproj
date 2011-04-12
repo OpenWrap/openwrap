@@ -112,10 +112,13 @@
     <Compile Include="Commands\clean_wrap\cleaning_a_wrap_with_two_versions.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_package_from_both_repositories.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_package_from_system_repository.cs" />
+    <Compile Include="Commands\command_line_handlers\verb_noun\verb_defaults_to.cs" />
+    <Compile Include="Commands\command_line_handlers\verb_noun\verb_noun_with_dash.cs" />
     <Compile Include="Commands\command_line_parsing\parsing_named_inputs.cs" />
     <Compile Include="Commands\contexts\add_wrap.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
+    <Compile Include="Commands\contexts\verb_noun_handler.cs" />
     <Compile Include="Commands\remove_wrap\removing_from_existing_scope.cs" />
     <Compile Include="Commands\remove_wrap\removing_unknown_package_in_project.cs" />
     <Compile Include="Commands\remove_wrap\remove_unknown_system_package.cs" />
@@ -147,6 +150,7 @@
     <Compile Include="contexts\package_graph_visitor.cs" />
     <Compile Include="contexts\scoped_descriptor.cs" />
     <Compile Include="Dependencies\hooks\successful_add.cs" />
+    <Compile Include="Extensions\strings\HumpsMatching.cs" />
     <Compile Include="IO\compound_template_path_segment_specs.cs" />
     <Compile Include="IO\determining_scope.cs" />
     <Compile Include="IO\template_path_segment_specs.cs" />
@@ -239,7 +243,7 @@
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
     <Compile Include="Dependencies\version_vertices_specs.cs" />
-    <Compile Include="Extensions\CamelToSpacedName.cs" />
+    <Compile Include="Extensions\strings\CamelToSpacedName.cs" />
     <Compile Include="IO\template_path_segment.cs" />
     <Compile Include="IO\template_processor\parsing_path_with_absolute_template.cs" />
     <Compile Include="NonSeekableMemoryStream.cs" />

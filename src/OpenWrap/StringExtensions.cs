@@ -69,9 +69,15 @@ namespace OpenWrap
         }
         public static bool MatchesHumps(this string name, string value)
         {
-            return name.ToUpperInvariant().MatchesHumps(0, value.ToUpperInvariant(), 0);
+            var nameInv = name.ToUpperInvariant();
+            var valueInv = value.ToUpperInvariant();
+            if (nameInv[0] != valueInv[0]) return false;
+            return nameInv.MatchesHumps(0, valueInv, 0);
         }
-
+        public static IEnumerable<string> SelectHumps(this string key, IEnumerable<string> values)
+        {
+            return values.Where(x => key.MatchesHumps(x));
+        }
         public static IEnumerable<string> SplitCamelCase(this string str)
         {
             var currentValue = new StringBuilder();
