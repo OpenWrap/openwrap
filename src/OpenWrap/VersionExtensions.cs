@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace OpenWrap.Build
+namespace OpenWrap
 {
     public static class VersionExtensions
     {
         static readonly DateTime FROM = new DateTime(2010, 01, 01);
-
+        public static Version IgnoreRevision(this Version version)
+        {
+            return new Version(version.Major, version.Minor, version.Build);
+        }
         public static string GenerateVersionNumber(this string version)
         {
             var match = Regex.Match(version, @"^(?<version>\d+\.\d+\.\d+)(?<revision>\..*$)?");

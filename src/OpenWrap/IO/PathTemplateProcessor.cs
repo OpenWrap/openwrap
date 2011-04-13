@@ -114,7 +114,6 @@ namespace OpenWrap.IO
             IDictionary<string, string> properties;
             var parseOk = processor.TryParsePath(projectFilePath, out properties);
             return parseOk &&
-                   properties.ContainsKey("source") &&
                    properties.ContainsKey("scope")
                            ? properties["scope"]
                            : null;

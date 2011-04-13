@@ -26,7 +26,7 @@ namespace OpenWrap.PackageModel
 
         public static implicit operator PackageDependency(PackageDependencyBuilder builder)
         {
-            return new PackageDependency(builder._name, builder._versions, builder._tags);
+            return builder.Build();
         }
 
         public PackageDependencyBuilder AddTag(string tag)
@@ -107,6 +107,11 @@ namespace OpenWrap.PackageModel
                 _tags.Add(tag);
             else if (!isSet && ContainsTag(tag))
                 _tags.Remove(tag);
+        }
+
+        public PackageDependency Build()
+        {
+            return new PackageDependency(_name, _versions, _tags);
         }
     }
 }

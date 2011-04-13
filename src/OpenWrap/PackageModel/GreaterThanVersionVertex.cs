@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenWrap.Build;
 
 namespace OpenWrap.PackageModel
 {
@@ -22,7 +23,7 @@ namespace OpenWrap.PackageModel
 
         public override string ToString()
         {
-            return "> " + Version;
+            return "> " + Version.IgnoreRevision();
         }
     }
 }

@@ -681,6 +681,10 @@ namespace OpenWrap.PackageManagement
                        ||
                        (Version.Major < version.Major);
             }
+            public override string ToString()
+            {
+                return "update " + Version;
+            }
         }
     }
 }

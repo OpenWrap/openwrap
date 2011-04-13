@@ -139,6 +139,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="add-wrap-content" xml:space="preserve">
     <value>Marks the dependency as being content-only, importing the content of the package but ignoring assembly references.</value>
   </data>
+  <data name="add-wrap-from" xml:space="preserve">
+    <value>Specifies where to install a package from. Can be a directory containing packages, a package file, a remote repository URI or name.</value>
+  </data>
   <data name="add-wrap-maxversion" xml:space="preserve">
     <value>Specifies the maximum (exclusive upper bound) version of the package to import. </value>
   </data>

@@ -33,7 +33,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                         continue;
                     }
                 }
-                return Result(packageSelection, repositoriesToQuery, visitor.NotFound);
+                return Result(packageDescriptor, packageSelection, repositoriesToQuery, visitor.NotFound);
             }
             throw new InvalidOperationException(string.Format("OpenWrap tried {0} times to resolve the tree of dependencies and gave up.", MAX_RETRIES));
         }
@@ -42,7 +42,8 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         {
         }
 
-        DependencyResolutionResult Result(PackageSelectionContext packageSelectionContext,
+        DependencyResolutionResult Result(IPackageDescriptor descriptor, 
+                                          PackageSelectionContext packageSelectionContext,
                                           IEnumerable<IPackageRepository> repositoriesToQuery,
                                           IEnumerable<IGrouping<PackageDependency, CallStack>> notFound)
         {
@@ -53,12 +54,12 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                                           select package
                            select new ResolvedPackage(id, packages.ToList(), compatible.Value.Successful))
                     .ToList();
-            var missing = from descriptor in notFound
-                          select new ResolvedPackage(new PackageIdentifier(descriptor.Key.Name), Enumerable.Empty<IPackageInfo>(), descriptor.ToList());
+            var missing = from callStacks in notFound
+                          select new ResolvedPackage(new PackageIdentifier(callStacks.Key.Name), Enumerable.Empty<IPackageInfo>(), callStacks.ToList());
             var conflicting = from incompat in packageSelectionContext.IncompatiblePackageVersions.GroupBy(x => x.Key, x => x.Value)
                               select new ResolvedPackage(incompat.Key, Enumerable.Empty<IPackageInfo>(), incompat.SelectMany(x => x.Failed.Concat(x.Successful)));
 
-            return new DependencyResolutionResult(success, conflicting, missing);
+            return new DependencyResolutionResult(descriptor, success, conflicting, missing);
         }
 
         PackageDependency ToDependency(PackageIdentifier pid)

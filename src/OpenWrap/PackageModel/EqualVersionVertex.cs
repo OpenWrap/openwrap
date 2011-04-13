@@ -17,7 +17,7 @@ namespace OpenWrap.PackageModel
 
         public override string ToString()
         {
-            return "= " + Version;
+            return "= " + Version.IgnoreRevision();
         }
 
         bool BuildMatches(Version version)
