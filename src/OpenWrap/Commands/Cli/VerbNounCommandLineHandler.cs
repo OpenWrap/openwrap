@@ -4,30 +4,23 @@ using System.Linq;
 
 namespace OpenWrap.Commands.Cli
 {
-    public class VerbNounCommandLineHandler : ICommandLineHandler
+    public class VerbNounCommandLineHandler : NamedCommandLineHandler
     {
-        readonly ICommandRepository _commands;
-
-        public VerbNounCommandLineHandler(ICommandRepository commands)
+        public VerbNounCommandLineHandler(ICommandRepository command)
+            : base(command)
         {
-            _commands = commands;
+
         }
-
-        public ICommandDescriptor Execute(ref string input)
+        public override ICommandDescriptor Execute(ref string input)
         {
-            var verbNounToken = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-            if (verbNounToken == null) return null;
+            if (string.IsNullOrEmpty(input)) return null;
+            var verbNounToken = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).First();
 
-            var commands = _commands.ToDictionary(x => x.Verb + "-" + x.Noun);
-
-            var matching = verbNounToken.Contains('-')
-                                   ? verbNounToken.SelectHumps(commands.Keys).SingleOrDefault()
-                                   : ("get-" + verbNounToken).SelectHumps(commands.Keys).SingleOrDefault()
-                                     ?? ("list-" + verbNounToken).SelectHumps(commands.Keys).SingleOrDefault();
-            if (matching == null) return null;
-
-            input = input.Substring(verbNounToken.Length).TrimStart();
-            return commands[matching];
+            var command = FindCommand(verbNounToken);
+            if (command == null) return null;
+            var lengthToRemove = verbNounToken.Length;
+            input = input.Substring(lengthToRemove).TrimStart();
+            return command;
         }
     }
 }

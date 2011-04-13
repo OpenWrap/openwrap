@@ -18,7 +18,7 @@ namespace Tests.Commands
 
         public static IEnumerable<ICommandOutput> ShouldHaveWarning(this IEnumerable<ICommandOutput> results)
         {
-            return results.ShouldHaveAtLeastOne(x => x.Type == CommandResultType.Error);
+            return results.ShouldHaveAtLeastOne(x => x.Type == CommandResultType.Warning);
         }
     }
 }

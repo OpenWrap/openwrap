@@ -64,7 +64,7 @@ namespace nuget_syndication_specs
 
             autofacMvcPackage.Dependencies
                     .ShouldHaveCountOf(1)
-                    .First().ShouldBe("Autofac = 2.2.4.900");
+                    .First().ShouldBe("Autofac = 2.2.4");
         }
     }
     namespace context

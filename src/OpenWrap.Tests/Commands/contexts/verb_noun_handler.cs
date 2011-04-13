@@ -9,18 +9,13 @@ using OpenWrap.Testing;
 
 namespace Tests.Commands.contexts
 {
-    class verb_noun_handler : context
+    internal abstract class command_handler : context
     {
-        CommandRepository Repository;
-        VerbNounCommandLineHandler Handler;
+        protected CommandRepository Repository;
+        protected ICommandLineHandler Handler;
         protected ICommandDescriptor Result;
         protected string ResultingLine;
 
-        public verb_noun_handler()
-        {
-            Repository = new CommandRepository();
-            Handler = new VerbNounCommandLineHandler(Repository);
-        }
         protected void when_executing(string line)
         {
 
@@ -37,6 +32,24 @@ namespace Tests.Commands.contexts
         {
             Result.Noun.ShouldBe(expectedNoun);
             Result.Verb.ShouldBe(expectedVerb);
+        }
+    }
+    abstract class noun_verb_handler : command_handler
+    {
+        public noun_verb_handler()
+        {
+            
+            Repository = new CommandRepository();
+            Handler = new NounVerbCommandLineHandler(Repository);
+
+        }
+    }
+    abstract class verb_noun_handler : command_handler
+    {
+        public verb_noun_handler()
+        {
+            Repository = new CommandRepository();
+            Handler = new VerbNounCommandLineHandler(Repository);
         }
     }
 }
