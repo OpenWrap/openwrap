@@ -20,57 +20,59 @@ namespace OpenWrap.Commands.Cli
     {
         public static int Main(string[] args)
         {
-            if (args == null || args.Length == 0)
-            {
-                Console.WriteLine("No command was entered. Type 'get-help' to get a list of supported commands.");
-            }
-            Services.ServiceLocator.RegisterService(new RuntimeAssemblyResolver());
-            Services.ServiceLocator.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
-            Services.ServiceLocator.TryRegisterService<IConfigurationManager>(
-                    () => new DefaultConfigurationManager(Services.ServiceLocator.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
-            Services.ServiceLocator.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
+            Console.WriteLine("This version of the shell is out of date. Your commands will still work for now, but it is recommended that you update now.\r\nIf you ");
+            return Main(Environment.CommandLine);
+        }
+        public static int Main(string argumentsLine)
+        {
+            throw new NotImplementedException();
+            //Services.ServiceLocator.RegisterService(new RuntimeAssemblyResolver());
+            //Services.ServiceLocator.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
+            //Services.ServiceLocator.TryRegisterService<IConfigurationManager>(
+            //        () => new DefaultConfigurationManager(Services.ServiceLocator.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
+            //Services.ServiceLocator.TryRegisterService<IEnvironment>(() => new CurrentDirectoryEnvironment());
 
-            Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
-            Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
-            Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
-            Services.ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
-                                                                                Services.ServiceLocator.GetService<IPackageDeployer>(),
-                                                                                Services.ServiceLocator.GetService<IPackageResolver>()
-                                                                                ));
+            //Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
+            //Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter());
+            //Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
+            //Services.ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
+            //                                                                    Services.ServiceLocator.GetService<IPackageDeployer>(),
+            //                                                                    Services.ServiceLocator.GetService<IPackageResolver>()
+            //                                                                    ));
 
-            Services.ServiceLocator.RegisterService<ITaskManager>(new TaskManager());
+            //Services.ServiceLocator.RegisterService<ITaskManager>(new TaskManager());
 
-            var commands = Services.ServiceLocator.GetService<IEnvironment>().Commands();
-            var repo = new CommandRepository(commands);
+            //var commands = Services.ServiceLocator.GetService<IEnvironment>().Commands();
+            //var repo = new CommandRepository(commands);
 
-            Services.ServiceLocator.TryRegisterService<ICommandRepository>(() => repo);
-            var processor = new CommandLineProcessor(repo);
-            var backedupConsoleColor = Console.ForegroundColor;
-            var returnCode = 0;
-            foreach (var commandOutput in AllOutputs(processor, args).Where(x => x != null))
-            {
-                try
-                {
-                    if (HiddenVerboseOutput(args, commandOutput))
-                        continue;
-                    SetCommandColor(commandOutput.Type);
-                    RenderOutput(commandOutput);
-                    if (commandOutput.Type == CommandResultType.Error)
-                    {
-                        returnCode = -1;
-                    }
-                }
-                finally
-                {
-                    Console.ForegroundColor = backedupConsoleColor;
-                }
-            }
-            if (Debugger.IsAttached)
-            {
-                Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-            }
-            return returnCode;
+            //Services.ServiceLocator.TryRegisterService<ICommandRepository>(() => repo);
+            //var processor = new CommandLineProcessor(repo);
+            //var backedupConsoleColor = Console.ForegroundColor;
+            //var returnCode = 0;
+            //foreach (var commandOutput in AllOutputs(processor, args).Where(x => x != null))
+            //{
+            //    try
+            //    {
+            //        if (HiddenVerboseOutput(args, commandOutput))
+            //            continue;
+            //        SetCommandColor(commandOutput.Type);
+            //        RenderOutput(commandOutput);
+            //        if (commandOutput.Type == CommandResultType.Error)
+            //        {
+            //            returnCode = -1;
+            //        }
+            //    }
+            //    finally
+            //    {
+            //        Console.ForegroundColor = backedupConsoleColor;
+            //    }
+            //}
+            //if (Debugger.IsAttached)
+            //{
+            //    Console.WriteLine("Press any key to continue...");
+            //    Console.ReadKey();
+            //}
+            //return returnCode;
         }
 
         static IEnumerable<ICommandOutput> AllOutputs(CommandLineProcessor processor, string[] args)

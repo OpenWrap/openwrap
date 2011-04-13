@@ -112,8 +112,14 @@
     <Compile Include="Commands\clean_wrap\cleaning_a_wrap_with_two_versions.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_package_from_both_repositories.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_package_from_system_repository.cs" />
-    <Compile Include="Commands\command_line_handlers\verb_noun\verb_defaults_to.cs" />
+    <Compile Include="Commands\command_line_handlers\noun_verb\not_enough_tokens.cs" />
+    <Compile Include="Commands\command_line_handlers\noun_verb\noun_verb_with_space.cs" />
+    <Compile Include="Commands\command_line_handlers\noun_verb\token_has_dash.cs" />
+    <Compile Include="Commands\command_line_handlers\noun_verb\unknown_command.cs" />
+    <Compile Include="Commands\command_line_handlers\verb_noun\unknown_verb_noun.cs" />
+    <Compile Include="Commands\command_line_handlers\verb_noun\verb_defaults.cs" />
     <Compile Include="Commands\command_line_handlers\verb_noun\verb_noun_with_dash.cs" />
+    <Compile Include="Commands\command_line_handlers\verb_noun\verb_noun_with_humps_matching.cs" />
     <Compile Include="Commands\command_line_parsing\parsing_named_inputs.cs" />
     <Compile Include="Commands\contexts\add_wrap.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />

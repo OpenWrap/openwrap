@@ -73,6 +73,8 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="Commands\Cli\NamedCommandLineHandler.cs" />
+    <Compile Include="Commands\Cli\NounVerbCommandLineHandler.cs" />
     <Compile Include="Commands\Cli\VerbNounCommandLineHandler.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
