@@ -120,10 +120,23 @@
     <Compile Include="Commands\command_line_handlers\verb_noun\verb_defaults.cs" />
     <Compile Include="Commands\command_line_handlers\verb_noun\verb_noun_with_dash.cs" />
     <Compile Include="Commands\command_line_handlers\verb_noun\verb_noun_with_humps_matching.cs" />
-    <Compile Include="Commands\command_line_parsing\parsing_named_inputs.cs" />
+    <Compile Include="Commands\command_line_parsing\empty_input.cs" />
+    <Compile Include="Commands\command_line_parsing\escape_characters.cs" />
+    <Compile Include="Commands\command_line_parsing\escape_special_characters.cs" />
+    <Compile Include="Commands\command_line_parsing\input_parser.cs" />
+    <Compile Include="Commands\command_line_parsing\mixed_named_and_unnamed_values.cs" />
+    <Compile Include="Commands\command_line_parsing\multiple_named_inputs_with_single_values.cs" />
+    <Compile Include="Commands\command_line_parsing\multiple_values.cs" />
+    <Compile Include="Commands\command_line_parsing\named_value_with_quotes.cs" />
+    <Compile Include="Commands\command_line_parsing\singe_named_input_no_value.cs" />
+    <Compile Include="Commands\command_line_parsing\single_named_input.cs" />
+    <Compile Include="Commands\command_line_parsing\single_noname_input.cs" />
     <Compile Include="Commands\contexts\add_wrap.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
+    <Compile Include="Commands\CommandOutputExtensions.cs" />
+    <Compile Include="Commands\MemoryCommand.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
+    <Compile Include="Commands\contexts\runner.cs" />
     <Compile Include="Commands\contexts\verb_noun_handler.cs" />
     <Compile Include="Commands\remove_wrap\removing_from_existing_scope.cs" />
     <Compile Include="Commands\remove_wrap\removing_unknown_package_in_project.cs" />
@@ -135,6 +148,20 @@
     <Compile Include="Commands\remove_wrap\removing_by_version_and_last.cs" />
     <Compile Include="Commands\remove_wrap\removing_by_version_in_project.cs" />
     <Compile Include="Commands\remove_wrap\removing_by_version_in_system.cs" />
+    <Compile Include="Commands\runner\named_input_hump_matching.cs" />
+    <Compile Include="Commands\runner\named_input_hump_matching_ambiguous.cs" />
+    <Compile Include="Commands\runner\named_input_invalid_value.cs" />
+    <Compile Include="Commands\runner\missing_optional_named_input.cs" />
+    <Compile Include="Commands\runner\missing_required_named_input.cs" />
+    <Compile Include="Commands\runner\missing_required_positioned_input.cs" />
+    <Compile Include="Commands\runner\named_input_multiple_values.cs" />
+    <Compile Include="Commands\runner\named_input_provided_too_many_times.cs" />
+    <Compile Include="Commands\runner\named_input_provided.cs" />
+    <Compile Include="Commands\runner\named_inputs_provided.cs" />
+    <Compile Include="Commands\runner\positioned_inputs.cs" />
+    <Compile Include="Commands\runner\positioned_inputs_used_by_name.cs" />
+    <Compile Include="Commands\runner\positioned_input_invalid_value.cs" />
+    <Compile Include="Commands\runner\unknown_named_input_provided.cs" />
     <Compile Include="Commands\update_wrap\command_flags\project_and_system_flag_specified.cs" />
     <Compile Include="Commands\update_wrap\project\from_system.cs" />
     <Compile Include="Commands\update_wrap\command_flags\defaults.cs" />
@@ -150,6 +177,12 @@
     <Compile Include="Commands\update_wrap\system\from_remote_by_name.cs" />
     <Compile Include="Commands\update_wrap\project\not_in_project.cs" />
     <Compile Include="Commands\update_wrap\project\from_remote.cs" />
+    <Compile Include="Commands\usage\command_description.cs" />
+    <Compile Include="Commands\usage\command_with_positioned_and_optional_parameters.cs" />
+    <Compile Include="Commands\usage\command_with_positioned_and_other_parameters.cs" />
+    <Compile Include="Commands\usage\command_with_positioned_parameters.cs" />
+    <Compile Include="Commands\MemoryCommandDescriptor.cs" />
+    <Compile Include="Commands\MemoryCommandInput.cs" />
     <Compile Include="contexts\dependency_manager_context.cs" />
     <Compile Include="contexts\descriptor.cs" />
     <Compile Include="contexts\descriptor_readers.cs" />
@@ -213,7 +246,7 @@
     <Compile Include="Collections\MultiThreaded_specs.cs" />
     <Compile Include="CommandsExtensions.cs" />
     <Compile Include="Commands\CommandsExtension.cs" />
-    <Compile Include="Commands\command_description_spec.cs" />
+    <Compile Include="Commands\usage\command_without_options.cs" />
     <Compile Include="Commands\command_documentation.cs" />
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
     <Compile Include="Commands\Help\getHelpCommand.cs" />
@@ -318,6 +351,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\add_wrap\from_remote\" />
+    <Folder Include="Commands\command_line_executor\" />
     <Folder Include="Commands\remove_wrap\hooks\" />
     <Folder Include="Commands\Wrap\buildwrap\" />
     <Folder Include="descriptors\" />

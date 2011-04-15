@@ -2,11 +2,11 @@
 
 namespace OpenWrap.Commands.Cli
 {
-    public abstract class NamedCommandLineHandler : ICommandLineHandler
+    public abstract class NamedCommandLocator : ICommandLocator
     {
         readonly ICommandRepository _commands;
 
-        public NamedCommandLineHandler(ICommandRepository commands)
+        public NamedCommandLocator(ICommandRepository commands)
         {
             _commands = commands;
         }

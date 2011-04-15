@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace OpenWrap.Commands.Cli
 {
-    public class VerbNounCommandLineHandler : NamedCommandLineHandler
+    public class VerbNounCommandLocator : NamedCommandLocator
     {
-        public VerbNounCommandLineHandler(ICommandRepository command)
+        public VerbNounCommandLocator(ICommandRepository command)
             : base(command)
         {
 

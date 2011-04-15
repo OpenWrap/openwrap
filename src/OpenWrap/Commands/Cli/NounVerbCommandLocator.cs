@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace OpenWrap.Commands.Cli
 {
-    public class NounVerbCommandLineHandler : NamedCommandLineHandler
+    public class NounVerbCommandLocator : NamedCommandLocator
     {
-        public NounVerbCommandLineHandler(ICommandRepository commands) : base(commands)
+        public NounVerbCommandLocator(ICommandRepository commands) : base(commands)
         {
         }
 

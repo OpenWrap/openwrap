@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace OpenWrap.Commands
 {
@@ -6,11 +7,12 @@ namespace OpenWrap.Commands
     {
         bool IsRequired { get; }
         bool IsValueRequired { get; }
+        bool MultiValues { get; }
         string Name { get; }
-        Type Type { get; }
+        string Type { get; }
         string Description { get; }
         int? Position { get; }
-        object ValidateValue<T>(T value);
-        void SetValue(object target, object value);
+        
+        bool TrySetValue(ICommand target, IEnumerable<string> value);
     }
 }

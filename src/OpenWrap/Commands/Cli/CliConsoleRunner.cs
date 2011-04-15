@@ -20,9 +20,15 @@ namespace OpenWrap.Commands.Cli
     {
         public static int Main(string[] args)
         {
-            Console.WriteLine("This version of the shell is out of date. Your commands will still work for now, but it is recommended that you update now.\r\nIf you ");
-            return Main(Environment.CommandLine);
+            Console.WriteLine("Your version of the shell is out of date. Your commands will still work for now, but it is recommended that you update now.");
+            return Main(StripExecutableName(Environment.CommandLine));
         }
+
+        static string StripExecutableName(string commandLine)
+        {
+            return commandLine;
+        }
+
         public static int Main(string argumentsLine)
         {
             throw new NotImplementedException();

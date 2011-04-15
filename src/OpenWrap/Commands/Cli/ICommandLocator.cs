@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OpenWrap.Commands.Cli
 {
-    public interface ICommandLineHandler
+    public interface ICommandLocator
     {
         ICommandDescriptor Execute(ref string input);
     }

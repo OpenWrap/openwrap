@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using command_description_spec;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
 using OpenWrap.Testing;
+using Tests.Commands.usage;
 
 namespace Tests.Commands.contexts
 {
     internal abstract class command_handler : context
     {
         protected CommandRepository Repository;
-        protected ICommandLineHandler Handler;
+        protected ICommandLocator Handler;
         protected ICommandDescriptor Result;
         protected string ResultingLine;
 
@@ -40,7 +40,7 @@ namespace Tests.Commands.contexts
         {
             
             Repository = new CommandRepository();
-            Handler = new NounVerbCommandLineHandler(Repository);
+            Handler = new NounVerbCommandLocator(Repository);
 
         }
     }
@@ -49,7 +49,7 @@ namespace Tests.Commands.contexts
         public verb_noun_handler()
         {
             Repository = new CommandRepository();
-            Handler = new VerbNounCommandLineHandler(Repository);
+            Handler = new VerbNounCommandLocator(Repository);
         }
     }
 }

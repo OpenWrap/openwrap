@@ -36,7 +36,7 @@ namespace OpenWrap.Commands.Core
 
         string CreateInputDescription(ICommandInputDescriptor input)
         {
-            return string.Format("\t-{0} <{1}>\r\n\t\t{2}", input.Name, input.Type.Name, input.Description);
+            return string.Format("\t-{0} <{1}>\r\n\t\t{2}", input.Name, input.Type, input.Description);
         }
 
         protected string CommandName { get; set; }
@@ -75,7 +75,7 @@ namespace OpenWrap.Commands.Core
             format = "-{0} " + format;
             if (!command.IsRequired)
                 format = "[" + format + "]";
-            return string.Format(format, command.Name, command.Type.Name);
+            return string.Format(format, command.Name, command.Type);
         }
 
         string CreatePositionedParameters(ICommandDescriptor command)
@@ -103,7 +103,7 @@ namespace OpenWrap.Commands.Core
                 format = "[[-{0}] <{1}>]";
             else
                 format = "(-{0} [<{1}>] | <{1}>)";
-            return string.Format(format, x.Name, x.Type.Name);
+            return string.Format(format, x.Name, x.Type);
         }
 
         public string UsageLine { get; set; }

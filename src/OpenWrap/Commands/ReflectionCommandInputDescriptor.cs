@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using OpenWrap.Reflection;
 
@@ -18,23 +20,28 @@ namespace OpenWrap.Commands
 
         public bool IsValueRequired { get; set; }
 
+        public bool MultiValues { get; set; }
+
         public string Name { get; set; }
         public int? Position { get; set; }
+        
+
         public PropertyInfo Property { get; private set; }
 
-        public Type Type
+        public string Type
         {
-            get { return Property.PropertyType; }
+            get { return Property.PropertyType.FullName; }
         }
 
-        public void SetValue(object target, object value)
+        public bool TrySetValue(ICommand target, IEnumerable<string> value)
         {
             Property.SetValue(target,
-                              value ??
+                              value.FirstOrDefault() ??
                               (Property.PropertyType == typeof(bool)
                                        ? "true"
                                        : null),
                               null);
+            return true;
         }
 
         public object ValidateValue<T>(T value)

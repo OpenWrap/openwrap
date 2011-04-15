@@ -313,6 +313,10 @@ namespace OpenWrap.Testing
             return enumerable;
         }
 
+        public static IEnumerable<T> ShouldHaveAtLeastOne<T>(this IEnumerable<T> enumerable) where T : class
+        {
+            return ShouldHaveAtLeastOne<T>(enumerable, _=>true);
+        }
         public static IEnumerable<T> ShouldHaveAtLeastOne<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
         {
             enumerable.Any(predicate).ShouldBeTrue();

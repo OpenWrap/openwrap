@@ -73,9 +73,18 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
-    <Compile Include="Commands\Cli\NamedCommandLineHandler.cs" />
-    <Compile Include="Commands\Cli\NounVerbCommandLineHandler.cs" />
-    <Compile Include="Commands\Cli\VerbNounCommandLineHandler.cs" />
+    <Compile Include="Commands\Cli\ColoredText.cs" />
+    <Compile Include="Commands\Cli\CommandRunner.cs" />
+    <Compile Include="Commands\Cli\ConsoleCommandExecutor.cs" />
+    <Compile Include="Commands\Cli\Input.cs" />
+    <Compile Include="Commands\Cli\InputParser.cs" />
+    <Compile Include="Commands\Cli\InputParserException.cs" />
+    <Compile Include="Commands\Cli\MultiValueInput.cs" />
+    <Compile Include="Commands\Cli\NamedCommandLocator.cs" />
+    <Compile Include="Commands\Cli\NounVerbCommandLocator.cs" />
+    <Compile Include="Commands\Cli\SingleValueInput.cs" />
+    <Compile Include="Commands\Cli\VerbNounCommandLocator.cs" />
+    <Compile Include="Commands\InputParsingError.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -96,7 +105,7 @@
     <Compile Include="Build\TextBuildResult.cs" />
     <Compile Include="Collections\MultiThreadedEnumerable.cs" />
     <Compile Include="Collections\MultiThreadedEnumerator.cs" />
-    <Compile Include="Commands\Cli\ICommandLineHandler.cs" />
+    <Compile Include="Commands\Cli\ICommandLocator.cs" />
     <Compile Include="Commands\CommandDocumentation.cs" />
     <Compile Include="Commands\CommandOutputExtensions.cs" />
     <Compile Include="Commands\Info.cs" />
@@ -144,7 +153,7 @@
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\NotificationCollection.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
-    <Compile Include="Commands\AmbiguousInputNameException.cs" />
+    <Compile Include="Commands\AmbiguousInputName.cs" />
     <Compile Include="Commands\AttributeBasedCommandDescriptor.cs" />
     <Compile Include="Commands\CommandAttribute.cs" />
     <Compile Include="Commands\CommandInputAttribute.cs" />
@@ -163,7 +172,7 @@
     <Compile Include="Commands\ICommandInputDescriptor.cs" />
     <Compile Include="Commands\ICommandRepository.cs" />
     <Compile Include="Commands\InvalidCommandValue.cs" />
-    <Compile Include="Commands\MissingCommandValue.cs" />
+    <Compile Include="Commands\MissingInput.cs" />
     <Compile Include="Collections\SequenceBuilder.cs" />
     <Compile Include="Commands\Success.cs" />
     <Compile Include="Configuration\Configurations.cs" />

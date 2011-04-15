@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using command_description_spec;
 using NUnit.Framework;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Core;
 using OpenWrap.Testing;
+using Tests.Commands;
+using Tests.Commands.usage;
 
 namespace getHelpCommand_specs
 {
@@ -163,7 +164,7 @@ namespace getHelpCommand_specs
                 _command.AllInputs.Add(new MemoryCommandInput
                 {
                         Name = name,
-                        Type = type,
+                        Type = type.FullName,
                         IsRequired = isRequired,
                         IsValueRequired = isValueRequired,
                         Description = description ?? string.Empty,

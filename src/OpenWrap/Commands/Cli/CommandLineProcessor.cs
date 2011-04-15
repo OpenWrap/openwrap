@@ -55,14 +55,14 @@ namespace OpenWrap.Commands.Cli
 
             var unnamedCommandInputsFromCommandLine = inputsFromCommandLine[null].ToList();
             List<ParsedInput> assignedNamedInputValues = null;
-            AmbiguousInputNameException exception = null;
+            Exception exception = null;
             try
             {
                 assignedNamedInputValues = (from namedValues in inputsFromCommandLine
                                             where namedValues.Key != null
                                             let value = namedValues.LastOrDefault()
                                             let commandInput = FindCommandInputDescriptor(command, namedValues.Key)
-                                            let parsedValue = commandInput != null ? commandInput.ValidateValue(value) : null
+                                            let parsedValue = new object()//commandInput != null ? commandInput.ValidateValue(value) : null
                                             select new ParsedInput
                                             {
                                                     InputName = namedValues.Key,
@@ -71,13 +71,13 @@ namespace OpenWrap.Commands.Cli
                                                     ParsedValue = parsedValue
                                             }).ToList();
             }
-            catch (AmbiguousInputNameException e)
+            catch (Exception e)
             {
                 exception = e;
             }
             if (exception != null)
             {
-                yield return exception;
+                yield return new ExceptionError(exception);
                 yield break;
             }
             var namedInputsNameNotFound = assignedNamedInputValues.FirstOrDefault(x => x.Input == null);
@@ -106,7 +106,7 @@ namespace OpenWrap.Commands.Cli
 
             var assignedUnnamedInputValues = (from unnamedValue in unnamedCommandInputsFromCommandLine
                                               let input = unfullfilledCommandInputs[unnamedCommandInputsFromCommandLine.IndexOf(unnamedValue)]
-                                              let commandValue = input.ValidateValue(unnamedValue)
+                                              let commandValue = new object()//null// input.ValidateValue(unnamedValue)
                                               select new ParsedInput
                                               {
                                                       InputName = null,
@@ -132,7 +132,7 @@ namespace OpenWrap.Commands.Cli
                     .ToList();
             if (missingRequiredInputs.Count > 0)
             {
-                yield return new MissingCommandValue(missingRequiredInputs);
+                yield return new MissingInput(missingRequiredInputs);
                 yield break;
             }
 
@@ -140,7 +140,7 @@ namespace OpenWrap.Commands.Cli
             // all clear, assign and run
             var commandInstance = command.Create();
             foreach (var namedInput in allAssignedInputs)
-                namedInput.Input.SetValue(commandInstance, namedInput.ParsedValue);
+                namedInput.Input.TrySetValue(commandInstance, new[]{namedInput.ParsedValue.ToString()});
             var enumerator = commandInstance.Execute().GetEnumerator();
             MoveNextResult result;
             do
@@ -170,7 +170,7 @@ namespace OpenWrap.Commands.Cli
                                    select input.Value).ToList();
 
             if (potentialInputs.Count > 1)
-                throw new AmbiguousInputNameException(name, potentialInputs.Select(x => x.Name).ToArray());
+                throw new NotSupportedException();// return new AmbiguousInputName(name, potentialInputs.Select(x => x.Name).ToArray());
 
             return potentialInputs.SingleOrDefault();
         }
