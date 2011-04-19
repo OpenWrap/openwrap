@@ -62,7 +62,7 @@ namespace OpenWrap.Tests.Collections
         {
             var signal = new AutoResetEvent(false);
             var merged = SecondWait(signal).Merge(FirstWait(signal));
-            merged.ShouldHaveSameElementsAs(new[]{0,1,42,43});
+            merged.ShouldBe(new[]{0,1,42,43});
         }
         public IEnumerable<int> First(EventWaitHandle wait)
         {

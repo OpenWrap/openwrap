@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
+using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Reflection;
 using OpenWrap.Testing;
 
@@ -169,7 +170,6 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
         public abstract class command_processor : Testing.context
         {
             protected ICommandRepository commands;
-            protected CommandLineProcessor processor;
 
             public command_processor()
             {
@@ -178,20 +178,19 @@ namespace OpenWrap.Repositories.Wrap.Tests.Commands
             public virtual void given()
             {
                 commands = new CommandRepository();
-                processor = new CommandLineProcessor(commands);   
             }
             protected void given_command<T>()
             {
-                throw new NotImplementedException();
-                //commands.Add(new AttributeBasedCommandDescriptor(typeof(T), typeof(T).GetAttribute<CommandAttribute>()));
+                commands.Add(command = CecilCommandExportProvider.GetCommandFrom<T>());
             }
             protected List<ICommandOutput> results;
+            ICommandDescriptor command;
             protected ICommandOutput Output { get { return results.Last(); } }
 
-                protected void when_parsing_input(params string[] command)
-            {
-                results = processor.Execute(command).ToList();
-            }
+                protected void when_parsing_input(params string[] line)
+                {
+                    results = new CommandRunner().Run(command, line.Join(" ")).ToList();
+                }
         }
     }
 }

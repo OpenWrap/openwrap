@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using OpenFileSystem.IO;
@@ -86,6 +87,7 @@ namespace Tests
         List<FluentMethodBuilder> _methods = new List<FluentMethodBuilder>();
         List<CustomAttribute> _attributes = new List<CustomAttribute>();
         List<TypeReference> _interfaces = new List<TypeReference>();
+        List<FluentPropertyBuilder> _properties = new List<FluentPropertyBuilder>();
 
 
         public FluentTypeBuilder(ModuleDefinition module, string name)
@@ -111,19 +113,24 @@ namespace Tests
             _baseClass = _module.Import(typeof(T));
             return this;
         }
-        public FluentTypeBuilder Methods(params Expression<Action<FluentMethodBuilder>>[] methods)
+        public FluentTypeBuilder Method(params Expression<Action<FluentMethodBuilder>>[] methods)
         {
             foreach (var method in methods)
             {
                 var methodBuilder = new FluentMethodBuilder(_module, method.Parameters[0].Name);
-                var config = method.Compile();
-                config(methodBuilder);
+                method.Compile()(methodBuilder);
                 _methods.Add(methodBuilder);
             }
             return this;
         }
-        public FluentTypeBuilder Properties(params Expression<Action<FluentPropertyBuilder>>[] properties)
+        public FluentTypeBuilder Property(params Expression<Action<FluentPropertyBuilder>>[] properties)
         {
+            foreach(var property in properties)
+            {
+                var propBuilder = new FluentPropertyBuilder(_module, property.Parameters[0].Name);
+                property.Compile()(propBuilder);
+                _properties.Add(propBuilder);
+            }
             return this;
         }
         public static explicit operator TypeDefinition(FluentTypeBuilder builder)
@@ -132,6 +139,7 @@ namespace Tests
             td.Methods.AddRange(builder._methods.Select(_ => _.Build()));
             td.CustomAttributes.AddRange(builder._attributes);
             td.Interfaces.AddRange(builder._interfaces);
+            td.Properties.AddRange(builder._properties.Select(_ => (PropertyDefinition)_));
             return td;
         }
 

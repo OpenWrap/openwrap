@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Mono.Cecil;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Collections;
 using OpenWrap.Commands.Cli;
@@ -191,24 +192,26 @@ namespace OpenWrap.Commands.contexts
 
     public abstract class command_context<T> : command where T : ICommand
     {
-        //protected AttributeBasedCommandDescriptor<T> Command;
+        protected ICommandDescriptor Command;
         protected List<ICommandOutput> Results;
 
         public command_context()
         {
-          //  Command = new AttributeBasedCommandDescriptor<T>(typeof(T).GetAttribute<CommandAttribute>());
-            Commands = new CommandRepository();// { Command };
+            var assembly = AssemblyDefinition.ReadAssembly(typeof(T).Assembly.Location);
+
+            Command = CecilCommandExportProvider.GetCommandFromTypeDef(assembly.MainModule.Import(typeof(T)).Resolve());
+            Commands = new CommandRepository { Command };
 
             
         }
 
         protected virtual void when_executing_command(params string[] parameters)
         {
-            throw new NotImplementedException();
-            //foreach (var descriptor in Environment.ScopedDescriptors.Values)
-            //    descriptor.Save();
-            //var allParams = new[] { Command.Noun, Command.Verb }.Concat(parameters);
-            //Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
+            
+            foreach (var descriptor in Environment.ScopedDescriptors.Values)
+                descriptor.Save();
+
+            Results = new CommandRunner().Run(Command, parameters.Join(" ")).ToList();
         }
 
         protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)

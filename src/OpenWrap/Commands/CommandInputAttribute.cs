@@ -11,7 +11,8 @@ namespace OpenWrap.Commands
             IsValueRequired = true;
         }
 
-        public string DisplayName { get; set; }
+        public string Description { get; set; }
+        public string Label { get; set; }
 
         public bool IsRequired { get; set; }
         public bool IsValueRequired { get; set; }

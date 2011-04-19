@@ -51,10 +51,12 @@ namespace OpenWrap.Build.Tasks
             if (Debug) Debugger.Launch();
 
             _success = true;
-            var commandProcessor = new CommandLineProcessor(new CommandRepository(ReadCommands(Services.ServiceLocator.GetService<IEnvironment>())));
 
-            foreach (var cmd in commandProcessor.Execute(new[] { Noun, Verb }.Concat(GetArguments()).ToList()))
-                ProcessOutput(cmd);
+            throw new NotImplementedException();
+            //var commandProcessor = new CommandLineProcessor(new CommandRepository(ReadCommands(Services.ServiceLocator.GetService<IEnvironment>())));
+
+            //foreach (var cmd in commandProcessor.Execute(new[] { Noun, Verb }.Concat(GetArguments()).ToList()))
+            //    ProcessOutput(cmd);
 
             return _success;
         }

@@ -55,7 +55,7 @@
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
     <Compile Include="Commands\contexts\exporter.cs" />
-    <Compile Include="Commands\exporter\command_without_inputs.cs" />
+    <Compile Include="Commands\cecil_exporter\command_without_inputs.cs" />
     <Compile Include="AssemblyBUilder.cs" />
     <Compile Include="Build\build_instruction_emitter\content.cs" />
     <Compile Include="Build\build_instruction_emitter\content_in_subfolder.cs" />
@@ -136,7 +136,7 @@
     <Compile Include="Commands\contexts\add_wrap.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
     <Compile Include="Commands\CommandOutputExtensions.cs" />
-    <Compile Include="Commands\exporter\command_with_inputs.cs" />
+    <Compile Include="Commands\cecil_exporter\command_with_inputs.cs" />
     <Compile Include="Commands\MemoryCommand.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
     <Compile Include="Commands\contexts\runner.cs" />
@@ -215,6 +215,7 @@
     <Compile Include="resolving_dependency_trees\resolving_content_branch_for_package_mared_as_content.cs" />
     <Compile Include="resolving_dependency_trees\resolving_content_branch_for_package_with_mixed_content.cs" />
     <Compile Include="resolving_dependency_trees\resolving_namespaced_dependency.cs" />
+    <Compile Include="string_conversions.cs" />
     <Compile Include="Testing\finding_runner\runner_in_referenced_package_is_found.cs" />
     <Compile Include="visiting_package_graphs\visiting_from_node.cs" />
     <Compile Include="visiting_package_graphs\visiting_linear_package_graph.cs" />
@@ -258,7 +259,6 @@
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
     <Compile Include="Commands\add_wrap\adding_wrap_twice.cs" />
-    <Compile Include="Commands\CommandLineParserTests.cs" />
     <Compile Include="Commands\CommandProcessor.cs" />
     <Compile Include="Commands\contexts\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />

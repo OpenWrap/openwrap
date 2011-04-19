@@ -25,7 +25,7 @@ namespace OpenWrap.Commands.Cli
             return Main(StripExecutableName(Environment.CommandLine));
         }
 
-	static string StripExecutableName(string commandLine)
+	    static string StripExecutableName(string commandLine)
         {
             return commandLine;
         }
@@ -81,12 +81,12 @@ namespace OpenWrap.Commands.Cli
             //return returnCode;
         }
 
-        static IEnumerable<ICommandOutput> AllOutputs(CommandLineProcessor processor, string[] args)
-        {
-            return processor.Execute(args);
-            //var eventListener = Services.Services.GetService<ITaskManager>().GetListener();
-            //return Wrap(processor.Execute(args), eventListener).Merge(eventListener.Start().Select(x => ProgressMessage(x)));
-        }
+        //static IEnumerable<ICommandOutput> AllOutputs(CommandLineProcessor processor, string[] args)
+        //{
+        //    return processor.Execute(args);
+        //    //var eventListener = Services.Services.GetService<ITaskManager>().GetListener();
+        //    //return Wrap(processor.Execute(args), eventListener).Merge(eventListener.Start().Select(x => ProgressMessage(x)));
+        //}
 
         static bool HasFlag(IEnumerable<string> args, string flag)
         {

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -36,12 +38,25 @@ namespace OpenWrap.PackageManagement.Exporters
 
     public class CecilCommandInputDescriptor : ICommandInputDescriptor
     {
-        Func<object, object> _validate;
+        string _propertyName;
 
-        public CecilCommandInputDescriptor(Func<object, object> validate)
+        public CecilCommandInputDescriptor()
         {
-            _validate = validate;
         }
+
+        public CecilCommandInputDescriptor(PropertyDefinition property, IDictionary<string, object> inputAttrib)
+        {
+            _propertyName = property.Name;
+            inputAttrib.TryGet("Name", name => Name = (string)name);
+            inputAttrib.TryGet("Description", description => Description = (string)description);
+            inputAttrib.TryGet("IsValueRequired", _ => IsValueRequired = (bool)_);
+            inputAttrib.TryGet("IsRequired", _ => IsRequired = (bool)_);
+            inputAttrib.TryGet("Position", position => Position = (int)position);
+
+            Name = Name ?? property.Name;
+            Type = property.PropertyType.FullName;
+        }
+
         public bool IsRequired { get; set; }
         public bool IsValueRequired { get; set; }
 
@@ -52,23 +67,127 @@ namespace OpenWrap.PackageManagement.Exporters
 
         public string Name { get; set; }
 
-        string ICommandInputDescriptor.Type
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string Type { get; private set; }
 
-        public Type Type { get; set; }
         public string Description { get; set; }
         public int? Position { get; set; }
-        
+
 
         public bool TrySetValue(ICommand target, IEnumerable<string> values)
         {
-            //target.GetType().GetProperty(Name).SetValue(target, value, null);
+            var pi = target.GetType().GetProperty(_propertyName);
+            var destinationType = pi.PropertyType;
+
+            if (IsValueRequired == false && values.Count() == 0)
+            {
+                if (destinationType == typeof(bool))
+                    pi.SetValue(target, true, null);
+                else if (destinationType.IsValueType)
+                    pi.SetValue(target, Activator.CreateInstance(destinationType), null);
+                else
+                    pi.SetValue(target, null, null);
+                return true;
+            }
+            object value;
+
+            if (!StringConversion.TryConvert(destinationType, values, out value))
+                return false;
+            try
+            {
+                pi.SetValue(target, value, null);
+                return true;
+            }
+            catch
+            {
+            }
             return false;
         }
     }
 
+    public static class StringConversion
+    {
+        delegate bool Converter(IEnumerable<string> values, out object result);
+
+        static readonly Dictionary<Type, Converter> _converters = new Dictionary<Type, Converter>
+        {
+            {typeof(string), ConvertString},
+            {typeof(IEnumerable<string>), ConvertListOfString}
+        };
+
+        static bool ConvertListOfString(IEnumerable<string> values, out object result)
+        {
+            result = values;
+            return true;
+        }
+
+        static bool ConvertString(IEnumerable<string> values, out object result)
+        {
+            result = null;
+            if (values.Count() != 1) return false;
+            result = values.First();
+            return true;
+        }
+        static Converter FallbackConverter(Type destinationType)
+        {
+            return (IEnumerable<string> values, out object result) => ConvertObject(destinationType, values, out result);
+        }
+        public static bool TryConvert(Type destinationType, IEnumerable<string> values, out object result)
+        {
+            return GetConverter(destinationType)(values, out result);
+        }
+
+        static Converter GetConverter(Type destinationType)
+        {
+            return _converters.ContainsKey(destinationType)
+                           ? _converters[destinationType]
+                           : FallbackConverter(destinationType);
+        }
+
+        static bool ConvertObject(Type destinationType, IEnumerable<string> values, out object result)
+        {
+            result = null;
+            var enumerableTypes = (from type in destinationType.GetInterfaces()
+                                   where type.IsGenericType
+                                   let def = type.GetGenericTypeDefinition()
+                                   where def == typeof(IEnumerable<>)
+                                   select type.GetGenericArguments().Single()).ToList();
+            var enumType = destinationType.IsInterface && destinationType.IsGenericType && destinationType.GetGenericTypeDefinition() == typeof(IEnumerable<>)
+                                   ? destinationType.GetGenericArguments().Single()
+                                   : null;
+            if (enumType != null)
+            {
+                var converter = GetConverter(enumType);
+                var list = Activator.CreateInstance(typeof(List<>).MakeGenericType(enumType)) as IList;
+                foreach (var value in values)
+                {
+                    object convertedValue;
+                    if (converter(new[] { value }, out convertedValue))
+                        list.Add(convertedValue);
+                    else return false;
+                }
+                result = list;
+                return true;
+            }
+            if (values.Count() != 1)
+                return false;
+            var valueToConvert = values.Single();
+            try
+            {
+                result = Convert.ChangeType(valueToConvert, destinationType);
+                return true;
+            }
+            catch { }
+            var typeConverter = TypeDescriptor.GetConverter(destinationType);
+            if (typeConverter == null || !typeConverter.CanConvertFrom(typeof(string))) return false;
+            try
+            {
+                result = typeConverter.ConvertFromString(valueToConvert);
+                return true;
+            }
+            catch { }
+            return false;
+        }
+    }
     public class CommandExportItem : Exports.ICommand
     {
         public CommandExportItem(string path, IPackage package, ICommandDescriptor descriptor)
@@ -109,7 +228,7 @@ namespace OpenWrap.PackageManagement.Exporters
     }
     public class CecilUICommandDescriptor : CommandDescriptor, Exports.ICommand
     {
-        public CecilUICommandDescriptor(TypeDefinition typeDef, IDictionary<string, object> commandAttribute, IDictionary<string, object> uiAttribute, IDictionary<string, ICommandInputDescriptor> inputs)
+        public CecilUICommandDescriptor(TypeDefinition typeDef, IDictionary<string, object> commandAttribute, IDictionary<string, object> uiAttribute, IEnumerable<CecilCommandInputDescriptor> inputs)
             : base(null)
         {
         }
@@ -132,11 +251,20 @@ namespace OpenWrap.PackageManagement.Exporters
 
     public class CecilCommandDescriptor : ICommandDescriptor
     {
-        public CecilCommandDescriptor(TypeDefinition typeDef, IDictionary<string, object> commandAttribute, IDictionary<string, ICommandInputDescriptor> inputs)
+        public CecilCommandDescriptor(TypeDefinition typeDef, IDictionary<string, object> commandAttribute, IEnumerable<CecilCommandInputDescriptor> inputs)
         {
             commandAttribute.TryGet("Noun", noun => Noun = (string)noun);
             commandAttribute.TryGet("Verb", verb => Verb = (string)verb);
-            Inputs = inputs;
+            var tokenPrefix = Verb + "-" + Noun;
+            commandAttribute.TryGet("Description", _ => Description = (string)_);
+            Description = Description ?? CommandDocumentation.GetCommandDescription(tokenPrefix);
+            Inputs = inputs.ToDictionary(x => x.Name,
+                                         x =>
+                                         {
+                                             x.Description = x.Description ?? CommandDocumentation.GetCommandDescription(tokenPrefix + "-" + x.Name);
+                                             return (ICommandInputDescriptor)x;
+                                         }, StringComparer.OrdinalIgnoreCase);
+
             Factory = () => (ICommand)Activator.CreateInstance(Type.GetType(typeDef.FullName + "," + typeDef.Module.Assembly.FullName));
         }
 

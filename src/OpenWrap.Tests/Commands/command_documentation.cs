@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Reflection;
 using OpenWrap.Testing;
 
@@ -19,13 +21,8 @@ namespace OpenWrap.Tests.Commands
 
         static ICommandDescriptor[] GetCommands()
         {
-            var provider = new AttributeBasedCommandProvider();
-            return (
-                           from type in typeof(AddWrapCommand).Assembly.GetExportedTypes()
-                           where type.IsAbstract == false && type.IsGenericTypeDefinition == false &&
-                                 type.GetInterface(typeof(ICommand).Name) != null
-                           select provider.TryGet(type)
-                   ).ToArray();
+            using (var stream = File.OpenRead(typeof(AddWrapCommand).Assembly.Location))
+                return CecilCommandExportProvider.GetCommandsFromAssembly(stream).ToArray();
         }
 
         [Theory]

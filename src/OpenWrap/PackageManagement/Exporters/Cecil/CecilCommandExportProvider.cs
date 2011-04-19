@@ -12,7 +12,7 @@ namespace OpenWrap.PackageManagement.Exporters
     public class CecilCommandExportProvider : AbstractAssemblyExporter
     {
         public CecilCommandExportProvider(IEnvironment env)
-                : base("commands", env.ExecutionEnvironment.Profile, env.ExecutionEnvironment.Platform)
+            : base("commands", env.ExecutionEnvironment.Profile, env.ExecutionEnvironment.Platform)
         {
 
         }
@@ -32,41 +32,51 @@ namespace OpenWrap.PackageManagement.Exporters
 
         IEnumerable<ICommandDescriptor> ReadCommandTypes(Exports.IAssembly assembly)
         {
-            return assembly.File.Read(assemblyStream=>
-            {
-                try
-                {
-                    var module1 = AssemblyDefinition.ReadAssembly(assemblyStream, new ReaderParameters(ReadingMode.Deferred)).MainModule;
-                    return (from type in module1.Types
-                            where type.IsPublic && type.IsAbstract == false && type.IsClass
-                            let typeDef = type.Resolve()
-                            where typeDef.HasGenericParameters == false || typeDef.IsGenericInstance
-                            where typeDef.HasInterfaces && typeDef.Interfaces.Any(_ => _.Is<ICommand>())
-                            let commandAttribute = typeDef.GetAttribute<CommandAttribute>()
-                            let uiAttribute = typeDef.GetAttribute<UICommandAttribute>()
-                            where commandAttribute != null
-                            let inputs = ReadInputs(typeDef)
-                            select uiAttribute != null
-                                           ? (ICommandDescriptor)new CecilUICommandDescriptor(typeDef, commandAttribute, uiAttribute, inputs)
-                                           : (ICommandDescriptor)new CecilCommandDescriptor(typeDef, commandAttribute, inputs)
-                           ).ToList();
-                }
-                catch
-                {
-                    return Enumerable.Empty<ICommandDescriptor>();
-                }
-            });
+            return assembly.File.Read(GetCommandsFromAssembly);
         }
 
-        IDictionary<string, ICommandInputDescriptor> ReadInputs(TypeDefinition typeDef)
+        public static IEnumerable<ICommandDescriptor> GetCommandsFromAssembly(Stream assemblyStream)
+        {
+            try
+            {
+                var module1 = AssemblyDefinition.ReadAssembly(assemblyStream, new ReaderParameters(ReadingMode.Deferred)).MainModule;
+                return (from type in module1.Types
+                        where type.IsPublic && type.IsAbstract == false && type.IsClass
+                        let typeDef = type.Resolve()
+                        where typeDef.HasGenericParameters == false || typeDef.IsGenericInstance
+                        where typeDef.HasInterfaces && typeDef.Interfaces.Any(_ => _.Is<ICommand>())
+                        let cmd = GetCommandFromTypeDef(typeDef)
+                        where cmd != null
+                        select cmd
+                       ).ToList();
+            }
+            catch
+            {
+                return Enumerable.Empty<ICommandDescriptor>();
+            }
+        }
+        public static ICommandDescriptor GetCommandFrom<T>()
+        {
+            return GetCommandFromTypeDef(AssemblyDefinition.ReadAssembly(typeof(T).Assembly.Location).MainModule.Import(typeof(T)).Resolve());
+        }
+        public static ICommandDescriptor GetCommandFromTypeDef(TypeDefinition typeDef)
+        {
+            var commandAttribute = typeDef.GetAttribute<CommandAttribute>();
+            var uiAttribute = typeDef.GetAttribute<UICommandAttribute>();
+                        if( commandAttribute == null) return null;
+            var inputs = ReadInputs(typeDef);
+            return uiAttribute != null
+                           ? (ICommandDescriptor)new CecilUICommandDescriptor(typeDef, commandAttribute, uiAttribute, inputs)
+                           : (ICommandDescriptor)new CecilCommandDescriptor(typeDef, commandAttribute, inputs);
+        }
+
+        static IEnumerable<CecilCommandInputDescriptor> ReadInputs(TypeDefinition typeDef)
         {
             return (from property in typeDef.Properties
                     let inputAttrib = property.GetAttribute<CommandInputAttribute>()
-                    select (ICommandInputDescriptor)null//new CommandInputDescriptor()
-                    //{
-                    //        //Description = inputAttrib.Contains()
-                    //}
-                   ).ToDictionary(x => x.Name);
+                    where inputAttrib != null
+                    select new CecilCommandInputDescriptor(property, inputAttrib)
+                   );
         }
     }
 }

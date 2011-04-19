@@ -213,7 +213,11 @@ namespace OpenWrap.Testing
             return true;
         }
 
-        public static IEnumerable<T> ShouldHaveSameElementsAs<T>(this IEnumerable<T> actual, IEnumerable<T> expected)
+        public static IEnumerable<T> ShouldBe<T>(this IEnumerable<T> actual, params T[] expected)
+        {
+            return actual.ShouldBe((IEnumerable<T>)expected);
+        }
+        public static IEnumerable<T> ShouldBe<T>(this IEnumerable<T> actual, IEnumerable<T> expected)
         {
             var enumerator1 = actual.GetEnumerator();
             var enumerator2 = expected.GetEnumerator();
