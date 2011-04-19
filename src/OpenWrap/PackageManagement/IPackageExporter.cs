@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Mono.Cecil;
+using OpenFileSystem.IO;
+using OpenWrap.IO;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
@@ -53,7 +56,7 @@ namespace OpenWrap.PackageManagement
 
         public AbstractAssemblyExporter(string export, string profile, string platform)
         {
-            _exportName = export.Contains("-") ? export : export + "-" + platform + "-" + profile;
+            _exportName = export;
             _profile = profile;
             _platform = platform;
         }
@@ -64,11 +67,14 @@ namespace OpenWrap.PackageManagement
             return GetAssemblies<TItem>(package);
         }
 
-        protected IEnumerable<IGrouping<string, TItems>> GetAssemblies<TItems>(IPackage package) where TItems: IExportItem
+        protected IEnumerable<IGrouping<string, TItems>> GetAssemblies<TItems>(IPackage package) where TItems : IExportItem
         {
             var allAssemblies = from directory in package.Content
-                                where directory.Key.StartsWithNoCase(_exportName + "-")
-                                let segments = directory.Key.Split(new[] { "-" }, StringSplitOptions.RemoveEmptyEntries)
+                                let packageExportName = directory.Key.EqualsNoCase(_exportName)
+                                    ? _exportName + "-" + _platform + "-" + _profile
+                                    : (directory.Key.StartsWithNoCase(_exportName + "-") ? directory.Key : null)
+                                where packageExportName != null
+                                let segments = packageExportName.Split(new[] { "-" }, StringSplitOptions.RemoveEmptyEntries)
                                 let platform = segments.Length == 3 ? segments[1] : ANYCPU
                                 let profile = segments.Length == 3 ? segments[2] : segments[1]
                                 where (PlatformMatches(platform, _platform) &&
@@ -77,29 +83,52 @@ namespace OpenWrap.PackageManagement
                                 where IsDotNetCode(file)
                                 group new
                                 {
-                                        file,
-                                        directory = directory.Key,
-                                        env = new EnvironmentDependentFile { Platform = platform, Profile = profile }
+                                    file,
+                                    directory = directory.Key,
+                                    env = new EnvironmentDependentFile { Platform = platform, Profile = profile }
                                 } by file.File.Name;
 
             return allAssemblies
-                    .Select(x=>x.OrderBy(_=>_.env)
-                        .Select(_=>new Assembly(
-                            _.file.Path,
-                            _.file.Package,
-                            _.file.File,
-                            _.env.Platform,
-                            _.env.Profile,
-                            AssemblyName.GetAssemblyName(_.file.File.Path.FullPath)
-                        ))
+                    .Select(x => x.OrderBy(_ => _.env)
+                        .Select(_ =>
+                        {
+                            var an = _.file.File.Read(s =>
+                            {
+                                var def = AssemblyDefinition.ReadAssembly(s, new ReaderParameters(ReadingMode.Deferred));
+                                var cecilName = def.Name;
+                                var attributes = AssemblyNameFlags.None;
+                                if (cecilName.IsRetargetable)
+                                    attributes |= AssemblyNameFlags.Retargetable;
+                                if (cecilName.HasPublicKey)
+                                    attributes |= AssemblyNameFlags.PublicKey;
+
+                                return new AssemblyName(def.FullName)
+                                {
+                                        CodeBase = _.file.File.Path.FullPath,
+                                        HashAlgorithm = cecilName.HashAlgorithm == AssemblyHashAlgorithm.SHA1
+                                                                ? System.Configuration.Assemblies.AssemblyHashAlgorithm.SHA1
+                                                                : System.Configuration.Assemblies.AssemblyHashAlgorithm.None,
+                                        Flags = attributes
+                                };
+                            });
+                            return new Assembly(
+                                    _.file.Path,
+                                    _.file.Package,
+                                    _.file.File,
+                                    _.env.Platform,
+                                    _.env.Profile,
+                                    an
+                                    );
+                        })
                         .Where(MatchesReferenceSection)
                         .Cast<TItems>()
                         .FirstOrDefault())
-                    .GroupBy(x=>x.Path);
+                    .GroupBy(x => x.Path);
         }
 
         static bool MatchesReferenceSection(Exports.IAssembly assembly)
         {
+            if (assembly.Package.Descriptor == null || assembly.Package.Descriptor.ReferencedAssemblies == null) return true;
             var specs = assembly.Package.Descriptor.ReferencedAssemblies.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
                                                                .Select(spec => spec.Trim().Wildcard());
             var fileName = assembly.File.Name;
@@ -133,6 +162,15 @@ namespace OpenWrap.PackageManagement
             if (profile == "net20")
                 return binFolder == "net20";
 
+            if (profile == "sl40")
+                return binFolder == "sl40" || binFolder == "sl30" || binFolder == "sl20";
+            if (profile == "sl30")
+                return binFolder == "sl30" || binFolder == "sl20";
+            if (profile == "sl20")
+                return binFolder == "sl20";
+
+            if (profile == "wp70")
+                return binFolder == "wp70";
 
             if (profile == "monotouch20")
                 return binFolder == "monotouch20";

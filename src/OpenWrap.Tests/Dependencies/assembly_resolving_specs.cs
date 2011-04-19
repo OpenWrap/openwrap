@@ -16,6 +16,7 @@ using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests;
 
 namespace assembly_resolving_specs
 {
@@ -189,7 +190,7 @@ namespace assembly_resolving_specs
             }
             protected PackageContent Assembly(string assemblyName, string relativePath)
             {
-                var assemblyFile = TempDirectory.CreateEmptyAssembly(assemblyName);
+                var assemblyFile = TempDirectory.CreateAssemblyStream(assemblyName);
                 return new PackageContent { FileName = assemblyFile.Name, RelativePath = relativePath, Stream = () => assemblyFile.OpenRead(), Size = assemblyFile.Size };
 
             }

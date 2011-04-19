@@ -7,7 +7,6 @@ using System.Reflection;
 using Mono.Cecil;
 using OpenWrap.Collections;
 using OpenWrap.Commands;
-using OpenWrap.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.Reflection;
 using OpenWrap.Repositories;
@@ -34,118 +33,39 @@ namespace OpenWrap.PackageManagement.Exporters
 
         }
     }
-    public class CommandExportProvider : AbstractAssemblyExporter
-    {
-        public CommandExportProvider(IEnvironment env)
-            : base("commands", env.ExecutionEnvironment.Profile, env.ExecutionEnvironment.Platform)
-        {
 
-        }
-        public override IEnumerable<IGrouping<string, TItem>> Items<TItem>(PackageModel.IPackage package)
-        {
-            if (typeof(TItem) != typeof(Exports.ICommand)) return Enumerable.Empty<IGrouping<string, TItem>>();
-            var commandAssemblies = base.GetAssemblies<Exports.IAssembly>(package);
-
-            return from source in commandAssemblies
-                   from assembly in source
-                   from type in ReadCommandTypes(assembly)
-                    .Select(_ => new CommandExportItem(assembly.Path, package, _))
-                    .Cast<TItem>()
-                   group type by source.Key;
-        }
-
-        IEnumerable<ICommandDescriptor> ReadCommandTypes(Exports.IAssembly assembly)
-        {
-            return assembly.File.Read(assemblyStream=>
-            {
-                try
-                {
-                    var module1 = AssemblyDefinition.ReadAssembly((Stream)assemblyStream, new ReaderParameters(ReadingMode.Deferred)).MainModule;
-                    return (from type in module1.ExportedTypes
-                            where type.IsAbstract == false && type.IsClass
-                            let typeDef = type.Resolve()
-                            where typeDef.HasGenericParameters == false || typeDef.IsGenericInstance
-                            where typeDef.HasInterfaces && typeDef.Interfaces.Any(_ => _.Is<ICommand>())
-                            let commandAttribute = typeDef.GetAttribute<CommandAttribute>()
-                            let uiAttribute = typeDef.GetAttribute<UICommandAttribute>()
-                            where commandAttribute != null
-                            let inputs = ReadInputs(typeDef)
-                            select uiAttribute != null
-                                           ? (ICommandDescriptor)new CecilUICommandDescriptor(typeDef, commandAttribute, uiAttribute, inputs)
-                                           : (ICommandDescriptor)new CecilCommandDescriptor(typeDef, commandAttribute, inputs)
-                           ).ToList();
-
-
-
-                }
-                catch
-                {
-                    return Enumerable.Empty<ICommandDescriptor>();
-                }
-            });
-        }
-
-        IDictionary<string, ICommandInputDescriptor> ReadInputs(TypeDefinition typeDef)
-        {
-            return (from property in typeDef.Properties
-                    let inputAttrib = property.GetAttribute<CommandInputAttribute>()
-                    select (ICommandInputDescriptor)new CommandInputDescriptor(ValidateValue(property))
-                    {
-                            //Description = inputAttrib.Contains()
-                    }
-                   ).ToDictionary(x => x.Name);
-        }
-        Func<object, object> ValidateValue(PropertyDefinition property)
-        {
-            return input =>
-            {
-                throw new NotImplementedException();
-                //try
-                //{
-                //    if (property.PropertyType.Is<bool>())
-                //    {
-                //        return input == null ? true : typeof(bool).CreateInstanceFrom(input as string);
-                //    }
-
-                //    if (input is string)
-                //    {
-                //        return Property.PropertyType.CreateInstanceFrom(value as string);
-                //    }
-                //    if (property.PropertyType.Resolve().IsAssignableFrom(typeof(T)))
-                //    {
-                //        return value;
-                //    }
-                //}
-                //catch
-                //{
-                //}
-                //return null;
-            };
-        }
-    }
-    public class CommandInputDescriptor : ICommandInputDescriptor
+    public class CecilCommandInputDescriptor : ICommandInputDescriptor
     {
         Func<object, object> _validate;
 
-        public CommandInputDescriptor(Func<object, object> validate)
+        public CecilCommandInputDescriptor(Func<object, object> validate)
         {
             _validate = validate;
         }
         public bool IsRequired { get; set; }
         public bool IsValueRequired { get; set; }
+
+        public bool MultiValues
+        {
+            get { return false; }
+        }
+
         public string Name { get; set; }
+
+        string ICommandInputDescriptor.Type
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         public Type Type { get; set; }
         public string Description { get; set; }
         public int? Position { get; set; }
-        public object ValidateValue<T>(T value)
-        {
-            return _validate(value);
+        
 
-        }
-
-        public void SetValue(object target, object value)
+        public bool TrySetValue(ICommand target, IEnumerable<string> values)
         {
-            target.GetType().GetProperty(Name).SetValue(target, value, null);
+            //target.GetType().GetProperty(Name).SetValue(target, value, null);
+            return false;
         }
     }
 
@@ -192,7 +112,6 @@ namespace OpenWrap.PackageManagement.Exporters
         public CecilUICommandDescriptor(TypeDefinition typeDef, IDictionary<string, object> commandAttribute, IDictionary<string, object> uiAttribute, IDictionary<string, ICommandInputDescriptor> inputs)
             : base(null)
         {
-
         }
 
         public string Path
@@ -215,38 +134,36 @@ namespace OpenWrap.PackageManagement.Exporters
     {
         public CecilCommandDescriptor(TypeDefinition typeDef, IDictionary<string, object> commandAttribute, IDictionary<string, ICommandInputDescriptor> inputs)
         {
-            throw new NotImplementedException();
+            commandAttribute.TryGet("Noun", noun => Noun = (string)noun);
+            commandAttribute.TryGet("Verb", verb => Verb = (string)verb);
+            Inputs = inputs;
+            Factory = () => (ICommand)Activator.CreateInstance(Type.GetType(typeDef.FullName + "," + typeDef.Module.Assembly.FullName));
         }
 
-        public string Noun
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public Func<ICommand> Factory { get; set; }
 
-        public string Verb
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string Noun { get; private set; }
 
-        public string Description
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string Verb { get; private set; }
+        public string Description { get; private set; }
 
-        public IDictionary<string, ICommandInputDescriptor> Inputs
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public IDictionary<string, ICommandInputDescriptor> Inputs { get; set; }
 
         public ICommand Create()
         {
-            throw new NotImplementedException();
+            return Factory();
         }
     }
 
     public static class CecilExtensions
     {
-
+        public static Stream ToStream(this AssemblyDefinition def)
+        {
+            var ms = new MemoryStream();
+            def.Write(ms);
+            ms.Position = 0;
+            return ms;
+        }
         public static IDictionary<string, object> GetAttribute<T>(this ICustomAttributeProvider typeDef) where T : Attribute
         {
             var attribType = typeof(T);
@@ -267,7 +184,9 @@ namespace OpenWrap.PackageManagement.Exporters
         public static bool Is<T>(this TypeReference reference)
         {
             var seekedType = typeof(T);
-            return reference.Name == seekedType.Name && reference.Namespace == seekedType.Namespace && reference.Module.Assembly.Name.Name == seekedType.Assembly.GetName().Name;
+            AssemblyNameReference source;
+            var assemblyMatches = (source = reference.Scope as AssemblyNameReference) != null ? seekedType.Assembly.FullName == source.FullName : false;
+            return reference.FullName == seekedType.FullName && assemblyMatches;
         }
     }
     //internal class CommandExportBuilder

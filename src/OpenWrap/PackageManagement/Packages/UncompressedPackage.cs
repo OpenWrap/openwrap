@@ -97,10 +97,11 @@ namespace OpenWrap.PackageManagement.Packages
         {
             get
             {
-                return BaseDirectory.Directories()
-                    .SelectMany(directory => directory.Files("**\\*"), (directory, file) => new { directory, file })
-                    .Select(@t => new { @t, relativePath = @t.file.Path.MakeRelative(@t.directory.Path) })
-                    .ToLookup(@t => @t.t.directory.Name, @t => (Exports.IFile)new FileExportItem(new Path(@t.relativePath),@t.t.file, this));
+                return (from directory in BaseDirectory.Directories()
+                        from file in directory.Files("**\\*")
+                        let relativePath = file.Parent.Path.MakeRelative(BaseDirectory.Path)
+                        select new FileExportItem(new Path(relativePath), file, this))
+                        .ToLookup(x => x.Path, x=>(Exports.IFile)x);
             }
         }
 

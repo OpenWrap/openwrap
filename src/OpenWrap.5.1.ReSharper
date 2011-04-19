@@ -367,4 +367,24 @@
       <Abbreviation Text="UTF" />
     </Naming2>
   </CodeStyleSettings>
+  <SharedSolutionTemplateManager>
+    <FileTemplates>
+      <Template uid="80b7b756-ae40-46e5-bf05-4da38bddd804" shortcut="" description="test" text="using System;&#xD;&#xA;using System.Collections.Generic;&#xD;&#xA;using System.Linq;&#xD;&#xA;using NUnit.Framework;&#xD;&#xA;using OpenWrap;&#xD;&#xA;using OpenWrap.Testing;&#xD;&#xA;using Tests;&#xD;&#xA;&#xD;&#xA;namespace $namespace$&#xD;&#xA;{&#xD;&#xA;    public class $spec$ : contexts.$context$&#xD;&#xA;	{&#xD;&#xA;		public $spec$()&#xD;&#xA;		{&#xD;&#xA;		}&#xD;&#xA;	}&#xD;&#xA;}" reformat="True" shortenQualifiedReferences="True">
+        <Context>
+          <ProjectLanguageContext language="CSharp" />
+        </Context>
+        <Categories />
+        <Variables>
+          <Variable name="namespace" expression="fileDefaultNamespace()" initialRange="-1" />
+          <Variable name="spec" expression="getFileNameWithoutExtension()" initialRange="-1" />
+          <Variable name="context" expression="completeSmart()" initialRange="0" />
+        </Variables>
+        <CustomProperties>
+          <Property key="FileName" value="MyClass" />
+          <Property key="Extension" value="cs" />
+          <Property key="ValidateFileName" value="True" />
+        </CustomProperties>
+      </Template>
+    </FileTemplates>
+  </SharedSolutionTemplateManager>
 </Configuration>

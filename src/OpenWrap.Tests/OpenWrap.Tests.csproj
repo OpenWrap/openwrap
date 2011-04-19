@@ -54,7 +54,9 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
-    <Compile Include="AssemblyBuildingExtensions.cs" />
+    <Compile Include="Commands\contexts\exporter.cs" />
+    <Compile Include="Commands\exporter\command_without_inputs.cs" />
+    <Compile Include="AssemblyBUilder.cs" />
     <Compile Include="Build\build_instruction_emitter\content.cs" />
     <Compile Include="Build\build_instruction_emitter\content_in_subfolder.cs" />
     <Compile Include="Build\build_instruction_emitter\doc_for_openwrap_assembly.cs" />
@@ -134,6 +136,7 @@
     <Compile Include="Commands\contexts\add_wrap.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
     <Compile Include="Commands\CommandOutputExtensions.cs" />
+    <Compile Include="Commands\exporter\command_with_inputs.cs" />
     <Compile Include="Commands\MemoryCommand.cs" />
     <Compile Include="Commands\contexts\remove_wrap_command.cs" />
     <Compile Include="Commands\contexts\runner.cs" />

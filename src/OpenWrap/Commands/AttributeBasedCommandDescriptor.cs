@@ -23,96 +23,96 @@ namespace OpenWrap.Commands
         }
     }
 
-    public class UIAttributeBasedCommandDescriptor : AttributeBasedCommandDescriptor, IUICommandDescriptor
-    {
-        public UIAttributeBasedCommandDescriptor(Func<ICommand> factory, CommandAttribute cmdAttribute, UICommandAttribute uiAttribute)
-            : base(factory, cmdAttribute)
-        {
-            Label = uiAttribute.Label;
-            Context = uiAttribute.Context;
-        }
+    //public class UIAttributeBasedCommandDescriptor : AttributeBasedCommandDescriptor, IUICommandDescriptor
+    //{
+    //    public UIAttributeBasedCommandDescriptor(Func<ICommand> factory, CommandAttribute cmdAttribute, UICommandAttribute uiAttribute)
+    //        : base(factory, cmdAttribute)
+    //    {
+    //        Label = uiAttribute.Label;
+    //        Context = uiAttribute.Context;
+    //    }
 
-        public string Label { get; set; }
+    //    public string Label { get; set; }
 
-        public UICommandContext Context { get; set; }
-    }
+    //    public UICommandContext Context { get; set; }
+    //}
 
-    public class AttributeBasedCommandDescriptor : ICommandDescriptor
-    {
-        readonly Type _commandType;
+    //public class AttributeBasedCommandDescriptor : ICommandDescriptor
+    //{
+    //    readonly Type _commandType;
 
-        public AttributeBasedCommandDescriptor(Func<ICommand> factory, CommandAttribute commandAttribute)
-        {
-            throw new NotImplementedException();
-            //_commandType = commandType;
+    //    public AttributeBasedCommandDescriptor(Func<ICommand> factory, CommandAttribute commandAttribute)
+    //    {
+    //        throw new NotImplementedException();
+    //        //_commandType = commandType;
 
-            //Noun = commandAttribute.Noun ?? DeductNounFromNamespace(commandType);
-            //Verb = commandAttribute.Verb ?? commandType.Name;
+    //        //Noun = commandAttribute.Noun ?? DeductNounFromNamespace(commandType);
+    //        //Verb = commandAttribute.Verb ?? commandType.Name;
 
-            //var commandResourceKey = commandAttribute.Verb + "-" + commandAttribute.Noun;
-            //Description = commandAttribute.Description ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey);
+    //        //var commandResourceKey = commandAttribute.Verb + "-" + commandAttribute.Noun;
+    //        //Description = commandAttribute.Description ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey);
 
-            //Inputs = (from pi in commandType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            //          let inputAttrib = pi.GetAttribute<CommandInputAttribute>()
-            //          where inputAttrib != null
-            //          let values = inputAttrib ?? new CommandInputAttribute()
-            //          let inputName = values.Name ?? pi.Name
-            //          select (ICommandInputDescriptor)new ReflectionCommandInputDescriptor(pi)
-            //          {
-            //              Name = inputName,
-            //              IsRequired = values.IsRequired,
-            //              Description = values.DisplayName ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey + "-" + inputName),
-            //              Position = values.Position == -1 ? (int?)null : values.Position,
-            //              IsValueRequired = values.IsValueRequired
-            //          }).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
-       }
-    }
+    //        //Inputs = (from pi in commandType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+    //        //          let inputAttrib = pi.GetAttribute<CommandInputAttribute>()
+    //        //          where inputAttrib != null
+    //        //          let values = inputAttrib ?? new CommandInputAttribute()
+    //        //          let inputName = values.Name ?? pi.Name
+    //        //          select (ICommandInputDescriptor)new ReflectionCommandInputDescriptor(pi)
+    //        //          {
+    //        //              Name = inputName,
+    //        //              IsRequired = values.IsRequired,
+    //        //              Description = values.DisplayName ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey + "-" + inputName),
+    //        //              Position = values.Position == -1 ? (int?)null : values.Position,
+    //        //              IsValueRequired = values.IsValueRequired
+    //        //          }).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+    //   }
+    //}
 
-    public class UIAttributeBasedCommandDescriptor : AttributeBasedCommandDescriptor, IUICommandDescriptor
-    {
-        public UIAttributeBasedCommandDescriptor(Func<ICommand> factory, CommandAttribute cmdAttribute, UICommandAttribute uiAttribute)
-            : base(factory, cmdAttribute)
-        {
-            Label = uiAttribute.Label;
-            Context = uiAttribute.Context;
-        }
+    //public class UIAttributeBasedCommandDescriptor : AttributeBasedCommandDescriptor, IUICommandDescriptor
+    //{
+    //    public UIAttributeBasedCommandDescriptor(Func<ICommand> factory, CommandAttribute cmdAttribute, UICommandAttribute uiAttribute)
+    //        : base(factory, cmdAttribute)
+    //    {
+    //        Label = uiAttribute.Label;
+    //        Context = uiAttribute.Context;
+    //    }
 
-        public string Label { get; set; }
+    //    public string Label { get; set; }
 
-        public UICommandContext Context { get; set; }
-    }
+    //    public UICommandContext Context { get; set; }
+    //}
 
-    public class AttributeBasedCommandDescriptor : ICommandDescriptor
-    {
-        readonly Type _commandType;
+    //public class AttributeBasedCommandDescriptor : ICommandDescriptor
+    //{
+    //    readonly Type _commandType;
 
-        public AttributeBasedCommandDescriptor(Func<ICommand> factory, CommandAttribute commandAttribute)
-        {
-            throw new NotImplementedException();
-            //_commandType = commandType;
+    //    public AttributeBasedCommandDescriptor(Func<ICommand> factory, CommandAttribute commandAttribute)
+    //    {
+    //        throw new NotImplementedException();
+    //        //_commandType = commandType;
 
-            //Noun = commandAttribute.Noun ?? DeductNounFromNamespace(commandType);
-            //Verb = commandAttribute.Verb ?? commandType.Name;
+    //        //Noun = commandAttribute.Noun ?? DeductNounFromNamespace(commandType);
+    //        //Verb = commandAttribute.Verb ?? commandType.Name;
 
-            //var commandResourceKey = commandAttribute.Verb + "-" + commandAttribute.Noun;
-            //Description = commandAttribute.Description ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey);
+    //        //var commandResourceKey = commandAttribute.Verb + "-" + commandAttribute.Noun;
+    //        //Description = commandAttribute.Description ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey);
 
-            //Inputs = (from pi in commandType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            //          let inputAttrib = pi.GetAttribute<CommandInputAttribute>()
-            //          where inputAttrib != null
-            //          let values = inputAttrib ?? new CommandInputAttribute()
-            //          let inputName = values.Name ?? pi.Name
-            //          select (ICommandInputDescriptor)new ReflectionCommandInputDescriptor(pi)
-            //          {
-            //              Name = inputName,
-            //              IsRequired = values.IsRequired,
-            //              Description = values.DisplayName ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey + "-" + inputName),
-            //              Position = values.Position == -1 ? (int?)null : values.Position,
-            //              IsValueRequired = values.IsValueRequired
-            //          }).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+    //        //Inputs = (from pi in commandType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+    //        //          let inputAttrib = pi.GetAttribute<CommandInputAttribute>()
+    //        //          where inputAttrib != null
+    //        //          let values = inputAttrib ?? new CommandInputAttribute()
+    //        //          let inputName = values.Name ?? pi.Name
+    //        //          select (ICommandInputDescriptor)new ReflectionCommandInputDescriptor(pi)
+    //        //          {
+    //        //              Name = inputName,
+    //        //              IsRequired = values.IsRequired,
+    //        //              Description = values.DisplayName ?? CommandDocumentation.GetCommandDescription(commandType, commandResourceKey + "-" + inputName),
+    //        //              Position = values.Position == -1 ? (int?)null : values.Position,
+    //        //              IsValueRequired = values.IsValueRequired
+    //        //          }).ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
 
-        }
-    }
+    //    }
+    //}
 
     //public class UIAttributeBasedCommandDescriptor : AttributeBasedCommandDescriptor, IUICommandDescriptor
     //{
@@ -181,12 +181,12 @@ namespace OpenWrap.Commands
     //    {
     //    }
     //}
-    public class AttributeBasedCommandDescriptor<T> : AttributeBasedCommandDescriptor
-            where T : ICommand
-    {
-        public AttributeBasedCommandDescriptor(CommandAttribute attribute)
-            : base(null, attribute)
-        {
-        }
-    }
+    //public class AttributeBasedCommandDescriptor<T> : AttributeBasedCommandDescriptor
+    //        where T : ICommand
+    //{
+    //    public AttributeBasedCommandDescriptor(CommandAttribute attribute)
+    //        : base(null, attribute)
+    //    {
+    //    }
+    //}
 }

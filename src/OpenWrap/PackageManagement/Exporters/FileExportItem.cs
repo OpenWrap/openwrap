@@ -6,10 +6,11 @@ namespace OpenWrap.PackageManagement.Exporters
 {
     public class FileExportItem : Exports.IFile
     {
-        public FileExportItem(Path relativePath, IFile file, IPackage sourcePackage)
+        public FileExportItem(Path relativePath, IFile file, IPackage package)
         {
             Path = relativePath.ToString();
             File = file;
+            Package = package;
         }
 
         public string Path { get; private set; }

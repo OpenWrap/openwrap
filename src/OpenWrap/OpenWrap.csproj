@@ -85,7 +85,6 @@
     <Compile Include="Commands\Cli\SingleValueInput.cs" />
     <Compile Include="Commands\Cli\VerbNounCommandLocator.cs" />
     <Compile Include="Commands\InputParsingError.cs" />
-
     <Compile Include="Commands\Cli\AliasCommandLineHandler.cs" />
     <Compile Include="Commands\Cli\CommandLineHandler.cs" />
     <Compile Include="Commands\Cli\NounVerbCommandLineHandler.cs" />
@@ -94,6 +93,7 @@
     <Compile Include="Commands\IUICommandDescriptor.cs" />
     <Compile Include="Commands\IUICommandRepository.cs" />
     <Compile Include="Commands\UICommandContext.cs" />
+    <Compile Include="PackageManagement\Exporters\Cecil\CecilCommandExportProvider.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -283,7 +283,6 @@
     <Compile Include="Repositories\Http\PackageDocument.cs" />
     <Compile Include="Repositories\Http\PackageItem.cs" />
     <Compile Include="Repositories\Http\RequestExtensions.cs" />
-    <Compile Include="PackageManagement\Exporters\ICommandExportItem.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\Node.cs" />
     <Compile Include="Repositories\NuGet\NuGetAtomExtensions.cs" />
     <Compile Include="Repositories\NuGet\NuGetConverter.cs" />
@@ -394,7 +393,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Commands\Cecil\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
       <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>

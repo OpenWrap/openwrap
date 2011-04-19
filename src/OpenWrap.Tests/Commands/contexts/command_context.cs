@@ -191,23 +191,24 @@ namespace OpenWrap.Commands.contexts
 
     public abstract class command_context<T> : command where T : ICommand
     {
-        protected AttributeBasedCommandDescriptor<T> Command;
+        //protected AttributeBasedCommandDescriptor<T> Command;
         protected List<ICommandOutput> Results;
 
         public command_context()
         {
-            Command = new AttributeBasedCommandDescriptor<T>(typeof(T).GetAttribute<CommandAttribute>());
-            Commands = new CommandRepository { Command };
+          //  Command = new AttributeBasedCommandDescriptor<T>(typeof(T).GetAttribute<CommandAttribute>());
+            Commands = new CommandRepository();// { Command };
 
             
         }
 
         protected virtual void when_executing_command(params string[] parameters)
         {
-            foreach (var descriptor in Environment.ScopedDescriptors.Values)
-                descriptor.Save();
-            var allParams = new[] { Command.Noun, Command.Verb }.Concat(parameters);
-            Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
+            throw new NotImplementedException();
+            //foreach (var descriptor in Environment.ScopedDescriptors.Values)
+            //    descriptor.Save();
+            //var allParams = new[] { Command.Noun, Command.Verb }.Concat(parameters);
+            //Results = new CommandLineProcessor(Commands).Execute(allParams).ToList();
         }
 
         protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)

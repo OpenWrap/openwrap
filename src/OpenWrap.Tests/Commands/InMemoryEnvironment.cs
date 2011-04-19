@@ -19,7 +19,7 @@ namespace OpenWrap.Tests.Commands
         public InMemoryRepository RemoteRepository;
         public IPackageRepository CurrentDirectoryRepository;
 
-        public InMemoryEnvironment(IDirectory currentDirectory, IDirectory configDirectory)
+        public InMemoryEnvironment(IDirectory currentDirectory, IDirectory configDirectory = null)
         {
             CurrentDirectory = currentDirectory;
             SystemRepository = new InMemoryRepository("System repository");

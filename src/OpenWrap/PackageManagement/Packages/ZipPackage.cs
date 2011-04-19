@@ -17,7 +17,7 @@ namespace OpenWrap.PackageManagement.Packages
         readonly LazyValue<PackageIdentifier> _identifier;
         IPackageInfo _descriptor;
 
-        protected ZipPackage(IFile packageFile)
+        public ZipPackage(IFile packageFile)
         {
             PackageFile = packageFile;
             _identifier = new LazyValue<PackageIdentifier>(() => new PackageIdentifier(Name, Version));

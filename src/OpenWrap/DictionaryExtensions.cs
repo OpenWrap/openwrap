@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace OpenWrap
 {
@@ -8,7 +9,13 @@ namespace OpenWrap
         {
             return dictionary.ContainsKey(key) ? dictionary[key] : default(TValue);
         }
+        public static void TryGet<TKey, TValue>(this IDictionary<TKey,TValue> dictionary, TKey key, Action<TValue> action)
+        {
+            TValue outValue;
+            if (dictionary.TryGetValue(key, out outValue))
+                action(outValue);
 
+        }
         public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
                 where TValue : new()
         {
