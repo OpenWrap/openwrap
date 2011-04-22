@@ -21,7 +21,7 @@ namespace Tests.Commands.usage.context
 
         protected void given_command_input(string name, Type type, bool required, int? position)
         {
-            Command.AllInputs.Add(new MemoryCommandInput { Name = name, Type = type.FullName, Position = position, IsRequired=required });
+            Command.AllInputs.Add(new MemoryCommandInput { Name = name, Type = type.Name, Position = position, IsRequired=required });
         }
     }
 }

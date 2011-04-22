@@ -74,7 +74,8 @@
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
     <Compile Include="Commands\Cli\ColoredText.cs" />
-    <Compile Include="Commands\Cli\CommandRunner.cs" />
+    <Compile Include="Commands\Cli\CommandInputTooManyTimes.cs" />
+    <Compile Include="Commands\Cli\CommandLineRunner.cs" />
     <Compile Include="Commands\Cli\ConsoleCommandExecutor.cs" />
     <Compile Include="Commands\Cli\Parser\Input.cs" />
     <Compile Include="Commands\Cli\Parser\InputParser.cs" />
@@ -89,7 +90,28 @@
     <Compile Include="Commands\IUICommandDescriptor.cs" />
     <Compile Include="Commands\IUICommandRepository.cs" />
     <Compile Include="Commands\UICommandContext.cs" />
-    <Compile Include="PackageManagement\Exporters\Cecil\CecilCommandExportProvider.cs" />
+    <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
+    <Compile Include="PackageManagement\Assembly.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\ResolvedPackageExtensions.cs" />
+    <Compile Include="PackageManagement\Exporters\Assemblies\EnvironmentDependentAssemblyExporter.cs" />
+    <Compile Include="PackageManagement\Exporters\Commands\CecilCommandDescriptor.cs" />
+    <Compile Include="PackageManagement\Exporters\Commands\CecilCommandInputDescriptor.cs" />
+    <Compile Include="PackageManagement\Exporters\Commands\CecilExtensions.cs" />
+    <Compile Include="PackageManagement\Exporters\Commands\CecilUICommandDescriptor.cs" />
+    <Compile Include="PackageManagement\Exporters\Commands\CecilCommandExporter.cs" />
+    <Compile Include="PackageManagement\Exporters\Commands\CommandDescriptor.cs" />
+    <Compile Include="PackageManagement\Exporters\Commands\CommandExportItem.cs" />
+    <Compile Include="PackageManagement\Exporters\StringConversion.cs" />
+    <Compile Include="PackageManagement\HookedPackageOperationResults.cs" />
+    <Compile Include="PackageManagement\HooksStore.cs" />
+    <Compile Include="PackageManagement\IExportProvider.cs" />
+    <Compile Include="PackageManagement\PackageChanged.cs" />
+    <Compile Include="PackageManagement\PackageExporterExtensions.cs" />
+    <Compile Include="PackageManagement\PackageHookResult.cs" />
+    <Compile Include="PackageManagement\PackageManagerExtensions.cs" />
+    <Compile Include="PackageManagement\PackageResultExtensions.cs" />
+    <Compile Include="PackageManagement\PackageUpdated.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -187,13 +209,12 @@
     <Compile Include="Configuration\InvalidConfigurationException.cs" />
     <Compile Include="Configuration\remote-repositories\RemoteRepositories.cs" />
     <Compile Include="Configuration\remote-repositories\RemoteRepository.cs" />
-    <Compile Include="Commands\Cli\CliConsoleRunner.cs" />
+    <Compile Include="Commands\Cli\ShellRunner.cs" />
     <Compile Include="PackageModel\AbsolutelyEqualVersionVertex.cs" />
     <Compile Include="PackageModel\DefaultPackageInfo.cs" />
     <Compile Include="PackageModel\PackageDescriptorEntryCollection.cs" />
     <Compile Include="PackageModel\GenericDescriptorEntry.cs" />
     <Compile Include="PackageModel\GreaterThanVersionVertex.cs" />
-    <Compile Include="PackageModel\IPackageDependency.cs" />
     <Compile Include="PackageModel\IPackageDescriptorEntry.cs" />
     <Compile Include="IO\Packaging\PackageContent.cs" />
     <Compile Include="PackageModel\PackageDependencyBuilder.cs" />
@@ -214,7 +235,7 @@
     <Compile Include="PackageModel\PackageNameOverride.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
     <Compile Include="Repositories\DirectoryExtensions.cs" />
-    <Compile Include="PackageManagement\Exporters\AssemblyReferences.cs" />
+    <Compile Include="PackageManagement\Exporters\Assemblies\AssemblyReferences.cs" />
     <Compile Include="FuncExtensions.cs" />
     <Compile Include="IO\ZipExtensions.cs" />
     <Compile Include="Repositories\NullAuthentication.cs" />
@@ -252,7 +273,6 @@
     <Compile Include="Reflection\ReflectionExtensions.cs" />
     <Compile Include="Repositories\RemoteRepositoryBuilder.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\CallStack.cs" />
-    <Compile Include="PackageManagement\Exporters\CommandExportBuilder.cs" />
     <Compile Include="Repositories\CurrentDirectoryRepository.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\DependencyNode.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageConflictsOutput.cs" />
@@ -315,7 +335,7 @@
     <Compile Include="Repositories\Http\IHttpRepositoryNavigator.cs" />
     <Compile Include="PackageModel\IPackageInfo.cs" />
     <Compile Include="Repositories\IPackageRepository.cs" />
-    <Compile Include="PackageManagement\IExport.cs" />
+    <Compile Include="PackageManagement\Exports.cs" />
     <Compile Include="PackageManagement\IExportItem.cs" />
     <Compile Include="Repositories\Http\HttpRepository.cs" />
     <Compile Include="PackageManagement\Packages\CachedZipPackage.cs" />
@@ -338,7 +358,6 @@
     <Compile Include="PackageModel\Serialization\PackageDescriptorReaderWriter.cs" />
     <Compile Include="Runtime\ExecutionEnvironment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PackageManagement\Exporters\EnvironmentDependentFile.cs" />
     <Compile Include="PackageManagement\Exporters\FileExportItem.cs" />
     <Compile Include="PackageManagement\Packages\UncompressedPackage.cs" />
     <Compile Include="PackageModel\IPackage.cs" />

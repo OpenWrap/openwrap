@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 
@@ -9,16 +10,19 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
 {
     public class RuntimeAssemblyResolver : IService
     {
+        readonly IEnvironment _environment;
+        readonly IPackageManager _packageManager;
         ILookup<string, Exports.IAssembly> _assemblyReferences;
 
-        protected IEnvironment Environment
+        public RuntimeAssemblyResolver()
+                : this(ServiceLocator.GetService<IPackageManager>(), ServiceLocator.GetService<IEnvironment>())
         {
-            get { return Services.ServiceLocator.GetService<IEnvironment>(); }
         }
 
-        protected IPackageResolver PackageResolver
+        public RuntimeAssemblyResolver(IPackageManager packageManager, IEnvironment environment)
         {
-            get { return Services.ServiceLocator.GetService<IPackageResolver>(); }
+            _packageManager = packageManager;
+            _environment = environment;
         }
 
         public void Initialize()
@@ -31,13 +35,16 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
         {
             if (_assemblyReferences != null)
                 return;
-            throw new NotImplementedException();
-            //_assemblyReferences = Environment.Descriptor == null || Environment.Descriptor.UseProjectRepository == false
-            //                              ? AssemblyReferences.GetAssemblyReferences(Environment.ExecutionEnvironment, Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name)
-            //                              : PackageResolver.GetAssemblyReferences(true,
-            //                                                                      Environment.Descriptor,
-            //                                                                      Environment.ProjectRepository,
-            //                                                                      Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name);
+
+            _assemblyReferences = (_environment.Descriptor == null || _environment.Descriptor.UseProjectRepository == false
+                                           ? _packageManager.GetSystemExports<Exports.IAssembly>(_environment.SystemRepository).SelectMany(_ => _)
+                                           : _packageManager.GetProjectAssemblyReferences
+                                                     (
+                                                             _environment.Descriptor,
+                                                             _environment.ProjectRepository,
+                                                             false
+                                                     ))
+                    .ToLookup(x => x.AssemblyName.Name);
         }
 
         System.Reflection.Assembly TryResolveAssembly(object sender, ResolveEventArgs args)

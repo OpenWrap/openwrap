@@ -6,6 +6,7 @@ using System.Text;
 using OpenWrap.Collections;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
 
@@ -28,22 +29,22 @@ namespace OpenWrap.Testing
         {
             var descriptor = new PackageDescriptor();
             descriptor.Dependencies.Add(new PackageDependencyBuilder(Guid.NewGuid().ToString()).Name(package.Name).VersionVertex(new EqualVersionVertex(package.Version)));
-            throw new NotImplementedException();
-            //var allAssemblyReferences = _manager.GetAssemblyReferences(false, descriptor, package.Source, _environment.ProjectRepository, _environment.SystemRepository);
 
-            //var runners = _factories.SelectMany(x=>x.GetTestRunners(allAssemblyReferences)).NotNull();
+            var allAssemblyReferences = _manager.GetProjectAssemblyReferences(descriptor, package.Source, false);
 
-            //var export = package.GetExport("tests", environment);
+            var runners = _factories.SelectMany(x => x.GetTestRunners(allAssemblyReferences)).NotNull();
 
-            //if (export == null) return Enumerable.Empty<KeyValuePair<string, bool?>>();
+            var tests = new EnvironmentDependentAssemblyExporter(environment, "tests").Items<Exports.IAssembly>(package);
 
-            //var testAssemblies = from item in export.Items
-            //                     where item.FullPath.EndsWithNoCase(".dll")
-            //                     select item.FullPath;
-            //return from runner in runners
-            //       from asm in testAssemblies
-            //       from result in runner.ExecuteTests(allAssemblyReferences.Select(x => x.FullPath).ToList(), testAssemblies)
-            //       select result;
+            if (tests == null) return Enumerable.Empty<KeyValuePair<string, bool?>>();
+
+            var testAssemblies = from item in tests.SelectMany(x=>x)
+                                 where item.File.Extension.Equals(".dll")
+                                 select item.File.Path.FullPath;
+            return from runner in runners
+                   from asm in testAssemblies
+                   from result in runner.ExecuteTests(allAssemblyReferences.Select(x => x.File.Path.FullPath).ToList(), testAssemblies)
+                   select result;
         }
 
     }

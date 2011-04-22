@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,144 +9,6 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
 {
-    public static class PackageResultExtensions
-    {
-        public static IEnumerable<PackageOperationResult> Hooks(this IEnumerable<PackageOperationResult> results)
-        {
-            bool success = true;
-            foreach (var result in results)
-            {
-                if (result.Success == false)
-                    success = false;
-                yield return result;
-            }
-        }
-    }
-
-    public delegate IEnumerable<object> PackageUpdated(string repository, string name, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages);
-
-    public delegate IEnumerable<object> PackageChanged(string repository, string name, Version version, IEnumerable<IPackageInfo> packages);
-
-
-    public class HooksStore
-    {
-        public event PackageChanged PackageAdded;
-        public event PackageChanged PackageRemoved;
-        public event PackageUpdated PackageUpdated;
-
-        public HooksStore()
-        {   
-        }
-        public IEnumerable<object> Installed(string repository, string packageName, Version version, IEnumerable<IPackageInfo> packages)
-        {
-            var hooks = PackageAdded;
-            if (hooks != null)
-                return hooks.GetInvocationList().SelectMany(x => (IEnumerable<object>)x.DynamicInvoke(repository, packageName, version, packages));
-                //return hooks.I((repository, packageName, version, packages);
-            return Enumerable.Empty<object>();
-        }
-        public IEnumerable<object> Updated(string repository, string packageName, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages)
-        {
-            var hooks = PackageUpdated;
-            if (hooks != null)
-                return hooks.GetInvocationList().SelectMany(x => (IEnumerable<object>)x.DynamicInvoke(repository, packageName, fromVersion, toVersion, packages));
-
-            return Enumerable.Empty<object>();
-        }
-        public IEnumerable<object> Removed(string repository, string packageName, Version version, IEnumerable<IPackageInfo> packages)
-        {
-            var hooks = PackageRemoved;
-            if (hooks != null)
-                return hooks.GetInvocationList().SelectMany(x => (IEnumerable<object>)x.DynamicInvoke(repository, packageName, version, packages));
-
-            return Enumerable.Empty<object>();
-        }
-    }
-    public class HookedPackageOperationResults : IEnumerable<PackageOperationResult>
-    {
-        readonly string _repository;
-        readonly IEnumerable<PackageOperationResult> _results;
-        readonly HooksStore _hooks;
-        readonly Func<IEnumerable<IPackageInfo>> _before;
-        readonly Func<IEnumerable<IPackageInfo>> _after;
-
-        public HookedPackageOperationResults(string repository, IEnumerable<PackageOperationResult> results, HooksStore hooks, Func<IEnumerable<IPackageInfo>> before, Func<IEnumerable<IPackageInfo>> after)
-        {
-            _repository = repository;
-            _results = results;
-            _hooks = hooks;
-            _before = before;
-            _after = after;
-        }
-
-        IEnumerator<PackageOperationResult> IEnumerable<PackageOperationResult>.GetEnumerator()
-        {
-            var resolvedBefore = _before();
-
-            bool? success = null;
-            foreach (var result in _results)
-            {
-                success = success ?? true;
-                if (!result.Success)
-                    success = false;
-                yield return result;
-            }
-            if (success == true)
-            {
-                var resolvedAfter = _after();
-                // TODO: process removes, then process adds and updates based on a dependency tree
-                foreach (var output in GetRemoved(resolvedBefore, resolvedAfter, _hooks).Concat(GetAdded(resolvedBefore, resolvedAfter, _hooks)).Concat(GetUpdated(resolvedBefore, resolvedAfter, _hooks)))
-                    yield return new PackageHookResult(output);
-            }
-        }
-        IEnumerable<object> GetUpdated(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, HooksStore hooks)
-        {
-            var afterByName = after.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
-            return from oldPackage in before
-                   where afterByName.ContainsKey(oldPackage.Name)
-                   let newPackage = afterByName[oldPackage.Name]
-                   where newPackage.Version != oldPackage.Version
-                   from output in hooks.Updated(_repository, newPackage.Name, oldPackage.Version, newPackage.Version, after)
-                   select output;
-        }
-
-        IEnumerable<object> GetAdded(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, HooksStore hooks)
-        {
-            var beforeByName = before.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
-            return from newPackage in after
-                   where beforeByName.ContainsKey(newPackage.Name) == false
-                   from output in hooks.Installed(_repository, newPackage.Name, newPackage.Version, after)
-                   select output;
-        }
-        IEnumerable<object> GetRemoved(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, HooksStore hooks)
-        {
-            var afterByName = after.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
-            return from oldPackage in before
-                   where afterByName.ContainsKey(oldPackage.Name) == false
-                   from output in hooks.Removed(_repository, oldPackage.Name, oldPackage.Version, before)
-                   select output;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable<PackageOperationResult>)this).GetEnumerator();
-        }
-    }
-    public static class PackageManagerExtensions
-    {
-        public static IDisposable Monitor(this IPackageManager manager, PackageChanged add  = null, PackageChanged remove = null, PackageUpdated update = null)
-        {
-            if (add != null) manager.PackageAdded += add;
-            if (remove != null) manager.PackageRemoved += remove;
-            if (update != null) manager.PackageUpdated += update;
-            return new ActionOnDispose(() =>
-            {
-                if (add != null) manager.PackageAdded -= add;
-                if (remove != null) manager.PackageRemoved -= remove;
-                if (update != null) manager.PackageUpdated -= update;
-            });
-        }
-    }
     public class DefaultPackageManager : IPackageManager
     {
         readonly IPackageDeployer _deployer;
@@ -162,6 +23,11 @@ namespace OpenWrap.PackageManagement
             return _resolver.TryResolveDependencies(descriptor, new[] { projectRepository }).SuccessfulPackages.Select(_ => _.Packages.First());
         }
 
+        public IEnumerable<IGrouping<string, TItem>> GetSystemExports<TItem>(IPackageRepository systemRepository) where TItem : IExportItem
+        {
+            var packages = systemRepository.PackagesByName.Select(x => x.OrderByDescending(_ => _.Version).First());
+            return packages.SelectMany(x => _exporter.Exports<TItem>(x.Load()));
+        }
         public IEnumerable<IGrouping<string, TItem>> GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository) where TItem : IExportItem
         {
             return ListProjectPackages(descriptor, projectRepository).SelectMany(x => _exporter.Exports<TItem>(x.Load()));

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
+using Tests.Commands;
 using Tests.Commands.update_wrap;
 
 namespace OpenWrap.Commands.remove_wrap
@@ -15,6 +16,12 @@ namespace OpenWrap.Commands.remove_wrap
             given_project_package("saruman", "1.0.0.0");
             given_project_package("saruman", "1.0.0.1");
             when_executing_command("saruman", "-project", "-version", "1.0.0.0");
+        }
+
+        [Test]
+        public void command_succeeds()
+        {
+            Results.ShouldHaveNoError();
         }
         [Test]
         public void version_is_removed()

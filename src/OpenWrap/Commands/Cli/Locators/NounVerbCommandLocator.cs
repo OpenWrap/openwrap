@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace OpenWrap.Commands.Cli
+namespace OpenWrap.Commands.Cli.Locators
 {
     public class NounVerbCommandLocator : NamedCommandLocator
     {

@@ -29,16 +29,19 @@ namespace OpenWrap.Commands.Wrap
             get { return _system != null ? (bool)_system : false; }
             set { _system = value; }
         }
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
+        {
+            yield return VerifyInputs;
+        }
 
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var update = Enumerable.Empty<ICommandOutput>();
             if (Project)
                 update = update.Concat(UpdateProjectPackages());
             if (System)
                 update = update.Concat(UpdateSystemPackages());
-            return Either(VerifyInputs)
-                    .Or(update);
+            return update;
         }
 
         protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
@@ -102,11 +105,10 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        ICommandOutput VerifyInputs()
+        IEnumerable<ICommandOutput> VerifyInputs()
         {
             if (Project && HostEnvironment.ProjectRepository == null)
-                return new Error("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
-            return null;
+                yield return new Error("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
         }
     }
 }

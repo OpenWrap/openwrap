@@ -24,6 +24,19 @@ namespace Tests
         }
 
         [Test]
+        public void can_convert_to_version()
+        {
+            can_convert<Version>("1.0").ShouldBe(new Version(1, 0));
+        }
+
+        [Test]
+        public void cannot_convert_invalid_version()
+        {
+            cannot_convert<Version>();
+            cannot_convert<Version>("1");
+            cannot_convert<Version>("1", "0");
+        }
+        [Test]
         public void can_convert_to_bool()
         {
             can_convert<bool>("true").ShouldBeTrue();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OpenWrap.Collections;
 using OpenWrap.Configuration;
 
 namespace OpenWrap.Commands.Remote
@@ -11,13 +12,12 @@ namespace OpenWrap.Commands.Remote
         public string Name { get; set; }
 
         IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            return Either(NameDoesntExist())
-                    .Or(RemoveRemote());
+            yield return ValidateNameDoesntExist;
         }
 
-        IEnumerable<ICommandOutput> RemoveRemote()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var repositories = ConfigurationManager.LoadRemoteRepositories();
             
@@ -27,7 +27,8 @@ namespace OpenWrap.Commands.Remote
             yield return new GenericMessage(string.Format("Repository '{0}' removed.", Name));
         }
 
-        IEnumerable<ICommandOutput> NameDoesntExist()
+
+        IEnumerable<ICommandOutput> ValidateNameDoesntExist()
         {
             if (!ConfigurationManager.LoadRemoteRepositories().ContainsKey(Name))
                 yield return new Error("Remote repository '{0}' not found.", Name);

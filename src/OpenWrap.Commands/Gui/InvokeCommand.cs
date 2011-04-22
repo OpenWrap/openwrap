@@ -9,7 +9,7 @@ namespace OpenWrap.Commands.Gui
     [UICommand(Label = "OpenWrap Dashboard", Context=UICommandContext.Global)]
     public class InvokeCommand : AbstractCommand
     {
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield break;
         }

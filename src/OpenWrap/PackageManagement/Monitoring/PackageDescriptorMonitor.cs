@@ -5,6 +5,7 @@ using System.Linq;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using Path = OpenFileSystem.IO.Path;
@@ -95,7 +96,7 @@ namespace OpenWrap.PackageManagement.Monitoring
                     .Single();
 
             foreach (var client in subscriptions.Clients)
-                client.AssembliesUpdated(PackageManager.GetAssemblyReferences(descriptor, subscriptions.Repository, false));
+                client.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, false));
         }
 
         void NotifyClient(IFile wrapPath, IResolvedAssembliesUpdateListener listener)
@@ -111,7 +112,7 @@ namespace OpenWrap.PackageManagement.Monitoring
                     .Single();
 
 
-            listener.AssembliesUpdated(PackageManager.GetAssemblyReferences(descriptor, subscriptions.Repository, false));
+            listener.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, false));
         }
 
         class DescriptorSubscriptions

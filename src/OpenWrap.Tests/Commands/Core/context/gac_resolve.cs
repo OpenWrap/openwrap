@@ -13,6 +13,7 @@ using OpenWrap.Commands.Core;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;

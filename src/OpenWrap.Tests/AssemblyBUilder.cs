@@ -35,7 +35,6 @@ namespace Tests
                 config(builder);
                 var typeDef = (TypeDefinition)builder;
                 assembly.MainModule.Types.Add(typeDef);
-                //assembly.MainModule.ExportedTypes.Add(new ExportedType(typeDef.Namespace, typeDef.Name, assembly.MainModule, assembly.Name));
             }
             return assembly;
         }
@@ -207,7 +206,7 @@ namespace Tests
                 pd.GetMethod = new MethodDefinition("get_" + builder._name, MethodAttributes.Public, builder._returnType);
             if (builder._hasSetter)
                 pd.SetMethod = new MethodDefinition("set_" + builder._name, MethodAttributes.Public, builder._returnType);
-
+            pd.CustomAttributes.AddRange(builder._attributes);
             return pd;
         }
 

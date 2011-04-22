@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using OpenWrap.Commands.Cli;
+using OpenWrap.Commands.Cli.Parser;
 using OpenWrap.Testing;
 
 namespace Tests.Commands.command_line_parsing.contexts

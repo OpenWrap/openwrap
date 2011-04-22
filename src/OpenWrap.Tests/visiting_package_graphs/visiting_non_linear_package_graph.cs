@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using OpenWrap.PackageModel;
@@ -23,7 +24,7 @@ namespace Tests.visiting_package_graphs
             });
         }
 
-        
+
         [Test]
         public void leaf_node_called_first()
         {
@@ -40,10 +41,6 @@ namespace Tests.visiting_package_graphs
         public void root_node_is_called_once_per_dependent_package()
         {
             visited.Where(x => x.Name == "the-shire").ShouldHaveCountOf(3);
-        }
-        int index_for(string packageName)
-        {
-            return visited.IndexOf(visited.First(x => x.Name == packageName));
         }
     }
 }

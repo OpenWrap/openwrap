@@ -13,6 +13,7 @@ using OpenWrap.PackageManagement.AssemblyResolvers;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
 using OpenWrap.Services;

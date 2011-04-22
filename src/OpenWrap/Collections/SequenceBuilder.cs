@@ -63,4 +63,21 @@ namespace OpenWrap.Collections
             return this;
         }
     }
+    public static class OutputExtensions
+    {
+        public static IEnumerable<ICommandOutput> IfSucceeds(this IEnumerable<ICommandOutput> first, IEnumerable<ICommandOutput> second)
+        {
+            bool errorFound = false;
+            foreach(var command in first)
+            {
+                yield return command;
+                if (command.Type == CommandResultType.Error)
+                    errorFound = true;
+            }
+            if (errorFound) yield break;
+
+            foreach (var output in second)
+                yield return output;
+        }
+    }
 }

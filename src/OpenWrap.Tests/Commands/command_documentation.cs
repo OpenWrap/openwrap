@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Wrap;
-using OpenWrap.PackageManagement.Exporters;
-using OpenWrap.Reflection;
+using OpenWrap.PackageManagement.Exporters.Commands;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands
 {
     [TestFixture]
     public class command_documentation
@@ -22,7 +18,7 @@ namespace OpenWrap.Tests.Commands
         static ICommandDescriptor[] GetCommands()
         {
             using (var stream = File.OpenRead(typeof(AddWrapCommand).Assembly.Location))
-                return CecilCommandExportProvider.GetCommandsFromAssembly(stream).ToArray();
+                return CecilCommandExporter.GetCommandsFromAssembly(stream).ToArray();
         }
 
         [Theory]

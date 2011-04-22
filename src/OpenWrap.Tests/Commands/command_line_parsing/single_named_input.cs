@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Commands.Cli;
+using OpenWrap.Commands.Cli.Parser;
 using OpenWrap.Testing;
 
 namespace Tests.Commands.command_line_parsing

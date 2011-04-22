@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
-namespace OpenWrap.Commands.Cli
+namespace OpenWrap.Commands.Cli.Locators
 {
     public class VerbNounCommandLocator : NamedCommandLocator
     {

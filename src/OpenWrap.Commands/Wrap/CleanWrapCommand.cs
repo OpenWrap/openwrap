@@ -22,13 +22,12 @@ namespace OpenWrap.Commands.Wrap
             get { return _project ?? false; }
             set { _project = value; }
         }
-
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<System.Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            return Either(VerifyInputs()).Or(ExecuteCore());
+            yield return VerifyInputs;
         }
 
-        IEnumerable<ICommandOutput> ExecuteCore()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             IEnumerable<ICommandOutput> outputs = Enumerable.Empty<ICommandOutput>();
             if (IncludeProject)

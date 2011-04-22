@@ -10,19 +10,16 @@ namespace OpenWrap.Commands
 {
     public static class EnvironmentExtensions
     {
-        public static IEnumerable<ICommandDescriptor> Commands(this IEnvironment environment)
+        public static IEnumerable<IGrouping<string, Exports.ICommand>> CommandExports(this IPackageManager manager, IEnvironment environment)
         {
-            throw new NotImplementedException();
-            //var packageExporter = Services.ServiceLocator.GetService<IPackageExporter>();
-            //if (packageExporter == null)
-            //    throw new InvalidOperationException("A package exporter service hasn't been found.");
-
-            //return packageExporter
-            //        .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
-            //        .SelectMany(x => x.Items)
-            //        .OfType<ICommandExportItem>()
-            //        .Select(x => x.Descriptor)
-            //        .ToList();
+            var projectCommands = manager.GetProjectExports<Exports.ICommand>(environment.Descriptor, environment.ProjectRepository).SelectMany(x=>x).GroupBy(x=>x.Package.Name);
+            var consumedPackages = projectCommands.Select(x => x.Key).ToList();
+            var systemCommands = manager.GetSystemExports<Exports.ICommand>(environment.SystemRepository).SelectMany(x => x).GroupBy(x => x.Package.Name);
+            return projectCommands.Concat(systemCommands.Where(x => consumedPackages.ContainsNoCase(x.Key) == false));
+        }
+        public static IEnumerable<ICommandDescriptor> Commands(this IPackageManager manager, IEnvironment environment)
+        {
+            return manager.CommandExports(environment).SelectMany(_ => _).Select(x => x.Descriptor);
         }
     }
 }

@@ -1,12 +1,11 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Commands.add_wrap
+namespace Tests.Commands.add_wrap
 {
-    public class adding_package_updates_descriptor : global::Tests.Commands.contexts.add_wrap
+    public class adding_package_updates_descriptor : contexts.add_wrap
     {
         public adding_package_updates_descriptor()
         {

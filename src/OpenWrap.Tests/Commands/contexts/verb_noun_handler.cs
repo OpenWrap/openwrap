@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
+using OpenWrap.Commands.Cli.Locators;
 using OpenWrap.Testing;
 using Tests.Commands.usage;
 

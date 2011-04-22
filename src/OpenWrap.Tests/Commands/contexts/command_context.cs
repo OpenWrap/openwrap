@@ -13,6 +13,8 @@ using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Assemblies;
+using OpenWrap.PackageManagement.Exporters.Commands;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Parsers;
@@ -46,7 +48,8 @@ namespace OpenWrap.Commands.contexts
             Services.ServiceLocator.RegisterService<IPackageResolver>(new ExhaustiveResolver());
             Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new IExportProvider[]{
-                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment)
+                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment),
+                    new CecilCommandExporter(ServiceLocator.GetService<IEnvironment>())
                 }));
             Services.ServiceLocator.RegisterService<ICommandRepository>(Commands);
             
@@ -197,12 +200,8 @@ namespace OpenWrap.Commands.contexts
 
         public command_context()
         {
-            var assembly = AssemblyDefinition.ReadAssembly(typeof(T).Assembly.Location);
-
-            Command = CecilCommandExportProvider.GetCommandFromTypeDef(assembly.MainModule.Import(typeof(T)).Resolve());
-            Commands = new CommandRepository { Command };
-
-            
+            Command = CecilCommandExporter.GetCommandFrom<T>();
+            Commands = new CommandRepository { Command };   
         }
 
         protected virtual void when_executing_command(params string[] parameters)
@@ -211,7 +210,7 @@ namespace OpenWrap.Commands.contexts
             foreach (var descriptor in Environment.ScopedDescriptors.Values)
                 descriptor.Save();
 
-            Results = new CommandRunner().Run(Command, parameters.Join(" ")).ToList();
+            Results = new CommandLineRunner().Run(Command, parameters.Join(" ")).ToList();
         }
 
         protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)

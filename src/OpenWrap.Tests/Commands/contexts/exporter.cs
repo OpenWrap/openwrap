@@ -9,6 +9,7 @@ using OpenWrap;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Commands;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Runtime;
 using OpenWrap.Testing;
@@ -16,11 +17,11 @@ using OpenWrap.Tests.Commands;
 
 namespace Tests.Commands.contexts
 {
-    public class cecil_command_exporter : exporter<CecilCommandExportProvider, Exports.ICommand>
+    public class cecil_command_exporter : exporter<CecilCommandExporter, Exports.ICommand>
     {
         public cecil_command_exporter()
         {
-            Exporter = new CecilCommandExportProvider(new InMemoryEnvironment(TempDirectory)
+            Exporter = new CecilCommandExporter(new InMemoryEnvironment(TempDirectory)
             {
                     ExecutionEnvironment = new ExecutionEnvironment("AnyCPU", "net20")
             });

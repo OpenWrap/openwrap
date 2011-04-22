@@ -29,7 +29,7 @@ namespace OpenWrap.Commands.Remote
 
         IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
 
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var repositories = ConfigurationManager.LoadRemoteRepositories();
 

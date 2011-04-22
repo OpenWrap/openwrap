@@ -1,4 +1,4 @@
-﻿namespace OpenWrap.Commands.Cli
+﻿namespace OpenWrap.Commands.Cli.Parser
 {
     public abstract class Input
     {

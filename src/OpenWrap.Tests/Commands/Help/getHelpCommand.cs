@@ -164,7 +164,7 @@ namespace getHelpCommand_specs
                 _command.AllInputs.Add(new MemoryCommandInput
                 {
                         Name = name,
-                        Type = type.FullName,
+                        Type = type.Name,
                         IsRequired = isRequired,
                         IsValueRequired = isValueRequired,
                         Description = description ?? string.Empty,

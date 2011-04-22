@@ -15,7 +15,6 @@ using NUnit.Framework;
 
 namespace OpenWrap.Testing
 {
-    [TestFixture]
     public class context
     {
         [SetUp]

@@ -18,11 +18,6 @@ namespace OpenWrap.Commands
             Success = true;
         }
 
-        public ICommand Source
-        {
-            get { throw new NotImplementedException(); }
-        }
-
         public bool Success { get; set; }
 
         public CommandResultType Type

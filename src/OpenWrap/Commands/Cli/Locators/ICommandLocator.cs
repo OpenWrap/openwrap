@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace OpenWrap.Commands.Cli
+﻿namespace OpenWrap.Commands.Cli.Locators
 {
     public interface ICommandLocator
     {

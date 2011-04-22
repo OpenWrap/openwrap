@@ -59,6 +59,7 @@ namespace OpenWrap.PackageManagement
 
         IEnumerable<IPackageInfo> ListProjectPackages(IPackageDescriptor descriptor, IPackageRepository projectRepository);
         IEnumerable<IGrouping<string, TItem>>  GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository) where TItem:IExportItem;
+        IEnumerable<IGrouping<string, TItem>> GetSystemExports<TItem>(IPackageRepository systemRepository) where TItem: IExportItem;
         
         event PackageUpdated PackageUpdated;
         event PackageChanged PackageAdded;

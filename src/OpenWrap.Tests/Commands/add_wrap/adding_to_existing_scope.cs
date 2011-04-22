@@ -4,6 +4,7 @@ using System.Text;
 using NUnit.Framework;
 using OpenWrap.PackageModel;
 using OpenWrap.Testing;
+using Tests.Commands;
 
 namespace OpenWrap.Commands.add_wrap
 {
@@ -22,6 +23,12 @@ namespace OpenWrap.Commands.add_wrap
             DefaultDescriptorTimeStamp = Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc;
             ScopedDescriptorTimeStamp = Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc;
             when_executing_command("sauron", "-scope", "tests");
+        }
+
+        [Test]
+        public void command_is_successful()
+        {
+            Results.ShouldHaveNoError();
         }
 
         [Test]

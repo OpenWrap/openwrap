@@ -1,35 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OpenFileSystem.IO;
 using OpenWrap.Repositories.NuGet;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.NuGet
 {
-    [Command(Noun="nuget", Verb="convert")]
+    [Command(Noun = "nuget", Verb = "convert")]
     public class ConvertNuGet : AbstractCommand
     {
-        IFile _nugetFile;
         IFile _destinationFile;
-        protected IFileSystem FileSystem { get { return Services.ServiceLocator.GetService<IFileSystem>(); } }
-        [CommandInput(Position=0, IsRequired=true)]
-        public string Path { get; set; }
+        IFile _nugetFile;
 
         [CommandInput(Position = 1)]
         public string Destination { get; set; }
 
-        public override IEnumerable<ICommandOutput> Execute()
+        [CommandInput(Position = 0, IsRequired = true)]
+        public string Path { get; set; }
+
+        protected IFileSystem FileSystem
         {
-            return Either(VerifyInputs()).Or(ExecuteCore());
-            
+            get { return ServiceLocator.GetService<IFileSystem>(); }
         }
 
-        IEnumerable<ICommandOutput> ExecuteCore()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            using(var nugetStream = _nugetFile.OpenRead())
-            using(var wrapStream = _destinationFile.OpenWrite())
+            using (var nugetStream = _nugetFile.OpenRead())
+            using (var wrapStream = _destinationFile.OpenWrite())
             {
                 NuGetConverter.Convert(nugetStream, wrapStream);
             }
             yield return new GenericMessage("Package successfully converted.");
+        }
+
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
+        {
+            yield return VerifyInputs;
         }
 
         IEnumerable<ICommandOutput> VerifyInputs()

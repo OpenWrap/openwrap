@@ -122,7 +122,7 @@ namespace OpenWrap.PackageModel
 
             public ICollection<string> DirectoryStructure
             {
-                get { throw new NotImplementedException(); }
+                get { return _parent.DirectoryStructure; }
             }
 
             public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read)

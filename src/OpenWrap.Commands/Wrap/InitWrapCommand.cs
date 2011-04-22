@@ -73,11 +73,14 @@ namespace OpenWrap.Commands.Wrap
         {
             get { return Services.ServiceLocator.GetService<IFileSystem>(); }
         }
-
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            return VerifyArguments()
-                    .Concat(SetupDirectoriesAndDescriptor())
+            yield return VerifyArguments;
+        }
+
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
+        {
+            return SetupDirectoriesAndDescriptor()
                     .Concat(ModifyProjects(Environment.DescriptorFile));
         }
 

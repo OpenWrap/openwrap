@@ -43,11 +43,10 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool AnyVersion { get; set; }
 
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            return Either(ValidateInputs()).Or(ExecuteCore());    
+            yield return ValidateInputs;
         }
-
         PackageDependency _dependency;
 
         PackageDependency FindDependencyByName()
@@ -96,7 +95,7 @@ namespace OpenWrap.Commands.Wrap
 
         }
 
-        IEnumerable<ICommandOutput> ExecuteCore()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var newDependency = UpdatedDependency(_dependency);
             HostEnvironment.Descriptor.Dependencies.Remove(_dependency);

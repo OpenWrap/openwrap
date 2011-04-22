@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenWrap.Commands.Cli
+namespace OpenWrap.Commands.Cli.Parser
 {
     public class InputParserException : Exception
     {

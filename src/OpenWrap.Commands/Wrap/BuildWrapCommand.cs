@@ -50,7 +50,7 @@ namespace OpenWrap.Commands.Wrap
         public BuildWrapCommand()
             : this(ServiceLocator.GetService<IFileSystem>(), ServiceLocator.GetService<IEnvironment>())
         {
-            
+
         }
         public BuildWrapCommand(IFileSystem fileSystem, IEnvironment environment)
         {
@@ -58,21 +58,21 @@ namespace OpenWrap.Commands.Wrap
             _environment = environment;
             _currentDirectory = environment.CurrentDirectory;
         }
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            return Either(FromEnvironmentNotFound)
-                    .Or(NoDescriptorFound)
-                    .Or(VerifyPath)
-                    .Or(CreateBuilder)
-                    .Or(
-                        TriggerBuild()
-                        .Concat(Build())
-                    );
+            yield return FromEnvironmentNotFound;
+            yield return NoDescriptorFound;
+            yield return VerifyPath;
+            yield return CreateBuilder;
+        }
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
+        {
+            return CreateBuilder().Concat(TriggerBuild()).Concat(Build());
         }
 
         IEnumerable<ICommandOutput> Build()
         {
-            
+
             var packageName = Name ?? _environment.Descriptor.Name;
             var destinationPath = _destinationPath ?? _currentDirectory;
 
@@ -106,21 +106,27 @@ namespace OpenWrap.Commands.Wrap
             if (size == null) return string.Empty;
             return string.Format(" ({0} bytes)", ((long)size).ToString("N0"));
         }
-        ICommandOutput FromEnvironmentNotFound()
+        IEnumerable<ICommandOutput> FromEnvironmentNotFound()
         {
             if (From != null)
             {
                 var directory = _fileSystem.GetDirectory(From);
                 if (directory.Exists == false)
-                    return new Error("Directory '{0}' not found.", From);
+                {
+                    yield return new Error("Directory '{0}' not found.", From);
+                    yield break;
+                }
                 var newEnv = new CurrentDirectoryEnvironment(directory);
                 newEnv.Initialize();
                 if (newEnv.ScopedDescriptors.Any() == false)
-                    return new Error("No descriptor found in directory '{0}'.", From);
+                {
+                    yield return new Error("No descriptor found in directory '{0}'.", From);
+                    yield break;
+                }
+
                 _environment = newEnv;
                 //return new Info("Building package at '{0}'.", From);
             }
-            return null;
         }
 
         IEnumerable<ICommandOutput> TriggerBuild()
@@ -146,10 +152,10 @@ namespace OpenWrap.Commands.Wrap
                             where file.Exists
                             select new PackageContent
                             {
-                                    FileName = file.Name,
-                                    RelativePath = fileDescriptor.ExportName,
-                                    Size = file.Size,
-                                    Stream = () => file.OpenRead()
+                                FileName = file.Name,
+                                RelativePath = fileDescriptor.ExportName,
+                                Size = file.Size,
+                                Stream = () => file.OpenRead()
                             }).ToList();
 
             var externalFiles = from fileDesc in buildFiles
@@ -160,10 +166,10 @@ namespace OpenWrap.Commands.Wrap
                                        binFiles.Any(x => x.FileName == file.Name) == false)
                                 select new PackageContent
                                 {
-                                        FileName = file.Name,
-                                        Size = file.Size,
-                                        RelativePath = fileDesc.ExportName,
-                                        Stream = () => file.OpenRead()
+                                    FileName = file.Name,
+                                    Size = file.Size,
+                                    RelativePath = fileDesc.ExportName,
+                                    Stream = () => file.OpenRead()
                                 };
             return binFiles.Concat(externalFiles);
         }
@@ -172,12 +178,12 @@ namespace OpenWrap.Commands.Wrap
         {
             return fileDescriptor.Path.FullPath.Contains("*")
                            ? _fileSystem.Files(fileDescriptor.Path.FullPath)
-                           : new[]{_fileSystem.GetFile(fileDescriptor.Path.FullPath)};
+                           : new[] { _fileSystem.GetFile(fileDescriptor.Path.FullPath) };
         }
 
         IEnumerable<ICommandOutput> ProcessBuildResults(IEnumerable<IPackageBuilder> packageBuilders, Action<FileBuildResult> onFound)
         {
-            foreach (var t in packageBuilders.SelectMany(x=>x.Build()))
+            foreach (var t in packageBuilders.SelectMany(x => x.Build()))
             {
                 if (t is TextBuildResult && !Quiet)
                     yield return new GenericMessage(t.Message);
@@ -267,7 +273,7 @@ namespace OpenWrap.Commands.Wrap
                               select version).FirstOrDefault();
         }
 
-        ICommandOutput CreateBuilder()
+        IEnumerable<ICommandOutput> CreateBuilder()
         {
             _builders = (
                                 from commandLine in _environment.Descriptor.Build.DefaultIfEmpty("msbuild")
@@ -280,10 +286,10 @@ namespace OpenWrap.Commands.Wrap
                                                  group value by key.Trim()
                                 select AssignProperties(builder, parameters)
                         ).ToList();
-            return null;
+            yield break;
         }
 
-        IPackageBuilder AssignProperties(IPackageBuilder builder, IEnumerable<IGrouping<string,string>> properties)
+        IPackageBuilder AssignProperties(IPackageBuilder builder, IEnumerable<IGrouping<string, string>> properties)
         {
             foreach (var property in properties)
             {
@@ -316,11 +322,10 @@ namespace OpenWrap.Commands.Wrap
             return version;
         }
 
-        ICommandOutput NoDescriptorFound()
+        IEnumerable<ICommandOutput> NoDescriptorFound()
         {
-            return _environment.ScopedDescriptors.Any() == false
-                           ? new Error("Could not find any descriptor. Are you in a project directory?")
-                           : null;
+            if (_environment.ScopedDescriptors.Any() == false)
+                yield return new Error("Could not find any descriptor. Are you in a project directory?");
         }
 
         string ReadVersionFile()
@@ -333,15 +338,14 @@ namespace OpenWrap.Commands.Wrap
             return null;
         }
 
-        ICommandOutput VerifyPath()
+        IEnumerable<ICommandOutput> VerifyPath()
         {
             if (Path != null)
             {
                 _destinationPath = _fileSystem.GetDirectory(Path);
                 if (_destinationPath.Exists == false)
-                    return new Error("Path '{0}' doesn't exist.", Path);
+                    yield return new Error("Path '{0}' doesn't exist.", Path);
             }
-            return null;
         }
     }
 }

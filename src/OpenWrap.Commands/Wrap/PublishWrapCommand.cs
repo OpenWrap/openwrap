@@ -34,9 +34,10 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public string Pwd { get; set; }
 
-        public override IEnumerable<ICommandOutput> Execute()
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            return RelaxedEither(ValidateInputs()).Or(ValidatePackageDoesntExist()).Or(ExecuteCore());
+            yield return ValidateInputs;
+            yield return ValidatePackageDoesntExist;
         }
 
         IEnumerable<ICommandOutput> ValidatePackageDoesntExist()
@@ -115,7 +116,7 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Error("Please specify either a file path using the -Path input, or a name using -Name.");
             }
         }
-        IEnumerable<ICommandOutput> ExecuteCore()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
             using (_authenticationSupport.WithCredentials(new Credentials(User, Pwd)))

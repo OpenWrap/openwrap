@@ -5,6 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Repositories;
@@ -149,9 +150,9 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             File("x86", "net35").ShouldBeBefore(File("x86", "net20"));
         }
 
-        EnvironmentDependentFile File(string platform, string target)
+        AbstractAssemblyExporter.EnvironmentDependentFile File(string platform, string target)
         {
-            return new EnvironmentDependentFile
+            return new AbstractAssemblyExporter.EnvironmentDependentFile
             {
                 Platform = platform,
                 Profile = target
@@ -202,19 +203,19 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             return vertex;
         }
 
-        public static EnvironmentDependentFile ShouldBeAfter(this EnvironmentDependentFile file,
-                                                             EnvironmentDependentFile other)
+        public static AbstractAssemblyExporter.EnvironmentDependentFile ShouldBeAfter(this AbstractAssemblyExporter.EnvironmentDependentFile file,
+                                                             AbstractAssemblyExporter.EnvironmentDependentFile other)
         {
-            var list = new List<EnvironmentDependentFile>(new[] { file, other });
+            var list = new List<AbstractAssemblyExporter.EnvironmentDependentFile>(new[] { file, other });
             list.Sort();
             list.Last().ShouldBe(file);
             return file;
         }
 
-        public static EnvironmentDependentFile ShouldBeBefore(this EnvironmentDependentFile file,
-                                                              EnvironmentDependentFile other)
+        public static AbstractAssemblyExporter.EnvironmentDependentFile ShouldBeBefore(this AbstractAssemblyExporter.EnvironmentDependentFile file,
+                                                              AbstractAssemblyExporter.EnvironmentDependentFile other)
         {
-            var list = new List<EnvironmentDependentFile>(new[] { file, other });
+            var list = new List<AbstractAssemblyExporter.EnvironmentDependentFile>(new[] { file, other });
             list.Sort();
             list.First().ShouldBe(file);
             return file;

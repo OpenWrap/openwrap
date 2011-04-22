@@ -31,6 +31,7 @@ namespace OpenWrap.Tests.Commands
             ConfigurationDirectory = configDirectory;
             ScopedDescriptors = new Dictionary<string, FileBased<IPackageDescriptor>>(StringComparer.OrdinalIgnoreCase);
             ScopedDescriptors[string.Empty] = FileBased.New(DescriptorFile, Descriptor);
+            ExecutionEnvironment = new ExecutionEnvironment("AnyCPU", "net35");
         }
 
         void IService.Initialize()

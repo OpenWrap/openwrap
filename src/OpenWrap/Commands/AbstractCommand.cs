@@ -6,21 +6,28 @@ namespace OpenWrap.Commands
 {
     public abstract class AbstractCommand : ICommand
     {
-        public abstract IEnumerable<ICommandOutput> Execute();
-
-        protected ISequenceBuilder Either(IEnumerable<ICommandOutput> returnValue)
+        public IEnumerable<ICommandOutput> Execute()
         {
-            return new SequenceBuilder(returnValue);
+            foreach(var validator in Validators())
+            {
+                bool errorDetected = false;
+                foreach(var output in validator().NotNull())
+                {
+                    yield return output;
+                    if (output.Type == CommandResultType.Error)
+                        errorDetected = true;
+                }
+                if (errorDetected)
+                    yield break;
+            }
+            foreach (var output in ExecuteCore().NotNull())
+                yield return output;
         }
 
-        protected ISequenceBuilder RelaxedEither(IEnumerable<ICommandOutput> returnValue)
+        protected virtual IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            return new SequenceBuilder(returnValue, false);
+            yield break;
         }
-
-        protected ISequenceBuilder Either(Func<ICommandOutput> returnValue)
-        {
-            return new SequenceBuilder(returnValue.AsEnumerable());
-        }
+        protected abstract IEnumerable<ICommandOutput> ExecuteCore();
     }
 }

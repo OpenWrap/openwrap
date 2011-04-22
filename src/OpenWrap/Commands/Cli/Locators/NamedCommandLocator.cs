@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace OpenWrap.Commands.Cli
+namespace OpenWrap.Commands.Cli.Locators
 {
     public abstract class NamedCommandLocator : ICommandLocator
     {

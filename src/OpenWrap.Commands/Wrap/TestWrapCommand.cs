@@ -38,7 +38,8 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput(Position=0, IsRequired=true)]
         public string Name { get; set; }
-        public override IEnumerable<ICommandOutput> Execute()
+
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var package = _environment.CurrentDirectoryRepository.PackagesByName[Name]
                 .OrderByDescending(x=>x.Version)

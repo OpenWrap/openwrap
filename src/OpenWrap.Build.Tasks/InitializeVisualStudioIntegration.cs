@@ -100,12 +100,10 @@ namespace OpenWrap.Build.Tasks
 
         static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            throw new NotImplementedException();
-            //return Services.ServiceLocator.GetService<IPackageExporter>()
-            //        .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
-            //        .SelectMany(x => x.Items)
-            //        .OfType<ICommandExportItem>()
-            //        .Select(x => x.Descriptor).ToList();
+            return Services.ServiceLocator.GetService<IPackageManager>()
+                    .CommandExports(environment)
+                    .SelectMany(x => x)
+                    .Select(x => x.Descriptor);
         }
 
     }

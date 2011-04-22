@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using OpenFileSystem.IO;
 using OpenWrap.Collections;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
-using OpenWrap.Runtime;
 using SysPath = System.IO.Path;
 
 namespace OpenWrap.Commands.Wrap
@@ -28,7 +25,7 @@ namespace OpenWrap.Commands.Wrap
         public bool Content { get; set; }
 
         [CommandInput]
-        public string Scope { get; set; }
+        public string From { get; set; }
 
         [CommandInput]
         public string MaxVersion { get; set; }
@@ -46,14 +43,14 @@ namespace OpenWrap.Commands.Wrap
         public bool NoHooks { get; set; }
 
         [CommandInput]
-        public string From { get; set; }
-
-        [CommandInput]
         public bool Project
         {
             get { return _project ?? (_system == null); }
             set { _project = value; }
         }
+
+        [CommandInput]
+        public string Scope { get; set; }
 
         [CommandInput]
         public bool System
@@ -102,33 +99,7 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        public override IEnumerable<ICommandOutput> Execute()
-        {
-            return Either(ValidateInputs()).Or(ExecuteCore());
-        }
-
-        protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
-        {
-            if (packageOperationResult is PackageMissingResult)
-                _packageNotFound = true;
-            return base.ToOutput(packageOperationResult);
-        }
-
-        static void ParseSuccess(PackageOperationResult m, Action<PackageIdentifier> onSuccess, Action onFailure = null)
-        {
-            var id = m is PackageUpdatedResult
-                             ? ((PackageUpdatedResult)m).Package.Identifier
-                             : (m is PackageAddedResult ? ((PackageAddedResult)m).Package.Identifier : null);
-            if (m.Success && id != null)
-                onSuccess(id);
-            else if (m.Success)
-                return;
-            else if (onFailure != null)
-                onFailure();
-        }
-
-
-        IEnumerable<ICommandOutput> ExecuteCore()
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope ?? string.Empty);
 
@@ -189,12 +160,69 @@ namespace OpenWrap.Commands.Wrap
                 TrySaveDescriptorFile(targetDescriptor);
         }
 
+        protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
+        {
+            if (packageOperationResult is PackageMissingResult)
+                _packageNotFound = true;
+            return base.ToOutput(packageOperationResult);
+        }
+
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
+        {
+            yield return ValidateInputs;
+        }
+
+        static void ParseSuccess(PackageOperationResult m, Action<PackageIdentifier> onSuccess, Action onFailure = null)
+        {
+            var id = m is PackageUpdatedResult
+                             ? ((PackageUpdatedResult)m).Package.Identifier
+                             : (m is PackageAddedResult ? ((PackageAddedResult)m).Package.Identifier : null);
+            if (m.Success && id != null)
+                onSuccess(id);
+            else if (m.Success)
+                return;
+            else if (onFailure != null)
+                onFailure();
+        }
+
+
         IEnumerable<IPackageRepository> GetSourceRepositories()
         {
-              return new[] { _userSpecifiedRepository, HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }
+            return new[] { _userSpecifiedRepository, HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }
                     .Concat(HostEnvironment.RemoteRepositories)
                     .Concat(HostEnvironment.ProjectRepository)
                     .NotNull();
+        }
+
+        ICommandOutput SetupEnvironmentForAdd()
+        {
+            var directory = HostEnvironment.CurrentDirectory;
+
+            var fromDirectory = string.IsNullOrEmpty(From) ? null : FileSystem.GetDirectory(From);
+            if (fromDirectory != null && fromDirectory.Exists)
+            {
+                if (SysPath.GetExtension(Name).EqualsNoCase(".wrap") &&
+                    SysPath.IsPathRooted(Name) &&
+                    FileSystem.GetDirectory(SysPath.GetDirectoryName(Name)) != fromDirectory)
+                {
+                    return new Error("You provided both -From and -Name, but -Name is a path. Try removing the -From parameter.");
+                }
+                directory = fromDirectory;
+                _userSpecifiedRepository = new FolderRepository(directory, FolderRepositoryOptions.Default);
+            }
+
+
+            if (SysPath.GetExtension(Name).EqualsNoCase(".wrap") && directory.GetFile(SysPath.GetFileName(Name)).Exists)
+            {
+                var originalName = Name;
+                Name = PackageNameUtility.GetName(SysPath.GetFileNameWithoutExtension(Name));
+                Version = PackageNameUtility.GetVersion(SysPath.GetFileNameWithoutExtension(originalName)).ToString();
+
+                return new Warning("The requested package contained '.wrap' in the name. Assuming you pointed to a file name and meant a package named '{0}' with version qualifier '{1}'.",
+                                   Name,
+                                   Version);
+            }
+            return null;
         }
 
 
@@ -256,37 +284,6 @@ namespace OpenWrap.Commands.Wrap
             return HostEnvironment.ProjectRepository != null
                            ? new GenericMessage("Project repository present.")
                            : new GenericMessage("Project repository absent.");
-        }
-
-        ICommandOutput SetupEnvironmentForAdd()
-        {
-            var directory = HostEnvironment.CurrentDirectory;
-
-            var fromDirectory = string.IsNullOrEmpty(From) ? null : FileSystem.GetDirectory(From);
-            if (fromDirectory != null && fromDirectory.Exists)
-            {
-                if (SysPath.GetExtension(Name).EqualsNoCase(".wrap") &&
-                    SysPath.IsPathRooted(Name) &&
-                    FileSystem.GetDirectory(SysPath.GetDirectoryName(Name)) != fromDirectory)
-                {
-                    return new Error("You provided both -From and -Name, but -Name is a path. Try removing the -From parameter.");
-                }
-                directory = fromDirectory;
-                _userSpecifiedRepository = new FolderRepository(directory, FolderRepositoryOptions.Default);
-            }
-
-
-            if (SysPath.GetExtension(Name).EqualsNoCase(".wrap") && directory.GetFile(SysPath.GetFileName(Name)).Exists)
-            {
-                var originalName = Name;
-                Name = PackageNameUtility.GetName(SysPath.GetFileNameWithoutExtension(Name));
-                Version = PackageNameUtility.GetVersion(SysPath.GetFileNameWithoutExtension(originalName)).ToString();
-
-                return new Warning("The requested package contained '.wrap' in the name. Assuming you pointed to a file name and meant a package named '{0}' with version qualifier '{1}'.",
-                                    Name,
-                                    Version);
-            }
-            return null;
         }
     }
 }

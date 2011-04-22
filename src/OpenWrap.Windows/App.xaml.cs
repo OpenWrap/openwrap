@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
@@ -9,6 +10,7 @@ using OpenWrap.PackageManagement.AssemblyResolvers;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
+using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.Preloading;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
@@ -55,10 +57,11 @@ namespace OpenWrap.Windows
                                                                              ServiceLocator.GetService<IPackageExporter>()));
 
             ServiceLocator.RegisterService<ITaskManager>(new TaskManager());
+            var commands = Services.ServiceLocator.GetService<IPackageManager>().CommandExports(ServiceLocator.GetService<IEnvironment>());
 
-            var repo = new CommandRepository(ServiceLocator.GetService<IEnvironment>().Commands());
+            var commandRepository = new CommandRepository(commands.SelectMany(x => x).Select(x => x.Descriptor));
 
-            ServiceLocator.TryRegisterService<ICommandRepository>(() => repo);
+            ServiceLocator.TryRegisterService<ICommandRepository>(() => commandRepository);
         }
 
         static void SendInitalDataPopulationMessage()

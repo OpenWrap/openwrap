@@ -22,19 +22,25 @@ namespace OpenWrap.Build.Tasks
     public class RunCommand : Task
     {
         IFileSystem _fileSystem;
+        readonly IPackageManager _packageManager;
+        readonly IEnvironment _environment;
         bool _success;
 
         public RunCommand()
-                : this(LocalFileSystem.Instance)
+                : this(LocalFileSystem.Instance,
+            ServiceLocator.GetService<IPackageManager>(),
+            ServiceLocator.GetService<IEnvironment>())
         {
         }
 
-        public RunCommand(IFileSystem fileSystem)
+        public RunCommand(IFileSystem fileSystem, IPackageManager packageManager, IEnvironment environment)
         {
             _fileSystem = fileSystem;
+            _packageManager = packageManager;
+            _environment = environment;
         }
 
-        
+
         public string Args { get; set; }
 
         public string CurrentDirectory { get; set; }
@@ -50,36 +56,39 @@ namespace OpenWrap.Build.Tasks
         {
             if (Debug) Debugger.Launch();
 
-            _success = true;
+            var runner = new CommandLineRunner();
 
-            throw new NotImplementedException();
-            //var commandProcessor = new CommandLineProcessor(new CommandRepository(ReadCommands(Services.ServiceLocator.GetService<IEnvironment>())));
+            var commands = ReadCommands(_environment);
 
-            //foreach (var cmd in commandProcessor.Execute(new[] { Noun, Verb }.Concat(GetArguments()).ToList()))
-            //    ProcessOutput(cmd);
+            var command = commands.FirstOrDefault(x => x.Noun.EqualsNoCase(Noun) && x.Verb.EqualsNoCase(Verb));
+            if (command == null)
+            {
+                Log.LogError("Command named '{0}-{1}' is not a recognized command.", Verb, Noun);
+                return false;
+            }
+            foreach (var value in runner.Run(command, GetArguments()))
+                ProcessOutput(value);
 
             return _success;
         }
 
-        static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
+        IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
         {
-            throw new NotImplementedException();
-            //return Services.ServiceLocator.GetService<IPackageExporter>()
-            //        .GetExports<IExport>("commands", environment.ExecutionEnvironment, new[] { environment.ProjectRepository, environment.SystemRepository }.NotNull())
-            //        .SelectMany(x => x.Items)
-            //        .OfType<ICommandExportItem>()
-            //        .Select(x => x.Descriptor).ToList();
+            return _packageManager.Commands(environment);
         }
 
-        IEnumerable<string> GetArguments()
+        string GetArguments()
         {
             var xmlDoc = "<parameters>" + Args + "</parameters>";
-            foreach (var child in XDocument.Parse(xmlDoc).Root.Descendants())
-            {
-                yield return "-" + child.Name.LocalName;
-                if (!child.IsEmpty)
-                    yield return child.Value;
-            }
+            return (from child in XDocument.Parse(xmlDoc).Root.Descendants()
+                    let key = "-" + child.Name.LocalName
+                    let value = child.IsEmpty ? string.Empty : " \"" + EncodeQuotes(child.Value) + "\""
+                    select key + value).Join(" ");
+        }
+
+        string EncodeQuotes(string value)
+        {
+            return value.Replace("\"", "`\"");
         }
 
         void ProcessOutput(ICommandOutput cmd)

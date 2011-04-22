@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
+using Tests.Commands;
 using Tests.Commands.update_wrap;
 
 namespace OpenWrap.Tests.Commands
@@ -14,6 +15,12 @@ namespace OpenWrap.Tests.Commands
             given_system_package("sauron", "2.0.0");
 
             when_executing_command("sauron");
+        }
+
+        [Test]
+        public void command_succeeds()
+        {
+            Results.ShouldHaveNoError();
         }
         [Test]
         public void package_is_updated()

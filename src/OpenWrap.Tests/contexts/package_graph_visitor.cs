@@ -14,21 +14,31 @@ namespace Tests.contexts
 {
     abstract class package_graph_visitor : context
     {
-        protected List<IPackageInfo> Packages;
+        protected HashSet<IPackageInfo> Packages = new HashSet<IPackageInfo>();
+        protected List<PackageDependency> Roots = new List<PackageDependency>();
+        protected bool Result;
+        protected List<IPackageInfo> visited = new List<IPackageInfo>();
 
-        public package_graph_visitor()
-        {
-            Packages = new List<IPackageInfo>();
-        }
-        protected void given_package(string name, string version, params string[] dependencies)
+        public void given_package(string name, string version, params string[] dependencies)
         {
             InMemoryPackage package;
             Packages.Add(package = new InMemoryPackage { Name = name, Version = version.ToVersion(), Dependencies = dependencies.Select(DependsParser.ParseDependsValue).ToList() });
 
         }
+
+        public void given_root(string name)
+        {
+            Roots.Add(new PackageDependency(name));
+        }
         protected void when_visiting_graph_from_leafs(PackageGraphVisitor.PackageVisitor visitor, params PackageDependency[] root)
         {
-            new PackageGraphVisitor(Packages).VisitFromLeafs(visitor, root != null && root.Length > 0 ? root : null);
+            Result = new PackageGraphVisitor(Packages).VisitFromLeafs(visitor, root != null && root.Length > 0 ? root : (Roots.Count > 0 ? Roots.ToArray() : null));
+        }
+
+        protected bool VisitNodes(IPackageInfo from, PackageDependency dependency, IPackageInfo to)
+        {
+            visited.Add(to);
+            return true;
         }
     }
 }
