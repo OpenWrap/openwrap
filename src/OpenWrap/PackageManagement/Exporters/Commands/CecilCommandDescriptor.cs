@@ -21,8 +21,8 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
                                              x.Description = x.Description ?? CommandDocumentation.GetCommandDescription(typeDef.Module.Assembly, tokenPrefix + "-" + x.Name);
                                              return (ICommandInputDescriptor)x;
                                          }, StringComparer.OrdinalIgnoreCase);
-
-            Factory = () => (ICommand)Activator.CreateInstance(Type.GetType(typeDef.FullName + "," + typeDef.Module.Assembly.FullName));
+            
+            Factory = () => (ICommand)Activator.CreateInstanceFrom(typeDef.Module.FullyQualifiedName, typeDef.FullName).Unwrap();
         }
 
         public Func<ICommand> Factory { get; set; }

@@ -13,7 +13,7 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
             _factory = factory;
             Noun = noun;
             Verb = verb;
-            Inputs = new Dictionary<string, ICommandInputDescriptor>();
+            Inputs = new Dictionary<string, ICommandInputDescriptor>(StringComparer.OrdinalIgnoreCase);
         }
         protected CommandDescriptor(Func<ICommand> factory)
         {

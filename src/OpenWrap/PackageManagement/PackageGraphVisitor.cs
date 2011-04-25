@@ -88,7 +88,7 @@ namespace OpenWrap.PackageManagement
         IEnumerable<string> VisitAll(IPackageInfo root)
         {
             var names = new List<string>();
-            VisitDependencyNode(null, new PackageDependency(root.Name), root, (from, dep, to) => AddReturn(names, to.Name, true), new Dictionary<string, int>());
+            VisitDependencyNode(null, new PackageDependency(root.Name), root, (from, dep, to) => AddReturn(names, to.Name, true), new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase));
             return names;
         }
         bool VisitDependencyNode(IPackageInfo from, PackageDependency dependency, IPackageInfo to, PackageVisitor visitor, Dictionary<string, int> visitsLeft)

@@ -19,5 +19,6 @@ namespace OpenWrap.Runtime
         IDirectory CurrentDirectory { get; }
         IDirectory ConfigurationDirectory { get; }
         ExecutionEnvironment ExecutionEnvironment { get; }
+        IDirectory SystemRepositoryDirectory { get; }
     }
 }

@@ -36,11 +36,12 @@ namespace OpenWrap.Runtime
         public IPackageRepository ProjectRepository { get; private set; }
         public IEnumerable<IPackageRepository> RemoteRepositories { get; private set; }
         public IPackageRepository SystemRepository { get; private set; }
+        public IDirectory SystemRepositoryDirectory { get; set; }
 
         public void Initialize()
         {
             FileSystem = LocalFileSystem.Instance;
-
+            SystemRepositoryDirectory = SystemRepositoryDirectory ?? FileSystem.GetDirectory(DefaultInstallationPaths.SystemRepositoryDirectory);
             var descriptors = new PackageDescriptorReader().ReadAll(CurrentDirectory);
             if (descriptors.ContainsKey(string.Empty))
             {
@@ -53,7 +54,7 @@ namespace OpenWrap.Runtime
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
-            SystemRepository = new FolderRepository(FileSystem.GetDirectory(DefaultInstallationPaths.SystemRepositoryDirectory))
+            SystemRepository = new FolderRepository(SystemRepositoryDirectory)
             {
                     Name = "System repository"
             };

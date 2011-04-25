@@ -38,7 +38,7 @@ namespace Tests.Commands.contexts
         //Dictionary<string,AssemblyDefinition[]> _assemblies = new Dictionary<string, AssemblyDefinition[]>();
         protected TExporter Exporter;
         protected IEnumerable<IGrouping<string, T>> Items;
-        Dictionary<string, Dictionary<string,Expression<Action<FluentTypeBuilder>>[]>> _exports = new Dictionary<string, Dictionary<string, Expression<Action<FluentTypeBuilder>>[]>>();
+        Dictionary<string, Dictionary<string, Expression<Action<FluentTypeBuilder>>[]>> _exports = new Dictionary<string, Dictionary<string, Expression<Action<FluentTypeBuilder>>[]>>((StringComparer.OrdinalIgnoreCase));
 
         public exporter()
         {

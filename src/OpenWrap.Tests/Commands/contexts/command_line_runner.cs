@@ -2,36 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using OpenWrap;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
 using OpenWrap.Testing;
-using Tests.Commands.runner;
-using Tests.Commands.usage;
 
 namespace Tests.Commands.contexts
 {
     public abstract class command_line_runner : context
     {
-        MemoryCommandDescriptor Command;
-        protected IEnumerable<ICommandOutput> Results;
-        Dictionary<string, List<string>> _properties;
         protected bool CommandExecuted;
+        protected IEnumerable<ICommandOutput> Results;
+        readonly Dictionary<string, List<string>> _properties;
+        MemoryCommandDescriptor Command;
+        List<string> _optionalInputs;
 
         public command_line_runner()
         {
-            _properties = new Dictionary<string, List<string>>();
-            
+            _properties = new Dictionary<string, List<string>>((StringComparer.OrdinalIgnoreCase));
+            _optionalInputs = new List<string>();
+
         }
-        protected void when_executing(string line)
-        {
-            Results = new CommandLineRunner().Run(Command, line).ToList();
-        }
+
         protected IEnumerable<string> Input(string inputName)
         {
             return _properties.ContainsKey(inputName) ? _properties[inputName] : Enumerable.Empty<string>();
         }
+
         protected void given_command(string verb, string noun, params Expression<Func<InputBuilder, InputBuilder>>[] properties)
         {
             Command = new MemoryCommandDescriptor(
@@ -41,9 +38,10 @@ namespace Tests.Commands.contexts
             {
                     Verb = verb,
                     Noun = noun,
-                    Create = ()=> new MemoryCommand
+                    Create = () => new MemoryCommand
                     {
-                            Execute = ()=> { 
+                            Execute = () =>
+                            {
                                 CommandExecuted = true;
                                 return Enumerable.Empty<ICommandOutput>();
                             }
@@ -51,32 +49,32 @@ namespace Tests.Commands.contexts
             };
         }
 
+        protected void given_optional_input(string inputName)
+        {
+            _optionalInputs.Add(inputName);
+        }
+
+        protected void when_executing(string line)
+        {
+            Results = new CommandLineRunner { OptionalInputs = _optionalInputs }.Run(Command, line).ToList();
+        }
+
         bool SaveProperty(string name, IEnumerable<string> val)
         {
             _properties.GetOrCreate(name).AddRange(val);
             return true;
         }
+
         public class InputBuilder
         {
+            readonly MemoryCommandInput _descriptor;
             readonly string _name;
-            MemoryCommandInput _descriptor;
+
             public InputBuilder(string name)
             {
                 _descriptor = new MemoryCommandInput { Name = name };
             }
-            public InputBuilder Required
-            {
-                get { _descriptor.IsRequired = true; return this; }
-            }
-            public InputBuilder OptionalValue
-            {
-                get { _descriptor.IsValueRequired = false; return this; }
-            }
-            public InputBuilder Setter(Func<ICommand, IEnumerable<string>, bool> setter)
-            {
-                _descriptor.TrySetValue = setter;
-                return this;
-            }
+
             public InputBuilder AssingmentFails
             {
                 get
@@ -86,9 +84,28 @@ namespace Tests.Commands.contexts
                     return this;
                 }
             }
+
             public ICommandInputDescriptor Descriptor
             {
                 get { return _descriptor; }
+            }
+
+            public InputBuilder OptionalValue
+            {
+                get
+                {
+                    _descriptor.IsValueRequired = false;
+                    return this;
+                }
+            }
+
+            public InputBuilder Required
+            {
+                get
+                {
+                    _descriptor.IsRequired = true;
+                    return this;
+                }
             }
 
             public InputBuilder Position(int position)
@@ -96,7 +113,12 @@ namespace Tests.Commands.contexts
                 _descriptor.Position = position;
                 return this;
             }
-        }
 
+            public InputBuilder Setter(Func<ICommand, IEnumerable<string>, bool> setter)
+            {
+                _descriptor.TrySetValue = setter;
+                return this;
+            }
+        }
     }
 }

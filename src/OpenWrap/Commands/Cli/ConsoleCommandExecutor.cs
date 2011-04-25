@@ -17,23 +17,28 @@ namespace OpenWrap.Commands.Cli
             _commands = commands;
             _handlers = handlers;
         }
-        public int Execute(string commandLine)
+        public int Execute(string commandLine, IEnumerable<string> optionalInputs)
         {
+            commandLine = commandLine.Trim();
+            if (commandLine == string.Empty) return 0;
             string commandParameters = commandLine;
-            var command = _handlers.Select(x => x.Execute(ref commandParameters)).FirstOrDefault();
+            var command = _handlers.Select(x => x.Execute(ref commandParameters)).Where(x=>x != null).FirstOrDefault();
             if (command == null)
             {
-                WriteError("The term '{0}' is not a recognized command or alias. Check the spelling or enter 'get-help' to get a list of available commands.");
-                return -1;
+                var sp = commandLine.IndexOf(" ");
+
+                WriteError("The term '{0}' is not a recognized command or alias. Check the spelling or enter 'get-help' to get a list of available commands.", sp != -1 ? commandLine.Substring(0, sp) : commandLine);
+                return -10;
             }
             int returnCode = 0;
-            foreach (var output in new CommandLineRunner().Run(command, commandParameters))
+            var commandLineRunner = new CommandLineRunner() { OptionalInputs = optionalInputs };
+            foreach (var output in commandLineRunner.Run(command, commandParameters))
             {
                 using (ColorFromOutput(output))
                     Console.WriteLine(output.ToString());
                 if (output.Type == CommandResultType.Error)
                 {
-                    returnCode = -1;
+                    returnCode = -50;
                 }
             }
             return returnCode;
@@ -54,7 +59,7 @@ namespace OpenWrap.Commands.Cli
         void WriteError(string message, params string[] args)
         {
             using (ColoredText.Red)
-                Console.WriteLine(message);
+                Console.WriteLine(message, args);
         }
     }
 }

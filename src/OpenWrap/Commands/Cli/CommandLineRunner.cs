@@ -8,6 +8,13 @@ namespace OpenWrap.Commands.Cli
     public class CommandLineRunner
     {
         public ICommand LastCommand { get; private set; }
+
+        public IEnumerable<string> OptionalInputs { get; set; }
+
+        public CommandLineRunner()
+        {
+            OptionalInputs = Enumerable.Empty<string>();
+        }
         public IEnumerable<ICommandOutput> Run(ICommandDescriptor command, string line)
         {
             var commandInstance = LastCommand = command.Create();
@@ -38,12 +45,15 @@ namespace OpenWrap.Commands.Cli
                         yield return new CommandInputTooManyTimes(inputName);
                         yield break;
                     }
-                    if (!command.Inputs.TryGetValue(inputName, out assigner))
+
+                    bool canIgnore = OptionalInputs.ContainsNoCase(inputName);
+                    if (!command.Inputs.TryGetValue(inputName, out assigner) && !canIgnore)
                     {
                         yield return new UnknownCommandInput(inputName);
                         yield break;
                     }
-                    if (!AssignValue(input, commandInstance, assigner))
+                    
+                    if (assigner != null && !AssignValue(input, commandInstance, assigner))
                     {
                         yield return new InputParsingError(inputName, GetLinearValue(input));
                         yield break;

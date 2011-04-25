@@ -7,6 +7,7 @@ using OpenWrap.Commands;
 using OpenWrap.IO;
 using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 
 namespace OpenWrap.PackageManagement.Exporters.Commands
 {
@@ -15,13 +16,13 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
         public CecilCommandExporter(IEnvironment env)
             : base("commands", env.ExecutionEnvironment.Profile, env.ExecutionEnvironment.Platform)
         {
-
         }
+
         public override IEnumerable<IGrouping<string, TItem>> Items<TItem>(PackageModel.IPackage package)
         {
             if (typeof(TItem) != typeof(Exports.ICommand)) return Enumerable.Empty<IGrouping<string, TItem>>();
 
-            var commandAssemblies = base.GetAssemblies<Exports.IAssembly>(package);
+            var commandAssemblies = GetAssemblies<Exports.IAssembly>(package);
 
             return from source in commandAssemblies
                    from assembly in source
@@ -40,12 +41,12 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
         {
             try
             {
-                var module1 = AssemblyDefinition.ReadAssembly(assemblyStream, new ReaderParameters(ReadingMode.Deferred)).MainModule;
+                var module1 = AssemblyDefinition.ReadAssembly(assemblyStream, new ReaderParameters(ReadingMode.Deferred){AssemblyResolver = ServiceLocator.GetService<IAssemblyResolver>() ?? GlobalAssemblyResolver.Instance}).MainModule;
                 return (from type in module1.Types
                         where type.IsPublic && type.IsAbstract == false && type.IsClass
                         let typeDef = type.Resolve()
                         where typeDef.HasGenericParameters == false || typeDef.IsGenericInstance
-                        where typeDef.HasInterfaces && typeDef.Interfaces.Any(_ => _.Is<ICommand>())
+                        where typeDef.AllInterfaces().Any(_ => _.Is<ICommand>())
                         let cmd = GetCommandFromTypeDef(typeDef)
                         where cmd != null
                         select cmd

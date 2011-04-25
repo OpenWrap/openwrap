@@ -15,7 +15,7 @@ namespace OpenWrap.Repositories.NuGet
     {
         public const string NuSpecSchema = "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd";
         // TODO: Move all framework profile stuff into FrameworkVersioning.cs
-        static readonly Dictionary<string, string> FrameworkProfiles = new Dictionary<string, string>
+        static readonly Dictionary<string, string> FrameworkProfiles = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
                 { "NET", "net" },
                 { ".NET", "net" },
@@ -25,7 +25,7 @@ namespace OpenWrap.Repositories.NuGet
                 { "Silverlight", "sl" }
         };
 
-        static readonly Dictionary<string, string> FrameworkVersions = new Dictionary<string, string>
+        static readonly Dictionary<string, string> FrameworkVersions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
                 { "2.0", "20" },
                 { "3.0", "30" },

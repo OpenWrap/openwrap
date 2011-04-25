@@ -66,6 +66,8 @@
     <Compile Include="Commands\cecil_commands\command_with_optional_input_provided_with_value.cs" />
     <Compile Include="Commands\cecil_commands\TestableCommand.cs" />
     <Compile Include="Commands\command_line_runner\mixed_named_and_positioned_inputs.cs" />
+    <Compile Include="Commands\command_line_runner\system_wide_optional_input_on_command_without_it.cs" />
+    <Compile Include="Commands\command_line_runner\system_wide_optional_input_on_command_with_it.cs" />
     <Compile Include="Commands\contexts\cecil_command.cs" />
     <Compile Include="Commands\contexts\exporter.cs" />
     <Compile Include="Commands\cecil_exporter\command_without_inputs.cs" />
@@ -385,7 +387,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Commands\add_wrap\from_remote\" />
-    <Folder Include="Commands\command_line_executor\" />
     <Folder Include="Commands\remove_wrap\hooks\" />
     <Folder Include="Commands\repository\" />
     <Folder Include="Commands\Wrap\buildwrap\" />

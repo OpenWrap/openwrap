@@ -75,6 +75,8 @@ namespace OpenWrap.Tests.Commands
             get; set;
         }
 
+        public IDirectory SystemRepositoryDirectory { get; private set; }
+
         public IDirectory ConfigurationDirectory { get; set; }
     }
 }

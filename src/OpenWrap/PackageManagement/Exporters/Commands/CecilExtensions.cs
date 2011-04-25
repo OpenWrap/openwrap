@@ -32,12 +32,32 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
                    select type;
 
         }
+        public static IEnumerable<TypeReference> AllInterfaces(this TypeDefinition typeDefinition)
+        {
+            var current = typeDefinition;
+            do
+            {
+                foreach (var i in current.Interfaces) yield return i;
+                try
+                {
+                    current = current.BaseType.FullName != typeof(object).FullName ? current.BaseType.Resolve() : null;
+                }
+                catch (AssemblyResolutionException)
+                {
+                    current = null;
+                }
+            } while (current != null);
+        }
         public static bool Is<T>(this TypeReference reference)
         {
             var seekedType = typeof(T);
-            AssemblyNameReference source;
-            var assemblyMatches = (source = reference.Scope as AssemblyNameReference) != null ? seekedType.Assembly.FullName == source.FullName : false;
-            return reference.FullName == seekedType.FullName && assemblyMatches;
+            string referenceAssembly = null;
+            if (reference.Scope.MetadataScopeType == MetadataScopeType.AssemblyNameReference)
+                referenceAssembly = ((AssemblyNameReference)reference.Scope).Name;
+            else if (reference.Scope.MetadataScopeType == MetadataScopeType.ModuleDefinition)
+                referenceAssembly = ((ModuleDefinition)reference.Scope).Assembly.Name.Name;
+            if (referenceAssembly == null) return false;
+            return reference.FullName == seekedType.FullName && referenceAssembly == seekedType.Assembly.GetName().Name;
         }
     }
 }
