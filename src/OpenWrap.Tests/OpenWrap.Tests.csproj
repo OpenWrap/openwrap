@@ -399,6 +399,15 @@
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\openwrap\build\ /y
+copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\openwrap\bin-net35\ /y
+copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\openwrap\commands\ /y
+copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\_cache\openwrap-1.1.0.57857518\bin-net35\ /y
+copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\_cache\openwrap-1.1.0.57857518\build\ /y
+copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\_cache\openwrap-1.1.0.57857518\commands\ /y
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

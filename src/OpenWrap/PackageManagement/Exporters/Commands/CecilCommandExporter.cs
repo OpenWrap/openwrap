@@ -71,8 +71,8 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
                         if( commandAttribute == null) return null;
             var inputs = ReadInputs(typeDef);
             return uiAttribute != null
-                           ? (ICommandDescriptor)new CecilUICommandDescriptor(typeDef, commandAttribute, uiAttribute, inputs)
-                           : (ICommandDescriptor)new CecilCommandDescriptor(typeDef, commandAttribute, inputs);
+                           ? new CecilUICommandDescriptor(typeDef, commandAttribute, uiAttribute, inputs)
+                           : new CecilCommandDescriptor(typeDef, commandAttribute, inputs);
         }
 
         static IEnumerable<CecilCommandInputDescriptor> ReadInputs(TypeDefinition typeDef)

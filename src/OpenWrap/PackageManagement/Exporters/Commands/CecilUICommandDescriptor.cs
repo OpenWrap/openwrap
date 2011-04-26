@@ -6,26 +6,18 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.PackageManagement.Exporters.Commands
 {
-    public class CecilUICommandDescriptor : CommandDescriptor, Exports.ICommand
+    public class CecilUICommandDescriptor : CecilCommandDescriptor, IUICommandDescriptor
     {
         public CecilUICommandDescriptor(TypeDefinition typeDef, IDictionary<string, object> commandAttribute, IDictionary<string, object> uiAttribute, IEnumerable<CecilCommandInputDescriptor> inputs)
-                : base(null)
+                : base(typeDef, commandAttribute,inputs)
         {
+            uiAttribute.TryGet("Label", label => Label = (string)label);
+            uiAttribute.TryGet("Context", context => Context = (UICommandContext)context);
+
         }
 
-        public string Path
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public string Label { get; private set; }
 
-        public IPackage Package
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public ICommandDescriptor Descriptor
-        {
-            get { throw new NotImplementedException(); }
-        }
+        public UICommandContext Context { get; private set; }
     }
 }

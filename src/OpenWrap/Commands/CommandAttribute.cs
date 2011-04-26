@@ -8,6 +8,7 @@ namespace OpenWrap.Commands
         public string Description { get; set; }
         public string Noun { get; set; }
         public string Verb { get; set; }
+        public bool Visible { get; set; }
     }
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=false, Inherited =false)]
     public class UICommandAttribute : Attribute
