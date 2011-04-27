@@ -174,10 +174,8 @@ namespace OpenWrap.Preloading
                            let content = File.ReadAllText(wrapDescriptor.FullName)
                            let nameMatch = Regex.Match(content, @"name\s*:\s*(?<name>\S+)", RegexOptions.Multiline)
                            let versionMatch = Regex.Match(content, @"version\s*:\s*(?<version>[\d\.]+)", RegexOptions.Multiline)
-                           where nameMatch.Success &&
-                                 versionMatch.Success
-                           let version = TryGetVersion(versionMatch.Groups["version"].Value)
-                           where version != null
+                           where nameMatch.Success
+                           let version = versionMatch.Success ? TryGetVersion(versionMatch.Groups["version"].Value) : new Version(0,0)
                            select new foundPackage
                            { 
                                Name = nameMatch.Groups["name"].Value,
