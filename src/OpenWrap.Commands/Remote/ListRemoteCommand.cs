@@ -6,7 +6,7 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Remote
 {
-    [Command(Noun = "remote", Verb = "list")]
+    [Command(Noun = "remote", Verb = "list", IsDefault = true)]
     public class ListRemoteCommand : AbstractCommand
     {
         IConfigurationManager ConfigurationManager

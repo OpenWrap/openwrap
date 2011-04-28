@@ -10,7 +10,7 @@ using Tests.Commands.usage;
 
 namespace Tests.Commands.contexts
 {
-    internal abstract class command_handler : context
+    internal abstract class command_locator : context
     {
         protected CommandRepository Repository;
         protected ICommandLocator Handler;
@@ -24,9 +24,11 @@ namespace Tests.Commands.contexts
             ResultingLine = line;
         }
 
-        protected void given_command(string verb, string noun)
+        protected void given_command(string verb, string noun, params Action<MemoryCommandDescriptor>[] configurators)
         {
-            Repository.Add(new MemoryCommandDescriptor { Noun = noun, Verb = verb });
+            var command = new MemoryCommandDescriptor { Noun = noun, Verb = verb };
+            foreach(var c in configurators) c(command);
+            Repository.Add(command);
         }
 
         protected void command_should_be(string expectedVerb, string expectedNoun)
@@ -35,22 +37,25 @@ namespace Tests.Commands.contexts
             Result.Verb.ShouldBe(expectedVerb);
         }
     }
-    abstract class noun_verb_handler : command_handler
+    abstract class command_locator<T> : command_locator where T: ICommandLocator
     {
-        public noun_verb_handler()
+        public command_locator(Func<ICommandRepository, T> builder)
         {
-            
             Repository = new CommandRepository();
-            Handler = new NounVerbCommandLocator(Repository);
-
+            Handler = builder(Repository);
         }
     }
-    abstract class verb_noun_handler : command_handler
+    abstract class noun_verb_locator : command_locator<NounVerbCommandLocator>
     {
-        public verb_noun_handler()
+        public noun_verb_locator() : base(_=>new NounVerbCommandLocator(_))
+        {   
+        }
+    }
+    abstract class verb_noun_locator : command_locator<VerbNounCommandLocator>
+    {
+        public verb_noun_locator()
+            : base(_ => new VerbNounCommandLocator(_))
         {
-            Repository = new CommandRepository();
-            Handler = new VerbNounCommandLocator(Repository);
         }
     }
 }

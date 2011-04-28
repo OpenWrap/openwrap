@@ -7,7 +7,7 @@ using System;
 
 namespace OpenWrap.Commands.Core
 {
-    [Command(Verb="get", Noun="help")]
+    [Command(Verb="get", Noun="help", IsDefault = true)]
     public class GetHelpCommand : ICommand
     {
         [CommandInput(Position=0)]
@@ -20,8 +20,7 @@ namespace OpenWrap.Commands.Core
 
         public IEnumerable<ICommandOutput> Execute()
         {
-            return string.IsNullOrEmpty(CommandName) ? ListAllCommands(CommandRepository) : ListCommand();
-
+            return string.IsNullOrEmpty(CommandName) ? ListAllCommands(CommandRepository.Where(x=>x.Visible)) : ListCommand();
         }
 
         IEnumerable<ICommandOutput> ListAllCommands(IEnumerable<ICommandDescriptor> commandRepository)
@@ -29,6 +28,7 @@ namespace OpenWrap.Commands.Core
             yield return new Result(Environment.NewLine + "List of available commands" + Environment.NewLine + "--------------------------");
             yield return new Result(Environment.NewLine + "Usage:" + Environment.NewLine + "  o {{verb}}-{{noun}} <command-arguments>" + Environment.NewLine);
             var groups = commandRepository
+                .Where(x => string.IsNullOrEmpty(x.Noun) == false && string.IsNullOrEmpty(x.Verb) == false)
                 .GroupBy(r => r.Noun)
                 .OrderBy(g => g.Key)
                 .Select(g => new CommandGroupResult(g.Key, g));

@@ -77,6 +77,8 @@
     <Compile Include="Commands\Cli\CommandInputTooManyTimes.cs" />
     <Compile Include="Commands\Cli\CommandLineRunner.cs" />
     <Compile Include="Commands\Cli\ConsoleCommandExecutor.cs" />
+    <Compile Include="Commands\Cli\Locators\CommandDescriptorComparer.cs" />
+    <Compile Include="Commands\Cli\Locators\DefaultForNounCommandLocator.cs" />
     <Compile Include="Commands\Cli\Parser\Input.cs" />
     <Compile Include="Commands\Cli\Parser\InputParser.cs" />
     <Compile Include="Commands\Cli\Parser\InputParserException.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Commands\IUICommand.cs" />
     <Compile Include="Commands\IUICommandDescriptor.cs" />
     <Compile Include="Commands\IUICommandRepository.cs" />
+    <Compile Include="Commands\UICommandAttribute.cs" />
     <Compile Include="Commands\UICommandContext.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
@@ -100,7 +103,6 @@
     <Compile Include="PackageManagement\Exporters\Commands\CecilExtensions.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CecilUICommandDescriptor.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CecilCommandExporter.cs" />
-    <Compile Include="PackageManagement\Exporters\Commands\CommandDescriptor.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CommandExportItem.cs" />
     <Compile Include="PackageManagement\Exporters\StringConversion.cs" />
     <Compile Include="PackageManagement\HookedPackageOperationResults.cs" />

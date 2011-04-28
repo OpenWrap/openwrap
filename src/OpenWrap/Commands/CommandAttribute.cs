@@ -9,11 +9,6 @@ namespace OpenWrap.Commands
         public string Noun { get; set; }
         public string Verb { get; set; }
         public bool Visible { get; set; }
-    }
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple=false, Inherited =false)]
-    public class UICommandAttribute : Attribute
-    {
-        public string Label { get; set; }
-        public UICommandContext Context { get; set; }
+        public bool IsDefault { get; set; }
     }
 }

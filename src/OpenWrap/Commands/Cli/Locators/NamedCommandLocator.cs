@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace OpenWrap.Commands.Cli.Locators
 {
@@ -13,13 +14,12 @@ namespace OpenWrap.Commands.Cli.Locators
 
         public ICommandDescriptor FindCommand(string verbNounToken)
         {
+            var commands = _commands.Distinct(CommandDescriptorComparer.VerbNoun).ToDictionary(x => x.Verb + "-" + x.Noun);
 
-            var commands = _commands.ToDictionary(x => x.Verb + "-" + x.Noun);
 
-            var matching = verbNounToken.Contains('-')
+            var matching =  verbNounToken.Contains('-')
                                    ? verbNounToken.SelectHumps(commands.Keys).SingleOrDefault()
-                                   : ("get-" + verbNounToken).SelectHumps(commands.Keys).SingleOrDefault()
-                                     ?? ("list-" + verbNounToken).SelectHumps(commands.Keys).SingleOrDefault();
+                                   : null;
             return matching == null ? null : commands[matching];
         }
 

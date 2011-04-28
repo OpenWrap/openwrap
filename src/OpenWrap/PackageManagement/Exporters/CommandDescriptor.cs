@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using OpenWrap.Commands;
 
-namespace OpenWrap.PackageManagement.Exporters.Commands
+namespace OpenWrap.PackageManagement.Exporters
 {
     public class CommandDescriptor : ICommandDescriptor
     {
@@ -13,7 +13,7 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
             _factory = factory;
             Noun = noun;
             Verb = verb;
-            Inputs = new Dictionary<string, ICommandInputDescriptor>(StringComparer.OrdinalIgnoreCase);
+            Inputs = new Dictionary<string, ICommandInputDescriptor>();
         }
         protected CommandDescriptor(Func<ICommand> factory)
         {

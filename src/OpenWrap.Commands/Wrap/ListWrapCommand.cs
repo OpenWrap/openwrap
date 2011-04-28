@@ -5,7 +5,7 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Noun = "wrap", Verb = "list")]
+    [Command(Noun = "wrap", Verb = "list", IsDefault = true)]
     public class ListWrapCommand : WrapCommand
     {
         string _remote;

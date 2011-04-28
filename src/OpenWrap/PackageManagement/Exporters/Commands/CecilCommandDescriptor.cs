@@ -10,8 +10,12 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
     {
         public CecilCommandDescriptor(TypeDefinition typeDef, IDictionary<string, object> commandAttribute, IEnumerable<CecilCommandInputDescriptor> inputs)
         {
+            Visible = true;
+            IsDefault = false;
             commandAttribute.TryGet("Noun", noun => Noun = (string)noun);
             commandAttribute.TryGet("Verb", verb => Verb = (string)verb);
+            commandAttribute.TryGet("Visible", visible => Visible = (bool)visible);
+            commandAttribute.TryGet("IsDefault", isDefault => IsDefault = (bool)isDefault);
             var tokenPrefix = Verb + "-" + Noun;
             commandAttribute.TryGet("Description", _ => Description = (string)_);
             Description = Description ?? CommandDocumentation.GetCommandDescription(typeDef.Module.Assembly, tokenPrefix);
@@ -34,6 +38,9 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
 
         public IDictionary<string, ICommandInputDescriptor> Inputs { get; set; }
 
+        public bool Visible { get; private set; }
+
+        public bool IsDefault { get; set; }
         public ICommand Create()
         {
             return Factory();

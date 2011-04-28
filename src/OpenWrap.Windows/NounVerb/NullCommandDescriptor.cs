@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using OpenWrap.Commands;
 
 namespace OpenWrap.Windows.NounVerb
@@ -10,6 +11,10 @@ namespace OpenWrap.Windows.NounVerb
         public string DisplayName { get; private set; }
         public string Description { get; private set; }
         public IDictionary<string, ICommandInputDescriptor> Inputs { get; private set; }
+
+        public bool Visible { get; private set; }
+
+        public bool IsDefault { get; set; }
 
         public ICommand Create()
         {

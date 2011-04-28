@@ -1,15 +1,15 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.command_line_handlers.noun_verb
+namespace Tests.Commands.command_line_locators.verb_noun
 {
-    class noun_verb_with_space : contexts.noun_verb_handler
-    {
-        public noun_verb_with_space()
+    class verb_noun_with_humps_matching : contexts.verb_noun_locator
+    {   
+        public verb_noun_with_humps_matching()
         {
             given_command("get", "ring");
             
-            when_executing("ring get");
+            when_executing("g-r");
         }
 
         [Test]

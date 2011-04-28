@@ -12,6 +12,9 @@ namespace Tests.Commands
         public string DisplayName { get; set; }
         public string Description { get; set; }
         public IDictionary<string, ICommandInputDescriptor> Inputs { get { return AllInputs.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase); } }
+
+        public bool Visible { get; set; }
+
         public IList<ICommandInputDescriptor> AllInputs { get; private set; }
 
         public MemoryCommandDescriptor()
@@ -27,6 +30,9 @@ namespace Tests.Commands
         }
 
         public Func<ICommand> Create { get; set; }
+
+        public bool IsDefault { get; set; }
+
         ICommand ICommandDescriptor.Create()
         {
             return Create();

@@ -1,11 +1,12 @@
 ﻿using NUnit.Framework;
+using OpenWrap.Commands.Cli.Locators;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.command_line_handlers.noun_verb
+namespace Tests.Commands.command_line_locators.noun_verb
 {
     [TestFixture("get-ring value")]
     [TestFixture("ring get-value")]
-    class token_has_dash : contexts.noun_verb_handler
+    class token_has_dash : contexts.noun_verb_locator
     {
         readonly string _line;
 

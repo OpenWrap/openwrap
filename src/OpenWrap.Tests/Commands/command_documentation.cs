@@ -22,8 +22,9 @@ namespace Tests.Commands
         }
 
         [Theory]
-        public void command_has_documentation(ICommandDescriptor command)
+        public void visible_command_has_documentation(ICommandDescriptor command)
         {
+            if (command.Visible == false) return;
             command.Description.ShouldNotBeNullOrEmpty(string.Format("command '{0}-{1}' doesn't have a description",command.Verb, command.Noun));
             foreach (var commandInput in command.Inputs)
                 commandInput.Value.Description.ShouldNotBeNullOrEmpty(string.Format("command input '{0}' for command '{1}-{2}' doesn't have a description", commandInput.Value.Name,command.Verb, command.Noun));

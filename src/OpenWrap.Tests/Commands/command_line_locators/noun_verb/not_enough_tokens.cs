@@ -1,24 +1,13 @@
 ﻿using NUnit.Framework;
+using OpenWrap.Commands.Cli.Locators;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.command_line_handlers.noun_verb
+namespace Tests.Commands.command_line_locators.noun_verb
 {
-    class empty_line : contexts.noun_verb_handler
-    {
-        public empty_line()
-        {
-            when_executing(string.Empty);
-        }
-
-        [Test]
-        public void command_not_found()
-        {
-            Result.ShouldBeNull();
-        }
-    }
-    class not_enough_tokens : contexts.noun_verb_handler
+    class not_enough_tokens : contexts.command_locator<NounVerbCommandLocator>
     {
         public not_enough_tokens()
+            : base(_ => new NounVerbCommandLocator(_))
         {
             when_executing("ring");
         }

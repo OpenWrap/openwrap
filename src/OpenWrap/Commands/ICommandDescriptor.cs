@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace OpenWrap.Commands
@@ -10,12 +9,9 @@ namespace OpenWrap.Commands
         string Description { get; }
 
         IDictionary<string, ICommandInputDescriptor> Inputs { get; }
+        bool Visible { get;  }
+        bool IsDefault { get; set; }
 
         ICommand Create();
     }
-    public interface ICommandDescriptorProvider
-    {
-        ICommandDescriptor TryGet(Type type);
-    }
-    
 }

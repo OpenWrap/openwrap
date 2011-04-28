@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.command_line_handlers.verb_noun
+namespace Tests.Commands.command_line_locators.verb_noun
 {
-    class unknown_verb_noun : contexts.verb_noun_handler
+    class unknown_verb_noun : contexts.verb_noun_locator
     {
         public unknown_verb_noun()
         {

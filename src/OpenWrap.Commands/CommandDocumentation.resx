@@ -277,6 +277,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="nuke-wrap-version" xml:space="preserve">
     <value>Specifies the exact version of the package to nuke.</value>
   </data>
+  <data name="open-gui" xml:space="preserve">
+    <value>Opens the OpenWrap Dashboard</value>
+  </data>
   <data name="publish-wrap" xml:space="preserve">
     <value>Publishes a package to a remote repository.</value>
   </data>

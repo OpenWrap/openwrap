@@ -6,6 +6,17 @@ namespace OpenWrap.Collections
 {
     public static class EnumerableExtensions
     {
+        public static T OneOrDefault<T>(this IEnumerable<T> input)
+        {
+            int count = 0;
+            var enumerator = input.GetEnumerator();
+            if (enumerator.MoveNext())
+            {
+                var current = enumerator.Current;
+                if (!enumerator.MoveNext()) return current;
+            }
+            return input.Where(_ => false).FirstOrDefault();
+        }
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> input, params T[] values)
         {
             return input.Concat((IEnumerable<T>)values);
