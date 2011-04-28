@@ -2,6 +2,7 @@
 using System.Linq;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.PackageManagement
 {
@@ -58,8 +59,8 @@ namespace OpenWrap.PackageManagement
         IPackageListResult ListPackages(IEnumerable<IPackageRepository> repositories, string query = null, PackageListOptions options = PackageListOptions.Default);
 
         IEnumerable<IPackageInfo> ListProjectPackages(IPackageDescriptor descriptor, IPackageRepository projectRepository);
-        IEnumerable<IGrouping<string, TItem>>  GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository) where TItem:IExportItem;
-        IEnumerable<IGrouping<string, TItem>> GetSystemExports<TItem>(IPackageRepository systemRepository) where TItem: IExportItem;
+        IEnumerable<IGrouping<string, TItem>>  GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository, ExecutionEnvironment environment) where TItem:IExportItem;
+        IEnumerable<IGrouping<string, TItem>> GetSystemExports<TItem>(IPackageRepository systemRepository, ExecutionEnvironment environment) where TItem : IExportItem;
         
         event PackageUpdated PackageUpdated;
         event PackageChanged PackageAdded;

@@ -68,7 +68,7 @@ namespace Tests.contexts
         protected void when_resolving_assemblies()
         {
             AssemblyReferences = ServiceLocator.GetService<IPackageManager>()
-                .GetProjectAssemblyReferences(Environment.Descriptor, Environment.ProjectRepository, false)
+                .GetProjectAssemblyReferences(Environment.Descriptor, Environment.ProjectRepository, Environment.ExecutionEnvironment, false)
                 .ToList();
         }
         [TestFixtureTearDown]

@@ -21,9 +21,9 @@ namespace OpenWrap.PackageManagement.Exporters
         {
         }
 
-        public IEnumerable<IGrouping<string, TItems>> Exports<TItems>(IPackage package) where TItems : IExportItem
+        public IEnumerable<IGrouping<string, TItems>> Exports<TItems>(IPackage package, ExecutionEnvironment environment = null) where TItems : IExportItem
         {
-            return _providers.SelectMany(x => x.Items<TItems>(package));
+            return _providers.SelectMany(x => x.Items<TItems>(package, environment));
         }
     }
 }

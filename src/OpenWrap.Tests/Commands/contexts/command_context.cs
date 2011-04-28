@@ -48,8 +48,8 @@ namespace OpenWrap.Commands.contexts
             Services.ServiceLocator.RegisterService<IPackageResolver>(new ExhaustiveResolver());
             Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new IExportProvider[]{
-                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment),
-                    new CecilCommandExporter(ServiceLocator.GetService<IEnvironment>())
+                    new DefaultAssemblyExporter(),
+                    new CecilCommandExporter()
                 }));
             Services.ServiceLocator.RegisterService<ICommandRepository>(Commands);
             

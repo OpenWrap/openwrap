@@ -12,9 +12,9 @@ namespace OpenWrap.Commands
     {
         public static IEnumerable<IGrouping<string, Exports.ICommand>> CommandExports(this IPackageManager manager, IEnvironment environment)
         {
-            var projectCommands = manager.GetProjectExports<Exports.ICommand>(environment.Descriptor, environment.ProjectRepository).SelectMany(x=>x).GroupBy(x=>x.Package.Name);
+            var projectCommands = manager.GetProjectExports<Exports.ICommand>(environment.Descriptor, environment.ProjectRepository, environment.ExecutionEnvironment).SelectMany(x=>x).GroupBy(x=>x.Package.Name);
             var consumedPackages = projectCommands.Select(x => x.Key).ToList();
-            var systemCommands = manager.GetSystemExports<Exports.ICommand>(environment.SystemRepository).SelectMany(x => x).GroupBy(x => x.Package.Name);
+            var systemCommands = manager.GetSystemExports<Exports.ICommand>(environment.SystemRepository, environment.ExecutionEnvironment).SelectMany(x => x).GroupBy(x => x.Package.Name);
             return projectCommands.Concat(systemCommands.Where(x => consumedPackages.ContainsNoCase(x.Key) == false));
         }
         public static IEnumerable<ICommandDescriptor> Commands(this IPackageManager manager, IEnvironment environment)

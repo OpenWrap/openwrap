@@ -75,12 +75,7 @@ namespace OpenWrap.PackageManagement.Monitoring
         {
             DescriptorSubscriptions d;
             lock (_notificationClients)
-            {
-                if (!_notificationClients.ContainsKey(wrapPath.Path))
-                    return null;
-                return _notificationClients[wrapPath.Path];
-            }
-            return d;
+                return !_notificationClients.ContainsKey(wrapPath.Path) ? null : _notificationClients[wrapPath.Path];
         }
 
         void NotifyAllClients(IFile wrapPath)
@@ -96,7 +91,7 @@ namespace OpenWrap.PackageManagement.Monitoring
                     .Single();
 
             foreach (var client in subscriptions.Clients)
-                client.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, false));
+                client.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, client.Environment, false));
         }
 
         void NotifyClient(IFile wrapPath, IResolvedAssembliesUpdateListener listener)
@@ -112,7 +107,7 @@ namespace OpenWrap.PackageManagement.Monitoring
                     .Single();
 
 
-            listener.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, false));
+            listener.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, listener.Environment, false));
         }
 
         class DescriptorSubscriptions

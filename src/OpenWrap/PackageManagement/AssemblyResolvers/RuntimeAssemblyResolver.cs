@@ -37,11 +37,12 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
                 return;
 
             _assemblyReferences = (_environment.Descriptor == null || _environment.Descriptor.UseProjectRepository == false
-                                           ? _packageManager.GetSystemExports<Exports.IAssembly>(_environment.SystemRepository).SelectMany(_ => _)
+                                           ? _packageManager.GetSystemExports<Exports.IAssembly>(_environment.SystemRepository, _environment.ExecutionEnvironment).SelectMany(_ => _)
                                            : _packageManager.GetProjectAssemblyReferences
                                                      (
                                                              _environment.Descriptor,
                                                              _environment.ProjectRepository,
+                                                             _environment.ExecutionEnvironment,
                                                              false
                                                      ))
                     .ToLookup(x => x.AssemblyName.Name);

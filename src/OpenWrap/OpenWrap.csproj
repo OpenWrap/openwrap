@@ -94,7 +94,7 @@
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolvedPackageExtensions.cs" />
-    <Compile Include="PackageManagement\Exporters\Assemblies\EnvironmentDependentAssemblyExporter.cs" />
+    <Compile Include="PackageManagement\Exporters\Assemblies\DefaultAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CecilCommandDescriptor.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CecilCommandInputDescriptor.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CecilExtensions.cs" />
@@ -110,7 +110,6 @@
     <Compile Include="PackageManagement\PackageExporterExtensions.cs" />
     <Compile Include="PackageManagement\PackageHookResult.cs" />
     <Compile Include="PackageManagement\PackageManagerExtensions.cs" />
-    <Compile Include="PackageManagement\PackageResultExtensions.cs" />
     <Compile Include="PackageManagement\PackageUpdated.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>

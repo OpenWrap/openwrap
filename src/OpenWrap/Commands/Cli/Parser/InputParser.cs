@@ -12,7 +12,6 @@ namespace OpenWrap.Commands.Cli.Parser
         const char SINGLE_QUOTE = '\'';
         public IEnumerable<Input> Parse(string value)
         {
-            bool isEscape;
             ParseState state = ParseState.None;
             var buffer = new StringBuilder();
             string currentName = string.Empty;

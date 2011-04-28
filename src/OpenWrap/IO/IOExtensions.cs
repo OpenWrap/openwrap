@@ -17,8 +17,6 @@ namespace OpenWrap.IO
 
         public static T ReadRetry<T>(this IFile file, Func<Stream, T> read, int retries = 10, int wait = 50)
         {
-            Exception exception = null;
-
             for (int retry = 0; ; )
             {
                 try

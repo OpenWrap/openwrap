@@ -6,6 +6,7 @@ using OpenWrap.Collections;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.PackageManagement
 {
@@ -23,14 +24,14 @@ namespace OpenWrap.PackageManagement
             return _resolver.TryResolveDependencies(descriptor, new[] { projectRepository }).SuccessfulPackages.Select(_ => _.Packages.First());
         }
 
-        public IEnumerable<IGrouping<string, TItem>> GetSystemExports<TItem>(IPackageRepository systemRepository) where TItem : IExportItem
+        public IEnumerable<IGrouping<string, TItem>> GetSystemExports<TItem>(IPackageRepository systemRepository, ExecutionEnvironment environment) where TItem : IExportItem
         {
             var packages = systemRepository.PackagesByName.Select(x => x.OrderByDescending(_ => _.Version).First());
-            return packages.SelectMany(x => _exporter.Exports<TItem>(x.Load()));
+            return packages.SelectMany(x => _exporter.Exports<TItem>(x.Load(), environment));
         }
-        public IEnumerable<IGrouping<string, TItem>> GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository) where TItem : IExportItem
+        public IEnumerable<IGrouping<string, TItem>> GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository, ExecutionEnvironment environment) where TItem : IExportItem
         {
-            return ListProjectPackages(descriptor, projectRepository).SelectMany(x => _exporter.Exports<TItem>(x.Load()));
+            return ListProjectPackages(descriptor, projectRepository).SelectMany(x => _exporter.Exports<TItem>(x.Load(), environment));
         }
 
         public event PackageUpdated PackageUpdated

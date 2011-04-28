@@ -46,8 +46,8 @@ namespace OpenWrap.Commands.Cli
             Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
             Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new List<IExportProvider>()
             {
-                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment),
-                    new CecilCommandExporter(ServiceLocator.GetService<IEnvironment>())
+                    new DefaultAssemblyExporter(),
+                    new CecilCommandExporter()
             }));
             Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             Services.ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(
@@ -84,9 +84,9 @@ namespace OpenWrap.Commands.Cli
             var allAssemblies = Enumerable.Empty<Exports.IAssembly>();
 
             if (_environment.ProjectRepository != null)
-                allAssemblies = _packageManager.GetProjectAssemblyReferences(_environment.Descriptor, _environment.ProjectRepository, true);
+                allAssemblies = _packageManager.GetProjectAssemblyReferences(_environment.Descriptor, _environment.ProjectRepository, environment.ExecutionEnvironment, true);
             var selectedPackages = allAssemblies.Select(x => x.Package.Name).ToList();
-            var systemAssemblies = _packageManager.GetSystemExports<Exports.IAssembly>(_environment.SystemRepository)
+            var systemAssemblies = _packageManager.GetSystemExports<Exports.IAssembly>(_environment.SystemRepository, environment.ExecutionEnvironment)
                 .Where(x => selectedPackages.Contains(x.Key) == false)
                 .SelectMany(x => x);
             _allAssemblies = allAssemblies.Concat(systemAssemblies).ToList();

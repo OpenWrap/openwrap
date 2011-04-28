@@ -34,7 +34,7 @@ namespace OpenWrap.Tests.Dependencies
             PackageFileDirectory = FileSystem.CreateTempDirectory();
             Exporter = new DefaultPackageExporter(new IExportProvider[]
             {
-                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment)
+                    new DefaultAssemblyExporter()
             });
         }
 
@@ -72,7 +72,7 @@ namespace OpenWrap.Tests.Dependencies
                                     }
                             }),
                         PackageFileDirectory)
-            }, new ExecutionEnvironment{ Profile="net20", Platform="x86" });
+            });
         }
     }
 }

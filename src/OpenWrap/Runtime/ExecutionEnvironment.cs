@@ -1,7 +1,9 @@
 namespace OpenWrap.Runtime
 {
+    // TODO Make immutable
     public class ExecutionEnvironment
     {
+        public static readonly ExecutionEnvironment Any = new ExecutionEnvironment("*", "*");
         public ExecutionEnvironment()
         {
         }

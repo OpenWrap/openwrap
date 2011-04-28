@@ -21,10 +21,7 @@ namespace Tests.Commands.contexts
     {
         public cecil_command_exporter()
         {
-            Exporter = new CecilCommandExporter(new InMemoryEnvironment(TempDirectory)
-            {
-                    ExecutionEnvironment = new ExecutionEnvironment("AnyCPU", "net20")
-            });
+            Exporter = new CecilCommandExporter();
         }
         protected Exports.ICommand command(string verb, string noun)
         {
@@ -73,7 +70,7 @@ namespace Tests.Commands.contexts
                         Stream = ()=> AssemblyBuilder.CreateAssemblyStream(assembly.Key, assembly.Value)
                 });
 
-            Items = Exporter.Items<T>(new ZipPackage(package).Load());
+            Items = Exporter.Items<T>(new ZipPackage(package).Load(), new ExecutionEnvironment("AnyCPU", "net35"));
         }
     }
 }

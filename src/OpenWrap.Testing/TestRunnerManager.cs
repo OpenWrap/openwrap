@@ -30,11 +30,11 @@ namespace OpenWrap.Testing
             var descriptor = new PackageDescriptor();
             descriptor.Dependencies.Add(new PackageDependencyBuilder(Guid.NewGuid().ToString()).Name(package.Name).VersionVertex(new EqualVersionVertex(package.Version)));
 
-            var allAssemblyReferences = _manager.GetProjectAssemblyReferences(descriptor, package.Source, false);
+            var allAssemblyReferences = _manager.GetProjectAssemblyReferences(descriptor, package.Source, environment, false);
 
             var runners = _factories.SelectMany(x => x.GetTestRunners(allAssemblyReferences)).NotNull();
 
-            var tests = new EnvironmentDependentAssemblyExporter(environment, "tests").Items<Exports.IAssembly>(package);
+            var tests = new DefaultAssemblyExporter("tests").Items<Exports.IAssembly>(package, environment);
 
             if (tests == null) return Enumerable.Empty<KeyValuePair<string, bool?>>();
 

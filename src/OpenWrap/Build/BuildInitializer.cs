@@ -37,8 +37,8 @@ namespace OpenWrap.Build
             Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
             Services.ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new List<IExportProvider>()
             {
-                    new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment),
-                    new CecilCommandExporter(ServiceLocator.GetService<IEnvironment>())
+                    new DefaultAssemblyExporter(),
+                    new CecilCommandExporter()
             }));
             Services.ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             Services.ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(

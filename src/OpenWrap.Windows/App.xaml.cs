@@ -48,7 +48,7 @@ namespace OpenWrap.Windows
             ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(
                                                                               new IExportProvider[]
                                                                               {
-                                                                                      new EnvironmentDependentAssemblyExporter(ServiceLocator.GetService<IEnvironment>().ExecutionEnvironment)
+                                                                                      new DefaultAssemblyExporter()
                                                                               }));
             ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             ServiceLocator.TryRegisterService<IPackageManager>(() => new DefaultPackageManager(

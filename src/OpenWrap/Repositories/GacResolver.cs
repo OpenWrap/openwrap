@@ -13,7 +13,7 @@ namespace OpenWrap.Repositories
 {
     public static class GacResolver
     {
-        public static ILookup<IPackageInfo, AssemblyName> InGac(this IPackageExporter exporter, IEnumerable<IPackageInfo> packages, ExecutionEnvironment environment = null)
+        public static ILookup<IPackageInfo, AssemblyName> InGac(this IPackageExporter exporter, IEnumerable<IPackageInfo> packages)
         {
             var domain = TempDomain();
             try
@@ -22,7 +22,7 @@ namespace OpenWrap.Repositories
                         typeof(Loader).Assembly.Location,
                         typeof(Loader).FullName));
                 return (from package in packages.NotNull().Select(x => x.Load()).NotNull()
-                        from assembly in exporter.Assemblies(package)
+                        from assembly in exporter.Assemblies(package, ExecutionEnvironment.Any)
                         where loader.InGAC(assembly.AssemblyName)
                         select new { package, assembly.AssemblyName }
                        ).ToLookup(x => (IPackageInfo)x.package, x => x.AssemblyName);

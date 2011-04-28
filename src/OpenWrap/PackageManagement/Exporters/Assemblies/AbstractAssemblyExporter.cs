@@ -6,42 +6,40 @@ using Mono.Cecil;
 using OpenWrap.Collections;
 using OpenWrap.IO;
 using OpenWrap.PackageModel;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.PackageManagement.Exporters.Assemblies
 {
     public abstract class AbstractAssemblyExporter : IExportProvider
     {
-        protected string _platform;
-        protected string _profile;
         const string ANYCPU = "AnyCPU";
         readonly string _exportName;
 
-        public AbstractAssemblyExporter(string export, string profile, string platform)
+        public AbstractAssemblyExporter(string export)
         {
             _exportName = export;
-            _profile = profile;
-            _platform = platform;
         }
 
-        public virtual IEnumerable<IGrouping<string, TItem>> Items<TItem>(IPackage package) where TItem : IExportItem
+        public virtual IEnumerable<IGrouping<string, TItem>> Items<TItem>(IPackage package, ExecutionEnvironment environment) where TItem : IExportItem
         {
             if (typeof(TItem) != typeof(Exports.IAssembly)) return Enumerable.Empty<IGrouping<string, TItem>>();
 
-            return GetAssemblies<TItem>(package);
+            return GetAssemblies<TItem>(package, environment);
         }
 
-        protected IEnumerable<IGrouping<string, TItems>> GetAssemblies<TItems>(IPackage package) where TItems : IExportItem
+        protected IEnumerable<IGrouping<string, TItems>> GetAssemblies<TItems>(IPackage package, ExecutionEnvironment executionEnvironment) where TItems : IExportItem
         {
+            
             var allAssemblies = from directory in package.Content
                                 let packageExportName = directory.Key.EqualsNoCase(_exportName)
-                                                                ? _exportName + "-" + _platform + "-" + _profile
+                                                                ? _exportName + "-" + executionEnvironment.Platform + "-" + executionEnvironment.Profile
                                                                 : (directory.Key.StartsWithNoCase(_exportName + "-") ? directory.Key : null)
                                 where packageExportName != null
                                 let segments = packageExportName.Split(new[] { "-" }, StringSplitOptions.RemoveEmptyEntries)
                                 let platform = segments.Length == 3 ? segments[1] : ANYCPU
                                 let profile = segments.Length == 3 ? segments[2] : segments[1]
-                                where (PlatformMatches(platform, _platform) &&
-                                       CanUseBinFolderForProfile(profile, _profile))
+                                where (PlatformMatches(platform, executionEnvironment.Platform) &&
+                                       CanUseBinFolderForProfile(profile, executionEnvironment.Profile))
                                 from file in directory
                                 where IsDotNetCode(file)
                                 group new
@@ -92,6 +90,7 @@ namespace OpenWrap.PackageManagement.Exporters.Assemblies
 
         static bool CanUseBinFolderForProfile(string binFolder, string profile)
         {
+            if (profile == "*") return true;
             if (profile.EqualsNoCase("net40"))
                 return binFolder.EqualsNoCase("net40") || binFolder.EqualsNoCase("net40cp") || binFolder.EqualsNoCase("net35") || binFolder.EqualsNoCase("net35cp") || binFolder.EqualsNoCase("net30") ||
                        binFolder.EqualsNoCase("net20");
@@ -108,6 +107,9 @@ namespace OpenWrap.PackageManagement.Exporters.Assemblies
                 return binFolder.EqualsNoCase("net30") || binFolder.EqualsNoCase("net20");
             if (profile.EqualsNoCase("net20"))
                 return binFolder.EqualsNoCase("net20");
+
+            if (profile.EqualsNoCase("sl50"))
+                return binFolder.EqualsNoCase("sl50") || binFolder.EqualsNoCase("sl40") || binFolder.EqualsNoCase("sl30") || binFolder.EqualsNoCase("sl20");
 
             if (profile.EqualsNoCase("sl40"))
                 return binFolder.EqualsNoCase("sl40") || binFolder.EqualsNoCase("sl30") || binFolder.EqualsNoCase("sl20");
@@ -137,6 +139,7 @@ namespace OpenWrap.PackageManagement.Exporters.Assemblies
 
         static bool PlatformMatches(string binPlatform, string envPlatform)
         {
+            if (envPlatform == "*") return true;
             return binPlatform.EqualsNoCase(ANYCPU) || (envPlatform.EqualsNoCase(ANYCPU) == false && binPlatform.EqualsNoCase(envPlatform));
         }
 

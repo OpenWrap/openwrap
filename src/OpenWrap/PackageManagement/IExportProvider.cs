@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.PackageModel;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.PackageManagement
 {
     public interface IExportProvider
     {
-        IEnumerable<IGrouping<string, TItem>> Items<TItem>(IPackage pacakge) where TItem : IExportItem;
+        IEnumerable<IGrouping<string, TItem>> Items<TItem>(IPackage pacakge, ExecutionEnvironment environment) where TItem : IExportItem;
     }
 }

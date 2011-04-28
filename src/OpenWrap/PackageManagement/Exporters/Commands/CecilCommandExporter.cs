@@ -6,6 +6,7 @@ using Mono.Cecil;
 using OpenWrap.Commands;
 using OpenWrap.IO;
 using OpenWrap.PackageManagement.Exporters.Assemblies;
+using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 
@@ -13,16 +14,16 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
 {
     public class CecilCommandExporter : AbstractAssemblyExporter
     {
-        public CecilCommandExporter(IEnvironment env)
-            : base("commands", env.ExecutionEnvironment.Profile, env.ExecutionEnvironment.Platform)
+        public CecilCommandExporter()
+            : base("commands")
         {
         }
 
-        public override IEnumerable<IGrouping<string, TItem>> Items<TItem>(PackageModel.IPackage package)
+        public override IEnumerable<IGrouping<string, TItem>> Items<TItem>(IPackage package, ExecutionEnvironment environment)
         {
             if (typeof(TItem) != typeof(Exports.ICommand)) return Enumerable.Empty<IGrouping<string, TItem>>();
 
-            var commandAssemblies = GetAssemblies<Exports.IAssembly>(package);
+            var commandAssemblies = GetAssemblies<Exports.IAssembly>(package, environment);
 
             return from source in commandAssemblies
                    from assembly in source

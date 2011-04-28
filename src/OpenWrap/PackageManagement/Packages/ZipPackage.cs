@@ -137,7 +137,7 @@ namespace OpenWrap.PackageManagement.Packages
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
