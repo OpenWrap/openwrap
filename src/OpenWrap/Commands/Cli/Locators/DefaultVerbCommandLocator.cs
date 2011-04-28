@@ -6,11 +6,11 @@ using OpenWrap.Collections;
 
 namespace OpenWrap.Commands.Cli.Locators
 {
-    public class DefaultForNounCommandLocator : ICommandLocator
+    public class DefaultVerbCommandLocator : ICommandLocator
     {
         readonly ICommandRepository _commandRepository;
 
-        public DefaultForNounCommandLocator(ICommandRepository commandRepository)
+        public DefaultVerbCommandLocator(ICommandRepository commandRepository)
         {
             _commandRepository = commandRepository;
         }
@@ -24,7 +24,7 @@ namespace OpenWrap.Commands.Cli.Locators
             var noun = firstToken.SelectHumps(_commandRepository.Nouns).OneOrDefault();
             return noun == null 
                 ? null
-                : _commandRepository.Where(x => x.Noun.EqualsNoCase(noun) && x.IsDefault).OneOrDefault();
+                : _commandRepository.Distinct(CommandDescriptorComparer.VerbNoun).Where(x => x != null && x.Noun.EqualsNoCase(noun) && x.IsDefault).OneOrDefault();
         }
     }
 }

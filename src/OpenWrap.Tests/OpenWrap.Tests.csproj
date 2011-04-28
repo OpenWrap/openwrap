@@ -65,10 +65,10 @@
     <Compile Include="Commands\cecil_commands\command_with_optional_input_provided_without_value.cs" />
     <Compile Include="Commands\cecil_commands\command_with_optional_input_provided_with_value.cs" />
     <Compile Include="Commands\cecil_commands\TestableCommand.cs" />
-    <Compile Include="Commands\command_line_locators\default_for_noun\multiple_matching_nouns.cs" />
-    <Compile Include="Commands\command_line_locators\default_for_noun\one_default_verb.cs" />
-    <Compile Include="Commands\command_line_locators\default_for_noun\two_default_verbs.cs" />
-    <Compile Include="Commands\command_line_locators\default_for_noun\unknown_noun.cs" />
+    <Compile Include="Commands\command_line_locators\default_verb\multiple_matching_nouns.cs" />
+    <Compile Include="Commands\command_line_locators\default_verb\one_default_verb.cs" />
+    <Compile Include="Commands\command_line_locators\default_verb\two_default_verbs.cs" />
+    <Compile Include="Commands\command_line_locators\default_verb\unknown_noun.cs" />
     <Compile Include="Commands\command_line_locators\noun_verb\empty_line.cs" />
     <Compile Include="Commands\command_line_runner\mixed_named_and_positioned_inputs.cs" />
     <Compile Include="Commands\command_line_runner\system_wide_optional_input_on_command_without_it.cs" />

@@ -78,7 +78,7 @@
     <Compile Include="Commands\Cli\CommandLineRunner.cs" />
     <Compile Include="Commands\Cli\ConsoleCommandExecutor.cs" />
     <Compile Include="Commands\Cli\Locators\CommandDescriptorComparer.cs" />
-    <Compile Include="Commands\Cli\Locators\DefaultForNounCommandLocator.cs" />
+    <Compile Include="Commands\Cli\Locators\DefaultVerbCommandLocator.cs" />
     <Compile Include="Commands\Cli\Parser\Input.cs" />
     <Compile Include="Commands\Cli\Parser\InputParser.cs" />
     <Compile Include="Commands\Cli\Parser\InputParserException.cs" />

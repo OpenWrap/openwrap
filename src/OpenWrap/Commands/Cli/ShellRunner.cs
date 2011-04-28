@@ -67,7 +67,12 @@ namespace OpenWrap.Commands.Cli
 
             Services.ServiceLocator.RegisterService(new RuntimeAssemblyResolver());
             return new ConsoleCommandExecutor(ServiceLocator.GetService<ICommandRepository>(),
-                                       new List<ICommandLocator> { new NounVerbCommandLocator(commandRepository), new VerbNounCommandLocator(commandRepository) }).Execute(env.CommandLine(), env.ShellArgs());
+                                       new List<ICommandLocator>
+                                       {
+                                               new NounVerbCommandLocator(commandRepository), 
+                                               new VerbNounCommandLocator(commandRepository),
+                                               new DefaultVerbCommandLocator(commandRepository)
+                                       }).Execute(env.CommandLine(), env.ShellArgs());
         }
     }
 

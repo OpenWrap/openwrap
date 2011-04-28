@@ -47,9 +47,9 @@ namespace OpenWrap.Commands
         {
             if (commandDescriptor == null) throw new ArgumentNullException("commandDescriptor");
 
-            if (!_nouns.Contains(commandDescriptor.Noun))
+            if (commandDescriptor.Noun != null && !_nouns.Contains(commandDescriptor.Noun))
                 _nouns.Add(commandDescriptor.Noun);
-            if (!_commandVerbs.Contains(commandDescriptor.Verb))
+            if (commandDescriptor.Verb != null && !_commandVerbs.Contains(commandDescriptor.Verb))
                 _commandVerbs.Add(commandDescriptor.Verb);
 
             _commands.Add(commandDescriptor);

@@ -2,12 +2,12 @@
 using OpenWrap.Commands.Cli.Locators;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.command_line_locators.default_for_noun
+namespace Tests.Commands.command_line_locators.default_verb
 {
-    class two_default_verbs : contexts.command_locator<DefaultForNounCommandLocator>
+    class two_default_verbs : contexts.command_locator<DefaultVerbCommandLocator>
     {
         public two_default_verbs()
-                : base(_ => new DefaultForNounCommandLocator(_))
+                : base(_ => new DefaultVerbCommandLocator(_))
         {
             given_command("get", "help", command => command.IsDefault = true);
             given_command("list", "help", command => command.IsDefault = true);
