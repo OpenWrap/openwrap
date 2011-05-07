@@ -46,7 +46,7 @@ namespace OpenWrap.VisualStudio.Hooks
             lock (_lock)
             {
                 if (_initialized) return;
-                System.Diagnostics.Debugger.Launch();
+                //System.Diagnostics.Debugger.Launch();
                 _initialized = true;
 
                 _manager = new VsCommandManager();

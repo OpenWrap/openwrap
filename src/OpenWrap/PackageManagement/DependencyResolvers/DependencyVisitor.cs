@@ -172,8 +172,8 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         void WriteDebug(string text)
         {
             var packages = string.Format(" Yes: {0} No:{1}",
-                                         _selectionContext.CompatiblePackageVersions.Select(x => x.Key.ToString()).Join(","),
-                                         _selectionContext.IncompatiblePackageVersions.Select(x => x.Key.ToString()).Join(","));
+                                         _selectionContext.CompatiblePackageVersions.Select(x => x.Key.ToString()).JoinString(","),
+                                         _selectionContext.IncompatiblePackageVersions.Select(x => x.Key.ToString()).JoinString(","));
 
             Debug.WriteLine(new String(' ', _currentNode.Count) + text + packages);
         }

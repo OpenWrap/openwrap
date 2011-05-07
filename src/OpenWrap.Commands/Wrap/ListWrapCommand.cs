@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OpenWrap.Collections;
+using OpenWrap.Configuration;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
@@ -51,17 +53,12 @@ namespace OpenWrap.Commands.Wrap
                     yield return HostEnvironment.SystemRepository;
                 yield break;
             }
-            if (_remoteSet && string.IsNullOrEmpty(Remote))
-            {
-                foreach (var remote in HostEnvironment.RemoteRepositories.NotNull())
-                    yield return remote;
-            }
             if (_remoteSet)
             {
-                var repo = GetRemoteRepository(Remote);
-                if (repo != null)
-                    yield return repo;
-                yield break;
+
+                foreach (var remote in GetFetchRepositories(Remote))
+                    yield return remote;
+
             }
             if (HostEnvironment.ProjectRepository != null)
                 yield return HostEnvironment.ProjectRepository;

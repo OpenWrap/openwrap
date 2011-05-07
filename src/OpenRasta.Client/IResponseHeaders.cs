@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace OpenRasta.Client
 {
-    public interface IResponseHeaders
+    public interface IResponseHeaders : IDictionary<string, string>
     {
         Uri Location { get; }
     }

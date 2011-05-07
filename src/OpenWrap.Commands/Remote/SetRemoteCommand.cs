@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using OpenWrap.Configuration;
 using System.Linq;
 using OpenWrap.Collections;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Remote
 {
     [Command(Noun = "remote", Verb = "set")]
-    public class SetRemoteCommand : AbstractCommand
+    public class SetRemoteCommand : AbstractRemoteCommand
     {
         int? _position;
 
@@ -25,7 +26,7 @@ namespace OpenWrap.Commands.Remote
         public string NewName { get; set; }
 
         [CommandInput]
-        public Uri Href { get; set; }
+        public string Href { get; set; }
 
         IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
 
@@ -54,7 +55,13 @@ namespace OpenWrap.Commands.Remote
 
             if (Href != null)
             {
-                remote.Href = Href;
+                var foundRepo = Factories.Select(x => x.FromUserInput(Href)).NotNull().FirstOrDefault();
+
+                if (foundRepo == null) throw new InvalidOperationException();
+                remote.FetchRepository = foundRepo.Token;
+                remote.PublishRepositories = foundRepo.Feature<ISupportPublishing>() != null
+                                                     ? new List<string> { foundRepo.Token }
+                                                     : new List<string>();
             }
 
             ConfigurationManager.SaveRemoteRepositories(repositories);

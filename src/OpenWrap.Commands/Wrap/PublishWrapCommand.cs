@@ -5,19 +5,20 @@ using System.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Repositories;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Noun = "wrap", Verb = "publish", Description = "Publishes a package to a remote reposiory.")]
     public class PublishWrapCommand : WrapCommand
     {
-        ISupportPublishing _remoteRepository;
         ISupportAuthentication _authenticationSupport;
 
         Func<Stream> _packageStream;
         string _packageFileName;
         Version _packageVersion;
         string _packageName;
+        IPackageRepository _remoteRepository;
 
         [CommandInput(IsRequired = true, Position = 0)]
         public string Remote { get; set; }
@@ -43,14 +44,12 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> ValidatePackageDoesntExist()
         {
             if (_remoteRepository.HasPackage(_packageName, _packageVersion.ToString()))
-            {
                 yield return new Error("The package '{0}' already exists. Please create a new version before uploading.", _packageFileName);
-            }
         }
-
         IEnumerable<ICommandOutput> ValidateInputs()
         {
-            var namedRepository = GetRemoteRepository(Remote);
+            // TODO: HACK HACK HACK
+            var namedRepository = GetPublishRepositories(Remote).FirstOrDefault();
 
             if (namedRepository == null)
             {
@@ -65,17 +64,18 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
-            _authenticationSupport = namedRepository as ISupportAuthentication;
+            _authenticationSupport = namedRepository.Feature<ISupportAuthentication>();
 
             if (_authenticationSupport == null)
             {
                 yield return new Warning("Remote repository '{0}' does not support authentication, ignoring authentication info.", namedRepository.Name);
                 _authenticationSupport = new NullAuthentication();
             }
+            //_repositories = namedRepository.
+            _remoteRepository = namedRepository;
+            var publishingRepo = _remoteRepository.Feature<ISupportPublishing>();
 
-            _remoteRepository = namedRepository as ISupportPublishing;
-
-            if (_remoteRepository == null)
+            if (publishingRepo == null)
             {
                 yield return new Error("Repository '{0}' doesn't support publishing.", namedRepository.Name);
                 yield break;
@@ -120,7 +120,7 @@ namespace OpenWrap.Commands.Wrap
         {
             yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
             using (_authenticationSupport.WithCredentials(new Credentials(User, Pwd)))
-            using (var publisher = _remoteRepository.Publisher())
+            using (var publisher = _remoteRepository.Feature<ISupportPublishing>().Publisher())
             using (var packageStream = _packageStream())
                 publisher.Publish(_packageFileName, packageStream);
         }

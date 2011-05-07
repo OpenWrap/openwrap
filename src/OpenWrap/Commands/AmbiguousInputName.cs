@@ -22,7 +22,7 @@ namespace OpenWrap.Commands
 
         public override string ToString()
         {
-            return string.Format("The input '{0}' was ambiguous. Possible inputs: {1}", _input, PotentialInputs.Join(", "));
+            return string.Format("The input '{0}' was ambiguous. Possible inputs: {1}", _input, PotentialInputs.JoinString(", "));
         }
     }
 }

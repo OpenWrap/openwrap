@@ -21,14 +21,15 @@ namespace OpenWrap.Commands.Wrap
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            IPackageRepository repo = GetRemoteRepository(Remote);
+            // TODO: HACK HACK HACK
+            IPackageRepository repo = GetPublishRepositories(Remote).FirstOrDefault();
             if (repo == null)
             {
                 yield return new UnknownRemoteRepository(Remote);
                 foreach (var m in HintRemoteRepositories()) yield return m;
                 yield break;
             }
-            var nukingRepo = repo as ISupportNuking;
+            var nukingRepo = repo.Feature<ISupportNuking>();
             if (nukingRepo == null)
             {
                 yield return new Error("The remote repository {0} does not support nuking.", Remote);
@@ -63,6 +64,11 @@ namespace OpenWrap.Commands.Wrap
                                             Version,
                                             Remote);
             yield return new Success();
+        }
+
+        IPackageRepository GetPublishRepository(string name)
+        {
+            throw new NotImplementedException();
         }
     }
 }

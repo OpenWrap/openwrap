@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,11 @@ namespace OpenWrap.Collections
 {
     public static class EnumerableExtensions
     {
+        public static IEnumerable<T> Select<T>(this IEnumerable input, Func<object, T> functoid)
+        {
+            foreach(var obj in input)
+                yield return functoid(obj);
+        }
         public static T OneOrDefault<T>(this IEnumerable<T> input)
         {
             int count = 0;

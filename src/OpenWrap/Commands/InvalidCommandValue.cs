@@ -13,7 +13,7 @@ namespace OpenWrap.Commands
         static string CreateErrorMessage(List<string> unnamed)
         {
             return "The following values could not be matched to any optional inputs:\r\n"
-                   + unnamed.Join("\r\n");
+                   + unnamed.JoinString("\r\n");
         }
     }
 }

@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using OpenWrap.Commands;
+using OpenWrap.Commands.contexts;
+using OpenWrap.Commands.Remote;
+using OpenWrap.Configuration;
+using OpenWrap.Repositories;
+using OpenWrap.Services;
+using OpenWrap.Tests.Commands.Remote.Add;
+
+namespace Tests.Commands.contexts
+{
+    public class remote_command<T> : command_context<T> where T : ICommand
+    {
+        public remote_command()
+        {
+
+        }
+
+        protected override void when_executing_command(params string[] parameters)
+        {
+            base.when_executing_command(parameters);
+            Remotes = ServiceLocator.GetService<IConfigurationManager>().LoadRemoteRepositories();
+        }
+    }
+}

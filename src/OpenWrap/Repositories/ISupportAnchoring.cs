@@ -4,7 +4,7 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
-    public interface ISupportAnchoring : IPackageRepository
+    public interface ISupportAnchoring : IRepositoryFeature
     {
         IEnumerable<PackageAnchoredResult> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor);
     }

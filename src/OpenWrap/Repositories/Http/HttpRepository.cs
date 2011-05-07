@@ -26,6 +26,12 @@ namespace OpenWrap.Repositories.Http
 
         public string Name { get; private set; }
 
+        public virtual string Token { get; set; }
+        public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
+        {
+            return this as TFeature;
+        }
+
         public IHttpRepositoryNavigator Navigator
         {
             get { return _navigator; }

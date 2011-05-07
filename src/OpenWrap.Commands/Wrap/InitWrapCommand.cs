@@ -186,7 +186,7 @@ namespace OpenWrap.Commands.Wrap
                 deepness++)
             {
                 if (current.Path == rootPath.Path)
-                    return Enumerable.Repeat("..", deepness).Join("\\")
+                    return Enumerable.Repeat("..", deepness).JoinString("\\")
                            + "\\"
                            + OPENWRAP_BUILD;
             }

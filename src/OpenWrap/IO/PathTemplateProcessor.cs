@@ -43,7 +43,7 @@ namespace OpenWrap.IO
                 searchPath.Add(searchSegment);
             }
             _segments = new LinkedList<PathSegment>(segments);
-            _searchString = searchPath.Join(System.IO.Path.DirectorySeparatorChar);
+            _searchString = searchPath.JoinString(System.IO.Path.DirectorySeparatorChar);
         }
         
         public bool TryParsePath(Path path, out IDictionary<string,string> properties)

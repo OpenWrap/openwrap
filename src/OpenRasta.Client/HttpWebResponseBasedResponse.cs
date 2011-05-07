@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace OpenRasta.Client
@@ -23,6 +24,7 @@ namespace OpenRasta.Client
             }
             if (_response != null)
             {
+                Status = new HttpStatus((int)_response.StatusCode, _response.StatusDescription);
                 RaiseStatusChanged("Connected.");
                 if (_response.ContentLength > 0)
                 {
@@ -31,6 +33,7 @@ namespace OpenRasta.Client
             }
             else
             {
+                Status = new HttpStatus(-1, "No response");
                 RaiseStatusChanged("No response.");
             }
         }
@@ -39,6 +42,8 @@ namespace OpenRasta.Client
         {
             get { return (int)_response.StatusCode; }
         }
+
+        public HttpStatus Status { get; private set; }
 
         public IResponseHeaders Headers
         {
@@ -55,6 +60,8 @@ namespace OpenRasta.Client
             get { return _request.RequestUri; }
         }
 
+        public IEnumerable<Exception> HandlerErrors { get; set; }
+
         protected void RaiseStatusChanged(string status, params object[] args)
         {
             StatusChanged.Raise(this, new StatusChangedEventArgs(string.Format(status, args)));
@@ -66,5 +73,10 @@ namespace OpenRasta.Client
         }
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
         public event EventHandler<ProgressEventArgs> Progress;
+
+        public Uri ResponseUri
+        {
+            get { return _response.ResponseUri; }
+        }
     }
 }

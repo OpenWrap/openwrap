@@ -98,7 +98,7 @@ yield
 
         string GetLinearValue(Input input)
         {
-            return input is SingleValueInput ? ((SingleValueInput)input).Value : ((MultiValueInput)input).Values.Join(", ");
+            return input is SingleValueInput ? ((SingleValueInput)input).Value : ((MultiValueInput)input).Values.JoinString(", ");
         }
 
         bool AssignValue(Input input, ICommand command, ICommandInputDescriptor descriptor)

@@ -18,7 +18,7 @@ namespace OpenWrap.Tests.Configuration
 
         public when_reading_dictionaries_of_values()
         {
-            given_configuration_text(Configurations.Addresses.RemoteRepositories, "[remoterepository openwrap]\r\nhref:http://wraps.openwrap.org\r\n[remoterepository]\r\nhref:http://default.openwrap.org");
+            given_configuration_text(Configurations.Addresses.RemoteRepositories, "[remoterepository openwrap]\r\nfetchrepository: http://wraps.openwrap.org\r\n[remoterepository]\r\nfetchrepository:http://default.openwrap.org");
 
             when_loading_configuration(Configurations.Addresses.RemoteRepositories);
         }
@@ -30,7 +30,7 @@ namespace OpenWrap.Tests.Configuration
         [Test]
         public void entries_in_dictionary_have_their_properties_set()
         {
-            Entry["openwrap"].Href.ShouldBe("http://wraps.openwrap.org");
+            Entry["openwrap"].FetchRepository.ShouldBe("http://wraps.openwrap.org");
         }
         [Test]
         public void sections_with_no_name_have_an_empty_key()
@@ -68,7 +68,7 @@ namespace OpenWrap.Tests.Configuration
                     .ShouldNotBeNull()
                     .OpenRead().ReadString(Encoding.UTF8)
                         .ShouldContain(@"[remoterepository openwrap]")
-                        .ShouldContain("href: " + RemoteRepositories.Default["openwrap"].Href);
+                        .ShouldContain("fetchrepository: " + RemoteRepositories.Default["openwrap"].FetchRepository);
         }
         void when_saving_configuration(Uri uri)
         {

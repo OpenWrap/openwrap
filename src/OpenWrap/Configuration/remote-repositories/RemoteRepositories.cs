@@ -8,10 +8,17 @@ namespace OpenWrap.Configuration
         public static readonly RemoteRepositories Default =
                 new RemoteRepositories
                 {
-                        { "openwrap", new RemoteRepository { Href = new Uri("http://wraps.openwrap.org") } }
+                        { "openwrap", new RemoteRepository
+                        {
+                            FetchRepository = "[indexed]http://wraps.openwrap.org",
+                            PublishRepositories = {"[indexed]http://wraps.openwrap.org"},
+
+                        } 
+                        }
                 };
 
-        public RemoteRepositories() : base(StringComparer.OrdinalIgnoreCase)
+        public RemoteRepositories()
+            : base(StringComparer.OrdinalIgnoreCase)
         {
         }
     }

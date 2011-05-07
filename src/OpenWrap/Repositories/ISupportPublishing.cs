@@ -4,7 +4,7 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
-    public interface ISupportPublishing : IPackageRepository
+    public interface ISupportPublishing : IRepositoryFeature
     {
         IPackagePublisher Publisher();
     }

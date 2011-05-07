@@ -31,7 +31,6 @@ namespace OpenWrap
 
             return builder.ToString();
         }
-
         public static bool ContainsNoCase(this string value, string valueToSearch)
         {
             return value.IndexOf(valueToSearch, StringComparison.OrdinalIgnoreCase) != -1;
@@ -58,12 +57,12 @@ namespace OpenWrap
             return new string(str.Where(char.IsUpper).ToArray());
         }
 
-        public static string Join(this IEnumerable<string> strings, string separator)
+        public static string JoinString(this IEnumerable<string> strings, string separator)
         {
             return string.Join(separator, strings.ToArray());
         }
 
-        public static string Join(this IEnumerable<string> strings, char separator)
+        public static string JoinString(this IEnumerable<string> strings, char separator)
         {
             return string.Join(separator + string.Empty, strings.ToArray());
         }

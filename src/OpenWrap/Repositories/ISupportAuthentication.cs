@@ -2,7 +2,7 @@ using System;
 
 namespace OpenWrap.Repositories
 {
-    public interface ISupportAuthentication
+    public interface ISupportAuthentication : IRepositoryFeature
     {
         IDisposable WithCredentials(Credentials credentials);
     }

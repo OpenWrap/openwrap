@@ -28,7 +28,7 @@ namespace OpenWrap.PackageModel
 
         public override string ToString()
         {
-            var versions = VersionVertices.Select(x => x.ToString()).Join(" and ");
+            var versions = VersionVertices.Select(x => x.ToString()).JoinString(" and ");
             var returnValue = versions.Length == 0
                                       ? Name
                                       : Name + " " + versions;

@@ -166,7 +166,7 @@ namespace nuget_converter_specs
         }
         string version(string s)
         {
-            return NuSpecConverter.ConvertNuGetVersionRange(s).Select(x=>x.ToString()).Join(" and ");
+            return NuSpecConverter.ConvertNuGetVersionRange(s).Select(x=>x.ToString()).JoinString(" and ");
         }
     }
     namespace contexts

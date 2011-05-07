@@ -4,7 +4,7 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
-    public interface ISupportCleaning : IPackageRepository
+    public interface ISupportCleaning : IRepositoryFeature
     {
         /// <summary>
         /// </summary>

@@ -54,6 +54,8 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="Commands\add_remote\adding_a_new_remote.cs" />
+    <Compile Include="Commands\add_remote\MemoryRepositoryFactory.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInput.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInputValue.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithoutInput.cs" />
@@ -156,6 +158,7 @@
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
     <Compile Include="Commands\CommandOutputExtensions.cs" />
     <Compile Include="Commands\cecil_exporter\command_with_inputs.cs" />
+    <Compile Include="Commands\contexts\remote_command.cs" />
     <Compile Include="Commands\init_wrap\init_dot_in_existing_package.cs" />
     <Compile Include="Commands\init_wrap\init_for_all_projects.cs" />
     <Compile Include="Commands\contexts\init_wrap.cs" />
@@ -193,6 +196,14 @@
     <Compile Include="Commands\command_line_runner\positioned_inputs_used_by_name.cs" />
     <Compile Include="Commands\command_line_runner\positioned_input_invalid_value.cs" />
     <Compile Include="Commands\command_line_runner\unknown_named_input_provided.cs" />
+    <Compile Include="Commands\set_remote\moving_repository_to_new_priority_case1.cs" />
+    <Compile Include="Commands\set_remote\moving_repository_to_new_priority_case2.cs" />
+    <Compile Include="Commands\set_remote\moving_repository_to_new_priority_case3.cs" />
+    <Compile Include="Commands\set_remote\moving_repository_to_new_priority_case4.cs" />
+    <Compile Include="Commands\contexts\set_remote.cs" />
+    <Compile Include="Commands\set_remote\when_changing_repository_href.cs" />
+    <Compile Include="Commands\set_remote\when_changing_repository_name.cs" />
+    <Compile Include="Commands\set_remote\when_changing_repository_name_to_existing.cs" />
     <Compile Include="Commands\update_wrap\command_flags\project_and_system_flag_specified.cs" />
     <Compile Include="Commands\update_wrap\project\from_system.cs" />
     <Compile Include="Commands\update_wrap\command_flags\defaults.cs" />
@@ -218,6 +229,7 @@
     <Compile Include="contexts\descriptor.cs" />
     <Compile Include="contexts\descriptor_readers.cs" />
     <Compile Include="contexts\package_graph_visitor.cs" />
+    <Compile Include="contexts\repository_factory.cs" />
     <Compile Include="contexts\scoped_descriptor.cs" />
     <Compile Include="Dependencies\hooks\successful_add.cs" />
     <Compile Include="Extensions\strings\HumpsMatching.cs" />
@@ -239,6 +251,15 @@
     <Compile Include="PackageModel\descriptors\setting_single_value_to_default.cs" />
     <Compile Include="PackageModel\descriptors\setting_symlinks.cs" />
     <Compile Include="PackageModel\descriptors\unknown_lines_in_descriptor.cs" />
+    <Compile Include="Repositories\contexts\simple_index_repository_factory.cs" />
+    <Compile Include="Repositories\factories\nuget\AtomContent.cs" />
+    <Compile Include="Repositories\factories\nuget\from_user_input_by_name.cs" />
+    <Compile Include="Repositories\factories\nuget\from_user_input_invalid_uri.cs" />
+    <Compile Include="Repositories\factories\simple_index\from_token.cs" />
+    <Compile Include="Repositories\factories\simple_index\from_unknown_token.cs" />
+    <Compile Include="Repositories\factories\simple_index\from_user_input_index_does_not_exist.cs" />
+    <Compile Include="Repositories\factories\simple_index\from_user_input_index_exists_in_sub_directory.cs" />
+    <Compile Include="Repositories\factories\simple_index\from_user_input_index_exists.cs" />
     <Compile Include="resolving_assemblies\assemblies_are_found.cs" />
     <Compile Include="resolving_assemblies\assemblies_defined_in_reference_section_are_resolved_by_assembly_name.cs" />
     <Compile Include="contexts\assembly_resolving.cs" />
@@ -292,8 +313,8 @@
     <Compile Include="Commands\command_documentation.cs" />
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
     <Compile Include="Commands\Help\getHelpCommand.cs" />
-    <Compile Include="Commands\Remote\addRemoteCommand.cs" />
-    <Compile Include="Commands\Remote\setRemoteCommand.cs" />
+    <Compile Include="Commands\add_remote\when_adding_a_remote_with_existing_name.cs" />
+    <Compile Include="Commands\set_remote\when_changing_remote_priority.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
     <Compile Include="Commands\add_wrap\adding_wrap_twice.cs" />
@@ -309,7 +330,7 @@
     <Compile Include="Commands\init_wrap\init_wrap_in_complete_dot_folder.cs" />
     <Compile Include="Commands\Wrap\setWrapCommand.cs" />
     <Compile Include="Commands\update_wrap\project\package_only_in_project.cs" />
-    <Compile Include="Configuration\configuration_parser_spec.cs" />
+    <Compile Include="Configuration\reading.cs" />
     <Compile Include="Configuration\configuration_specifications.cs" />
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\anchored_dependencies.cs" />

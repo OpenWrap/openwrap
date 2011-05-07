@@ -54,12 +54,6 @@ namespace OpenWrap.Tests.Commands
 
         public IPackageDescriptor Descriptor { get; set; }
 
-        IEnumerable<IPackageRepository> IEnvironment.RemoteRepositories
-        {
-            get { return RemoteRepositories.Cast<IPackageRepository>(); }
-             
-        }
-
         IPackageRepository IEnvironment.SystemRepository
         {
             get { return SystemRepository; }

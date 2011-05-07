@@ -20,7 +20,7 @@ namespace OpenWrap.PackageManagement
 
         public override ICommandOutput ToOutput()
         {
-            var conflictingVersions = Package.DependencyStacks.Select(x => "\t" + x.ToString()).Join(Environment.NewLine);
+            var conflictingVersions = Package.DependencyStacks.Select(x => "\t" + x.ToString()).JoinString(Environment.NewLine);
             return new Error("Package {0} has conflicting versions:" + Environment.NewLine + conflictingVersions, Package.Identifier.Name);
         }
     }

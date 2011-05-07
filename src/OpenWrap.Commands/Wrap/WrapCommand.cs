@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
+using OpenWrap.Collections;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Configuration;
 using OpenWrap.PackageManagement;
@@ -10,6 +11,7 @@ using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -78,21 +80,8 @@ namespace OpenWrap.Commands.Wrap
                 yield return m;
         }
 
-        protected IPackageRepository GetRemoteRepository(string repository)
-        {
-            Uri possibleUri;
-            try
-            {
-                possibleUri = new Uri(repository, UriKind.Absolute);
-            }
-            catch
-            {
-                possibleUri = null;
-            }
-            return possibleUri != null
-                           ? new RemoteRepositoryBuilder(FileSystem, ConfigurationManager).BuildPackageRepositoryForUri(repository, possibleUri)
-                           : HostEnvironment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(repository));
-        }
+        protected IEnumerable<IRemoteRepositoryFactory> RemoteFactories { get { return ServiceLocator.GetService<IEnumerable<IRemoteRepositoryFactory>>(); } }
+
         protected IDisposable ChangeMonitor(FileBased<IPackageDescriptor> descriptor)
         {
                 bool packagesChanged = false;
@@ -124,6 +113,25 @@ namespace OpenWrap.Commands.Wrap
                         }
                     }
                 });
+        }
+
+        protected IEnumerable<IPackageRepository> GetFetchRepositories(string name = null)
+        {
+            return ConfigurationManager.LoadRemoteRepositories().Where(x=>string.IsNullOrEmpty(name) || x.Value.Name.EqualsNoCase(name))
+                    .Select(x => RemoteFactories.Select(factory => factory.FromToken(x.Value.FetchRepository)).NotNull().FirstOrDefault())
+                    .NotNull()
+                    .DefaultIfEmpty(RemoteFactories.Select(factory=>factory.FromUserInput(name)).NotNull().FirstOrDefault()).NotNull();
+        }
+
+        protected IEnumerable<IPackageRepository> GetPublishRepositories(string name = null)
+        {
+            return (
+                   from remoteConfig in ConfigurationManager.LoadRemoteRepositories()
+                   where string.IsNullOrEmpty(name) || remoteConfig.Value.Name.EqualsNoCase(name)
+                   from publish in remoteConfig.Value.PublishRepositories
+                   select RemoteFactories.Select(factory => factory.FromToken(publish)).NotNull().FirstOrDefault()
+                   ).NotNull()
+                    .DefaultIfEmpty(RemoteFactories.Select(factory => factory.FromUserInput(name)).NotNull().FirstOrDefault()).NotNull();
         }
     }
 }

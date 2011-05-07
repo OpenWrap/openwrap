@@ -8,11 +8,11 @@ namespace OpenWrap.PackageManagement
     public class PackageAnchoredResult : PackageOperationResult
     {
         readonly IPackageInfo _package;
-        readonly ISupportAnchoring _repository;
+        readonly IPackageRepository _repository;
 
         readonly bool _success;
 
-        public PackageAnchoredResult(ISupportAnchoring repository, IPackageInfo package, bool success)
+        public PackageAnchoredResult(IPackageRepository repository, IPackageInfo package, bool success)
         {
             _repository = repository;
             _package = package;

@@ -32,6 +32,16 @@ namespace OpenWrap.Repositories
 
         public string Name { get; set; }
 
+        public string Token
+        {
+            get { return "[memory]" + Name; }
+        }
+
+        public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
+        {
+            return this as TFeature;
+        }
+
         public ICollection<IPackageInfo> Packages
         {
             get { return _packages; }

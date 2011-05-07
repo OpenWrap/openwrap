@@ -27,26 +27,4 @@ namespace OpenWrap.Tests.Commands.Remote.Add
                     .ShouldNotBeNull();
         }
     }
-    public class when_adding_a_new_remote : command_context<AddRemoteCommand>
-    {
-        public when_adding_a_new_remote()
-        {
-            given_remote_configuration(new RemoteRepositories());
-            when_executing_command("iron-hills", "http://lotr.org/iron-hills");
-        }
-        [Test]
-        public void remote_is_added_to_the_list()
-        {
-            Services.ServiceLocator.GetService<IConfigurationManager>()
-                    .LoadRemoteRepositories()
-                    .ContainsKey("iron-hills")
-                    .ShouldBeTrue();
-        }
-        [Test]
-        public void remote_has_position_1()
-        {
-            var remote = Services.ServiceLocator.GetService<IConfigurationManager>().LoadRemoteRepositories()["iron-hills"];
-            remote.Priority.ShouldBe(1);
-        }
-    }
 }

@@ -83,7 +83,7 @@ namespace OpenWrap.Build.Tasks
             return (from child in XDocument.Parse(xmlDoc).Root.Descendants()
                     let key = "-" + child.Name.LocalName
                     let value = child.IsEmpty ? string.Empty : " \"" + EncodeQuotes(child.Value) + "\""
-                    select key + value).Join(" ");
+                    select key + value).JoinString(" ");
         }
 
         string EncodeQuotes(string value)

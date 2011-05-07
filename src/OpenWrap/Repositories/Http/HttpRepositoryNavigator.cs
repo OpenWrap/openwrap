@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 using OpenRasta.Client;
 using OpenWrap.Tasks;
 
@@ -9,7 +10,7 @@ namespace OpenWrap.Repositories.Http
     {
         readonly Uri _baseUri;
         readonly IHttpClient _httpClient = new HttpWebRequestBasedClient();
-        readonly Func<IHttpClient> _httpClientGetter;
+        readonly Func<Uri, IClientRequest> _httpClientGetter;
         readonly Uri _requestUri;
         PackageDocument _fileList;
         Credentials _availableCredentials;
@@ -20,9 +21,9 @@ namespace OpenWrap.Repositories.Http
         {
             _baseUri = baseUri;
             _requestUri = new Uri(baseUri, new Uri("index.wraplist", UriKind.Relative));
-            _httpClientGetter = () => _availableCredentials != null
-                                              ? _httpClient.WithCredentials(_availableCredentials.Username, _availableCredentials.Password)
-                                              : _httpClient;
+            _httpClientGetter = (uri) => _availableCredentials != null
+                                              ? _httpClient.CreateRequest(uri).Credentials(new NetworkCredential(_availableCredentials.Username, _availableCredentials.Password))
+                                              : _httpClient.CreateRequest(uri);
         }
 
         public bool CanPublish
@@ -42,7 +43,7 @@ namespace OpenWrap.Repositories.Http
 
         public Stream LoadPackage(PackageItem packageItem)
         {
-            var response = _httpClientGetter().CreateRequest(packageItem.PackageHref.BaseUri(_baseUri))
+            var response = _httpClientGetter(packageItem.PackageHref.BaseUri(_baseUri))
                     .Get()
                     .Send();
 
@@ -56,14 +57,14 @@ namespace OpenWrap.Repositories.Http
             TaskManager.Instance.Run(string.Format("Publishing package '{0}'...", packageFileName),
                                      request =>
                                      {
-                                         var response = _httpClientGetter().CreateRequest(_fileList.PublishHref)
+                                         var response = _httpClientGetter(_fileList.PublishHref)
                                                  .Content(packageStream)
                                                  .Post()
                                                  .Notify(request)
                                                  .Send();
-                                         request.Status(response.StatusCode == 201
+                                         request.Status(response.Status.Code == 201
                                                                 ? string.Format("Package created at '{0}'.", response.Headers.Location)
-                                                                : string.Format("Unexpected response ({0}) from server.", response.StatusCode));
+                                                                : string.Format("Unexpected response ({0}) from server.", response.Status.Code));
                                      });
         }
 
@@ -75,7 +76,7 @@ namespace OpenWrap.Repositories.Http
                 TaskManager.Instance.Run("Loading wrap index file.",
                                          x =>
                                          {
-                                             _fileList = _httpClientGetter().CreateRequest(_requestUri)
+                                             _fileList = _httpClientGetter(_requestUri)
                                                      .Get()
                                                      .Notify(x)
                                                      .Send()

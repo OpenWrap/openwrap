@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.Persistence;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Tests.Configuration
+namespace Tests.Configuration
 {
-    public class configuration_parser_spec : OpenWrap.Testing.context
+    public class reading : OpenWrap.Testing.context
     {
         [Test]
         public void section_without_name_is_parsed()

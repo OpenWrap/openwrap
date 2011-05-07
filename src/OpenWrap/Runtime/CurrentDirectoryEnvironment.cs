@@ -34,7 +34,7 @@ namespace OpenWrap.Runtime
         public ExecutionEnvironment ExecutionEnvironment { get; private set; }
         public IFileSystem FileSystem { get; set; }
         public IPackageRepository ProjectRepository { get; private set; }
-        public IEnumerable<IPackageRepository> RemoteRepositories { get; private set; }
+        
         public IPackageRepository SystemRepository { get; private set; }
         public IDirectory SystemRepositoryDirectory { get; set; }
 
@@ -61,7 +61,7 @@ namespace OpenWrap.Runtime
 
             ConfigurationDirectory = FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory);
 
-            RemoteRepositories = new RemoteRepositoryBuilder(FileSystem, Services.ServiceLocator.GetService<IConfigurationManager>()).GetConfiguredPackageRepositories().ToList();
+
             ExecutionEnvironment = new ExecutionEnvironment
             {
                     Platform = IntPtr.Size == 4 ? "x86" : "x64",

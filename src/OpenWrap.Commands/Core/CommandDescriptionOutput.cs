@@ -31,7 +31,7 @@ namespace OpenWrap.Commands.Core
             return PositionalParameters(command)
                     .Concat(NonPositionalParameters(command))
                     .Select(x => CreateInputDescription(x))
-                    .Join("\r\n\r\n");
+                    .JoinString("\r\n\r\n");
         }
 
         string CreateInputDescription(ICommandInputDescriptor input)
@@ -45,14 +45,14 @@ namespace OpenWrap.Commands.Core
         {
             var positionedParameters = CreatePositionedParameters(command);
             var unpositionedParameters = CreateUnpositionedParameters(command);
-            return new[] { CommandName, positionedParameters, unpositionedParameters }.NotNullOrEmpty().Join(" ");
+            return new[] { CommandName, positionedParameters, unpositionedParameters }.NotNullOrEmpty().JoinString(" ");
         }
 
         string CreateUnpositionedParameters(ICommandDescriptor command)
         {
             return NonPositionalParameters(command)
                     .Select(CreateUnpositionedParameter)
-                    .Join(" ");
+                    .JoinString(" ");
         }
 
         IEnumerable<ICommandInputDescriptor> NonPositionalParameters(ICommandDescriptor command)
@@ -82,7 +82,7 @@ namespace OpenWrap.Commands.Core
         {
             return PositionalParameters(command)
                     .Select(CreatePositionedParameter)
-                    .Join(" ");
+                    .JoinString(" ");
         }
 
         IOrderedEnumerable<ICommandInputDescriptor> PositionalParameters(ICommandDescriptor command)

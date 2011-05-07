@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace OpenWrap.Reflection
 {
@@ -51,7 +52,18 @@ namespace OpenWrap.Reflection
                 {
                 }
             }
-
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ICollection<>))
+            {
+                var collectionArg = type.GetGenericArguments()[0];
+                var list = Activator.CreateInstance(typeof(List<>).MakeGenericType(collectionArg));
+                var add = list.GetType().GetMethod("Add");
+                foreach(var value in propertyValue.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    var convertedValue = collectionArg.CreateInstanceFrom(value);
+                    add.Invoke(list, new object[]{convertedValue});
+                }
+                return list;
+            }
             recursionDefender = recursionDefender ?? new Stack<Type>();
             foreach (var constructor in type.GetConstructors())
             {

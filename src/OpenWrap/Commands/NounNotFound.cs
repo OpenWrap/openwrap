@@ -13,7 +13,7 @@ namespace OpenWrap.Commands
             if (nouns.Count() == 0)
                 _message = "Noun not found.";
             else
-                _message = "Ambiguous noun. Possible matches: " + nouns.Join(", ");
+                _message = "Ambiguous noun. Possible matches: " + nouns.JoinString(", ");
         }
 
         public override string ToString()

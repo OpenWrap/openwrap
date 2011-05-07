@@ -189,7 +189,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<IPackageRepository> GetSourceRepositories()
         {
             return new[] { _userSpecifiedRepository, HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }
-                    .Concat(HostEnvironment.RemoteRepositories)
+                    .Concat(GetFetchRepositories())
                     .Concat(HostEnvironment.ProjectRepository)
                     .NotNull();
         }

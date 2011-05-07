@@ -113,6 +113,9 @@
     <Compile Include="PackageManagement\PackageHookResult.cs" />
     <Compile Include="PackageManagement\PackageManagerExtensions.cs" />
     <Compile Include="PackageManagement\PackageUpdated.cs" />
+    <Compile Include="Repositories\IRepositoryFeature.cs" />
+    <Compile Include="Repositories\NuGet\NuGetODataRepositoryFactory.cs" />
+    <Compile Include="Repositories\SimpleIndexedRepositoryFactory.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -243,7 +246,6 @@
     <Compile Include="Repositories\PackagePublisher.cs" />
     <Compile Include="Runtime\FrameworkVersioning.cs" />
     <Compile Include="Tasks\IProgressOutput.cs" />
-    <Compile Include="Repositories\IRemoteRepositoryBuilder.cs" />
     <Compile Include="Lazy.cs" />
     <Compile Include="LazyValue.cs" />
     <Compile Include="Collections\MoveNextResult.cs" />
@@ -271,8 +273,7 @@
     <Compile Include="Preloading\TinySharpZip\ZipDirectoryEntry.cs" />
     <Compile Include="Preloading\TinySharpZip\ZipEntry.cs" />
     <Compile Include="Preloading\TinySharpZip\ZipFileEntry.cs" />
-    <Compile Include="Reflection\ReflectionExtensions.cs" />
-    <Compile Include="Repositories\RemoteRepositoryBuilder.cs" />
+    <Compile Include="Repositories\RemoteRepositoryLocator.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\CallStack.cs" />
     <Compile Include="Repositories\CurrentDirectoryRepository.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\DependencyNode.cs" />

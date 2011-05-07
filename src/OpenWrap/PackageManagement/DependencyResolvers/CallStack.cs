@@ -18,7 +18,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         public override string ToString()
         {
-            return _nodes.Select(x => x.ToString()).Join(" -> ");
+            return _nodes.Select(x => x.ToString()).JoinString(" -> ");
         }
 
         IEnumerator IEnumerable.GetEnumerator()

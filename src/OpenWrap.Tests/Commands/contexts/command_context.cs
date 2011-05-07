@@ -25,6 +25,7 @@ using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
+using OpenWrap.Tests.Commands.Remote.Add;
 
 namespace OpenWrap.Commands.contexts
 {
@@ -197,11 +198,16 @@ namespace OpenWrap.Commands.contexts
     {
         protected ICommandDescriptor Command;
         protected List<ICommandOutput> Results;
+        protected MemoryRepositoryFactory Factory;
+        protected RemoteRepositories Remotes;
 
         public command_context()
         {
             Command = CecilCommandExporter.GetCommandFrom<T>();
-            Commands = new CommandRepository { Command };   
+            Commands = new CommandRepository { Command };
+
+            Factory = new MemoryRepositoryFactory();
+            ServiceLocator.TryRegisterService<IEnumerable<IRemoteRepositoryFactory>>(() => new List<IRemoteRepositoryFactory> { Factory });
         }
 
         protected virtual void when_executing_command(params string[] parameters)
@@ -210,7 +216,7 @@ namespace OpenWrap.Commands.contexts
             foreach (var descriptor in Environment.ScopedDescriptors.Values)
                 descriptor.Save();
 
-            Results = new CommandLineRunner().Run(Command, parameters.Join(" ")).ToList();
+            Results = new CommandLineRunner().Run(Command, parameters.JoinString(" ")).ToList();
         }
 
         protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
@@ -232,6 +238,11 @@ namespace OpenWrap.Commands.contexts
         {
             scope = scope ?? string.Empty;
             return new PackageDescriptorReaderWriter().Read(Environment.ScopedDescriptors[scope].File);
+        }
+
+        protected void given_remote_factory(Func<string, IPackageRepository> repoFactory)
+        {
+            Factory.FromUserInput = repoFactory;
         }
     }
 }

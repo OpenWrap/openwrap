@@ -20,7 +20,7 @@ namespace OpenWrap.Windows.PackageRepository
             if (_environment != null)
             {
                 parameter.PackageRepositories.Clear();
-                ReadPackageRepositories(_environment.RemoteRepositories, parameter.PackageRepositories);
+                //ReadPackageRepositories(_environment.RemoteRepositories, parameter.PackageRepositories);
             }
         }
 

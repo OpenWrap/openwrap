@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="HttpEntity.cs" />
+    <Compile Include="HttpStatus.cs" />
     <Compile Include="HttpWebRequestBasedClient.cs" />
     <Compile Include="HttpWebRequestBasedRequest.cs" />
     <Compile Include="HttpWebResponseBasedResponse.cs" />
@@ -79,6 +80,9 @@
     <Compile Include="IResponse.cs" />
     <Compile Include="IResponseHeaders.cs" />
     <Compile Include="MediaType.cs" />
+    <Compile Include="Memory\MemoryEntity.cs" />
+    <Compile Include="Memory\MemoryHttpClient.cs" />
+    <Compile Include="Memory\MemoryResource.cs" />
     <Compile Include="ProgressEventArgs.cs" />
     <Compile Include="ProgressStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
