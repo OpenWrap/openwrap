@@ -46,15 +46,18 @@ namespace OpenWrap.Preloading
 
         public static IEnumerable<KeyValuePair<Assembly, string>> LoadAssemblies(IEnumerable<string> packageFolders)
         {
-            return (
-                           from asm in packageFolders
-                           from assemblyPath in CombinePaths(asm, "bin-net40", "bin-net35", "bin-net30", "bin-net20")
-                           where Directory.Exists(assemblyPath)
-                           from file in Directory.GetFiles(assemblyPath, "*.dll").Concat(Directory.GetFiles(assemblyPath, "*.exe"))
-                           let assembly = TryLoadAssembly(file)
-                           where assembly != null
-                           select new KeyValuePair<Assembly, string>(assembly, file)
-                   ).ToList();
+
+            string[] folders = Environment.Version.Major >= 4 ? new[] { "bin-net40", "bin-net35", "bin-net30", "bin-net20" } : new[] { "bin-net35", "bin-net30", "bin-net20" };
+            return (from uniqueFileName in
+                            from asm in packageFolders
+                            from assemblyFolder in CombinePaths(asm, folders)
+                            where Directory.Exists(assemblyFolder)
+                            from file in Directory.GetFiles(assemblyFolder, "*.dll").Concat(Directory.GetFiles(assemblyFolder, "*.exe"))
+                            group file by Path.GetFileName(file)
+                    let filePath = uniqueFileName.First()
+                    let assembly = TryLoadAssembly(filePath)
+                    where assembly != null
+                    select new KeyValuePair<Assembly, string>(assembly, filePath)).ToList();
         }
 
         static IEnumerable<string> CombinePaths(string packageFolder, params string[] subFolders)
