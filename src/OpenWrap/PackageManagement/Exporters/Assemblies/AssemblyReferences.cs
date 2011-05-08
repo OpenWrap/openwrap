@@ -22,7 +22,7 @@ namespace OpenWrap.PackageManagement.Exporters.Assemblies
             if (includeContentOnly) return assemblies;
 
             var packagesToInclude = sourcePackages.NotInContentBranch(descriptor.Dependencies).Select(x=>x.Identifier).ToList();
-            return assemblies.Where(x => packagesToInclude.Contains(x.Package.Identifier));
+            return assemblies.Where(x => packagesToInclude.Contains(x.Package.Identifier)).ToList();
         }
 
     }

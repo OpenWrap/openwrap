@@ -5,9 +5,9 @@ using Tests.contexts;
 
 namespace Tests.resolving_assemblies
 {
-    public class resolving_assemblies_when_invalid_dependencies : assembly_resolving
+    public class with_invalid_dependencies : assembly_resolving
     {
-        public resolving_assemblies_when_invalid_dependencies()
+        public with_invalid_dependencies()
         {
             given_dependency("depends: mirkwood");
             given_dependency("depends: eastbight");

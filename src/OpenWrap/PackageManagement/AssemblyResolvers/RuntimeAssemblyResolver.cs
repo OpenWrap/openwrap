@@ -43,7 +43,7 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
                                                              _environment.Descriptor,
                                                              _environment.ProjectRepository,
                                                              _environment.ExecutionEnvironment,
-                                                             false
+                                                             true
                                                      ))
                     .ToLookup(x => x.AssemblyName.Name);
         }

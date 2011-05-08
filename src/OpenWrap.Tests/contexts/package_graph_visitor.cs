@@ -32,7 +32,7 @@ namespace Tests.contexts
         }
         protected void when_visiting_graph_from_leafs(PackageGraphVisitor.PackageVisitor visitor, params PackageDependency[] root)
         {
-            Result = new PackageGraphVisitor(Packages).VisitFromLeafs(visitor, root != null && root.Length > 0 ? root : (Roots.Count > 0 ? Roots.ToArray() : null));
+            Result = new PackageGraphVisitor(Packages).VisitFrom(root != null && root.Length > 0 ? root : (Roots.Count > 0 ? Roots.ToArray() : null), visitor);
         }
 
         protected bool VisitNodes(IPackageInfo from, PackageDependency dependency, IPackageInfo to)

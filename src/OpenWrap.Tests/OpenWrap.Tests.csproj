@@ -245,7 +245,7 @@
     <Compile Include="resolving_assemblies\marking_dependency_as_content.cs" />
     <Compile Include="resolving_assemblies\marking_dependency_with_sub_dependencies_as_content.cs" />
     <Compile Include="resolving_assemblies\multiple_assemblies_defined_in_reference_section_are_resolved_by_assembly_name.cs" />
-    <Compile Include="resolving_assemblies\recursive_dependencies_for_assemblies.cs" />
+    <Compile Include="resolving_assemblies\recursive_dependencies_marked_content.cs" />
     <Compile Include="resolving_dependency_trees\resolving_package_depending_on_content_package.cs" />
     <Compile Include="resolving_dependency_trees\resolving_content_branch_for_package_mared_as_content.cs" />
     <Compile Include="resolving_dependency_trees\resolving_content_branch_for_package_with_mixed_content.cs" />
@@ -313,7 +313,7 @@
     <Compile Include="Configuration\configuration_specifications.cs" />
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\anchored_dependencies.cs" />
-    <Compile Include="resolving_assemblies\resolving_assemblies_when_invalid_dependencies.cs" />
+    <Compile Include="resolving_assemblies\with_invalid_dependencies.cs" />
     <Compile Include="Dependencies\DependenciesParser_Specification.cs" />
     <Compile Include="Commands\Core\context\gac_resolve.cs" />
     <Compile Include="Dependencies\nuked\nuked_package_resolution.cs" />
