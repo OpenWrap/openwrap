@@ -14,7 +14,7 @@ namespace OpenWrap.Preloading
         readonly string _proxyAddress;
         readonly string _proxyUsername;
         readonly string _proxyPassword;
-        readonly IWebProxy _webProxy = WebRequest.GetSystemWebProxy();
+        readonly IWebProxy _systemProxy = WebRequest.GetSystemWebProxy();
         byte[] _dataReadResult;
         Exception _error;
         string _stringReadResult;
@@ -28,31 +28,48 @@ namespace OpenWrap.Preloading
             _proxyPassword = proxyPassword;
         }
 
-        WebClient CreateWebClient()
+        WebClient CreateWebClient(Uri uri)
         {
             WebClient newWebClient = new WebClient();
             newWebClient.DownloadFileCompleted += DownloadFileCompleted;
             newWebClient.DownloadStringCompleted += DownloadStringCompleted;
             newWebClient.DownloadDataCompleted += DownloadDataCompleted;
             newWebClient.DownloadProgressChanged += DownloadProgressChanged;
-            
+
+            WebProxy finalProxySettings = null;
             if (_proxyAddress != null)
             {
-                var proxy = new WebProxy(_proxyAddress, false);
-                if (_proxyUsername != null)
-                    proxy.Credentials = new NetworkCredential(_proxyUsername, _proxyPassword);
-                else
-                    proxy.UseDefaultCredentials = true;
-                newWebClient.Proxy = proxy;
+                finalProxySettings = new WebProxy(_proxyAddress, false);
             }
             else
-                newWebClient.Proxy = _webProxy;
+            {
+                var proxyUriForUri = _systemProxy.GetProxy(uri);
+                if (!_systemProxy.IsBypassed(uri))
+                    finalProxySettings = new WebProxy(proxyUriForUri, false);
+
+            }
+            if (finalProxySettings != null)
+            {
+                Console.Write("Using proxy at " + finalProxySettings.Address.ToString());
+                if (_proxyUsername != null)
+                {
+                    finalProxySettings.Credentials = new NetworkCredential(_proxyUsername, _proxyPassword);
+                    Console.WriteLine(" using provided credentials.");
+                }
+                else
+                {
+                    finalProxySettings.UseDefaultCredentials = true;
+                    Console.WriteLine(" using default credentials.");
+                }
+                newWebClient.Proxy = finalProxySettings;
+            }
+
             return newWebClient;
         }
 
         public byte[] DownloadData(Uri uri)
         {
-            using (var client = CreateWebClient())
+            using (var client = CreateWebClient(uri))
             {
                 StartAsync(uri);
                 _notifier.DownloadStart(uri);
@@ -64,7 +81,7 @@ namespace OpenWrap.Preloading
 
         public void DownloadFile(Uri uri, string destinationFile)
         {
-            using (var client = CreateWebClient())
+            using (var client = CreateWebClient(uri))
             {
                 StartAsync(uri);
                 _notifier.DownloadStart(uri);
@@ -77,7 +94,7 @@ namespace OpenWrap.Preloading
         public string DownloadString(Uri uri)
         {
 
-            using (var client = CreateWebClient())
+            using (var client = CreateWebClient(uri))
             {
                 StartAsync(uri);
                 _notifier.DownloadStart(uri);

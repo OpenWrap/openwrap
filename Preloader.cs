@@ -48,7 +48,7 @@ namespace OpenWrap.Preloading
         {
             return (
                            from asm in packageFolders
-                           from assemblyPath in CombinePaths(asm, "bin-net35", "bin-net40")
+                           from assemblyPath in CombinePaths(asm, "bin-net40", "bin-net35", "bin-net30", "bin-net20")
                            where Directory.Exists(assemblyPath)
                            from file in Directory.GetFiles(assemblyPath, "*.dll").Concat(Directory.GetFiles(assemblyPath, "*.exe"))
                            let assembly = TryLoadAssembly(file)
@@ -172,8 +172,8 @@ namespace OpenWrap.Preloading
                            let wrapDescriptor = packageDirectory.GetFiles("*.wrapdesc").OrderBy(x => x.Name.Length).FirstOrDefault()
                            where wrapDescriptor != null
                            let content = File.ReadAllText(wrapDescriptor.FullName)
-                           let nameMatch = Regex.Match(content, @"name\s*:\s*(?<name>\S+)", RegexOptions.Multiline)
-                           let versionMatch = Regex.Match(content, @"version\s*:\s*(?<version>[\d\.]+)", RegexOptions.Multiline)
+                           let nameMatch = Regex.Match(content, @"name\s*:\s*(?<name>\S+)", RegexOptions.Multiline | RegexOptions.IgnoreCase)
+                           let versionMatch = Regex.Match(content, @"version\s*:\s*(?<version>[\d\.]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase)
                            where nameMatch.Success
                            let version = versionMatch.Success ? TryGetVersion(versionMatch.Groups["version"].Value) : new Version(0,0)
                            select new foundPackage
@@ -182,7 +182,7 @@ namespace OpenWrap.Preloading
                                Version = version,
                                Descriptor = content,
                                Path = packageDirectory.FullName,
-                               Dependencies = (from match in Regex.Matches(content, @"depends\s*:\s*(?<dependency>\S+)", RegexOptions.Multiline).OfType<Match>()
+                               Dependencies = (from match in Regex.Matches(content, @"depends\s*:\s*(?<dependency>\S+)", RegexOptions.Multiline | RegexOptions.IgnoreCase).OfType<Match>()
                                                where match.Success
                                                let value = match.Groups["dependency"].Value.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()
                                                where value != null
