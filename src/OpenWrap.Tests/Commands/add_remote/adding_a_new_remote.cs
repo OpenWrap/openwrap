@@ -14,30 +14,30 @@ namespace Tests.Commands.add_remote
         {
             given_remote_factory(input => new InMemoryRepository(input));
             given_remote_configuration(new RemoteRepositories());
-            when_executing_command("iron-hills", "http://lotr.org/iron-hills");
+            when_executing_command("iron-hills http://lotr.org/iron-hills");
         }
 
         [Test]
         public void remote_is_added_to_the_list()
         {
-            Remotes.ContainsKey("iron-hills").ShouldBeTrue();
+            ConfiguredRemotes.ContainsKey("iron-hills").ShouldBeTrue();
         }
         [Test]
         public void remote_has_priority_of_one()
         {
-            Remotes["iron-hills"].Priority.ShouldBe(1);
+            ConfiguredRemotes["iron-hills"].Priority.ShouldBe(1);
         }
 
         [Test]
         public void remote_has_correct_fetch_token()
         {
-            Remotes["iron-hills"].FetchRepository.ShouldBe("[memory]test");
+            ConfiguredRemotes["iron-hills"].FetchRepository.ShouldBe("[memory]http://lotr.org/iron-hills");
         }
 
         [Test]
         public void remote_has_correct_publish_token()
         {
-            Remotes["iron-hills"].PublishRepositories.ShouldHaveCountOf(1).First().ShouldBe("[memory]test");
+            ConfiguredRemotes["iron-hills"].PublishRepositories.ShouldHaveCountOf(1).First().ShouldBe("[memory]http://lotr.org/iron-hills");
         }
     }
 }

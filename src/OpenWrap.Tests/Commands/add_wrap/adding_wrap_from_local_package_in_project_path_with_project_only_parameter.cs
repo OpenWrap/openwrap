@@ -4,7 +4,7 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
     class adding_wrap_from_local_package_in_project_path_with_project_only_parameter : command_context<AddWrapCommand>
     {
@@ -15,7 +15,7 @@ namespace OpenWrap.Tests.Commands
             given_currentdirectory_package(SAURON_NAME, SAURON_VERSION);
             given_project_repository(new InMemoryRepository("Project repository"));
 
-            when_executing_command("-Name", "sauron", "-Project");
+            when_executing_command("-Name sauron -Project");
         }
         [Test]
         public void installs_package_in_project_repository()

@@ -26,7 +26,7 @@ namespace Tests.Commands.build_wrap
 
             given_file(filePath, new MemoryStream(new byte[]{0x0}));
 
-            when_executing_command();
+            when_executing_command("");
         }
 
         [Test]

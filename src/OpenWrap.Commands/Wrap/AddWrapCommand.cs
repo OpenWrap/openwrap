@@ -150,7 +150,7 @@ namespace OpenWrap.Commands.Wrap
                 {
                     if (!hit)
                     {
-                        yield return new Info("Did you mean one of the following package?", Name);
+                        yield return new Info("Did you mean one of the following packages?", Name);
                         hit = true;
                     }
                     yield return ToOutput(m);

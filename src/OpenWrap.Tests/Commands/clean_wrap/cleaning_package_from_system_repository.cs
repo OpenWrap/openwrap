@@ -20,7 +20,7 @@ namespace Tests.Commands.clean_wrap
             given_system_package("lionel", "1.0.0.0");
             given_system_package("lionel", LionelVersion);
 
-            when_executing_command("lionel", "-system");
+            when_executing_command("lionel -system");
         }
 
         [Test]

@@ -13,7 +13,7 @@ namespace Tests.Commands.update_wrap.system
 
             given_remote_package("nurn", "2.1.1.0".ToVersion(), "depends: mordor");
 
-            when_executing_command("nurn", "-system");
+            when_executing_command("nurn -system");
         }
 
         [Test]
@@ -23,9 +23,9 @@ namespace Tests.Commands.update_wrap.system
         }
 
         [Test]
-        public void warning_is_generated()
+        public void error_is_generated()
         {
-            Results.ShouldHaveWarning();
+            Results.ShouldHaveError();
         }
     }
 }

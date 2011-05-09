@@ -13,7 +13,7 @@ namespace Tests.Commands.contexts
         protected IDirectory ProjectRepositoryDir;
         protected IPackageDescriptor PostExecutionDescriptor;
 
-        protected override void when_executing_command(params string[] parameters)
+        protected void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
 

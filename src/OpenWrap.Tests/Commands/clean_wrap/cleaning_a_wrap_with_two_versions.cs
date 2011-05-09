@@ -16,7 +16,7 @@ namespace Tests.Commands.clean_wrap
             given_project_package("lionel", "1.0.0.0");
             given_project_package("lionel", LionelVersion);
             given_dependency("depends: lionel");
-            when_executing_command("lionel", "-Project");
+            when_executing_command("lionel -Project");
         }
 
         [Test]

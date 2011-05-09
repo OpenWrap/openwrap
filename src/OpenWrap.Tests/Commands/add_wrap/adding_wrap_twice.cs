@@ -4,7 +4,7 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
     class adding_wrap_twice : command_context<AddWrapCommand>
     {
@@ -13,7 +13,7 @@ namespace OpenWrap.Tests.Commands
             given_dependency("depends: sauron");
             given_project_package("sauron", "1.0.0.0");
 
-            when_executing_command("sauron", "-content");
+            when_executing_command("sauron -content");
         }
 
         [Test]

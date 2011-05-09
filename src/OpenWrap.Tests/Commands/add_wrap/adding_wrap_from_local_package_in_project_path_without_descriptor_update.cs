@@ -1,24 +1,19 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.contexts;
-using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
-using Tests.Commands.contexts;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
-    class adding_wrap_from_local_package_in_project_path_without_descriptor_update : add_wrap
+    class adding_wrap_from_local_package_in_project_path_without_descriptor_update : contexts.add_wrap
     {
-        
         public adding_wrap_from_local_package_in_project_path_without_descriptor_update()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
             given_currentdirectory_package("sauron", new Version(1, 0, 0));
 
-
-            when_executing_command("-Name","sauron", "-nodesc");
+            when_executing_command("-Name sauron -nodesc");
         }
 
         [Test]
@@ -30,12 +25,12 @@ namespace OpenWrap.Tests.Commands
         [Test]
         public void descriptor_is_not_updated()
         {
-            SpecExtensions.ShouldBeNull<PackageDependency>(Environment.Descriptor.Dependencies.FirstOrDefault(x=>x.Name == "sauron"));
+            Environment.Descriptor.Dependencies.FirstOrDefault(x=>x.Name == "sauron").ShouldBeNull();
         }
         [Test]
         public void descriptor_file_is_not_updated()
         {
-            SpecExtensions.ShouldBeNull<PackageDependency>(PostExecutionDescriptor.Dependencies.FirstOrDefault(x => x.Name == "sauron"));
+            PostExecutionDescriptor.Dependencies.FirstOrDefault(x => x.Name == "sauron").ShouldBeNull();
         }
     }
 }

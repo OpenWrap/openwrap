@@ -11,7 +11,7 @@ namespace OpenWrap.Commands.remove_wrap
         {
             given_system_package("saruman", "1.0.0.0");
             given_system_package("saruman", "1.0.0.1");
-            when_executing_command("saruman","-system", "-last");
+            when_executing_command("saruman -system -last");
         }
         [Test]
         public void packge_is_removed()

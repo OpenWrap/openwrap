@@ -17,10 +17,10 @@ namespace Tests.Commands.contexts
 
         }
 
-        protected override void when_executing_command(params string[] parameters)
+        protected override void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
-            Remotes = ServiceLocator.GetService<IConfigurationManager>().LoadRemoteRepositories();
+            ConfiguredRemotes = ServiceLocator.GetService<IConfigurationManager>().LoadRemoteRepositories();
         }
     }
 }

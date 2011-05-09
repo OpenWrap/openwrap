@@ -13,7 +13,7 @@ namespace Tests.Commands.clean_wrap
             given_project_repository(new InMemoryRepository("Project repository"));
             given_project_package("lionel", "1.2.3.4");
 
-            when_executing_command("richie", "-Project");
+            when_executing_command("richie -Project");
         }
 
         [Test]

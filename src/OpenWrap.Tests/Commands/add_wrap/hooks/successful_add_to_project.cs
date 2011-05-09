@@ -13,7 +13,7 @@ namespace Tests.Commands.add_wrap.hooks
             given_project_repository();
             given_remote_package("sauron", "1.0.0".ToVersion());
 
-            when_executing_command("sauron", "-project");
+            when_executing_command("sauron -project");
         }
 
         [Test]

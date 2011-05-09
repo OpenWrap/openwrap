@@ -12,7 +12,13 @@ namespace OpenWrap.Configuration
 
         public string FetchRepository { get; set; }
         public ICollection<string> PublishRepositories { get; set; }
-        public string Name { get; set; }
+        string _name;
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value.Trim(); }
+        }
+
         public int Priority { get; set; }
     }
 }

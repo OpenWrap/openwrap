@@ -8,7 +8,7 @@ namespace OpenWrap.Commands.contexts
     {
 
         protected IPackageDescriptor PostCommandDescriptor;
-        protected override void when_executing_command(params string[] parameters)
+        protected override void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
             PostCommandDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);

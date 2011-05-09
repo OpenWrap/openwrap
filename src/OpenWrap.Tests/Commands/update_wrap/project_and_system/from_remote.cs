@@ -19,7 +19,7 @@ namespace Tests.Commands.update_wrap.project_and_system
             given_remote_package("goldberry", "3.0.0".ToVersion());
 
 
-            when_executing_command("-system","-project");
+            when_executing_command("-system -project");
         }
         [Test]
         public void project_repo_updated()

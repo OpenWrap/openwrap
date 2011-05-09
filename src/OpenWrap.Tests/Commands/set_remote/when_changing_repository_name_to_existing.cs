@@ -8,7 +8,7 @@ namespace OpenWrap.Tests.Commands.Remote.Set
     {
         public when_changing_repository_name_to_existing()
         {
-            when_executing_command("secundus", "-newname", "primus");
+            when_executing_command("secundus -newname primus");
         }
 
         [Test]

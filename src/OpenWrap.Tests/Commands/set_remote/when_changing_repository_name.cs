@@ -8,7 +8,7 @@ namespace OpenWrap.Tests.Commands.Remote.Set
     {
         public when_changing_repository_name()
         {
-            when_executing_command("secundus", "-newname", "vamu");
+            when_executing_command("secundus -newname vamu");
         }
 
         [Test]

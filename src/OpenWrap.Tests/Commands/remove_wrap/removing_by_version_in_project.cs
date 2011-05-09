@@ -15,7 +15,7 @@ namespace OpenWrap.Commands.remove_wrap
             given_dependency("depends: saruman");
             given_project_package("saruman", "1.0.0.0");
             given_project_package("saruman", "1.0.0.1");
-            when_executing_command("saruman", "-project", "-version", "1.0.0.0");
+            when_executing_command("saruman -project -version 1.0.0.0");
         }
 
         [Test]

@@ -11,7 +11,7 @@ namespace publish_wrap_specifications
         {
             given_remote_repository("mordor");
             given_currentdirectory_package("sauron", "1.0.0.123");
-            when_executing_command("-remote", "mordor", "-path", "sauron-1.0.0.123.wrap", "-user", "frodo", "-pwd", "ring");
+            when_executing_command("-remote mordor -path sauron-1.0.0.123.wrap -user frodo -pwd ring");
         }
 
         [Test]

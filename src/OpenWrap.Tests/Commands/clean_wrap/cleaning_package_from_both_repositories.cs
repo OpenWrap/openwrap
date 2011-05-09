@@ -21,7 +21,7 @@ namespace Tests.Commands.clean_wrap
             given_system_package("lionel", "1.0.0.0");
             given_system_package("lionel", LionelVersion);
 
-            when_executing_command("lionel", "-sys", "-proj");
+            when_executing_command("lionel -sys -proj");
         }
 
         [Test]

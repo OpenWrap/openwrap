@@ -8,7 +8,7 @@ namespace OpenWrap.Tests.Commands.Remote.Set
     {
         public moving_repository_to_new_priority_case3()
         {
-            when_executing_command("primus", "-priority", "2");
+            when_executing_command("primus -priority 2");
         }
 
         [Test]

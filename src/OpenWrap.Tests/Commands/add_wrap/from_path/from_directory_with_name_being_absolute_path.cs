@@ -8,7 +8,7 @@ namespace Tests.Commands.add_wrap.from_path
         {
             given_current_directory(@"c:\\rohan");
 
-            when_executing_command(@"c:\sauron\myFile.wrap", "-from", "c:\\mordor");
+            when_executing_command(@"c:\sauron\myFile.wrap -from c:\\mordor");
         }
 
         [Test]

@@ -34,9 +34,25 @@ namespace OpenWrap.Commands.contexts
         protected CommandRepository Commands;
         protected InMemoryEnvironment Environment;
         protected IFileSystem FileSystem;
+        protected MemoryRepositoryFactory Factory;
+        protected RemoteRepositories ConfiguredRemotes;
+        protected InMemoryRepository DefaultRemote;
+        protected List<IPackageRepository> RemoteRepositories;
 
         protected command()
         {
+            DefaultRemote = new InMemoryRepository("default");
+            RemoteRepositories = new List<IPackageRepository> { DefaultRemote };
+            ConfiguredRemotes = new RemoteRepositories
+            {
+                    {"default",
+                        new RemoteRepository
+                        {
+                                FetchRepository = DefaultRemote.Token,
+                                PublishRepositories = {DefaultRemote.Token}
+                        }
+                    }
+            };
             Services.ServiceLocator.Clear();
             var currentDirectory = System.Environment.CurrentDirectory;
             FileSystem = given_file_system(currentDirectory);
@@ -53,10 +69,15 @@ namespace OpenWrap.Commands.contexts
                     new CecilCommandExporter()
                 }));
             Services.ServiceLocator.RegisterService<ICommandRepository>(Commands);
-            
+
             Services.ServiceLocator.TryRegisterService<IPackageManager>(PackageManagerFactory());
-            
+
             Services.ServiceLocator.RegisterService<IConfigurationManager>(new DefaultConfigurationManager(Environment.ConfigurationDirectory));
+
+            Factory = new MemoryRepositoryFactory();
+            Factory.FromToken = token => RemoteRepositories.FirstOrDefault(repo => repo.Name == token.Substring(8));
+
+            ServiceLocator.GetService<IConfigurationManager>().SaveRemoteRepositories(ConfiguredRemotes);
         }
 
         protected virtual Func<IPackageManager> PackageManagerFactory()
@@ -76,7 +97,7 @@ namespace OpenWrap.Commands.contexts
         {
             new DependsParser().Parse(dependency, Environment.GetOrCreateScopedDescriptor(scope).Value);
         }
-        
+
         protected void given_dependency(string dependency)
         {
             given_dependency(string.Empty, dependency);
@@ -105,16 +126,16 @@ namespace OpenWrap.Commands.contexts
         {
             Environment.CurrentDirectoryRepository = repository;
         }
-       
+
         protected void given_remote_package(string name, Version version, params string[] dependencies)
         {
             // note Version is a version type because of overload resolution...
-            AddPackage(Environment.RemoteRepository, name, version.ToString(), dependencies);
+            AddPackage(DefaultRemote, name, version.ToString(), dependencies);
         }
 
         protected void given_remote_package(string repositoryName, string name, Version version, params string[] dependencies)
         {
-            AddPackage(Environment.RemoteRepositories.First(x=>x.Name == repositoryName), name, version.ToString(), dependencies);
+            AddPackage(RemoteRepositories.First(x => x.Name == repositoryName), name, version.ToString(), dependencies);
         }
 
         protected void given_system_package(string name, string version, params string[] dependencies)
@@ -128,17 +149,17 @@ namespace OpenWrap.Commands.contexts
             {
                 ((InMemoryRepository)repository).Packages.Add(new InMemoryPackage
                 {
-                        Name = name,
-                        Source = repository,
-                        Version = version.ToVersion(),
-                        Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies).ToList()
+                    Name = name,
+                    Source = repository,
+                    Version = version.ToVersion(),
+                    Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies).ToList()
                 });
                 return;
             }
             var packageFileName = name + "-" + version + ".wrap";
             var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
             using (var readStream = packageStream)
-            using (var publisher = ((ISupportPublishing)repository).Publisher())
+            using (var publisher = repository.Feature<ISupportPublishing>().Publisher())
                 publisher.Publish(packageFileName, readStream);
         }
 
@@ -155,13 +176,13 @@ namespace OpenWrap.Commands.contexts
             {
                 var localFile = Environment.CurrentDirectory.GetFile(PackageNameUtility.PackageFileName(packageName, version.ToString())).MustExist();
                 Packager.NewWithDescriptor(localFile, packageName, version.ToString(), dependencies);
-                
+
             }
         }
 
         protected void given_remote_configuration(RemoteRepositories remoteRepositories)
         {
-            Services.ServiceLocator.GetService<IConfigurationManager>()
+            ServiceLocator.GetService<IConfigurationManager>()
                     .Save(Configurations.Addresses.RemoteRepositories, remoteRepositories);
         }
 
@@ -169,15 +190,23 @@ namespace OpenWrap.Commands.contexts
         {
 
             var file = FileSystem.GetFile(filePath);
-            using(var newFile = file.OpenWrite())
+            using (var newFile = file.OpenWrite())
             {
-                StreamExtensions.CopyTo(stream, newFile);
+                stream.CopyTo(newFile);
             }
         }
 
         protected void given_remote_repository(string remoteName)
         {
-            Environment.RemoteRepositories.Add(new InMemoryRepository(remoteName));
+            var repo = new InMemoryRepository(remoteName);
+            RemoteRepositories.Add(repo);
+            ConfiguredRemotes[remoteName] = new RemoteRepository
+            {
+                FetchRepository = repo.Token,
+                PublishRepositories = { repo.Token },
+                Name = remoteName
+            };
+            ServiceLocator.GetService<IConfigurationManager>().SaveRemoteRepositories(ConfiguredRemotes);
         }
 
         protected void given_current_directory(string currentDirectory)
@@ -192,31 +221,33 @@ namespace OpenWrap.Commands.contexts
         {
             Environment.Descriptor = packageDescriptor;
         }
+
+        protected void given_remote_factory(Func<string, IPackageRepository> repoFactory)
+        {
+            Factory.FromUserInput = repoFactory;
+        }
     }
 
     public abstract class command_context<T> : command where T : ICommand
     {
         protected ICommandDescriptor Command;
         protected List<ICommandOutput> Results;
-        protected MemoryRepositoryFactory Factory;
-        protected RemoteRepositories Remotes;
 
         public command_context()
         {
             Command = CecilCommandExporter.GetCommandFrom<T>();
             Commands = new CommandRepository { Command };
 
-            Factory = new MemoryRepositoryFactory();
             ServiceLocator.TryRegisterService<IEnumerable<IRemoteRepositoryFactory>>(() => new List<IRemoteRepositoryFactory> { Factory });
         }
 
-        protected virtual void when_executing_command(params string[] parameters)
+        protected virtual void when_executing_command(string args = null)
         {
-            
+            args = args ?? string.Empty;
             foreach (var descriptor in Environment.ScopedDescriptors.Values)
                 descriptor.Save();
 
-            Results = new CommandLineRunner().Run(Command, parameters.JoinString(" ")).ToList();
+            Results = new CommandLineRunner().Run(Command, args).ToList();
         }
 
         protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
@@ -238,11 +269,6 @@ namespace OpenWrap.Commands.contexts
         {
             scope = scope ?? string.Empty;
             return new PackageDescriptorReaderWriter().Read(Environment.ScopedDescriptors[scope].File);
-        }
-
-        protected void given_remote_factory(Func<string, IPackageRepository> repoFactory)
-        {
-            Factory.FromUserInput = repoFactory;
         }
     }
 }

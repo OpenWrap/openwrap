@@ -8,7 +8,7 @@ namespace OpenWrap.Tests.Commands.Remote.Set
     {
         public when_changing_remote_priority()
         {
-            when_executing_command("secundus", "-priority", "1");
+            when_executing_command("secundus -priority 1");
         }
 
         [Test]

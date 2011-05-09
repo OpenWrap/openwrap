@@ -4,7 +4,7 @@ using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
     class adding_from_local_path_with_dependency : command_context<AddWrapCommand>
     {

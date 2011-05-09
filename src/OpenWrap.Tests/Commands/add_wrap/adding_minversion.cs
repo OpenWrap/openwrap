@@ -1,18 +1,16 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
-using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
-    class adding_minversion : add_wrap
+    class adding_minversion : contexts.add_wrap
     {
         public adding_minversion()
         {
             given_file_based_project_repository();
             given_system_package("sauron", "1.0.0");
             given_system_package("sauron", "2.0.0");
-            when_executing_command("sauron", "-minversion", "1.0.0");
+            when_executing_command("sauron -minversion 1.0.0");
         }
 
         [Test]

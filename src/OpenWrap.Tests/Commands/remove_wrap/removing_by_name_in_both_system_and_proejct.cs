@@ -14,7 +14,7 @@ namespace OpenWrap.Commands.remove_wrap
             given_system_package("gandalf", "1.0.0.0");
             given_project_package("saruman", "99");
             given_project_package("gandalf", "1.0.0.0");
-            when_executing_command("gandalf", "-project", "-system");
+            when_executing_command("gandalf -project -system");
         }
         [Test]
         public void package_removed_from_both_repositories()

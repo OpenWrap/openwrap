@@ -8,7 +8,7 @@ namespace OpenWrap.Commands.remove_wrap
     {
         public remove_unknown_system_package()
         {
-            when_executing_command("saruman", "-system");
+            when_executing_command("saruman -system");
         }
         [Test]
         public void an_error_is_triggered()

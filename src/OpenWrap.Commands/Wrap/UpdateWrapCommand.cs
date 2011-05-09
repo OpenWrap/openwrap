@@ -68,7 +68,8 @@ namespace OpenWrap.Commands.Wrap
 
                 var errorMessage = "{0} could not be updated\r\n{1}";
 
-                var details = new[] { " - " + failed.First() }.Concat(failed.Skip(1).Select(x => "   " + x));
+                var details = failed.SelectMany(_ => new[] { " - " + _.First() }.Concat(_.Skip(1).Select(x => "   " + x)));
+
 
                 yield return new Error(errorMessage, failed.Key, details.JoinString(@"\r\n"));
             }

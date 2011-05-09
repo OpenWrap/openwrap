@@ -24,12 +24,16 @@ namespace OpenWrap.PackageManagement
 
         public delegate bool PackageVisitor(IPackageInfo from, PackageDependency dependency, IPackageInfo to);
 
-        public bool VisitFromLeafs(PackageVisitor visitor, IEnumerable<PackageDependency> dependencies = null)
+        public bool VisitFrom(PackageVisitor visitor)
+        {
+            return VisitFrom(null, visitor);
+        }
+
+        public bool VisitFrom(IEnumerable<PackageDependency> dependencies, PackageVisitor visitor)
         {
             var nodes = (dependencies ?? Leafs()).Where(x=>_byName.ContainsKey(x.Name)).ToList();
-            
-            Dictionary<string, List<string>> byDependents = GetExpectedVisitCounts(nodes);
-            var expectedVisits = byDependents.ToDictionary(x => x.Key, x => x.Value.Count);
+
+            var expectedVisits = GetExpectedVisitCounts(nodes).ToDictionary(x => x.Key, x => x.Value.Count);
             return nodes.All(package => _byName.ContainsKey(package.Name) && VisitDependencyNode(null, package, _byName[package.Name], visitor, expectedVisits));
         }
 
@@ -43,6 +47,7 @@ namespace OpenWrap.PackageManagement
                                                    (from, dep, to) =>
                                                    {
                                                        if (from == null) return true;
+                                                       if (from.Name == to.Name) return true;
                                                        List<string> dependents;
                                                        if (!byDependents.TryGetValue(to.Name, out dependents))
                                                            byDependents[to.Name] = dependents = new List<string>();
@@ -79,11 +84,6 @@ namespace OpenWrap.PackageManagement
                 unvisited.RemoveAll(x => seen.Contains(x.Name));
             }
             return leafs.Select(_ => _.dep).Concat(recursives.Select(_ => new PackageDependency(_.Name)));
-            //foreach(var package in _byName.Values.Where(p=>!leafs.Any(leaf=>p.Name == leaf.Name)))
-            //{
-
-            //    VisitDependencyNode(null, new PackageDependency(package.Name),package, visitor, new Dictionary<string,int>() )
-            //}
         }
         IEnumerable<string> VisitAll(IPackageInfo root)
         {
@@ -93,12 +93,14 @@ namespace OpenWrap.PackageManagement
         }
         bool VisitDependencyNode(IPackageInfo from, PackageDependency dependency, IPackageInfo to, PackageVisitor visitor, Dictionary<string, int> visitsLeft)
         {
-            return visitor(from, dependency, to) &&
+            var visitResult = visitor(from, dependency, to);
+            return visitResult &&
                    (DecreaseVisitCount(visitsLeft, to.Name) != 0 ||
                     to.Dependencies.All(dependencyNode => _byName.ContainsKey(dependencyNode.Name) ?
                                                           VisitDependencyNode(to, dependencyNode, _byName[dependencyNode.Name], visitor, visitsLeft)
                                                           : true));
         }
+
         TReturn AddReturn<T, TReturn>(ICollection<T> collection, T value, TReturn returnValue)
         {
             collection.Add(value);

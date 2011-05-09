@@ -14,7 +14,6 @@ namespace OpenWrap.Runtime
         IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors { get; }
         IFile DescriptorFile { get; }
         IPackageDescriptor Descriptor { get; }
-        //IEnumerable<IPackageRepository> RemoteRepositories { get; }
         IPackageRepository SystemRepository { get; }
         IDirectory CurrentDirectory { get; }
         IDirectory ConfigurationDirectory { get; }

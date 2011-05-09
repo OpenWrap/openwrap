@@ -11,7 +11,7 @@ namespace OpenWrap.Tests.Commands.Remote.Set
         public when_changing_repository_href()
         {
             given_remote_factory(input => new InMemoryRepository(input));
-            when_executing_command("secundus", "-href", "http://awesomereps.net");
+            when_executing_command("secundus -href http://awesomereps.net");
         }
 
         [Test]

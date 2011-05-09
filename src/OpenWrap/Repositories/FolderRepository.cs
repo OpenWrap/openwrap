@@ -97,6 +97,8 @@ namespace OpenWrap.Repositories
         }
         class DirectoryCopyAnchorageStrategy : AnchorageStrategy
         {
+            const string ANCHOR_MARKER_FILENAME = "_anchored";
+
             public override bool? Anchor(IDirectory packagesDirectory, IDirectory packageDirectory, string anchorName)
             {
                 var anchoredDirectory = packagesDirectory.GetDirectory(anchorName);
@@ -106,14 +108,27 @@ namespace OpenWrap.Repositories
                 anchoredDirectory = packagesDirectory.GetDirectory(anchorName);
                 if (anchoredDirectory.Exists)
                 {
-                    var anchorFile = anchoredDirectory.GetFile(".anchored");
+                    // convert old anchor file to new name
+                    TryConvertOldAnchorMarker(anchoredDirectory);
+                    var anchorFile = anchoredDirectory.GetFile(ANCHOR_MARKER_FILENAME);
                     if (anchorFile.Exists && anchorFile.ReadString() == packageDirectory.Name) return null;
 
                     if (!SafeDelete(anchoredDirectory)) return false;
                 }
                 packageDirectory.CopyTo(anchoredDirectory);
-                anchoredDirectory.GetFile(".anchored").WriteString(packageDirectory.Name);
+                anchoredDirectory.GetFile(ANCHOR_MARKER_FILENAME).WriteString(packageDirectory.Name);
                 return true;
+            }
+
+            void TryConvertOldAnchorMarker(IDirectory anchoredDirectory)
+            {
+                var oldAnchor = anchoredDirectory.GetFile(".anchored");
+                if (oldAnchor.Exists)
+                {
+                    var newAnchor = anchoredDirectory.GetFile(ANCHOR_MARKER_FILENAME);
+                    if (newAnchor.Exists) newAnchor.Delete();
+                    oldAnchor.MoveTo(newAnchor);
+                }
             }
         }
         public class SymLinkAnchorageStrategy : AnchorageStrategy

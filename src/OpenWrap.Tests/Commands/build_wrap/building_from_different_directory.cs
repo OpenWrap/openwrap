@@ -19,7 +19,7 @@ namespace Tests.Commands.build_wrap
 
             given_current_directory(@"c:\current");
             given_file(@"c:\other\myPackage.wrapdesc", Content("name: myPackage\r\nversion: 1.0\r\nbuild: none"));
-            when_executing_command("-from", @"c:\other");
+            when_executing_command(@"-from c:\other");
         }
 
         [Test]

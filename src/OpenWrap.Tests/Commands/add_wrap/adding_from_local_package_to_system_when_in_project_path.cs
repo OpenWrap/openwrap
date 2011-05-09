@@ -4,7 +4,7 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
     class adding_from_local_package_to_system_when_in_project_path : command_context<AddWrapCommand>
     {
@@ -18,7 +18,7 @@ namespace OpenWrap.Tests.Commands
             given_currentdirectory_package(SAURON_NAME, SAURON_VERSION);
 
 
-            when_executing_command("-Name", SAURON_NAME, "-System");
+            when_executing_command("-Name " + SAURON_NAME + " -System");
         }
         [Test]
         public void installs_package_in_system_repository()

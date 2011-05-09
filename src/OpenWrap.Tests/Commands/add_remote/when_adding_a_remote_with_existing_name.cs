@@ -18,7 +18,7 @@ namespace OpenWrap.Tests.Commands.Remote.Add
         public when_adding_a_remote_with_existing_name()
         {
             given_remote_configuration(new RemoteRepositories{{"iron-hills", null}});
-            when_executing_command("iron-hills", "http://lotr.org/iron-hills");
+            when_executing_command("iron-hills http://lotr.org/iron-hills");
         }
         [Test]
         public void an_error_is_returned()

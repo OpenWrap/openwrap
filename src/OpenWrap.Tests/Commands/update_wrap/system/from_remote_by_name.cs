@@ -14,7 +14,7 @@ namespace Tests.Commands.update_wrap.system
             given_remote_package("one-ring", "1.1".ToVersion());
             given_remote_package("goldberry", "2.1".ToVersion());
 
-            when_executing_command("one-ring", "-sys");
+            when_executing_command("one-ring -sys");
         }
         [Test]
         public void project_is_updated()

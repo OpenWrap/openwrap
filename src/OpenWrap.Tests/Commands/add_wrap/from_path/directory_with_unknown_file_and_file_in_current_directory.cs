@@ -14,7 +14,7 @@ namespace Tests.Commands.add_wrap.from_path
             given_file_package("c:\\rohan", "sauron", "2.0.0");
             FileSystem.GetDirectory(@"c:\mordor").MustExist();
 
-            when_executing_command("sauron", "-from", @"c:\mordor");
+            when_executing_command(@"sauron -from c:\mordor");
         }
 
         [Test]

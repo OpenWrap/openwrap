@@ -13,7 +13,7 @@ namespace Tests.Commands.add_wrap.from_path
             given_project_repository();
             given_file_package("c:\\rohan", "sauron", "2.0.0");
 
-            when_executing_command("sauron", "-from", @"c:\mordor");
+            when_executing_command(@"sauron -from c:\mordor");
         }
         [Test]
         public void package_is_not_added()
