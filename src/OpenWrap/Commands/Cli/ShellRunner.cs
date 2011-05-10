@@ -40,7 +40,7 @@ namespace OpenWrap.Commands.Cli
             {
                 var cdenv = new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(env.CurrentDirectory()));
                 if (env.SysPath() != null)
-                    cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(env.SysPath());
+                    cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(new Path(env.SysPath()).Combine("wraps"));
                 return cdenv;
             });
             Services.ServiceLocator.TryRegisterService<IPackageResolver>(() => new ExhaustiveResolver());
