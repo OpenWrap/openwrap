@@ -17,6 +17,10 @@ namespace OpenRasta.Client
                 ? new Uri(uri.ToString() + "/")
                 : uri;
         }
+        public static Uri Combine(this Uri baseUri, string childUri)
+        {
+            return baseUri.Combine(childUri.ToUri());
+        }
         public static Uri Combine(this Uri baseUri, Uri childUri)
         {
             return new Uri(baseUri, childUri);

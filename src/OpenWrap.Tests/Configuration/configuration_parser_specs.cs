@@ -6,7 +6,7 @@ using OpenWrap.Testing;
 
 namespace Tests.Configuration
 {
-    public class reading : OpenWrap.Testing.context
+    public class configuration_parser_specs : OpenWrap.Testing.context
     {
         [Test]
         public void section_without_name_is_parsed()

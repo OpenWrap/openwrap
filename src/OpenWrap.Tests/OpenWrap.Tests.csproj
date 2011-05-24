@@ -236,6 +236,12 @@
     <Compile Include="Commands\usage\command_with_positioned_parameters.cs" />
     <Compile Include="Commands\MemoryCommandDescriptor.cs" />
     <Compile Include="Commands\MemoryCommandInput.cs" />
+    <Compile Include="Configuration\reading_config_with_uri.cs" />
+    <Compile Include="contexts\configuration.cs" />
+    <Compile Include="Configuration\dictionaries\reading_no_file.cs" />
+    <Compile Include="Configuration\dictionaries\when_two_dictionary_values_with_same_name_are_present.cs" />
+    <Compile Include="Configuration\dictionaries\writing_config_files.cs" />
+    <Compile Include="Configuration\simple\reading_from_file.cs" />
     <Compile Include="contexts\dependency_manager_context.cs" />
     <Compile Include="contexts\descriptor.cs" />
     <Compile Include="contexts\descriptor_readers.cs" />
@@ -341,8 +347,8 @@
     <Compile Include="Commands\init_wrap\init_wrap_in_complete_dot_folder.cs" />
     <Compile Include="Commands\set_wrap\set_wrap_content_true.cs" />
     <Compile Include="Commands\update_wrap\project\package_only_in_project.cs" />
-    <Compile Include="Configuration\reading.cs" />
-    <Compile Include="Configuration\configuration_specifications.cs" />
+    <Compile Include="Configuration\configuration_parser_specs.cs" />
+    <Compile Include="Configuration\dictionaries\reading_from_file.cs" />
     <Compile Include="context.cs" />
     <Compile Include="Dependencies\anchored_dependencies.cs" />
     <Compile Include="resolving_assemblies\with_invalid_dependencies.cs" />

@@ -116,6 +116,7 @@
     <Compile Include="Repositories\IRepositoryFeature.cs" />
     <Compile Include="Repositories\NuGet\NuGetODataRepositoryFactory.cs" />
     <Compile Include="Repositories\SimpleIndexedRepositoryFactory.cs" />
+    <Compile Include="TypeExtensions.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

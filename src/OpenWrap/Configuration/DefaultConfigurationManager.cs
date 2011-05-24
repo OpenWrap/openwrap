@@ -26,10 +26,19 @@ namespace OpenWrap.Configuration
 
         public T Load<T>(Uri uri) where T : new()
         {
+            uri = uri ?? DetermineUriFromAttribute<T>();
             var file = GetConfigurationFile(uri);
             if (!file.Exists)
                 return GetDefaultValueFor<T>();
             return ParseFile<T>(file);
+        }
+
+        Uri DetermineUriFromAttribute<T>()
+        {
+            var attrib = typeof(T).Attribute<PathUriAttribute>();
+            if (attrib == null) return null;
+
+            return new Uri(attrib.Uri, UriKind.Absolute);
         }
 
         public void Save<T>(Uri uri, T configEntry)
@@ -82,6 +91,7 @@ namespace OpenWrap.Configuration
             {
                 PopulateDictionaryEntries(file, dictionaryInterface, parsedConfig, configData);
             }
+            AssignPropertiesFromLines(configData, parsedConfig.OfType<ConfigurationLine>());
             return configData;
         }
 
