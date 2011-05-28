@@ -4,7 +4,7 @@ namespace OpenWrap.Configuration
 {
     public interface IConfigurationManager
     {
-        T Load<T>(Uri uri) where T : new();
-        void Save<T>(Uri uri, T configEntry);
+        T Load<T>(Uri uri = null) where T : new();
+        void Save<T>(T configEntry, Uri uri = null);
     }
 }

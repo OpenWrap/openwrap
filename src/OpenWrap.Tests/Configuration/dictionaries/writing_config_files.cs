@@ -9,7 +9,7 @@ using Tests.contexts;
 
 namespace Tests.Configuration.dictionaries
 {
-    class writing_config_files: configuration<RemoteRepositories>
+    internal class writing_config_files : configuration<RemoteRepositories>
     {
         public writing_config_files()
         {
@@ -27,16 +27,16 @@ namespace Tests.Configuration.dictionaries
                     .ShouldContain(@"[remoterepository openwrap]")
                     .ShouldContain("fetchrepository: " + RemoteRepositories.Default["openwrap"].FetchRepository);
         }
-        void when_saving_configuration(Uri uri)
-        {
-            DefaultConfigurationManager.Save(uri, Entry);
-            Entry = DefaultConfigurationManager.LoadRemoteRepositories();
-        }
 
         void given_configuration_object(RemoteRepositories remoteRepositories)
         {
             Entry = remoteRepositories;
+        }
 
+        void when_saving_configuration(Uri uri)
+        {
+            DefaultConfigurationManager.Save(Entry, uri);
+            Entry = DefaultConfigurationManager.LoadRemoteRepositories();
         }
     }
 }

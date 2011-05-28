@@ -7,7 +7,7 @@ using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
+
 
 namespace OpenWrap.Repositories.Http
 {

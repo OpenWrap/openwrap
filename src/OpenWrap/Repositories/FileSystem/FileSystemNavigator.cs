@@ -8,7 +8,7 @@ using OpenFileSystem.IO;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories.Http;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
+
 
 namespace OpenWrap.Repositories.FileSystem
 {

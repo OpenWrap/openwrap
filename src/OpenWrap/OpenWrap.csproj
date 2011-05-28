@@ -93,6 +93,9 @@
     <Compile Include="Commands\IUICommandRepository.cs" />
     <Compile Include="Commands\UICommandAttribute.cs" />
     <Compile Include="Commands\UICommandContext.cs" />
+    <Compile Include="Configuration\ConstantUris.cs" />
+    <Compile Include="Configuration\KeyAttribute.cs" />
+    <Compile Include="Configuration\PathUriAttribute.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />

@@ -3,7 +3,7 @@ using System.Text;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Configuration;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
+
 
 namespace Tests.contexts
 {
@@ -43,7 +43,7 @@ namespace Tests.contexts
             var relativeUri = Configurations.Addresses.BaseUri.MakeRelativeUri(configurationUri).ToString();
             var file = ConfigurationDirectory.GetFile(relativeUri);
             using (var fs = file.OpenWrite())
-                StreamExtensions.Write(fs, Encoding.UTF8.GetBytes(textValue));
+                fs.Write(Encoding.UTF8.GetBytes(textValue));
 
 
         }

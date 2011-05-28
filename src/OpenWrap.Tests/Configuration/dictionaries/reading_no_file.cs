@@ -6,12 +6,13 @@ using Tests.contexts;
 
 namespace Tests.Configuration.dictionaries
 {
-    class reading_no_file : configuration<reading_no_file.Config>
+    internal class reading_no_file : configuration<reading_no_file.Config>
     {
         public reading_no_file()
         {
             when_loading_configuration(Configurations.Addresses.BaseUri.Combine("/unknown".ToUri()));
         }
+
         [Test]
         public void a_default_value_is_returned()
         {

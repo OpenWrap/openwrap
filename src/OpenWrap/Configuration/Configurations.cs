@@ -2,33 +2,22 @@
 
 namespace OpenWrap.Configuration
 {
-    public static class ConstantUris
+    public static class ConfigurationExtensions
     {
-        public const string URI_BASE = "http://configuration.openwrap.org";
-        public const string URI_REMOTES = "http://configuration.openwrap.org/remote-repositories";
-        
-    }
-    public class PathUriAttribute : Attribute
-    {
-        public string Uri { get; private set; }
 
-        public PathUriAttribute(string uri)
-        {
-            Uri = uri;
-        }
-    }
-    public static class Configurations
-    {
         public static RemoteRepositories LoadRemoteRepositories(this IConfigurationManager configurationManager)
         {
-            return configurationManager.Load<RemoteRepositories>(Addresses.RemoteRepositories);
+            return configurationManager.Load<RemoteRepositories>();
         }
 
         public static void SaveRemoteRepositories(this IConfigurationManager configurationManager, RemoteRepositories repositories)
         {
-            configurationManager.Save(Addresses.RemoteRepositories, repositories);
+            configurationManager.Save(repositories);
         }
-
+   
+    }
+    public static class Configurations
+    {
         public static class Addresses
         {
             public static readonly Uri BaseUri = new Uri("http://configuration.openwrap.org");

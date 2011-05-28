@@ -183,7 +183,7 @@ namespace OpenWrap.Commands.contexts
         protected void given_remote_configuration(RemoteRepositories remoteRepositories)
         {
             ServiceLocator.GetService<IConfigurationManager>()
-                    .Save(Configurations.Addresses.RemoteRepositories, remoteRepositories);
+                    .Save(remoteRepositories, Configurations.Addresses.RemoteRepositories);
         }
 
         protected void given_file(string filePath, Stream stream)

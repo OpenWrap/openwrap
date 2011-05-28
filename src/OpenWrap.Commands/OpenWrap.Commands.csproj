@@ -95,6 +95,10 @@
     <Compile Include="Wrap\UpdateWrapCommand.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
+      <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
+      <Name>OpenRasta.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Testing\OpenWrap.Testing.csproj">
       <Project>{C8271D09-7581-4DC5-B47B-6763062506C2}</Project>
       <Name>OpenWrap.Testing</Name>

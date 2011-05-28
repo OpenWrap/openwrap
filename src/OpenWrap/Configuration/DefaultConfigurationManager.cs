@@ -41,8 +41,10 @@ namespace OpenWrap.Configuration
             return new Uri(attrib.Uri, UriKind.Absolute);
         }
 
-        public void Save<T>(Uri uri, T configEntry)
+        public void Save<T>(T configEntry, Uri uri)
         {
+            uri = uri ?? DetermineUriFromAttribute<T>();
+
             var configFile = GetConfigurationFile(uri);
             using (var writer = new StreamWriter(configFile.OpenWrite()))
             {
@@ -59,12 +61,19 @@ namespace OpenWrap.Configuration
         static object AssignPropertiesFromLines(object instance, IEnumerable<ConfigurationLine> lines)
         {
             var type = instance.GetType();
+            var allProperties = (type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Select(prop => new { prop, attr = prop.Attribute<KeyAttribute>() })
+                    .Where(@t => @t.attr != null)
+                    .ToLookup(x => x.attr.Name, x => x.prop, StringComparer.OrdinalIgnoreCase));
 
             foreach (var line in lines)
             {
-                var property = type.GetProperty(line.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                var property = type.GetProperty(line.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase)
+                    ?? (allProperties.Contains(line.Name) ? allProperties[line.Name].FirstOrDefault() : null);
+
                 if (property == null)
                     continue;
+
                 var propertyValue = property.PropertyType.CreateInstanceFrom(line.Value);
 
                 property.SetValue(instance, propertyValue, null);

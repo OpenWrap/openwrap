@@ -236,6 +236,7 @@
     <Compile Include="Commands\usage\command_with_positioned_parameters.cs" />
     <Compile Include="Commands\MemoryCommandDescriptor.cs" />
     <Compile Include="Commands\MemoryCommandInput.cs" />
+    <Compile Include="Configuration\reading_config_with_attribute_on_property.cs" />
     <Compile Include="Configuration\reading_config_with_uri.cs" />
     <Compile Include="contexts\configuration.cs" />
     <Compile Include="Configuration\dictionaries\reading_no_file.cs" />
