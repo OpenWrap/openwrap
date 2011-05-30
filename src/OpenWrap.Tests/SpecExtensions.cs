@@ -327,6 +327,16 @@ namespace OpenWrap.Testing
             return enumerable;
         }
 
+        public static IEnumerable<T> ShouldHaveOne<T>(this IEnumerable<T> enumerable, T value) where T : class
+        {
+            enumerable.SingleOrDefault(x => x.Equals(value)).ShouldNotBeNull();
+            return enumerable;
+        }
+        public static IEnumerable<T> ShouldHaveOne<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
+        {
+            enumerable.SingleOrDefault(predicate).ShouldNotBeNull();
+            return enumerable;
+        }
         public static IEnumerable<T> ShouldHaveAll<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
         {
             enumerable.All(predicate).ShouldBeTrue();

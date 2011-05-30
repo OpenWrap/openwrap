@@ -4,8 +4,8 @@ namespace OpenWrap.Repositories.Http
 {
     public interface IHttpRepositoryNavigator
     {
-        PackageDocument Index();
-        Stream LoadPackage(PackageItem packageItem);
+        PackageFeed Index();
+        Stream LoadPackage(PackageEntry packageEntry);
         bool CanPublish { get; }
         void PushPackage(string packageFileName, Stream packageStream);
     }

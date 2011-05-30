@@ -70,13 +70,13 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
             }
             class InMemoryNavigator : IHttpRepositoryNavigator
             {
-                public PackageDocument Index()
+                public PackageFeed Index()
                 {
                     var doc = XDocument.Parse(WrapListDocument, LoadOptions.SetBaseUri);
                     return doc.ParsePackageDocument();
                 }
 
-                public Stream LoadPackage(PackageItem packageItem)
+                public Stream LoadPackage(PackageEntry packageEntry)
                 {
                     throw new NotSupportedException();
                 }

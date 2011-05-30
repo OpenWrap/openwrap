@@ -25,6 +25,10 @@ namespace OpenWrap.Repositories
             return client.CreateRequest(uri).Head();
         }
 
+        public static IClientRequest Get(this IHttpClient client, Uri uri)
+        {
+            return client.CreateRequest(uri).Get();
+        }
         public static IClientRequest Head(this IHttpClient client, string uri)
         {
             return client.CreateRequest(new Uri(uri, UriKind.RelativeOrAbsolute)).Head();

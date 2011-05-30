@@ -42,14 +42,14 @@ namespace OpenWrap.Repositories.FileSystem
         }
 
 
-        public PackageDocument Index()
+        public PackageFeed Index()
         {
             return IndexDocument.ParsePackageDocument();
         }
 
-        public Stream LoadPackage(PackageItem packageItem)
+        public Stream LoadPackage(PackageEntry packageEntry)
         {
-            var packageFile = _directory.GetFile(packageItem.PackageHref.ToString());
+            var packageFile = _directory.GetFile(packageEntry.PackageHref.ToString());
             return packageFile.Exists ? packageFile.OpenRead() : null;
         }
 

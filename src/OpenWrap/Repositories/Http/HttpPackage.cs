@@ -16,13 +16,13 @@ namespace OpenWrap.Repositories.Http
         readonly IFileSystem _fileSystem;
         readonly IHttpRepositoryNavigator _httpNavigator;
         readonly LazyValue<PackageIdentifier> _identifier;
-        readonly PackageItem _package;
+        readonly PackageEntry _package;
         IPackage _loadedPackage;
 
         public HttpPackage(IFileSystem fileSystem,
                            IPackageRepository source,
                            IHttpRepositoryNavigator httpNavigator,
-                           PackageItem package)
+                           PackageEntry package)
         {
             _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;

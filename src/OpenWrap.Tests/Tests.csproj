@@ -270,7 +270,7 @@
     <Compile Include="PackageModel\descriptors\setting_symlinks.cs" />
     <Compile Include="PackageModel\descriptors\unknown_lines_in_descriptor.cs" />
     <Compile Include="Repositories\contexts\simple_index_repository_factory.cs" />
-    <Compile Include="Repositories\factories\nuget\AtomContent.cs" />
+    <Compile Include="Repositories\AtomContent.cs" />
     <Compile Include="Repositories\factories\nuget\from_user_input_by_name.cs" />
     <Compile Include="Repositories\factories\nuget\from_user_input_invalid_uri.cs" />
     <Compile Include="Repositories\factories\simple_index\from_token.cs" />
@@ -278,6 +278,16 @@
     <Compile Include="Repositories\factories\simple_index\from_user_input_index_does_not_exist.cs" />
     <Compile Include="Repositories\factories\simple_index\from_user_input_index_exists_in_sub_directory.cs" />
     <Compile Include="Repositories\factories\simple_index\from_user_input_index_exists.cs" />
+    <Compile Include="Repositories\nufeed\reading_official_nuget_feed.cs" />
+    <Compile Include="Repositories\nufeed\reading_package_feeds.cs" />
+    <Compile Include="Repositories\contexts\nufeed_parser.cs" />
+    <Compile Include="Repositories\nufeed\parser\reading_base_uri.cs" />
+    <Compile Include="Repositories\nufeed\parser\reading_empty_dependencies.cs" />
+    <Compile Include="Repositories\nufeed\parser\reading_feed.cs" />
+    <Compile Include="Repositories\nufeed\parser\reading_links.cs" />
+    <Compile Include="Repositories\nufeed\parser\reading_multiple_dependencies_with_ranges.cs" />
+    <Compile Include="Repositories\nufeed\parser\reading_one_dependency.cs" />
+    <Compile Include="Repositories\nufeed\parser\reading_one_dependency_without_version.cs" />
     <Compile Include="resolving_assemblies\assemblies_are_found.cs" />
     <Compile Include="resolving_assemblies\assemblies_defined_in_reference_section_are_resolved_by_assembly_name.cs" />
     <Compile Include="contexts\assembly_resolving.cs" />
@@ -306,7 +316,7 @@
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <Private>false</Private>
+      <Private>False</Private>
       <HintPath>..\..\lib\nunit-2.5.5\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -369,7 +379,6 @@
     <Compile Include="Repositories\current_directory_repository.cs" />
     <Compile Include="Repositories\indexed_folder_navigator.cs" />
     <Compile Include="Repositories\nuget_converter.cs" />
-    <Compile Include="Repositories\nuget_syndication.cs" />
     <Compile Include="Repositories\TestFiles.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

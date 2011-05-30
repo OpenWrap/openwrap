@@ -13,12 +13,12 @@ namespace OpenWrap.Repositories.Http
         readonly IHttpRepositoryNavigator _httpNavigator;
         readonly DateTimeOffset _lastModifiedTimeUtc;
         readonly bool _nuked;
-        readonly PackageItem _package;
+        readonly PackageEntry _package;
 
         public HttpPackageInfo(IFileSystem fileSystem,
                                IPackageRepository source,
                                IHttpRepositoryNavigator httpNavigator,
-                               PackageItem package)
+                               PackageEntry package)
         {
             Source = source;
             _fileSystem = fileSystem;

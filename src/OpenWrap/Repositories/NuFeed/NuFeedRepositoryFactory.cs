@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -8,9 +7,9 @@ using OpenRasta.Client;
 using OpenWrap.Repositories.Http;
 using OpenWrap.Repositories.NuGet;
 
-namespace OpenWrap.Repositories
+namespace OpenWrap.Repositories.NuFeed
 {
-    public class NuGetODataRepositoryFactory : IRemoteRepositoryFactory
+    public class NuFeedRepositoryFactory : IRemoteRepositoryFactory
     {
         const string DEFAULT_HREF = "https://go.microsoft.com/fwlink/?LinkID=206669";
         const string NS_ATOM = "http://www.w3.org/2005/Atom";
@@ -18,7 +17,7 @@ namespace OpenWrap.Repositories
         const string NS_XML = "http://www.w3.org/XML/1998/namespace";
         readonly IHttpClient _client;
 
-        public NuGetODataRepositoryFactory(IFileSystem fileSystem, IHttpClient client)
+        public NuFeedRepositoryFactory(IFileSystem fileSystem, IHttpClient client)
         {
             _client = client;
         }
@@ -26,15 +25,8 @@ namespace OpenWrap.Repositories
         public IPackageRepository FromToken(string token)
         {
             if (token.StartsWith("[nuget]") == false) return null;
-            var destinationUri = Regex.Match(token, @"^\[nuget\]\[.*\](?<uri>.*)");
-            return new HttpRepository(
-                    null,
-                    "nuget",
-                    new NuGetFeedNavigator(destinationUri.Groups["uri"].Value.ToUri()))
-            {
-                Token = token
-            }; 
-            
+            var destinationUri = Regex.Match(token, @"^\[nuget\]\[(?<target>.*)\](?<uri>.*)");
+            return new NuFeedRepository(_client, destinationUri.Groups["target"].Value.ToUri(), destinationUri.Groups["uri"].Value.ToUri());
         }
 
         public IPackageRepository FromUserInput(string identifier)
@@ -57,7 +49,7 @@ namespace OpenWrap.Repositories
             if (serviceResponse.Status.Code != 200) return null;
             var serviceDocument = XDocument.Load(XmlReader.Create(serviceResponse.Entity.Stream, new XmlReaderSettings { }), LoadOptions.SetBaseUri)
                     ;
-            var packageUri = (from collection in serviceDocument.Descendants(XName.Get("collection", NS_ATOMPUB))
+            var packagesUri = (from collection in serviceDocument.Descendants(XName.Get("collection", NS_ATOMPUB))
                               let collectionHref = collection.Attributes("href").FirstOrDefault()
                               let titleElement = collection.Element(XName.Get("title", NS_ATOM))
                               where collectionHref != null &&
@@ -72,14 +64,8 @@ namespace OpenWrap.Repositories
                                                 ).Reverse().Aggregate(target, UriExtensions.Combine)
                               select baseElement.Combine(collectionHref.Value.ToUri())).FirstOrDefault();
 
-            if (packageUri == null) return null;
-            return new HttpRepository(
-                    null,
-                    "nuget",
-                    new NuGetFeedNavigator(packageUri))
-            {
-                    Token = string.Format("[nuget][{0}]{1}", target, packageUri)
-            };
+            if (packagesUri == null) return null;
+            return new NuFeedRepository(_client, target, packagesUri);
         }
     }
 }

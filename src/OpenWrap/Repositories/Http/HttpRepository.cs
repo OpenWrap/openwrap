@@ -22,7 +22,7 @@ namespace OpenWrap.Repositories.Http
             _packagesQuery = LoadPackages(navigator, fileSystem);
         }
 
-        public PackageDocument IndexDocument { get; private set; }
+        public PackageFeed IndexFeed { get; private set; }
 
         public string Name { get; private set; }
 
@@ -96,11 +96,11 @@ namespace OpenWrap.Repositories.Http
 
         IEnumerable<HttpPackageInfo> LoadPackages(IHttpRepositoryNavigator navigator, IFileSystem fileSystem)
         {
-            IndexDocument = navigator.Index();
+            IndexFeed = navigator.Index();
 
-            if (IndexDocument == null)
+            if (IndexFeed == null)
                 yield break;
-            foreach (var package in IndexDocument.Packages)
+            foreach (var package in IndexFeed.Packages)
                 yield return new HttpPackageInfo(fileSystem, this, navigator, package);
         }
 

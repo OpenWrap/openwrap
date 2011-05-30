@@ -1,5 +1,6 @@
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Repositories;
+using OpenWrap.Repositories.NuFeed;
 using Tests.contexts;
 
 namespace Tests.Repositories.contexts
@@ -11,10 +12,10 @@ namespace Tests.Repositories.contexts
         {
         }
     }
-    public class nuget_repository_factory : repository_factory<NuGetODataRepositoryFactory>
+    public class nuget_repository_factory : repository_factory<NuFeedRepositoryFactory>
     {
         public nuget_repository_factory()
-            : base(_ => new NuGetODataRepositoryFactory(new InMemoryFileSystem(),_))
+            : base(_ => new NuFeedRepositoryFactory(new InMemoryFileSystem(),_))
         {
         }
     }

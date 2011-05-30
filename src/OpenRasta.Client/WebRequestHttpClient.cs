@@ -2,12 +2,12 @@
 
 namespace OpenRasta.Client
 {
-    public class HttpWebRequestBasedClient : IHttpClient
+    public class WebRequestHttpClient : IHttpClient
     {
 
         readonly Func<Uri,IClientRequest> _requestCreator;
 
-        public HttpWebRequestBasedClient()
+        public WebRequestHttpClient()
         {
             _requestCreator = uri => new HttpWebRequestBasedRequest(uri);
         }

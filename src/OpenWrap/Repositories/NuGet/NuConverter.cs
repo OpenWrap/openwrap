@@ -8,7 +8,7 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories.NuGet
 {
-    public class NuSpecConverter
+    public static class NuConverter
     {
         public static IEnumerable<VersionVertex> ConvertNuGetVersionRange(string value)
         {
@@ -18,7 +18,7 @@ namespace OpenWrap.Repositories.NuGet
             if (simpleVersion != null)
             {
                 // play around with version ranges to account for NuGet not making distinction between
-                // revisions and implementation details of their tool.
+                // revisions and implementation details of their tool algorithm.
                 if (simpleVersion.Build == -1)
                 {
                     yield return new EqualVersionVertex(simpleVersion);

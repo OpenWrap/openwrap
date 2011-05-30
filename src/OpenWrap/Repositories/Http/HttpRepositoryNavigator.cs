@@ -9,10 +9,10 @@ namespace OpenWrap.Repositories.Http
     public class HttpRepositoryNavigator : IHttpRepositoryNavigator, ISupportAuthentication
     {
         readonly Uri _baseUri;
-        readonly IHttpClient _httpClient = new HttpWebRequestBasedClient();
+        readonly IHttpClient _httpClient = new WebRequestHttpClient();
         readonly Func<Uri, IClientRequest> _httpClientGetter;
         readonly Uri _requestUri;
-        PackageDocument _fileList;
+        PackageFeed _fileList;
         Credentials _availableCredentials;
 
 
@@ -35,15 +35,15 @@ namespace OpenWrap.Repositories.Http
         }
 
 
-        public PackageDocument Index()
+        public PackageFeed Index()
         {
             EnsureFileListLoaded();
             return _fileList;
         }
 
-        public Stream LoadPackage(PackageItem packageItem)
+        public Stream LoadPackage(PackageEntry packageEntry)
         {
-            var response = _httpClientGetter(packageItem.PackageHref.BaseUri(_baseUri))
+            var response = _httpClientGetter(packageEntry.PackageHref.BaseUri(_baseUri))
                     .Get()
                     .Send();
 

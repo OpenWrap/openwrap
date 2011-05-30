@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.ComShim", "OpenWra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.v450", "OpenWrap.Resharper.v450\OpenWrap.Resharper.v450.csproj", "{05F146AE-9315-44B7-AF52-9B5925C90E27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Tests", "OpenWrap.Tests\OpenWrap.Tests.csproj", "{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "OpenWrap.Tests\Tests.csproj", "{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Vs2008", "OpenWrap.Vs2008\OpenWrap.Vs2008.csproj", "{B91287F0-8D9A-40C0-B3BC-3A9563C7AA22}"
 EndProject
