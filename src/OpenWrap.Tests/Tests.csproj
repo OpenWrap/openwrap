@@ -55,11 +55,12 @@
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
     <Compile Include="Commands\add_remote\adding_new_remote_supporting_fetch_and_publish.cs" />
+    <Compile Include="Commands\add_remote\adding_new_remote_with_authentication.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing_with_readonly_repo.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing_with_unknown_repository_type.cs" />
-    <Compile Include="Commands\add_remote\adding_remote_by_name_only.cs" />
-    <Compile Include="Commands\add_remote\adding_remote_of_unknown_type.cs" />
+    <Compile Include="Commands\add_remote\adding_new_remote_by_name_only.cs" />
+    <Compile Include="Commands\add_remote\adding_new_remote_of_unknown_type.cs" />
     <Compile Include="MemoryRepositoryFactory.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInput.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInputValue.cs" />
@@ -350,7 +351,7 @@
     <Compile Include="Commands\command_documentation.cs" />
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
     <Compile Include="Commands\Help\getHelpCommand.cs" />
-    <Compile Include="Commands\add_remote\adding_remote_with_existing_name.cs" />
+    <Compile Include="Commands\add_remote\adding_new_remote_with_existing_name.cs" />
     <Compile Include="Commands\set_remote\when_changing_remote_priority.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />

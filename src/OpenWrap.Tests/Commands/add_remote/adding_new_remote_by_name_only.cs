@@ -5,9 +5,9 @@ using OpenWrap.Testing;
 
 namespace Tests.Commands.add_remote
 {
-    class adding_remote_by_name_only : contexts.add_remote
+    class adding_new_remote_by_name_only : contexts.add_remote
     {
-        public adding_remote_by_name_only()
+        public adding_new_remote_by_name_only()
         {
             given_remote_factory(input => new InMemoryRepository(input));
 

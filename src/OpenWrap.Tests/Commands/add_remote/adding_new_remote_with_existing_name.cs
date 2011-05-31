@@ -5,9 +5,9 @@ using OpenWrap.Configuration;
 
 namespace Tests.Commands.add_remote
 {
-    class adding_remote_with_existing_name : command_context<AddRemoteCommand>
+    class adding_new_remote_with_existing_name : command_context<AddRemoteCommand>
     {
-        public adding_remote_with_existing_name()
+        public adding_new_remote_with_existing_name()
         {
             given_remote_configuration(new RemoteRepositories { { "iron-hills", null } });
             when_executing_command("iron-hills http://lotr.org/iron-hills");

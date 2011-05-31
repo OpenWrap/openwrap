@@ -60,6 +60,7 @@
     <Compile Include="Errors\IncompleteAuthentication.cs" />
     <Compile Include="Gui\ShowPackageExplorerCommand.cs" />
     <Compile Include="Gui\InvokeGuiCommand.cs" />
+    <Compile Include="Messages\MissingCredentials.cs" />
     <Compile Include="Remote\AbstractRemoteCommand.cs" />
     <Compile Include="Remote\RemoteRepositoryMessage.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />

@@ -9,6 +9,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -331,6 +332,10 @@ namespace OpenWrap.Testing
         {
             enumerable.SingleOrDefault(x => x.Equals(value)).ShouldNotBeNull();
             return enumerable;
+        }
+        public static T ShouldHaveOne<T>(this IEnumerable enumerable) where T : class
+        {
+            return enumerable.OfType<T>().SingleOrDefault().ShouldNotBeNull();
         }
         public static IEnumerable<T> ShouldHaveOne<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
         {
