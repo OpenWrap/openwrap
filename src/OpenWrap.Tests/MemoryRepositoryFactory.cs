@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenWrap.Repositories;
 
-namespace OpenWrap.Tests.Commands.Remote.Add
+namespace Tests
 {
     public class MemoryRepositoryFactory : IRemoteRepositoryFactory
     {

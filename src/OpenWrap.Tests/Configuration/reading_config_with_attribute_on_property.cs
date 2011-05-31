@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using OpenRasta.Client;
 using OpenWrap.Configuration;
 using OpenWrap.Testing;
@@ -20,7 +21,7 @@ namespace Tests.Configuration
             Entry.RingName.ShouldBe("value");
         }
 
-        [PathUri(ConstantUris.URI_BASE + "/sauron")]
+        [Path(ConstantUris.URI_BASE + "/sauron")]
         public class ConfigurationWithPropertyAttrib
         {
             [Key("key")]

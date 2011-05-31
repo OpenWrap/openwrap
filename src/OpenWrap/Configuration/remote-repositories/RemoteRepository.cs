@@ -10,14 +10,13 @@ namespace OpenWrap.Configuration
             PublishRepositories = new List<string>();
         }
 
+        [Key("fetch")]
         public string FetchRepository { get; set; }
+
+        [Key("publish")]
         public ICollection<string> PublishRepositories { get; set; }
-        string _name;
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value.Trim(); }
-        }
+
+        public string Name { get; set; }
 
         public int Priority { get; set; }
     }

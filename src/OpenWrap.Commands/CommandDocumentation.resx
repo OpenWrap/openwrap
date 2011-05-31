@@ -133,6 +133,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="add-remote-priority" xml:space="preserve">
     <value>Specifies the priority level for the remote repository. When a package with the same version exists in multiple remotes, the remote with the lowest priority will be selected as the source of the package.</value>
   </data>
+  <data name="add-remote-publish" xml:space="preserve">
+    <value>Specifies the path or the name of a remote repository to be added to the list of publishing endpoints for the configured remote.</value>
+  </data>
   <data name="add-wrap" xml:space="preserve">
     <value>Adds a package to the current solution</value>
   </data>

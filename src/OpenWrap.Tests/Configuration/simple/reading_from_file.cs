@@ -10,9 +10,9 @@ namespace Tests.Configuration.simple
     {
         public reading_from_file()
         {
-            var configurationUri = Configurations.Addresses.BaseUri.Combine("test");
-            given_configuration_text(configurationUri, "sauronsring: one to rule them all");
-            when_loading_configuration(configurationUri);
+            
+            given_configuration_text("test", "sauronsring: one to rule them all");
+            when_loading_configuration("test");
         }
 
         [Test]

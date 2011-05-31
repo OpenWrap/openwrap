@@ -19,18 +19,18 @@ namespace OpenWrap.Commands.Remote
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            var repositories = ConfigurationManager.LoadRemoteRepositories();
+            var repositories = ConfigurationManager.Load<RemoteRepositories>();
             
             repositories.Remove(Name);
 
-            ConfigurationManager.SaveRemoteRepositories(repositories);
+            ConfigurationManager.Save(repositories);
             yield return new GenericMessage(string.Format("Repository '{0}' removed.", Name));
         }
 
 
         IEnumerable<ICommandOutput> ValidateNameDoesntExist()
         {
-            if (!ConfigurationManager.LoadRemoteRepositories().ContainsKey(Name))
+            if (!ConfigurationManager.Load<RemoteRepositories>().ContainsKey(Name))
                 yield return new Error("Remote repository '{0}' not found.", Name);
         }
     }

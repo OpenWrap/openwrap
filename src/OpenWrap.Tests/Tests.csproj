@@ -54,8 +54,13 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
-    <Compile Include="Commands\add_remote\adding_a_new_remote.cs" />
-    <Compile Include="Commands\add_remote\MemoryRepositoryFactory.cs" />
+    <Compile Include="Commands\add_remote\adding_new_remote_supporting_fetch_and_publish.cs" />
+    <Compile Include="Commands\add_remote\adding_publish_to_existing.cs" />
+    <Compile Include="Commands\add_remote\adding_publish_to_existing_with_readonly_repo.cs" />
+    <Compile Include="Commands\add_remote\adding_publish_to_existing_with_unknown_repository_type.cs" />
+    <Compile Include="Commands\add_remote\adding_remote_by_name_only.cs" />
+    <Compile Include="Commands\add_remote\adding_remote_of_unknown_type.cs" />
+    <Compile Include="MemoryRepositoryFactory.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInput.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInputValue.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithoutInput.cs" />
@@ -75,6 +80,7 @@
     <Compile Include="Commands\command_line_runner\mixed_named_and_positioned_inputs.cs" />
     <Compile Include="Commands\command_line_runner\system_wide_optional_input_on_command_without_it.cs" />
     <Compile Include="Commands\command_line_runner\system_wide_optional_input_on_command_with_it.cs" />
+    <Compile Include="Commands\contexts\add_remote.cs" />
     <Compile Include="Commands\contexts\cecil_command.cs" />
     <Compile Include="Commands\contexts\exporter.cs" />
     <Compile Include="Commands\cecil_exporter\command_without_inputs.cs" />
@@ -236,12 +242,15 @@
     <Compile Include="Commands\usage\command_with_positioned_parameters.cs" />
     <Compile Include="Commands\MemoryCommandDescriptor.cs" />
     <Compile Include="Commands\MemoryCommandInput.cs" />
+    <Compile Include="Configuration\dictionaries\Test.cs" />
     <Compile Include="Configuration\reading_config_with_attribute_on_property.cs" />
-    <Compile Include="Configuration\reading_config_with_uri.cs" />
+    <Compile Include="Configuration\reading_config_with_absolute_uri.cs" />
+    <Compile Include="Configuration\reading_config_with_relative_uri.cs" />
+    <Compile Include="Configuration\writing_config_with_attribute_on_property.cs" />
     <Compile Include="contexts\configuration.cs" />
     <Compile Include="Configuration\dictionaries\reading_no_file.cs" />
-    <Compile Include="Configuration\dictionaries\when_two_dictionary_values_with_same_name_are_present.cs" />
-    <Compile Include="Configuration\dictionaries\writing_config_files.cs" />
+    <Compile Include="Configuration\dictionaries\two_dictionary_values_with_same_name_are_present.cs" />
+    <Compile Include="Configuration\dictionaries\writing.cs" />
     <Compile Include="Configuration\simple\reading_from_file.cs" />
     <Compile Include="contexts\dependency_manager_context.cs" />
     <Compile Include="contexts\descriptor.cs" />
@@ -341,7 +350,7 @@
     <Compile Include="Commands\command_documentation.cs" />
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
     <Compile Include="Commands\Help\getHelpCommand.cs" />
-    <Compile Include="Commands\add_remote\when_adding_a_remote_with_existing_name.cs" />
+    <Compile Include="Commands\add_remote\adding_remote_with_existing_name.cs" />
     <Compile Include="Commands\set_remote\when_changing_remote_priority.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />

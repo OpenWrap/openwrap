@@ -95,7 +95,7 @@
     <Compile Include="Commands\UICommandContext.cs" />
     <Compile Include="Configuration\ConstantUris.cs" />
     <Compile Include="Configuration\KeyAttribute.cs" />
-    <Compile Include="Configuration\PathUriAttribute.cs" />
+    <Compile Include="Configuration\PathAttribute.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />
@@ -209,7 +209,6 @@
     <Compile Include="Commands\MissingInput.cs" />
     <Compile Include="Collections\SequenceBuilder.cs" />
     <Compile Include="Commands\Success.cs" />
-    <Compile Include="Configuration\Configurations.cs" />
     <Compile Include="Configuration\ConfigurationEntry.cs" />
     <Compile Include="Configuration\ConfigurationLine.cs" />
     <Compile Include="Configuration\DefaultConfigurationManager.cs" />

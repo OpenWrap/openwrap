@@ -16,7 +16,7 @@ namespace OpenWrap.Commands.Remote
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            return ConfigurationManager.LoadRemoteRepositories()
+            return ConfigurationManager.Load<RemoteRepositories>()
                     .OrderBy(x => x.Value.Priority)
                     .Select(x => new RemoteRepositoryMessage(this, x.Key, x.Value))
                     .Cast<ICommandOutput>();

@@ -5,27 +5,16 @@ using System.Text.RegularExpressions;
 using OpenWrap.Collections;
 using OpenWrap.Configuration;
 using OpenWrap.Repositories;
-using OpenWrap.Services;
 
 
 namespace OpenWrap.Commands.Remote
 {
-    public abstract class AbstractRemoteCommand : AbstractCommand
-    {
-        protected IConfigurationManager ConfigurationManager
-        {
-            get { return ServiceLocator.GetService<IConfigurationManager>(); }
-        }
-
-        protected IEnumerable<IRemoteRepositoryFactory> Factories { get { return ServiceLocator.GetService<IEnumerable<IRemoteRepositoryFactory>>(); } }
-    }
-
     [Command(Noun = "remote", Verb = "add")]
     public class AddRemoteCommand : AbstractRemoteCommand
     {
         int? _priority;
 
-        [CommandInput(Position = 1, IsRequired = true)]
+        [CommandInput(Position = 1)]
         public string Href { get; set; }
 
         [CommandInput(Position = 0, IsRequired = true)]
@@ -38,6 +27,9 @@ namespace OpenWrap.Commands.Remote
             set { _priority = value; }
         }
 
+        [CommandInput]
+        public string Publish { get; set; }
+
         protected bool NameIsValid
         {
             get { return Regex.IsMatch(Name, @"^\S+$"); }
@@ -45,27 +37,66 @@ namespace OpenWrap.Commands.Remote
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            var repositories = ConfigurationManager.LoadRemoteRepositories();
-            var repository = Factories.Select(x => x.FromUserInput(Href)).NotNull().FirstOrDefault();
-            var publishTokens = (repository.Feature<ISupportPublishing>() != null) ? new List<string> { repository.Token } : new List<string>();
+            var repositories = ConfigurationManager.Load<RemoteRepositories>();
 
-            int position = GetNewRemotePriority(repositories);
-
-            repositories[Name] = new RemoteRepository
-            {
-                    FetchRepository = repository.Token,
-                    PublishRepositories = publishTokens,
-                    Name = Name,
-                    Priority = position
-            };
-            ConfigurationManager.SaveRemoteRepositories(repositories);
-            yield return new GenericMessage(string.Format("Remote repository '{0}' added.", Name));
+            return repositories.ContainsKey(Name)
+                       ? Append(repositories)
+                       : AddNew(repositories);
         }
 
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield return ValidateName;
             yield return NameAlreadyExists;
+        }
+
+        IEnumerable<ICommandOutput> AddNew(RemoteRepositories repositories)
+        {
+            var repositoryInput = Href??Name;
+            var repository = Factories.Select(x => x.FromUserInput(repositoryInput)).NotNull().FirstOrDefault();
+            if (repository == null)
+            {
+                yield return UnknownRepositoryType(repositoryInput);
+                yield break;
+            }
+            var publishTokens = (repository.Feature<ISupportPublishing>() != null) ? new List<string> { repository.Token } : new List<string>();
+
+            int position = GetNewRemotePriority(repositories);
+
+            repositories[Name] = new RemoteRepository
+            {
+                FetchRepository = repository.Token,
+                PublishRepositories = publishTokens,
+                Name = Name,
+                Priority = position
+            };
+            ConfigurationManager.Save(repositories);
+            yield return new GenericMessage(string.Format("Remote repository '{0}' added.", Name));
+        }
+
+        Error UnknownRepositoryType(string repositoryInput)
+        {
+            return new Error("The address '{0}' was not recognized as a known repository type.", repositoryInput);
+        }
+
+        IEnumerable<ICommandOutput> Append(RemoteRepositories repositories)
+        {
+            var existingReg = repositories[Name];
+            var publishRepo = Factories.Select(x => x.FromUserInput(Publish)).NotNull().FirstOrDefault();
+            if (publishRepo == null)
+            {
+                yield return UnknownRepositoryType(Publish);
+                yield break;
+            }
+            if (publishRepo.Feature<ISupportPublishing>() == null)
+            {
+                yield return new Error("The path '{0}' is not recognized as a repository that can be published to.");
+                yield break;
+            }
+            existingReg.PublishRepositories.Add(publishRepo.Token);
+
+            ConfigurationManager.Save(repositories);
+            yield return new Info("Publish endpoint added to remote repository '{0}'.", Name);
         }
 
         int GetNewRemotePriority(RemoteRepositories repositories)
@@ -77,14 +108,15 @@ namespace OpenWrap.Commands.Remote
 
         IEnumerable<ICommandOutput> NameAlreadyExists()
         {
-            if (ConfigurationManager.LoadRemoteRepositories().ContainsKey(Name))
-                yield return new Error("A repository with the name '{0}' already exists.", Name);
+            var configs = ConfigurationManager.Load<RemoteRepositories>();
+            if (configs.ContainsKey(Name) && Publish == null)
+                yield return new Error("A repository with the name '{0}' already exists. Try specifying a different name.", Name);
         }
 
         IEnumerable<ICommandOutput> ValidateName()
         {
             if (!NameIsValid)
-                yield return new Error("The 'Name' parameter is invalid.");
+                yield return new Error("The 'Name' parameter is invalid. Identifiers ");
         }
     }
 }

@@ -74,7 +74,7 @@ namespace OpenWrap.Commands.Wrap
         protected IEnumerable<ICommandOutput> HintRemoteRepositories()
         {
             yield return new Info("The list of configured repositories can be seen using the 'list-remote' command. The currently configured repositories are:");
-            foreach(var m in ConfigurationManager.LoadRemoteRepositories()
+            foreach(var m in ConfigurationManager.Load<RemoteRepositories>()
                     .OrderBy(x => x.Value.Priority)
                     .Select(x => new RemoteRepositoryMessage(this, x.Key, x.Value)))
                 yield return m;
@@ -117,7 +117,7 @@ namespace OpenWrap.Commands.Wrap
 
         protected IEnumerable<IPackageRepository> GetFetchRepositories(string name = null)
         {
-            return ConfigurationManager.LoadRemoteRepositories().Where(x=>string.IsNullOrEmpty(name) || x.Value.Name.EqualsNoCase(name))
+            return ConfigurationManager.Load<RemoteRepositories>().Where(x=>string.IsNullOrEmpty(name) || x.Value.Name.EqualsNoCase(name))
                     .Select(x => RemoteFactories.Select(factory => factory.FromToken(x.Value.FetchRepository)).NotNull().FirstOrDefault())
                     .NotNull()
                     .DefaultIfEmpty(RemoteFactories.Select(factory=>factory.FromUserInput(name)).NotNull().FirstOrDefault()).NotNull();
@@ -126,7 +126,7 @@ namespace OpenWrap.Commands.Wrap
         protected IEnumerable<IPackageRepository> GetPublishRepositories(string name = null)
         {
             return (
-                   from remoteConfig in ConfigurationManager.LoadRemoteRepositories()
+                   from remoteConfig in ConfigurationManager.Load<RemoteRepositories>()
                    where string.IsNullOrEmpty(name) || remoteConfig.Value.Name.EqualsNoCase(name)
                    from publish in remoteConfig.Value.PublishRepositories
                    select RemoteFactories.Select(factory => factory.FromToken(publish)).NotNull().FirstOrDefault()

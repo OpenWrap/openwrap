@@ -18,6 +18,7 @@ namespace OpenWrap.Repositories
         public InMemoryRepository(string name)
         {
             Name = name;
+            CanPublish = true;
         }
 
         public bool CanDelete
@@ -25,10 +26,7 @@ namespace OpenWrap.Repositories
             get { return true; }
         }
 
-        public bool CanPublish
-        {
-            get { return true; }
-        }
+        public bool CanPublish { get; set; }
 
         public string Name { get; set; }
 
@@ -39,6 +37,8 @@ namespace OpenWrap.Repositories
 
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
+            if (typeof(TFeature) == typeof(ISupportPublishing) && !CanPublish)
+                return null;
             return this as TFeature;
         }
 
@@ -51,6 +51,7 @@ namespace OpenWrap.Repositories
         {
             get { return Packages.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
         }
+
 
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
         {

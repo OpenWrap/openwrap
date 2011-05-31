@@ -36,8 +36,7 @@ namespace OpenWrap.Tests.Commands.Remote.Remove
         [Test]
         public void the_remote_repository_is_removed()
         {
-            Services.ServiceLocator.GetService<IConfigurationManager>()
-                    .LoadRemoteRepositories()
+            Services.ServiceLocator.GetService<IConfigurationManager>().Load<RemoteRepositories>()
                     .ContainsKey("esgaroth")
                     .ShouldBeFalse();
         }

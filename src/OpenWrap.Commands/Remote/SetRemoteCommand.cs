@@ -32,7 +32,7 @@ namespace OpenWrap.Commands.Remote
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            var repositories = ConfigurationManager.LoadRemoteRepositories();
+            var repositories = ConfigurationManager.Load<RemoteRepositories>();
 
             RemoteRepository remote;
             if (!repositories.TryGetValue(Name, out remote))
@@ -64,8 +64,7 @@ namespace OpenWrap.Commands.Remote
                                                      : new List<string>();
             }
 
-            ConfigurationManager.SaveRemoteRepositories(repositories);
-            
+            ConfigurationManager.Save(repositories);
         }
 
         void HandlePrioritySetting(RemoteRepositories repositories, RemoteRepository remote)

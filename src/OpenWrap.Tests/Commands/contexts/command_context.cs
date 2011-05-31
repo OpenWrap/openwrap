@@ -25,7 +25,7 @@ using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
-using OpenWrap.Tests.Commands.Remote.Add;
+using Tests;
 
 namespace OpenWrap.Commands.contexts
 {
@@ -77,7 +77,7 @@ namespace OpenWrap.Commands.contexts
             Factory = new MemoryRepositoryFactory();
             Factory.FromToken = token => RemoteRepositories.FirstOrDefault(repo => repo.Name == token.Substring(8));
 
-            ServiceLocator.GetService<IConfigurationManager>().SaveRemoteRepositories(ConfiguredRemotes);
+            ServiceLocator.GetService<IConfigurationManager>().Save(ConfiguredRemotes);
         }
 
         protected virtual Func<IPackageManager> PackageManagerFactory()
@@ -183,7 +183,7 @@ namespace OpenWrap.Commands.contexts
         protected void given_remote_configuration(RemoteRepositories remoteRepositories)
         {
             ServiceLocator.GetService<IConfigurationManager>()
-                    .Save(remoteRepositories, Configurations.Addresses.RemoteRepositories);
+                    .Save(remoteRepositories);
         }
 
         protected void given_file(string filePath, Stream stream)
@@ -206,7 +206,7 @@ namespace OpenWrap.Commands.contexts
                 PublishRepositories = { repo.Token },
                 Name = remoteName
             };
-            ServiceLocator.GetService<IConfigurationManager>().SaveRemoteRepositories(ConfiguredRemotes);
+            ServiceLocator.GetService<IConfigurationManager>().Save(ConfiguredRemotes);
         }
 
         protected void given_current_directory(string currentDirectory)

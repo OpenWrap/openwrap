@@ -6,7 +6,6 @@ using OpenWrap.Commands.Remote;
 using OpenWrap.Configuration;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
-using OpenWrap.Tests.Commands.Remote.Add;
 
 namespace Tests.Commands.contexts
 {
@@ -20,7 +19,7 @@ namespace Tests.Commands.contexts
         protected override void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
-            ConfiguredRemotes = ServiceLocator.GetService<IConfigurationManager>().LoadRemoteRepositories();
+            ConfiguredRemotes = ServiceLocator.GetService<IConfigurationManager>().Load<RemoteRepositories>();
         }
     }
 }

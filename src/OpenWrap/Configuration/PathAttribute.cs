@@ -2,11 +2,11 @@
 
 namespace OpenWrap.Configuration
 {
-    public class PathUriAttribute : Attribute
+    public class PathAttribute : Attribute
     {
         public string Uri { get; private set; }
 
-        public PathUriAttribute(string uri)
+        public PathAttribute(string uri)
         {
             Uri = uri;
         }

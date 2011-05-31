@@ -21,6 +21,7 @@ using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Tasks;
+using Path = OpenFileSystem.IO.Path;
 
 namespace OpenWrap.Build
 {

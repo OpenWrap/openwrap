@@ -12,10 +12,10 @@ namespace Tests.Configuration.dictionaries
 
         public reading_from_file()
         {
-            given_configuration_text(Configurations.Addresses.RemoteRepositories,
-                                     "[remoterepository openwrap]\r\nfetchrepository: http://wraps.openwrap.org\r\n[remoterepository]\r\nfetchrepository:http://default.openwrap.org");
+            given_configuration_text("remote-repositories",
+                                     "[remoterepository openwrap]\r\nfetch: http://wraps.openwrap.org\r\n[remoterepository]\r\nfetch:http://default.openwrap.org");
 
-            when_loading_configuration(Configurations.Addresses.RemoteRepositories);
+            when_loading_configuration("remote-repositories");
         }
 
         [Test]

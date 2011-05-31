@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using OpenFileSystem.IO;
+using OpenRasta.Client;
 using OpenWrap.Configuration.Persistence;
 using OpenWrap.IO;
 using OpenWrap.Reflection;
@@ -19,12 +20,12 @@ namespace OpenWrap.Configuration
         public DefaultConfigurationManager(IDirectory configurationDirectory)
         {
             _configurationDirectory = configurationDirectory;
-            BaseUri = Configurations.Addresses.BaseUri;
+            BaseUri = ConstantUris.Base;
         }
 
         public Uri BaseUri { get; private set; }
 
-        public T Load<T>(Uri uri) where T : new()
+        public T Load<T>(Uri uri = null) where T : new()
         {
             uri = uri ?? DetermineUriFromAttribute<T>();
             var file = GetConfigurationFile(uri);
@@ -35,13 +36,13 @@ namespace OpenWrap.Configuration
 
         Uri DetermineUriFromAttribute<T>()
         {
-            var attrib = typeof(T).Attribute<PathUriAttribute>();
+            var attrib = typeof(T).Attribute<PathAttribute>();
             if (attrib == null) return null;
-
-            return new Uri(attrib.Uri, UriKind.Absolute);
+            
+            return ConstantUris.Base.Combine(attrib.Uri);
         }
 
-        public void Save<T>(T configEntry, Uri uri)
+        public void Save<T>(T configEntry, Uri uri = null)
         {
             uri = uri ?? DetermineUriFromAttribute<T>();
 
@@ -132,7 +133,7 @@ namespace OpenWrap.Configuration
 
         IFile GetConfigurationFile(Uri uri)
         {
-            return _configurationDirectory.GetFile(Configurations.Addresses.BaseUri.MakeRelativeUri(uri).ToString());
+            return _configurationDirectory.GetFile(ConstantUris.Base.MakeRelativeUri(uri).ToString());
         }
 
         T GetDefaultValueFor<T>()

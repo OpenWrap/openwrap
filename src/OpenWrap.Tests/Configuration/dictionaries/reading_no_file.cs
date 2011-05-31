@@ -10,7 +10,7 @@ namespace Tests.Configuration.dictionaries
     {
         public reading_no_file()
         {
-            when_loading_configuration(Configurations.Addresses.BaseUri.Combine("/unknown".ToUri()));
+            when_loading_configuration("unknown");
         }
 
         [Test]

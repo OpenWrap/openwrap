@@ -8,9 +8,9 @@ using Tests.Commands.contexts;
 
 namespace Tests.Commands.add_remote
 {
-    public class adding_a_new_remote_supporting_fetch_and_publish : remote_command<AddRemoteCommand>
+    public class adding_new_remote_supporting_fetch_and_publish : remote_command<AddRemoteCommand>
     {
-        public adding_a_new_remote_supporting_fetch_and_publish()
+        public adding_new_remote_supporting_fetch_and_publish()
         {
             given_remote_factory(input => new InMemoryRepository(input));
             given_remote_configuration(new RemoteRepositories());
