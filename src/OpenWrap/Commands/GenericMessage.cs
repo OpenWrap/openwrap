@@ -8,13 +8,14 @@ namespace OpenWrap.Commands
         {
             Message = message;
             MessageArguments = args;
-            DefaultMessage = "An unknown message was sent.";
+            DefaultMessage = GetType().Name.CamelToSpacedName();
         }
 
         public GenericMessage(string message)
         {
             Message = message;
             Type = CommandResultType.Info;
+            DefaultMessage = GetType().Name.CamelToSpacedName();
         }
 
         protected GenericMessage(string message, object[] args, string defaultMessage, CommandResultType type)

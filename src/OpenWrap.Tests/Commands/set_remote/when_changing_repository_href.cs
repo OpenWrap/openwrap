@@ -17,7 +17,7 @@ namespace OpenWrap.Tests.Commands.Remote.Set
         [Test]
         public void the_second_repository_has_new_href()
         {
-            TryGetRepository("secundus").FetchRepository.ShouldBe("[memory]http://awesomereps.net");
+            TryGetRepository("secundus").FetchRepository.Token.ShouldBe("[memory]http://awesomereps.net");
         }
     }
 }

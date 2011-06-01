@@ -17,13 +17,13 @@ namespace Tests.Commands.add_remote
         [Test]
         public void remote_fetch_is_added()
         {
-            Remotes["iron-hills"].FetchRepository.ShouldBe("[memory]iron-hills");
+            StoredRemotesConfig["iron-hills"].FetchRepository.Token.ShouldBe("[memory]iron-hills");
         }
 
         [Test]
         public void remote_publish_is_added()
         {
-            Remotes["iron-hills"].PublishRepositories.Single().ShouldBe("[memory]iron-hills");
+            StoredRemotesConfig["iron-hills"].PublishRepositories.Single().Token.ShouldBe("[memory]iron-hills");
         }
     }
 }

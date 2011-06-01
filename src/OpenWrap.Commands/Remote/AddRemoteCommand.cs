@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using OpenWrap.Collections;
+using OpenWrap.Commands.Messages;
 using OpenWrap.Configuration;
 using OpenWrap.Repositories;
 
@@ -30,11 +31,6 @@ namespace OpenWrap.Commands.Remote
         [CommandInput]
         public string Publish { get; set; }
 
-        protected bool NameIsValid
-        {
-            get { return Regex.IsMatch(Name, @"^\S+$"); }
-        }
-
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var repositories = ConfigurationManager.Load<RemoteRepositories>();
@@ -46,9 +42,22 @@ namespace OpenWrap.Commands.Remote
 
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            yield return ValidateName;
-            yield return NameAlreadyExists;
+            yield return NameValid;
+            yield return NameNotInUseForNewRemote;
+            yield return AuthIsCorrect;
         }
+
+        IEnumerable<ICommandOutput> AuthIsCorrect()
+        {
+            if ((Username != null || Password != null) && (Username == null || Password == null))
+                yield return new IncompleteCredentials();
+        }
+
+        [CommandInput]
+        public string Password { get; set; }
+
+        [CommandInput]
+        public string Username { get; set; }
 
         IEnumerable<ICommandOutput> AddNew(RemoteRepositories repositories)
         {
@@ -59,13 +68,13 @@ namespace OpenWrap.Commands.Remote
                 yield return UnknownRepositoryType(repositoryInput);
                 yield break;
             }
-            var publishTokens = (repository.Feature<ISupportPublishing>() != null) ? new List<string> { repository.Token } : new List<string>();
+            var publishTokens = (repository.Feature<ISupportPublishing>() != null) ? new List<RemoteRepositoryEndpoint> { new RemoteRepositoryEndpoint{Token=repository.Token} } : new List<RemoteRepositoryEndpoint>();
 
             int position = GetNewRemotePriority(repositories);
 
             repositories[Name] = new RemoteRepository
             {
-                FetchRepository = repository.Token,
+                FetchRepository = {Token=repository.Token},
                 PublishRepositories = publishTokens,
                 Name = Name,
                 Priority = position
@@ -76,7 +85,7 @@ namespace OpenWrap.Commands.Remote
 
         Error UnknownRepositoryType(string repositoryInput)
         {
-            return new Error("The address '{0}' was not recognized as a known repository type.", repositoryInput);
+            return new UnknownRepositoryType(repositoryInput);
         }
 
         IEnumerable<ICommandOutput> Append(RemoteRepositories repositories)
@@ -93,7 +102,7 @@ namespace OpenWrap.Commands.Remote
                 yield return new Error("The path '{0}' is not recognized as a repository that can be published to.");
                 yield break;
             }
-            existingReg.PublishRepositories.Add(publishRepo.Token);
+            existingReg.PublishRepositories.Add(new RemoteRepositoryEndpoint{Token=publishRepo.Token});
 
             ConfigurationManager.Save(repositories);
             yield return new Info("Publish endpoint added to remote repository '{0}'.", Name);
@@ -106,17 +115,32 @@ namespace OpenWrap.Commands.Remote
             return repositories.Count > 0 ? repositories.Values.Max(r => r.Priority) + 1 : 1;
         }
 
-        IEnumerable<ICommandOutput> NameAlreadyExists()
+        IEnumerable<ICommandOutput> NameNotInUseForNewRemote()
         {
-            var configs = ConfigurationManager.Load<RemoteRepositories>();
-            if (configs.ContainsKey(Name) && Publish == null)
-                yield return new Error("A repository with the name '{0}' already exists. Try specifying a different name.", Name);
+            if (ConfigurationManager.Load<RemoteRepositories>().ContainsKey(Name) && Publish == null)
+                yield return new RemoteNameInUse(Name);
         }
 
-        IEnumerable<ICommandOutput> ValidateName()
+        IEnumerable<ICommandOutput> NameValid()
         {
-            if (!NameIsValid)
-                yield return new Error("The 'Name' parameter is invalid. Identifiers ");
+            if (!Regex.IsMatch(Name, @"^\S+$"))
+                yield return new RemoteNameInvalid();
+        }
+    }
+
+    class RemoteNameInvalid : Error
+    {
+        public RemoteNameInvalid() : base("The 'Name' parameter is invalid for a remote name. Identifiers cannot contain spaces.")
+        {
+        }
+    }
+
+    public class RemoteNameInUse : Error
+    {
+        public RemoteNameInUse(string name)
+            :base("A repository with the name '{0}' already exists. Try specifying a different name.", name)
+        {
+            
         }
     }
 }

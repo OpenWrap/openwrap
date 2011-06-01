@@ -9,7 +9,7 @@ namespace Tests.Commands.add_remote
     {   
         public adding_publish_to_existing_with_readonly_repo()
         {
-            given_remote_configuration(new RemoteRepositories { { "iron-hills", new RemoteRepository { FetchRepository = "[indexed]unknown" } } });
+            given_remote_configuration(new RemoteRepositories { { "iron-hills", new RemoteRepository { FetchRepository =  new RemoteRepositoryEndpoint{Token= "[indexed]unknown" } } }});
             given_remote_factory(input => new InMemoryRepository(input) { CanPublish = false});
 
             when_executing_command("iron-hills -publish somewhere");
@@ -24,7 +24,7 @@ namespace Tests.Commands.add_remote
         [Test]
         public void publish_not_modified()
         {
-            Remotes["iron-hills"].PublishRepositories.ShouldBeEmpty();
+            StoredRemotesConfig["iron-hills"].PublishRepositories.ShouldBeEmpty();
         }
     }
 }

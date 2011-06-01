@@ -59,7 +59,7 @@ namespace OpenWrap.Reflection
                 var add = list.GetType().GetMethod("Add");
                 foreach(var value in propertyValue.Split(new[]{","}, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    var convertedValue = collectionArg.CreateInstanceFrom(value);
+                    var convertedValue = collectionArg.CreateInstanceFrom(value.Trim());
                     add.Invoke(list, new object[]{convertedValue});
                 }
                 return list;

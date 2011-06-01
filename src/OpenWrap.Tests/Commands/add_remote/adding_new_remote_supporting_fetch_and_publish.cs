@@ -31,13 +31,13 @@ namespace Tests.Commands.add_remote
         [Test]
         public void remote_has_correct_fetch_token()
         {
-            ConfiguredRemotes["iron-hills"].FetchRepository.ShouldBe("[memory]http://lotr.org/iron-hills");
+            ConfiguredRemotes["iron-hills"].FetchRepository.Token.ShouldBe("[memory]http://lotr.org/iron-hills");
         }
 
         [Test]
         public void remote_has_correct_publish_token()
         {
-            ConfiguredRemotes["iron-hills"].PublishRepositories.ShouldHaveCountOf(1).First().ShouldBe("[memory]http://lotr.org/iron-hills");
+            ConfiguredRemotes["iron-hills"].PublishRepositories.ShouldHaveCountOf(1).First().Token.ShouldBe("[memory]http://lotr.org/iron-hills");
         }
     }
 }

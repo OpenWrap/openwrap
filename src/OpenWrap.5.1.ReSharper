@@ -363,6 +363,16 @@
     </Naming2>
   </CodeStyleSettings>
   <SharedSolutionTemplateManager>
+    <LiveTemplates>
+      <Template uid="4434600c-5393-4814-8f56-3ed467dd9d7a" shortcut="merr" description="new error for commands" text="public class $NAME$ : $Error$ {&#xD;&#xA;  public $NAME$(&#xD;&#xA;}" reformat="True" shortenQualifiedReferences="True">
+        <Categories />
+        <Variables>
+          <Variable name="NAME" expression="" initialRange="0" />
+          <Variable name="Error" expression="" initialRange="0" />
+        </Variables>
+        <CustomProperties />
+      </Template>
+    </LiveTemplates>
     <FileTemplates>
       <Template uid="80b7b756-ae40-46e5-bf05-4da38bddd804" shortcut="" description="test" text="using System;&#xD;&#xA;using System.Collections.Generic;&#xD;&#xA;using System.Linq;&#xD;&#xA;using NUnit.Framework;&#xD;&#xA;using OpenWrap;&#xD;&#xA;using OpenWrap.Testing;&#xD;&#xA;using Tests;&#xD;&#xA;&#xD;&#xA;namespace $namespace$&#xD;&#xA;{&#xD;&#xA;    public class $spec$ : contexts.$context$&#xD;&#xA;	{&#xD;&#xA;		public $spec$()&#xD;&#xA;		{&#xD;&#xA;		}&#xD;&#xA;	}&#xD;&#xA;}" reformat="True" shortenQualifiedReferences="True">
         <Context>
@@ -382,4 +392,21 @@
       </Template>
     </FileTemplates>
   </SharedSolutionTemplateManager>
+  <CustomStructuralPatterns>
+    <Pattern Severity="DO_NOT_SHOW">
+      <Comment>generic error</Comment>
+      <ReplaceComment>specific error</ReplaceComment>
+      <ReplacePattern><![CDATA[new $customErrorType$($messageParams$);
+
+]]></ReplacePattern>
+      <SearchPattern>new $error$($message$,$messageParams$)</SearchPattern>
+      <Params />
+      <Placeholders>
+        <TypePlaceholder Name="error" Type="OpenWrap.Commands.Error" ExactType="True" />
+        <ArgumentPlaceholder Name="message" Minimal="1" Maximal="1" />
+        <ArgumentPlaceholder Name="messageParams" Minimal="-1" Maximal="-1" />
+        <TypePlaceholder Name="customErrorType" Type="Error" ExactType="False" />
+      </Placeholders>
+    </Pattern>
+  </CustomStructuralPatterns>
 </Configuration>

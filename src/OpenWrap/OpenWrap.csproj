@@ -96,6 +96,7 @@
     <Compile Include="Configuration\ConstantUris.cs" />
     <Compile Include="Configuration\KeyAttribute.cs" />
     <Compile Include="Configuration\PathAttribute.cs" />
+    <Compile Include="Configuration\remote-repositories\LegacyRemoteRepositories.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />

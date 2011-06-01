@@ -225,7 +225,7 @@ namespace OpenWrap.Testing
             bool moveNext1 = false, moveNext2 = false;
             while (((moveNext1 = enumerator1.MoveNext()) & (moveNext2 = enumerator2.MoveNext()))
                    && moveNext1 == moveNext2)
-                Assert.AreEqual(enumerator1.Current, enumerator2.Current);
+                Assert.AreEqual(enumerator2.Current, enumerator1.Current);
             if (moveNext1 != moveNext2)
                 Assert.Fail("The two enumerables didn't have the same number of elements.");
             enumerator1.Dispose();

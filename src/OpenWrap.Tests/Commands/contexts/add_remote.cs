@@ -14,7 +14,7 @@ namespace Tests.Commands.contexts
 {
     public class add_remote : command_context<AddRemoteCommand>
     {
-        protected RemoteRepositories Remotes { get { return ServiceLocator.GetService<IConfigurationManager>().Load<RemoteRepositories>(); } }
+        protected RemoteRepositories StoredRemotesConfig { get { return ServiceLocator.GetService<IConfigurationManager>().Load<RemoteRepositories>(); } }
         
     }
 }

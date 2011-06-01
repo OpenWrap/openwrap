@@ -12,9 +12,9 @@ namespace OpenWrap.Tests.Commands.Remote.Set.context
             given_remote_configuration(
                     new RemoteRepositories
                     {
-                            { "primus", new RemoteRepository { Name = "primus", Priority = 1, FetchRepository = "[memory]primus"} },
-                            { "secundus", new RemoteRepository { Name = "secundus", Priority = 2, FetchRepository = "[memory]secundus" } },
-                            { "terz", new RemoteRepository { Name = "terz", Priority = 3, FetchRepository = "[memory]terz"} }
+                            { "primus", new RemoteRepository { Name = "primus", Priority = 1, FetchRepository = {Token="[memory]primus"}} },
+                            { "secundus", new RemoteRepository { Name = "secundus", Priority = 2, FetchRepository = {Token="[memory]secundus"} } },
+                            { "terz", new RemoteRepository { Name = "terz", Priority = 3, FetchRepository = {Token="[memory]terz"}} }
                     });
         }
 

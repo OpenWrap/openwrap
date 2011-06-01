@@ -58,10 +58,10 @@ namespace OpenWrap.Commands.Remote
                 var foundRepo = Factories.Select(x => x.FromUserInput(Href)).NotNull().FirstOrDefault();
 
                 if (foundRepo == null) throw new InvalidOperationException();
-                remote.FetchRepository = foundRepo.Token;
+                remote.FetchRepository.Token = foundRepo.Token;
                 remote.PublishRepositories = foundRepo.Feature<ISupportPublishing>() != null
-                                                     ? new List<string> { foundRepo.Token }
-                                                     : new List<string>();
+                                                     ? new List<RemoteRepositoryEndpoint> { new RemoteRepositoryEndpoint{Token=foundRepo.Token} }
+                                                     : new List<RemoteRepositoryEndpoint>(0);
             }
 
             ConfigurationManager.Save(repositories);

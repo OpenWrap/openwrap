@@ -48,8 +48,8 @@ namespace OpenWrap.Commands.contexts
                     {"default",
                         new RemoteRepository
                         {
-                                FetchRepository = DefaultRemote.Token,
-                                PublishRepositories = {DefaultRemote.Token}
+                                FetchRepository = {Token=DefaultRemote.Token},
+                                PublishRepositories = {new RemoteRepositoryEndpoint{Token=DefaultRemote.Token} }
                         }
                     }
             };
@@ -202,8 +202,8 @@ namespace OpenWrap.Commands.contexts
             RemoteRepositories.Add(repo);
             ConfiguredRemotes[remoteName] = new RemoteRepository
             {
-                FetchRepository = repo.Token,
-                PublishRepositories = { repo.Token },
+                FetchRepository = {Token=repo.Token},
+                PublishRepositories = { new RemoteRepositoryEndpoint{Token=repo.Token } },
                 Name = remoteName
             };
             ServiceLocator.GetService<IConfigurationManager>().Save(ConfiguredRemotes);

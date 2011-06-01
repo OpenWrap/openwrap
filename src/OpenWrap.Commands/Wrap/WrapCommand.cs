@@ -118,7 +118,7 @@ namespace OpenWrap.Commands.Wrap
         protected IEnumerable<IPackageRepository> GetFetchRepositories(string name = null)
         {
             return ConfigurationManager.Load<RemoteRepositories>().Where(x=>string.IsNullOrEmpty(name) || x.Value.Name.EqualsNoCase(name))
-                    .Select(x => RemoteFactories.Select(factory => factory.FromToken(x.Value.FetchRepository)).NotNull().FirstOrDefault())
+                    .Select(x => RemoteFactories.Select(factory => factory.FromToken(x.Value.FetchRepository.Token)).NotNull().FirstOrDefault())
                     .NotNull()
                     .DefaultIfEmpty(RemoteFactories.Select(factory=>factory.FromUserInput(name)).NotNull().FirstOrDefault()).NotNull();
         }
@@ -129,7 +129,7 @@ namespace OpenWrap.Commands.Wrap
                    from remoteConfig in ConfigurationManager.Load<RemoteRepositories>()
                    where string.IsNullOrEmpty(name) || remoteConfig.Value.Name.EqualsNoCase(name)
                    from publish in remoteConfig.Value.PublishRepositories
-                   select RemoteFactories.Select(factory => factory.FromToken(publish)).NotNull().FirstOrDefault()
+                   select RemoteFactories.Select(factory => factory.FromToken(publish.Token)).NotNull().FirstOrDefault()
                    ).NotNull()
                     .DefaultIfEmpty(RemoteFactories.Select(factory => factory.FromUserInput(name)).NotNull().FirstOrDefault()).NotNull();
         }

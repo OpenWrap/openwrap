@@ -31,7 +31,7 @@ namespace OpenWrap.Configuration
             var file = GetConfigurationFile(uri);
             if (!file.Exists)
                 return GetDefaultValueFor<T>();
-            return ParseFile<T>(file);
+            return ReadFile<T>(file);
         }
 
         Uri DetermineUriFromAttribute<T>()
@@ -62,24 +62,45 @@ namespace OpenWrap.Configuration
         static object AssignPropertiesFromLines(object instance, IEnumerable<ConfigurationLine> lines)
         {
             var type = instance.GetType();
-            var allProperties = (type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            var propertiesWithKeys = (type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                     .Select(prop => new { prop, attr = prop.Attribute<KeyAttribute>() })
                     .Where(@t => @t.attr != null)
                     .ToLookup(x => x.attr.Name, x => x.prop, StringComparer.OrdinalIgnoreCase));
 
-            foreach (var line in lines)
+            foreach (var linesByName in lines.GroupBy(x=>x.Name,StringComparer.OrdinalIgnoreCase))
             {
-                var property = type.GetProperty(line.Name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase)
-                    ?? (allProperties.Contains(line.Name) ? allProperties[line.Name].FirstOrDefault() : null);
+                var property = type.GetProperty(linesByName.Key, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase)
+                    ?? (propertiesWithKeys.Contains(linesByName.Key) ? propertiesWithKeys[linesByName.Key].FirstOrDefault() : null);
 
                 if (property == null)
                     continue;
 
-                var propertyValue = property.PropertyType.CreateInstanceFrom(line.Value);
-
+                object propertyValue;
+                if (PropertyIsList(property.PropertyType))
+                {
+                    var itemType = property.PropertyType.GetGenericArguments()[0];
+                    var list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(itemType));
+                    foreach (var obj in linesByName.Select(x => itemType.CreateInstanceFrom(x.Value)))
+                        list.Add(obj);
+                    propertyValue = list;
+                }
+                else
+                {
+                    propertyValue = property.PropertyType.CreateInstanceFrom(linesByName.LastOrDefault().Value);
+                }
                 property.SetValue(instance, propertyValue, null);
             }
             return instance;
+        }
+
+        static bool PropertyIsList(Type propertyType)
+        {
+            if (!propertyType.IsGenericType) return false;
+            var typeDef = propertyType.GetGenericTypeDefinition();
+            return typeDef == typeof(IEnumerable<>) ||
+                   typeDef == typeof(IList<>) ||
+                   typeDef == typeof(ICollection<>) ||
+                   typeDef == typeof(List<>);
         }
 
         static Type FindDictionaryInterface<T>()
@@ -87,7 +108,7 @@ namespace OpenWrap.Configuration
             return typeof(T).GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IDictionary<,>) && x.GetGenericArguments()[0] == typeof(string));
         }
 
-        static T ParseFile<T>(IFile file) where T : new()
+        static T ReadFile<T>(IFile file) where T : new()
         {
             string data;
             using (var fileStream = file.OpenRead())
@@ -171,21 +192,23 @@ namespace OpenWrap.Configuration
             }
         }
 
-        void WriteProperties(StreamWriter configFile, object value)
+        static void WriteProperties(StreamWriter configFile, object target)
         {
-            if (value == null)
+            if (target == null)
                 return;
-            var properties = from pi in value.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+            var properties = from pi in target.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                             let keyAttrib = pi.Attribute<KeyAttribute>()
+                             let name = keyAttrib != null ? keyAttrib.Name : pi.Name
                              where pi.GetIndexParameters().Length == 0
-                             let propertyValue = pi.GetValue(value, null)
-                             where propertyValue != null
-                             select new { pi, propertyValue };
+                             let value = pi.GetValue(target, null)
+                             where value != null
+                             select new { name, value };
 
             foreach (var property in properties)
-                configFile.WriteProperty(property.pi.Name.ToLowerInvariant(), property.propertyValue);
+                configFile.WriteProperty(property.name.ToLowerInvariant(), property.value);
         }
 
-        void WriteSection(StreamWriter configFile, string sectionName, string key, object value)
+        static void WriteSection(StreamWriter configFile, string sectionName, string key, object value)
         {
             configFile.WriteSection(sectionName, key);
             WriteProperties(configFile, value);

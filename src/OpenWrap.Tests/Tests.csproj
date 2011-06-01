@@ -61,6 +61,9 @@
     <Compile Include="Commands\add_remote\adding_publish_to_existing_with_unknown_repository_type.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_by_name_only.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_of_unknown_type.cs" />
+    <Compile Include="Configuration\lists\reading_config_values.cs" />
+    <Compile Include="Configuration\lists\writing_values.cs" />
+    <Compile Include="Configuration\Remotes\endpoint_encoding.cs" />
     <Compile Include="MemoryRepositoryFactory.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInput.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInputValue.cs" />

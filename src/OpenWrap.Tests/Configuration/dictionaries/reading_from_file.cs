@@ -13,7 +13,7 @@ namespace Tests.Configuration.dictionaries
         public reading_from_file()
         {
             given_configuration_text("remote-repositories",
-                                     "[remoterepository openwrap]\r\nfetch: http://wraps.openwrap.org\r\n[remoterepository]\r\nfetch:http://default.openwrap.org");
+                                     "[remoterepository openwrap]\r\nfetch: token=\"http://wraps.openwrap.org\"\r\n[remoterepository]\r\nfetch:token=\"http://default.openwrap.org\"");
 
             when_loading_configuration("remote-repositories");
         }
@@ -21,7 +21,7 @@ namespace Tests.Configuration.dictionaries
         [Test]
         public void entries_in_dictionary_have_their_properties_set()
         {
-            Entry["openwrap"].FetchRepository.ShouldBe("http://wraps.openwrap.org");
+            Entry["openwrap"].FetchRepository.Token.ShouldBe("http://wraps.openwrap.org");
         }
 
         [Test]

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.IO;
 using System.Linq;
+using System.Text;
 using OpenWrap.Collections;
 
 namespace OpenWrap.Configuration.Persistence
@@ -13,7 +14,7 @@ namespace OpenWrap.Configuration.Persistence
             var enumerable = value as IEnumerable;
             if (value == null || ((value is string) == false && enumerable != null && enumerable.GetEnumerator().MoveNext() == false)) return;
             if (enumerable != null && (value is string) == false)
-                writer.WriteLine("{0}: {1}", name, enumerable.Select(x => x.ToString()).JoinString(", "));
+                writer.Write(enumerable.Select(x => x.ToString()).Aggregate(new StringBuilder(), (@in, @new) => @in.AppendFormat("{0}: {1}\r\n",name, @new)));
             else
                 writer.WriteLine("{0}: {1}", name, value);
         }

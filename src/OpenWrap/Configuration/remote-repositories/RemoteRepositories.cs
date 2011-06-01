@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 namespace OpenWrap.Configuration
 {
-    [Path("remote-repositories")]
+    [Path("remotes")]
     public class RemoteRepositories : Dictionary<string, RemoteRepository>
     {
         public static readonly RemoteRepositories Default =
-                new RemoteRepositories
+            new RemoteRepositories
+            {
                 {
-                        { "openwrap", new RemoteRepository
-                        {
-                            FetchRepository = "[indexed]http://wraps.openwrap.org",
-                            PublishRepositories = {"[indexed]http://wraps.openwrap.org"},
-
-                        } 
-                        }
-                };
+                    "openwrap", new RemoteRepository
+                    {
+                        FetchRepository = { Token = "[indexed]http://wraps.openwrap.org" },
+                        PublishRepositories = { new RemoteRepositoryEndpoint { Token = "[indexed]http://wraps.openwrap.org" } },
+                    }
+                }
+            };
 
         public RemoteRepositories()
             : base(StringComparer.OrdinalIgnoreCase)

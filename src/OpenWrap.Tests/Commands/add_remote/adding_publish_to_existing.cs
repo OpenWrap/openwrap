@@ -10,7 +10,7 @@ namespace Tests.Commands.add_remote
     {
         public adding_publish_to_existing()
         {
-            given_remote_configuration(new RemoteRepositories { { "iron-hills", new RemoteRepository { FetchRepository = "[indexed]unknown" } } });
+            given_remote_configuration(new RemoteRepositories { { "iron-hills", new RemoteRepository { FetchRepository = new RemoteRepositoryEndpoint{Token= "[indexed]unknown"} } } });
             given_remote_factory(input => new InMemoryRepository(input));
 
             when_executing_command("iron-hills -publish somewhere");
@@ -24,7 +24,7 @@ namespace Tests.Commands.add_remote
         [Test]
         public void publish_is_added()
         {
-            Remotes["iron-hills"].PublishRepositories.Single().ShouldBe("[memory]somewhere");
+            StoredRemotesConfig["iron-hills"].PublishRepositories.Single().Token.ShouldBe("[memory]somewhere");
         }
     }
 }
