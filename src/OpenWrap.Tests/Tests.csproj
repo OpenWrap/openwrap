@@ -56,11 +56,13 @@
     </Compile>
     <Compile Include="Commands\add_remote\adding_new_remote_supporting_fetch_and_publish.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_with_authentication.cs" />
+    <Compile Include="Commands\add_remote\adding_new_remote_with_authentication_missing_inputs.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing_with_readonly_repo.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing_with_unknown_repository_type.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_by_name_only.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_of_unknown_type.cs" />
+    <Compile Include="Commands\add_remote\add_publish_to_existing_with_authentication.cs" />
     <Compile Include="Configuration\lists\reading_config_values.cs" />
     <Compile Include="Configuration\lists\writing_values.cs" />
     <Compile Include="Configuration\Remotes\endpoint_encoding.cs" />

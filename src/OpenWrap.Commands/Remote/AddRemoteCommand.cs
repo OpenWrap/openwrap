@@ -22,6 +22,9 @@ namespace OpenWrap.Commands.Remote
         public string Name { get; set; }
 
         [CommandInput]
+        public string Password { get; set; }
+
+        [CommandInput]
         public int Priority
         {
             get { return _priority ?? 1; }
@@ -30,6 +33,9 @@ namespace OpenWrap.Commands.Remote
 
         [CommandInput]
         public string Publish { get; set; }
+
+        [CommandInput]
+        public string Username { get; set; }
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
@@ -47,34 +53,27 @@ namespace OpenWrap.Commands.Remote
             yield return AuthIsCorrect;
         }
 
-        IEnumerable<ICommandOutput> AuthIsCorrect()
-        {
-            if ((Username != null || Password != null) && (Username == null || Password == null))
-                yield return new IncompleteCredentials();
-        }
-
-        [CommandInput]
-        public string Password { get; set; }
-
-        [CommandInput]
-        public string Username { get; set; }
-
         IEnumerable<ICommandOutput> AddNew(RemoteRepositories repositories)
         {
-            var repositoryInput = Href??Name;
+            var repositoryInput = Href ?? Name;
             var repository = Factories.Select(x => x.FromUserInput(repositoryInput)).NotNull().FirstOrDefault();
             if (repository == null)
             {
-                yield return UnknownRepositoryType(repositoryInput);
+                yield return new UnknownRepositoryType(repositoryInput);
                 yield break;
             }
-            var publishTokens = (repository.Feature<ISupportPublishing>() != null) ? new List<RemoteRepositoryEndpoint> { new RemoteRepositoryEndpoint{Token=repository.Token} } : new List<RemoteRepositoryEndpoint>();
-
+            var publishTokens = (repository.Feature<ISupportPublishing>() != null)
+                                    ? new List<RemoteRepositoryEndpoint>
+                                    {
+                                        new RemoteRepositoryEndpoint { Token = repository.Token, Username = Username, Password = Password }
+                                    }
+                                    : new List<RemoteRepositoryEndpoint>();
+            
             int position = GetNewRemotePriority(repositories);
 
             repositories[Name] = new RemoteRepository
             {
-                FetchRepository = {Token=repository.Token},
+                FetchRepository = { Token = repository.Token, Username = Username, Password = Password },
                 PublishRepositories = publishTokens,
                 Name = Name,
                 Priority = position
@@ -83,18 +82,13 @@ namespace OpenWrap.Commands.Remote
             yield return new GenericMessage(string.Format("Remote repository '{0}' added.", Name));
         }
 
-        Error UnknownRepositoryType(string repositoryInput)
-        {
-            return new UnknownRepositoryType(repositoryInput);
-        }
-
         IEnumerable<ICommandOutput> Append(RemoteRepositories repositories)
         {
             var existingReg = repositories[Name];
             var publishRepo = Factories.Select(x => x.FromUserInput(Publish)).NotNull().FirstOrDefault();
             if (publishRepo == null)
             {
-                yield return UnknownRepositoryType(Publish);
+                yield return new UnknownRepositoryType(Publish);
                 yield break;
             }
             if (publishRepo.Feature<ISupportPublishing>() == null)
@@ -102,10 +96,19 @@ namespace OpenWrap.Commands.Remote
                 yield return new Error("The path '{0}' is not recognized as a repository that can be published to.");
                 yield break;
             }
-            existingReg.PublishRepositories.Add(new RemoteRepositoryEndpoint{Token=publishRepo.Token});
+            existingReg.PublishRepositories.Add(new RemoteRepositoryEndpoint
+            {
+                Token = publishRepo.Token, Username = Username, Password = Password
+            });
 
             ConfigurationManager.Save(repositories);
             yield return new Info("Publish endpoint added to remote repository '{0}'.", Name);
+        }
+
+        IEnumerable<ICommandOutput> AuthIsCorrect()
+        {
+            if ((Username != null || Password != null) && (Username == null || Password == null))
+                yield return new IncompleteCredentials();
         }
 
         int GetNewRemotePriority(RemoteRepositories repositories)
@@ -125,22 +128,6 @@ namespace OpenWrap.Commands.Remote
         {
             if (!Regex.IsMatch(Name, @"^\S+$"))
                 yield return new RemoteNameInvalid();
-        }
-    }
-
-    class RemoteNameInvalid : Error
-    {
-        public RemoteNameInvalid() : base("The 'Name' parameter is invalid for a remote name. Identifiers cannot contain spaces.")
-        {
-        }
-    }
-
-    public class RemoteNameInUse : Error
-    {
-        public RemoteNameInUse(string name)
-            :base("A repository with the name '{0}' already exists. Try specifying a different name.", name)
-        {
-            
         }
     }
 }

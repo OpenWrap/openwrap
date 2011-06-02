@@ -62,6 +62,8 @@
     <Compile Include="Gui\InvokeGuiCommand.cs" />
     <Compile Include="Messages\IncompleteCredentials.cs" />
     <Compile Include="Remote\AbstractRemoteCommand.cs" />
+    <Compile Include="Remote\RemoteNameInUse.cs" />
+    <Compile Include="Remote\RemoteNameInvalid.cs" />
     <Compile Include="Remote\RemoteRepositoryMessage.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Remote\UnknownRepositoryType.cs" />
