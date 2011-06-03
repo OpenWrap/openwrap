@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Commands.Remote;
-using OpenWrap.Configuration.Remotes;
+using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 using Tests.Commands.contexts;
@@ -13,8 +13,14 @@ namespace Tests.Commands.add_remote
         public adding_new_remote_supporting_fetch_and_publish()
         {
             given_remote_factory(input => new InMemoryRepository(input));
-            given_remote_configuration(new RemoteRepositories());
             when_executing_command("iron-hills http://lotr.org/iron-hills");
+        }
+
+        [Test]
+        public void outputs_success_message()
+        {
+            Results.ShouldHaveOne<RemoteAdded>()
+                .Name.ShouldBe("iron-hills");
         }
 
         [Test]

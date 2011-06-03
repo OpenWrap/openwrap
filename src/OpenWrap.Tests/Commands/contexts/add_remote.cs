@@ -13,9 +13,7 @@ using Tests;
 
 namespace Tests.Commands.contexts
 {
-    public class add_remote : command_context<AddRemoteCommand>
+    public class add_remote : remote_command<AddRemoteCommand>
     {
-        protected RemoteRepositories StoredRemotesConfig { get { return ServiceLocator.GetService<IConfigurationManager>().Load<RemoteRepositories>(); } }
-        
     }
 }

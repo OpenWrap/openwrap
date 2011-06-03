@@ -1,17 +1,14 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
-using OpenWrap.Commands.Remote;
 using OpenWrap.Commands.Remote.Messages;
-using OpenWrap.Configuration.Remotes;
 using OpenWrap.Testing;
 
 namespace Tests.Commands.add_remote
 {
-    class adding_new_remote_with_existing_name : command_context<AddRemoteCommand>
+    class adding_new_remote_with_existing_name : contexts.add_remote
     {
         public adding_new_remote_with_existing_name()
         {
-            given_remote_configuration(new RemoteRepositories { { "iron-hills", null } });
+            given_remote_config("iron-hills");
             when_executing_command("iron-hills http://lotr.org/iron-hills");
         }
 

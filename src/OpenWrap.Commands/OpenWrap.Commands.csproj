@@ -62,10 +62,14 @@
     <Compile Include="Gui\InvokeGuiCommand.cs" />
     <Compile Include="Messages\IncompleteCredentials.cs" />
     <Compile Include="Remote\AbstractRemoteCommand.cs" />
+    <Compile Include="Remote\Messages\RemoteAdded.cs" />
     <Compile Include="Remote\Messages\RemoteEndpointReadOnly.cs" />
     <Compile Include="Remote\Messages\RemoteNameInUse.cs" />
     <Compile Include="Remote\Messages\RemoteNameInvalid.cs" />
+    <Compile Include="Remote\Messages\RemotePublishEndpointAdded.cs" />
     <Compile Include="Remote\Messages\RemoteRepositoryInfo.cs" />
+    <Compile Include="Remote\Messages\RemoteUpdated.cs" />
+    <Compile Include="Remote\Messages\UnknownRemoteName.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Remote\Messages\UnknownEndpointType.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />

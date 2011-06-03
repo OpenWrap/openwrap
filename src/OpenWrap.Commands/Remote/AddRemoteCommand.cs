@@ -44,7 +44,7 @@ namespace OpenWrap.Commands.Remote
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield return NameValid;
-            yield return NameNotInUseForNewRemote;
+            yield return NameAvailable;
             yield return AuthIsCorrect;
         }
 
@@ -74,7 +74,7 @@ namespace OpenWrap.Commands.Remote
                 Priority = position
             };
             ConfigurationManager.Save(repositories);
-            yield return new Info("Remote repository '{0}' added.", Name);
+            yield return new RemoteAdded(Name);
         }
 
         IEnumerable<ICommandOutput> Append(RemoteRepositories repositories)
@@ -99,7 +99,7 @@ namespace OpenWrap.Commands.Remote
             });
 
             ConfigurationManager.Save(repositories);
-            yield return new Info("Publish endpoint added to remote repository '{0}'.", Name);
+            yield return new RemotePublishEndpointAdded(Name, Publish);
         }
 
         IEnumerable<ICommandOutput> AuthIsCorrect()
@@ -110,25 +110,12 @@ namespace OpenWrap.Commands.Remote
 
         int GetNewRemotePriority(RemoteRepositories repositories)
         {
-            if (Priority.HasValue)
-            {
-                var val = Priority.Value;
-                int reorderFrom = val;
-                int reorderTo = reorderFrom;
-// ReSharper disable AccessToModifiedClosure
-                while (repositories.Any(_ => _.Value.Priority == reorderTo))
-// ReSharper restore AccessToModifiedClosure
-                    reorderTo++;
-
-                foreach (var repo in repositories.Where(_ => _.Value.Priority >= reorderFrom && _.Value.Priority < reorderTo))
-                    repo.Value.Priority = repo.Value.Priority + 1;
-
-                return val;
-            }
-            return repositories.Count > 0 ? repositories.Values.Max(r => r.Priority) + 1 : 1;
+            return Priority.HasValue
+                       ? MoveRepositoriesToHigherPriority(Priority.Value, repositories)
+                       : (repositories.Count > 0 ? repositories.Values.Max(r => r.Priority) + 1 : 1);
         }
 
-        IEnumerable<ICommandOutput> NameNotInUseForNewRemote()
+        IEnumerable<ICommandOutput> NameAvailable()
         {
             if (ConfigurationManager.Load<RemoteRepositories>().ContainsKey(Name) && Publish == null)
                 yield return new RemoteNameInUse(Name);

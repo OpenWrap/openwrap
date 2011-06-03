@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenWrap.Configuration;
 using System.Linq;
 using OpenWrap.Collections;
+using OpenWrap.Commands.Messages;
+using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Configuration.Remotes;
 using OpenWrap.Repositories;
 
@@ -11,101 +12,141 @@ namespace OpenWrap.Commands.Remote
     [Command(Noun = "remote", Verb = "set")]
     public class SetRemoteCommand : AbstractRemoteCommand
     {
-        int? _position;
+        // TODO: Add a -fetch
+        IPackageRepository _fetchRepo;
+        IPackageRepository _publishRepo;
+        RemoteRepositories _remotes;
+        RemoteRepository _targetRemote;
+
+        [CommandInput]
+        public string Href { get; set; }
 
         [CommandInput(Position = 0, IsRequired = true)]
         public string Name { get; set; }
 
         [CommandInput]
-        public int Priority
-        {
-            get { return _position ?? 1; }
-            set { _position = value; }
-        }
-
-        [CommandInput]
         public string NewName { get; set; }
 
         [CommandInput]
-        public string Href { get; set; }
+        public string Password { get; set; }
 
-        IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
+        [CommandInput]
+        public int? Priority { get; set; }
+
+        [CommandInput]
+        public string Publish { get; set; }
+
+        [CommandInput]
+        public string Username { get; set; }
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            var repositories = ConfigurationManager.Load<RemoteRepositories>();
+            HandlePrioritySetting(_remotes, _targetRemote);
 
-            RemoteRepository remote;
-            if (!repositories.TryGetValue(Name, out remote))
+            if (NewName != null)
+                _targetRemote.Name = NewName;
+
+            if (_fetchRepo != null)
             {
-                yield return new Error("Could not find remote repository named: " + Name);
-                yield break;
+                _targetRemote.FetchRepository.Token = _fetchRepo.Token;
+                _targetRemote.FetchRepository.Username = Username;
+                _targetRemote.FetchRepository.Password = Password;
+
+                _targetRemote.PublishRepositories = ToPublishEndpoints(_publishRepo ?? _fetchRepo);
             }
-
-            HandlePrioritySetting(repositories, remote);
-
-            if (!string.IsNullOrEmpty(NewName))
+            else if (_publishRepo != null)
             {
-                if (repositories.ContainsKey(NewName))
+                _targetRemote.PublishRepositories = ToPublishEndpoints(_publishRepo);
+            }
+            else if (_publishRepo == null && _fetchRepo == null && Username != null)
+            {
+                foreach (var config in _targetRemote.PublishRepositories.Concat(_targetRemote.FetchRepository))
                 {
-                    yield return new Error("Repository with name '{0}' already present.");
-                    yield break;
+                    config.Username = Username;
+                    config.Password = Password;
                 }
-                remote.Name = NewName;
             }
 
+            ConfigurationManager.Save(_remotes);
+            yield return new RemoteUpdated(Name);
+        }
+
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
+        {
+            yield return RemoteExists;
+            yield return NewNameAvailable;
+            yield return FetchRepoFound;
+            yield return PublishRepoFound;
+            yield return CredentialsComplete;
+        }
+
+        IEnumerable<ICommandOutput> CredentialsComplete()
+        {
+            if ((Username != null || Password != null) && (Username == null || Password == null))
+                yield return new IncompleteCredentials();
+        }
+
+        IEnumerable<ICommandOutput> FetchRepoFound()
+        {
             if (Href != null)
             {
-                var foundRepo = Factories.Select(x => x.FromUserInput(Href)).NotNull().FirstOrDefault();
-
-                if (foundRepo == null) throw new InvalidOperationException();
-                remote.FetchRepository.Token = foundRepo.Token;
-                remote.PublishRepositories = foundRepo.Feature<ISupportPublishing>() != null
-                                                     ? new List<RemoteRepositoryEndpoint> { new RemoteRepositoryEndpoint{Token=foundRepo.Token} }
-                                                     : new List<RemoteRepositoryEndpoint>(0);
+                _fetchRepo = Factories.Select(x => x.FromUserInput(Href)).NotNull().FirstOrDefault();
+                if (_fetchRepo == null)
+                    yield return new UnknownEndpointType(Href);
             }
-
-            ConfigurationManager.Save(repositories);
         }
 
         void HandlePrioritySetting(RemoteRepositories repositories, RemoteRepository remote)
         {
-            if (!_position.HasValue || remote.Priority == _position)
+            if (!Priority.HasValue || remote.Priority == Priority)
                 return;
-            
-            var prioHasIncreased = remote.Priority > _position;
-            
-            var otherRepositories = repositories.Values.Except(remote.ToEnumerable());
 
-            var vars = prioHasIncreased
-                                        ? new
-                                        {
-                                            RelevantRepositories = otherRepositories.OrderBy(r => r.Priority).ToList(),
-                                            SkipCondition = new Func<RemoteRepository, bool>(r => r.Priority < _position),
-                                            PriorityMutator = new Func<int, int>(i => i + 1)
-                                        }
-                                        : new
-                                        {
-                                            RelevantRepositories = otherRepositories.OrderByDescending(r => r.Priority).ToList(),
-                                            SkipCondition = new Func<RemoteRepository, bool>(r => r.Priority > _position),
-                                            PriorityMutator = new Func<int, int>(i => i - 1)
-                                        };
+            MoveRepositoriesToHigherPriority(Priority.Value, repositories);
 
-            if (!vars.RelevantRepositories.Any(r => r.Priority == _position))
-                return;
-            
-            var lastPriority = (int)_position;
-
-            foreach (var repository in vars.RelevantRepositories.SkipWhile(vars.SkipCondition))
-            {
-                if (repository.Priority == lastPriority)
-                    repository.Priority = (lastPriority = vars.PriorityMutator(lastPriority));
-                else
-                    break;
-            }
-
-            remote.Priority = _position.Value;
+            remote.Priority = Priority.Value;
         }
 
+        IEnumerable<ICommandOutput> NewNameAvailable()
+        {
+            if (NewName != null && ConfigurationManager.Load<RemoteRepositories>().ContainsKey(NewName))
+                yield return new RemoteNameInUse(NewName);
+        }
+
+        IEnumerable<ICommandOutput> PublishRepoFound()
+        {
+            if (Publish != null)
+            {
+                var publishRepo = Factories.Select(x => x.FromUserInput(Publish)).NotNull().FirstOrDefault();
+                if (publishRepo == null)
+                    yield return new UnknownEndpointType(Publish);
+                else if (publishRepo.Feature<ISupportPublishing>() == null)
+                    yield return new RemoteEndpointReadOnly(Publish);
+                else
+                    _publishRepo = publishRepo;
+            }
+        }
+
+        IEnumerable<ICommandOutput> RemoteExists()
+        {
+            _remotes = ConfigurationManager.Load<RemoteRepositories>();
+            if (_remotes.ContainsKey(Name) == false)
+                yield return new UnknownRemoteName(Name);
+            else
+                _targetRemote = _remotes[Name];
+        }
+
+        ICollection<RemoteRepositoryEndpoint> ToPublishEndpoints(IPackageRepository repo)
+        {
+            if (repo == null || repo.Feature<ISupportPublishing>() == null) return new List<RemoteRepositoryEndpoint>(0);
+            return new List<RemoteRepositoryEndpoint>
+            {
+                new RemoteRepositoryEndpoint
+                {
+                    Token = repo.Token,
+                    Username = Username,
+                    Password = Password
+                }
+            };
+        }
     }
 }

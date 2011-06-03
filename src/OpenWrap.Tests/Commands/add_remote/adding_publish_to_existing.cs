@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Configuration.Remotes;
+using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
@@ -10,7 +10,7 @@ namespace Tests.Commands.add_remote
     {
         public adding_publish_to_existing()
         {
-            given_remote_configuration(new RemoteRepositories { { "iron-hills", new RemoteRepository { FetchRepository = new RemoteRepositoryEndpoint { Token = "[indexed]unknown" } } } });
+            given_remote_config("iron-hills");
             given_remote_factory(input => new InMemoryRepository(input));
 
             when_executing_command("iron-hills -publish somewhere");
@@ -20,12 +20,15 @@ namespace Tests.Commands.add_remote
         public void comand_succeeds()
         {
             Results.ShouldHaveNoError();
+            Results.ShouldHaveOne<RemotePublishEndpointAdded>()
+                .Check(x => x.Name.ShouldBe("iron-hills"))
+                .Check(x => x.Path.ShouldBe("somewhere"));
         }
 
         [Test]
         public void publish_is_added()
         {
-            StoredRemotesConfig["iron-hills"].PublishRepositories.Single().Token.ShouldBe("[memory]somewhere");
+            ConfiguredRemotes["iron-hills"].PublishRepositories.Single().Token.ShouldBe("[memory]somewhere");
         }
     }
 }

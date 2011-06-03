@@ -17,15 +17,15 @@ namespace Tests.Commands.add_remote
         [Test]
         public void password_is_persisted()
         {
-            StoredRemotesConfig["iron-hills"].FetchRepository.Password.ShouldBe("lossarnach");
-            StoredRemotesConfig["iron-hills"].PublishRepositories.First().Password.ShouldBe("lossarnach");
+            ConfiguredRemotes["iron-hills"].FetchRepository.Password.ShouldBe("lossarnach");
+            ConfiguredRemotes["iron-hills"].PublishRepositories.First().Password.ShouldBe("lossarnach");
         }
 
         [Test]
         public void username_is_persisted()
         {
-            StoredRemotesConfig["iron-hills"].FetchRepository.Username.ShouldBe("forlong.the.fat");
-            StoredRemotesConfig["iron-hills"].PublishRepositories.First().Username.ShouldBe("forlong.the.fat");
+            ConfiguredRemotes["iron-hills"].FetchRepository.Username.ShouldBe("forlong.the.fat");
+            ConfiguredRemotes["iron-hills"].PublishRepositories.First().Username.ShouldBe("forlong.the.fat");
         }
     }
 }

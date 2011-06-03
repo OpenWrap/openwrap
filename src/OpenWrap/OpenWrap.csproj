@@ -74,6 +74,7 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="Collections\IndexedDictionary.cs" />
     <Compile Include="Commands\Cli\ColoredText.cs" />
     <Compile Include="Commands\Cli\CommandInputTooManyTimes.cs" />
     <Compile Include="Commands\Cli\CommandLineRunner.cs" />
@@ -430,8 +431,5 @@
   <Target Name="AfterBuild">
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\openwrap\build\ /y
-copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\_cache\openwrap-1.1.0.57857518\bin-net35\ /y
-</PostBuildEvent>
   </PropertyGroup>
 </Project>

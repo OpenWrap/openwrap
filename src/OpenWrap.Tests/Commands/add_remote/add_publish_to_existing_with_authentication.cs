@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Configuration.Remotes;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
@@ -10,7 +9,7 @@ namespace Tests.Commands.add_remote
     {
         public add_publish_to_existing_with_authentication()
         {
-            given_remote_configuration(new RemoteRepositories { { "iron-hills", new RemoteRepository { FetchRepository = new RemoteRepositoryEndpoint { Token = "[indexed]unknown" } } } });
+            given_remote_config("iron-hills");
             given_remote_factory(userInput => new InMemoryRepository(userInput));
             when_executing_command("iron-hills -publish http://sauron -username forlong.the.fat -password lossarnach");
         }
@@ -18,13 +17,13 @@ namespace Tests.Commands.add_remote
         [Test]
         public void password_is_persisted()
         {
-            StoredRemotesConfig["iron-hills"].PublishRepositories.First().Password.ShouldBe("lossarnach");
+            ConfiguredRemotes["iron-hills"].PublishRepositories.First().Password.ShouldBe("lossarnach");
         }
 
         [Test]
         public void username_is_persisted()
         {
-            StoredRemotesConfig["iron-hills"].PublishRepositories.First().Username.ShouldBe("forlong.the.fat");
+            ConfiguredRemotes["iron-hills"].PublishRepositories.First().Username.ShouldBe("forlong.the.fat");
         }
     }
 }

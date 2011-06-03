@@ -54,10 +54,12 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="Collections\indexed_dic.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_supporting_fetch_and_publish.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_with_authentication.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_with_authentication_missing_inputs.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_with_invalid_name.cs" />
+    <Compile Include="Commands\add_remote\adding_new_remote_with_separate_fetch_and_publish.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing_with_readonly_repo.cs" />
     <Compile Include="Commands\add_remote\adding_publish_to_existing_with_unknown_repository_type.cs" />
@@ -68,6 +70,16 @@
     <Compile Include="Commands\add_remote\priority\adding_new_remote_existing_config.cs" />
     <Compile Include="Commands\add_remote\priority\adding_new_remote_with_priority.cs" />
     <Compile Include="Commands\add_remote\priority\adding_new_remote_with_same_priority_as_existing.cs" />
+    <Compile Include="Commands\set_remote\changing_credentials_missing.cs" />
+    <Compile Include="Commands\set_remote\changing_credentials_on_existing.cs" />
+    <Compile Include="Commands\set_remote\changing_credentials_on_setting_new_endpoint.cs" />
+    <Compile Include="Commands\set_remote\changing_fetch_and_publish.cs" />
+    <Compile Include="Commands\set_remote\changing_href_to_readonly.cs" />
+    <Compile Include="Commands\set_remote\changing_href_unknown_endpoint.cs" />
+    <Compile Include="Commands\set_remote\changing_publish.cs" />
+    <Compile Include="Commands\set_remote\changing_publish_to_readonly.cs" />
+    <Compile Include="Commands\set_remote\changing_publish_to_unknown.cs" />
+    <Compile Include="Commands\set_remote\remote_name_doesnt_exist.cs" />
     <Compile Include="Configuration\lists\reading_config_values.cs" />
     <Compile Include="Configuration\lists\writing_values.cs" />
     <Compile Include="Configuration\Remotes\endpoint_encoding.cs" />
@@ -215,14 +227,12 @@
     <Compile Include="Commands\command_line_runner\positioned_inputs_used_by_name.cs" />
     <Compile Include="Commands\command_line_runner\positioned_input_invalid_value.cs" />
     <Compile Include="Commands\command_line_runner\unknown_named_input_provided.cs" />
-    <Compile Include="Commands\set_remote\moving_repository_to_new_priority_case1.cs" />
-    <Compile Include="Commands\set_remote\moving_repository_to_new_priority_case2.cs" />
-    <Compile Include="Commands\set_remote\moving_repository_to_new_priority_case3.cs" />
-    <Compile Include="Commands\set_remote\moving_repository_to_new_priority_case4.cs" />
+    <Compile Include="Commands\set_remote\changing_priority_to_value_in_use.cs" />
+    <Compile Include="Commands\set_remote\changing_priority_to_new_value.cs" />
     <Compile Include="Commands\contexts\set_remote.cs" />
-    <Compile Include="Commands\set_remote\when_changing_repository_href.cs" />
-    <Compile Include="Commands\set_remote\when_changing_repository_name.cs" />
-    <Compile Include="Commands\set_remote\when_changing_repository_name_to_existing.cs" />
+    <Compile Include="Commands\set_remote\changing_href.cs" />
+    <Compile Include="Commands\set_remote\changing_name.cs" />
+    <Compile Include="Commands\set_remote\changing_name_to_existing.cs" />
     <Compile Include="Commands\set_wrap\set_wrap_anchored_false.cs" />
     <Compile Include="Commands\set_wrap\set_wrap_anchored_true.cs" />
     <Compile Include="Commands\set_wrap\set_wrap_conflicting_version_inputs.cs" />
@@ -362,7 +372,6 @@
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
     <Compile Include="Commands\Help\getHelpCommand.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_with_existing_name.cs" />
-    <Compile Include="Commands\set_remote\when_changing_remote_priority.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
     <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
     <Compile Include="Commands\add_wrap\adding_wrap_twice.cs" />
@@ -472,13 +481,6 @@
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\openwrap\build\ /y
-copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\openwrap\bin-net35\ /y
-copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\openwrap\commands\ /y
-copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\_cache\openwrap-1.1.0.57857518\bin-net35\ /y
-copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\_cache\openwrap-1.1.0.57857518\build\ /y
-copy $(TargetDir)*.* C:\tmp\resharpernew\wraps\_cache\openwrap-1.1.0.57857518\commands\ /y
-</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

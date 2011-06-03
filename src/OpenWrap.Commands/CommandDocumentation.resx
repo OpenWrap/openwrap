@@ -349,11 +349,20 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="set-remote-newname" xml:space="preserve">
     <value>Specify a new name for the repository you are changing</value>
   </data>
+  <data name="set-remote-password" xml:space="preserve">
+    <value>Sets the password to use for the endpoint.</value>
+  </data>
   <data name="set-remote-position" xml:space="preserve">
     <value>Updates the integer position used to order remote repositories.</value>
   </data>
   <data name="set-remote-priority" xml:space="preserve">
     <value>Sets the priority used for the remote.</value>
+  </data>
+  <data name="set-remote-publish" xml:space="preserve">
+    <value>Sets the publish endpoint to the provided remote repository address.</value>
+  </data>
+  <data name="set-remote-username" xml:space="preserve">
+    <value>Sets the username to use when accessing the remote endpoints already configured or being set.</value>
   </data>
   <data name="set-wrap" xml:space="preserve">
     <value>Updates a wrap dependency in the project repository.</value>

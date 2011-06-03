@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.Remote.Messages;
-using OpenWrap.Configuration.Remotes;
 using OpenWrap.Testing;
 
 namespace Tests.Commands.add_remote
@@ -9,7 +8,7 @@ namespace Tests.Commands.add_remote
     {
         public adding_publish_to_existing_with_unknown_repository_type()
         {
-            given_remote_configuration(new RemoteRepositories { { "iron-hills", new RemoteRepository { FetchRepository = new RemoteRepositoryEndpoint { Token = "[indexed]unknown" } } } });
+            given_remote_config("iron-hills");
 
             when_executing_command("iron-hills -publish somewhere");
         }
@@ -24,7 +23,7 @@ namespace Tests.Commands.add_remote
         [Test]
         public void configuration_is_not_modified()
         {
-            StoredRemotesConfig["iron-hills"].PublishRepositories.ShouldBeEmpty();
+            ConfiguredRemotes["iron-hills"].PublishRepositories.ShouldBeEmpty();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Tests.Configuration.dictionaries
         public reading_from_file()
         {
             given_configuration_text("remote-repositories",
-                                     "[remoterepository openwrap]\r\nfetch: token=\"http://wraps.openwrap.org\"\r\n[remoterepository]\r\nfetch:token=\"http://default.openwrap.org\"");
+                                     "[remoterepository openwrap]\r\nname:openwrap\r\nfetch: token=\"http://wraps.openwrap.org\"\r\n[remoterepository]\r\nfetch:token=\"http://default.openwrap.org\"");
 
             when_loading_configuration("remote-repositories");
         }
