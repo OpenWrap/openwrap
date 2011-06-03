@@ -67,6 +67,7 @@
     <Compile Include="Remote\Messages\RemoteNameInUse.cs" />
     <Compile Include="Remote\Messages\RemoteNameInvalid.cs" />
     <Compile Include="Remote\Messages\RemotePublishEndpointAdded.cs" />
+    <Compile Include="Remote\Messages\RemoteRemoved.cs" />
     <Compile Include="Remote\Messages\RemoteRepositoryInfo.cs" />
     <Compile Include="Remote\Messages\RemoteUpdated.cs" />
     <Compile Include="Remote\Messages\UnknownRemoteName.cs" />

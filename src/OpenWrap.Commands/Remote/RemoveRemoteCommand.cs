@@ -1,38 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
-using OpenWrap.Collections;
-using OpenWrap.Configuration;
+using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Configuration.Remotes;
 
 namespace OpenWrap.Commands.Remote
 {
-    [Command(Noun="remote", Verb="remove")]
-    public class RemoveRemoteCommand : AbstractCommand
+    [Command(Noun = "remote", Verb = "remove")]
+    public class RemoveRemoteCommand : AbstractRemoteCommand
     {
-        [CommandInput(Position=0, IsRequired=true)]
-        public string Name { get; set; }
+        RemoteRepositories _remotes;
 
-        IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
-        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
-        {
-            yield return ValidateNameDoesntExist;
-        }
+        [CommandInput(Position = 0, IsRequired = true)]
+        public string Name { get; set; }
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            var repositories = ConfigurationManager.Load<RemoteRepositories>();
-            
-            repositories.Remove(Name);
+            _remotes.Remove(Name);
 
-            ConfigurationManager.Save(repositories);
-            yield return new GenericMessage(string.Format("Repository '{0}' removed.", Name));
+            ConfigurationManager.Save(_remotes);
+            yield return new RemoteRemoved(Name);
+        }
+
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
+        {
+            yield return NameExists;
         }
 
 
-        IEnumerable<ICommandOutput> ValidateNameDoesntExist()
+        IEnumerable<ICommandOutput> NameExists()
         {
-            if (!ConfigurationManager.Load<RemoteRepositories>().ContainsKey(Name))
-                yield return new Error("Remote repository '{0}' not found.", Name);
+            _remotes = ConfigurationManager.Load<RemoteRepositories>();
+            if (!_remotes.ContainsKey(Name))
+                yield return new UnknownRemoteName(Name);
         }
     }
 }

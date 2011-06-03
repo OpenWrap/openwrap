@@ -70,6 +70,7 @@
     <Compile Include="Commands\add_remote\priority\adding_new_remote_existing_config.cs" />
     <Compile Include="Commands\add_remote\priority\adding_new_remote_with_priority.cs" />
     <Compile Include="Commands\add_remote\priority\adding_new_remote_with_same_priority_as_existing.cs" />
+    <Compile Include="Commands\remove_remote\removing_existing.cs" />
     <Compile Include="Commands\set_remote\changing_credentials_missing.cs" />
     <Compile Include="Commands\set_remote\changing_credentials_on_existing.cs" />
     <Compile Include="Commands\set_remote\changing_credentials_on_setting_new_endpoint.cs" />
@@ -373,7 +374,7 @@
     <Compile Include="Commands\Help\getHelpCommand.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_with_existing_name.cs" />
     <Compile Include="Commands\Remote\listRemoteCommand.cs" />
-    <Compile Include="Commands\Remote\removeRemoteCommand.cs" />
+    <Compile Include="Commands\remove_remote\removing_unknown.cs" />
     <Compile Include="Commands\add_wrap\adding_wrap_twice.cs" />
     <Compile Include="Commands\contexts\command_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
