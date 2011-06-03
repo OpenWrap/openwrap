@@ -6,6 +6,7 @@ using OpenWrap;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using Tests;

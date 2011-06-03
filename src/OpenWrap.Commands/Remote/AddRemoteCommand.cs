@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using OpenWrap.Collections;
 using OpenWrap.Commands.Messages;
-using OpenWrap.Configuration;
+using OpenWrap.Commands.Remote.Messages;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.Repositories;
 
 
@@ -13,8 +14,6 @@ namespace OpenWrap.Commands.Remote
     [Command(Noun = "remote", Verb = "add")]
     public class AddRemoteCommand : AbstractRemoteCommand
     {
-        int? _priority;
-
         [CommandInput(Position = 1)]
         public string Href { get; set; }
 
@@ -25,11 +24,7 @@ namespace OpenWrap.Commands.Remote
         public string Password { get; set; }
 
         [CommandInput]
-        public int Priority
-        {
-            get { return _priority ?? 1; }
-            set { _priority = value; }
-        }
+        public int? Priority { get; set; }
 
         [CommandInput]
         public string Publish { get; set; }
@@ -59,7 +54,7 @@ namespace OpenWrap.Commands.Remote
             var repository = Factories.Select(x => x.FromUserInput(repositoryInput)).NotNull().FirstOrDefault();
             if (repository == null)
             {
-                yield return new UnknownRepositoryType(repositoryInput);
+                yield return new UnknownEndpointType(repositoryInput);
                 yield break;
             }
             var publishTokens = (repository.Feature<ISupportPublishing>() != null)
@@ -68,7 +63,7 @@ namespace OpenWrap.Commands.Remote
                                         new RemoteRepositoryEndpoint { Token = repository.Token, Username = Username, Password = Password }
                                     }
                                     : new List<RemoteRepositoryEndpoint>();
-            
+
             int position = GetNewRemotePriority(repositories);
 
             repositories[Name] = new RemoteRepository
@@ -79,7 +74,7 @@ namespace OpenWrap.Commands.Remote
                 Priority = position
             };
             ConfigurationManager.Save(repositories);
-            yield return new GenericMessage(string.Format("Remote repository '{0}' added.", Name));
+            yield return new Info("Remote repository '{0}' added.", Name);
         }
 
         IEnumerable<ICommandOutput> Append(RemoteRepositories repositories)
@@ -88,17 +83,19 @@ namespace OpenWrap.Commands.Remote
             var publishRepo = Factories.Select(x => x.FromUserInput(Publish)).NotNull().FirstOrDefault();
             if (publishRepo == null)
             {
-                yield return new UnknownRepositoryType(Publish);
+                yield return new UnknownEndpointType(Publish);
                 yield break;
             }
             if (publishRepo.Feature<ISupportPublishing>() == null)
             {
-                yield return new Error("The path '{0}' is not recognized as a repository that can be published to.");
+                yield return new RemoteEndpointReadOnly(Publish);
                 yield break;
             }
             existingReg.PublishRepositories.Add(new RemoteRepositoryEndpoint
             {
-                Token = publishRepo.Token, Username = Username, Password = Password
+                Token = publishRepo.Token,
+                Username = Username,
+                Password = Password
             });
 
             ConfigurationManager.Save(repositories);
@@ -113,8 +110,21 @@ namespace OpenWrap.Commands.Remote
 
         int GetNewRemotePriority(RemoteRepositories repositories)
         {
-            if (_priority.HasValue)
-                return _priority.Value;
+            if (Priority.HasValue)
+            {
+                var val = Priority.Value;
+                int reorderFrom = val;
+                int reorderTo = reorderFrom;
+// ReSharper disable AccessToModifiedClosure
+                while (repositories.Any(_ => _.Value.Priority == reorderTo))
+// ReSharper restore AccessToModifiedClosure
+                    reorderTo++;
+
+                foreach (var repo in repositories.Where(_ => _.Value.Priority >= reorderFrom && _.Value.Priority < reorderTo))
+                    repo.Value.Priority = repo.Value.Priority + 1;
+
+                return val;
+            }
             return repositories.Count > 0 ? repositories.Values.Max(r => r.Priority) + 1 : 1;
         }
 
@@ -127,7 +137,7 @@ namespace OpenWrap.Commands.Remote
         IEnumerable<ICommandOutput> NameValid()
         {
             if (!Regex.IsMatch(Name, @"^\S+$"))
-                yield return new RemoteNameInvalid();
+                yield return new RemoteNameInvalid(Name);
         }
     }
 }

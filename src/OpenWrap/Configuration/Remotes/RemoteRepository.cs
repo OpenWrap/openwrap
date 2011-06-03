@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OpenWrap.Configuration
+namespace OpenWrap.Configuration.Remotes
 {
     public class RemoteRepository
     {

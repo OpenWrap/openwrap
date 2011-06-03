@@ -6,6 +6,7 @@ using NUnit.Framework;
 using OpenWrap.Commands;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Commands.Remote;

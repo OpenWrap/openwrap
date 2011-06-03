@@ -1,7 +1,9 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Remote;
-using OpenWrap.Configuration;
+using OpenWrap.Commands.Remote.Messages;
+using OpenWrap.Configuration.Remotes;
+using OpenWrap.Testing;
 
 namespace Tests.Commands.add_remote
 {
@@ -16,7 +18,8 @@ namespace Tests.Commands.add_remote
         [Test]
         public void an_error_is_returned()
         {
-            Results.ShouldHaveError();
+            Results.ShouldHaveOne<RemoteNameInUse>()
+                .Name.ShouldBe("iron-hills");
         }
     }
 }

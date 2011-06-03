@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.Remote;
+using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Testing;
 using Tests.Commands.contexts;
 
@@ -17,10 +18,12 @@ namespace Tests.Commands.add_remote
         {
             ConfiguredRemotes.Keys.ShouldNotContain("iron-hills");
         }
+
         [Test]
         public void error_is_returned()
         {
-            Results.ShouldHaveError();
+            Results.ShouldHaveOne<UnknownEndpointType>()
+                .Path.ShouldBe("http://lotr.org/iron-hills");
         }
     }
 }

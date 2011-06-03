@@ -1,6 +1,7 @@
 ﻿using System;
 using NUnit.Framework;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.Testing;
 using Tests.contexts;
 

@@ -28,8 +28,6 @@ namespace OpenWrap.Commands
 
         public string Message { get; private set; }
 
-        public ICommand Source { get; set; }
-
         public CommandResultType Type { get; set; }
         protected string DefaultMessage { get; set; }
         protected object[] MessageArguments { get; set; }

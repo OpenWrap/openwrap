@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Remote
@@ -18,7 +20,7 @@ namespace OpenWrap.Commands.Remote
         {
             return ConfigurationManager.Load<RemoteRepositories>()
                     .OrderBy(x => x.Value.Priority)
-                    .Select(x => new RemoteRepositoryMessage(this, x.Key, x.Value))
+                    .Select(x => new RemoteRepositoryInfo(x.Key, x.Value))
                     .Cast<ICommandOutput>();
         }
     }

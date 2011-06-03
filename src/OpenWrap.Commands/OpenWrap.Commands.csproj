@@ -62,11 +62,12 @@
     <Compile Include="Gui\InvokeGuiCommand.cs" />
     <Compile Include="Messages\IncompleteCredentials.cs" />
     <Compile Include="Remote\AbstractRemoteCommand.cs" />
-    <Compile Include="Remote\RemoteNameInUse.cs" />
-    <Compile Include="Remote\RemoteNameInvalid.cs" />
-    <Compile Include="Remote\RemoteRepositoryMessage.cs" />
+    <Compile Include="Remote\Messages\RemoteEndpointReadOnly.cs" />
+    <Compile Include="Remote\Messages\RemoteNameInUse.cs" />
+    <Compile Include="Remote\Messages\RemoteNameInvalid.cs" />
+    <Compile Include="Remote\Messages\RemoteRepositoryInfo.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />
-    <Compile Include="Remote\UnknownRepositoryType.cs" />
+    <Compile Include="Remote\Messages\UnknownEndpointType.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
     <Compile Include="Wrap\DependenciesConflictMessage.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
@@ -137,6 +138,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

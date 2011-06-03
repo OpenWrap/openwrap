@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OpenWrap.Collections;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Remotes;
 
 namespace OpenWrap.Commands.Remote
 {

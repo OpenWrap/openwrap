@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenWrap.Configuration
+namespace OpenWrap.Configuration.Remotes
 {
     static class ConfigurationHelper
     {

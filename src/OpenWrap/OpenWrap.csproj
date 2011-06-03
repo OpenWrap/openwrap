@@ -97,9 +97,9 @@
     <Compile Include="Configuration\ConstantUris.cs" />
     <Compile Include="Configuration\KeyAttribute.cs" />
     <Compile Include="Configuration\PathAttribute.cs" />
-    <Compile Include="Configuration\remote-repositories\ConfigurationHelper.cs" />
-    <Compile Include="Configuration\remote-repositories\LegacyRemoteRepositories.cs" />
-    <Compile Include="Configuration\remote-repositories\RemoteRepositoryEndpoint.cs" />
+    <Compile Include="Configuration\Remotes\ConfigurationHelper.cs" />
+    <Compile Include="Configuration\Remotes\LegacyRemoteRepositories.cs" />
+    <Compile Include="Configuration\Remotes\RemoteRepositoryEndpoint.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />
@@ -220,8 +220,8 @@
     <Compile Include="Configuration\ConfigurationSection.cs" />
     <Compile Include="Configuration\IConfigurationManager.cs" />
     <Compile Include="Configuration\InvalidConfigurationException.cs" />
-    <Compile Include="Configuration\remote-repositories\RemoteRepositories.cs" />
-    <Compile Include="Configuration\remote-repositories\RemoteRepository.cs" />
+    <Compile Include="Configuration\Remotes\RemoteRepositories.cs" />
+    <Compile Include="Configuration\Remotes\RemoteRepository.cs" />
     <Compile Include="Commands\Cli\ShellRunner.cs" />
     <Compile Include="PackageModel\AbsolutelyEqualVersionVertex.cs" />
     <Compile Include="PackageModel\DefaultPackageInfo.cs" />

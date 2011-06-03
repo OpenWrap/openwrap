@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
-using Tests;
 
 namespace Tests.Commands.add_remote
 {
@@ -18,17 +15,17 @@ namespace Tests.Commands.add_remote
         }
 
         [Test]
-        public void username_is_persisted()
-        {
-            StoredRemotesConfig["iron-hills"].FetchRepository.Username.ShouldBe("forlong.the.fat");
-            StoredRemotesConfig["iron-hills"].PublishRepositories.First().Username.ShouldBe("forlong.the.fat");
-        }
-
-        [Test]
         public void password_is_persisted()
         {
             StoredRemotesConfig["iron-hills"].FetchRepository.Password.ShouldBe("lossarnach");
             StoredRemotesConfig["iron-hills"].PublishRepositories.First().Password.ShouldBe("lossarnach");
+        }
+
+        [Test]
+        public void username_is_persisted()
+        {
+            StoredRemotesConfig["iron-hills"].FetchRepository.Username.ShouldBe("forlong.the.fat");
+            StoredRemotesConfig["iron-hills"].PublishRepositories.First().Username.ShouldBe("forlong.the.fat");
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using OpenWrap.Configuration;
 using System.Linq;
 using OpenWrap.Collections;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Remote

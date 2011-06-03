@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using OpenWrap.Configuration;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.Testing;
 
 namespace Tests.Configuration.Remotes
 {
     class endpoint_encoding : context
     {
+        [TestCase("token", null, null)]
         [TestCase("token", "username", "password")]
         [TestCase("to;ken", "user;name", "password")]
         [TestCase("token", "username", "password")]

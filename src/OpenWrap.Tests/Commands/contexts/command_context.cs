@@ -8,6 +8,7 @@ using OpenWrap.Collections;
 using OpenWrap.Commands.Cli;
 using OpenWrap.Configuration;
 using OpenFileSystem.IO;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;

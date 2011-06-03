@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace OpenWrap.Configuration
+namespace OpenWrap.Configuration.Remotes
 {
     [Path("remotes")]
     public class RemoteRepositories : Dictionary<string, RemoteRepository>

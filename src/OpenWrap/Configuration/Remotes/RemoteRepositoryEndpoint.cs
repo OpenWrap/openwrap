@@ -3,7 +3,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OpenWrap.Configuration
+namespace OpenWrap.Configuration.Remotes
 {
     // TODO: Move encoding and escaping into the configuration reader/writer where it belongs.
     public class RemoteRepositoryEndpoint
@@ -34,12 +34,13 @@ namespace OpenWrap.Configuration
             return sb.ToString();
         }
 
-        string Encrypt(string input)
+        static string Encrypt(string input)
         {
             if (input == null) return null;
             return Convert.ToBase64String(ProtectedData.Protect(Encoding.UTF8.GetBytes(input), null, DataProtectionScope.CurrentUser));
         }
-        string Decrypt(string input)
+
+        static string Decrypt(string input)
         {
             if (input == null) return null;
             return Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(input), null, DataProtectionScope.CurrentUser));
@@ -47,6 +48,7 @@ namespace OpenWrap.Configuration
 
         static string Escape(string input)
         {
+            if (input == null) return null;
             return input.Replace("\\", "\\\\").Replace("\"", "\\\"");
         }
 

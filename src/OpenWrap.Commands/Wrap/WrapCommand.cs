@@ -4,7 +4,9 @@ using System.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.Collections;
 using OpenWrap.Commands.Remote;
+using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageModel;
@@ -76,7 +78,7 @@ namespace OpenWrap.Commands.Wrap
             yield return new Info("The list of configured repositories can be seen using the 'list-remote' command. The currently configured repositories are:");
             foreach(var m in ConfigurationManager.Load<RemoteRepositories>()
                     .OrderBy(x => x.Value.Priority)
-                    .Select(x => new RemoteRepositoryMessage(this, x.Key, x.Value)))
+                    .Select(x => new RemoteRepositoryInfo(x.Key, x.Value)))
                 yield return m;
         }
 
