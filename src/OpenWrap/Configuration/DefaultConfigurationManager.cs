@@ -20,10 +20,8 @@ namespace OpenWrap.Configuration
         public DefaultConfigurationManager(IDirectory configurationDirectory)
         {
             _configurationDirectory = configurationDirectory;
-            BaseUri = ConstantUris.Base;
         }
 
-        public Uri BaseUri { get; private set; }
 
         public T Load<T>(Uri uri = null) where T : new()
         {
@@ -34,7 +32,7 @@ namespace OpenWrap.Configuration
             return ReadFile<T>(file);
         }
 
-        Uri DetermineUriFromAttribute<T>()
+        static Uri DetermineUriFromAttribute<T>()
         {
             var attrib = typeof(T).Attribute<PathAttribute>();
             if (attrib == null) return null;
@@ -146,8 +144,7 @@ namespace OpenWrap.Configuration
                                               section.Name,
                                               file.Path.FullPath),
                                 e.InnerException);
-                    else
-                        throw;
+                    throw;
                 }
             }
         }
@@ -157,7 +154,7 @@ namespace OpenWrap.Configuration
             return _configurationDirectory.GetFile(ConstantUris.Base.MakeRelativeUri(uri).ToString());
         }
 
-        T GetDefaultValueFor<T>()
+        static T GetDefaultValueFor<T>()
         {
             var pi = typeof(T).GetProperty("Default", BindingFlags.Static | BindingFlags.Public);
             var fi = typeof(T).GetField("Default", BindingFlags.Static | BindingFlags.Public);
@@ -165,12 +162,14 @@ namespace OpenWrap.Configuration
                 if (fi == null)
                     return default(T);
                 else
+// ReSharper disable AssignNullToNotNullAttribute
                     return (T)fi.GetValue(null);
+// ReSharper restore AssignNullToNotNullAttribute
 
             return (T)pi.GetValue(null, null);
         }
 
-        void WriteDictionaryEntries<T>(StreamWriter configFile, Type dictionaryInterface, T configEntry)
+        static void WriteDictionaryEntries<T>(StreamWriter configFile, Type dictionaryInterface, T configEntry)
         {
             var entryType = dictionaryInterface.GetGenericArguments()[1];
             var kvPairType = typeof(KeyValuePair<,>).MakeGenericType(typeof(string), entryType);

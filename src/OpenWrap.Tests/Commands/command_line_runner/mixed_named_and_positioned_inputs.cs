@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
 using OpenWrap.Testing;
-using Tests;
 
-namespace Tests.Commands.runner
+namespace Tests.Commands.command_line_runner
 {
     public class mixed_named_and_positioned_inputs : contexts.command_line_runner
     {

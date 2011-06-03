@@ -4,11 +4,4 @@
     {
         UICommandState State { get; }
     }
-
-    public enum UICommandState
-    {
-        Enabled,
-        Disabled,
-        Hidden
-    }
 }

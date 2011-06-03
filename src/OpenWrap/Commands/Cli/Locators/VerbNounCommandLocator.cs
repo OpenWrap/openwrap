@@ -8,8 +8,8 @@ namespace OpenWrap.Commands.Cli.Locators
         public VerbNounCommandLocator(ICommandRepository command)
             : base(command)
         {
-
         }
+
         public override ICommandDescriptor Execute(ref string input)
         {
             if (string.IsNullOrEmpty(input)) return null;

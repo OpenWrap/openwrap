@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.command_line_locators.noun_verb
 {
-    class unknown_command : contexts.noun_verb_locator
+    class unknown_command : noun_verb_locator
     {
         public unknown_command()
         {

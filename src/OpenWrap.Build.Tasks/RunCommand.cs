@@ -5,15 +5,9 @@ using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using OpenFileSystem.IO;
-using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystems.Local;
-using OpenWrap.Collections;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
 using OpenWrap.PackageManagement;
-using OpenWrap.PackageManagement.Exporters;
-using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 
@@ -21,21 +15,18 @@ namespace OpenWrap.Build.Tasks
 {
     public class RunCommand : Task
     {
-        IFileSystem _fileSystem;
-        readonly IPackageManager _packageManager;
         readonly IEnvironment _environment;
+        readonly IPackageManager _packageManager;
         bool _success;
 
         public RunCommand()
-                : this(LocalFileSystem.Instance,
-            ServiceLocator.GetService<IPackageManager>(),
-            ServiceLocator.GetService<IEnvironment>())
+            : this(ServiceLocator.GetService<IPackageManager>(),
+                   ServiceLocator.GetService<IEnvironment>())
         {
         }
 
-        public RunCommand(IFileSystem fileSystem, IPackageManager packageManager, IEnvironment environment)
+        public RunCommand(IPackageManager packageManager, IEnvironment environment)
         {
-            _fileSystem = fileSystem;
             _packageManager = packageManager;
             _environment = environment;
         }
@@ -72,23 +63,20 @@ namespace OpenWrap.Build.Tasks
             return _success;
         }
 
-        IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
+        static string EncodeQuotes(string value)
         {
-            return _packageManager.Commands(environment);
+            return value.Replace("\"", "`\"");
         }
 
         string GetArguments()
         {
             var xmlDoc = "<parameters>" + Args + "</parameters>";
+// ReSharper disable PossibleNullReferenceException
             return (from child in XDocument.Parse(xmlDoc).Root.Descendants()
+// ReSharper restore PossibleNullReferenceException
                     let key = "-" + child.Name.LocalName
                     let value = child.IsEmpty ? string.Empty : " \"" + EncodeQuotes(child.Value) + "\""
                     select key + value).JoinString(" ");
-        }
-
-        string EncodeQuotes(string value)
-        {
-            return value.Replace("\"", "`\"");
         }
 
         void ProcessOutput(ICommandOutput cmd)
@@ -110,6 +98,11 @@ namespace OpenWrap.Build.Tasks
                     Log.LogMessage(MessageImportance.Low, cmd.ToString());
                     break;
             }
+        }
+
+        IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
+        {
+            return _packageManager.Commands(environment);
         }
     }
 }

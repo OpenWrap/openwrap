@@ -2,11 +2,10 @@
 using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Repositories;
-using Tests.Commands.contexts;
 
-namespace publish_wrap_specifications
+namespace Tests.Commands.publish_wrap
 {
-    public class publishing_file_to_remote : publish_wrap
+    public class publishing_file_to_remote : contexts.publish_wrap
     {
         public publishing_file_to_remote()
         {

@@ -273,17 +273,17 @@ namespace OpenWrap.Commands.Wrap
         ICommandOutput VerifyDescriptor(FileBased<IPackageDescriptor> descriptor)
         {
             if (NoDescriptorUpdate)
-                return new GenericMessage("Descriptor file will not be updated.");
+                return new Info("Descriptor file will not be updated.");
             return descriptor.File.Exists
-                           ? new GenericMessage(@"Using descriptor {0}.", descriptor.File.Name)
-                           : new GenericMessage("Creating descriptor {0}.", descriptor.File.Name);
+                           ? new Info(@"Using descriptor {0}.", descriptor.File.Name)
+                           : new Info("Creating descriptor {0}.", descriptor.File.Name);
         }
 
         ICommandOutput VerifyProjectRepository()
         {
             return HostEnvironment.ProjectRepository != null
-                           ? new GenericMessage("Project repository present.")
-                           : new GenericMessage("Project repository absent.");
+                           ? new Info("Project repository present.")
+                           : new Info("Project repository absent.");
         }
     }
 }

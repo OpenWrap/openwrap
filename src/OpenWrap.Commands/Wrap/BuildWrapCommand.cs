@@ -94,10 +94,10 @@ namespace OpenWrap.Commands.Wrap
                                     GenerateDescriptorFile(packageDescriptorForEmbedding)
                                  ).ToList();
             foreach (var item in packageContent)
-                yield return new GenericMessage(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
+                yield return new Info(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
 
             Packager.NewFromFiles(packageFilePath, packageContent);
-            yield return new GenericMessage(string.Format("Package built at '{0}'.", packageFilePath));
+            yield return new Info(string.Format("Package built at '{0}'.", packageFilePath));
 
         }
 
@@ -186,14 +186,14 @@ namespace OpenWrap.Commands.Wrap
             foreach (var t in packageBuilders.SelectMany(x => x.Build()))
             {
                 if (t is TextBuildResult && !Quiet)
-                    yield return new GenericMessage(t.Message);
+                    yield return new Info(t.Message);
                 else if (t is FileBuildResult)
                 {
                     var buildResult = (FileBuildResult)t;
 
                     onFound(buildResult);
                     if (!Quiet)
-                        yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
+                        yield return new Info(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
                 }
                 else if (t is ErrorBuildResult)
                 {

@@ -9,8 +9,6 @@ namespace OpenWrap.Commands
             Type = CommandResultType.Info;
         }
 
-        public ICommand Source { get; set; }
-
         public CommandResultType Type { get; protected set; }
 
         public override string ToString()

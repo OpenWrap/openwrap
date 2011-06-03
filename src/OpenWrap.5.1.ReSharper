@@ -360,6 +360,7 @@
       <Abbreviation Text="MS" />
       <Abbreviation Text="GAC" />
       <Abbreviation Text="UTF" />
+      <Abbreviation Text="UI" />
     </Naming2>
   </CodeStyleSettings>
   <SharedSolutionTemplateManager>

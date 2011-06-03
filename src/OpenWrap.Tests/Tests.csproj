@@ -70,6 +70,8 @@
     <Compile Include="Commands\add_remote\priority\adding_new_remote_existing_config.cs" />
     <Compile Include="Commands\add_remote\priority\adding_new_remote_with_priority.cs" />
     <Compile Include="Commands\add_remote\priority\adding_new_remote_with_same_priority_as_existing.cs" />
+    <Compile Include="Commands\command_line_runner\positioned_input_required_provided.cs" />
+    <Compile Include="Commands\command_line_runner\system_wide_optional_input_on_command_without_inputs.cs" />
     <Compile Include="Commands\remove_remote\removing_existing.cs" />
     <Compile Include="Commands\set_remote\changing_credentials_missing.cs" />
     <Compile Include="Commands\set_remote\changing_credentials_on_existing.cs" />
@@ -186,7 +188,6 @@
     <Compile Include="Commands\command_line_parsing\single_noname_input.cs" />
     <Compile Include="Commands\contexts\add_wrap.cs" />
     <Compile Include="Commands\contexts\add_wrap_with_hooks.cs" />
-    <Compile Include="Commands\CommandOutputExtensions.cs" />
     <Compile Include="Commands\cecil_exporter\command_with_inputs.cs" />
     <Compile Include="Commands\contexts\remote_command.cs" />
     <Compile Include="Commands\init_wrap\init_dot_in_existing_package.cs" />
@@ -373,7 +374,7 @@
     <Compile Include="Commands\Core\gac_resolve_spec.cs" />
     <Compile Include="Commands\Help\getHelpCommand.cs" />
     <Compile Include="Commands\add_remote\adding_new_remote_with_existing_name.cs" />
-    <Compile Include="Commands\Remote\listRemoteCommand.cs" />
+    <Compile Include="Commands\list_remote\listRemoteCommand.cs" />
     <Compile Include="Commands\remove_remote\removing_unknown.cs" />
     <Compile Include="Commands\add_wrap\adding_wrap_twice.cs" />
     <Compile Include="Commands\contexts\command_context.cs" />

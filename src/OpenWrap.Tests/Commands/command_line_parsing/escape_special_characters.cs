@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.Cli;
 using OpenWrap.Commands.Cli.Parser;
 using OpenWrap.Testing;
-
 
 namespace Tests.Commands.command_line_parsing
 {
@@ -15,7 +13,7 @@ namespace Tests.Commands.command_line_parsing
     [TestFixture("`r", "\r")]
     [TestFixture("`t", "\t")]
     [TestFixture("`v", "\v")]
-    class escape_special_characters : contexts.input_parser
+    class escape_special_characters : input_parser
     {
         readonly string _expected;
 

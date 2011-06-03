@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.Cli;
 using OpenWrap.Commands.Cli.Parser;
 using OpenWrap.Testing;
-
 
 namespace Tests.Commands.command_line_parsing
 {
@@ -11,7 +9,7 @@ namespace Tests.Commands.command_line_parsing
     [TestFixture(@"-named ' tom bombadil'", " tom bombadil")]
     [TestFixture(@"-named ' tom ""bombadil""'", " tom \"bombadil\"")]
     [TestFixture(@"-named "" tom o'bombadil""", " tom o'bombadil")]
-    class named_value_with_quotes : contexts.input_parser
+    class named_value_with_quotes : input_parser
     {
         readonly string _expected;
 
@@ -31,7 +29,7 @@ namespace Tests.Commands.command_line_parsing
         public void has_value_preserving_white_space()
         {
             Result.First().ShouldBeOfType<SingleValueInput>()
-                    .Value.ShouldBe(_expected);
+                .Value.ShouldBe(_expected);
         }
     }
 }

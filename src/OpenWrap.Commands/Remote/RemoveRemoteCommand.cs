@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OpenWrap.Commands.Errors;
 using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Configuration.Remotes;
 

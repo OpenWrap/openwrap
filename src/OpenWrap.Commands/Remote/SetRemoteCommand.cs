@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Collections;
+using OpenWrap.Commands.Errors;
 using OpenWrap.Commands.Messages;
 using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Configuration.Remotes;

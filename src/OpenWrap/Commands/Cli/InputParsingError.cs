@@ -1,6 +1,4 @@
-using System;
-
-namespace OpenWrap.Commands
+namespace OpenWrap.Commands.Cli
 {
     public class InputParsingError : Error
     {
@@ -11,7 +9,7 @@ namespace OpenWrap.Commands
             AttemptedValue = attemptedValue;
         }
 
-        public string InputName { get; set; }
         public string AttemptedValue { get; set; }
+        public string InputName { get; set; }
     }
 }

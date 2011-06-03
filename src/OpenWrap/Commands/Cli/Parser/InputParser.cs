@@ -5,22 +5,35 @@ using System.Text;
 
 namespace OpenWrap.Commands.Cli.Parser
 {
-    public class InputParser
+    public static class InputParser
     {
-        const char ESCAPE = '`';
         const char DBL_QUOTE = '"';
+        const char ESCAPE = '`';
         const char SINGLE_QUOTE = '\'';
-        public IEnumerable<Input> Parse(string value)
+
+        enum ParseState
+        {
+            None,
+            Name,
+            BeforeValue,
+            Value,
+            QuotedValue,
+            AfterValue
+        }
+
+        public static IEnumerable<Input> Parse(string value)
         {
             ParseState state = ParseState.None;
             var buffer = new StringBuilder();
             string currentName = string.Empty;
-            List<string> currentValues = new List<string>();
-            List<Input> inputs = new List<Input>();
+            var currentValues = new List<string>();
+            var inputs = new List<Input>();
             char currentQuote = '\0';
             Action commitName = () =>
             {
+// ReSharper disable AccessToModifiedClosure
                 currentName = buffer.ToString();
+// ReSharper restore AccessToModifiedClosure
                 buffer = new StringBuilder();
                 state = ParseState.BeforeValue;
             };
@@ -48,7 +61,6 @@ namespace OpenWrap.Commands.Cli.Parser
             };
             Action<char> appendCharacter = character =>
             {
-
                 if (state == ParseState.BeforeValue || state == ParseState.None)
                     state = ParseState.Value;
                 if (state == ParseState.AfterValue)
@@ -58,12 +70,11 @@ namespace OpenWrap.Commands.Cli.Parser
                     state = ParseState.Value;
                 }
                 buffer.Append(character);
-
             };
             for (var position = 0; position < value.Length; position++)
             {
                 var current = value[position];
-                
+
                 if (current == DBL_QUOTE || current == SINGLE_QUOTE)
                 {
                     if (state == ParseState.BeforeValue || state == ParseState.None)
@@ -79,13 +90,13 @@ namespace OpenWrap.Commands.Cli.Parser
                         continue;
                     }
                 }
-                if (current == '`')
+                if (current == ESCAPE)
                 {
                     if (value.Length - (position + 1) == 0) throw new InputParserException("Incomplete command. The escape character '`' is at the end of the line.");
 
                     var c = value[++position];
                     appendCharacter(ConvertToSpecialCharacter(c));
-                    
+
                     continue;
                 }
                 if (current == '-' && state == ParseState.None)
@@ -93,8 +104,8 @@ namespace OpenWrap.Commands.Cli.Parser
                     state = ParseState.Name;
                     continue;
                 }
-                
-                if (current == '-' && (state == ParseState.AfterValue || state ==ParseState.BeforeValue))
+
+                if (current == '-' && (state == ParseState.AfterValue || state == ParseState.BeforeValue))
                 {
                     commitInput();
                     state = ParseState.Name;
@@ -145,40 +156,37 @@ namespace OpenWrap.Commands.Cli.Parser
             commitInput();
             return inputs;
         }
-        
-        char ConvertToSpecialCharacter(char c)
+
+        static char ConvertToSpecialCharacter(char c)
         {
-            switch(c)
+            switch (c)
             {
-                case '0': return '\0';
-                case 'a': return '\a';
-                case 'b': return '\b';
-                case 'f': return '\f';
-                case 'r': return '\r';
-                case 'n': return '\n';
-                case 't': return '\t';
-                case 'v': return '\v';
+                case '0':
+                    return '\0';
+                case 'a':
+                    return '\a';
+                case 'b':
+                    return '\b';
+                case 'f':
+                    return '\f';
+                case 'r':
+                    return '\r';
+                case 'n':
+                    return '\n';
+                case 't':
+                    return '\t';
+                case 'v':
+                    return '\v';
             }
             return c;
         }
 
-        bool IsNameCharacter(char current)
+        static bool IsNameCharacter(char current)
         {
             return (current >= 'a' && current <= 'z') ||
                    (current >= 'A' && current <= 'Z') ||
                    (current >= '0' && current <= '9') ||
                    current == '_';
-        }
-
-        enum ParseState
-        {
-            None,
-            Name,
-            BeforeValue,
-            Value,
-            QuotedValue,
-            Array,
-            AfterValue
         }
     }
 }

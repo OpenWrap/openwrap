@@ -75,10 +75,12 @@
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
     <Compile Include="Collections\IndexedDictionary.cs" />
+    <Compile Include="Commands\Cli\CecilStaticAssemblyResolver.cs" />
     <Compile Include="Commands\Cli\ColoredText.cs" />
     <Compile Include="Commands\Cli\CommandInputTooManyTimes.cs" />
     <Compile Include="Commands\Cli\CommandLineRunner.cs" />
     <Compile Include="Commands\Cli\ConsoleCommandExecutor.cs" />
+    <Compile Include="Commands\Cli\DictionaryExtensions.cs" />
     <Compile Include="Commands\Cli\Locators\CommandDescriptorComparer.cs" />
     <Compile Include="Commands\Cli\Locators\DefaultVerbCommandLocator.cs" />
     <Compile Include="Commands\Cli\Parser\Input.cs" />
@@ -89,12 +91,13 @@
     <Compile Include="Commands\Cli\Locators\NounVerbCommandLocator.cs" />
     <Compile Include="Commands\Cli\Parser\SingleValueInput.cs" />
     <Compile Include="Commands\Cli\Locators\VerbNounCommandLocator.cs" />
-    <Compile Include="Commands\InputParsingError.cs" />
+    <Compile Include="Commands\Cli\InputParsingError.cs" />
     <Compile Include="Commands\IUICommand.cs" />
     <Compile Include="Commands\IUICommandDescriptor.cs" />
     <Compile Include="Commands\IUICommandRepository.cs" />
     <Compile Include="Commands\UICommandAttribute.cs" />
     <Compile Include="Commands\UICommandContext.cs" />
+    <Compile Include="Commands\UICommandState.cs" />
     <Compile Include="Configuration\ConstantUris.cs" />
     <Compile Include="Configuration\KeyAttribute.cs" />
     <Compile Include="Configuration\PathAttribute.cs" />
@@ -162,7 +165,6 @@
     <Compile Include="IO\WildcardPathSegment.cs" />
     <Compile Include="PackageManagement\AbstractPackageOperationResultIterator.cs" />
     <Compile Include="PackageManagement\PackageGraphVisitor.cs" />
-    <Compile Include="PackageManagement\DependencyResolvers\PackageMissingOutput.cs" />
     <Compile Include="PackageManagement\IPackageAddResult.cs" />
     <Compile Include="PackageManagement\IPackageCleanResult.cs" />
     <Compile Include="PackageManagement\IPackageListResult.cs" />
@@ -195,23 +197,19 @@
     <Compile Include="Collections\CollectionExtensions.cs" />
     <Compile Include="Collections\NotificationCollection.cs" />
     <Compile Include="Commands\AbstractCommand.cs" />
-    <Compile Include="Commands\AmbiguousInputName.cs" />
+    <Compile Include="Commands\Cli\AmbiguousInputName.cs" />
     <Compile Include="Commands\CommandAttribute.cs" />
     <Compile Include="Commands\CommandInputAttribute.cs" />
-    <Compile Include="Commands\ReflectionCommandInputDescriptor.cs" />
     <Compile Include="Commands\CommandRepository.cs" />
     <Compile Include="Commands\CommandResultType.cs" />
-    <Compile Include="Commands\ExceptionError.cs" />
-    <Compile Include="Commands\GenericMessage.cs" />
+    <Compile Include="Commands\AbstractOutput.cs" />
     <Compile Include="Collections\ISequenceBuilder.cs" />
-    <Compile Include="Commands\NounNotFound.cs" />
     <Compile Include="Commands\Result.cs" />
     <Compile Include="Commands\Error.cs" />
     <Compile Include="Commands\ICommandDescriptor.cs" />
     <Compile Include="Commands\ICommandInputDescriptor.cs" />
     <Compile Include="Commands\ICommandRepository.cs" />
-    <Compile Include="Commands\InvalidCommandValue.cs" />
-    <Compile Include="Commands\MissingInput.cs" />
+    <Compile Include="Commands\Cli\MissingInput.cs" />
     <Compile Include="Collections\SequenceBuilder.cs" />
     <Compile Include="Commands\Success.cs" />
     <Compile Include="Configuration\ConfigurationEntry.cs" />
@@ -325,7 +323,7 @@
     <Compile Include="PackageManagement\Packages\ZipPackage.cs" />
     <Compile Include="PackageManagement\AssemblyResolvers\RuntimeAssemblyResolver.cs" />
     <Compile Include="StringExtensions.cs" />
-    <Compile Include="Commands\UnknownCommandInput.cs" />
+    <Compile Include="Commands\Cli\UnknownCommandInput.cs" />
     <Compile Include="Runtime\CurrentDirectoryEnvironment.cs" />
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="Runtime\IEnvironment.cs" />
@@ -352,8 +350,6 @@
     <Compile Include="Services\ServiceLocator.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandOutput.cs" />
-    <Compile Include="Commands\NotEnoughParameters.cs" />
-    <Compile Include="Commands\UnknownCommand.cs" />
     <Compile Include="PackageModel\AnyVersionVertex.cs" />
     <Compile Include="PackageModel\GreaterThanOrEqualVersionVertex.cs" />
     <Compile Include="PackageModel\EqualVersionVertex.cs" />
@@ -411,9 +407,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\Cecil\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
       <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>

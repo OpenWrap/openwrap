@@ -4,12 +4,12 @@ using OpenWrap.Testing;
 
 namespace Tests.Commands.command_line_runner
 {
-    public class named_input_hump_matching : contexts.command_line_runner
+    public class positioned_input_required_provided : contexts.command_line_runner
     {
-        public named_input_hump_matching()
+        public positioned_input_required_provided()
         {
-            given_command("get", "help", from => from);
-            when_executing("-fm Frodo");
+            given_command("get", "help", command => command.Position(0).Required);
+            when_executing("destroy-ring");
         }
 
         [Test]
@@ -21,7 +21,7 @@ namespace Tests.Commands.command_line_runner
         [Test]
         public void input_is_assigned()
         {
-            Input("from").Single().ShouldBe("Frodo");
+            Input("command").Single().ShouldBe("destroy-ring");
         }
     }
 }

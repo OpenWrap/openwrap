@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenFileSystem.IO;
+using OpenWrap.Commands.Errors;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Repositories;
-using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -14,26 +14,35 @@ namespace OpenWrap.Commands.Wrap
     {
         ISupportAuthentication _authenticationSupport;
 
-        Func<Stream> _packageStream;
         string _packageFileName;
-        Version _packageVersion;
         string _packageName;
+        Func<Stream> _packageStream;
+        Version _packageVersion;
         IPackageRepository _remoteRepository;
 
-        [CommandInput(IsRequired = true, Position = 0)]
-        public string Remote { get; set; }
+        [CommandInput]
+        public string Name { get; set; }
 
         [CommandInput(Position = 1)]
         public string Path { get; set; }
 
         [CommandInput]
-        public string Name { get; set; }
+        public string Pwd { get; set; }
+
+        [CommandInput(IsRequired = true, Position = 0)]
+        public string Remote { get; set; }
 
         [CommandInput]
         public string User { get; set; }
 
-        [CommandInput]
-        public string Pwd { get; set; }
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
+        {
+            yield return new Info(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
+            using (_authenticationSupport.WithCredentials(new Credentials(User, Pwd)))
+            using (var publisher = _remoteRepository.Feature<ISupportPublishing>().Publisher())
+            using (var packageStream = _packageStream())
+                publisher.Publish(_packageFileName, packageStream);
+        }
 
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
@@ -41,11 +50,6 @@ namespace OpenWrap.Commands.Wrap
             yield return ValidatePackageDoesntExist;
         }
 
-        IEnumerable<ICommandOutput> ValidatePackageDoesntExist()
-        {
-            if (_remoteRepository.HasPackage(_packageName, _packageVersion.ToString()))
-                yield return new Error("The package '{0}' already exists. Please create a new version before uploading.", _packageFileName);
-        }
         IEnumerable<ICommandOutput> ValidateInputs()
         {
             // TODO: HACK HACK HACK
@@ -53,14 +57,14 @@ namespace OpenWrap.Commands.Wrap
 
             if (namedRepository == null)
             {
-                yield return new Errors.UnknownRemoteRepository(Remote);
+                yield return new UnknownRemoteName(Remote);
                 foreach (var _ in HintRemoteRepositories()) yield return _;
                 yield break;
             }
 
             if (User != null && Pwd == null)
             {
-                yield return new Errors.IncompleteAuthentication();
+                yield return new IncompleteAuthentication();
                 yield break;
             }
 
@@ -85,17 +89,14 @@ namespace OpenWrap.Commands.Wrap
                 var packageFile = FileSystem.GetFile(Path);
                 if (!packageFile.Exists)
                 {
-                    yield return new Errors.FileNotFound(Path);
+                    yield return new FileNotFound(Path);
                     yield break;
                 }
-                else
-                {
-                    _packageStream = () => packageFile.OpenRead();
-                    _packageFileName = packageFile.Name;
-                    var package = new CachedZipPackage(null, packageFile, null);
-                    _packageName = package.Name;
-                    _packageVersion = package.Version;
-                }
+                _packageStream = () => packageFile.OpenRead();
+                _packageFileName = packageFile.Name;
+                var package = new CachedZipPackage(null, packageFile, null);
+                _packageName = package.Name;
+                _packageVersion = package.Version;
             }
             else if (Name != null)
             {
@@ -116,13 +117,11 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Error("Please specify either a file path using the -Path input, or a name using -Name.");
             }
         }
-        protected override IEnumerable<ICommandOutput> ExecuteCore()
+
+        IEnumerable<ICommandOutput> ValidatePackageDoesntExist()
         {
-            yield return new GenericMessage(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
-            using (_authenticationSupport.WithCredentials(new Credentials(User, Pwd)))
-            using (var publisher = _remoteRepository.Feature<ISupportPublishing>().Publisher())
-            using (var packageStream = _packageStream())
-                publisher.Publish(_packageFileName, packageStream);
+            if (_remoteRepository.HasPackage(_packageName, _packageVersion.ToString()))
+                yield return new Error("The package '{0}' already exists. Please create a new version before uploading.", _packageFileName);
         }
     }
 }

@@ -51,11 +51,11 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
             var testRunner = new TestRunnerManager(new[]{new TdnetTestRunnerFactory(_fileSystem)}, _environment, _manager);
-            yield return new GenericMessage("Starting testing package {0}...", package.Identifier);
+            yield return new Info("Starting testing package {0}...", package.Identifier);
             foreach (var result in testRunner.ExecuteAllTests(_environment.ExecutionEnvironment, package.Load()))
             {
                 if (result.Value == true)
-                    yield return new GenericMessage(result.Key);
+                    yield return new Info(result.Key);
                 else if (result.Value == false)
                     yield return new Error(result.Key);
                 else

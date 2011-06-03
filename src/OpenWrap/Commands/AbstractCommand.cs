@@ -8,10 +8,10 @@ namespace OpenWrap.Commands
     {
         public IEnumerable<ICommandOutput> Execute()
         {
-            foreach(var validator in Validators())
+            foreach (var validator in Validators())
             {
                 bool errorDetected = false;
-                foreach(var output in validator().NotNull())
+                foreach (var output in validator().NotNull())
                 {
                     yield return output;
                     if (output.Type == CommandResultType.Error)
@@ -24,10 +24,11 @@ namespace OpenWrap.Commands
                 yield return output;
         }
 
+        protected abstract IEnumerable<ICommandOutput> ExecuteCore();
+
         protected virtual IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield break;
         }
-        protected abstract IEnumerable<ICommandOutput> ExecuteCore();
     }
 }

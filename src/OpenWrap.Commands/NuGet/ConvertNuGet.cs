@@ -30,7 +30,7 @@ namespace OpenWrap.Commands.NuGet
             {
                 NuGetConverter.Convert(nugetStream, wrapStream);
             }
-            yield return new GenericMessage("Package successfully converted.");
+            yield return new Info("Package successfully converted.");
         }
 
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()

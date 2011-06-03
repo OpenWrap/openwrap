@@ -1,11 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.Errors;
-using OpenWrap.Tests;
-using Tests.Commands.contexts;
+using OpenWrap.Testing;
 
-namespace publish_wrap_specifications
+namespace Tests.Commands.publish_wrap
 {
-    public class publishing_to_unknown_remote : publish_wrap
+    public class publishing_to_unknown_remote : contexts.publish_wrap
     {
         public publishing_to_unknown_remote()
         {
@@ -16,7 +15,8 @@ namespace publish_wrap_specifications
         [Test]
         public void command_fails()
         {
-            Results.ShouldContain<UnknownRemoteRepository>();
+            Results.ShouldHaveOne<UnknownRemoteName>()
+                .Name.ShouldBe("mordor");
         }
     }
 }

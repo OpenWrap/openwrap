@@ -131,7 +131,7 @@ namespace OpenWrap.Commands.Wrap
                                              projectDescriptor,
                                              projectRepository,
                                              PackageAddOptions.Default | PackageAddOptions.Anchor | PackageAddOptions.Content).ToList();
-            yield return new GenericMessage("Project repository initialized.");
+            yield return new Info("Project repository initialized.");
         }
 
         IEnumerable<IFile> GetAllProjects()
@@ -164,14 +164,14 @@ namespace OpenWrap.Commands.Wrap
                                    select node).FirstOrDefault();
 
                 if (csharpTarget == null)
-                    yield return new GenericMessage("Project '{0}' was not a recognized csharp project file. Ignoring.", project.Name);
+                    yield return new Info("Project '{0}' was not a recognized csharp project file. Ignoring.", project.Name);
                 else
                 {
                     // TODO: Detect path of openwrap directory and generate correct relative path from there
                     csharpTarget.Attributes["Project"].Value = GetOpenWrapPath(project.Parent, descriptorFile.Parent);
                     using (Stream projectFileStream = project.OpenWrite())
                         xmlDoc.Save(projectFileStream);
-                    yield return new GenericMessage(string.Format("Project '{0}' updated to use OpenWrap.", project.Path.FullPath));
+                    yield return new Info(string.Format("Project '{0}' updated to use OpenWrap.", project.Path.FullPath));
                 }
             }
         }
@@ -204,7 +204,7 @@ namespace OpenWrap.Commands.Wrap
             _packageDescriptorFile = projectDirectory.GetFile(packageName + ".wrapdesc");
             if (_packageDescriptorFile.Exists)
             {
-                yield return new GenericMessage("Package descriptor present.");
+                yield return new Info("Package descriptor present.");
                 yield break;
             }
 
@@ -223,7 +223,7 @@ namespace OpenWrap.Commands.Wrap
             }
             WriteVersionFile(projectDirectory);
             WriteDescriptor(_packageDescriptorFile, packageDescriptor);
-            yield return new GenericMessage("Package '{0}' initialized. Start adding packages by using the 'add-wrap' command.", packageName);
+            yield return new Info("Package '{0}' initialized. Start adding packages by using the 'add-wrap' command.", packageName);
         }
 
         void AddIgnores(IDirectory projectDirectory)

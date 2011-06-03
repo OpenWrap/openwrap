@@ -3,7 +3,7 @@ using OpenWrap.Testing;
 
 namespace Tests.Commands.command_line_parsing
 {
-    class empty_input : contexts.input_parser
+    class empty_input : input_parser
     {
         public empty_input()
         {

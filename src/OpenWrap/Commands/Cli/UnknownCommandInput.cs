@@ -1,6 +1,4 @@
-using System;
-
-namespace OpenWrap.Commands
+namespace OpenWrap.Commands.Cli
 {
     public class UnknownCommandInput : Error
     {

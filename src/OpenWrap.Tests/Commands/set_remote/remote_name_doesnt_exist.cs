@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using OpenWrap.Commands.Remote.Messages;
+using OpenWrap.Commands.Errors;
 using OpenWrap.Testing;
 
 namespace Tests.Commands.set_remote

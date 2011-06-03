@@ -6,19 +6,11 @@ namespace OpenWrap.Commands
     {
         readonly string _value;
 
-        public Result(object value)
-        {
-            _value = value.ToString();
-            Success = true;
-        }
-
         public Result(string str, params object[] parameters)
         {
             _value = string.Format(str, parameters);
-            Success = true;
         }
 
-        public bool Success { get; set; }
 
         public CommandResultType Type
         {

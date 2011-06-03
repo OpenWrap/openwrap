@@ -8,13 +8,11 @@ namespace OpenWrap.Commands.Cli.Locators
 
         class CommandVerbNounComparer : IEqualityComparer<ICommandDescriptor>
         {
-
             public bool Equals(ICommandDescriptor x, ICommandDescriptor y)
             {
                 if (ReferenceEquals(x, null) && ReferenceEquals(y, null)) return true;
                 if (ReferenceEquals(x, null) || ReferenceEquals(y, null)) return false;
                 return x.Noun.EqualsNoCase(y.Noun) && x.Verb.EqualsNoCase(y.Verb);
-
             }
 
             public int GetHashCode(ICommandDescriptor obj)
@@ -22,6 +20,5 @@ namespace OpenWrap.Commands.Cli.Locators
                 return (obj.Verb + "-" + obj.Noun).GetHashCode();
             }
         }
-
     }
 }

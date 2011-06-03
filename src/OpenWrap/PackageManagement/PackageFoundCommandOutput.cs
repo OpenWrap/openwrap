@@ -3,7 +3,7 @@ using OpenWrap.Commands;
 
 namespace OpenWrap.PackageManagement
 {
-    public class PackageFoundCommandOutput : GenericMessage
+    public class PackageFoundCommandOutput : AbstractOutput
     {
         readonly PackageFoundResult _result;
 

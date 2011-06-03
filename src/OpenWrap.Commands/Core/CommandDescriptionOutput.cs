@@ -5,7 +5,7 @@ using OpenWrap.Collections;
 
 namespace OpenWrap.Commands.Core
 {
-    public class CommandDescriptionOutput : GenericMessage
+    public class CommandDescriptionOutput : AbstractOutput
     {
         public const string TEMPLATE =
                 "COMMAND\r\n" +
@@ -30,11 +30,11 @@ namespace OpenWrap.Commands.Core
         {
             return PositionalParameters(command)
                     .Concat(NonPositionalParameters(command))
-                    .Select(x => CreateInputDescription(x))
+                    .Select(CreateInputDescription)
                     .JoinString("\r\n\r\n");
         }
 
-        string CreateInputDescription(ICommandInputDescriptor input)
+        static string CreateInputDescription(ICommandInputDescriptor input)
         {
             return string.Format("\t-{0} <{1}>\r\n\t\t{2}", input.Name, input.Type, input.Description);
         }
@@ -55,7 +55,7 @@ namespace OpenWrap.Commands.Core
                     .JoinString(" ");
         }
 
-        IEnumerable<ICommandInputDescriptor> NonPositionalParameters(ICommandDescriptor command)
+        static IEnumerable<ICommandInputDescriptor> NonPositionalParameters(ICommandDescriptor command)
         {
             return command.Inputs
                     .Select(x=>x.Value)
@@ -68,7 +68,7 @@ namespace OpenWrap.Commands.Core
                     );
         }
 
-        string CreateUnpositionedParameter(ICommandInputDescriptor command)
+        static string CreateUnpositionedParameter(ICommandInputDescriptor command)
         {
 
             string format = command.IsValueRequired ? "<{1}>" : "[<{1}>]";
@@ -85,16 +85,16 @@ namespace OpenWrap.Commands.Core
                     .JoinString(" ");
         }
 
-        IOrderedEnumerable<ICommandInputDescriptor> PositionalParameters(ICommandDescriptor command)
+        static IEnumerable<ICommandInputDescriptor> PositionalParameters(ICommandDescriptor command)
         {
             return command.Inputs.Select(x=>x.Value)
                     .Where(x => x.Position != null)
                     .OrderBy(x => x.Position);
         }
 
-        string CreatePositionedParameter(ICommandInputDescriptor x)
+        static string CreatePositionedParameter(ICommandInputDescriptor x)
         {
-            string format = string.Empty;
+            string format;
             if (x.IsRequired && x.IsValueRequired)
                 format = "[-{0}] <{1}>";
             else if (x.IsRequired)
@@ -106,9 +106,9 @@ namespace OpenWrap.Commands.Core
             return string.Format(format, x.Name, x.Type);
         }
 
-        public string UsageLine { get; set; }
+        public string UsageLine { get; private set; }
 
-        public string Description { get; set; }
+        string Description { get; set; }
 
         public override string ToString()
         {

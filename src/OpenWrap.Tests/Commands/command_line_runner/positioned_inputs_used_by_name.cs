@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.runner
+namespace Tests.Commands.command_line_runner
 {
     public class positioned_inputs_used_by_name : contexts.command_line_runner
     {
@@ -20,6 +17,12 @@ namespace Tests.Commands.runner
         }
 
         [Test]
+        public void command_executes()
+        {
+            CommandExecuted.ShouldBeTrue();
+        }
+
+        [Test]
         public void named_takes_precedence()
         {
             Input("command").Single().ShouldBe("destroy-ring");
@@ -30,12 +33,5 @@ namespace Tests.Commands.runner
         {
             Input("verbosity").Single().ShouldBe("debug");
         }
-
-        [Test]
-        public void command_executes()
-        {
-            CommandExecuted.ShouldBeTrue();
-        }
     }
-
 }

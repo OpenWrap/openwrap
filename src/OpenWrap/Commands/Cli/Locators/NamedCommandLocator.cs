@@ -7,7 +7,7 @@ namespace OpenWrap.Commands.Cli.Locators
     {
         readonly ICommandRepository _commands;
 
-        public NamedCommandLocator(ICommandRepository commands)
+        protected NamedCommandLocator(ICommandRepository commands)
         {
             _commands = commands;
         }
@@ -17,9 +17,9 @@ namespace OpenWrap.Commands.Cli.Locators
             var commands = _commands.Distinct(CommandDescriptorComparer.VerbNoun).ToDictionary(x => x.Verb + "-" + x.Noun);
 
 
-            var matching =  verbNounToken.Contains('-')
-                                   ? verbNounToken.SelectHumps(commands.Keys).SingleOrDefault()
-                                   : null;
+            var matching = verbNounToken.Contains('-')
+                               ? verbNounToken.SelectHumps(commands.Keys).SingleOrDefault()
+                               : null;
             return matching == null ? null : commands[matching];
         }
 

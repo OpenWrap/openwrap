@@ -12,7 +12,7 @@ namespace OpenWrap.Commands
         string Type { get; }
         string Description { get; }
         int? Position { get; }
-        
+
         bool TrySetValue(ICommand target, IEnumerable<string> value);
     }
 }

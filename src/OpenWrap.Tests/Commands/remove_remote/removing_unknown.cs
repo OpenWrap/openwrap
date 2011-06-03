@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
+using OpenWrap.Commands.Errors;
 using OpenWrap.Commands.Remote;
-using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Testing;
 using Tests.Commands.contexts;
 
