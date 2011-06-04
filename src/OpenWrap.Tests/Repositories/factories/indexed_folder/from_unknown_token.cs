@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
 using OpenWrap.Testing;
-using Tests;
+using Tests.Repositories.contexts;
 
-namespace Tests.Repositories.factories.simple_index
+namespace Tests.Repositories.factories.indexed_folder
 {
-    public class from_unknown_token : contexts.simple_index_repository_factory
+    public class from_unknown_token : indexed_folder_repository
     {
         public from_unknown_token()
         {

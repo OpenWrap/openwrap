@@ -13,7 +13,7 @@ namespace OpenWrap.Repositories.Http
         readonly Func<Uri, IClientRequest> _httpClientGetter;
         readonly Uri _requestUri;
         PackageFeed _fileList;
-        Credentials _availableCredentials;
+        NetworkCredential _availableCredentials;
 
 
 
@@ -22,7 +22,7 @@ namespace OpenWrap.Repositories.Http
             _baseUri = baseUri;
             _requestUri = new Uri(baseUri, new Uri("index.wraplist", UriKind.Relative));
             _httpClientGetter = (uri) => _availableCredentials != null
-                                              ? _httpClient.CreateRequest(uri).Credentials(new NetworkCredential(_availableCredentials.Username, _availableCredentials.Password))
+                                              ? _httpClient.CreateRequest(uri).Credentials(new NetworkCredential(_availableCredentials.UserName, _availableCredentials.Password))
                                               : _httpClient.CreateRequest(uri);
         }
 
@@ -86,7 +86,7 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
-        IDisposable ISupportAuthentication.WithCredentials(Credentials credentials)
+        IDisposable ISupportAuthentication.WithCredentials(NetworkCredential credentials)
         {
             _availableCredentials = credentials;
             return new ActionOnDispose(() => _availableCredentials = null);

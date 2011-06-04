@@ -40,7 +40,7 @@ namespace OpenWrap.Commands.Remote
         RemoteEndpointData BuildEndpointData(RemoteRepositoryEndpoint value, string type)
         {
             var repo = Repo(value.Token);
-            return new RemoteEndpointData(repo.Name, type, repo.GetType().Name, value.Token, value.Username, value.Password);
+            return new RemoteEndpointData(repo.Name, type, repo.Type, value.Token, value.Username, value.Password);
         }
 
         IEnumerable<RemoteEndpointData> BuildEndpoints(RemoteRepository value)

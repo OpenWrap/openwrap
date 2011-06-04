@@ -36,7 +36,7 @@ namespace OpenWrap.Repositories
 
         public IDirectory BasePath { get; set; }
         public string Name { get; set; }
-
+        public string Type { get { return "Folder"; } }
         public string Token
         {
             get { return "[folder]" + BasePath.Path.FullPath; }

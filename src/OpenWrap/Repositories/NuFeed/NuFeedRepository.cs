@@ -22,7 +22,7 @@ namespace OpenWrap.Repositories.NuFeed
             _packagesUri = packagesUri;
             _packages = Lazy.Is(LoadPackages);
         }
-
+        public string Type { get { return "nufeed"; } }
         IEnumerable<IPackageInfo> LoadPackages()
         {
             var feed = NuFeedReader.Read(GetXml(_packagesUri));

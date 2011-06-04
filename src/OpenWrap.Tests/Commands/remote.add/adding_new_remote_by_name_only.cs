@@ -9,7 +9,7 @@ namespace Tests.Commands.remote.add
     {
         public adding_new_remote_by_name_only()
         {
-            given_remote_factory(input => new InMemoryRepository(input));
+            given_remote_factory_memory();
 
             when_executing_command("iron-hills");
         }

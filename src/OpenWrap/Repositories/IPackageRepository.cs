@@ -13,6 +13,7 @@ namespace OpenWrap.Repositories
         void RefreshPackages();
         string Name { get; }
         string Token { get; }
+        string Type { get; }
 
         TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature;
     }

@@ -124,11 +124,15 @@
     <Compile Include="PackageManagement\PackageHookResult.cs" />
     <Compile Include="PackageManagement\PackageManagerExtensions.cs" />
     <Compile Include="PackageManagement\PackageUpdated.cs" />
+    <Compile Include="Repositories\DefaultRemoteManager.cs" />
+    <Compile Include="Repositories\FileSystem\IndexedFolderRepositoryFactory.cs" />
+    <Compile Include="Repositories\IRemoteManager.cs" />
     <Compile Include="Repositories\IRepositoryFeature.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedReader.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepository.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepositoryFactory.cs" />
-    <Compile Include="Repositories\SimpleIndexedRepositoryFactory.cs" />
+    <Compile Include="Repositories\Http\IndexedHttpRepositoryFactory.cs" />
+    <Compile Include="Repositories\PreauthenticatedRepository.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
@@ -337,12 +341,12 @@
     <Compile Include="PackageManagement\DependencyResolvers\ResolvedPackage.cs" />
     <Compile Include="Repositories\Http\HttpPackage.cs" />
     <Compile Include="Repositories\Http\HttpPackageInfo.cs" />
-    <Compile Include="Repositories\Http\IHttpRepositoryNavigator.cs" />
+    <Compile Include="Repositories\FileSystem\IHttpRepositoryNavigator.cs" />
     <Compile Include="PackageModel\IPackageInfo.cs" />
     <Compile Include="Repositories\IPackageRepository.cs" />
     <Compile Include="PackageManagement\Exports.cs" />
     <Compile Include="PackageManagement\IExportItem.cs" />
-    <Compile Include="Repositories\Http\HttpRepository.cs" />
+    <Compile Include="Repositories\Http\IndexedHttpRepository.cs" />
     <Compile Include="PackageManagement\Packages\CachedZipPackage.cs" />
     <Compile Include="Services\IService.cs" />
     <Compile Include="PackageManagement\Monitoring\IPackageDescriptorMonitor.cs" />

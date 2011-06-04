@@ -4,10 +4,9 @@ using OpenWrap.Repositories;
 using OpenWrap.Testing;
 using Tests;
 
-namespace Tests.Repositories.factories
+namespace Tests.Repositories.factories.indexed_http
 {
-
-    public class from_user_input_index_exists : contexts.simple_index_repository_factory
+    public class from_user_input_index_exists : contexts.indexed_http_repository
     {
         public from_user_input_index_exists()
         {
@@ -24,11 +23,7 @@ namespace Tests.Repositories.factories
         [Test]
         public void token_is_generated()
         {
-            Repository.Token.ShouldBe("[indexed]http://middle.earth/index.wraplist");
+            Repository.Token.ShouldBe("[indexed-http]http://middle.earth/index.wraplist");
         }
     }
-}
-
-namespace Tests.contexts
-{
 }

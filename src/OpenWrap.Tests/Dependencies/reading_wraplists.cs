@@ -66,7 +66,7 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         {
             protected void given_repository()
             {
-                Repository = new HttpRepository(LocalFileSystem.Instance, "remote", new InMemoryNavigator());
+                Repository = new IndexedHttpRepository(LocalFileSystem.Instance, "remote", new InMemoryNavigator());
             }
             class InMemoryNavigator : IHttpRepositoryNavigator
             {

@@ -9,7 +9,7 @@ namespace Tests.Commands.remote.add
     {
         public adding_new_remote_with_authentication()
         {
-            given_remote_factory(userInput => new InMemoryRepository(userInput));
+            given_remote_factory_memory();
             when_executing_command("iron-hills http://sauron -username forlong.the.fat -password lossarnach");
         }
 

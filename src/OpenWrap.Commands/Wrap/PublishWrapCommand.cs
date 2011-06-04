@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using OpenFileSystem.IO;
 using OpenWrap.Commands.Errors;
 using OpenWrap.PackageManagement.Packages;
@@ -38,7 +39,7 @@ namespace OpenWrap.Commands.Wrap
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new Info(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
-            using (_authenticationSupport.WithCredentials(new Credentials(User, Pwd)))
+            using (_authenticationSupport.WithCredentials(new NetworkCredential(User, Pwd)))
             using (var publisher = _remoteRepository.Feature<ISupportPublishing>().Publisher())
             using (var packageStream = _packageStream())
                 publisher.Publish(_packageFileName, packageStream);

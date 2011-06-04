@@ -28,6 +28,10 @@ namespace OpenWrap.Repositories
         {
             get { return "[directory]" + Environment.CurrentDirectory.Path.FullPath; }
         }
+        public string Type
+        {
+            get { return "Current Directory"; }
+        }
 
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {

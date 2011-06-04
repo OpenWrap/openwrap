@@ -4,7 +4,7 @@ using OpenWrap.Repositories.Http;
 
 namespace OpenWrap.Repositories.FileSystem
 {
-    public class IndexedFolderRepository : HttpRepository, ISupportNuking
+    public class IndexedFolderRepository : IndexedHttpRepository, ISupportNuking
     {
         readonly FileSystemNavigator _navigator;
 
@@ -13,6 +13,7 @@ namespace OpenWrap.Repositories.FileSystem
         {
             _navigator = Navigator as FileSystemNavigator;
         }
+        public override string Type { get { return "indexed-folder"; } }
 
         public void Nuke(IPackageInfo packageInfo)
         {

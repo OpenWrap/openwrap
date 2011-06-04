@@ -31,7 +31,7 @@ namespace OpenWrap.Configuration.Remotes
             if (Token != null) sb.Append("token=\"").Append(Escape(Token)).Append("\"");
             if (Username != null) sb.Append("; username=\"").Append(Escape(Username)).Append("\"");
             if (Password != null) sb.Append("; password=\"").Append(Escape(Encrypt(Password))).Append("\"");
-            return sb.Length > 0 ?  sb.ToString() : null;
+            return sb.Length > 0 ?  sb.ToString() : string.Empty;
         }
 
         static string Encrypt(string input)

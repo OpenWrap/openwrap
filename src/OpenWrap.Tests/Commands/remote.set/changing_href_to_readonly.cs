@@ -9,7 +9,8 @@ namespace Tests.Commands.remote.set
         public changing_href_to_readonly()
         {
             given_remote_config("secundus");
-            given_remote_factory(input => new InMemoryRepository(input) { CanPublish = false });
+            given_remote_factory_memory(repo => repo.CanPublish = false);
+
             when_executing_command("secundus -href http://awesomereps.net");
         }
 

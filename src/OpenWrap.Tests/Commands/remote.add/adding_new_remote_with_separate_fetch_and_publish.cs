@@ -9,7 +9,7 @@ namespace Tests.Commands.remote.add
     {
         public adding_new_remote_with_separate_fetch_and_publish()
         {
-            given_remote_factory(input => new InMemoryRepository(input));
+            given_remote_factory_memory();
             when_executing_command("iron-hills http://localhost/one -publish http://localhost/two");
         }
 

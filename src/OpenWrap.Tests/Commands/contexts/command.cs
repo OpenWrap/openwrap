@@ -25,6 +25,7 @@ using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
+using Tests.Repositories.manager;
 
 namespace Tests.Commands.contexts
 {
@@ -35,14 +36,13 @@ namespace Tests.Commands.contexts
         protected IFileSystem FileSystem;
         protected MemoryRepositoryFactory Factory;
         protected RemoteRepositories ConfiguredRemotes;
-        protected InMemoryRepository DefaultRemote;
         protected List<IPackageRepository> RemoteRepositories;
         IConfigurationManager ConfigurationManager;
 
         protected command()
         {
-            DefaultRemote = new InMemoryRepository("default");
-            RemoteRepositories = new List<IPackageRepository> { DefaultRemote };
+            
+            RemoteRepositories = new List<IPackageRepository>();
             ConfiguredRemotes = new RemoteRepositories();
             ServiceLocator.Clear();
             var currentDirectory = System.Environment.CurrentDirectory;
@@ -65,11 +65,18 @@ namespace Tests.Commands.contexts
 
             ServiceLocator.RegisterService<IConfigurationManager>(new DefaultConfigurationManager(Environment.ConfigurationDirectory));
 
+
             Factory = new MemoryRepositoryFactory();
-            Factory.FromToken = token => RemoteRepositories.FirstOrDefault(repo => repo.Name == token.Substring(8));
+            Factory.FromToken = token => RemoteRepositories.FirstOrDefault(repo => repo.Token == token);
+            
+            ServiceLocator.TryRegisterService<IEnumerable<IRemoteRepositoryFactory>>(() => new List<IRemoteRepositoryFactory> { Factory });
 
             ConfigurationManager = ServiceLocator.GetService<IConfigurationManager>();
             ConfigurationManager.Save(ConfiguredRemotes);
+
+            ServiceLocator.RegisterService<IRemoteManager>(new DefaultRemoteManager(ConfigurationManager, ServiceLocator.GetService<IEnumerable<IRemoteRepositoryFactory>>()));
+
+
         }
 
         protected virtual Func<IPackageManager> PackageManagerFactory()
@@ -122,7 +129,7 @@ namespace Tests.Commands.contexts
         protected void given_remote_package(string name, Version version, params string[] dependencies)
         {
             // note Version is a version type because of overload resolution...
-            AddPackage(DefaultRemote, name, version.ToString(), dependencies);
+            AddPackage(RemoteRepositories.First(), name, version.ToString(), dependencies);
         }
 
         protected void given_remote_package(string repositoryName, string name, Version version, params string[] dependencies)
@@ -174,7 +181,7 @@ namespace Tests.Commands.contexts
         protected void given_remote_config(string name, string fetchToken = "[memory]default", int? priority = null, string fetchUsername = null, string fetchPassword = null, params string[] publishTokens)
         {
             publishTokens = publishTokens ?? new string[0];
-
+            fetchToken = fetchToken == "[memory]default" ? "[memory]" + name : fetchToken;
             var remote = new RemoteRepository
             {
                 Name = name,
@@ -215,9 +222,10 @@ namespace Tests.Commands.contexts
             }
         }
 
-        protected void given_remote_repository(string remoteName)
+        protected void given_remote_repository(string remoteName, Action<InMemoryRepository> factory = null)
         {
             var repo = new InMemoryRepository(remoteName);
+            if (factory != null) factory(repo);
             RemoteRepositories.Add(repo);
             ConfiguredRemotes[remoteName] = new RemoteRepository
             {
@@ -243,9 +251,19 @@ namespace Tests.Commands.contexts
 
         protected void given_remote_factory(Func<string, IPackageRepository> repoFactory = null, Func<string,IPackageRepository> tokenFactory = null)
         {
-            if (repoFactory != null)
-                Factory.FromUserInput = repoFactory;
+            if (repoFactory != null) Factory.FromUserInput = repoFactory;
             if (tokenFactory != null) Factory.FromToken = tokenFactory;
+        }
+
+        protected void given_remote_factory_memory(Action<InMemoryRepository> factory = null)
+        {
+            Func<string, InMemoryRepository> build = name =>
+            {
+                var repo = new InMemoryRepository(name);
+                if (factory != null) factory(repo);
+                return repo;
+            };
+            given_remote_factory(name => build(name), token => build(token.Substring("[memory]".Length)));
         }
     }
 
@@ -259,7 +277,6 @@ namespace Tests.Commands.contexts
             Command = CecilCommandExporter.GetCommandFrom<T>();
             Commands = new CommandRepository { Command };
 
-            ServiceLocator.TryRegisterService<IEnumerable<IRemoteRepositoryFactory>>(() => new List<IRemoteRepositoryFactory> { Factory });
         }
 
         protected virtual void when_executing_command(string args = null)

@@ -2,24 +2,24 @@
 using System.Linq;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenRasta.Client;
-using OpenWrap.Repositories.Http;
 
-namespace OpenWrap.Repositories
+namespace OpenWrap.Repositories.Http
 {
-    public class SimpleIndexedRepositoryFactory : IRemoteRepositoryFactory
+    public class IndexedHttpRepositoryFactory : IRemoteRepositoryFactory
     {
+        const string PREFIX = "[indexed-http]";
         IHttpClient _client;
 
-        public SimpleIndexedRepositoryFactory(IHttpClient client)
+        public IndexedHttpRepositoryFactory(IHttpClient client)
         {
             _client = client;
         }
         
         public IPackageRepository FromToken(string token)
         {
-            if (token.StartsWith("[indexed]") == false)
+            if (token.StartsWith(PREFIX) == false)
                 return null;
-            return GetIndexedRepository(token.Substring(9).ToUri());
+            return GetIndexedRepository(token.Substring(PREFIX.Length).ToUri());
         }
 
         public IPackageRepository FromUserInput(string identifier)
@@ -29,17 +29,18 @@ namespace OpenWrap.Repositories
             var targetUri = identifier.ToUri();
             if (targetUri == null) return null;
 
-            if (!StringExtensions.EqualsNoCase(targetUri.Segments.Last(), "index.wraplist"))
+            if (!targetUri.Segments.Last().EqualsNoCase("index.wraplist"))
                 targetUri = new Uri(targetUri.EnsureTrailingSlash(), new Uri("index.wraplist", UriKind.Relative));
             _client.Head(targetUri).Handle(200, _ => found = true).Send();
             return found ? GetIndexedRepository(targetUri) : null;
         }
 
-        IPackageRepository GetIndexedRepository(Uri targetUri)
+        static IPackageRepository GetIndexedRepository(Uri targetUri)
         {
-            return new HttpRepository(new InMemoryFileSystem(), "local", new HttpRepositoryNavigator(targetUri))
+            // TODO: Remove the inmemory file system
+            return new IndexedHttpRepository(new InMemoryFileSystem(), "local", new HttpRepositoryNavigator(targetUri))
             {
-                    Token = "[indexed]" + targetUri
+                    Token = PREFIX + targetUri
             };
         }
     }

@@ -10,7 +10,7 @@ namespace Tests.Commands.remote.set
         public changing_publish()
         {
             given_remote_config("primus");
-            given_remote_factory(input => new InMemoryRepository(input));
+            given_remote_factory_memory();
             when_executing_command("primus -publish openwrap");
         }
 

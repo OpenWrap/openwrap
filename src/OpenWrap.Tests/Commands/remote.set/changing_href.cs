@@ -10,7 +10,7 @@ namespace Tests.Commands.remote.set
         public changing_href()
         {
             given_remote_config("secundus");
-            given_remote_factory(input => new InMemoryRepository(input));
+            given_remote_factory_memory();
             when_executing_command("secundus -href http://awesomereps.net");
         }
 

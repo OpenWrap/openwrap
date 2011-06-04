@@ -327,7 +327,10 @@ namespace OpenWrap.Testing
             enumerable.Any(predicate).ShouldBeTrue();
             return enumerable;
         }
-
+        public static T ShouldHaveOne<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable.ShouldHaveCountOf(1).Single();
+        }
         public static IEnumerable<T> ShouldHaveOne<T>(this IEnumerable<T> enumerable, T value) where T : class
         {
             enumerable.SingleOrDefault(x => x.Equals(value)).ShouldNotBeNull();

@@ -10,7 +10,7 @@ namespace Tests.Commands.remote.add
         public add_publish_to_existing_with_authentication()
         {
             given_remote_config("iron-hills");
-            given_remote_factory(userInput => new InMemoryRepository(userInput));
+            given_remote_factory_memory();
             when_executing_command("iron-hills -publish http://sauron -username forlong.the.fat -password lossarnach");
         }
 

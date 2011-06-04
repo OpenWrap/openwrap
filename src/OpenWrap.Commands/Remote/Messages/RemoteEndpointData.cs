@@ -12,11 +12,11 @@ namespace OpenWrap.Commands.Remote.Messages
         public string Username { get; set; }
         public string Password { get; set; }
 
-        public RemoteEndpointData(string name, string type, string typeName, string token, string username, string password)
+        public RemoteEndpointData(string name, string type, string feedType, string token, string username, string password)
         {
             Name = name;
             Type = type;
-            TypeName = typeName;
+            TypeName = feedType;
             Token = token;
             Username = username;
             Password = password;

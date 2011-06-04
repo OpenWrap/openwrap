@@ -11,7 +11,7 @@ namespace Tests.Commands.remote.add.priority
             given_remote_config("isengard", priority: 666);
             given_remote_config("fangorn", priority: 667);
 
-            given_remote_factory(input => new InMemoryRepository(input));
+            given_remote_factory_memory();
             when_executing_command("iron-hills http://lotr.org/iron-hills -priority 666");
         }
 

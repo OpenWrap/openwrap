@@ -7,7 +7,7 @@ namespace OpenWrap.Configuration.Persistence
     public class ConfigurationParser
     {
         static readonly Regex _configurationLineRegex = new Regex(@"^\s*(?<name>[^\s:]+)\s*:\s*(?<value>.*?)\s*$");
-        static readonly Regex _configurationSectionRegex = new Regex(@"^\s*\[(?<type>\w+?)(\s+(?<name>\S+)\s*)?]\s*$");
+        static readonly Regex _configurationSectionRegex = new Regex(@"^\s*\[(?<type>\w+?)(\s+(?<name>.+)\s*)?]\s*$");
 
         public IEnumerable<ConfigurationEntry> Parse(string data)
         {

@@ -1,13 +1,14 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.Repositories.contexts;
 
-namespace Tests.Repositories.factories.simple_index
+namespace Tests.Repositories.factories.indexed_folder
 {
-    public class from_token : contexts.simple_index_repository_factory
+    public class from_token : indexed_folder_repository
     {
         public from_token()
         {
-            when_building_from_token("[indexed]http://middle.earth/index.wraplist");
+            when_building_from_token("[indexed-folder]c:\\folder");
         }
 
         [Test]

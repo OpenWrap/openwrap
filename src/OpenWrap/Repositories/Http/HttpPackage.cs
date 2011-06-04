@@ -106,7 +106,7 @@ namespace OpenWrap.Repositories.Http
             IFile temporaryFile = _fileSystem.CreateTempFile();
             using (var sourceStream = _httpNavigator.LoadPackage(_package))
             using (var destinationStream = temporaryFile.OpenWrite())
-                StreamExtensions.CopyTo(sourceStream, destinationStream);
+                sourceStream.CopyTo(destinationStream);
 
             _loadedPackage = new CachedZipPackage(Source, temporaryFile, _fileSystem.CreateTempDirectory()).Load();
         }

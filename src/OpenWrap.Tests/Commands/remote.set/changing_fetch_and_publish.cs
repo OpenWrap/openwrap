@@ -10,7 +10,7 @@ namespace Tests.Commands.remote.set
         public changing_fetch_and_publish()
         {
             given_remote_config("primus", publishTokens: "[memory]http://evil.land.com");
-            given_remote_factory(input => new InMemoryRepository(input));
+            given_remote_factory_memory();
             when_executing_command("primus -href http://openwrap.org -publish http://openwrap2.org");
         }
 

@@ -8,7 +8,7 @@ using Tests.Commands.update_wrap;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_from_system_with_outdated_version_in_remote : command<AddWrapCommand>
+    class adding_from_system_with_outdated_version_in_remote : contexts.add_wrap
     {
         public adding_from_system_with_outdated_version_in_remote()
         {

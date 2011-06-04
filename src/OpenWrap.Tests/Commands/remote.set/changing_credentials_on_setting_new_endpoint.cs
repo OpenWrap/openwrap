@@ -9,7 +9,7 @@ namespace Tests.Commands.remote.set
     {
         public changing_credentials_on_setting_new_endpoint()
         {
-            given_remote_factory(input => new InMemoryRepository(input));
+            given_remote_factory_memory();
             given_remote_config("secundus");
             when_executing_command("secundus -href http://localhost -username sauron -password sarumansucks");
         }

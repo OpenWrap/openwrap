@@ -15,7 +15,7 @@ namespace Tests.Commands.contexts
 
         public add_wrap()
         {
-            given_remote_config("iron-hills");
+            given_remote_repository("iron-hills");
         }
         protected void when_executing_command(string parameters)
         {

@@ -2,22 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories.Http
 {
-    public class HttpRepository : IPackageRepository, ISupportPublishing, ISupportAuthentication
+    public class IndexedHttpRepository : IPackageRepository, ISupportPublishing, ISupportAuthentication
     {
-        readonly IFileSystem _fileSystem;
         readonly IHttpRepositoryNavigator _navigator;
         readonly IEnumerable<HttpPackageInfo> _packagesQuery;
         ILookup<string, IPackageInfo> _packagesByName;
 
-        public HttpRepository(IFileSystem fileSystem, string repositoryName, IHttpRepositoryNavigator navigator)
+        public IndexedHttpRepository(IFileSystem fileSystem, string repositoryName, IHttpRepositoryNavigator navigator)
         {
             _navigator = navigator;
-            _fileSystem = fileSystem;
             Name = repositoryName;
             _packagesQuery = LoadPackages(navigator, fileSystem);
         }
@@ -27,6 +26,12 @@ namespace OpenWrap.Repositories.Http
         public string Name { get; private set; }
 
         public virtual string Token { get; set; }
+
+        public virtual string Type
+        {
+            get { return "indexed-http"; }
+        }
+
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
             return this as TFeature;
@@ -61,7 +66,7 @@ namespace OpenWrap.Repositories.Http
             _packagesByName = null;
         }
 
-        IDisposable ISupportAuthentication.WithCredentials(Credentials credentials)
+        IDisposable ISupportAuthentication.WithCredentials(NetworkCredential credentials)
         {
             var auth = _navigator as ISupportAuthentication;
             return auth == null

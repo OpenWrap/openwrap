@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
 
-namespace Tests.Repositories.factories
+namespace Tests.Repositories.factories.indexed_http
 {
     [TestFixture("http://middle.earth/rohan")]
     [TestFixture("http://middle.earth/rohan/")]
-    public class from_user_input_index_exists_in_sub_directory : contexts.simple_index_repository_factory
+    public class from_user_input_index_exists_in_sub_directory : contexts.indexed_http_repository
     {
         public from_user_input_index_exists_in_sub_directory(string userInput)
         {

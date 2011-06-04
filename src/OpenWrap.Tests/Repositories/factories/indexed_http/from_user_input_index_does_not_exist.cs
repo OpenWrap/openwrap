@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
 
-namespace Tests.Repositories.factories
+namespace Tests.Repositories.factories.indexed_http
 {
-    internal class from_user_input_index_does_not_exist : contexts.simple_index_repository_factory
+    internal class from_user_input_index_does_not_exist : contexts.indexed_http_repository
     {
         public from_user_input_index_does_not_exist()
         {

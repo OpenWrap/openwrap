@@ -9,7 +9,7 @@ namespace Tests.Commands.remote.add
     {
         public adding_new_remote_with_invalid_name()
         {
-            given_remote_factory(input => new InMemoryRepository(input));
+            given_remote_factory_memory();
 
             when_executing_command("\"iron hills\" http://lotr.org/iron-hills");
         }

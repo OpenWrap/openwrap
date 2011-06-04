@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.PackageManagement;
@@ -10,7 +11,10 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
-    public class InMemoryRepository : IPackageRepository, ISupportPublishing, ISupportCleaning
+    public class InMemoryRepository : IPackageRepository, 
+        ISupportPublishing,
+        ISupportCleaning,
+        ISupportAuthentication
     {
         ICollection<IPackageInfo> _packages = new List<IPackageInfo>();
 
@@ -20,11 +24,8 @@ namespace OpenWrap.Repositories
             CanPublish = true;
             Token = "[memory]" + Name;
         }
-
-        public bool CanDelete
-        {
-            get { return true; }
-        }
+        public string Type { get { return "memory"; } }
+        public bool CanAuthenticate { get; set; }
 
         public bool CanPublish { get; set; }
 
@@ -45,6 +46,8 @@ namespace OpenWrap.Repositories
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
             if (typeof(TFeature) == typeof(ISupportPublishing) && !CanPublish)
+                return null;
+            if (typeof(TFeature) == typeof(ISupportAuthentication) && !CanAuthenticate)
                 return null;
             return this as TFeature;
         }
@@ -95,6 +98,11 @@ namespace OpenWrap.Repositories
             };
             Packages.Add(package);
             return package;
+        }
+
+        public IDisposable WithCredentials(NetworkCredential credentials)
+        {
+            return ActionOnDispose.None;
         }
     }
 }
