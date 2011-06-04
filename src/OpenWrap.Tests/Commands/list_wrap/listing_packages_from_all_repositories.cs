@@ -6,11 +6,12 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 
 namespace listWrap_specs
 {
-    public class listing_packages_from_all_repositories : command_context<ListWrapCommand>
+    public class listing_packages_from_all_repositories : command<ListWrapCommand>
     {
         public listing_packages_from_all_repositories()
         {

@@ -3,10 +3,11 @@ using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_from_local_package_to_system_when_in_project_path : command_context<AddWrapCommand>
+    class adding_from_local_package_to_system_when_in_project_path : command<AddWrapCommand>
     {
         string SAURON_NAME = "sauron";
         Version SAURON_VERSION = new Version(1, 0, 0);

@@ -7,10 +7,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace listWrap_specs
 {
-    public class filtering_project_package_list_by_name : command_context<ListWrapCommand>
+    public class filtering_project_package_list_by_name : command<ListWrapCommand>
     {
         public filtering_project_package_list_by_name()
         {

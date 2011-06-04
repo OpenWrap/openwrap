@@ -14,7 +14,10 @@ namespace OpenWrap.Configuration.Remotes
                 {
                     "openwrap", new RemoteRepository
                     {
-                        FetchRepository = { Token = "[indexed]http://wraps.openwrap.org" },
+                        FetchRepository = new RemoteRepositoryEndpoint
+                        {
+                            Token = "[indexed]http://wraps.openwrap.org" 
+                        },
                         PublishRepositories = { new RemoteRepositoryEndpoint { Token = "[indexed]http://wraps.openwrap.org" } },
                     }
                 }

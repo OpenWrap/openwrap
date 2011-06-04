@@ -5,7 +5,7 @@ using System.Text;
 
 namespace OpenWrap.Configuration.Remotes
 {
-    // TODO: Move encoding and escaping into the configuration reader/writer where it belongs.
+    // TODO: Move encoding and escaping into the configuration reader/writer where it belongs. See #207 and #208
     public class RemoteRepositoryEndpoint
     {
         public RemoteRepositoryEndpoint(string configValue)
@@ -28,10 +28,10 @@ namespace OpenWrap.Configuration.Remotes
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("token=\"").Append(Escape(Token)).Append("\"");
+            if (Token != null) sb.Append("token=\"").Append(Escape(Token)).Append("\"");
             if (Username != null) sb.Append("; username=\"").Append(Escape(Username)).Append("\"");
             if (Password != null) sb.Append("; password=\"").Append(Escape(Encrypt(Password))).Append("\"");
-            return sb.ToString();
+            return sb.Length > 0 ?  sb.ToString() : null;
         }
 
         static string Encrypt(string input)

@@ -6,7 +6,6 @@ namespace OpenWrap.Configuration.Remotes
     {
         public RemoteRepository()
         {
-            FetchRepository = new RemoteRepositoryEndpoint();
             PublishRepositories = new List<RemoteRepositoryEndpoint>();
         }
 

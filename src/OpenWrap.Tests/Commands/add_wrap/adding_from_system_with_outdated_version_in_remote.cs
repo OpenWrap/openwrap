@@ -3,11 +3,12 @@ using OpenWrap;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
+using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_from_system_with_outdated_version_in_remote : command_context<AddWrapCommand>
+    class adding_from_system_with_outdated_version_in_remote : command<AddWrapCommand>
     {
         public adding_from_system_with_outdated_version_in_remote()
         {

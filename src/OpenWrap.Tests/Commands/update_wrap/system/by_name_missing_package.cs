@@ -1,10 +1,11 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.system
 {
-    public class by_name_missing_package : command_context<UpdateWrapCommand>
+    public class by_name_missing_package: contexts.update_wrap
     {
         public by_name_missing_package()
         {

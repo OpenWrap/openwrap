@@ -2,10 +2,11 @@
 using OpenWrap;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.system
 {
-    public class from_current_directory : command_context<UpdateWrapCommand>
+    public class from_current_directory: contexts.update_wrap
     {
         public from_current_directory()
         {

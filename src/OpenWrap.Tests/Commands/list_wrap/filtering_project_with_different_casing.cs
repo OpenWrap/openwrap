@@ -4,11 +4,12 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 using Enumerable = System.Linq.Enumerable;
 
 namespace listWrap_specs
 {
-    public class filtering_project_with_different_casing : command_context<ListWrapCommand>
+    public class filtering_project_with_different_casing : command<ListWrapCommand>
     {
         public filtering_project_with_different_casing()
         {

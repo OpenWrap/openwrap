@@ -5,10 +5,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageModel;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.set_wrap
 {
-    class set_wrap_minversion_2_maxversion_3 : command_context<SetWrapCommand>
+    class set_wrap_minversion_2_maxversion_3 : command<SetWrapCommand>
     {
         public set_wrap_minversion_2_maxversion_3()
         {

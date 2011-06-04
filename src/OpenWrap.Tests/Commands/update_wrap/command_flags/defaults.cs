@@ -2,10 +2,11 @@
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.command_flags
 {
-    public class defaults : command_context<UpdateWrapCommand>
+    public class defaults: contexts.update_wrap
     {
         UpdateWrapCommand CommandInstance;
 

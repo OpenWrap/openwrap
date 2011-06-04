@@ -2,7 +2,7 @@
 {
     public class Info : AbstractOutput
     {
-        public Info(string message, params object[] args) : base(message, args)
+        public Info(string message = null, params object[] args) : base(message, args)
         {
             Type = CommandResultType.Info;
         }

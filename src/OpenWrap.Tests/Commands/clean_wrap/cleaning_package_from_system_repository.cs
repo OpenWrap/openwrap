@@ -3,10 +3,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.clean_wrap
 {
-    public class cleaning_package_from_system_repository : command_context<CleanWrapCommand>
+    public class cleaning_package_from_system_repository : command<CleanWrapCommand>
     {
         static readonly string LionelVersion = "1.0.0.123";
 

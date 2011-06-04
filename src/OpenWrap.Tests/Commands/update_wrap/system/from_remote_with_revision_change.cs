@@ -1,12 +1,11 @@
 ﻿using NUnit.Framework;
 using OpenWrap;
 using OpenWrap.Commands.contexts;
-using OpenWrap.Commands.Wrap;
 using OpenWrap.Tests.Commands;
 
 namespace Tests.Commands.update_wrap.system
 {
-    public class from_remote_with_revision_change : command_context<UpdateWrapCommand>
+    public class from_remote_with_revision_change : contexts.update_wrap
     {
         public from_remote_with_revision_change()
         {

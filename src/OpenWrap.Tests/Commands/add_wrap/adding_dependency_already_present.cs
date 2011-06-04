@@ -1,11 +1,12 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
+using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_dependency_already_present : command_context<AddWrapCommand>
+    class adding_dependency_already_present : command<AddWrapCommand>
     {
         public adding_dependency_already_present()
         {

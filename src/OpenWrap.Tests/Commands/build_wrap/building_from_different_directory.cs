@@ -9,10 +9,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.IO;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.build_wrap
 {
-    class building_from_different_directory : command_context<BuildWrapCommand>
+    class building_from_different_directory : command<BuildWrapCommand>
     {
         public building_from_different_directory()
         {

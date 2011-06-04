@@ -4,10 +4,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_wrap_with_incompatible_arguments : command_context<AddWrapCommand>
+    class adding_wrap_with_incompatible_arguments : command<AddWrapCommand>
     {
         public adding_wrap_with_incompatible_arguments()
         {

@@ -4,10 +4,11 @@ using OpenWrap.Commands;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.set_wrap
 {
-    class set_wrap_conflicting_version_inputs : command_context<SetWrapCommand>
+    class set_wrap_conflicting_version_inputs : command<SetWrapCommand>
     {
         public set_wrap_conflicting_version_inputs()
         {

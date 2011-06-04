@@ -5,10 +5,11 @@ using OpenWrap.Commands;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_from_local_package_when_not_in_project_path : command_context<AddWrapCommand>
+    class adding_from_local_package_when_not_in_project_path : command<AddWrapCommand>
     {
         public adding_from_local_package_when_not_in_project_path()
         {

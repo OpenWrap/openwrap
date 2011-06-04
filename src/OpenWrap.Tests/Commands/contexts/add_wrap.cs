@@ -8,15 +8,19 @@ using OpenWrap.Repositories;
 
 namespace Tests.Commands.contexts
 {
-    public class add_wrap : command_context<AddWrapCommand>
+    public class add_wrap : command<AddWrapCommand>
     {
         protected IDirectory ProjectRepositoryDir;
         protected IPackageDescriptor PostExecutionDescriptor;
 
+        public add_wrap()
+        {
+            given_remote_config("iron-hills");
+        }
         protected void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
-
+            
             PostExecutionDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);
         }
 

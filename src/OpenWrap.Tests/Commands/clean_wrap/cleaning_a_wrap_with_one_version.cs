@@ -3,10 +3,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.clean_wrap
 {
-    public class cleaning_a_wrap_with_one_version : command_context<CleanWrapCommand>
+    public class cleaning_a_wrap_with_one_version : command<CleanWrapCommand>
     {
         public cleaning_a_wrap_with_one_version()
         {

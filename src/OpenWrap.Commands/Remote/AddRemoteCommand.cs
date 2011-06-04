@@ -68,7 +68,7 @@ namespace OpenWrap.Commands.Remote
 
             repositories[Name] = new RemoteRepository
             {
-                FetchRepository = { Token = repository.Token, Username = Username, Password = Password },
+                FetchRepository = new RemoteRepositoryEndpoint { Token = repository.Token, Username = Username, Password = Password },
                 PublishRepositories = publishTokens,
                 Name = Name,
                 Priority = position

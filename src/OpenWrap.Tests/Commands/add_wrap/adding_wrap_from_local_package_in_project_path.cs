@@ -4,10 +4,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_wrap_from_local_package_in_project_path : command_context<AddWrapCommand>
+    class adding_wrap_from_local_package_in_project_path : command<AddWrapCommand>
     {
         public adding_wrap_from_local_package_in_project_path()
         {

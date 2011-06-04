@@ -7,12 +7,13 @@ using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.build_wrap
 {
     [TestFixture("test.txt", "files; file=bin-net35->test.txt")]
     [TestFixture("test.txt", "files; file = bin-net35 -> test.txt ")]
-    public class from_existing_files : command_context<BuildWrapCommand>
+    public class from_existing_files : command<BuildWrapCommand>
     {
         readonly string _filePath;
 

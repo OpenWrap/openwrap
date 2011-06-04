@@ -4,10 +4,11 @@ using OpenWrap.Commands;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_non_existant_wrap : command_context<AddWrapCommand>
+    class adding_non_existant_wrap : command<AddWrapCommand>
     {
         public adding_non_existant_wrap()
         {

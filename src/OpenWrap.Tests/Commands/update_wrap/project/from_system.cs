@@ -5,10 +5,11 @@ using OpenWrap;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.project
 {
-    public class from_system : command_context<UpdateWrapCommand>
+    public class from_system: contexts.update_wrap
     {
         public from_system()
         {

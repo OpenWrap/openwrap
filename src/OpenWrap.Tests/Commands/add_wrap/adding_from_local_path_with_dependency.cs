@@ -3,10 +3,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.add_wrap
 {
-    class adding_from_local_path_with_dependency : command_context<AddWrapCommand>
+    class adding_from_local_path_with_dependency : command<AddWrapCommand>
     {
         public adding_from_local_path_with_dependency()
         {

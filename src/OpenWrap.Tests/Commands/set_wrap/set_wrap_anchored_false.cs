@@ -4,10 +4,11 @@ using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.set_wrap
 {
-    class set_wrap_anchored_false : command_context<SetWrapCommand>
+    class set_wrap_anchored_false : command<SetWrapCommand>
     {
         public set_wrap_anchored_false()
         {

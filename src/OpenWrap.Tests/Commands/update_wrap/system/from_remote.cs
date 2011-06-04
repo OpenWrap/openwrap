@@ -2,10 +2,11 @@
 using OpenWrap;
 using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.system
 {
-    public class from_remote : command_context<UpdateWrapCommand>
+    public class from_remote: contexts.update_wrap
     {
         public from_remote()
         {

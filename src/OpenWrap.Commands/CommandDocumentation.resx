@@ -262,6 +262,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="list-remote" xml:space="preserve">
     <value>Lists the configured remote repositories.</value>
   </data>
+  <data name="list-remote-detailed" xml:space="preserve">
+    <value>Provides detailed information about all configured remote endpoints.</value>
+  </data>
   <data name="list-wrap" xml:space="preserve">
     <value>Lists or queries all packages in a repository.</value>
   </data>

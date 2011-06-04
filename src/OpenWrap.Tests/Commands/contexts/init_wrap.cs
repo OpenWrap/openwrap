@@ -5,7 +5,7 @@ using OpenWrap.Commands.Wrap;
 
 namespace Tests.Commands.contexts
 {
-    public abstract class init_wrap : command_context<InitWrapCommand>
+    public abstract class init_wrap : command<InitWrapCommand>
     {
         public init_wrap()
         {

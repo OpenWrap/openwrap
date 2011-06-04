@@ -13,6 +13,7 @@ using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
+using Tests.Commands.contexts;
 
 namespace Tests.contexts
 {
