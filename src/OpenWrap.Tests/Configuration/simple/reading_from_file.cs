@@ -11,7 +11,7 @@ namespace Tests.Configuration.simple
         public reading_from_file()
         {
             
-            given_configuration_text("test", "sauronsring: one to rule them all");
+            given_configuration_file("test", "sauronsring: one to rule them all");
             when_loading_configuration("test");
         }
 

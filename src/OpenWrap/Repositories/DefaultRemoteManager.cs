@@ -20,7 +20,7 @@ namespace OpenWrap.Repositories
 
         public IEnumerable<IPackageRepository> FetchRepositories(string input = null)
         {
-            var remotes = _configurationManager.Load<RemoteRepositories>();
+            var remotes = LoadRemotes();
             var configured = from config in GetRepositoriesOrdered(input, remotes)
                              let remote = FromToken(config.FetchRepository.Token)
                              where remote != null
@@ -31,7 +31,7 @@ namespace OpenWrap.Repositories
 
         public IEnumerable<IEnumerable<IPackageRepository>> PublishRepositories(string input = null)
         {
-            var remotes = _configurationManager.Load<RemoteRepositories>();
+            var remotes = LoadRemotes();
             var configuredPublish = from config in GetRepositoriesOrdered(input, remotes)
                                     where config.PublishRepositories.Count > 0
                                     select from publish in config.PublishRepositories
@@ -59,7 +59,7 @@ namespace OpenWrap.Repositories
         {
             if (config.Username == null) return remote;
             var auth = remote.Feature<ISupportAuthentication>();
-            if (auth == null) return null;
+            if (auth == null) return remote;
 
             return new PreAuthenticatedRepository(remote, auth, new NetworkCredential(config.Username, config.Password));
         }
@@ -81,6 +81,35 @@ namespace OpenWrap.Repositories
                 var ambient = FromInput(input);
                 if (ambient != null) yield return ambient;
             }
+        }
+
+        RemoteRepositories LoadRemotes()
+        {
+            var remotes = _configurationManager.Load<RemoteRepositories>();
+            if (ReferenceEquals(remotes, RemoteRepositories.Default))
+            {
+                var legacyRemotes = _configurationManager.Load<Configuration.Remotes.Legacy.RemoteRepositories>();
+                if (legacyRemotes != null)
+                {
+                    remotes.Clear();
+                    foreach (var legacy in legacyRemotes)
+                    {
+                        var repo = FromInput(legacy.Value.Href.ToString());
+                        if (repo == null) continue;
+                        var newRemote = new RemoteRepository
+                        {
+                            Name = legacy.Key,
+                            Priority = legacy.Value.Priority,
+                            FetchRepository = new RemoteRepositoryEndpoint { Token = repo.Token }
+                        };
+                        if (repo.Feature<ISupportPublishing>() != null)
+                            newRemote.PublishRepositories.Add(new RemoteRepositoryEndpoint { Token = repo.Token });
+                        remotes.Add(newRemote);
+                    }
+                    _configurationManager.Save(remotes);
+                }
+            }
+            return remotes;
         }
     }
 }

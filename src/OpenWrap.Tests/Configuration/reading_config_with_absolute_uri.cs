@@ -11,7 +11,7 @@ namespace Tests.Configuration
     {
         public reading_config_with_absolute_uri()
         {
-            given_configuration_text((ConstantUris.URI_BASE + "/sauron").ToUri(), "key: value");
+            given_configuration_file((ConstantUris.URI_BASE + "/sauron").ToUri(), "key: value");
             when_loading_configuration();
         }
 

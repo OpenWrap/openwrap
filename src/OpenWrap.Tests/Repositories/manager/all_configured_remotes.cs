@@ -6,9 +6,9 @@ using Tests.Repositories.contexts;
 
 namespace Tests.Repositories.manager
 {
-    public class getting_repositories_for_fetch_and_publish : remote_manager
+    public class all_configured_remotes : remote_manager
     {
-        public getting_repositories_for_fetch_and_publish()
+        public all_configured_remotes()
         {
             given_remote_factory_memory();
 

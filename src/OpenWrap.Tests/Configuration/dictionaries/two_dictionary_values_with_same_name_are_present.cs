@@ -10,7 +10,7 @@ namespace Tests.Configuration.dictionaries
     {
         public two_dictionary_values_with_same_name_are_present()
         {
-            given_configuration_text("sauron",
+            given_configuration_file("sauron",
                                      "[config openwrap]\r\nfetch:http://wraps.openwrap.org\r\n[config openwrap]\r\nfetch:http://default.openwrap.org");
 
             when_loading_configuration("sauron");

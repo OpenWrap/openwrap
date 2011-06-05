@@ -327,11 +327,15 @@
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_does_not_exist.cs" />
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_exists_in_sub_directory.cs" />
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_exists.cs" />
-    <Compile Include="Repositories\manager\getting_repositories_for_fetch_and_publish.cs" />
+    <Compile Include="Repositories\manager\all_configured_remotes.cs" />
+    <Compile Include="Repositories\manager\legacy\old_config_and_new.cs" />
+    <Compile Include="Repositories\manager\legacy\old_config_no_new.cs" />
+    <Compile Include="Repositories\manager\legacy\old_config_no_new_unknown_uri.cs" />
     <Compile Include="Repositories\manager\repositories_by_configured_name.cs" />
     <Compile Include="Repositories\manager\repositories_by_configured_name_and_additional_factory.cs" />
     <Compile Include="Repositories\manager\repositories_by_user_input.cs" />
     <Compile Include="Repositories\manager\repositories_with_authentication.cs" />
+    <Compile Include="Repositories\manager\repositories_with_authentication_without_auth_support.cs" />
     <Compile Include="Repositories\nufeed\reading_official_nuget_feed.cs" />
     <Compile Include="Repositories\nufeed\reading_package_feeds.cs" />
     <Compile Include="Repositories\contexts\nufeed_parser.cs" />

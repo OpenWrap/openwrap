@@ -38,7 +38,7 @@ namespace Tests.Commands.contexts
         protected MemoryRepositoryFactory Factory;
         protected RemoteRepositories ConfiguredRemotes;
         protected List<IPackageRepository> RemoteRepositories;
-        IConfigurationManager ConfigurationManager;
+        protected IConfigurationManager ConfigurationManager;
 
         protected command()
         {

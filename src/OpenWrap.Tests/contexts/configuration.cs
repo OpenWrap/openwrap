@@ -40,11 +40,11 @@ namespace Tests.contexts
 
         protected Exception Error { get; set; }
 
-        protected void given_configuration_text(Uri configurationUri, string textValue)
+        protected void given_configuration_file(Uri configurationUri, string textValue)
         {
-            given_configuration_text(configurationUri.ToString(), textValue);
+            given_configuration_file(configurationUri.ToString(), textValue);
         }
-        protected void given_configuration_text(string configurationUri, string textValue)
+        protected void given_configuration_file(string configurationUri, string textValue)
         {
             // add file to virtual file system by getting relative URI 
             var relativeUri = ConstantUris.Base.MakeRelativeUri(ConstantUris.Base.Combine(configurationUri)).ToString();

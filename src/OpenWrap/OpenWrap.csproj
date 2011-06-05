@@ -102,7 +102,8 @@
     <Compile Include="Configuration\KeyAttribute.cs" />
     <Compile Include="Configuration\PathAttribute.cs" />
     <Compile Include="Configuration\Remotes\ConfigurationHelper.cs" />
-    <Compile Include="Configuration\Remotes\LegacyRemoteRepositories.cs" />
+    <Compile Include="Configuration\Remotes\Legacy\RemoteRepositories.cs" />
+    <Compile Include="Configuration\Remotes\Legacy\RemoteRepository.cs" />
     <Compile Include="Configuration\Remotes\RemoteRepositoryEndpoint.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />

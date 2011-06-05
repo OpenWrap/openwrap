@@ -13,7 +13,7 @@ namespace Tests.Configuration.lists
     {
         public reading_values()
         {
-            given_configuration_text("config", "value: one\r\nvalue: two");
+            given_configuration_file("config", "value: one\r\nvalue: two");
             when_loading_configuration("config");
         }
 
