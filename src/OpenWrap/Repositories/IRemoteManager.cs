@@ -4,7 +4,7 @@ namespace OpenWrap.Repositories
 {
     public interface IRemoteManager
     {
-        IEnumerable<IPackageRepository> FetchRepositories(string input);
-        IEnumerable<IEnumerable<IPackageRepository>> PublishRepositories(string input);
+        IEnumerable<IPackageRepository> FetchRepositories(string input = null);
+        IEnumerable<IEnumerable<IPackageRepository>> PublishRepositories(string input = null);
     }
 }

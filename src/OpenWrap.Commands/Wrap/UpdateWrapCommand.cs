@@ -55,7 +55,7 @@ namespace OpenWrap.Commands.Wrap
         {
             yield return new Result("Updating project packages...");
 
-            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(GetFetchRepositories());
+            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(Remotes.FetchRepositories());
             var errors = new List<PackageOperationResult>();
             foreach (var x in (string.IsNullOrEmpty(Name)
                                        ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor)
@@ -84,7 +84,7 @@ namespace OpenWrap.Commands.Wrap
 
 
 
-            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository }.Concat(GetFetchRepositories()).ToList();
+            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository }.Concat(Remotes.FetchRepositories()).ToList();
 
             var errors = new List<PackageOperationResult>();
 

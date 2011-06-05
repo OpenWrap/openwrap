@@ -21,7 +21,7 @@ namespace OpenWrap.Commands.Wrap
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             // TODO: HACK HACK HACK
-            IPackageRepository repo = GetPublishRepositories(Remote).FirstOrDefault();
+            IPackageRepository repo = Remotes.PublishRepositories(Remote).SelectMany(_=>_).FirstOrDefault();
             if (repo == null)
             {
                 yield return new UnknownRemoteName(Remote);

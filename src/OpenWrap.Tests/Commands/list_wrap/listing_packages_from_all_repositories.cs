@@ -28,7 +28,8 @@ namespace listWrap_specs
         {
             Results.OfType<PackageFoundCommandOutput>()
                     .ShouldHaveCountOf(2)
-                    .Check(x => x.ShouldHaveAtLeastOne(n => n.Name.Equals("one-ring"))).Check(x => x.ShouldHaveAtLeastOne(n => n.Name.Equals("ring-of-power")));
+                    .Check(x => x.ShouldHaveAtLeastOne(n => n.Name.Equals("one-ring")))
+                    .Check(x => x.ShouldHaveAtLeastOne(n => n.Name.Equals("ring-of-power")));
         }
     }
 }

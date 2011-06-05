@@ -7,7 +7,6 @@ namespace OpenWrap.Configuration.Remotes
     [Path("remotes")]
     public class RemoteRepositories : IndexedDictionary<string, RemoteRepository>
     {
-
         public static readonly RemoteRepositories Default =
             new RemoteRepositories
             {

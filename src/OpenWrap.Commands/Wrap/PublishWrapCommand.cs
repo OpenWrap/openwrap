@@ -54,7 +54,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> ValidateInputs()
         {
             // TODO: HACK HACK HACK
-            var namedRepository = GetPublishRepositories(Remote).FirstOrDefault();
+            var namedRepository = Remotes.PublishRepositories(Remote).SelectMany(_=>_).FirstOrDefault();
 
             if (namedRepository == null)
             {

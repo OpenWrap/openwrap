@@ -55,10 +55,9 @@ namespace OpenWrap.Commands.Wrap
             }
             if (_remoteSet)
             {
-
-                foreach (var remote in GetFetchRepositories(Remote))
-                    yield return remote;
-
+                foreach(var fetch in Remotes.FetchRepositories(Remote))
+                    yield return fetch;
+                yield break;
             }
             if (HostEnvironment.ProjectRepository != null)
                 yield return HostEnvironment.ProjectRepository;
