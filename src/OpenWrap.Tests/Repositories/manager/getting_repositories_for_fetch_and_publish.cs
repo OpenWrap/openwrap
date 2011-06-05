@@ -1,33 +1,42 @@
+using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Repositories;
-using OpenWrap.Services;
 using OpenWrap.Testing;
-using Tests;
-using Tests.Commands.contexts;
+using Tests.Repositories.contexts;
 
 namespace Tests.Repositories.manager
 {
-    public class getting_repositories_for_fetch_and_publish : contexts.remote_manager
+    public class getting_repositories_for_fetch_and_publish : remote_manager
     {
         public getting_repositories_for_fetch_and_publish()
         {
             given_remote_factory_memory();
 
-            given_remote_config("iron-hills", publishTokens: "[memory]somewhere");
+            given_remote_config("iron-hills2", priority: 2);
+            given_remote_config("iron-hills", priority: 1, publishTokens: "[memory]somewhere");
             when_listing_repositories();
+        }
+
+        [Test]
+        public void fetch_order_is_preserved()
+        {
+            FetchRepositories.ShouldHaveCountOf(2)
+                .Check(_ => _.ElementAt(0).Name.ShouldBe("iron-hills"))
+                .Check(_ => _.ElementAt(1).Name.ShouldBe("iron-hills2"));
         }
 
         [Test]
         public void fetch_repo_built()
         {
-            FetchRepositories.ShouldHaveOne()
+            FetchRepositories.ShouldHaveAtLeastOne().First()
                 .Check(_ => _.Name.ShouldBe("iron-hills"))
                 .Check(_ => _.Token.ShouldBe("[memory]iron-hills"));
         }
+
         [Test]
         public void publish_repo_built()
         {
-            PublishRepositories.ShouldHaveOne()
+            PublishRepositories.ShouldHaveAtLeastOne().First()
                 .Check(_ => _.Name.ShouldBe("somewhere"))
                 .Check(_ => _.Token.ShouldBe("[memory]somewhere"))
                 .Feature<ISupportPublishing>().ShouldNotBeNull();

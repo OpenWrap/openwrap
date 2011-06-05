@@ -34,6 +34,7 @@ namespace Tests.Commands.contexts
         protected CommandRepository Commands;
         protected InMemoryEnvironment Environment;
         protected IFileSystem FileSystem;
+        protected List<IRemoteRepositoryFactory> RemoteFactories;
         protected MemoryRepositoryFactory Factory;
         protected RemoteRepositories ConfiguredRemotes;
         protected List<IPackageRepository> RemoteRepositories;
@@ -68,8 +69,9 @@ namespace Tests.Commands.contexts
 
             Factory = new MemoryRepositoryFactory();
             Factory.FromToken = token => RemoteRepositories.FirstOrDefault(repo => repo.Token == token);
-            
-            ServiceLocator.TryRegisterService<IEnumerable<IRemoteRepositoryFactory>>(() => new List<IRemoteRepositoryFactory> { Factory });
+            RemoteFactories = new List<IRemoteRepositoryFactory> { Factory };
+
+            ServiceLocator.TryRegisterService<IEnumerable<IRemoteRepositoryFactory>>(() => RemoteFactories);
 
             ConfigurationManager = ServiceLocator.GetService<IConfigurationManager>();
             ConfigurationManager.Save(ConfiguredRemotes);
@@ -222,13 +224,14 @@ namespace Tests.Commands.contexts
             }
         }
 
-        protected void given_remote_repository(string remoteName, Action<InMemoryRepository> factory = null)
+        protected void given_remote_repository(string remoteName, int? priority = null, Action<InMemoryRepository> factory = null)
         {
             var repo = new InMemoryRepository(remoteName);
             if (factory != null) factory(repo);
             RemoteRepositories.Add(repo);
             ConfiguredRemotes[remoteName] = new RemoteRepository
             {
+                Priority = priority ?? ConfiguredRemotes.Count + 1,
                 FetchRepository = new RemoteRepositoryEndpoint{Token=repo.Token},
                 PublishRepositories = { new RemoteRepositoryEndpoint{Token=repo.Token } },
                 Name = remoteName
@@ -264,6 +267,15 @@ namespace Tests.Commands.contexts
                 return repo;
             };
             given_remote_factory(name => build(name), token => build(token.Substring("[memory]".Length)));
+        }
+
+        protected void given_remote_factory_additional(Func<string, IPackageRepository> fromUserInput = null, Func<string, IPackageRepository> fromToken = null)
+        {
+            RemoteFactories.Add(new MemoryRepositoryFactory
+            {
+                FromToken = fromToken ?? (input => null),
+                FromUserInput = fromUserInput ?? (input => null)
+            });
         }
     }
 

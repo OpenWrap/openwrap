@@ -6,7 +6,7 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
-    public class PreauthenticatedRepository : IPackageRepository, ISupportAuthentication
+    public class PreAuthenticatedRepository : IPackageRepository, ISupportAuthentication
     {
         readonly IPackageRepository _remote;
         public string Type
@@ -43,29 +43,34 @@ namespace OpenWrap.Repositories
 
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
+            if (typeof(TFeature) == typeof(ISupportAuthentication)) return this as TFeature;
             return _remote.Feature<TFeature>();
         }
 
-        readonly NetworkCredential _credentials;
+        readonly NetworkCredential _initialCredentials;
         IDisposable _credentialCookie;
 
-        public PreauthenticatedRepository(IPackageRepository remote, ISupportAuthentication auth, NetworkCredential credentials)
+        public PreAuthenticatedRepository(IPackageRepository remote, ISupportAuthentication auth, NetworkCredential initialCredentials)
         {
             _remote = remote;
             _auth = auth;
-            _credentials = credentials;
-            _credentialCookie = auth.WithCredentials(credentials);
+            Credentials = _initialCredentials = initialCredentials;
+            _credentialCookie = auth.WithCredentials(initialCredentials);
         }
+
+        public NetworkCredential Credentials { get; private set; }
 
         public IDisposable WithCredentials(NetworkCredential credentials)
         {
             // dispose the previous auth context. When coming back, reset to original credentials
             _credentialCookie.Dispose();
+            Credentials = credentials;
             _credentialCookie = _auth.WithCredentials(credentials);
             return new ActionOnDispose(() =>
             {
                 _credentialCookie.Dispose();
-                _credentialCookie = _auth.WithCredentials(_credentials);
+                _credentialCookie = _auth.WithCredentials(_initialCredentials);
+                Credentials = _initialCredentials;
             });
         }
     }

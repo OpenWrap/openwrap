@@ -132,7 +132,7 @@
     <Compile Include="Repositories\NuFeed\NuFeedRepository.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepositoryFactory.cs" />
     <Compile Include="Repositories\Http\IndexedHttpRepositoryFactory.cs" />
-    <Compile Include="Repositories\PreauthenticatedRepository.cs" />
+    <Compile Include="Repositories\PreAuthenticatedRepository.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>

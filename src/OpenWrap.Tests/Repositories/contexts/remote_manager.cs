@@ -12,10 +12,10 @@ namespace Tests.Repositories.contexts
         protected List<IPackageRepository> PublishRepositories;
         protected IRemoteManager RemoteManager { get { return ServiceLocator.GetService<IRemoteManager>(); } }
 
-        protected void when_listing_repositories()
+        protected void when_listing_repositories(string name = null)
         {
-            FetchRepositories = RemoteManager.FetchRepositories.ToList();
-            PublishRepositories = RemoteManager.PublishRepositories.ToList();
+            FetchRepositories = RemoteManager.FetchRepositories(name).ToList();
+            PublishRepositories = RemoteManager.PublishRepositories(name).SelectMany(x=>x).ToList();
         }
     }
 }
