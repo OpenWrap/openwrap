@@ -5,9 +5,12 @@ using Tests.Repositories.contexts;
 
 namespace Tests.Repositories.factories.indexed_folder
 {
-    [TestFixture("c:\\middle-earth")]
-    [TestFixture("c:\\middle-earth\\")]
-    [TestFixture("c:\\middle-earth\\index.wraplist")]
+    [TestFixture("file:///c:/middle-earth")]
+    [TestFixture("file:///c:/middle-earth")]
+    [TestFixture("file:///c:/middle-earth")]
+    [TestFixture("indexed-folder:///c:/middle-earth")]
+    [TestFixture("indexed-folder:///c:/middle-earth")]
+    [TestFixture("indexed-folder:///c:/middle-earth")]
     public class from_user_input_index_exists : indexed_folder_repository
     {
         public from_user_input_index_exists(string userInput)

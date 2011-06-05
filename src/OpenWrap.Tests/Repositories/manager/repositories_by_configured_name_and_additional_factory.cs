@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Repositories;
+using OpenWrap.Testing;
 using Tests.Repositories.contexts;
 
 namespace Tests.Repositories.manager
@@ -17,7 +18,7 @@ namespace Tests.Repositories.manager
         [Test]
         public void configured_is_returned()
         {
-            Enumerable.Single<IPackageRepository>(FetchRepositories.ShouldHaveCountOf(1)).Name.ShouldBe("iron-hills");
+            FetchRepositories.ShouldHaveCountOf(1).Single().Name.ShouldBe("iron-hills");
         }
     }
 }

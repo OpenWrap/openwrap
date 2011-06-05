@@ -9,7 +9,7 @@ namespace Tests.Repositories.factories.indexed_folder
         public from_user_file_not_index()
         {
             given_file(@"c:\middle-earth\somewhere.txt", "test content");
-            when_detecting(@"c:\middle-earth\somewhere.txt");
+            when_detecting(@"file:///c:/middle-earth/somewhere.txt");
         }
 
         [Test]

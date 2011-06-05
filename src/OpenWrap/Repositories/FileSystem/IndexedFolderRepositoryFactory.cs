@@ -1,10 +1,9 @@
-﻿using System;
+﻿using System.Linq;
 using OpenFileSystem.IO;
 using OpenRasta.Client;
 using OpenWrap.IO;
-using OpenWrap.Repositories.FileSystem;
 
-namespace OpenWrap.Repositories.Http
+namespace OpenWrap.Repositories.FileSystem
 {
     public class IndexedFolderRepositoryFactory : IRemoteRepositoryFactory
     {
@@ -18,18 +17,20 @@ namespace OpenWrap.Repositories.Http
 
         public IPackageRepository FromUserInput(string identifier)
         {
-            // TODO: Move file URI processing to OpenFileSystem
-            if (identifier.StartsWith("file://"))
+            if (!identifier.StartsWith("file://") && !identifier.StartsWith("indexed-folder://"))
             {
-                var fileUri = identifier.ToUri();
-                if (fileUri.Authority.EqualsNoCase("localhost") || string.IsNullOrEmpty(fileUri.Authority))
-                    identifier = fileUri.Segments.JoinString(System.IO.Path.DirectorySeparatorChar);
-                else
-                    identifier = string.Format("{0}{0}{1}{0}{2}",
-                                               System.IO.Path.DirectorySeparatorChar,
-                                               fileUri.Authority,
-                                               fileUri.Segments.JoinString(System.IO.Path.DirectorySeparatorChar));
+                return null;
             }
+            var fileUri = identifier.ToUri();
+            if (fileUri.Authority.EqualsNoCase("localhost") || string.IsNullOrEmpty(fileUri.Authority))
+                identifier = fileUri.Segments.Skip(1)
+                    .Select(_=>_.EndsWith("/") ? _.Substring(0, _.Length-1) : _)
+                    .JoinString(System.IO.Path.DirectorySeparatorChar);
+            else
+                identifier = string.Format("{0}{0}{1}{0}{2}",
+                                           System.IO.Path.DirectorySeparatorChar,
+                                           fileUri.Authority,
+                                           fileUri.Segments.JoinString(System.IO.Path.DirectorySeparatorChar));
             IDirectory directory;
             var file = _fileSystem.GetFile(identifier);
 

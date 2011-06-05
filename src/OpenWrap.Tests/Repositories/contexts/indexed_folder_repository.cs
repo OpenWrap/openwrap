@@ -1,6 +1,7 @@
 ﻿using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.IO;
+using OpenWrap.Repositories.FileSystem;
 using OpenWrap.Repositories.Http;
 using Tests.contexts;
 

@@ -319,7 +319,6 @@
     <Compile Include="Repositories\factories\indexed_folder\from_user_file_not_index.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_user_input_directory_doesnt_exist.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_user_input_directory_exists_index_doesnt.cs" />
-    <Compile Include="Repositories\factories\indexed_folder\from_user_input_index_does_not_exist.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_user_input_index_exists.cs" />
     <Compile Include="Repositories\factories\nuget\from_user_input_by_name.cs" />
     <Compile Include="Repositories\factories\nuget\from_user_input_invalid_uri.cs" />
