@@ -1,4 +1,3 @@
-using System;
 using NUnit.Framework;
 using OpenRasta.Client;
 using OpenWrap.Configuration;

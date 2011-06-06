@@ -29,10 +29,17 @@ namespace Tests.contexts
 
         protected void when_loading_configuration(string configurationUri = null)
         {
+            var uri = configurationUri == null ? null : ConstantUris.Base.Combine(configurationUri);
+            TryLoadConfiguration(uri);
+        }
+
+        void TryLoadConfiguration(Uri uri)
+        {
             try
             {
-                Entry = DefaultConfigurationManager.Load<T>(configurationUri == null ? null : ConstantUris.Base.Combine(configurationUri));
-            }catch(Exception error)
+                Entry = DefaultConfigurationManager.Load<T>(uri);
+            }
+            catch(Exception error)
             {
                 Error = error;
             }
@@ -59,7 +66,7 @@ namespace Tests.contexts
         {
             var pathUri = ConstantUris.URI_BASE.ToUri().Combine(path);
             DefaultConfigurationManager.Save(Entry, pathUri);
-            Entry = DefaultConfigurationManager.Load<T>(pathUri);
+            TryLoadConfiguration(pathUri);
         }
 
         protected void given_configuration(T config)

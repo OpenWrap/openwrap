@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using OpenWrap.Collections;
 
 namespace OpenWrap.Configuration.Remotes
@@ -15,15 +14,15 @@ namespace OpenWrap.Configuration.Remotes
                     {
                         FetchRepository = new RemoteRepositoryEndpoint
                         {
-                            Token = "[indexed]http://wraps.openwrap.org" 
+                            Token = "[indexed]http://wraps.openwrap.org"
                         },
                         PublishRepositories = { new RemoteRepositoryEndpoint { Token = "[indexed]http://wraps.openwrap.org" } },
                     }
-                }
+                    }
             };
 
         public RemoteRepositories()
-            : base(_=>_.Name, (key,_)=>_.Name = key, StringComparer.OrdinalIgnoreCase)
+            : base(_ => _.Name, (key, _) => _.Name = key, StringComparer.OrdinalIgnoreCase)
         {
         }
     }

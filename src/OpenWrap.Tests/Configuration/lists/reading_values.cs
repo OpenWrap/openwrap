@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
 using OpenWrap.Configuration;
 using OpenWrap.Testing;
-using Tests;
+using Tests.contexts;
 
 namespace Tests.Configuration.lists
 {
-    public class reading_values : contexts.configuration<reading_values.ConfigSection>
+    public class reading_values : configuration<reading_values.ConfigSection>
     {
         public reading_values()
         {
@@ -22,13 +21,8 @@ namespace Tests.Configuration.lists
         {
             Entry.Values.First().Input.ShouldBe("one");
             Entry.Values.ElementAt(1).Input.ShouldBe("two");
+        }
 
-        }
-        public class ConfigSection
-        {
-            [Key("value")]
-            public ICollection<ConfigItem> Values { get; set; }
-        }
         public class ConfigItem
         {
             public ConfigItem(string input)
@@ -37,10 +31,17 @@ namespace Tests.Configuration.lists
             }
 
             public string Input { get; set; }
+
             public override string ToString()
             {
                 return Input;
             }
+        }
+
+        public class ConfigSection
+        {
+            [Key("value")]
+            public ICollection<ConfigItem> Values { get; set; }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 using Tests.Repositories.contexts;
@@ -17,7 +18,7 @@ namespace Tests.Repositories.manager
         [Test]
         public void repository_has_no_authentication()
         {
-            SpecExtensions.ShouldBeOfType<InMemoryRepository>(FetchRepositories.Single());
+            FetchRepositories.Single().ShouldBeOfType<InMemoryRepository>();
         }
     }
 }

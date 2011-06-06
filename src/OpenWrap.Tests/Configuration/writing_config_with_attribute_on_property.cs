@@ -18,6 +18,7 @@ namespace Tests.Configuration
         {
             Entry.RingName.ShouldBe("The one");
         }
+
         public class Config
         {
             [Key("key")]

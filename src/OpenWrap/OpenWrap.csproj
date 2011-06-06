@@ -99,12 +99,15 @@
     <Compile Include="Commands\UICommandContext.cs" />
     <Compile Include="Commands\UICommandState.cs" />
     <Compile Include="Configuration\ConstantUris.cs" />
+    <Compile Include="Configuration\EncryptAttribute.cs" />
+    <Compile Include="Configuration\IgnoreAttribute.cs" />
     <Compile Include="Configuration\KeyAttribute.cs" />
     <Compile Include="Configuration\PathAttribute.cs" />
     <Compile Include="Configuration\Remotes\ConfigurationHelper.cs" />
     <Compile Include="Configuration\Remotes\Legacy\RemoteRepositories.cs" />
     <Compile Include="Configuration\Remotes\Legacy\RemoteRepository.cs" />
     <Compile Include="Configuration\Remotes\RemoteRepositoryEndpoint.cs" />
+    <Compile Include="Configuration\StringBuilderExtensions.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />

@@ -1,12 +1,10 @@
 ﻿using NUnit.Framework;
-using OpenRasta.Client;
-using OpenWrap.Configuration;
 using OpenWrap.Testing;
 using Tests.contexts;
 
 namespace Tests.Configuration.dictionaries
 {
-    internal class reading_no_file : configuration<reading_no_file.Config>
+    class reading_no_file : configuration<reading_no_file.Config>
     {
         public reading_no_file()
         {

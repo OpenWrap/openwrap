@@ -1,5 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenWrap.Configuration;
 using OpenWrap.Configuration.Remotes;
 using OpenWrap.Testing;
 
@@ -19,10 +22,20 @@ namespace Tests.Configuration.Remotes
         [TestCase("token", "username", "pa\\;=ssword")]
         public void roundtrips(string token, string username, string password)
         {
-            new RemoteRepositoryEndpoint(new RemoteRepositoryEndpoint { Token = token, Username = username, Password = password }.ToString())
-                .Check(x => x.Token.ShouldBe(token))
-                .Check(x => x.Username.ShouldBe(username))
-                .Check(x => x.Password.ShouldBe(password));
+            var confMan = new DefaultConfigurationManager(new InMemoryFileSystem().GetDirectory(@"c:\config").MustExist());
+            confMan.Save(new RemoteRepositories
+            {
+                new RemoteRepository
+                {
+                    Name = "iron-hills",
+                    FetchRepository = new RemoteRepositoryEndpoint { Token = token, Username = username, Password = password }
+                }
+            });
+
+            confMan.Load<RemoteRepositories>()["iron-hills"]
+                .Check(x => x.FetchRepository.Token.ShouldBe(token))
+                .Check(x => x.FetchRepository.Username.ShouldBe(username))
+                .Check(x => x.FetchRepository.Password.ShouldBe(password));
         }
     }
 }

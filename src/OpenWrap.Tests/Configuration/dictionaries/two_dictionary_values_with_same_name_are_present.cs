@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OpenWrap.Configuration;
 using OpenWrap.Testing;
 using Tests.contexts;
 
 namespace Tests.Configuration.dictionaries
 {
-    internal class two_dictionary_values_with_same_name_are_present : configuration<Test<reading_no_file.Config>>
+    class two_dictionary_values_with_same_name_are_present : configuration<ConfigurationDictionary<reading_no_file.Config>>
     {
         public two_dictionary_values_with_same_name_are_present()
         {
@@ -21,7 +20,10 @@ namespace Tests.Configuration.dictionaries
         {
             Error.ShouldBeOfType<InvalidConfigurationException>();
         }
-        class Config{
-            public string Fetch { get; set; }}
+
+        class Config
+        {
+            public string Fetch { get; set; }
+        }
     }
 }

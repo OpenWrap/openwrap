@@ -1,13 +1,12 @@
 ﻿using System;
 using NUnit.Framework;
-using OpenWrap.Configuration;
 using OpenWrap.Configuration.Remotes;
 using OpenWrap.Testing;
 using Tests.contexts;
 
 namespace Tests.Configuration.dictionaries
 {
-    internal class reading_from_file : configuration<RemoteRepositories>
+    class reading_from_file : configuration<RemoteRepositories>
     {
         static readonly Uri repositoryUri = new Uri("http://configuration.openwrap.org/repository");
 

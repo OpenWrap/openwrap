@@ -195,6 +195,7 @@ namespace OpenWrap.Testing
             return baseString;
         }
 
+        
         public static IEnumerable<T> ShouldHaveCountOf<T>(this IEnumerable<T> values, int count)
         {
             values.ShouldNotBeNull().Count().ShouldBe(count);
@@ -281,10 +282,11 @@ namespace OpenWrap.Testing
             Assert.That(actual, Is.Not.SameAs(expected));
         }
 
-        public static void ShouldNotContain(this string baseString, string textToFind)
+        public static string ShouldNotContain(this string baseString, string textToFind)
         {
             if (baseString.IndexOf(textToFind) != -1)
                 Assert.Fail("text '{0}' found in '{1}'", textToFind, baseString);
+            return baseString;
         }
 
         public static void ShouldReturn<T>(this Func<T> codeToExecute, T expectedValue)

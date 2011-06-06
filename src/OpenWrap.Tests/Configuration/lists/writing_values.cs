@@ -6,14 +6,15 @@ using OpenFileSystem.IO;
 using OpenWrap.Configuration;
 using OpenWrap.IO;
 using OpenWrap.Testing;
+using Tests.contexts;
 
 namespace Tests.Configuration.lists
 {
-    public class writing_values : contexts.configuration<writing_values.ConfigSection>
+    public class writing_values : configuration<writing_values.ConfigSection>
     {
         public writing_values()
         {
-            given_configuration(new ConfigSection{Values={"one", "two"}});
+            given_configuration(new ConfigSection { Values = { "one", "two" } });
             when_saving_configuration("config");
         }
 
@@ -32,12 +33,14 @@ namespace Tests.Configuration.lists
                 .OpenRead().ReadString(Encoding.UTF8)
                 .ShouldContain("value: one\r\n").ShouldContain("value: two\r\n");
         }
+
         public class ConfigSection
         {
             public ConfigSection()
             {
                 Values = new List<string>();
             }
+
             [Key("value")]
             public ICollection<string> Values { get; set; }
         }

@@ -1,12 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
-using OpenWrap.Configuration;
-using OpenWrap.Services;
 using OpenWrap.Testing;
-using Tests;
 using Tests.Commands.contexts;
 
 namespace Tests.Configuration.Remotes

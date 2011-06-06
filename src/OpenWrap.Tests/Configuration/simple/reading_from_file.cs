@@ -1,16 +1,13 @@
 using NUnit.Framework;
-using OpenRasta.Client;
-using OpenWrap.Configuration;
 using OpenWrap.Testing;
 using Tests.contexts;
 
 namespace Tests.Configuration.simple
 {
-    internal class reading_from_file : configuration<reading_from_file.SimpleConfiguration>
+    class reading_from_file : configuration<reading_from_file.SimpleConfiguration>
     {
         public reading_from_file()
         {
-            
             given_configuration_file("test", "sauronsring: one to rule them all");
             when_loading_configuration("test");
         }

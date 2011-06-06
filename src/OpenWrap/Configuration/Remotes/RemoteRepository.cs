@@ -12,12 +12,12 @@ namespace OpenWrap.Configuration.Remotes
         [Key("fetch")]
         public RemoteRepositoryEndpoint FetchRepository { get; set; }
 
-        [Key("publish")]
-        public ICollection<RemoteRepositoryEndpoint> PublishRepositories { get; set; }
-
+        [Ignore]
         public string Name { get; set; }
 
         public int Priority { get; set; }
 
+        [Key("publish")]
+        public ICollection<RemoteRepositoryEndpoint> PublishRepositories { get; set; }
     }
 }
