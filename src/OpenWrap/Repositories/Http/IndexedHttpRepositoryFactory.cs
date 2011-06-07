@@ -8,13 +8,13 @@ namespace OpenWrap.Repositories.Http
     public class IndexedHttpRepositoryFactory : IRemoteRepositoryFactory
     {
         const string PREFIX = "[indexed-http]";
-        IHttpClient _client;
+        readonly IHttpClient _client;
 
         public IndexedHttpRepositoryFactory(IHttpClient client)
         {
             _client = client;
         }
-        
+
         public IPackageRepository FromToken(string token)
         {
             if (token.StartsWith(PREFIX) == false)
@@ -27,7 +27,10 @@ namespace OpenWrap.Repositories.Http
             // try a HEAD on /index.wraplist to see if it is the correct one
             bool found = false;
             var targetUri = identifier.ToUri();
-            if (targetUri == null) return null;
+            if (targetUri == null ||
+                targetUri.IsAbsoluteUri == false ||
+                !(targetUri.Scheme.EqualsNoCase("http") || targetUri.Scheme.EqualsNoCase("https")))
+                return null;
 
             if (!targetUri.Segments.Last().EqualsNoCase("index.wraplist"))
                 targetUri = new Uri(targetUri.EnsureTrailingSlash(), new Uri("index.wraplist", UriKind.Relative));
@@ -35,12 +38,12 @@ namespace OpenWrap.Repositories.Http
             return found ? GetIndexedRepository(targetUri) : null;
         }
 
-        static IPackageRepository GetIndexedRepository(Uri targetUri)
+        IPackageRepository GetIndexedRepository(Uri targetUri)
         {
             // TODO: Remove the inmemory file system
-            return new IndexedHttpRepository(new InMemoryFileSystem(), "local", new HttpRepositoryNavigator(targetUri))
+            return new IndexedHttpRepository(new InMemoryFileSystem(), "local", new HttpRepositoryNavigator(_client, targetUri))
             {
-                    Token = PREFIX + targetUri
+                Token = PREFIX + targetUri
             };
         }
     }

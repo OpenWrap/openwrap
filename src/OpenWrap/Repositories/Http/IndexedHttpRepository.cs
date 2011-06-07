@@ -25,18 +25,6 @@ namespace OpenWrap.Repositories.Http
 
         public string Name { get; private set; }
 
-        public virtual string Token { get; set; }
-
-        public virtual string Type
-        {
-            get { return "indexed-http"; }
-        }
-
-        public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
-        {
-            return this as TFeature;
-        }
-
         public IHttpRepositoryNavigator Navigator
         {
             get { return _navigator; }
@@ -51,9 +39,21 @@ namespace OpenWrap.Repositories.Http
             }
         }
 
+        public virtual string Token { get; set; }
+
+        public virtual string Type
+        {
+            get { return "indexed-http"; }
+        }
+
         public override string ToString()
         {
             return string.Format("Remote {0} [{1}]", Name, Navigator);
+        }
+
+        public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
+        {
+            return this as TFeature;
         }
 
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
@@ -70,8 +70,8 @@ namespace OpenWrap.Repositories.Http
         {
             var auth = _navigator as ISupportAuthentication;
             return auth == null
-                           ? new ActionOnDispose(() => { })
-                           : auth.WithCredentials(credentials);
+                       ? new ActionOnDispose(() => { })
+                       : auth.WithCredentials(credentials);
         }
 
         public IPackagePublisher Publisher()
@@ -86,8 +86,8 @@ namespace OpenWrap.Repositories.Http
                 try
                 {
                     _packagesByName = _packagesQuery
-                            .Cast<IPackageInfo>()
-                            .ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase);
+                        .Cast<IPackageInfo>()
+                        .ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase);
                 }
                 catch
                 {

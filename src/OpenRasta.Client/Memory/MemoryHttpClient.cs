@@ -18,6 +18,8 @@ namespace OpenRasta.Client.Memory
             return new MemoryRequest(this, uri);
         }
 
+        public Func<IWebProxy> Proxy { get; set; }
+
         internal class MemoryRequest : IClientRequest
         {
             readonly MemoryHttpClient _client;

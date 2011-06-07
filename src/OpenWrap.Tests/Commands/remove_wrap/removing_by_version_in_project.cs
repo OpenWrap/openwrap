@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
 using Tests.Commands;
+using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
 
 namespace OpenWrap.Commands.remove_wrap

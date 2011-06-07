@@ -220,6 +220,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="convert-nuget-path" xml:space="preserve">
     <value>Specifies the path to the NuPack package to convert.</value>
   </data>
+  <data name="get-configuration" xml:space="preserve">
+    <value>Returns a list of all configured data.</value>
+  </data>
   <data name="get-help" xml:space="preserve">
     <value>Provides documentation for the commands available in the current OpenWrap session.</value>
   </data>
@@ -310,6 +313,12 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="publish-wrap-user" xml:space="preserve">
     <value>User for authentication against a remote repository. Also set password when using. The value may contain domain information.</value>
   </data>
+  <data name="remove-configuration" xml:space="preserve">
+    <value>Clears configuration data.</value>
+  </data>
+  <data name="remove-configuration-proxy" xml:space="preserve">
+    <value>Removes proxy details from the core configuration.</value>
+  </data>
   <data name="remove-remote" xml:space="preserve">
     <value>Removes a remote repository.</value>
   </data>
@@ -339,6 +348,12 @@ Note that the NuPack support is only provided for backward compatibility with le
   </data>
   <data name="remove-wrap-version" xml:space="preserve">
     <value>Specifies the exact version of the package to remove.</value>
+  </data>
+  <data name="set-configuration" xml:space="preserve">
+    <value>Gets or sets configuration data, such as network proxy credentials and names.</value>
+  </data>
+  <data name="set-configuration-proxy" xml:space="preserve">
+    <value>Sets the proxy to the provided URI. To set a username and password, use http://username:password@example.org/.</value>
   </data>
   <data name="set-remote" xml:space="preserve">
     <value>Updates a remote repository's metadata.</value>

@@ -23,7 +23,7 @@ namespace OpenWrap.Commands.Remote.Messages
             {
                 var sb = new StringBuilder();
                 if (Fetch) sb.Append("fetch");
-                if (Publish) sb.Append("publish");
+                if (Publish) sb.Append(sb.Length > 0 ? ", publish" : "publish");
                 return sb.ToString();
             }
         }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using OpenFileSystem.IO;
 using OpenWrap.Commands.Errors;
+using OpenWrap.Commands.Messages;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Repositories;
 
@@ -65,7 +66,7 @@ namespace OpenWrap.Commands.Wrap
 
             if (User != null && Pwd == null)
             {
-                yield return new IncompleteAuthentication();
+                yield return new IncompleteCredentials();
                 yield break;
             }
 

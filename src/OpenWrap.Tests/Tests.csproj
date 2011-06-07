@@ -55,6 +55,17 @@
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
     <Compile Include="Collections\indexed_dic.cs" />
+    <Compile Include="Commands\contexts\configuration_command.cs" />
+    <Compile Include="Commands\configuration\get_wihtout_config.cs" />
+    <Compile Include="Commands\configuration\get_without_arguments_with_config.cs" />
+    <Compile Include="Commands\configuration\remove_nothing.cs" />
+    <Compile Include="Commands\configuration\remove_proxy.cs" />
+    <Compile Include="Commands\contexts\set_configuration.cs" />
+    <Compile Include="Commands\configuration\set_nothing.cs" />
+    <Compile Include="Commands\configuration\set_proxy_href.cs" />
+    <Compile Include="Commands\configuration\set_proxy_password.cs" />
+    <Compile Include="Commands\configuration\set_proxy_to_invalid_uri.cs" />
+    <Compile Include="Commands\configuration\set_proxy_username.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_supporting_fetch_and_publish.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_with_authentication.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_with_authentication_missing_inputs.cs" />

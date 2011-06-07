@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Commands.Wrap;
 using Tests.Commands.contexts;

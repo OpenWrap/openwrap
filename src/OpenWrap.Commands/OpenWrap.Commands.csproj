@@ -56,8 +56,14 @@
     </Compile>
     <Compile Include="Core\CommandDescriptionOutput.cs" />
     <Compile Include="Core\CommandGroupResult.cs" />
+    <Compile Include="Core\ConfigurationData.cs" />
+    <Compile Include="Core\ConfigurationUpdated.cs" />
+    <Compile Include="Core\EmptyConfiguration.cs" />
+    <Compile Include="Core\GetConfigurationCommand.cs" />
+    <Compile Include="Core\InvalidProxy.cs" />
+    <Compile Include="Core\RemoveConfigurationCommand.cs" />
+    <Compile Include="Core\SetConfigurationCommand.cs" />
     <Compile Include="Errors\FileNotFound.cs" />
-    <Compile Include="Errors\IncompleteAuthentication.cs" />
     <Compile Include="Gui\ShowPackageExplorerCommand.cs" />
     <Compile Include="Gui\InvokeGuiCommand.cs" />
     <Compile Include="Messages\IncompleteCredentials.cs" />
@@ -76,7 +82,7 @@
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Remote\Messages\UnknownEndpointType.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
-    <Compile Include="Wrap\DependenciesConflictMessage.cs" />
+    <Compile Include="Wrap\Messages\DependenciesConflictMessage.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
     <Compile Include="Wrap\TestWrapCommand.cs" />
     <Compile Include="Wrap\UpdatePackageVertex.cs" />

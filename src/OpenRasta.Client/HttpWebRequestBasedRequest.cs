@@ -3,31 +3,41 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using OpenFileSystem.IO.FileSystems.Local;
 using OpenRasta.Client.IO;
 
 namespace OpenRasta.Client
 {
     public class HttpWebRequestBasedRequest : IClientRequest
     {
-        readonly Uri _requestUri;
         readonly MemoryStream _emptyStream;
         readonly HttpEntity _entity;
+        readonly List<KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>> _handlers = new List<KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>>();
         readonly HttpWebRequest _request;
+        readonly Uri _requestUri;
         NetworkCredential _explicitCredentials;
-        List<KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>> _handlers = new List<KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>>();
 
 
-        public HttpWebRequestBasedRequest(Uri requestUri)
+        public HttpWebRequestBasedRequest(Uri requestUri, WebProxy proxy)
         {
             _requestUri = requestUri;
             _emptyStream = new MemoryStream();
             _entity = new HttpEntity(_emptyStream);
             _request = (HttpWebRequest)WebRequest.Create(requestUri);
+            if (proxy != null) _request.Proxy = proxy;
         }
 
         public event EventHandler<ProgressEventArgs> Progress;
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
+
+        public NetworkCredential Credentials
+        {
+            get { return _explicitCredentials; }
+            set
+            {
+                _explicitCredentials = value;
+                _request.Credentials = new CredentialCache { { _requestUri, "Basic", value }, { _requestUri, "Digest", value } };
+            }
+        }
 
 
         public IEntity Entity
@@ -46,6 +56,11 @@ namespace OpenRasta.Client
             get { return _request.RequestUri; }
         }
 
+        public void RegisterHandler(Func<IClientResponse, bool> predicate, Action<IClientResponse> handler)
+        {
+            _handlers.Add(new KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>(predicate, handler));
+        }
+
         public IClientResponse Send()
         {
             _request.ContentType = _entity.ContentType.ToString();
@@ -56,36 +71,21 @@ namespace OpenRasta.Client
                 SendRequestStream();
 
             var response = new HttpWebResponseBasedResponse(this, _request);
-            List<Exception> exceptions = new List<Exception>();
+            var exceptions = new List<Exception>();
 
-            foreach(var handler in _handlers.Where(x=>x.Key(response)).Select(x=>x.Value))
+            foreach (var handler in _handlers.Where(x => x.Key(response)).Select(x => x.Value))
             {
-                
                 try
                 {
                     handler(response);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     exceptions.Add(e);
                 }
             }
             response.HandlerErrors = exceptions;
             return response;
-        }
-
-        public NetworkCredential Credentials
-        {
-            get { return _explicitCredentials; }
-            set {
-                _explicitCredentials = value;
-                _request.Credentials = new CredentialCache { { _requestUri, "Basic", value }, { _requestUri, "Digest", value } };
-            }
-        }
-
-        public void RegisterHandler(Func<IClientResponse, bool> predicate, Action<IClientResponse> handler)
-        {
-            _handlers.Add(new KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>(predicate, handler));
         }
 
         protected void RaiseProgress(int progress)

@@ -1,5 +1,4 @@
-﻿using OpenWrap.Commands.contexts;
-using OpenWrap.Commands.Wrap;
+﻿using OpenWrap.Commands.Wrap;
 
 namespace Tests.Commands.contexts
 {

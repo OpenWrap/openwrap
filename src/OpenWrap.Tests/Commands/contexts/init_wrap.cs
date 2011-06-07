@@ -1,6 +1,5 @@
 ﻿using System.Text;
 using OpenFileSystem.IO;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 
 namespace Tests.Commands.contexts

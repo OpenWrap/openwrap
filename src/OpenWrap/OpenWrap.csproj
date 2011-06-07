@@ -99,6 +99,7 @@
     <Compile Include="Commands\UICommandContext.cs" />
     <Compile Include="Commands\UICommandState.cs" />
     <Compile Include="Configuration\ConstantUris.cs" />
+    <Compile Include="Configuration\Core\CoreConfiguration.cs" />
     <Compile Include="Configuration\EncryptAttribute.cs" />
     <Compile Include="Configuration\IgnoreAttribute.cs" />
     <Compile Include="Configuration\KeyAttribute.cs" />

@@ -20,7 +20,7 @@ namespace OpenWrap.Preloading
         public static Action<Stream, string> Extractor { get; set; }
         public static IEnumerable<string> GetPackageFolders(RemoteInstall remote, string currentDirectory, string systemRepositoryPath, params string[] packageNamesToLoad)
         {
-            var regex = new Regex(string.Format(@"^(?<name>{0})-(?<version>\d+(\.\d+(\.\d+(\.\d+)?)?)?)$", string.Join("|", packageNamesToLoad.ToArray())), RegexOptions.IgnoreCase);
+            var regex = new Regex(string.Format(@"^(?<name>{0})-(?<version>\dL+(\.\d+(\.\d+(\.\d+)?)?)?)$", string.Join("|", packageNamesToLoad.ToArray())), RegexOptions.IgnoreCase);
             EnsurePackagesUnzippedInRepository(Environment.CurrentDirectory);
 
             var bootstrapPackagePaths = currentDirectory != null

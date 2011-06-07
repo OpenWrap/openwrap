@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Testing;

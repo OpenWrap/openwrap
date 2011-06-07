@@ -1,26 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using OpenWrap.Commands;
 using OpenWrap.Services;
-using System;
 
 namespace OpenWrap.Commands.Core
 {
-    [Command(Verb="get", Noun="help", IsDefault = true)]
+    [Command(Verb = "get", Noun = "help", IsDefault = true)]
     public class GetHelpCommand : ICommand
     {
-        [CommandInput(Position=0)]
+        [CommandInput(Position = 0)]
         public string CommandName { get; set; }
 
         protected ICommandRepository CommandRepository
         {
-            get { return Services.ServiceLocator.GetService<ICommandRepository>(); }
+            get { return ServiceLocator.GetService<ICommandRepository>(); }
         }
 
         public IEnumerable<ICommandOutput> Execute()
         {
-            return string.IsNullOrEmpty(CommandName) ? ListAllCommands(CommandRepository.Where(x=>x.Visible)) : ListCommand();
+            return string.IsNullOrEmpty(CommandName) ? ListAllCommands(CommandRepository.Where(x => x.Visible)) : ListCommand();
+        }
+
+        IEnumerable<ICommandOutput> CommandDescription(ICommandDescriptor matchingCommand)
+        {
+            yield return new CommandDescriptionOutput(matchingCommand);
+        }
+
+        IEnumerable<ICommandOutput> CommandNotFound()
+        {
+            yield return new Error("Command '{0}' not found.", CommandName);
         }
 
         IEnumerable<ICommandOutput> ListAllCommands(IEnumerable<ICommandDescriptor> commandRepository)
@@ -51,19 +59,9 @@ namespace OpenWrap.Commands.Core
             return CommandDescription(matchingCommands[0]);
         }
 
-        IEnumerable<ICommandOutput> CommandDescription(ICommandDescriptor matchingCommand)
-        {
-            yield return new CommandDescriptionOutput(matchingCommand);
-        }
-
         IEnumerable<ICommandOutput> MultipleCommands(List<ICommandDescriptor> matchingCommands)
         {
             return ListAllCommands(matchingCommands);
-        }
-
-        IEnumerable<ICommandOutput> CommandNotFound()
-        {
-            yield return new Error("Command '{0}' not found.", CommandName);
         }
     }
 }

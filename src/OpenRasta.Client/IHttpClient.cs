@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace OpenRasta.Client
 {
@@ -8,5 +9,6 @@ namespace OpenRasta.Client
     public interface IHttpClient
     {
         IClientRequest CreateRequest(Uri uri);
+        Func<IWebProxy> Proxy { get; set; }
     }
 }

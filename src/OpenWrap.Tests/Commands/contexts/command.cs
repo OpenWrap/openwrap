@@ -206,11 +206,14 @@ namespace Tests.Commands.contexts
         {
             ConfiguredRemotes = ConfigurationManager.Load<RemoteRepositories>();
         }
-
-        protected void given_remote_config(RemoteRepositories remoteRepositories)
+        protected void given_config<T>(T config)
         {
             var confMan = ServiceLocator.GetService<IConfigurationManager>();
-            confMan.Save(ConfiguredRemotes = remoteRepositories);
+            confMan.Save(config);
+        }
+        protected void given_remote_config(RemoteRepositories remoteRepositories)
+        {
+            ServiceLocator.GetService<IConfigurationManager>().Save(ConfiguredRemotes = remoteRepositories);
             ReloadRepositories();
         }
 

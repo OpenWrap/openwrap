@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Testing;
@@ -21,6 +22,14 @@ namespace Tests.Commands.remote.list
                 .Check(x => x.Name.ShouldBe("sauron"))
                 .Check(x => x.Fetch.ShouldBeTrue())
                 .Check(x => x.Publish.ShouldBeTrue());
+        }
+
+        [Test]
+        public void text_output_is_correct()
+        {
+            Results.OfType<RemoteRepositoryData>().First()
+                .ToString().ShouldBe("  1 sauron     [fetch, publish]");
+
         }
     }
 }

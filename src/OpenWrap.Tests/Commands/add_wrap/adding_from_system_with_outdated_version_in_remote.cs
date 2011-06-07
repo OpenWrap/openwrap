@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using Tests.Commands.contexts;

@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Mono.Cecil;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
+using OpenRasta.Client;
 using OpenWrap.Commands.Cli.Locators;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Core;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.AssemblyResolvers;
 using OpenWrap.PackageManagement.DependencyResolvers;
@@ -13,6 +16,10 @@ using OpenWrap.PackageManagement.Deployers;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.PackageManagement.Exporters.Commands;
+using OpenWrap.Repositories;
+using OpenWrap.Repositories.FileSystem;
+using OpenWrap.Repositories.Http;
+using OpenWrap.Repositories.NuFeed;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.Tasks;
@@ -34,8 +41,27 @@ namespace OpenWrap.Commands.Cli
         public static int Main(IDictionary<string, object> env)
         {
             ServiceLocator.TryRegisterService<IFileSystem>(() => LocalFileSystem.Instance);
+            
             ServiceLocator.TryRegisterService<IConfigurationManager>(
-                () => new DefaultConfigurationManager(ServiceLocator.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
+                () => new DefaultConfigurationManager(
+                    ServiceLocator.GetService<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
+            ServiceLocator.TryRegisterService<IHttpClient>(() => new WebRequestHttpClient
+            {
+                Proxy = ReadProxy
+                    
+            });
+            ServiceLocator.TryRegisterService<IEnumerable<IRemoteRepositoryFactory>>(() => new List<IRemoteRepositoryFactory>
+            {
+                new IndexedFolderRepositoryFactory(ServiceLocator.GetService<IFileSystem>()),
+                new NuFeedRepositoryFactory(
+                    ServiceLocator.GetService<IFileSystem>(),
+                    ServiceLocator.GetService<IHttpClient>()),
+                new IndexedHttpRepositoryFactory(ServiceLocator.GetService<IHttpClient>())
+            });
+            ServiceLocator.TryRegisterService<IRemoteManager>(() => new DefaultRemoteManager(
+                                                                        ServiceLocator.GetService<IConfigurationManager>(),
+                                                                        ServiceLocator.GetService<IEnumerable<IRemoteRepositoryFactory>>()));
+
             ServiceLocator.TryRegisterService<IEnvironment>(() =>
             {
                 var cdenv = new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(env.CurrentDirectory()));
@@ -72,6 +98,16 @@ namespace OpenWrap.Commands.Cli
                                                   new VerbNounCommandLocator(commandRepository),
                                                   new DefaultVerbCommandLocator(commandRepository)
                                               }).Execute(env.CommandLine(), env.ShellArgs());
+        }
+
+        static WebProxy ReadProxy()
+        {
+            var conf = ServiceLocator.GetService<IConfigurationManager>().Load<CoreConfiguration>();
+            if (conf == null || conf.ProxyHref == null) return null;
+            var proxy = new WebProxy(conf.ProxyHref);
+            if (conf.ProxyUsername == null)
+                proxy.Credentials = new NetworkCredential(conf.ProxyUsername, conf.ProxyPassword);
+            return proxy;
         }
     }
 }

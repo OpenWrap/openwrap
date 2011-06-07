@@ -5,7 +5,6 @@ using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenFileSystem.IO.FileSystems.Local;
-using OpenWrap.Commands.contexts;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;

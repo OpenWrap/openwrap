@@ -6,13 +6,13 @@ namespace OpenWrap.Commands.Core
 {
     public class CommandGroupResult : Success
     {
-        readonly string _noun;
         readonly IEnumerable<ICommandDescriptor> _commands;
+        readonly string _noun;
 
         public CommandGroupResult(string noun, IEnumerable<ICommandDescriptor> commands)
         {
             _noun = noun;
-            _commands = commands.Where(x=>x.IsDefault).Concat(commands.Where(x=>x.IsDefault == false).OrderBy(c => c.Verb));
+            _commands = commands.Where(x => x.IsDefault).Concat(commands.Where(x => x.IsDefault == false).OrderBy(c => c.Verb));
         }
 
         public override string ToString()

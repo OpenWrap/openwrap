@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.IO;
 using OpenWrap.Testing;

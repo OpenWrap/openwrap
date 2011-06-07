@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.Errors;
+using OpenWrap.Commands.Messages;
+using OpenWrap.Testing;
 using OpenWrap.Tests;
 using Tests.Commands.contexts;
 
@@ -17,7 +19,7 @@ namespace publish_wrap_specifications
         [Test]
         public void command_fails()
         {
-            Results.ShouldContain<IncompleteAuthentication>();
+            Results.ShouldHaveOne<IncompleteCredentials>();
         }
     }
 }

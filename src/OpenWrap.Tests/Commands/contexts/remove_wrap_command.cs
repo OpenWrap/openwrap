@@ -1,9 +1,8 @@
 ﻿using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
-using Tests.Commands.contexts;
 
-namespace OpenWrap.Commands.contexts
+namespace Tests.Commands.contexts
 {
     public abstract class remove_wrap_command : command<RemoveWrapCommand>
     {
