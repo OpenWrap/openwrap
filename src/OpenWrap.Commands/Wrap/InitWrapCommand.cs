@@ -24,6 +24,7 @@ namespace OpenWrap.Commands.Wrap
         bool? _allProjects;
         IEnumerable<IFile> _projectsToPatch;
         IFile _packageDescriptorFile;
+        string _name;
 
         public InitWrapCommand()
         {
@@ -192,6 +193,13 @@ namespace OpenWrap.Commands.Wrap
             }
             throw new InvalidOperationException("Could not find a descriptor.");
         }
+  [CommandInput (Position = 1)]
+  public string Name
+  {
+      get { return _name ?? (Target == "." ? Environment.CurrentDirectory.Name : Target); }
+      set { _name = value; }
+  }
+
 
         IEnumerable<ICommandOutput> SetupDirectoriesAndDescriptor()
         {
@@ -199,7 +207,7 @@ namespace OpenWrap.Commands.Wrap
 
             IDirectory projectDirectory = Target == "." ? currentDirectory : currentDirectory.GetDirectory(Target);
 
-            string packageName = Target == "." ? Environment.CurrentDirectory.Name : Target;
+            string packageName = Name;
 
             _packageDescriptorFile = projectDirectory.GetFile(packageName + ".wrapdesc");
             if (_packageDescriptorFile.Exists)

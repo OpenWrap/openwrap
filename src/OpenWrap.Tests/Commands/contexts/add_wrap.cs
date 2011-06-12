@@ -16,7 +16,7 @@ namespace Tests.Commands.contexts
         {
             given_remote_repository("iron-hills");
         }
-        protected void when_executing_command(string parameters)
+        protected override void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
             

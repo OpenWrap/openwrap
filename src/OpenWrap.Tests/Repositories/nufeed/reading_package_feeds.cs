@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenRasta.Client;
 using OpenWrap;
 using OpenWrap.PackageModel;
@@ -47,10 +48,11 @@ namespace Tests.Repositories.contexts
     public class nufeed : http
     {
         protected ILookup<string, IPackageInfo> Packages;
+        protected InMemoryFileSystem FileSystem = new InMemoryFileSystem();
 
         protected void when_reading_packages()
         {
-            Packages = new NuFeedRepository(base.Client, "http://localhost/packages/1".ToUri(), "http://localhost/packages/1".ToUri())
+            Packages = new NuFeedRepository(FileSystem, base.Client, "http://localhost/packages/1".ToUri(), "http://localhost/packages/1".ToUri())
                     .PackagesByName;
         }
     }

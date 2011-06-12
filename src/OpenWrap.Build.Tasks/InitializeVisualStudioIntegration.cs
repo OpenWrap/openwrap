@@ -72,11 +72,7 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string ProjectFilePath { get; set; }
 
-        public InitializeVisualStudioIntegration()
-        {
-            InternalServices.Initialize();
-            
-        }
+
         public override bool Execute()
         {
             ResharperLogger.Debug("Initialize called on " + ProjectFilePath);

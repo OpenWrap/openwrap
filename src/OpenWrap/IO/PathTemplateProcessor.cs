@@ -46,12 +46,26 @@ namespace OpenWrap.IO
             _searchString = searchPath.JoinString(System.IO.Path.DirectorySeparatorChar);
         }
         
-        public bool TryParsePath(Path path, out IDictionary<string,string> properties)
+        public bool TryParsePath(Path path, bool exactMatch, out IDictionary<string,string> properties)
         {
             if (!path.IsRooted)
                 throw new ArgumentException("'path' should be rooted.", "path");
 
-            var segments = SkipToFirstSearchSegment(path);
+            int ignoreCount = 0;
+            int count = path.Segments.Count();
+
+            do
+            {
+                if (ParsePass(path.Segments.Skip(ignoreCount), exactMatch, out properties))
+                    return true;
+                ignoreCount++;
+            } while (ignoreCount < count);
+            return false;
+        }
+
+        bool ParsePass(IEnumerable<string> segs, bool exactMatch, out IDictionary<string, string> properties)
+        {
+            var segments = new LinkedList<string>(segs);
             var parsers = _segments;
             properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (segments.Count == 0)
@@ -65,6 +79,8 @@ namespace OpenWrap.IO
                     return false;
 
                 currentParser = currentParser.Next;
+                if (!exactMatch && currentParser == null)
+                    break;
                 if (currentParser == null && currentSegment != null)
                     return false;
             } while (currentParser != null);
@@ -72,16 +88,11 @@ namespace OpenWrap.IO
             return true;
         }
 
-        LinkedList<string> SkipToFirstSearchSegment(Path path)
-        {
-            return new LinkedList<string>(path.Segments);
-        }
-
         public IEnumerable<PathTemplateItem<IDirectory>> Directories(IDirectory baseDirectory)
         {
             IDictionary<string, string> var = null;
             return from dir in baseDirectory.Directories(_searchString)
-                   where TryParsePath(dir.Path, out var)
+                   where TryParsePath(dir.Path, true, out var)
                    let dirVars = new Dictionary<string, string>(var, StringComparer.OrdinalIgnoreCase)
                    select new PathTemplateItem<IDirectory>(dir, dirVars);
         }
@@ -112,7 +123,7 @@ namespace OpenWrap.IO
         static string GetScope(PathTemplateProcessor processor, Path projectFilePath)
         {
             IDictionary<string, string> properties;
-            var parseOk = processor.TryParsePath(projectFilePath, out properties);
+            var parseOk = processor.TryParsePath(projectFilePath, false, out properties);
             return parseOk &&
                    properties.ContainsKey("scope")
                            ? properties["scope"]

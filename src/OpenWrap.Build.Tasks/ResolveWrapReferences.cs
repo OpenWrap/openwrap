@@ -24,7 +24,6 @@ namespace OpenWrap.Build.Tasks
 
         public ResolveWrapReferences()
         {
-            InternalServices.Initialize();
             _fileSystem = LocalFileSystem.Instance;
         }
 

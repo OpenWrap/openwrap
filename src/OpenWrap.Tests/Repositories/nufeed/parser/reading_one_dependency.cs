@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using OpenRasta.Client;
 using OpenWrap.Testing;
 using Tests.Repositories.contexts;
 using Tests.Repositories.factories.nuget;
@@ -16,7 +17,8 @@ namespace Tests.Repositories.nufeed.parser
                     "openwrap", 
                     "1.1.0",
                     "The best package manager for .net",
-                    dependencies: "openfilesystem:1.0.0"));
+                    dependencies: "openfilesystem:1.0.0",
+                    contentUri: "openwrap.nupkg"));
 
             when_reading_feed();
         }
@@ -31,6 +33,13 @@ namespace Tests.Repositories.nufeed.parser
         public void dependency_version_ignores_build()
         {
             Feed.Packages.Single().Dependencies.Single().ShouldBe("openfilesystem >= 1.0 and < 1.1");
+        }
+
+        [Test]
+        public void dependency_content_is_correct()
+        {
+            Feed.Packages.Single().PackageHref.ShouldNotBeNull()
+                .ShouldBe(NuGetBaseUri.Combine("openwrap.nupkg"));
         }
     }
 }

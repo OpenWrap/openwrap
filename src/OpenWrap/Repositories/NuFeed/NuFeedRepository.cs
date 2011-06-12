@@ -1,22 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
+using OpenFileSystem.IO;
 using OpenRasta.Client;
+using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories.Http;
+using OpenWrap.Repositories.NuGet;
 
 namespace OpenWrap.Repositories.NuFeed
 {
     public class NuFeedRepository : IPackageRepository
     {
+        readonly IFileSystem _fileSystem;
         readonly IHttpClient _client;
         readonly Uri _target;
         readonly Uri _packagesUri;
         LazyValue<IEnumerable<IPackageInfo>> _packages;
 
-        public NuFeedRepository(IHttpClient client, Uri target, Uri packagesUri)
+        public NuFeedRepository(IFileSystem fileSystem, IHttpClient client, Uri target, Uri packagesUri)
         {
+            _fileSystem = fileSystem;
             _client = client;
             _target = target;
             _packagesUri = packagesUri;
@@ -51,13 +57,21 @@ namespace OpenWrap.Repositories.NuFeed
         {
             return ()=>
             {
-                throw new NotImplementedException();
+                var response = _client.CreateRequest(packageEntry.PackageHref).Get().Send();
+                if (response.Entity == null)
+                    return null;
+                var tempFile = _fileSystem.CreateTempFile();
+                var tempDirectory = _fileSystem.CreateTempDirectory();
+                using(var tempStream = tempFile.OpenWrite())
+                NuGetConverter.Convert(response.Entity.Stream, tempStream);
+                
+                return new CachedZipPackage(this, tempFile, tempDirectory).Load();
             };
         }
 
         public ILookup<string, IPackageInfo> PackagesByName
         {
-            get { return _packages.Value.ToLookup(x => x.Name); }
+            get { return _packages.Value.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
         }
 
         public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)

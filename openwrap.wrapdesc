@@ -7,3 +7,5 @@ name: openwrap
 depends: tdnet-framework
 use-symlinks: true
 depends: mono.cecil
+directory-structure: src\*{scope: Tests=tests}\**
+depends: Newtonsoft.Json

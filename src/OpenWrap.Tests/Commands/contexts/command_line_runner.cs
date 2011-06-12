@@ -68,7 +68,6 @@ namespace Tests.Commands.contexts
         public class InputBuilder
         {
             readonly MemoryCommandInput _descriptor;
-            readonly string _name;
 
             public InputBuilder(string name)
             {

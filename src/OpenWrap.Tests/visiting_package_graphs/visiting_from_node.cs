@@ -8,7 +8,7 @@ namespace Tests.visiting_package_graphs
 {
     class visiting_from_node : contexts.package_graph_visitor
     {
-        List<IPackageInfo> visited = new List<IPackageInfo>();
+        //List<IPackageInfo> visited = new List<IPackageInfo>();
 
         public visiting_from_node()
         {

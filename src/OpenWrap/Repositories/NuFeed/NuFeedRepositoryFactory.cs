@@ -15,10 +15,12 @@ namespace OpenWrap.Repositories.NuFeed
         const string NS_ATOM = "http://www.w3.org/2005/Atom";
         const string NS_ATOMPUB = "http://www.w3.org/2007/app";
         const string NS_XML = "http://www.w3.org/XML/1998/namespace";
+        readonly IFileSystem _fileSystem;
         readonly IHttpClient _client;
 
         public NuFeedRepositoryFactory(IFileSystem fileSystem, IHttpClient client)
         {
+            _fileSystem = fileSystem;
             _client = client;
         }
 
@@ -26,7 +28,7 @@ namespace OpenWrap.Repositories.NuFeed
         {
             if (token.StartsWith("[nuget]") == false) return null;
             var destinationUri = Regex.Match(token, @"^\[nuget\]\[(?<target>.*)\](?<uri>.*)");
-            return new NuFeedRepository(_client, destinationUri.Groups["target"].Value.ToUri(), destinationUri.Groups["uri"].Value.ToUri());
+            return new NuFeedRepository(_fileSystem, _client, destinationUri.Groups["target"].Value.ToUri(), destinationUri.Groups["uri"].Value.ToUri());
         }
 
         public IPackageRepository FromUserInput(string identifier)
@@ -49,14 +51,14 @@ namespace OpenWrap.Repositories.NuFeed
             if (serviceResponse.Status.Code != 200) return null;
             var serviceDocument = XDocument.Load(XmlReader.Create(serviceResponse.Entity.Stream, new XmlReaderSettings { }), LoadOptions.SetBaseUri)
                     ;
-            var packagesUri = (from collection in serviceDocument.Descendants(XName.Get("collection", NS_ATOMPUB))
-                              let collectionHref = collection.Attributes("href").FirstOrDefault()
-                              let titleElement = collection.Element(XName.Get("title", NS_ATOM))
+            var packagesUri = (from collectionElement in serviceDocument.Descendants(XName.Get("collection", NS_ATOMPUB))
+                              let collectionHref = collectionElement.Attributes("href").FirstOrDefault()
+                              let titleElement = collectionElement.Element(XName.Get("title", NS_ATOM))
                               where collectionHref != null &&
                                     titleElement != null &&
                                     titleElement.Value == "Packages"
                               let baseElement = (
-                                                        from parent in collection.AncestorsAndSelf()
+                                                        from parent in collectionElement.AncestorsAndSelf()
                                                         let xmlBase = parent.Attribute(XName.Get("base", NS_XML))
                                                         where xmlBase != null
                                                         let parsedBaseUri = xmlBase.Value.ToUri()
@@ -65,7 +67,7 @@ namespace OpenWrap.Repositories.NuFeed
                               select baseElement.Combine(collectionHref.Value.ToUri())).FirstOrDefault();
 
             if (packagesUri == null) return null;
-            return new NuFeedRepository(_client, target, packagesUri);
+            return new NuFeedRepository(_fileSystem, _client, target, packagesUri);
         }
     }
 }

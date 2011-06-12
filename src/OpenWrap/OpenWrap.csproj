@@ -336,7 +336,7 @@
     <Compile Include="Runtime\CurrentDirectoryEnvironment.cs" />
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="Runtime\IEnvironment.cs" />
-    <Compile Include="Services\InternalServices.cs" />
+    <Compile Include="Services\ServiceRegistry.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\DependencyResolutionResult.cs" />
     <Compile Include="Repositories\FolderRepository.cs" />
     <Compile Include="Repositories\Http\HttpRepositoryNavigator.cs" />

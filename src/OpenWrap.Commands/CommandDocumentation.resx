@@ -193,6 +193,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="build-wrap-name" xml:space="preserve">
     <value>Sets the name of the package to create. If not present, the name specified in the descriptor is used.</value>
   </data>
+  <data name="init-wrap-name" xml:space="preserve">
+    <value>Specifies the package name to initialize. If -Target is specified, the default is the directory name specified there, otherwise the default is the current directory name.</value>
+  </data>
   <data name="build-wrap-path" xml:space="preserve">
     <value>Sets the location in which to build the package. Defaults to the current directory.</value>
   </data>
