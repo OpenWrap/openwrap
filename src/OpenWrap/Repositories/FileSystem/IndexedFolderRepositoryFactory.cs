@@ -27,22 +27,25 @@ namespace OpenWrap.Repositories.FileSystem
                     .Select(_=>_.EndsWith("/") ? _.Substring(0, _.Length-1) : _)
                     .JoinString(System.IO.Path.DirectorySeparatorChar);
             else
-                identifier = string.Format("{0}{0}{1}{0}{2}",
+                identifier = string.Format("{0}{0}{1}{2}",
                                            System.IO.Path.DirectorySeparatorChar,
                                            fileUri.Authority,
-                                           fileUri.Segments.JoinString(System.IO.Path.DirectorySeparatorChar));
+                                           fileUri.Segments.Select(_ => _.EndsWith("/") ? _.Substring(0, _.Length - 1) : _).JoinString(System.IO.Path.DirectorySeparatorChar));
             IDirectory directory;
             var file = _fileSystem.GetFile(identifier);
 
             if (file.Exists || file.Name == "index.wraplist")
+            {
                 directory = file.Parent;
+                identifier = System.IO.Path.GetDirectoryName(directory.Path);
+            }
             else if ((directory = _fileSystem.GetDirectory(identifier)).Exists == false)
                 directory.MustExist();
 
             var wrapList = directory.GetFile("index.wraplist");
             if (wrapList.Exists == false) wrapList.MustExist().WriteString("<package-list />");
 
-            return new IndexedFolderRepository(directory.Name, directory){Token=PREFIX + directory.Path};
+            return new IndexedFolderRepository(directory.Name, directory){Token=PREFIX + identifier};
         }
 
         public IPackageRepository FromToken(string token)
