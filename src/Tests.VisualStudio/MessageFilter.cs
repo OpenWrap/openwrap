@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using EnvDTE;
 using System.Runtime.InteropServices;
 
-namespace ConsoleApplication2
+namespace Tests.VisualStudio
 {
     public class MessageFilter : IOleMessageFilter
     {
@@ -65,29 +61,5 @@ namespace ConsoleApplication2
         private static extern int
           CoRegisterMessageFilter(IOleMessageFilter newFilter, out 
           IOleMessageFilter oldFilter);
-    }
-
-    [ComImport(), Guid("00000016-0000-0000-C000-000000000046"),
-    InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-    interface IOleMessageFilter
-    {
-        [PreserveSig]
-        int HandleInComingCall(
-            int dwCallType,
-            IntPtr hTaskCaller,
-            int dwTickCount,
-            IntPtr lpInterfaceInfo);
-
-        [PreserveSig]
-        int RetryRejectedCall(
-            IntPtr hTaskCallee,
-            int dwTickCount,
-            int dwRejectType);
-
-        [PreserveSig]
-        int MessagePending(
-            IntPtr hTaskCallee,
-            int dwTickCount,
-            int dwPendingType);
     }
 }

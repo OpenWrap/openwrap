@@ -67,7 +67,7 @@
 
   </PropertyGroup>
 
-  <Target Name="OpenWrap-ResolveReferences">
+  <Target Name="OpenWrap-ResolveReferences" DependsOnTargets="OpenWrap-Initialize">
     <ResolveWrapReferences
       WrapDescriptor="$(OpenWrap-DescriptorPath)"
       WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"

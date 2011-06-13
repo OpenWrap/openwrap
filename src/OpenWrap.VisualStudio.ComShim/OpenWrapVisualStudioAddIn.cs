@@ -5,15 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
-using System.Text;
 using System.Threading;
 using EnvDTE;
 using EnvDTE80;
 using Extensibility;
-using Microsoft.Build.BuildEngine;
 using OpenWrap.Preloading;
 
-namespace OpenWrap.VisualStudio.ComShim
+namespace OpenWrap.VisualStudio.SolutionAddIn
 {
     public abstract class OpenWrapVisualStudioAddIn : MarshalByRefObject, IDTExtensibility2
     {
@@ -32,7 +30,7 @@ namespace OpenWrap.VisualStudio.ComShim
             DteVersion = targetDteVersion;
         }
 
-        protected AddIn AddIn { get; set; }
+        protected EnvDTE.AddIn AddIn { get; set; }
         protected DTE2 Application { get; set; }
 
         public void OnAddInsUpdate(ref Array custom)
@@ -52,11 +50,11 @@ namespace OpenWrap.VisualStudio.ComShim
             if (dte.Version != DteVersion)
             {
                 Notify("OpenWrap Visual Studio integration is not correct version, re-creating now.");
-                dte.Solution.AddIns.OfType<AddIn>().First(x => x.ProgID == _progId).Remove();
+                dte.Solution.AddIns.OfType<EnvDTE.AddIn>().First(x => x.ProgID == _progId).Remove();
                 if (dte.Version == "9.0")
-                    dte.Solution.AddIns.Add(Constants.ADD_IN_PROGID_2008, Constants.ADD_IN_DESCRIPTION, Constants.ADD_IN_NAME, true);
+                    dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2008, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
                 else if (dte.Version == "10.0")
-                    dte.Solution.AddIns.Add(Constants.ADD_IN_PROGID_2010, Constants.ADD_IN_DESCRIPTION, Constants.ADD_IN_NAME, true);
+                    dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2010, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
                 return;
             }
             _rootPath = GetRootLocation(dte.Solution.FullName);

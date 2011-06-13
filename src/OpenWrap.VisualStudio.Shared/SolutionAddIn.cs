@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using EnvDTE;
+using OpenWrap.VisualStudio.SolutionAddIn;
 
 namespace OpenWrap.VisualStudio.Hooks
 {
@@ -28,14 +29,14 @@ namespace OpenWrap.VisualStudio.Hooks
 
                 dte.Solution.AddIns.Update();
 
-                if (dte.Solution.AddIns.OfType<AddIn>().Any(x => x.ProgID == Constants.ADD_IN_PROGID_2010 || x.ProgID == Constants.ADD_IN_PROGID_2008))
+                if (dte.Solution.AddIns.OfType<EnvDTE.AddIn>().Any(x => x.ProgID == ComConstants.ADD_IN_PROGID_2010 || x.ProgID == ComConstants.ADD_IN_PROGID_2008))
                     return;
 
-                AddInInstaller.RegisterAddInInUserHive();
+                AddInInstaller.InstallInUserHive();
                 if (dte.Version == "9.0")
-                    dte.Solution.AddIns.Add(Constants.ADD_IN_PROGID_2008, Constants.ADD_IN_DESCRIPTION, Constants.ADD_IN_NAME, true);
+                    dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2008, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
                 else if (dte.Version == "10.0")
-                    dte.Solution.AddIns.Add(Constants.ADD_IN_PROGID_2010, Constants.ADD_IN_DESCRIPTION, Constants.ADD_IN_NAME, true);
+                    dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2010, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
             }
         }
     }

@@ -6,6 +6,7 @@ using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.PackageManagement.Monitoring;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Core
 {
@@ -17,19 +18,25 @@ namespace OpenWrap.Commands.Core
         IPackageDescriptorMonitor _monitor;
         ManualResetEvent _exit = new ManualResetEvent(false);
 
-        public StartSolutionPlugin()
+        public StartSolutionPlugin() : this(ServiceLocator.GetService<IPackageDescriptorMonitor>())
         {
-            
         }
+
+        public StartSolutionPlugin(IPackageDescriptorMonitor monitor)
+        {
+            _monitor = monitor;
+        }
+
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new Info("Solution plugin started");
-            //_monitor.RegisterListener(_environment.DescriptorFile, _environment.ProjectRepository, this);
-                
             
+            //_monitor.RegisterListener(_environment.DescriptorFile, _environment.ProjectRepository, this);
+
+
             //var solPackages = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
-            //    .SelectMany(x=>x)
-            //    .Select(x=>x.Start())
+            //    .SelectMany(x => x)
+            //    .Select(x => x.Start())
             //    .ToList();
 
             //_exit.WaitOne();

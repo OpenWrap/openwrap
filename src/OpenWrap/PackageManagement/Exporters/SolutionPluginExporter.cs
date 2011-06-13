@@ -15,8 +15,6 @@ namespace OpenWrap.PackageManagement.Exporters
 {
     public class SolutionPluginExporter : AbstractAssemblyExporter
     {
-        IEnumerable<Exports.ISolutionPlugin> _plugins;
-
         public SolutionPluginExporter() : base("solution")
         {
         }

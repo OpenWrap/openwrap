@@ -8,8 +8,8 @@
     <ProjectGuid>{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenWrap.VisualStudio.ComShim</RootNamespace>
-    <AssemblyName>OpenWrap.VisualStudio.ComShim</AssemblyName>
+    <RootNamespace>OpenWrap.VisualStudio.SolutionAddIn</RootNamespace>
+    <AssemblyName>OpenWrap.VisualStudio.SolutionAddIn</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -41,7 +41,6 @@
     <Reference Include="Extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Microsoft.Build.Engine" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,9 +51,6 @@
   <ItemGroup>
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
-    </Compile>
-    <Compile Include="..\OpenWrap.VisualStudio.Shared\Guids.cs">
-      <Link>Guids.cs</Link>
     </Compile>
     <Compile Include="..\OpenWrap\Preloading\INotifyDownload.cs">
       <Link>Preloading\INotifyDownload.cs</Link>
@@ -77,6 +73,7 @@
     <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipFileEntry.cs">
       <Link>Preloading\TinySharpZip\ZipFileEntry.cs</Link>
     </Compile>
+    <Compile Include="ComConstants.cs" />
     <Compile Include="OpenWrapVisualStudioAddIn.cs" />
     <Compile Include="OpenWrapVisualStudioAddIn2008.cs" />
     <Compile Include="OpenWrapVisualStudioAddIn2010.cs" />

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using EnvDTE;
 using Microsoft.Win32;
-using OpenWrap.VisualStudio.ComShim;
+using OpenWrap.VisualStudio.SolutionAddIn;
 
 namespace OpenWrap.VisualStudio.Hooks
 {
@@ -13,12 +13,49 @@ namespace OpenWrap.VisualStudio.Hooks
     {
         const string REG_INPROCSERVER32 = "InprocServer32";
 
-        public static void RegisterAddInInUserHive()
+        public static void InstallInUserHive()
         {
             var assemblyCodeBase = CopyAssemblyToAppData();
-
+            if (assemblyCodeBase == null) return;
             RegisterComAddIn<OpenWrapVisualStudioAddIn2008>(assemblyCodeBase, "v2.0.50727");
             RegisterComAddIn<OpenWrapVisualStudioAddIn2010>(assemblyCodeBase, "v4.0.30319");
+        }
+        public static void Uninstall()
+        {
+            var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var openwrapPath = Path.Combine(localAppDataPath, "openwrap");
+            var addinPath = Path.Combine(openwrapPath, "VisualStudio");
+
+            if (Directory.Exists(addinPath))
+                Directory.Delete(addinPath, true);
+
+            UnregisterComAddIn<OpenWrapVisualStudioAddIn2008>();
+            UnregisterComAddIn<OpenWrapVisualStudioAddIn2010>();
+        }
+
+        static void UnregisterComAddIn<T>()
+        {
+            var classes = Registry.CurrentUser.OpenSubKey("Software\\Classes", RegistryKeyPermissionCheck.ReadWriteSubTree);
+            if (classes == null) return;
+
+            var type = typeof(T);
+            var progid = type.Attribute<ProgIdAttribute>().Value;
+            var guid = type.Attribute<GuidAttribute>().Value;
+            
+            string clsIdKeyPath = Path.Combine("CLSID", "{" + guid + "}");
+
+            var clsIdKey = classes.OpenSubKey(clsIdKeyPath);
+            if (clsIdKey != null)
+            {
+                clsIdKey.Close();
+                classes.DeleteSubKeyTree(clsIdKeyPath);
+            }
+            var progIdKey = classes.OpenSubKey(progid);
+            if (progIdKey != null)
+            {
+                progIdKey.Close();
+                classes.DeleteSubKeyTree(progid);
+            }
         }
 
         static void RegisterComAddIn<T>(string assemblyCodeBase, string targetVersion)
@@ -75,14 +112,6 @@ namespace OpenWrap.VisualStudio.Hooks
                                  )
                 );
         }
-        public static AddIn Install(DTE dte)
-        {
-            if (dte.Version == "9.0")
-                return dte.Solution.AddIns.Add(Constants.ADD_IN_PROGID_2008, Constants.ADD_IN_DESCRIPTION, Constants.ADD_IN_NAME, true);
-            if (dte.Version == "10.0")
-                return dte.Solution.AddIns.Add(Constants.ADD_IN_PROGID_2010, Constants.ADD_IN_DESCRIPTION, Constants.ADD_IN_NAME, true);
-            return null;
-        }
 
         static string Combine(params string[] strings)
         {
@@ -94,28 +123,44 @@ namespace OpenWrap.VisualStudio.Hooks
         {
             var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var openwrapPath = Path.Combine(localAppDataPath, "openwrap");
-            var addinPath = Path.Combine(openwrapPath, "VisualStudio");
+            var vsIntegrationPath = Path.Combine(openwrapPath, "VisualStudio");
 
             if (!Directory.Exists(openwrapPath))
                 Directory.CreateDirectory(openwrapPath);
-            if (!Directory.Exists(addinPath))
-                Directory.CreateDirectory(addinPath);
+            if (!Directory.Exists(vsIntegrationPath))
+                Directory.CreateDirectory(vsIntegrationPath);
 
-            var existingPath = typeof(OpenWrapVisualStudioAddIn).Assembly.Location;
-            var assemblyFileName = Path.GetFileName(existingPath);
-            if (assemblyFileName == null)
+            var sourceAssembly = typeof(OpenWrapVisualStudioAddIn).Assembly.Location;
+            var sourceAssemblyFileName = Path.GetFileName(sourceAssembly);
+
+            if (sourceAssemblyFileName == null)
                 return null;
-            var assemblyPath = Path.Combine(addinPath, assemblyFileName);
+
+            var currentVersion = FileVersionInfo.GetVersionInfo(sourceAssembly).FileVersion.ToVersion();
+
+            var latestInstalledVersion = Directory.GetDirectories(vsIntegrationPath)
+                .Select(Path.GetDirectoryName)
+                .Where(x => x != null)
+                .Select(_ => _.ToVersion())
+                .Where(x => x != null)
+                .OrderByDescending(x => x)
+                .FirstOrDefault();
+
+            if (latestInstalledVersion != null && latestInstalledVersion > currentVersion) return null;
+
+            var destinationPath = Path.Combine(vsIntegrationPath, currentVersion.ToString());
+            if (!Directory.Exists(destinationPath)) Directory.CreateDirectory(destinationPath);
+            var destinationAssembly = Path.Combine(destinationPath, sourceAssemblyFileName);
             try
             {
-                File.Copy(existingPath, assemblyPath, true);
+                File.Copy(sourceAssembly, destinationAssembly, true);
             }
             catch (Exception e)
             {
-                Debug.WriteLine(string.Format("SolutionAddIn: Could not copy '{0}' to '{1}'.\r\n{2}", existingPath, assemblyPath, e));
+                Debug.WriteLine(string.Format("SolutionAddIn: Could not copy '{0}' to '{1}'.\r\n{2}", sourceAssembly, destinationAssembly, e));
                 return null;
             }
-            return "file:///" + assemblyPath.Replace('\\', '/');
+            return "file:///" + destinationAssembly.Replace('\\', '/');
         }
     }
 }

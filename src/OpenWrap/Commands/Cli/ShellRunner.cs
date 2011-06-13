@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Mono.Cecil;
 using OpenFileSystem.IO;
@@ -34,15 +35,10 @@ namespace OpenWrap.Commands.Cli
                 "Your version of the shell is out of date and cannot execute this version of OpenWrap.\r\nWe're very sorry for the invonvenience, but we promise the new version is eons better.\r\nThe latest shell can be downloaded from http://openwrap.org by click on the 'Download' icon on the top right.");
             return -250;
         }
-
+#pragma warning disable 28
         public static int Main(IDictionary<string, object> env)
         {
             var serviceRegistry = new ServiceRegistry();
-            //if (env.ContainsKey("openwrap.shell.type"))
-            //{
-            //    if (((string)env["openwrap.shell.type"]).StartsWith("VisualStudio."))
-            //        serviceRegistry.Override<ICommandOutputRenderer>(()=> )
-            //}
 
             serviceRegistry
                 .Override<IEnvironment>(() =>
@@ -57,5 +53,6 @@ namespace OpenWrap.Commands.Cli
             return new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>(), ServiceLocator.GetService<ICommandOutputRenderer>())
                 .Execute(env.CommandLine(), env.ShellArgs());
         }
+#pragma warning restore 28
     }
 }

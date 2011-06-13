@@ -1,8 +1,4 @@
-﻿extern alias resharper450;
-extern alias resharper500;
-extern alias resharper510;
-extern alias resharper511;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;

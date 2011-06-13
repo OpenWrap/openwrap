@@ -79,6 +79,8 @@ namespace OpenWrap.Build.Tasks
 
         public override bool Execute()
         {
+            //Debugger.Launch();
+
             try
             {
                 EnsurePackageRepositoryIsInitialized();

@@ -52,16 +52,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddInInstaller.cs" />
-    <Compile Include="Guids.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegistryExtensions.cs" />
     <Compile Include="SiteManager.cs" />
     <Compile Include="SolutionAddIn.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenWrap.VisualStudio.ComShim\OpenWrap.VisualStudio.ComShim.csproj">
+    <ProjectReference Include="..\OpenWrap.VisualStudio.ComShim\OpenWrap.VisualStudio.SolutionAddIn.csproj">
       <Project>{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}</Project>
-      <Name>OpenWrap.VisualStudio.ComShim</Name>
+      <Name>OpenWrap.VisualStudio.SolutionAddIn</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>

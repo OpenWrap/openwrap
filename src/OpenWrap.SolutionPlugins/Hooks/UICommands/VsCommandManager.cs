@@ -6,10 +6,21 @@ using Microsoft.VisualStudio.CommandBars;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using OpenWrap.Commands;
+using OpenWrap.VisualStudio.SolutionAddIn;
 using OLECMDF = OpenWrap.VisualStudio.Interop.OLECMDF;
 
 namespace OpenWrap.VisualStudio.Hooks
 {
+    public static class VsConstants
+    {
+        public const string COMMANDS_PACKAGE_GUID = "{3A9801E8-4BAF-415B-A115-1F6D62967D24}";
+        public const string COMMANDS_GROUP_GLOBAL = "{C11E43BD-0D8B-4816-AD3E-C626812FFAFE}";
+        public const string COMMANDS_GROUP_SOLUTION = "{403A2BCE-C712-4488-AC6F-7009C2952A7A}";
+        public const string COMMANDS_GROUP_PROJECT = "{42E3D6FF-722B-4845-A2F8-F6BABA12B338}";
+        public static readonly Guid COMMANDS_GROUP_GLOBAL_GUID = new Guid(COMMANDS_GROUP_GLOBAL);
+        public static readonly Guid COMMANDS_GROUP_SOLUTION_GUID = new Guid(COMMANDS_GROUP_SOLUTION);
+        public static readonly Guid COMMANDS_GROUP_PROJECT_GUID = new Guid(COMMANDS_GROUP_PROJECT);
+    }
     public class VsCommandManager : IOleCommandTarget, IDisposable
     {
         Dictionary<VsCommandIdentifier, VsCommand> _commands;
@@ -58,9 +69,9 @@ namespace OpenWrap.VisualStudio.Hooks
         public int QueryStatus(ref Guid pguidCmdGroup, uint cCmds, OLECMD[] prgCmds, IntPtr pCmdText)
         {
 
-            if (pguidCmdGroup != Constants.COMMANDS_GROUP_GLOBAL_GUID &&
-                pguidCmdGroup != Constants.COMMANDS_GROUP_SOLUTION_GUID &&
-                pguidCmdGroup != Constants.COMMANDS_GROUP_PROJECT_GUID)
+            if (pguidCmdGroup != VsConstants.COMMANDS_GROUP_GLOBAL_GUID &&
+                pguidCmdGroup != VsConstants.COMMANDS_GROUP_SOLUTION_GUID &&
+                pguidCmdGroup != VsConstants.COMMANDS_GROUP_PROJECT_GUID)
                 return OLECMDERR_E_UNKNOWNGROUP;
             if (cCmds < 1) return S_OK;
 

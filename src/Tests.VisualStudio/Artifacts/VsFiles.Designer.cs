@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Tests.VisualStudio.new_solution {
+namespace Tests.VisualStudio.Artifacts {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Tests.VisualStudio.new_solution {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Files {
+    internal class VsFiles {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Files() {
+        internal VsFiles() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Tests.VisualStudio.new_solution {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Tests.VisualStudio.new_solution.Files", typeof(Files).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Tests.VisualStudio.Artifacts.VsFiles", typeof(VsFiles).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

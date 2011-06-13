@@ -14,7 +14,6 @@ namespace OpenWrap.Collections
         }
         public static T OneOrDefault<T>(this IEnumerable<T> input)
         {
-            int count = 0;
             var enumerator = input.GetEnumerator();
             if (enumerator.MoveNext())
             {

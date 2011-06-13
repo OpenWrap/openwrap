@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.VisualStudio.CommandBars;
+using OpenWrap.VisualStudio.SolutionAddIn;
 using OpenWrap.Commands;
 
 namespace OpenWrap.VisualStudio.Hooks
@@ -26,7 +27,7 @@ namespace OpenWrap.VisualStudio.Hooks
         }
         public VsCommand Register()
         {
-            var packageId = new Guid(Constants.COMMANDS_PACKAGE_GUID);
+            var packageId = new Guid(VsConstants.COMMANDS_PACKAGE_GUID);
             var groupId = CommandGroupGuid = GetGroupId(_commandDescriptor);
             if (CommandGroupGuid == Guid.Empty) return null;
             
@@ -62,12 +63,12 @@ namespace OpenWrap.VisualStudio.Hooks
         Guid GetGroupId(IUICommandDescriptor commandDescriptor)
         {
             if (commandDescriptor.Context == UICommandContext.Global)
-                return new Guid(Constants.COMMANDS_GROUP_GLOBAL);
+                return new Guid(VsConstants.COMMANDS_GROUP_GLOBAL);
             if (commandDescriptor.Context == UICommandContext.Solution)
-                return new Guid(Constants.COMMANDS_GROUP_SOLUTION);
+                return new Guid(VsConstants.COMMANDS_GROUP_SOLUTION);
             if (commandDescriptor.Context == UICommandContext.OpenWrapProject
                 || commandDescriptor.Context == UICommandContext.StandardProject)
-                return new Guid(Constants.COMMANDS_GROUP_PROJECT);
+                return new Guid(VsConstants.COMMANDS_GROUP_PROJECT);
             return Guid.Empty;
         }
 

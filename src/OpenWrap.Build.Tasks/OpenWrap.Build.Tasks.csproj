@@ -114,16 +114,6 @@
       <Aliases>resharper510</Aliases>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.Resharper.v511\OpenWrap.Resharper.v511.csproj">
-      <Project>{9F5D9D90-DD43-45E9-BB70-B8EADE27FE82}</Project>
-      <Name>OpenWrap.Resharper.v511</Name>
-      <Aliases>resharper511</Aliases>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.VisualStudio.ComShim\OpenWrap.VisualStudio.ComShim.csproj">
-      <Project>{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}</Project>
-      <Name>OpenWrap.VisualStudio.ComShim</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj">
       <Project>{955C1309-6376-4BFE-A36B-144EFE172D8B}</Project>
       <Name>OpenWrap.VisualStudio.Shared</Name>

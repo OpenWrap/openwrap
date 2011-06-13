@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using ConsoleApplication2;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.Win32;
@@ -24,19 +23,21 @@ using OpenWrap.Configuration.Remotes;
 using OpenWrap.IO.Packaging;
 using OpenWrap.ProjectModel.Drivers.File;
 using OpenWrap.Services;
-using OpenWrap.VisualStudio.ComShim;
+using OpenWrap.Testing;
 using OpenWrap.VisualStudio.Hooks;
+using OpenWrap.VisualStudio.SolutionAddIn;
 using Tests.ProjectModel.drivers.file;
-using Tests.VisualStudio.new_solution;
+using Tests.VisualStudio.Artifacts;
+
 
 namespace Tests.VisualStudio.contexts
 {
     
-    public class visual_studio
+    public class visual_studio : context, IDisposable
     {
         LocalFileSystem FileSystem;
         IDirectory RootDir;
-        IFile SlnFile;
+        protected IFile SlnFile;
         List<string> _commands = new List<string>();
         string Vs2010Path;
         string Vs2008Path;
@@ -55,6 +56,7 @@ namespace Tests.VisualStudio.contexts
 
         public visual_studio()
         {
+            ServiceLocator.Clear();
             Vs2010Path = (string)Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\VisualStudio\10.0\Setup\VS\").GetValue("EnvironmentDirectory") + "devenv.com";
             Vs2008Path = (string)Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\VisualStudio\9.0\Setup\VS\").GetValue("EnvironmentDirectory") + "devenv.com";
             FileSystem = LocalFileSystem.Instance;
@@ -81,7 +83,7 @@ namespace Tests.VisualStudio.contexts
         {
             _commands.Add(command);
         }
-        protected void when_building_with_vs2010()
+        protected void when_building_with_vs2010(params Action<DTE2>[] actions)
         {
             CreateProjectFiles();
 
@@ -92,17 +94,18 @@ namespace Tests.VisualStudio.contexts
             ExecuteCommands();
 
             System.Type t = System.Type.GetTypeFromProgID("VisualStudio.DTE.10.0", true);
-            DTE2 dte = (DTE2)System.Activator.CreateInstance(t, true);
+            Dte = (DTE2)System.Activator.CreateInstance(t, true);
             MessageFilter.Register();
             try
             {
-                dte.Solution.Open(SlnFile.Path);
-                while (dte.Solution.IsOpen == false) System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
-                dte.Solution.SolutionBuild.Build(true);
-                dte.ExecuteCommand("File.SaveAll");
-                for (int i = 1; i <= dte.ToolWindows.ErrorList.ErrorItems.Count; i++)
+                Dte.Solution.Open(SlnFile.Path);
+                while (Dte.Solution.IsOpen == false) System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+                foreach (var action in actions)
+                    action(Dte);
+                
+                for (int i = 1; i <= Dte.ToolWindows.ErrorList.ErrorItems.Count; i++)
                 {
-                    var error = dte.ToolWindows.ErrorList.ErrorItems.Item(i);
+                    var error = Dte.ToolWindows.ErrorList.ErrorItems.Item(i);
                     Errors.Add(new VisualStudioError
                     {
                         Description = TryGet(()=>error.Description),
@@ -110,7 +113,7 @@ namespace Tests.VisualStudio.contexts
                         FileName = TryGet(() => error.FileName)
                     });
                 }
-                dte.ExecuteCommand("File.Exit");
+                Dte.ExecuteCommand("File.Exit");
             }
             finally
             {
@@ -161,22 +164,31 @@ namespace Tests.VisualStudio.contexts
 
         IEnumerable<PackageContent> GetOpenWrapPackageContent()
         {
-            yield return Static("openwrap.wrapdesc", ".", Files.openwrap_wrapdesc);
+            yield return Static("openwrap.wrapdesc", ".", VsFiles.openwrap_wrapdesc);
             yield return Static("version", ".", Encoding.UTF8.GetBytes("99.99"));
             // bin-net35
             yield return AssemblyOf<ICommand>(); // openwrap.dll
             yield return AssemblyOf<IHttpClient>(); // openrasta.client.dll
             yield return AssemblyOf<SolutionAddIn>(); // openwrap.visualstudio.shared.dll
             // build
-            yield return Static("OpenWrap.CSharp.targets", "build", Files.OpenWrap_CSharp_targets);
-            yield return Static("OpenWrap.tasks", "build", Files.OpenWrap_tasks);
+            yield return Static("OpenWrap.CSharp.targets", "build", VsFiles.OpenWrap_CSharp_targets);
+            yield return Static("OpenWrap.tasks", "build", VsFiles.OpenWrap_tasks);
             yield return AssemblyOf<InitializeOpenWrap>("build"); // openwrap.build.bootstrap.dll
             yield return AssemblyOf<RunCommand>("build"); // openwrap.build.tasks.dll
-            yield return AssemblyOf<OpenWrapVisualStudioAddIn>("build"); // openwrap.visualstudio.comshim.dll
+            yield return AssemblyOf<OpenWrapVisualStudioAddIn>(); // openwrap.visualstudio.comshim.dll
 
             // commands
             yield return AssemblyOf<BuildWrapCommand>("commands-net35");
+
+            foreach (var added in OpenWrapAssemblies)
+                yield return added();
         }
+        protected void given_openwrap_assemblyOf<T>(string destination)
+        {
+            OpenWrapAssemblies.Add(() => AssemblyOf<T>(destination));
+        }
+        List<Func<PackageContent>> OpenWrapAssemblies = new List<Func<PackageContent>>();
+        protected DTE2 Dte;
 
         PackageContent AssemblyOf<T>(string relativePath = "bin-net35")
         {
@@ -200,14 +212,16 @@ namespace Tests.VisualStudio.contexts
         {
             _project.AddCompile(fileName, content);
         }
-    }
 
-    public class VisualStudioError
-    {
-        public string Description { get; set; }
+        protected void given_empty_solution_addin_com_reg()
+        {
+            AddInInstaller.Uninstall();
+        }
 
-        public string FileName { get; set; }
-
-        public string Project { get; set; }
+        public void Dispose()
+        {
+            Dte.Application.Quit();
+            Dte = null;
+        }
     }
 }

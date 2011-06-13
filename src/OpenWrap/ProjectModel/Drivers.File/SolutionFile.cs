@@ -148,7 +148,7 @@ namespace OpenWrap.ProjectModel.Drivers.File
                 QuotedGuid("projectGuid"));
 
             readonly List<string> _lines = new List<string>();
-            string _projectLine;
+            
 
             public static Project TryParse(string[] lines, ref int index)
             {
@@ -156,7 +156,6 @@ namespace OpenWrap.ProjectModel.Drivers.File
                 if (match.Success == false) return null;
                 var project = new Project
                 {
-                    _projectLine = lines[index],
                     Name = match.Groups["name"].Value,
                     Path = match.Groups["path"].Value,
                     Type = new Guid(match.Groups["projectTypeGuid"].Value),
@@ -187,7 +186,6 @@ namespace OpenWrap.ProjectModel.Drivers.File
         {
             public readonly Version Version;
             static readonly Regex _solutionId = new Regex(@"Microsoft Visual Studio Solution File, Format Version (?<version>\d+\.\d+)");
-            readonly string _identifierLine;
 
             public SolutionFormatVersion(Version version)
             {

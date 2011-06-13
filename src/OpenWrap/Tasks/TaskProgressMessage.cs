@@ -14,9 +14,9 @@ namespace OpenWrap.Tasks
             _task.ProgressChanged += (s, e) => this.ProgressChanged.Raise(this, e);
             _task.StatusChanged += (s, e) => StatusChanged.Raise(this, e);
         }
-
+#pragma warning disable 67
         public event EventHandler Complete;
-
+#pragma warning restore 67
         public event EventHandler<ProgressEventArgs> ProgressChanged;
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
 

@@ -1,23 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
 using OpenWrap.Testing;
-using Tests;
 
-namespace Tests.VisualStudio.new_solution
+namespace Tests.VisualStudio.v2010
 {
-    public class can_create_new_vs_solution_2010 : contexts.visual_studio
+    public class can_create_and_build_new_solution : contexts.visual_studio
     {
-        public can_create_new_vs_solution_2010()
+        public can_create_and_build_new_solution()
         {
             given_solution_file("mySolution.sln");
             given_project_2010("MyProject");
             given_file("Class1.cs", "public class ClassName { public static void MainMethod(OpenFileSystem.IO.IFile file) {} }");
             given_command("init-wrap . -name MyProject -all");
             given_command("add-wrap openfilesystem");
-            when_building_with_vs2010();
+            when_building_with_vs2010(dte=> dte.Solution.SolutionBuild.Build(true), dte=> dte.ExecuteCommand("File.SaveAll"));
         }
 
         [Test]
@@ -31,5 +26,7 @@ namespace Tests.VisualStudio.new_solution
         {
             OutDir.GetFile("MyProject.dll").Exists.ShouldBeTrue();
         }
+
     }
+
 }

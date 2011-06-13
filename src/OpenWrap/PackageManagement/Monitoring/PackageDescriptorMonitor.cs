@@ -73,7 +73,6 @@ namespace OpenWrap.PackageManagement.Monitoring
 
         DescriptorSubscriptions GetSubsriptionsFor(IFile wrapPath)
         {
-            DescriptorSubscriptions d;
             lock (_notificationClients)
                 return !_notificationClients.ContainsKey(wrapPath.Path) ? null : _notificationClients[wrapPath.Path];
         }
