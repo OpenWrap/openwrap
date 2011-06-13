@@ -14,7 +14,6 @@ namespace Tests.Repositories.nufeed
     [TestFixture, Explicit]
     public class reading_official_nuget_feed2
     {
-
         [Test]
         public void packages()
         {

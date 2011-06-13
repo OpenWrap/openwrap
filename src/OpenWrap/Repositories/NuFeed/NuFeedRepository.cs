@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Xml;
 using OpenFileSystem.IO;
 using OpenRasta.Client;
@@ -12,13 +13,14 @@ using OpenWrap.Repositories.NuGet;
 
 namespace OpenWrap.Repositories.NuFeed
 {
-    public class NuFeedRepository : IPackageRepository
+    public class NuFeedRepository : IPackageRepository, ISupportAuthentication
     {
         readonly IFileSystem _fileSystem;
         readonly IHttpClient _client;
         readonly Uri _target;
         readonly Uri _packagesUri;
         LazyValue<IEnumerable<IPackageInfo>> _packages;
+        NetworkCredential _credentials;
 
         public NuFeedRepository(IFileSystem fileSystem, IHttpClient client, Uri target, Uri packagesUri)
         {
@@ -97,6 +99,13 @@ namespace OpenWrap.Repositories.NuFeed
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
             return this as TFeature;
+        }
+
+        public IDisposable WithCredentials(NetworkCredential credentials)
+        {
+            var oldCredentials = _credentials;
+            _credentials = credentials;
+            return new ActionOnDispose(() => _credentials = oldCredentials);
         }
     }
 }
