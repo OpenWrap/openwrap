@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OpenWrap.Commands.Remote;
 using OpenWrap.Commands.Wrap;
+using Tests;
 using Tests.Commands.contexts;
 
 namespace OpenWrap.Tests.Commands.Wrap

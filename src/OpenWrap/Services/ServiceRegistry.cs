@@ -31,8 +31,9 @@ namespace OpenWrap.Services
     public class ServiceRegistry
     {
         readonly Dictionary<Type, Action> _services = new Dictionary<Type, Action>();
+        string _configDirectory = DefaultInstallationPaths.ConfigurationDirectory;
         string _currentDirectory = Environment.CurrentDirectory;
-        string _systemRepositoryPath;
+        string _systemRepositoryPath = DefaultInstallationPaths.SystemRepositoryDirectory;
 
         public ServiceRegistry()
         {
@@ -40,7 +41,7 @@ namespace OpenWrap.Services
 
             Register<IConfigurationManager>(
                 () => new DefaultConfigurationManager(
-                          Get<IFileSystem>().GetDirectory(DefaultInstallationPaths.ConfigurationDirectory)));
+                          Get<IFileSystem>().GetDirectory(_configDirectory)));
             Register<IHttpClient>(() => new WebRequestHttpClient
             {
                 Proxy = ReadProxy
@@ -57,13 +58,17 @@ namespace OpenWrap.Services
                                                Get<IConfigurationManager>(),
                                                Get<IEnumerable<IRemoteRepositoryFactory>>()));
 
-            Register<IEnvironment>(() => new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(_currentDirectory)));
+            Register<IEnvironment>(() => new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(_currentDirectory))
+            {
+                SystemRepositoryDirectory = Get<IFileSystem>().GetDirectory(_systemRepositoryPath)
+            });
 
             Register<IPackageResolver>(() => new ExhaustiveResolver());
             Register<IPackageExporter>(() => new DefaultPackageExporter(new List<IExportProvider>
             {
                 new DefaultAssemblyExporter(),
-                new CecilCommandExporter()
+                new CecilCommandExporter(),
+                new SolutionPluginExporter()
             }));
             Register<IPackageDeployer>(() => new DefaultPackageDeployer());
             Register<IPackageManager>(() => new DefaultPackageManager(
@@ -87,8 +92,14 @@ namespace OpenWrap.Services
                                                        .SelectMany(x => x)
                                                        .Select(x => x.Descriptor)));
             Register(() => new RuntimeAssemblyResolver());
-
             Register<IPackageDescriptorMonitor>(() => new PackageDescriptorMonitor());
+            Register<ICommandOutputRenderer>(() => new ConsoleCommandOutputRenderer());
+        }
+
+        public ServiceRegistry ConfigurationDirectory(string path)
+        {
+            _configDirectory = path;
+            return this;
         }
 
         public ServiceRegistry CurrentDirectory(string currentDirectory)
@@ -100,6 +111,7 @@ namespace OpenWrap.Services
         public void Initialize()
         {
             foreach (var reg in _services.Values) reg();
+            ServiceLocator.GetService<RuntimeAssemblyResolver>();
         }
 
         public ServiceRegistry Override<T>(Func<T> factory) where T : class
@@ -108,7 +120,7 @@ namespace OpenWrap.Services
             return this;
         }
 
-        public ServiceRegistry SystemRepositoryPath(string systemRepositoryPath)
+        public ServiceRegistry SystemRepositoryDirectory(string systemRepositoryPath)
         {
             _systemRepositoryPath = systemRepositoryPath;
             return this;

@@ -12,6 +12,7 @@ using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.Commands.Wrap
@@ -132,6 +133,7 @@ namespace OpenWrap.Commands.Wrap
                                              projectDescriptor,
                                              projectRepository,
                                              PackageAddOptions.Default | PackageAddOptions.Anchor | PackageAddOptions.Content).ToList();
+            
             yield return new Info("Project repository initialized.");
         }
 

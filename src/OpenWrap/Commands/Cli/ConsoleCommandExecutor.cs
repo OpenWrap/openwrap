@@ -9,10 +9,12 @@ namespace OpenWrap.Commands.Cli
     public class ConsoleCommandExecutor
     {
         readonly IEnumerable<ICommandLocator> _handlers;
+        readonly ICommandOutputRenderer _renderer;
 
-        public ConsoleCommandExecutor(IEnumerable<ICommandLocator> handlers)
+        public ConsoleCommandExecutor(IEnumerable<ICommandLocator> handlers, ICommandOutputRenderer renderer)
         {
             _handlers = handlers;
+            _renderer = renderer;
         }
 
         public int Execute(string commandLine, IEnumerable<string> optionalInputs)
@@ -25,16 +27,15 @@ namespace OpenWrap.Commands.Cli
             {
                 var sp = commandLine.IndexOf(" ");
 
-                WriteError("The term '{0}' is not a recognized command or alias. Check the spelling or enter 'get-help' to get a list of available commands.",
-                           sp != -1 ? commandLine.Substring(0, sp) : commandLine);
+                _renderer.Render(new Error("The term '{0}' is not a recognized command or alias. Check the spelling or enter 'get-help' to get a list of available commands.",
+                           sp != -1 ? commandLine.Substring(0, sp) : commandLine));
                 return -10;
             }
             int returnCode = 0;
             var commandLineRunner = new CommandLineRunner { OptionalInputs = optionalInputs };
             foreach (var output in commandLineRunner.Run(command, commandParameters))
             {
-                using (ColorFromOutput(output))
-                    Console.WriteLine(output.ToString());
+                _renderer.Render(output);
                 if (output.Type == CommandResultType.Error)
                 {
                     returnCode = -50;
@@ -42,7 +43,14 @@ namespace OpenWrap.Commands.Cli
             }
             return returnCode;
         }
+    }
 
+    public interface ICommandOutputRenderer
+    {
+        void Render(ICommandOutput output);
+    }
+    public class ConsoleCommandOutputRenderer : ICommandOutputRenderer
+    {
         static IDisposable ColorFromOutput(ICommandOutput output)
         {
             switch (output.Type)
@@ -61,6 +69,12 @@ namespace OpenWrap.Commands.Cli
         {
             using (ColoredText.Red)
                 Console.WriteLine(message, args);
+        }
+
+        public void Render(ICommandOutput output)
+        {
+            using (ColorFromOutput(output))
+                Console.WriteLine(output.ToString());
         }
     }
 }

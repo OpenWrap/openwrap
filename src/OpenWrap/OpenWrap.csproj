@@ -120,6 +120,7 @@
     <Compile Include="PackageManagement\Exporters\Commands\CecilUICommandDescriptor.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CecilCommandExporter.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CommandExportItem.cs" />
+    <Compile Include="PackageManagement\Exporters\SolutionPluginExporter.cs" />
     <Compile Include="PackageManagement\Exporters\StringConversion.cs" />
     <Compile Include="PackageManagement\HookedPackageOperationResults.cs" />
     <Compile Include="PackageManagement\HooksStore.cs" />
@@ -129,6 +130,11 @@
     <Compile Include="PackageManagement\PackageHookResult.cs" />
     <Compile Include="PackageManagement\PackageManagerExtensions.cs" />
     <Compile Include="PackageManagement\PackageUpdated.cs" />
+    <Compile Include="ProjectModel\Drivers.File\ProjectConstants.cs" />
+    <Compile Include="ProjectModel\Drivers.File\SolutionConstants.cs" />
+    <Compile Include="ProjectModel\Drivers.File\SolutionFile.cs" />
+    <Compile Include="ProjectModel\IProject.cs" />
+    <Compile Include="ProjectModel\ISolution.cs" />
     <Compile Include="Repositories\DefaultRemoteManager.cs" />
     <Compile Include="Repositories\FileSystem\IndexedFolderRepositoryFactory.cs" />
     <Compile Include="Repositories\IRemoteManager.cs" />

@@ -17,11 +17,11 @@ using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.VisualStudio.Hooks;
 
+
 namespace OpenWrap.Build.Tasks
 {
     public class InitializeVisualStudioIntegration : Task
     {
-        static UICommands _commands;
         public bool EnableVisualStudioIntegration { get; set; }
 
         [Required]
@@ -72,36 +72,20 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string ProjectFilePath { get; set; }
 
-
+        public InitializeVisualStudioIntegration()
+        {
+        }
         public override bool Execute()
         {
             ResharperLogger.Debug("Initialize called on " + ProjectFilePath);
+            
+            SolutionAddIn.Initialize();
             EnsureWrapRepositoryIsInitialized();
             
             if (!EnableVisualStudioIntegration) return true;
             ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository);
-            SolutionAddIn.Initialize();
-            if (_commands == null)
-            {
-                lock (this)
-                    if (_commands == null)
-                    {
-                        var repository = new CommandRepository(ReadCommands(Services.ServiceLocator.GetService<IEnvironment>()));
-                        _commands = new UICommands(repository);
-                        _commands.Initialize();
-                    }
-            }
+            
             return true;
         }
-
-        static IEnumerable<ICommandDescriptor> ReadCommands(IEnvironment environment)
-        {
-            return Services.ServiceLocator.GetService<IPackageManager>()
-                    .CommandExports(environment)
-                    .SelectMany(x => x)
-                    .Select(x => x.Descriptor);
-        }
-
     }
-
 }

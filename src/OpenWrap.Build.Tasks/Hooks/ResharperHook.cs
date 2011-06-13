@@ -28,12 +28,11 @@ namespace OpenWrap.Build.Tasks
     {
         const int WAIT_RETRY_MS = 5000;
 
-        static Dictionary<Version, Type> _integrationTypes = new Dictionary<Version, Type>
+        static Dictionary<Version, string> _integrationTypes = new Dictionary<Version, string>
         {
-            {new Version("4.5.1288.2"), typeof(resharper450::OpenWrap.Resharper.ResharperIntegrationService)},
-            {new Version("5.0.1659.36"), typeof(resharper500::OpenWrap.Resharper.ResharperIntegrationService)},
-            {new Version("5.1.1727.12"), typeof(resharper510::OpenWrap.Resharper.ResharperIntegrationService)},
-            {new Version("5.1.1751.8"), typeof(resharper511::OpenWrap.Resharper.ResharperIntegrationService)}
+            {new Version("4.5.1288.2"), "OpenWrap.Resharper.ResharperIntegrationService, OpenWrap.Resharper.v450" },
+            {new Version("5.0.1659.36"), "OpenWrap.Resharper.ResharperIntegrationService, OpenWrap.Resharper.v500" },
+            {new Version("5.1.1727.12"), "OpenWrap.Resharper.ResharperIntegrationService, OpenWrap.Resharper.v510"}
         };
 
         static bool _called = false;
@@ -90,13 +89,15 @@ namespace OpenWrap.Build.Tasks
                     return;
 
                 var installedVersion = unimportantType.Assembly.GetName().Version;
-                var resharperIntegratorType = (from supportedResharperVersion in _integrationTypes.Keys
+                var resharperIntegratorTypeName = (from supportedResharperVersion in _integrationTypes.Keys
                                                orderby supportedResharperVersion descending
                                                where installedVersion >= supportedResharperVersion
                                                select _integrationTypes[supportedResharperVersion]).FirstOrDefault();
 
-                if (resharperIntegratorType == null) return;
+                if (resharperIntegratorTypeName == null) return;
 
+                var resharperIntegratorType = Type.GetType(resharperIntegratorTypeName, false);
+                if (resharperIntegratorType == null) return;
                 _instance = Activator.CreateInstance(resharperIntegratorType);
                 ResharperLogger.Debug("TryCreateIntegrationService: instance loaded: '{0}'.", _instance.GetType().AssemblyQualifiedName);
                 if (_queuedRegistration != null)

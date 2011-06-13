@@ -16,7 +16,7 @@ using Tests.Commands.contexts;
 
 namespace Tests.contexts
 {
-    public abstract class assembly_resolving : command
+    public abstract class assembly_resolving : openwrap_context
     {
         protected IEnumerable<Exports.IAssembly> AssemblyReferences;
         ITemporaryDirectory TempDirectory;

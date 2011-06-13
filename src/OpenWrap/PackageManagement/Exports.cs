@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using OpenWrap.Commands;
@@ -20,6 +21,12 @@ namespace OpenWrap.PackageManagement
         public interface ICommand : IExportItem
         {
             ICommandDescriptor Descriptor { get; }
+        }
+
+        public interface ISolutionPlugin : IExportItem
+        {
+            string Name { get; }
+            IDisposable Start();
         }
     }
 }

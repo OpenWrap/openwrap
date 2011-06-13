@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.Testing;
+using Tests;
 using Tests.Commands.contexts;
 using Enumerable = System.Linq.Enumerable;
 

@@ -18,8 +18,6 @@ namespace OpenWrap.Build
                 .Override<IEnvironment>(() => new MSBuildEnvironment(Path.GetDirectoryName(projectFile), currentDirectory))
                 .Initialize();
 
-            ServiceLocator.GetService<RuntimeAssemblyResolver>();
-
             var env = ServiceLocator.GetService<IEnvironment>();
 
             var scope = PathFinder.GetCurrentScope(env.Descriptor.DirectoryStructure, new OpenFileSystem.IO.Path(projectFile));

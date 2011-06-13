@@ -27,30 +27,43 @@ namespace OpenWrap.Runtime
 
         public IPackageRepository CurrentDirectoryRepository { get; set; }
 
-        public IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors { get; private set; }
+        IDictionary<string, FileBased<IPackageDescriptor>> _scopedDescriptors = new Dictionary<string, FileBased<IPackageDescriptor>>();
+        public IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors
+        {
+            get { TryInitializeProject(); return _scopedDescriptors; }
+        }
 
-        public IPackageDescriptor Descriptor { get; private set; }
-        public IFile DescriptorFile { get; private set; }
+        public IPackageDescriptor Descriptor
+        {
+            get { TryInitializeProject(); return _scopedDescriptors.ContainsKey(string.Empty) ? _scopedDescriptors[string.Empty].Value : null; }
+        }
+
+        public IFile DescriptorFile
+        {
+            get { TryInitializeProject(); return _scopedDescriptors.ContainsKey(string.Empty) ? _scopedDescriptors[string.Empty].File : null; }
+        }
+
         public ExecutionEnvironment ExecutionEnvironment { get; private set; }
         public IFileSystem FileSystem { get; set; }
-        public IPackageRepository ProjectRepository { get; private set; }
-        
+        IPackageRepository _projectRepository;
+        public IPackageRepository ProjectRepository
+        {
+            get
+            {
+                TryInitializeProject(); return _projectRepository; 
+            }
+        }
+
         public IPackageRepository SystemRepository { get; private set; }
         public IDirectory SystemRepositoryDirectory { get; set; }
 
         public void Initialize()
         {
+            
             FileSystem = LocalFileSystem.Instance;
             SystemRepositoryDirectory = SystemRepositoryDirectory ?? FileSystem.GetDirectory(DefaultInstallationPaths.SystemRepositoryDirectory);
-            var descriptors = new PackageDescriptorReader().ReadAll(CurrentDirectory);
-            if (descriptors.ContainsKey(string.Empty))
-            {
-                DescriptorFile = descriptors[string.Empty].File;
-                Descriptor = descriptors[string.Empty].Value;
-            }
 
-            ScopedDescriptors = descriptors;
-            TryInitializeProjectRepository();
+            TryInitializeProject();
 
             CurrentDirectoryRepository = new CurrentDirectoryRepository();
 
@@ -69,10 +82,18 @@ namespace OpenWrap.Runtime
             };
         }
 
+        void TryInitializeProject()
+        {
+            if (_scopedDescriptors.Count > 0) return;
+
+            _scopedDescriptors = new PackageDescriptorReader().ReadAll(CurrentDirectory);
+            if (_scopedDescriptors.Count == 0) return;
+            if (_scopedDescriptors.ContainsKey(string.Empty))
+                TryInitializeProjectRepository();
+        }
+
         void TryInitializeProjectRepository()
         {
-            if (Descriptor == null || DescriptorFile == null)
-                return;
             if (Descriptor.UseProjectRepository)
             {
                 var projectRepositoryDirectory = DescriptorFile.Parent.FindProjectRepositoryDirectory();
@@ -83,7 +104,7 @@ namespace OpenWrap.Runtime
                     var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
                     if (Descriptor.UseSymLinks)
                         repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
-                    ProjectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions)
+                    _projectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions)
                     {
                             Name = "Project repository"
                     };

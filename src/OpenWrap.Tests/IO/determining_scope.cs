@@ -30,10 +30,11 @@ namespace Tests.IO
             scope_should_be(@"c:\src\tests\src\MyProject.Tests\MyProject.Tests.csproj", "tests", @"{source: src}\*{scope: Tests = tests}*");
         }
 
-        [Test]
-        public void scope_without_source_is_found()
+        [TestCase(@"c:\src\tests\src\MyProject.Tests\MyProject.Tests.csproj")]
+        [TestCase(@"c:\src\tests\src\MyProject.Tests.Unit\MyProject.Tests.Unit.csproj")]
+        public void scope_without_source_is_found(string path)
         {
-            scope_should_be(@"c:\src\tests\src\MyProject.Tests\MyProject.Tests.csproj", "tests", @"src\*{scope: Tests = tests}*");
+            scope_should_be(path, "tests", @"src\*{scope: Tests = tests}*");
         }
     }
     namespace contexts

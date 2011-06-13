@@ -53,20 +53,37 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
-    <Compile Include="..\OpenWrap.VisualStudio\Guids.cs">
+    <Compile Include="..\OpenWrap.VisualStudio.Shared\Guids.cs">
       <Link>Guids.cs</Link>
     </Compile>
-    <Compile Include="OpenWrapBootstrapper.cs" />
-    <Compile Include="IMSBuildEngine.cs" />
-    <Compile Include="IMSBuildProject.cs" />
-    <Compile Include="ITargetExecutor.cs" />
-    <Compile Include="MSBuild3Engine.cs" />
-    <Compile Include="MSBuild3Project.cs" />
-    <Compile Include="MSBuild4Engine.cs" />
-    <Compile Include="MSBuild4Project.cs" />
+    <Compile Include="..\OpenWrap\Preloading\INotifyDownload.cs">
+      <Link>Preloading\INotifyDownload.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\NotifyProgressWebClient.cs">
+      <Link>Preloading\NotifyProgressWebClient.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\Preloader.cs">
+      <Link>Preloading\Preloader.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipArchive.cs">
+      <Link>Preloading\TinySharpZip\ZipArchive.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipDirectoryEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipDirectoryEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipFileEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipFileEntry.cs</Link>
+    </Compile>
+    <Compile Include="OpenWrapVisualStudioAddIn.cs" />
+    <Compile Include="OpenWrapVisualStudioAddIn2008.cs" />
+    <Compile Include="OpenWrapVisualStudioAddIn2010.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup />
+  <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

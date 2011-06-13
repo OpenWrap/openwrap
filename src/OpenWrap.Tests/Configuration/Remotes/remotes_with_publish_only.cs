@@ -5,7 +5,7 @@ using Tests.Commands.contexts;
 
 namespace Tests.Configuration.Remotes
 {
-    public class remotes_with_publish_only : command
+    public class remotes_with_publish_only : openwrap_context
     {
         public remotes_with_publish_only()
         {

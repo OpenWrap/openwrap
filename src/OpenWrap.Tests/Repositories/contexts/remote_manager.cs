@@ -8,12 +8,13 @@ using OpenWrap.Configuration;
 using OpenWrap.Configuration.Remotes.Legacy;
 using OpenWrap.Repositories;
 using OpenWrap.Services;
-using Tests.Commands.contexts;
+using Tests;
 using Tests.Repositories.manager;
 
 namespace Tests.Repositories.contexts
 {
-    public abstract class remote_manager : command{
+    public abstract class remote_manager : Tests.openwrap_context
+    {
         protected List<IPackageRepository> FetchRepositories;
         protected List<IPackageRepository> PublishRepositories;
         protected IRemoteManager RemoteManager { get { return ServiceLocator.GetService<IRemoteManager>(); } }

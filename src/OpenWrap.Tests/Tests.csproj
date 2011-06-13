@@ -337,6 +337,17 @@
     <Compile Include="PackageModel\descriptors\setting_single_value_to_default.cs" />
     <Compile Include="PackageModel\descriptors\setting_symlinks.cs" />
     <Compile Include="PackageModel\descriptors\unknown_lines_in_descriptor.cs" />
+    <Compile Include="ProjectModel\drivers.file\can_add_project.cs" />
+    <Compile Include="ProjectModel\drivers.file\can_create_new_solution.cs" />
+    <Compile Include="ProjectModel\drivers.file\can_read_solution.cs" />
+    <Compile Include="ProjectModel\drivers.file\can_roundtrip_solution.cs" />
+    <Compile Include="ProjectModel\drivers.file\ClassLibraryProject.cs" />
+    <Compile Include="ProjectModel\drivers.file\Files.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Files.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectModel\drivers.file\visual_studio.cs" />
     <Compile Include="Repositories\contexts\indexed_folder_repository.cs" />
     <Compile Include="Repositories\contexts\nuget_repository_factory.cs" />
     <Compile Include="Repositories\contexts\remote_manager.cs" />
@@ -426,7 +437,7 @@
     <Compile Include="Commands\remote.list\list_remote_with_fetch.cs" />
     <Compile Include="Commands\remote.remove\removing_unknown.cs" />
     <Compile Include="Commands\add_wrap\adding_wrap_twice.cs" />
-    <Compile Include="Commands\contexts\command.cs" />
+    <Compile Include="openwrap_context.cs" />
     <Compile Include="Commands\InMemoryEnvironment.cs" />
     <Compile Include="Commands\build_wrap\building_a_meta_package.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_a_non_existing_wrap.cs" />
@@ -507,6 +518,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ProjectModel\drivers.file\Files.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Files.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Repositories\feed.xml" />
     <EmbeddedResource Include="Repositories\TestFiles.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -521,6 +536,7 @@
     <Folder Include="Commands\add_wrap\from_remote\" />
     <Folder Include="Commands\remove_wrap\hooks\" />
     <Folder Include="Commands\repository\" />
+    <Folder Include="Commands\solutionplugin.start\" />
     <Folder Include="Commands\Wrap\buildwrap\" />
     <Folder Include="descriptors\" />
     <Folder Include="Exporters\content\" />

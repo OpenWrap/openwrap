@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E24298AF-B37B-4DCB-9F7E-1C4A85DBC821}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tests.VisualStudio</RootNamespace>
+    <AssemblyName>Tests.VisualStudio</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="envdte80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="contexts\visual_studio.cs" />
+    <Compile Include="MessageFilter.cs" />
+    <Compile Include="new_solution\can_create_new_vs_solution_2010.cs" />
+    <Compile Include="new_solution\Files.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Files.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
+      <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
+      <Name>OpenRasta.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Build.Bootstrap\OpenWrap.Build.Bootstrap.csproj">
+      <Project>{DFF6974F-5148-4B2C-8D76-190C3D92D9FF}</Project>
+      <Name>OpenWrap.Build.Bootstrap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj">
+      <Project>{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}</Project>
+      <Name>OpenWrap.Build.Tasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Commands\OpenWrap.Commands.csproj">
+      <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>
+      <Name>OpenWrap.Commands</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Tests\Tests.csproj">
+      <Project>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</Project>
+      <Name>Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.VisualStudio.ComShim\OpenWrap.VisualStudio.ComShim.csproj">
+      <Project>{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}</Project>
+      <Name>OpenWrap.VisualStudio.ComShim</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj">
+      <Project>{955C1309-6376-4BFE-A36B-144EFE172D8B}</Project>
+      <Name>OpenWrap.VisualStudio.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
+      <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
+      <Name>OpenWrap</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\openwrap.wrapdesc">
+      <Link>new_solution\openwrap.wrapdesc</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="new_solution\Files.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Files.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\wraps\Mono.Cecil-0.9.4.1.wrap">
+      <Link>Artifacts\Mono.Cecil-0.9.4.1.wrap</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\wraps\openfilesystem-1.0.0.61263243.wrap">
+      <Link>Artifacts\openfilesystem-1.0.0.61263243.wrap</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\wraps\SharpZipLib-0.86.0.wrap">
+      <Link>Artifacts\SharpZipLib-0.86.0.wrap</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\wraps\tdnet-framework-2.0.0.48555719.wrap">
+      <Link>Artifacts\tdnet-framework-2.0.0.48555719.wrap</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OpenWrap.Build.Tasks\OpenWrap.CSharp.targets">
+      <Link>new_solution\OpenWrap.CSharp.targets</Link>
+    </None>
+    <None Include="..\OpenWrap.Build.Tasks\OpenWrap.tasks">
+      <Link>new_solution\OpenWrap.tasks</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

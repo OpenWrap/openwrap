@@ -37,7 +37,14 @@ namespace OpenWrap.Commands.Cli
 
         public static int Main(IDictionary<string, object> env)
         {
-            new ServiceRegistry()
+            var serviceRegistry = new ServiceRegistry();
+            //if (env.ContainsKey("openwrap.shell.type"))
+            //{
+            //    if (((string)env["openwrap.shell.type"]).StartsWith("VisualStudio."))
+            //        serviceRegistry.Override<ICommandOutputRenderer>(()=> )
+            //}
+
+            serviceRegistry
                 .Override<IEnvironment>(() =>
                 {
                     var cdenv = new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(env.CurrentDirectory()));
@@ -47,7 +54,7 @@ namespace OpenWrap.Commands.Cli
                 })
                 .Initialize();
 
-            return new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>())
+            return new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>(), ServiceLocator.GetService<ICommandOutputRenderer>())
                 .Execute(env.CommandLine(), env.ShellArgs());
         }
     }

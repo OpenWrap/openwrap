@@ -42,7 +42,10 @@ namespace OpenWrap.PackageManagement.Exporters.Commands
         {
             try
             {
-                var module1 = AssemblyDefinition.ReadAssembly(assemblyStream, new ReaderParameters(ReadingMode.Deferred){AssemblyResolver = ServiceLocator.GetService<IAssemblyResolver>() ?? GlobalAssemblyResolver.Instance}).MainModule;
+                var module1 = AssemblyDefinition.ReadAssembly(assemblyStream, new ReaderParameters(ReadingMode.Deferred)
+                {
+                    AssemblyResolver = ServiceLocator.GetService<IAssemblyResolver>() ?? GlobalAssemblyResolver.Instance
+                }).MainModule;
                 return (from type in module1.Types
                         where type.IsPublic && type.IsAbstract == false && type.IsClass
                         let typeDef = type.Resolve()
