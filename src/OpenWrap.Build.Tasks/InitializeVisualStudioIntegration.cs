@@ -79,10 +79,10 @@ namespace OpenWrap.Build.Tasks
         {
             ResharperLogger.Debug("Initialize called on " + ProjectFilePath);
             //Debugger.Launch();
-            SolutionAddIn.Initialize();
             EnsureWrapRepositoryIsInitialized();
             
             if (!EnableVisualStudioIntegration) return true;
+            SolutionAddIn.Initialize();
             ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository);
             
             return true;
