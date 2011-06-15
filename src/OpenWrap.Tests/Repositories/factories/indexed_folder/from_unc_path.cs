@@ -21,7 +21,7 @@ namespace Tests.Repositories.factories.indexed_folder
         [Test]
         public void token_is_generated()
         {
-            Repository.Token.ShouldBe(@"[indexed-folder]\\server\share");
+            Repository.Token.ShouldBe(@"[indexed-folder]\\server\share\index.wraplist");
         }
     }
 }

@@ -356,6 +356,7 @@
     <Compile Include="Repositories\factories\indexed_folder\from_token.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unc_path.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unknown_token.cs" />
+    <Compile Include="Repositories\factories\indexed_folder\from_unrecognized_user_input.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_user_file_not_index.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_user_input_directory_doesnt_exist.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_user_input_directory_exists_index_doesnt.cs" />

@@ -31,23 +31,7 @@ namespace Tests.Repositories.factories.indexed_folder
         [Test]
         public void token_is_generated()
         {
-            Repository.Token.ShouldBe("[indexed-folder]c:\\middle-earth");
-        }
-    }
-    [TestFixture("http://server.com")]
-    [TestFixture("c:\\folder")]
-    [TestFixture(@"\\server\share\folder")]
-    class from_unrecognized_user_input : indexed_folder_repository
-    {
-        public from_unrecognized_user_input(string userInput)
-        {
-            when_detecting(userInput);
-        }
-
-        [Test]
-        public void repository_is_not_built()
-        {
-            Repository.ShouldBeNull();
+            Repository.Token.ShouldBe("[indexed-folder]c:\\middle-earth\\index.wraplist");
         }
     }
 }
