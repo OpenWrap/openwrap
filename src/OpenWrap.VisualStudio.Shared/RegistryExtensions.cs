@@ -27,5 +27,9 @@ namespace OpenWrap.VisualStudio.Hooks
             key.SetValue(name, value);
             return key;
         }
+        public static object Value(this RegistryKey key, string name)
+        {
+            return key.GetValue(name);
+        }    
     }
 }

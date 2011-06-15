@@ -90,9 +90,8 @@ namespace OpenWrap.Resharper
                     {
                         RegisterChangeMonitor();
                         foreach (var project in listeners)
-                        {
                             _monitor.RegisterListener(project.Descriptor, projectRepository, project);
-                        }
+
                         _knownProjects = listeners.ToList();
                         _isInitialized = true;
                     }

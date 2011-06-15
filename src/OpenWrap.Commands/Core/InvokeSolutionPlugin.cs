@@ -16,33 +16,56 @@ namespace OpenWrap.Commands.Core
         IPackageManager _manager;
         IEnvironment _environment;
         IPackageDescriptorMonitor _monitor;
+        IList<IDisposable> _plugins = new List<IDisposable>();
         ManualResetEvent _exit = new ManualResetEvent(false);
 
-        public StartSolutionPlugin() : this(ServiceLocator.GetService<IPackageDescriptorMonitor>())
+        public StartSolutionPlugin()
+            : this(ServiceLocator.GetService<IPackageDescriptorMonitor>(), ServiceLocator.GetService<IPackageManager>(), ServiceLocator.GetService<IEnvironment>())
         {
         }
 
-        public StartSolutionPlugin(IPackageDescriptorMonitor monitor)
+        public StartSolutionPlugin(IPackageDescriptorMonitor monitor, IPackageManager manager, IEnvironment environment)
         {
             _monitor = monitor;
+            _environment = environment;
+            _manager = manager;
         }
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new Info("Solution plugin started");
+
+            _monitor.RegisterListener(_environment.DescriptorFile, _environment.ProjectRepository, this);
+
+
+            var solutionPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
+                .SelectMany(x => x);
             
-            //_monitor.RegisterListener(_environment.DescriptorFile, _environment.ProjectRepository, this);
+            foreach(var plugin in solutionPlugins)
+            {
+                yield return new Info("Starting plugin {0}.", plugin.Name);
+                bool loadSuccess = false;
+                try
+                {
+                    _plugins.Add(plugin.Start());
+                    loadSuccess = true;
+                }
+                catch
+                {
+                }
+                if (!loadSuccess)
+                {
+                    yield return new Warning("Plugin initialization failed.");
+                }
+            }
+            var solPackages = solutionPlugins
+                .Select(x => x.Start())
+                .ToList();
 
+            _exit.WaitOne();
+            solPackages.ForEach(x => x.Dispose());
 
-            //var solPackages = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
-            //    .SelectMany(x => x)
-            //    .Select(x => x.Start())
-            //    .ToList();
-
-            //_exit.WaitOne();
-            //solPackages.ForEach(x => x.Dispose());
-
-            //CommitSuicide();
+            CommitSuicide();
         }
 
         static void CommitSuicide()

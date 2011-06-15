@@ -7,6 +7,6 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
     [ComVisible(true)]
     public class OpenWrapVisualStudioAddIn2010 : OpenWrapVisualStudioAddIn
     {
-        public OpenWrapVisualStudioAddIn2010() : base("10.0", ComConstants.ADD_IN_GUID_2010) { }
+        public OpenWrapVisualStudioAddIn2010() : base("10.0", ComConstants.ADD_IN_PROGID_2010) { }
     }
 }

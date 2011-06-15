@@ -9,6 +9,7 @@ using System.Threading;
 using EnvDTE;
 using EnvDTE80;
 using Extensibility;
+using Microsoft.Win32;
 using OpenWrap.Preloading;
 
 namespace OpenWrap.VisualStudio.SolutionAddIn
@@ -59,6 +60,7 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
             }
             _rootPath = GetRootLocation(dte.Solution.FullName);
             if (_rootPath == null) return;
+            Notify("OpenWrap Visual Studio Integration ({0}) starting.", FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion);
             Notify("Root location: " + _rootPath);
 
             LoadAppDomain();
@@ -78,13 +80,14 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                 _appDomain.SetData("openwrap.vs.version", _dte.Version);
                 _appDomain.SetData("openwrap.vs.currentdirectory", _rootPath);
                 _appDomain.SetData("openwrap.vs.packages", packages.ToArray());
+                _appDomain.SetData("openwrap.appdomain", AppDomain.CurrentDomain);
                 
-                //_appDomain.DomainUnload += HandleAppDomainChange;
                 // replace that with the location in the codebase we just registered, ensuring the correct version is loaded
-                var location = GetType().Assembly.Location;
+                var location = Type.GetTypeFromProgID(_progId).Assembly.Location;
                 
                 _loader = _appDomain.CreateInstanceFrom(location, typeof(AddInAppDomainManager).FullName);
-                
+
+                //_appDomain.DomainUnload += HandleAppDomainChange;
 
             }
             catch(Exception e)
@@ -101,11 +104,11 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
         {
             try
             {
-                    Notify("Change detected");
+                    Notify("Default scope change detected, restarting...");
                     LoadAppDomain();
             }catch
             {
-                Notify("OpenWrap unloading.");
+                Notify("Restarting failed, OpenWrap unloading.");
             }
         }
 
@@ -120,7 +123,7 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
             return null;
         }
 
-        void Notify(string message)
+        void Notify(string message, params object[] args)
         {
             Debug.WriteLine(message);
             if (_outputWindow == null)
@@ -129,10 +132,9 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
 
                 _outputWindow = output.OutputWindowPanes.Cast<OutputWindowPane>().FirstOrDefault(x => x.Name == "OpenWrap")
                     ?? output.OutputWindowPanes.Add("OpenWrap");
-
             }
 
-            _outputWindow.OutputString(message + "\r\n");
+            _outputWindow.OutputString(string.Format(message, args) + "\r\n");
         }
 
         public void OnDisconnection(ext_DisconnectMode removeMode, ref Array custom)
@@ -144,6 +146,7 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
         public void OnStartupComplete(ref Array custom)
         {
         }
+
     }
     public class AddInAppDomainManager : MarshalByRefObject
     {
@@ -158,10 +161,16 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
             var appDomain = AppDomain.CurrentDomain;
             ThreadPool.QueueUserWorkItem(state => Load((string)appDomain.GetData("openwrap.vs.version"),
                                                        (string)appDomain.GetData("openwrap.vs.currentdirectory"),
-                                                       (string[])appDomain.GetData("openwrap.vs.packages")));
+                                                       (string[])appDomain.GetData("openwrap.vs.packages"),
+                                                       (AppDomain)appDomain.GetData("openwrap.appdomain")));
+            AppDomain.CurrentDomain.AssemblyResolve += (src, ev) =>
+            {
+                var currentAssembly = typeof(AddInAppDomainManager).Assembly;
+                return (ev.Name == currentAssembly.GetName().Name) ? currentAssembly : null;
+            };
         }
 
-        void Load(string vsVersion, string currentDirectory, string[] packagePaths)
+        void Load(string vsVersion, string currentDirectory, string[] packagePaths, AppDomain sourceAppDomain)
         {
             var assemblies = Preloader.LoadAssemblies(packagePaths);
             Func<IDictionary<string, object>, int> runner = null;
@@ -191,7 +200,9 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                     { "openwrap.shell.commandline", "start-solutionplugin" },
                     { "openwrap.shell.assemblies", assemblies.ToList() },
                     { "openwrap.shell.version", "1.1" },
-                    { "openwrap.shell.type", "VisualStudio." + vsVersion }
+                    { "openwrap.shell.type", "VisualStudio." + vsVersion },
+                    { "openwrap.scope", "build"},
+                    { "openwrap.shell.appdomain", sourceAppDomain }
             };
             
             runner(info);

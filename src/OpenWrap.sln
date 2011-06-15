@@ -40,7 +40,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Testing", "OpenWra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Build.Bootstrap", "OpenWrap.Build.Bootstrap\OpenWrap.Build.Bootstrap.csproj", "{DFF6974F-5148-4B2C-8D76-190C3D92D9FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.SolutionPlugins", "OpenWrap.SolutionPlugins\OpenWrap.SolutionPlugins.csproj", "{5433F587-B9B9-42F2-A5BA-005AF1025EE2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.VisualStudio.SolutionPlugins", "OpenWrap.SolutionPlugins\OpenWrap.VisualStudio.SolutionPlugins.csproj", "{5433F587-B9B9-42F2-A5BA-005AF1025EE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.VisualStudio.SolutionAddIn", "OpenWrap.VisualStudio.ComShim\OpenWrap.VisualStudio.SolutionAddIn.csproj", "{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}"
 EndProject

@@ -32,7 +32,7 @@ namespace OpenWrap.VisualStudio.Hooks
                 if (dte.Solution.AddIns.OfType<EnvDTE.AddIn>().Any(x => x.ProgID == ComConstants.ADD_IN_PROGID_2010 || x.ProgID == ComConstants.ADD_IN_PROGID_2008))
                     return;
 
-                AddInInstaller.InstallInUserHive();
+                AddInInstaller.Install();
                 if (dte.Version == "9.0")
                     dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2008, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
                 else if (dte.Version == "10.0")
