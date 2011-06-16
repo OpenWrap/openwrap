@@ -102,24 +102,43 @@ namespace Tests.VisualStudio.contexts
                 while (Dte.Solution.IsOpen == false) System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
                 foreach (var action in actions)
                     action(Dte);
-                
-                for (int i = 1; i <= Dte.ToolWindows.ErrorList.ErrorItems.Count; i++)
-                {
-                    var error = Dte.ToolWindows.ErrorList.ErrorItems.Item(i);
-                    Errors.Add(new VisualStudioError
-                    {
-                        Description = TryGet(()=>error.Description),
-                        Project = TryGet(() => error.Project),
-                        FileName = TryGet(() => error.FileName)
-                    });
-                }
+
+                ReadErrors();
+                ReadOpenWrapOutput();
                 Dte.ExecuteCommand("File.Exit");
             }
             finally
             {
                 MessageFilter.Revoke();
             }
-            foreach (var error in Errors) Console.WriteLine(error.Description);
+            foreach (var error in Errors) Console.WriteLine("Error: " + error.Description);
+        }
+
+        void ReadOpenWrapOutput()
+        {
+            var output = Dte.Windows.Item(Constants.vsWindowKindOutput).Object as OutputWindow;
+            if (output == null) return;
+            var outputWindow = output.OutputWindowPanes.OfType<OutputWindowPane>().FirstOrDefault(x => x.Name == "OpenWrap");
+            if (outputWindow == null) return;
+
+            var text = outputWindow.TextDocument;
+            text.Selection.StartOfDocument(false);
+            text.Selection.EndOfDocument(true);
+            Output = text.Selection.Text;
+        }
+
+        void ReadErrors()
+        {
+            for (int i = 1; i <= Dte.ToolWindows.ErrorList.ErrorItems.Count; i++)
+            {
+                var error = Dte.ToolWindows.ErrorList.ErrorItems.Item(i);
+                Errors.Add(new VisualStudioError
+                {
+                    Description = TryGet(()=>error.Description),
+                    Project = TryGet(() => error.Project),
+                    FileName = TryGet(() => error.FileName)
+                });
+            }
         }
 
         string TryGet(Func<string> project)
@@ -149,6 +168,7 @@ namespace Tests.VisualStudio.contexts
         {
             SlnFile = SourceDir.GetFile(_solutionName);
             var sol = new SolutionFile(SlnFile, SolutionConstants.VisualStudio2010Version);
+            
             var projectFile = SourceDir.GetDirectory(_project.Name).GetFile(_project.Name + ".csproj");
             _project.Write(projectFile);
             sol.AddProject(projectFile);
@@ -189,6 +209,7 @@ namespace Tests.VisualStudio.contexts
         }
         List<Func<PackageContent>> OpenWrapAssemblies = new List<Func<PackageContent>>();
         protected DTE2 Dte;
+        protected string Output;
 
         PackageContent AssemblyOf<T>(string relativePath = "bin-net35")
         {

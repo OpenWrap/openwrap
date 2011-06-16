@@ -9,6 +9,7 @@ namespace OpenWrap.ProjectModel
     {
         IEnumerable<IProject> AllProjects { get; }
         Version Version { get; }
+        bool OpenWrapAddInEnabled { get; set; }
         void Save();
         IProject AddProject(IFile projectFile);
     }

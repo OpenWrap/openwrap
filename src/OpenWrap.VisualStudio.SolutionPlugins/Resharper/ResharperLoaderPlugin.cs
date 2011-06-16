@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using OpenWrap.Commands;
 
 namespace OpenWrap.VisualStudio.Resharper
 {
@@ -13,8 +15,8 @@ namespace OpenWrap.VisualStudio.Resharper
         };
         public ResharperLoaderPlugin()
         {
-            var vsAppDomain = AppDomain.CurrentDomain.GetData("openwrap.shell.appdomain") as AppDomain;
-            Console.WriteLine("AppDomain found = " + vsAppDomain != null);
+            var vsAppDomain = AppDomain.CurrentDomain.GetData("openwrap.vs.appdomain") as AppDomain;
+            
             if (vsAppDomain == null) return;
             
          }
@@ -22,5 +24,6 @@ namespace OpenWrap.VisualStudio.Resharper
         {
             
         }
+
     }
 }

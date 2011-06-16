@@ -9,22 +9,22 @@ using OpenWrap.VisualStudio.Interop;
 
 namespace OpenWrap.VisualStudio.Hooks
 {
-    public class UICommandsPlugin : IDisposable
+    public class UICommands : IDisposable
     {
         readonly ICommandRepository _commands;
         uint _commandTargetCookie;
         VsCommandManager _manager;
 
-        public UICommandsPlugin() : this(ServiceLocator.GetService<ICommandRepository>())
+        public UICommands() : this(ServiceLocator.GetService<ICommandRepository>())
         {
         }
 
-        public UICommandsPlugin(ICommandRepository commands)
+        public UICommands(ICommandRepository commands)
         {
             _commands = commands;
         }
 
-        ~UICommandsPlugin()
+        ~UICommands()
         {
             Dispose(false);
         }

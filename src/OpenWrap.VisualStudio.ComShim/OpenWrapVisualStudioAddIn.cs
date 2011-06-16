@@ -77,7 +77,7 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                 _appDomain.SetData("openwrap.vs.version", _dte.Version);
                 _appDomain.SetData("openwrap.vs.currentdirectory", _rootPath);
                 _appDomain.SetData("openwrap.vs.packages", packages.ToArray());
-                _appDomain.SetData("openwrap.appdomain", AppDomain.CurrentDomain);
+                _appDomain.SetData("openwrap.vs.appdomain", AppDomain.CurrentDomain);
                 
                 // replace that with the location in the codebase we just registered, ensuring the correct version is loaded
                 var location = Type.GetTypeFromProgID(_progId).Assembly.Location;

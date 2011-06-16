@@ -4,6 +4,7 @@ using System.Linq;
 using EnvDTE;
 using NUnit.Framework;
 using OpenWrap;
+using OpenWrap.Commands.Core;
 using OpenWrap.IO;
 using OpenWrap.Testing;
 using OpenWrap.VisualStudio;
@@ -24,7 +25,7 @@ namespace Tests.VisualStudio.solution_addin
             
             given_command("init-wrap . -name MyProject -all");
 
-            when_building_with_vs2010(dte => dte.ExecuteCommand("File.SaveAll"));
+            when_building_with_vs2010(dte => dte.Solution.SaveAll(true));
         }
 
         [Test]
@@ -39,5 +40,12 @@ namespace Tests.VisualStudio.solution_addin
             Dte.Solution.AddIns.Update();
             Dte.Solution.AddIns.OfType<AddIn>().Where(x => x.ProgID == ComConstants.ADD_IN_PROGID_2010).ShouldHaveCountOf(1);
         }
+
+        [Test]
+        public void start_solutionplugin_command_loaded()
+        {
+            Output.ShouldContain(StartSolutionPlugin.SOLUTION_PLUGIN_STARTED);
+        }
     }
+
 }

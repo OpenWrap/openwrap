@@ -52,6 +52,12 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="envdte80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="JetBrains.Platform.ReSharper.ProjectModel, Version=4.5.1288.2, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\resharper-4.5.0\JetBrains.Platform.ReSharper.ProjectModel.dll</HintPath>
@@ -70,6 +76,8 @@
       <Private>False</Private>
       <Aliases>resharper</Aliases>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.VisualStudio.Shell, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -78,9 +86,11 @@
     <Compile Include="..\CommonProperties.cs">
       <Link>Properties\CommonProperties.cs</Link>
     </Compile>
+    <Compile Include="PluginManager.cs" />
     <Compile Include="ResharperIntegrationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResharperProjectUpdater.cs" />
+    <Compile Include="SiteManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">

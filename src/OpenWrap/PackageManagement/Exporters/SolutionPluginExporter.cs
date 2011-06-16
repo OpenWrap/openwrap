@@ -55,6 +55,7 @@ namespace OpenWrap.PackageManagement.Exporters
         {
             _type = type;
             Path = path;
+            Name = type.Name;
         }
 
         public string Path { get; private set; }
@@ -66,6 +67,7 @@ namespace OpenWrap.PackageManagement.Exporters
         public IDisposable Start()
         {
             var plugin = Activator.CreateInstanceFrom(_type.Module.FullyQualifiedName, _type.FullName).Unwrap();
+
             if (plugin is IDisposable)
                 return (IDisposable)plugin;
             return new PluginWrapper(plugin);

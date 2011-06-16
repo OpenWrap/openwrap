@@ -8,8 +8,8 @@
     <ProjectGuid>{5433F587-B9B9-42F2-A5BA-005AF1025EE2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenWrap.VisualStudio</RootNamespace>
-    <AssemblyName>OpenWrap.VisualStudio</AssemblyName>
+    <RootNamespace>OpenWrap.VisualStudio.SolutionPlugins</RootNamespace>
+    <AssemblyName>OpenWrap.VisualStudio.SolutionPlugins</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

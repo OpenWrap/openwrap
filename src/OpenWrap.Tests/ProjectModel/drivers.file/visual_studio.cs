@@ -39,10 +39,11 @@ namespace Tests.ProjectModel.drivers.file
             Solution = SolutionFile.Parse(SlnFile);
         }
 
-        protected void given_solution(string solutionFile, Version vsVersion)
+        protected void given_solution(string solutionFile, Version vsVersion, bool openwrapAddin = false)
         {
             SlnFile = SlnDir.GetFile(solutionFile);
             Solution = new SolutionFile(SlnFile, vsVersion);
+            Solution.OpenWrapAddInEnabled = openwrapAddin;
         }
     }
 }

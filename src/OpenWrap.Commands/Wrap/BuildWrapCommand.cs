@@ -40,6 +40,9 @@ namespace OpenWrap.Commands.Wrap
         public string From { get; set; }
 
         [CommandInput]
+        public bool Incremental { get; set; }
+
+        [CommandInput]
         public IEnumerable<string> Flavour { get; set; }
 
         IEnvironment _environment;
@@ -304,7 +307,7 @@ namespace OpenWrap.Commands.Wrap
         {
             commandLine = commandLine.Trim();
             if (commandLine.StartsWithNoCase("msbuild"))
-                return new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
+                return new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser()) { Incremental = Incremental};
             if (commandLine.StartsWithNoCase("files"))
                 return new FilePackageBuilder();
             if (commandLine.StartsWithNoCase("command"))

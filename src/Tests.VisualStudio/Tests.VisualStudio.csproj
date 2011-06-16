@@ -60,8 +60,10 @@
     <Compile Include="contexts\adin_installer.cs" />
     <Compile Include="contexts\VisualStudioError.cs" />
     <Compile Include="contexts\visual_studio.cs" />
+    <Compile Include="DteExtensions.cs" />
     <Compile Include="IOleMessageFilter.cs" />
     <Compile Include="MessageFilter.cs" />
+    <Compile Include="resharper\rehsarper_plugin_manager_loads.cs" />
     <Compile Include="solution_plugins\loads_with_vs.cs" />
     <Compile Include="v2010\can_create_and_build_new_solution.cs" />
     <Compile Include="Artifacts\VsFiles.Designer.cs">

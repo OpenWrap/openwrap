@@ -33,7 +33,7 @@ namespace OpenWrap.VisualStudio.Hooks
             
             uint pdwCmdId;
             Guid[] emptyGuids = new Guid[0];
-            var registered = UICommandsPlugin.VsProfferCommands.AddNamedCommand(ref packageId, ref groupId, CanonicalName, out pdwCmdId, CanonicalName, _text, _description, null, 0u, 0u, 0u, 0, emptyGuids);
+            var registered = UICommands.VsProfferCommands.AddNamedCommand(ref packageId, ref groupId, CanonicalName, out pdwCmdId, CanonicalName, _text, _description, null, 0u, 0u, 0u, 0, emptyGuids);
             if (Failed(registered)) return null;
             CommandId = pdwCmdId;
             Debug.WriteLine(string.Format("Registered command '{0}'", CanonicalName));
@@ -84,13 +84,13 @@ namespace OpenWrap.VisualStudio.Hooks
             {
                 int commandId;
                 string commandGroup;
-                UICommandsPlugin.DTE.Commands.CommandInfo(control, out commandGroup, out commandId);
+                UICommands.DTE.Commands.CommandInfo(control, out commandGroup, out commandId);
                 if (new Guid(commandGroup) == CommandGroupGuid && commandId == CommandId)
                     toRemove.Add(control);
             }
             foreach(var value in toRemove)
                 value.Delete();
-            var dteCommand = UICommandsPlugin.DTE.Commands.Named(CanonicalName);
+            var dteCommand = UICommands.DTE.Commands.Named(CanonicalName);
             _uiControl = (CommandBarControl)dteCommand.AddControl(menu, index);
             _uiControl.BeginGroup = isFirstInGroup;
         }

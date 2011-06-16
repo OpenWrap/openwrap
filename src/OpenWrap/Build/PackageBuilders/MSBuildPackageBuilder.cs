@@ -34,6 +34,8 @@ namespace OpenWrap.Build.PackageBuilders
             get { return GetMSBuildExecutablePath(); }
         }
 
+        public bool Incremental { get; set; }
+
         public override IEnumerable<BuildResult> Build()
         {
             var currentDirectory = _environment.CurrentDirectory;
@@ -63,6 +65,7 @@ namespace OpenWrap.Build.PackageBuilders
 
             yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", ExecutablePath));
 
+            if (!Incremental)
             foreach(var project in builds)
             {
                 using(var responseFile = _fileSystem.CreateTempFile())

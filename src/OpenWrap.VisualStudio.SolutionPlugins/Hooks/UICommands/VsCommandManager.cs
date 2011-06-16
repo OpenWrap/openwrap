@@ -31,9 +31,9 @@ namespace OpenWrap.VisualStudio.Hooks
         public VsCommandManager()
         {
             // VS2008 needs that to initialize commands
-            if (UICommandsPlugin.DTE.Version == "9.0")
+            if (UICommands.DTE.Version == "9.0")
             {
-                var useless = UICommandsPlugin.DTE.CommandBars;
+                var useless = UICommands.DTE.CommandBars;
             }
             MainMenu = GetCommandBar(VsMenus.guidSHLMainMenu, 0);
             ToolsMenu = MainMenu.Popups().Named("Tools");
@@ -49,7 +49,7 @@ namespace OpenWrap.VisualStudio.Hooks
         CommandBar GetCommandBar(Guid commandGroup, uint commandId)
         {
             object mainMenuAsObj;
-            var result = UICommandsPlugin.VsProfferCommands.FindCommandBar(IntPtr.Zero, ref commandGroup, commandId, out mainMenuAsObj);
+            var result = UICommands.VsProfferCommands.FindCommandBar(IntPtr.Zero, ref commandGroup, commandId, out mainMenuAsObj);
             return result >= 0 ? mainMenuAsObj as CommandBar : null;
         }
         public bool TryAdd(IUICommandDescriptor command)
