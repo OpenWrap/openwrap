@@ -73,6 +73,7 @@
     <Compile Include="..\OpenWrap\Preloading\TinySharpZip\ZipFileEntry.cs">
       <Link>Preloading\TinySharpZip\ZipFileEntry.cs</Link>
     </Compile>
+    <Compile Include="AddInAppDomainManager.cs" />
     <Compile Include="ComConstants.cs" />
     <Compile Include="OpenWrapVisualStudioAddIn.cs" />
     <Compile Include="OpenWrapVisualStudioAddIn2008.cs" />

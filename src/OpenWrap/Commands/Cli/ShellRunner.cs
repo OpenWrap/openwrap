@@ -38,19 +38,21 @@ namespace OpenWrap.Commands.Cli
 #pragma warning disable 28
         public static int Main(IDictionary<string, object> env)
         {
-            var serviceRegistry = new ServiceRegistry();
-
-            serviceRegistry
-                .Override<IEnvironment>(() =>
+            var serviceRegistry = new ServiceRegistry().Override<IEnvironment>(() =>
                 {
                     var cdenv = new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(env.CurrentDirectory()));
                     if (env.SysPath() != null)
                         cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(new Path(env.SysPath()).Combine("wraps"));
                     return cdenv;
-                })
-                .Initialize();
+                });
+            var formatterType = env.Formatter();
+            if(formatterType != null)
+            {
+                serviceRegistry.Override<ICommandOutputFormatter>(() => (ICommandOutputFormatter)Activator.CreateInstance(Type.GetType(formatterType)));
+            }
+            serviceRegistry.Initialize();
 
-            return new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>(), ServiceLocator.GetService<ICommandOutputRenderer>())
+            return new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>(),  ServiceLocator.GetService<IEventHub>(),ServiceLocator.GetService<ICommandOutputFormatter>())
                 .Execute(env.CommandLine(), env.ShellArgs());
         }
 #pragma warning restore 28

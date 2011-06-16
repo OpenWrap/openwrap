@@ -203,7 +203,10 @@ namespace Tests.VisualStudio.contexts
 
         void ExecuteCommands()
         {
-            var executor = new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>(), ServiceLocator.GetService<ICommandOutputRenderer>());
+            var executor = new ConsoleCommandExecutor(
+                ServiceLocator.GetService<IEnumerable<ICommandLocator>>(),
+                ServiceLocator.GetService<IEventHub>(),
+                ServiceLocator.GetService<ICommandOutputFormatter>());
             foreach (var command in _commands)
                 executor.Execute(command, Enumerable.Empty<string>());
         }
