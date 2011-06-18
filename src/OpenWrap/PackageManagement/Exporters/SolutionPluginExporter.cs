@@ -66,11 +66,11 @@ namespace OpenWrap.PackageManagement.Exporters
 
         public IDisposable Start()
         {
-            var plugin = Activator.CreateInstanceFrom(_type.Module.FullyQualifiedName, _type.FullName).Unwrap();
+                var plugin = Activator.CreateInstanceFrom(_type.Module.FullyQualifiedName, _type.FullName).Unwrap();
 
-            if (plugin is IDisposable)
-                return (IDisposable)plugin;
-            return new PluginWrapper(plugin);
+                if (plugin is IDisposable)
+                    return (IDisposable)plugin;
+                return new PluginWrapper(plugin);
         }
 
         class PluginWrapper : IDisposable

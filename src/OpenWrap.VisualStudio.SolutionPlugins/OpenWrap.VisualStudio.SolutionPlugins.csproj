@@ -19,7 +19,6 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +26,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -71,7 +69,27 @@
     <Compile Include="Resharper\ResharperLoaderPlugin.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenWrap.VisualStudio.ComShim\OpenWrap.VisualStudio.SolutionAddIn.csproj">
+    <ProjectReference Include="..\OpenWrap.Resharper.600\OpenWrap.Resharper.600.csproj">
+      <Project>{9673FD11-2970-4902-B018-0B799F893535}</Project>
+      <Name>OpenWrap.Resharper.600</Name>
+      <Aliases>r60</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.450\OpenWrap.Resharper.450.csproj">
+      <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
+      <Name>OpenWrap.Resharper.450</Name>
+      <Aliases>r45</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.500\OpenWrap.Resharper.500.csproj">
+      <Project>{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}</Project>
+      <Name>OpenWrap.Resharper.500</Name>
+      <Aliases>r5</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.510\OpenWrap.Resharper.510.csproj">
+      <Project>{A9FA9F17-3DBE-4848-9044-DD734FDF554B}</Project>
+      <Name>OpenWrap.Resharper.510</Name>
+      <Aliases>r51</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.VisualStudio.SolutionAddIn\OpenWrap.VisualStudio.SolutionAddIn.csproj">
       <Project>{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}</Project>
       <Name>OpenWrap.VisualStudio.SolutionAddIn</Name>
     </ProjectReference>
@@ -84,9 +102,8 @@
       <Name>OpenWrap</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Preloader\" />
-  </ItemGroup>
+  <ItemGroup />
+  <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

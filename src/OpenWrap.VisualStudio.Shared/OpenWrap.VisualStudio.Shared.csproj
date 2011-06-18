@@ -18,7 +18,6 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +25,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -60,7 +58,7 @@
     <Compile Include="SolutionAddIn.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenWrap.VisualStudio.ComShim\OpenWrap.VisualStudio.SolutionAddIn.csproj">
+    <ProjectReference Include="..\OpenWrap.VisualStudio.SolutionAddIn\OpenWrap.VisualStudio.SolutionAddIn.csproj">
       <Project>{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}</Project>
       <Name>OpenWrap.VisualStudio.SolutionAddIn</Name>
     </ProjectReference>
@@ -69,6 +67,7 @@
       <Name>OpenWrap</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

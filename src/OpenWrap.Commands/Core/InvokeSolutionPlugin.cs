@@ -14,11 +14,12 @@ namespace OpenWrap.Commands.Core
     [Command(Visible = false, Noun = "solutionplugin", Verb = "start")]
     public class StartSolutionPlugin : AbstractCommand, IResolvedAssembliesUpdateListener
     {
-        public const string SOLUTION_PLUGIN_STARTED = "Solution plugin started";
+        public const string SOLUTION_PLUGIN_STARTING = "Solution plugin started";
+        public const string SOLUTION_PLUGINS_STARTED = "All solution plugins started.";
         IPackageManager _manager;
         IEnvironment _environment;
         IPackageDescriptorMonitor _monitor;
-        IList<IDisposable> _plugins = new List<IDisposable>();
+        List<IDisposable> _plugins = new List<IDisposable>();
         ManualResetEvent _exit = new ManualResetEvent(false);
 
         public StartSolutionPlugin()
@@ -35,7 +36,7 @@ namespace OpenWrap.Commands.Core
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            yield return new Info(SOLUTION_PLUGIN_STARTED);
+            yield return new Info(SOLUTION_PLUGIN_STARTING);
 
             _monitor.RegisterListener(_environment.DescriptorFile, _environment.ProjectRepository, this);
 
@@ -47,25 +48,24 @@ namespace OpenWrap.Commands.Core
             {
                 yield return new Info("Starting plugin {0}.", plugin.Name);
                 bool loadSuccess = false;
+                Exception error = null;
                 try
                 {
                     _plugins.Add(plugin.Start());
                     loadSuccess = true;
                 }
-                catch
+                catch(Exception e)
                 {
+                    error = e;
                 }
                 if (!loadSuccess)
                 {
-                    yield return new Warning("Plugin initialization failed.");
+                    yield return new Warning("Plugin initialization failed.\r\n" + error);
                 }
             }
-            var solPackages = solutionPlugins
-                .Select(x => x.Start())
-                .ToList();
-
+            yield return new Info(SOLUTION_PLUGINS_STARTED);
             _exit.WaitOne();
-            solPackages.ForEach(x => x.Dispose());
+            _plugins.ForEach(x => x.Dispose());
 
             CommitSuicide();
         }

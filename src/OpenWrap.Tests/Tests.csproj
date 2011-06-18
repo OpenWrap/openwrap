@@ -51,9 +51,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\CommonProperties.cs">
-      <Link>Properties\CommonProperties.cs</Link>
-    </Compile>
     <Compile Include="Collections\indexed_dic.cs" />
     <Compile Include="Commands\contexts\configuration_command.cs" />
     <Compile Include="Commands\configuration\get_wihtout_config.cs" />
@@ -122,6 +119,7 @@
     <Compile Include="Configuration\simple\readonly_properties_not_persisted.cs" />
     <Compile Include="Configuration\simple\readonly_properties_not_read.cs" />
     <Compile Include="Configuration\simple\save_null_does_nothing.cs" />
+    <Compile Include="contexts\signing.cs" />
     <Compile Include="MemoryRepositoryFactory.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInput.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInputValue.cs" />
@@ -322,6 +320,10 @@
     <Compile Include="IO\compound_template_path_segment_specs.cs" />
     <Compile Include="IO\determining_scope.cs" />
     <Compile Include="IO\template_path_segment_specs.cs" />
+    <Compile Include="Mono.Security.Cryptography\CryptoConvert.cs" />
+    <Compile Include="Mono.Security\BitConverterLE.cs" />
+    <Compile Include="Mono.Security\StrongName.cs" />
+    <Compile Include="Mono.Security\StrongNameManager.cs" />
     <Compile Include="PackageModel\descriptors\adding_a_multiline_value.cs" />
     <Compile Include="PackageModel\descriptors\default_values_in_descriptor.cs" />
     <Compile Include="PackageModel\descriptors\editing_single_value.cs" />
@@ -339,6 +341,7 @@
     <Compile Include="PackageModel\descriptors\unknown_lines_in_descriptor.cs" />
     <Compile Include="ProjectModel\drivers.file\can_add_project.cs" />
     <Compile Include="ProjectModel\drivers.file\can_create_new_solution.cs" />
+    <Compile Include="ProjectModel\drivers.file\can_create_new_solution_with_addin.cs" />
     <Compile Include="ProjectModel\drivers.file\can_read_solution.cs" />
     <Compile Include="ProjectModel\drivers.file\can_roundtrip_solution.cs" />
     <Compile Include="ProjectModel\drivers.file\ClassLibraryProject.cs" />
@@ -348,6 +351,7 @@
       <DependentUpon>Files.resx</DependentUpon>
     </Compile>
     <Compile Include="ProjectModel\drivers.file\visual_studio.cs" />
+    <Compile Include="Reflection\can_sign_unsigned_assembly.cs" />
     <Compile Include="Repositories\contexts\indexed_folder_repository.cs" />
     <Compile Include="Repositories\contexts\nuget_repository_factory.cs" />
     <Compile Include="Repositories\contexts\remote_manager.cs" />
@@ -408,6 +412,9 @@
     <Compile Include="visiting_package_graphs\visiting_recursive_package_graph.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Platform.ReSharper.Util">
+      <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.Util.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Build.Engine, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.5\Microsoft.Build.Engine.dll</HintPath>

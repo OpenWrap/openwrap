@@ -17,7 +17,7 @@ namespace Tests.VisualStudio.contexts
     {
         protected ITemporaryDirectory InstallDir;
         PerUserComComponentInstaller _installer;
-        bool _clear;
+        
 
         public addin_installer()
         {

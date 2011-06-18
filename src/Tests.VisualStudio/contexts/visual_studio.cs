@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.Win32;
@@ -17,6 +18,7 @@ using OpenWrap.Build.Tasks;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
 using OpenWrap.Commands.Cli.Locators;
+using OpenWrap.Commands.Core;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.Remotes;
@@ -32,7 +34,7 @@ using Tests.VisualStudio.Artifacts;
 
 namespace Tests.VisualStudio.contexts
 {
-    
+
     public class visual_studio : context, IDisposable
     {
         LocalFileSystem FileSystem;
@@ -70,9 +72,10 @@ namespace Tests.VisualStudio.contexts
 
             OpenWrapPackage = SysRepoDir.GetFile("openwrap-99.99.wrap");
         }
-        protected void given_solution_file(string solutionName)
+        protected void given_solution_file(string solutionName, bool withAddin = false)
         {
             _solutionName = solutionName;
+            _solutionHasAddin = withAddin;
         }
         protected void given_project_2010(string projectName)
         {
@@ -83,7 +86,11 @@ namespace Tests.VisualStudio.contexts
         {
             _commands.Add(command);
         }
-        protected void when_building_with_vs2010(params Action<DTE2>[] actions)
+        protected void given_plugins_started()
+        {
+            _waitForPlugins = true;
+        }
+        protected void when_executing_vs2010(params Action<DTE2>[] actions)
         {
             CreateProjectFiles();
 
@@ -94,23 +101,29 @@ namespace Tests.VisualStudio.contexts
             ExecuteCommands();
 
             System.Type t = System.Type.GetTypeFromProgID("VisualStudio.DTE.10.0", true);
-            Dte = (DTE2)System.Activator.CreateInstance(t, true);
+            object app = System.Activator.CreateInstance(t, true);
+            Dte = (DTE2)app;
             MessageFilter.Register();
-            try
-            {
-                Dte.Solution.Open(SlnFile.Path);
-                while (Dte.Solution.IsOpen == false) System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
-                foreach (var action in actions)
-                    action(Dte);
+            Dte.Solution.Open(SlnFile.Path);
+            while (Dte.Solution.IsOpen == false) System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
+            foreach (var action in actions)
+                action(Dte);
+            if (_waitForPlugins)
+                Dte.Windows.Output("OpenWrap").WaitForMessage(StartSolutionPlugin.SOLUTION_PLUGINS_STARTED);
+            ReadErrors();
+            ReadOpenWrapOutput();
 
-                ReadErrors();
-                ReadOpenWrapOutput();
-                Dte.ExecuteCommand("File.Exit");
-            }
-            finally
-            {
-                MessageFilter.Revoke();
-            }
+
+
+            //var ev = new ManualResetEvent(false);
+            //_dispSolutionEvents_AfterClosingEventHandler solClosed = () => ev.Set();
+            //Dte.Events.SolutionEvents.AfterClosing += solClosed;
+            //if (Dte.Solution.IsOpen == true)
+            //{
+            //    if (!ev.WaitOne(TimeSpan.FromMinutes(1)))
+            //        throw new TimeoutException("Waiting for VS to close has timed out");
+            //}
+
             foreach (var error in Errors) Console.WriteLine("Error: " + error.Description);
         }
 
@@ -134,7 +147,7 @@ namespace Tests.VisualStudio.contexts
                 var error = Dte.ToolWindows.ErrorList.ErrorItems.Item(i);
                 Errors.Add(new VisualStudioError
                 {
-                    Description = TryGet(()=>error.Description),
+                    Description = TryGet(() => error.Description),
                     Project = TryGet(() => error.Project),
                     FileName = TryGet(() => error.FileName)
                 });
@@ -168,7 +181,9 @@ namespace Tests.VisualStudio.contexts
         {
             SlnFile = SourceDir.GetFile(_solutionName);
             var sol = new SolutionFile(SlnFile, SolutionConstants.VisualStudio2010Version);
-            
+            if (_solutionHasAddin)
+                sol.OpenWrapAddInEnabled = true;
+
             var projectFile = SourceDir.GetDirectory(_project.Name).GetFile(_project.Name + ".csproj");
             _project.Write(projectFile);
             sol.AddProject(projectFile);
@@ -210,6 +225,8 @@ namespace Tests.VisualStudio.contexts
         List<Func<PackageContent>> OpenWrapAssemblies = new List<Func<PackageContent>>();
         protected DTE2 Dte;
         protected string Output;
+        bool _solutionHasAddin;
+        bool _waitForPlugins;
 
         PackageContent AssemblyOf<T>(string relativePath = "bin-net35")
         {
@@ -241,11 +258,17 @@ namespace Tests.VisualStudio.contexts
         {
             AddInInstaller.Uninstall();
         }
-
+        protected void given_solution_addin_com_reg()
+        {
+            AddInInstaller.Install();
+        }
         public void Dispose()
         {
+            Dte.Solution.Close(true);
+            while (Dte.Solution.IsOpen) System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
             Dte.Application.Quit();
             Dte = null;
+            MessageFilter.Revoke();
         }
     }
 }

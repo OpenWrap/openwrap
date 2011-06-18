@@ -12,7 +12,7 @@ namespace Tests.VisualStudio.v2010
             given_file("Class1.cs", "public class ClassName { public static void MainMethod(OpenFileSystem.IO.IFile file) {} }");
             given_command("init-wrap . -name MyProject -all");
             given_command("add-wrap openfilesystem");
-            when_building_with_vs2010(dte=> dte.Solution.SolutionBuild.Build(true), dte=> dte.ExecuteCommand("File.SaveAll"));
+            when_executing_vs2010(dte=> dte.Solution.SolutionBuild.Build(true), dte=> dte.ExecuteCommand("File.SaveAll"));
         }
 
         [Test]

@@ -71,9 +71,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonProperties.cs">
-      <Link>Properties\CommonProperties.cs</Link>
-    </Compile>
     <Compile Include="Collections\IndexedDictionary.cs" />
     <Compile Include="Commands\Cli\CecilStaticAssemblyResolver.cs" />
     <Compile Include="Commands\Cli\ColoredText.cs" />
@@ -135,6 +132,7 @@
     <Compile Include="ProjectModel\Drivers.File\SolutionFile.cs" />
     <Compile Include="ProjectModel\IProject.cs" />
     <Compile Include="ProjectModel\ISolution.cs" />
+    <Compile Include="Reflection\AssemblyFiddler.cs" />
     <Compile Include="Repositories\DefaultRemoteManager.cs" />
     <Compile Include="Repositories\FileSystem\IndexedFolderRepositoryFactory.cs" />
     <Compile Include="Repositories\IRemoteManager.cs" />
@@ -144,6 +142,11 @@
     <Compile Include="Repositories\NuFeed\NuFeedRepositoryFactory.cs" />
     <Compile Include="Repositories\Http\IndexedHttpRepositoryFactory.cs" />
     <Compile Include="Repositories\PreAuthenticatedRepository.cs" />
+    <Compile Include="Resources\Keys.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Keys.resx</DependentUpon>
+    </Compile>
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>
@@ -399,6 +402,10 @@
     <Compile Include="Tasks\TaskManagerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Keys.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Keys.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -422,7 +429,9 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\openwrap.snk" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
       <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
@@ -430,6 +439,7 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -231,20 +231,21 @@ namespace OpenWrap.ProjectModel.Drivers.File
         }
         class ExtensibilityAddInsGlobalSection : GlobalSection
         {
-            Regex _addin = new Regex(WS + Group("progid", "\\S+") + WS + Text("=") + WS +
-                                     Group("connected", "(0|1)") + Text(";") +
-                                     Group("description", "[^;]") + Text(";") +
+            static Regex _addin = new Regex(WS + Group("progid", "\\S+") + WS + "=" + WS +
+                                     Group("connected", "(0|1)") + ";" +
+                                     Group("description", "[^;]") + ";" +
                                      Group("name", ".*"));
 
             public ExtensibilityAddInsGlobalSection()
                 : base("ExtensibilityAddIns", GlobalSectionInitialization.postSolution, new List<string>())
             {
-                
+                AddIns = new List<AddIn>();
             }
             public ExtensibilityAddInsGlobalSection(string name, GlobalSectionInitialization type, List<string> sectionLines)
                 : base(name,type,sectionLines)
             {
-                foreach(var line in sectionLines)
+                AddIns = new List<AddIn>();
+                foreach (var line in sectionLines)
                 {
                     var match = _addin.Match(line);
                     if (match.Success == false) throw new InvalidOperationException("Cannot parse addin section");

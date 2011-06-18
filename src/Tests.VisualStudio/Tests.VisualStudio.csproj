@@ -18,7 +18,6 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +25,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -47,7 +45,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -64,6 +61,7 @@
     <Compile Include="IOleMessageFilter.cs" />
     <Compile Include="MessageFilter.cs" />
     <Compile Include="resharper\rehsarper_plugin_manager_loads.cs" />
+    <Compile Include="solution_addin\loads_add_in_on_already_configured_solution.cs" />
     <Compile Include="solution_plugins\loads_with_vs.cs" />
     <Compile Include="v2010\can_create_and_build_new_solution.cs" />
     <Compile Include="Artifacts\VsFiles.Designer.cs">
@@ -91,17 +89,36 @@
       <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>
       <Name>OpenWrap.Commands</Name>
     </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.450\OpenWrap.Resharper.450.csproj">
+      <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
+      <Name>OpenWrap.Resharper.450</Name>
+      <Aliases>resharper450</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.500\OpenWrap.Resharper.500.csproj">
+      <Project>{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}</Project>
+      <Name>OpenWrap.Resharper.500</Name>
+      <Aliases>resharper500</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.510\OpenWrap.Resharper.510.csproj">
+      <Project>{A9FA9F17-3DBE-4848-9044-DD734FDF554B}</Project>
+      <Name>OpenWrap.Resharper.510</Name>
+      <Aliases>resharper510</Aliases>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Tests\Tests.csproj">
       <Project>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</Project>
       <Name>Tests</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.VisualStudio.ComShim\OpenWrap.VisualStudio.SolutionAddIn.csproj">
+    <ProjectReference Include="..\OpenWrap.VisualStudio.SolutionAddIn\OpenWrap.VisualStudio.SolutionAddIn.csproj">
       <Project>{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}</Project>
       <Name>OpenWrap.VisualStudio.SolutionAddIn</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj">
       <Project>{955C1309-6376-4BFE-A36B-144EFE172D8B}</Project>
       <Name>OpenWrap.VisualStudio.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.VisualStudio.SolutionPlugins.csproj">
+      <Project>{5433F587-B9B9-42F2-A5BA-005AF1025EE2}</Project>
+      <Name>OpenWrap.VisualStudio.SolutionPlugins</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
@@ -142,6 +159,7 @@
     </None>
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -21,11 +21,11 @@ namespace Tests.VisualStudio.solution_addin
             given_empty_solution_addin_com_reg();
             given_solution_file("mySolution.sln");
             given_project_2010("MyProject");
-            given_file("Class1.cs", "public class ClassName { public static void MainMethod(OpenFileSystem.IO.IFile file) {} }");
+            given_file("Class1.cs", "public class ClassName { public static void MainMethod() {} }");
             
             given_command("init-wrap . -name MyProject -all");
-
-            when_building_with_vs2010(dte => dte.Solution.SaveAll(true));
+            given_plugins_started();
+            when_executing_vs2010(dte => dte.Solution.SaveAll(true));
         }
 
         [Test]
@@ -44,8 +44,7 @@ namespace Tests.VisualStudio.solution_addin
         [Test]
         public void start_solutionplugin_command_loaded()
         {
-            Output.ShouldContain(StartSolutionPlugin.SOLUTION_PLUGIN_STARTED);
+            Output.ShouldContain(StartSolutionPlugin.SOLUTION_PLUGIN_STARTING);
         }
     }
-
 }

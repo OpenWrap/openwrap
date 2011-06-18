@@ -51,9 +51,6 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\CommonProperties.cs">
-      <Link>Properties\CommonProperties.cs</Link>
-    </Compile>
     <Compile Include="Core\CommandDescriptionOutput.cs" />
     <Compile Include="Core\CommandGroupResult.cs" />
     <Compile Include="Core\ConfigurationData.cs" />
