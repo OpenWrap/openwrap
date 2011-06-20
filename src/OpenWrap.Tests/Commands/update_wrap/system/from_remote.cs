@@ -31,11 +31,11 @@ namespace Tests.Commands.update_wrap.system
         [Test]
         public void system_repo_already_at_latest_version()
         {
-            given_remote_package("latest", "1.1.0".ToVersion());
-            given_system_package("latest", "1.1.0");
-            when_executing_command("-system -name latest");
+            given_remote_package("goldberry", "2.2.0".ToVersion());
+            given_system_package("goldberry", "2.2.0");
+            when_executing_command("-system");
             Assert.IsFalse(Results.Any(result => result is OpenWrap.Commands.Error));
-            Environment.SystemRepository.ShouldHavePackage("latest", "1.1.0");
+            Environment.SystemRepository.ShouldHavePackage("goldberry", "2.2.0");
         }
     }
 }
