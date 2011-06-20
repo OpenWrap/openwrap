@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Linq;
+using NUnit.Framework;
 using OpenWrap;
 using OpenWrap.Commands.Wrap;
 using Tests.Commands.contexts;
@@ -25,6 +26,16 @@ namespace Tests.Commands.update_wrap.system
         public void system_repo_updated()
         {
             Environment.SystemRepository.ShouldHavePackage("goldberry", "2.2.0");            
+        }
+
+        [Test]
+        public void system_repo_already_at_latest_version()
+        {
+            given_remote_package("latest", "1.1.0".ToVersion());
+            given_system_package("latest", "1.1.0");
+            when_executing_command("-system -name latest");
+            Assert.IsFalse(Results.Any(result => result is OpenWrap.Commands.Error));
+            Environment.SystemRepository.ShouldHavePackage("latest", "1.1.0");
         }
     }
 }
