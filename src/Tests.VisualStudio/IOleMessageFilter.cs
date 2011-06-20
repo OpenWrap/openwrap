@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Tests.VisualStudio
 {
-    [ComImport(), Guid("00000016-0000-0000-C000-000000000046"),
+    [ComImport, Guid("00000016-0000-0000-C000-000000000046"),
      InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
     interface IOleMessageFilter
     {

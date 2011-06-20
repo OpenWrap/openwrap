@@ -118,7 +118,7 @@ namespace OpenWrap.Build.PackageBuilders
                 if (platform != null) writer.WriteLine("/p:OpenWrap-TargetPlatform=" + platform);
                 if (profile != null)
                 {
-                    var msbuildVersioning = FrameworkVersioning.OpenWrapToMSBuild(profile);
+                    var msbuildVersioning = TargetFramework.ParseOpenWrapIdentifier(profile);
                     writer.WriteLine("/p:OpenWrap-TargetProfile=" + profile);
                     writer.WriteLine("/p:TargetFrameworkVersion=" + msbuildVersioning.Version);
                     writer.WriteLine("/p:TargetFrameworkIdentifier=" + msbuildVersioning.Identifier);

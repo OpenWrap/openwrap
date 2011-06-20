@@ -12,6 +12,10 @@ using Path = OpenFileSystem.IO.Path;
 
 namespace OpenWrap.PackageManagement.Monitoring
 {
+    class DescriptorMonitor
+    {
+        
+    }
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
     public class PackageDescriptorMonitor : IPackageDescriptorMonitor
     {

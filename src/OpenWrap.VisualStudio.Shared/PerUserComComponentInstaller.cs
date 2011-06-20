@@ -5,8 +5,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace OpenWrap.VisualStudio.Hooks
+namespace OpenWrap.VisualStudio
 {
+    public class PerUserComComponentInstaller<T> : PerUserComComponentInstaller
+    {
+        public PerUserComComponentInstaller(string path)
+            : base(path, typeof(T))
+        {
+        }
+    }
     public class PerUserComComponentInstaller
     {
         protected string _basePath;
@@ -37,7 +44,7 @@ namespace OpenWrap.VisualStudio.Hooks
                 {
                     Directory.Delete(_basePath, true);
                 }
-                catch (IOException e)
+                catch
                 {
                 }
             }

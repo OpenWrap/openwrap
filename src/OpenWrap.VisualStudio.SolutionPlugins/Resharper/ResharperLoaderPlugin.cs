@@ -1,23 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using EnvDTE;
 using EnvDTE80;
 using OpenFileSystem.IO;
-using OpenWrap.Commands;
 using OpenWrap.Reflection;
 using OpenWrap.Resources;
 using OpenWrap.Services;
 
-namespace OpenWrap.VisualStudio.Resharper
+namespace OpenWrap.VisualStudio.SolutionPlugins.ReSharper
 {
-    public class ResharperLoaderPlugin : IDisposable
+    public class ReSharperLoaderPlugin : IDisposable
     {
         readonly IFileSystem _fileSystem;
-        const int WAIT_RETRY_MS = 2000;
         const int MAX_RETRIES = 50;
         int _retries = 0;
         static readonly IDictionary<Version, string> VersionToLoaders = new Dictionary<Version, string>
@@ -28,18 +24,21 @@ namespace OpenWrap.VisualStudio.Resharper
             { new Version("6.0.2162.902"), "OpenWrap.Resharper.PluginManager, OpenWrap.Resharper.600" }
         };
 
-        Timer _timer;
         object _pluginManager;
-        ITemporaryDirectory _assemblyDir;
+        IDirectory _assemblyDir;
 
-        public ResharperLoaderPlugin() : this(ServiceLocator.GetService<IFileSystem>())
+        public ReSharperLoaderPlugin() : this(ServiceLocator.GetService<IFileSystem>())
         {
         }
 
-        public ResharperLoaderPlugin(IFileSystem fileSystem)
+        public ReSharperLoaderPlugin(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
-            _assemblyDir = _fileSystem.CreateTempDirectory();
+            _assemblyDir = _fileSystem.GetDirectory(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData))
+                .GetDirectory("openwrap")
+                .GetDirectory("VisualStudio")
+                .GetDirectory("AssemblyCache")
+                .GetDirectory(System.IO.Path.GetRandomFileName()).MustExist();
             var vsAppDomain = AppDomain.CurrentDomain.GetData("openwrap.vs.appdomain") as AppDomain;
             
             if (vsAppDomain == null) return;
@@ -63,7 +62,6 @@ namespace OpenWrap.VisualStudio.Resharper
                 if (_retries++ <= MAX_RETRIES)
                 {
                     OpenWrapOutput.Write("ReSharper not found, try {0}/{1}", _retries, MAX_RETRIES);
-                    _timer = new Timer(_ => DetectResharperLoading(vsAppDomain), null, WAIT_RETRY_MS, Timeout.Infinite);
                 }
                 return;
             }
@@ -71,16 +69,12 @@ namespace OpenWrap.VisualStudio.Resharper
             var pluginManagerType = LoadTypeFromVersion(resharperVersion);
             if (pluginManagerType == null) return;
             var sourceAssemblyFile = _fileSystem.GetFile(pluginManagerType.Assembly.Location);
-            var destinationAssemblyFile = _assemblyDir.GetFile(sourceAssemblyFile.Name + ".dll");
-            //var version = 
-            sourceAssemblyFile.Sign(destinationAssemblyFile, new StrongNameKeyPair(Keys.openwrap));
-            var plugin = vsAppDomain.CreateInstanceFromAndUnwrap(destinationAssemblyFile.Path, pluginManagerType.FullName);
-            PluginLoaded(plugin);
-        }
+            var destinationAssemblyFile = _assemblyDir.GetFile(sourceAssemblyFile.Name);
 
-        void PluginLoaded(object plugin)
-        {
-            _pluginManager = plugin;
+            sourceAssemblyFile.Sign(destinationAssemblyFile, new StrongNameKeyPair(Keys.openwrap));
+            //var plugin = vsAppDomain.CreateInstanceFromAndUnwrap(destinationAssemblyFile.Path, pluginManagerType.FullName);
+            _pluginManager = (IDisposable)vsAppDomain.CreateInstanceFromAndUnwrap(sourceAssemblyFile.Path, pluginManagerType.FullName);
+            
         }
 
         Type LoadTypeFromVersion(Version resharperAssembly)
@@ -94,7 +88,8 @@ namespace OpenWrap.VisualStudio.Resharper
 
         public void Dispose()
         {
-            _assemblyDir.Dispose();
+            var disposer = _pluginManager as IDisposable;
+            if (disposer != null) disposer.Dispose();
         }
 
     }

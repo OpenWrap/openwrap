@@ -37,7 +37,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;v510</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -45,7 +45,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;v510</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
@@ -56,6 +56,11 @@
     </Reference>
     <Reference Include="envdte80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="JetBrains.Platform.ReSharper.ActionManagement">
+      <HintPath>..\..\lib\resharper-5.1.0\JetBrains.Platform.ReSharper.ActionManagement.dll</HintPath>
+      <Aliases>resharper</Aliases>
+      <Private>False</Private>
     </Reference>
     <Reference Include="JetBrains.Platform.ReSharper.ProjectModel, Version=5.1.1727.12, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -80,6 +85,16 @@
       <Private>False</Private>
       <Aliases>resharper</Aliases>
     </Reference>
+    <Reference Include="JetBrains.ReSharper.Daemon">
+      <HintPath>..\..\lib\resharper-5.1.0\JetBrains.ReSharper.Daemon.dll</HintPath>
+      <Aliases>resharper</Aliases>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="JetBrains.ReSharper.SolutionAnalysis">
+      <HintPath>..\..\lib\resharper-5.1.0\JetBrains.ReSharper.SolutionAnalysis.dll</HintPath>
+      <Aliases>resharper</Aliases>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.Shell, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -88,6 +103,9 @@
   <ItemGroup>
     <Compile Include="..\OpenWrap.Resharper.450\PluginManager.cs">
       <Link>PluginManager.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\ProjectReferenceUpdater.cs">
+      <Link>ProjectReferenceUpdater.cs</Link>
     </Compile>
     <Compile Include="..\OpenWrap.Resharper.450\ResharperIntegrationService.cs">
       <Link>ResharperIntegrationService.cs</Link>

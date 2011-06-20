@@ -2,7 +2,7 @@
 depends: openfilesystem
 depends: openwrap content
 anchored: true
-build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj; project=src\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj; project=src\OpenWrap.Commands\OpenWrap.Commands.csproj; project=src\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.VisualStudio.SolutionPlugins.csproj
+build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj; project=src\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj; project=src\OpenWrap.Commands\OpenWrap.Commands.csproj; project=src\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.SolutionPlugins.VisualStudio.csproj
 name: openwrap
 depends: tdnet-framework
 use-symlinks: true

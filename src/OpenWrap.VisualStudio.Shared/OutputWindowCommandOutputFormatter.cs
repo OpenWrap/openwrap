@@ -1,11 +1,10 @@
-using System;
 using System.Linq;
 using EnvDTE;
 using EnvDTE80;
 using OpenWrap.Commands;
 using OpenWrap.Commands.Cli;
 
-namespace OpenWrap.VisualStudio.Shared
+namespace OpenWrap.VisualStudio
 {
     public class OutputWindowCommandOutputFormatter : ICommandOutputFormatter
     {

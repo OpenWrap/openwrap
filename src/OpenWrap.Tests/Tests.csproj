@@ -120,6 +120,7 @@
     <Compile Include="Configuration\simple\readonly_properties_not_read.cs" />
     <Compile Include="Configuration\simple\save_null_does_nothing.cs" />
     <Compile Include="contexts\signing.cs" />
+    <Compile Include="framework_versioning\from_dte.cs" />
     <Compile Include="MemoryRepositoryFactory.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInput.cs" />
     <Compile Include="Commands\cecil_commands\CommandWithOptionalInputValue.cs" />
@@ -549,6 +550,7 @@
     <Folder Include="Commands\Wrap\buildwrap\" />
     <Folder Include="descriptors\" />
     <Folder Include="Exporters\content\" />
+    <Folder Include="solution_plugins\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Repositories\feedodata2.xml" />

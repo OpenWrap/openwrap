@@ -15,7 +15,7 @@ using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
-using OpenWrap.VisualStudio.Hooks;
+using OpenWrap.VisualStudio;
 
 
 namespace OpenWrap.Build.Tasks
@@ -82,9 +82,16 @@ namespace OpenWrap.Build.Tasks
             EnsureWrapRepositoryIsInitialized();
             
             if (!EnableVisualStudioIntegration) return true;
-            SolutionAddIn.Initialize();
-            ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository);
-            
+            try
+            {
+                SolutionAddInEnabler.Initialize();
+                ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository);
+            }
+            catch(Exception e)
+            {
+                // probably running on a machine with no vs install
+                Log.LogMessage(MessageImportance.Low, "DTE not detected. See exception details below.\r\n{0}", e);
+            }
             return true;
         }
     }

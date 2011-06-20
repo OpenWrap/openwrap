@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using EnvDTE;
-using OpenWrap.VisualStudio.SolutionAddIn;
+using OpenWrap.VisualStudio.ProjectModel;
 
-namespace OpenWrap.VisualStudio.Hooks
+namespace OpenWrap.VisualStudio
 {
-    public class SolutionAddIn
+    public class SolutionAddInEnabler
     {
         static bool _called;
         static readonly object LOCKER = new object();
@@ -26,17 +23,10 @@ namespace OpenWrap.VisualStudio.Hooks
                     Debug.WriteLine("SolutionAddIn: DTE not found");
                     return;
                 }
-
-                dte.Solution.AddIns.Update();
-
-                if (dte.Solution.AddIns.OfType<EnvDTE.AddIn>().Any(x => x.ProgID == ComConstants.ADD_IN_PROGID_2010 || x.ProgID == ComConstants.ADD_IN_PROGID_2008))
-                    return;
-
                 AddInInstaller.Install();
-                if (dte.Version == "9.0")
-                    dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2008, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
-                else if (dte.Version == "10.0")
-                    dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2010, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
+
+                var solution = new DteSolution(dte.Solution);
+                solution.OpenWrapAddInEnabled = true;
             }
         }
     }

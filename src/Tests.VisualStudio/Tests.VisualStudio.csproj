@@ -51,17 +51,23 @@
   <ItemGroup>
     <Compile Include="addin_install\alread_up_to_date.cs" />
     <Compile Include="addin_install\installing_fresh.cs" />
+    <Compile Include="addin_install\installing_two_types_from_same_assembly.cs" />
     <Compile Include="addin_install\IOExtensions.cs" />
     <Compile Include="addin_install\TemporaryComAddIn.cs" />
+    <Compile Include="addin_install\TemporaryComAddIn2.cs" />
     <Compile Include="addin_install\upgrading.cs" />
-    <Compile Include="contexts\adin_installer.cs" />
+    <Compile Include="CloseOptions.cs" />
+    <Compile Include="contexts\addin_installer.cs" />
     <Compile Include="contexts\VisualStudioError.cs" />
     <Compile Include="contexts\visual_studio.cs" />
     <Compile Include="DteExtensions.cs" />
     <Compile Include="IOleMessageFilter.cs" />
     <Compile Include="MessageFilter.cs" />
-    <Compile Include="resharper\rehsarper_plugin_manager_loads.cs" />
+    <Compile Include="resharper\resharper_detects_existing_openwrap_assemblies.cs" />
+    <Compile Include="resharper\resharper_plugin_manager_loads.cs" />
     <Compile Include="solution_addin\loads_add_in_on_already_configured_solution.cs" />
+    <Compile Include="solution_plugins\solution_plugin_reloads_on_descriptor_change.cs" />
+    <Compile Include="solution_plugins\unloads_on_solution_close.cs" />
     <Compile Include="solution_plugins\loads_with_vs.cs" />
     <Compile Include="v2010\can_create_and_build_new_solution.cs" />
     <Compile Include="Artifacts\VsFiles.Designer.cs">
@@ -104,6 +110,11 @@
       <Name>OpenWrap.Resharper.510</Name>
       <Aliases>resharper510</Aliases>
     </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.600\OpenWrap.Resharper.600.csproj">
+      <Project>{9673FD11-2970-4902-B018-0B799F893535}</Project>
+      <Name>OpenWrap.Resharper.600</Name>
+      <Aliases>resharper600</Aliases>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Tests\Tests.csproj">
       <Project>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</Project>
       <Name>Tests</Name>
@@ -116,9 +127,9 @@
       <Project>{955C1309-6376-4BFE-A36B-144EFE172D8B}</Project>
       <Name>OpenWrap.VisualStudio.Shared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.VisualStudio.SolutionPlugins.csproj">
+    <ProjectReference Include="..\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.SolutionPlugins.VisualStudio.csproj">
       <Project>{5433F587-B9B9-42F2-A5BA-005AF1025EE2}</Project>
-      <Name>OpenWrap.VisualStudio.SolutionPlugins</Name>
+      <Name>OpenWrap.SolutionPlugins.VisualStudio</Name>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>

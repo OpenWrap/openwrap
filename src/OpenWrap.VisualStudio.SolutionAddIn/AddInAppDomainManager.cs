@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -8,35 +8,36 @@ using OpenWrap.Preloading;
 
 namespace OpenWrap.VisualStudio.SolutionAddIn
 {
-    public class AddInAppDomainManager : MarshalByRefObject
+    public class AddInAppDomainManager : MarshalByRefObject, IDisposable
     {
-        
+        ManualResetEvent _manualResetEvent;
+
+        public AddInAppDomainManager()
+        {
+            var appDomain = AppDomain.CurrentDomain;
+            _manualResetEvent = new ManualResetEvent(false);
+            appDomain.SetData("openwrap.vs.events.unloading", _manualResetEvent);
+            AppDomain.CurrentDomain.AssemblyResolve += (src, ev) =>
+            {
+                var currentAssembly = typeof(AddInAppDomainManager).Assembly;
+                return (new AssemblyName(ev.Name).Name == currentAssembly.GetName().Name) ? currentAssembly : null;
+            };
+            ThreadPool.QueueUserWorkItem(state => Load((string)appDomain.GetData("openwrap.vs.version"),
+                                                       (string)appDomain.GetData("openwrap.vs.currentdirectory"),
+                                                       (string[])appDomain.GetData("openwrap.vs.packages")));
+        }
+
+        // todo: make this return a lease so the object does't keep on living forever?
         public override object InitializeLifetimeService()
         {
             return null;
         }
 
-        public AddInAppDomainManager()
-        {
-            var appDomain = AppDomain.CurrentDomain;
-
-            ThreadPool.QueueUserWorkItem(state => Load((string)appDomain.GetData("openwrap.vs.version"),
-                                                                           (string)appDomain.GetData("openwrap.vs.currentdirectory"),
-                                                                           (string[])appDomain.GetData("openwrap.vs.packages"),
-                                                                           (AppDomain)appDomain.GetData("openwrap.appdomain")));
-
-            AppDomain.CurrentDomain.AssemblyResolve += (src, ev) =>
-            {
-                var currentAssembly = typeof(AddInAppDomainManager).Assembly;
-                return (ev.Name == currentAssembly.GetName().Name) ? currentAssembly : null;
-            };
-        }
-
-        void Load(string vsVersion, string currentDirectory, string[] packagePaths, AppDomain sourceAppDomain)
+        static void Load(string vsVersion, string currentDirectory, IEnumerable<string> packagePaths)
         {
             var assemblies = Preloader.LoadAssemblies(packagePaths);
             Func<IDictionary<string, object>, int> runner = null;
-            foreach(var asm in assemblies)
+            foreach (var asm in assemblies)
             {
                 try
                 {
@@ -51,8 +52,9 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                         break;
                     }
                 }
-                catch
+                catch (Exception e)
                 {
+                    Debug.WriteLine(e);
                 }
             }
             if (runner == null) return;
@@ -63,13 +65,17 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                 { "openwrap.shell.assemblies", assemblies.ToList() },
                 { "openwrap.shell.version", "1.1" },
                 { "openwrap.shell.type", "VisualStudio." + vsVersion },
-                { "openwrap.scope", "build"},
-                { "openwrap.shell.appdomain", sourceAppDomain },
-                { "openwrap.shell.formatter", "OpenWrap.VisualStudio.Shared.OutputWindowCommandOutputFormatter, OpenWrap.VisualStudio.Shared" }
+                { "openwrap.scope", "build" },
+                { "openwrap.shell.formatter", "OpenWrap.VisualStudio.OutputWindowCommandOutputFormatter, OpenWrap.VisualStudio.Shared" }
             };
-            
-            runner(info);
 
+            runner(info);
+        }
+        
+        public void Dispose()
+        {
+            _manualResetEvent.Set();
+            _manualResetEvent = null;
         }
     }
 }

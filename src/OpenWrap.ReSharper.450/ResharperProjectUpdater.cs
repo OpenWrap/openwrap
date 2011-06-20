@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using OpenFileSystem.IO;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Monitoring;
@@ -47,7 +48,7 @@ namespace OpenWrap.Resharper
         public void AssembliesUpdated(IEnumerable<Exports.IAssembly> resolvedAssemblies)
         {
 
-            ResharperLocks.WriteCookie("Updating references...",
+            Guard.Run("Updating references...",
                                        () =>
                                        {
                                            if (_project.ProjectFile == null) return;
@@ -90,16 +91,20 @@ namespace OpenWrap.Resharper
         }
     }
 
-    public static class ResharperLocks
+    public static class Guard
     {
-        public static void WriteCookie(string description, Action invoke)
+        public static void Run(Action invoke)
         {
+            Run(invoke.Method.Name, invoke);
+
+        }
+        public static void Run(string description, Action invoke)
+        {
+            
             resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Dispatcher
                     .Invoke(description,
-                            () => resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.ExecuteOrQueue
-                                          (
-                                                  description,
-                                                  () => invoke()));
+                            () => resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Execute
+                                          (description, () => invoke()));
         }
     }
 

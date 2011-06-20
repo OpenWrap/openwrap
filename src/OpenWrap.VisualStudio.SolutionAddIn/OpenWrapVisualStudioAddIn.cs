@@ -2,7 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting;
+using System.Reflection;
+using System.Runtime.Hosting;
 using EnvDTE;
 using EnvDTE80;
 using Extensibility;
@@ -18,8 +19,8 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
         DTE _dte;
         OutputWindowPane _outputWindow;
         AppDomain _appDomain;
-        ObjectHandle _loader;
         string _rootPath;
+        IDisposable _appDomainManager;
         public string DteVersion { get; private set; }
 
         public OpenWrapVisualStudioAddIn(string targetDteVersion, string progId)
@@ -44,23 +45,29 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
             var dte = application as DTE;
             if (dte == null) return;
             _dte = dte;
-
-            if (dte.Version != DteVersion)
+            try
             {
-                Notify("OpenWrap Visual Studio integration is not correct version, re-creating now.");
-                dte.Solution.AddIns.OfType<EnvDTE.AddIn>().First(x => x.ProgID == _progId).Remove();
-                if (dte.Version == "9.0")
-                    dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2008, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
-                else if (dte.Version == "10.0")
-                    dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2010, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
-                return;
-            }
-            _rootPath = GetRootLocation(dte.Solution.FullName);
-            if (_rootPath == null) return;
-            Notify("OpenWrap Visual Studio Integration ({0}) starting.", FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion);
-            Notify("Root location: " + _rootPath);
+                if (dte.Version != DteVersion)
+                {
+                    Notify("OpenWrap Visual Studio integration is not correct version, re-creating now.");
+                    dte.Solution.AddIns.OfType<EnvDTE.AddIn>().First(x => x.ProgID == _progId).Remove();
+                    if (dte.Version == "9.0")
+                        dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2008, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
+                    else if (dte.Version == "10.0")
+                        dte.Solution.AddIns.Add(ComConstants.ADD_IN_PROGID_2010, ComConstants.ADD_IN_DESCRIPTION, ComConstants.ADD_IN_NAME, true);
+                    return;
+                }
+                _rootPath = GetRootLocation(dte.Solution.FullName);
+                if (_rootPath == null) return;
+                Notify("OpenWrap Visual Studio Integration ({0}) starting.", FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion);
+                Notify("Root location: " + _rootPath);
 
-            LoadAppDomain();
+                LoadAppDomain();
+            }
+            catch(Exception e)
+            {
+                Notify("OpenWrap failed to initialize. Improbability Drive has been activated.\r\n", e.ToString());
+            }
         }
 
         void LoadAppDomain()
@@ -74,6 +81,7 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
 
                 foreach (var package in packages) Notify("Loading package " + package);
                 _appDomain = AppDomain.CreateDomain("OpenWrap Visual Studio Integration (default scope)");
+                //_appDomain.SetupInformation = new AppDomainSetup() { ShadowCopyFiles = true }
                 _appDomain.SetData("openwrap.vs.version", _dte.Version);
                 _appDomain.SetData("openwrap.vs.currentdirectory", _rootPath);
                 _appDomain.SetData("openwrap.vs.packages", packages.ToArray());
@@ -81,10 +89,10 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                 
                 // replace that with the location in the codebase we just registered, ensuring the correct version is loaded
                 var location = Type.GetTypeFromProgID(_progId).Assembly.Location;
-                
-                _loader = _appDomain.CreateInstanceFrom(location, typeof(AddInAppDomainManager).FullName);
-
-                //_appDomain.DomainUnload += HandleAppDomainChange;
+                AppDomain.CurrentDomain.AssemblyResolve += HandleSelfLoad();
+                _appDomainManager = (IDisposable)_appDomain.CreateInstanceFromAndUnwrap(location, typeof(AddInAppDomainManager).FullName);
+                AppDomain.CurrentDomain.AssemblyResolve -= HandleSelfLoad();
+                _appDomain.DomainUnload += HandleAppDomainChange;
 
             }
             catch(Exception e)
@@ -93,6 +101,16 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                 Notify(e.ToString());
             }
         }
+
+        static ResolveEventHandler HandleSelfLoad()
+        {
+            return (src, ev) =>
+            {
+                var currentAssembly = typeof(AddInAppDomainManager).Assembly;
+                return (new AssemblyName(ev.Name).Name == currentAssembly.GetName().Name) ? currentAssembly : null;
+            };
+        }
+
         public override object InitializeLifetimeService()
         {
             return null;
@@ -111,7 +129,10 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
 
         string GetRootLocation(string fullName)
         {
-            var curDir = new DirectoryInfo(Path.GetDirectoryName(fullName));
+            string directoryName = Path.GetDirectoryName(fullName);
+            if (directoryName == null) return null;
+
+            var curDir = new DirectoryInfo(directoryName);
             do
             {
                 if (curDir.GetFiles("*.wrapdesc").Length > 0) return curDir.FullName;
@@ -136,8 +157,14 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
 
         public void OnDisconnection(ext_DisconnectMode removeMode, ref Array custom)
         {
-            Notify("Unloading. Goodbye.");
-            AppDomain.Unload(_appDomain);
+            _appDomain.DomainUnload -= HandleAppDomainChange;
+            _appDomainManager.Dispose();
+            Notify("Unloaded. Goodbye.");
+
+            //AppDomain.Unload(_appDomain);
+            _appDomainManager = null;
+            _dte = null;
+            _appDomain = null;
         }
 
         public void OnStartupComplete(ref Array custom)

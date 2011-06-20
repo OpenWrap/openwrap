@@ -1,21 +1,16 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.VisualStudio.contexts;
 
 namespace Tests.VisualStudio.addin_install
 {
-    public class upgrading : contexts.addin_installer
+    public class upgrading : addin_installer
     {
         public upgrading()
         {
             given_empty_registry_for<TemporaryComAddIn>();
             given_install<TemporaryComAddIn>("1.0.0.0");
             when_installing<TemporaryComAddIn>("1.0.0.1");
-        }
-
-        [Test]
-        public void versioned_directory_for_new_version_is_added()
-        {
-            InstallDir.GetDirectory("1.0.0.1").Exists.ShouldBeTrue();
         }
 
         [Test]
@@ -30,6 +25,12 @@ namespace Tests.VisualStudio.addin_install
         {
             CodeBase<TemporaryComAddIn>().ShouldBe(
                 InstallDir.GetDirectory("1.0.0.1").GetFile(FileName<TemporaryComAddIn>()).Path.ToFileUri());
+        }
+
+        [Test]
+        public void versioned_directory_for_new_version_is_added()
+        {
+            InstallDir.GetDirectory("1.0.0.1").Exists.ShouldBeTrue();
         }
     }
 }

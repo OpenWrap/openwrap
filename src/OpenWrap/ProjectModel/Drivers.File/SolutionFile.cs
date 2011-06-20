@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.IO;
+using OpenWrap.Runtime;
 
 namespace OpenWrap.ProjectModel.Drivers.File
 {
@@ -152,7 +153,7 @@ namespace OpenWrap.ProjectModel.Drivers.File
                 _content.Add(
                     SolutionFormatVersion.TryParse(lines, ref i) ??
                     SolutionVisualStudioVersion.TryParse(lines, ref i) ??
-                    Project.TryParse(lines, ref i) ??
+                    Project.TryParse(_file.FileSystem, lines, ref i) ??
                     Global.TryParse(lines, ref i) ??
                     (object)lines[i]
                     );
@@ -292,6 +293,7 @@ namespace OpenWrap.ProjectModel.Drivers.File
         }
         // ReSharper restore InconsistentNaming
 
+        // TODO: Make public class once fully implemented
         class Project : IProject
         {
             public Guid Guid;
@@ -311,7 +313,7 @@ namespace OpenWrap.ProjectModel.Drivers.File
             readonly List<string> _lines = new List<string>();
             
 
-            public static Project TryParse(string[] lines, ref int index)
+            public static Project TryParse(IFileSystem fileSystem, string[] lines, ref int index)
             {
                 var match = _projectRegex.Match(lines[index]);
                 if (match.Success == false) return null;
@@ -320,7 +322,8 @@ namespace OpenWrap.ProjectModel.Drivers.File
                     Name = match.Groups["name"].Value,
                     Path = match.Groups["path"].Value,
                     Type = new Guid(match.Groups["projectTypeGuid"].Value),
-                    Guid = new Guid(match.Groups["projectGuid"].Value)
+                    Guid = new Guid(match.Groups["projectGuid"].Value),
+                    File = fileSystem.GetFile(match.Groups["path"].Value)
                 };
 
 
@@ -332,6 +335,8 @@ namespace OpenWrap.ProjectModel.Drivers.File
                 return project;
             }
 
+            public IFile File { get; private set; }
+
             public override string ToString()
             {
                 return string.Format("Project(\"{{{0}}}\") = \"{1}\", \"{2}\", \"{{{3}}}\"\r\n{4}EndProject",
@@ -341,6 +346,19 @@ namespace OpenWrap.ProjectModel.Drivers.File
                                      Guid.ToString().ToUpperInvariant(),
                                      _lines.Aggregate(string.Empty, (input,line)=>input+line+"\r\n"));
             }
+
+            public TargetFramework TargetFramework
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public string TargetPlatform
+            {
+                get { throw new NotImplementedException(); }
+            }
+
+            public bool OpenWrapEnabled
+            { get { return MSBuildProject.OpenWrapEnabled(Path); } }
         }
 
         class SolutionFormatVersion

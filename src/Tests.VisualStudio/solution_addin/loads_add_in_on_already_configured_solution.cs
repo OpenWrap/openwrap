@@ -4,10 +4,11 @@ using NUnit.Framework;
 using OpenWrap.Commands.Core;
 using OpenWrap.Testing;
 using OpenWrap.VisualStudio.SolutionAddIn;
+using Tests.VisualStudio.contexts;
 
 namespace Tests.VisualStudio.solution_addin
 {
-    public class loads_add_in_on_already_configured_solution : contexts.visual_studio
+    public class loads_add_in_on_already_configured_solution : visual_studio
     {
         public loads_add_in_on_already_configured_solution()
         {
@@ -17,10 +18,11 @@ namespace Tests.VisualStudio.solution_addin
             given_file("Class1.cs", "public class ClassName { public static void MainMethod() {} }");
 
             given_command("init-wrap . -name MyProject -all");
-            given_plugins_started();
+            given_vs_action(dte => dte.Solution.SaveAll(true));
 
-            when_executing_vs2010(dte => dte.Solution.SaveAll(true));
+            when_loading_solution_with_plugins();
         }
+
         [Test]
         public void solution_addin_is_loaded()
         {

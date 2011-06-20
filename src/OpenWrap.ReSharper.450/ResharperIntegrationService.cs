@@ -189,8 +189,8 @@ namespace OpenWrap.Resharper
         {
             bool success = false;
             IEnumerable<ResharperProjectUpdater> readProjects = null;
-            ResharperLocks.WriteCookie("Listing projects",
-                                       () => { success = TryEnumerateProjects(environment, out readProjects); });
+            //Guard.Run("Listing projects",
+            //                           () => { success = TryEnumerateProjects(environment, out readProjects); });
             projects = readProjects ?? Enumerable.Empty<ResharperProjectUpdater>();
             return success;
         }
@@ -205,31 +205,6 @@ namespace OpenWrap.Resharper
             _refreshTimer.Change(REFRESH_DELAY_MS, Timeout.Infinite);
         }
 
-        bool TryEnumerateProjects(Func<ExecutionEnvironment> env, out IEnumerable<ResharperProjectUpdater> projects)
-        {
-            projects = new ResharperProjectUpdater[0];
-
-            if (SolutionManager == null)
-                return false;
-
-            ResharperLogger.Debug("SolutionManager found");
-
-            var solution = Solution;
-            if (solution == null) return false;
-
-
-            ResharperLogger.Debug("Solution found");
-            
-            var monitors = (
-                                   from proj in solution.GetAllProjects()
-                                   where ProjectIsOpenWrapEnabled(proj)
-                                   let scope = PathFinder.GetCurrentScope(_env.Descriptor.DirectoryStructure, new OpenFileSystem.IO.Path(proj.ProjectFile.Location.FullPath))
-                                   let descriptor = _env.ScopedDescriptors.ContainsKey(scope) ? _env.ScopedDescriptors[scope] : _env.ScopedDescriptors[string.Empty]
-                                   select new ResharperProjectUpdater(descriptor.File, proj, env)
-                           ).ToList();
-            projects = monitors;
-            return true;
-        }
 
         void HandleChanges(object sender, resharper::JetBrains.Application.ChangeEventArgs changeeventargs)
         {

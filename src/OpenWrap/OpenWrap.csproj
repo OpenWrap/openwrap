@@ -117,6 +117,7 @@
     <Compile Include="PackageManagement\Exporters\Commands\CecilUICommandDescriptor.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CecilCommandExporter.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CommandExportItem.cs" />
+    <Compile Include="PackageManagement\Exporters\SolutionPlugin.cs" />
     <Compile Include="PackageManagement\Exporters\SolutionPluginExporter.cs" />
     <Compile Include="PackageManagement\Exporters\StringConversion.cs" />
     <Compile Include="PackageManagement\HookedPackageOperationResults.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="PackageManagement\PackageHookResult.cs" />
     <Compile Include="PackageManagement\PackageManagerExtensions.cs" />
     <Compile Include="PackageManagement\PackageUpdated.cs" />
+    <Compile Include="ProjectModel\MSBuildProject.cs" />
     <Compile Include="ProjectModel\Drivers.File\ProjectConstants.cs" />
     <Compile Include="ProjectModel\Drivers.File\SolutionConstants.cs" />
     <Compile Include="ProjectModel\Drivers.File\SolutionFile.cs" />
@@ -439,7 +441,9 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Extensibility\" />
+  </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
