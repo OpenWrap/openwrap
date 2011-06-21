@@ -73,9 +73,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonProperties.cs">
-      <Link>Properties\CommonProperties.cs</Link>
-    </Compile>
     <Compile Include="GenerateRevisionNumber.cs" />
     <Compile Include="Hooks\SolutionAddIn.cs" />
     <Compile Include="InitializeVisualStudioIntegration.cs" />
@@ -95,24 +92,6 @@
     <ProjectReference Include="..\OpenWrap.Build.Bootstrap\OpenWrap.Build.Bootstrap.csproj">
       <Project>{DFF6974F-5148-4B2C-8D76-190C3D92D9FF}</Project>
       <Name>OpenWrap.Build.Bootstrap</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.Resharper.v450\OpenWrap.Resharper.v450.csproj">
-      <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
-      <Name>OpenWrap.Resharper.v450</Name>
-      <Aliases>resharper450</Aliases>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.Resharper.v500\OpenWrap.Resharper.v500.csproj">
-      <Project>{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}</Project>
-      <Name>OpenWrap.Resharper.v500</Name>
-      <Aliases>resharper500</Aliases>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.Resharper.v510\OpenWrap.Resharper.v510.csproj">
-      <Project>{A9FA9F17-3DBE-4848-9044-DD734FDF554B}</Project>
-      <Name>OpenWrap.Resharper.v510</Name>
-      <Aliases>resharper510</Aliases>
-      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj">
       <Project>{955C1309-6376-4BFE-A36B-144EFE172D8B}</Project>

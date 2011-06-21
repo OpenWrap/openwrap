@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Runtime;
@@ -20,11 +18,13 @@ namespace OpenWrap.PackageModel
             var result = FileBased.New(newDescriptorFile, newDescriptor);
             return env.ScopedDescriptors[scope] = result;
         }
+
         public static void Save(this FileBased<IPackageDescriptor> descriptor)
         {
             using (var writeStream = descriptor.File.OpenWrite())
                 new PackageDescriptorReaderWriter().Write(descriptor.Value, writeStream);
         }
+
         public static void Touch(this IFile file)
         {
             file.MustExist().LastModifiedTimeUtc = DateTimeOffset.UtcNow;

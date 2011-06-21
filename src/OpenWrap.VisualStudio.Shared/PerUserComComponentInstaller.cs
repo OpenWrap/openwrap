@@ -5,8 +5,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 
-namespace OpenWrap.VisualStudio.Hooks
+namespace OpenWrap.VisualStudio
 {
+    public class PerUserComComponentInstaller<T> : PerUserComComponentInstaller
+    {
+        public PerUserComComponentInstaller(string path)
+            : base(path, typeof(T))
+        {
+        }
+    }
     public class PerUserComComponentInstaller
     {
         protected string _basePath;
@@ -14,7 +21,7 @@ namespace OpenWrap.VisualStudio.Hooks
         protected PerUserComComponentInstaller(string path, Type typeToRegister)
         {
             _basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), path);
-            VersionProvider = file => StringExtensions.ToVersion(FileVersionInfo.GetVersionInfo(file).FileVersion);
+            VersionProvider = file => FileVersionInfo.GetVersionInfo(file).FileVersion.ToVersion();
             Type = typeToRegister;
             ProgId = Type.Attribute<ProgIdAttribute>().Value;
             Guid = Type.Attribute<GuidAttribute>().Value;
@@ -37,7 +44,7 @@ namespace OpenWrap.VisualStudio.Hooks
                 {
                     Directory.Delete(_basePath, true);
                 }
-                catch (IOException e)
+                catch
                 {
                 }
             }
@@ -134,7 +141,12 @@ namespace OpenWrap.VisualStudio.Hooks
                 .OrderByDescending(x => x)
                 .FirstOrDefault();
 
-            if (latestInstalledVersion != null && latestInstalledVersion >= currentVersion) return null;
+            if (latestInstalledVersion != null && latestInstalledVersion >= currentVersion)
+            {
+                string filePath = Path.Combine(Path.Combine(_basePath,latestInstalledVersion.ToString()),sourceAssemblyFileName);
+                if (File.Exists(filePath))
+                    return "file:///" + filePath.Replace('\\', '/');
+            }
 
             var destinationPath = Path.Combine(_basePath, currentVersion.ToString());
             if (!Directory.Exists(destinationPath)) Directory.CreateDirectory(destinationPath);

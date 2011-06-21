@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.VisualStudio.contexts;
 
 namespace Tests.VisualStudio.addin_install
 {
-    public class alread_up_to_date : contexts.addin_installer
+    public class alread_up_to_date : addin_installer
     {
         public alread_up_to_date()
         {
@@ -13,16 +14,16 @@ namespace Tests.VisualStudio.addin_install
         }
 
         [Test]
-        public void versioned_directory_for_old_version_not_created()
-        {
-            InstallDir.GetDirectory("1.0.0.0").Exists.ShouldBeFalse();
-        }
-
-        [Test]
         public void registry_points_to_correct_file()
         {
             CodeBase<TemporaryComAddIn>().ShouldBe(
                 InstallDir.GetDirectory("1.0.0.1").GetFile(FileName<TemporaryComAddIn>()).Path.ToFileUri());
+        }
+
+        [Test]
+        public void versioned_directory_for_old_version_not_created()
+        {
+            InstallDir.GetDirectory("1.0.0.0").Exists.ShouldBeFalse();
         }
     }
 }

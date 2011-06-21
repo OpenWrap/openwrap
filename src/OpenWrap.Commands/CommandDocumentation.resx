@@ -427,4 +427,7 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="update-wrap-system" xml:space="preserve">
     <value>Limits the update to the system repository.</value>
   </data>
+  <data name="build-wrap-incremental" xml:space="preserve">
+    <value>Only build what has changes since the last build.</value>
+  </data>
 </root>

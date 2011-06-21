@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Win32;
 
-namespace OpenWrap.VisualStudio.Hooks
+namespace OpenWrap.VisualStudio
 {
     public static class RegistryExtensions
     {

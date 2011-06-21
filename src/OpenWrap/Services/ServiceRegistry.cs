@@ -70,6 +70,8 @@ namespace OpenWrap.Services
                 new CecilCommandExporter(),
                 new SolutionPluginExporter()
             }));
+            Register<IEventHub>(() => new EventHub());
+
             Register<IPackageDeployer>(() => new DefaultPackageDeployer());
             Register<IPackageManager>(() => new DefaultPackageManager(
                                                 Get<IPackageDeployer>(),
@@ -93,7 +95,7 @@ namespace OpenWrap.Services
                                                        .Select(x => x.Descriptor)));
             Register(() => new RuntimeAssemblyResolver());
             Register<IPackageDescriptorMonitor>(() => new PackageDescriptorMonitor());
-            Register<ICommandOutputRenderer>(() => new ConsoleCommandOutputRenderer());
+            Register<ICommandOutputFormatter>(() => new ConsoleCommandOutputFormatter());
         }
 
         public ServiceRegistry ConfigurationDirectory(string path)

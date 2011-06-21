@@ -1,9 +1,10 @@
 using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.VisualStudio.contexts;
 
 namespace Tests.VisualStudio.v2010
 {
-    public class can_create_and_build_new_solution : contexts.visual_studio
+    public class can_create_and_build_new_solution : visual_studio
     {
         public can_create_and_build_new_solution()
         {
@@ -12,13 +13,9 @@ namespace Tests.VisualStudio.v2010
             given_file("Class1.cs", "public class ClassName { public static void MainMethod(OpenFileSystem.IO.IFile file) {} }");
             given_command("init-wrap . -name MyProject -all");
             given_command("add-wrap openfilesystem");
-            when_building_with_vs2010(dte=> dte.Solution.SolutionBuild.Build(true), dte=> dte.ExecuteCommand("File.SaveAll"));
-        }
+            given_vs_action(dte => dte.Solution.SolutionBuild.Build(true), dte => dte.ExecuteCommand("File.SaveAll"));
 
-        [Test]
-        public void build_succeeds()
-        {
-            Errors.ShouldBeEmpty();
+            when_executing_vs2010();
         }
 
         [Test]
@@ -27,6 +24,10 @@ namespace Tests.VisualStudio.v2010
             OutDir.GetFile("MyProject.dll").Exists.ShouldBeTrue();
         }
 
+        [Test]
+        public void build_succeeds()
+        {
+            Errors.ShouldBeEmpty();
+        }
     }
-
 }

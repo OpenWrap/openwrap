@@ -4,6 +4,7 @@ using OpenWrap.PackageManagement.Monitoring;
 
 namespace OpenWrap.Services
 {
+    // Note, this class is *evil* and *will* be removed over time. It's a temporary solution only. :)
     public static class ServiceLocator
     {
         static readonly Dictionary<Type, Func<object>> _factories = new Dictionary<Type, Func<object>>();
