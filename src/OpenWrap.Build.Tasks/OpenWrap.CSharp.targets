@@ -45,13 +45,7 @@
     </InitializeOpenWrap>
 
     <InitializeVisualStudioIntegration
-      WrapDescriptor="$(OpenWrap-DescriptorPath)"
-      WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
-      Platform="$(OpenWrap-TargetPlatform)"
-      Profile="$(OpenWrap-TargetProfile)"
-      ProjectFilePath="$(MSBuildProjectFullPath)"
       EnableVisualStudioIntegration="$(OpenWrap-EnableVisualStudioIntegration)"
-      ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)"
       />
     <!-- Sanity checks -->
     

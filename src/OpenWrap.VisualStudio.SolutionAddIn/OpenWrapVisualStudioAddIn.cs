@@ -158,10 +158,13 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
         public void OnDisconnection(ext_DisconnectMode removeMode, ref Array custom)
         {
             _appDomain.DomainUnload -= HandleAppDomainChange;
-            _appDomainManager.Dispose();
+            try
+            {
+                _appDomainManager.Dispose();
+            }
+            catch{}
             Notify("Unloaded. Goodbye.");
 
-            //AppDomain.Unload(_appDomain);
             _appDomainManager = null;
             _dte = null;
             _appDomain = null;

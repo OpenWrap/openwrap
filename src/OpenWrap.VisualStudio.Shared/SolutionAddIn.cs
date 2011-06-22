@@ -8,25 +8,21 @@ namespace OpenWrap.VisualStudio
     {
         static bool _called;
         static readonly object LOCKER = new object();
-        public static void Initialize()
+        public static string Initialize()
         {
             lock (LOCKER)
             {
-                if (_called) return;
+                if (_called) return null;
 
                 _called = true;
 
                 var dte = SiteManager.GetGlobalService<DTE>();
                 
-                if (dte == null)
-                {
-                    Debug.WriteLine("SolutionAddIn: DTE not found");
-                    return;
-                }
                 AddInInstaller.Install();
 
                 var solution = new DteSolution(dte.Solution);
                 solution.OpenWrapAddInEnabled = true;
+                return "OpenWrap enabled.";
             }
         }
     }

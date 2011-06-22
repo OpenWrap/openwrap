@@ -11,6 +11,7 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
     public class AddInAppDomainManager : MarshalByRefObject, IDisposable
     {
         ManualResetEvent _manualResetEvent;
+        Thread _initThread;
 
         public AddInAppDomainManager()
         {
@@ -22,9 +23,11 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                 var currentAssembly = typeof(AddInAppDomainManager).Assembly;
                 return (new AssemblyName(ev.Name).Name == currentAssembly.GetName().Name) ? currentAssembly : null;
             };
-            ThreadPool.QueueUserWorkItem(state => Load((string)appDomain.GetData("openwrap.vs.version"),
+            _initThread = new Thread(() => Load((string)appDomain.GetData("openwrap.vs.version"),
                                                        (string)appDomain.GetData("openwrap.vs.currentdirectory"),
-                                                       (string[])appDomain.GetData("openwrap.vs.packages")));
+                                                       (string[])appDomain.GetData("openwrap.vs.packages"))) { Name = "OpenWrap Main Thread"};
+            _initThread.SetApartmentState(ApartmentState.STA);
+            _initThread.Start();
         }
 
         // todo: make this return a lease so the object does't keep on living forever?
@@ -76,6 +79,8 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
         {
             _manualResetEvent.Set();
             _manualResetEvent = null;
+
+            _initThread.Join(TimeSpan.FromSeconds(20));
         }
     }
 }

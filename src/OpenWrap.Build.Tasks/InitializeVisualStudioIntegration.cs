@@ -10,9 +10,6 @@ using OpenWrap.Collections;
 using OpenWrap.Commands;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
-using OpenWrap.Repositories;
-using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 using OpenWrap.VisualStudio;
@@ -24,68 +21,13 @@ namespace OpenWrap.Build.Tasks
     {
         public bool EnableVisualStudioIntegration { get; set; }
 
-        [Required]
-        public string Platform { get; set; }
-
-        [Required]
-        public string Profile { get; set; }
-
-        public ExecutionEnvironment Environment
-        {
-            get
-            {
-                return new ExecutionEnvironment
-                {
-                        Platform = Platform,
-                        Profile = Profile
-                };
-            }
-        }
-
-        IFile WrapDescriptorPath
-        {
-            get { return LocalFileSystem.Instance.GetFile(WrapDescriptor.ItemSpec); }
-        }
-
-        protected IPackageRepository PackageRepository { get; set; }
-        [Required]
-        public ITaskItem WrapDescriptor { get; set; }
-
-        [Required]
-        public string WrapsDirectory { get; set; }
-
-        public ITaskItem[] ExcludeAssemblies { get; set; }
-
-        IDirectory WrapsDirectoryPath
-        {
-            get { return LocalFileSystem.Instance.GetDirectory(WrapsDirectory); }
-        }
-        void EnsureWrapRepositoryIsInitialized()
-        {
-            if (PackageRepository != null)
-            {
-                Log.LogMessage(MessageImportance.Low, "Project repository found.");
-                return;
-            }
-            PackageRepository = new FolderRepository(WrapsDirectoryPath);
-        }
-        [Required]
-        public string ProjectFilePath { get; set; }
-
-        public InitializeVisualStudioIntegration()
-        {
-        }
         public override bool Execute()
-        {
-            ResharperLogger.Debug("Initialize called on " + ProjectFilePath);
-            //Debugger.Launch();
-            EnsureWrapRepositoryIsInitialized();
-            
+        {   
             if (!EnableVisualStudioIntegration) return true;
             try
             {
-                SolutionAddInEnabler.Initialize();
-                ResharperHook.TryRegisterResharper(Environment, WrapDescriptorPath, PackageRepository);
+                var message = SolutionAddInEnabler.Initialize();
+                if (message != null) Log.LogMessage(MessageImportance.Low, message);
             }
             catch(Exception e)
             {

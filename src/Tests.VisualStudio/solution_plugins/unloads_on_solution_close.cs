@@ -18,7 +18,8 @@ namespace Tests.VisualStudio.solution_plugins
             given_vs_action(
                 dte => dte.Solution.SaveAll(true),
                 dte => dte.Windows.Output("OpenWrap").WaitForMessage(StartSolutionPlugin.SOLUTION_PLUGINS_STARTED),
-                dte => dte.Solution.Close(CloseOptions.Wait));
+                dte => dte.Solution.Close(CloseOptions.Wait),
+                dte => dte.Windows.Output("OpenWrap").WaitForMessage(StartSolutionPlugin.SOLUTION_PLUGIN_UNLOADED));
 
             when_executing_vs2010();
         }

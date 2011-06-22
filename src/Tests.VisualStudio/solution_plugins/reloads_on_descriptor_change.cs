@@ -8,9 +8,9 @@ using Tests.VisualStudio.contexts;
 
 namespace Tests.VisualStudio.solution_addin
 {
-    public class solution_plugin_reloads_on_descriptor_change : visual_studio
+    public class reloads_on_descriptor_change : visual_studio
     {
-        public solution_plugin_reloads_on_descriptor_change()
+        public reloads_on_descriptor_change()
         {
             given_solution_addin_com_reg();
             given_solution_file("mySolution.sln", true);

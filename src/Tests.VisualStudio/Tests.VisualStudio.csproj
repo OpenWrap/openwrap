@@ -66,7 +66,7 @@
     <Compile Include="resharper\resharper_detects_existing_openwrap_assemblies.cs" />
     <Compile Include="resharper\resharper_plugin_manager_loads.cs" />
     <Compile Include="solution_addin\loads_add_in_on_already_configured_solution.cs" />
-    <Compile Include="solution_plugins\solution_plugin_reloads_on_descriptor_change.cs" />
+    <Compile Include="solution_plugins\reloads_on_descriptor_change.cs" />
     <Compile Include="solution_plugins\unloads_on_solution_close.cs" />
     <Compile Include="solution_plugins\loads_with_vs.cs" />
     <Compile Include="v2010\can_create_and_build_new_solution.cs" />

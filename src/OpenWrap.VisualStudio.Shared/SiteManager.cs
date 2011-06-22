@@ -41,13 +41,10 @@ namespace OpenWrap.VisualStudio
         // --------------------------------------------------------------------------------------------
         static SiteManager()
         {
-            foreach (string moniker in VSMonikers)
-            {
-                TryToGetServiceProviderFromCurrentProcess(moniker);
-                if (HasGlobalServiceProvider) return;
-            }
+            
         }
 
+        static readonly object _syncLock = new object();
         #endregion
 
         #region Public members
@@ -82,11 +79,20 @@ namespace OpenWrap.VisualStudio
             where SInterface : class
         {
             if (!HasGlobalServiceProvider)
-                throw new InvalidOperationException("The framework has not been sited!");
-            var ti = GlobalServiceProvider.GetService(typeof(SInterface)) as TInterface;
-            if (ti == null)
-                throw new NotSupportedException(typeof(SInterface).FullName);
-            return ti;
+            {
+                lock(_syncLock)
+                {
+                    if (!HasGlobalServiceProvider)
+                    {
+                        foreach (string moniker in VSMonikers)
+                        {
+                            TryToGetServiceProviderFromCurrentProcess(moniker);
+                        }
+                        if (!HasGlobalServiceProvider) return null;// try later
+                    }
+                }
+            }
+            return GlobalServiceProvider.GetService(typeof(SInterface)) as TInterface;
         }
 
         // --------------------------------------------------------------------------------------------

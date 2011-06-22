@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddInInstaller.cs" />
+    <Compile Include="DteGuard.cs" />
     <Compile Include="OutputWindowCommandOutputFormatter.cs" />
     <Compile Include="PerUserComComponentInstaller.cs" />
     <Compile Include="ProjectModel\DteProject.cs" />
