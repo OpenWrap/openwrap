@@ -23,11 +23,15 @@ namespace OpenWrap.Build.PackageBuilders
             Profile = new List<string>();
             Platform = new List<string>();
             Project = new List<string>();
+            Configuration = new List<string>();
         }
+
+        protected ILookup<string, string> Properties { get; set; }
 
         public IEnumerable<string> Platform { get; set; }
         public IEnumerable<string> Profile { get; set; }
         public IEnumerable<string> Project { get; set; }
+        public IEnumerable<string> Configuration { get; set; }
 
         protected override string ExecutablePath
         {
@@ -123,6 +127,10 @@ namespace OpenWrap.Build.PackageBuilders
                     writer.WriteLine("/p:TargetFrameworkVersion=" + msbuildVersioning.Version);
                     writer.WriteLine("/p:TargetFrameworkIdentifier=" + msbuildVersioning.Identifier);
                     writer.WriteLine("/p:TargetFrameworkProfile=" + msbuildVersioning.Profile);
+                }
+                if (Configuration.Any())
+                {
+                    writer.WriteLine("/p:Configuration=" + Configuration.Last());
                 }
                 if (Debugger.IsAttached)
                     writer.WriteLine("/p:OpenWrap-StartDebug=true");

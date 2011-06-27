@@ -26,13 +26,18 @@ namespace OpenWrap.Resharper
         ManualResetEvent _shutdownSync = new ManualResetEvent(false);
         Dictionary<string, List<string>> _assemblyMap;
         bool _shuttingDown = false;
+        OpenWrapOutput _output;
 
         public ProjectReferenceUpdater(resharper::JetBrains.ProjectModel.ISolution solution)
         {
             _solution = solution;
-            OpenWrapOutput.Write("Solution opened " + solution.Name);
+            _output = new OpenWrapOutput();
+
+            _output.Write("Solution opened " + solution.Name);
             _thread = new System.Threading.Thread(LoadAssemblies)
                 {Name = "OpenWrap assembly change listener" };
+
+            
            
         }
 
@@ -100,6 +105,7 @@ namespace OpenWrap.Resharper
         public void Init()
         {
             _thread.Start();
+            RegisterChangeMonitor();
         }
 
         public void Dispose()
@@ -116,6 +122,78 @@ namespace OpenWrap.Resharper
             _shuttingDown = true;
             _shutdownSync.Set();
             _thread.Join();
+        }
+
+        void RegisterChangeMonitor()
+        {
+            resharper::JetBrains.Application.ChangeManager.Instance.Changed += HandleChanges;
+        }
+
+        void HandleChanges(object sender, resharper::JetBrains.Application.ChangeEventArgs changeeventargs)
+        {
+            var solutionChanges = changeeventargs.ChangeMap.GetChange(_solution) as resharper::JetBrains.ProjectModel.SolutionChange;
+            if (solutionChanges == null)
+            {
+                ResharperLogger.Debug("Unknown solution change");
+                return;
+            }
+            if (HasSolutionChanges(solutionChanges) ||
+                HasProjectChanges(solutionChanges))
+            {
+                ResharperLogger.Debug("Scheduled refresh of projects");
+                RefreshProjects();
+
+            }
+        }
+
+        bool HasProjectChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
+        {
+            var children = solutionChanges.GetChildren();
+            foreach (var child in children.OfType<resharper::JetBrains.ProjectModel.ProjectItemChange>())
+            {
+                if (child.IsAdded || child.IsRemoved || child.IsExternallyChanged || (child.IsSubtreeChanged && HasProjectItemChanges(child)))
+                    return true;
+            }
+            return false;
+        }
+
+        bool HasProjectItemChanges(resharper::JetBrains.ProjectModel.ProjectItemChange child)
+        {
+            var children = child.GetChildren();
+            return children.OfType<resharper::JetBrains.ProjectModel.AssemblyChange>().Any();
+        }
+
+        bool HasSolutionChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
+        {
+            return solutionChanges.IsAdded ||
+                   solutionChanges.IsRemoved ||
+                   solutionChanges.IsOpeningSolution ||
+                   solutionChanges.IsClosingSolution;
+        }
+    }
+
+    public static class Guard
+    {
+        public static void Run(Action invoke)
+        {
+            Run(invoke.Method.Name, invoke);
+
+        }
+        public static void Run(string description, Action invoke)
+        {
+
+            resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Dispatcher
+                    .Invoke(description,
+                            () => resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Execute
+                                          (description, () => invoke()));
+        }
+    }
+
+    internal static class ResharperLogger
+    {
+        public static void Debug(string text, params string[] args)
+        {
+            System.Diagnostics.Debugger.Log(0, "resharper", DateTime.Now.ToShortTimeString() + ":" + string.Format(text, args) + "\r\n");
         }
     }
 }

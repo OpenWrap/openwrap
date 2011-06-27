@@ -38,5 +38,11 @@ namespace Tests.VisualStudio.solution_addin
         {
             Output.ShouldContain(StartSolutionPlugin.SOLUTION_PLUGIN_UNLOADING);
         }
+
+        [Test]
+        public void no_errors_are_raised()
+        {
+            Output.ShouldNotContain("Exception");
+        }
     }
 }

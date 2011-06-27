@@ -37,10 +37,10 @@ namespace Tests.contexts
         }
     }
 
-    public class repository_factory<T> : http where T : IRemoteRepositoryFactory
+    public class repository_factory<T, TRepository> : http where T : IRemoteRepositoryFactory where TRepository : IPackageRepository
     {
         protected T Factory;
-        protected IPackageRepository Repository;
+        protected TRepository Repository;
 
         public repository_factory(Func<IHttpClient, T> builder)
         {
@@ -49,12 +49,12 @@ namespace Tests.contexts
 
         protected void when_building_from_token(string token)
         {
-            Repository = Factory.FromToken(token);
+            Repository = (TRepository)Factory.FromToken(token);
         }
 
         protected void when_detecting(string userInput)
         {
-            Repository = Factory.FromUserInput(userInput);
+            Repository = (TRepository)Factory.FromUserInput(userInput);
         }
     }
 }

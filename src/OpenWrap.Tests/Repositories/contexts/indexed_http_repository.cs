@@ -8,7 +8,7 @@ using Tests.contexts;
 
 namespace Tests.Repositories.contexts
 {
-    public class indexed_http_repository : repository_factory<IndexedHttpRepositoryFactory>
+    public class indexed_http_repository : repository_factory<IndexedHttpRepositoryFactory, IndexedHttpRepository>
     {
         public indexed_http_repository()
             : base(_ => new IndexedHttpRepositoryFactory(_))

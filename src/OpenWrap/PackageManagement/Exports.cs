@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using OpenWrap.Commands;
 
@@ -27,6 +28,12 @@ namespace OpenWrap.PackageManagement
         {
             string Name { get; }
             IDisposable Start();
+        }
+        public static void main()
+        {
+            Console.WriteLine(new string[0].Any());
+            Console.WriteLine(new string[0].Any(x => false));
+            Console.WriteLine(new string[0].Any(x => true));
         }
     }
 }

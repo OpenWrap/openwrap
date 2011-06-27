@@ -78,6 +78,23 @@ namespace OpenWrap.VisualStudio
             where TInterface : class
             where SInterface : class
         {
+            EnsureGlobalProviderInitialized();
+            if (!HasGlobalServiceProvider) return null;
+            try
+            {
+                return GlobalServiceProvider.GetService(typeof(SInterface)) as TInterface;
+            }
+            catch(InvalidComObjectException)
+            {
+                GlobalServiceProvider = null;
+                EnsureGlobalProviderInitialized();
+                if (!HasGlobalServiceProvider) return null;
+                return GlobalServiceProvider.GetService(typeof(SInterface)) as TInterface;
+            }
+        }
+
+        static void EnsureGlobalProviderInitialized()
+        {
             if (!HasGlobalServiceProvider)
             {
                 lock(_syncLock)
@@ -88,11 +105,10 @@ namespace OpenWrap.VisualStudio
                         {
                             TryToGetServiceProviderFromCurrentProcess(moniker);
                         }
-                        if (!HasGlobalServiceProvider) return null;// try later
+                        if (!HasGlobalServiceProvider) return;// try later
                     }
                 }
             }
-            return GlobalServiceProvider.GetService(typeof(SInterface)) as TInterface;
         }
 
         // --------------------------------------------------------------------------------------------

@@ -76,7 +76,7 @@ namespace Tests.VisualStudio.contexts
 
         public void Dispose()
         {
-            if (Dte.Solution.IsOpen) Dte.Solution.Close(CloseOptions.Save | CloseOptions.Wait);
+            if (Dte.Solution.IsOpen) Dte.Solution.Close(CloseOptions.Save);
 
             Dte.Application.Quit();
             Dte = null;

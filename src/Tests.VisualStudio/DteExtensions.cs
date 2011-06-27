@@ -12,7 +12,7 @@ namespace Tests.VisualStudio
             var save = (options & CloseOptions.Save) == CloseOptions.Save;
             var wait = (options & CloseOptions.Wait) == CloseOptions.Wait;
             sol.Close(save);
-            if (wait) WaitFor(null, () => sol.IsOpen == false);
+            if (wait) WaitFor(null, () => sol.IsOpen == false, waitFor: TimeSpan.FromSeconds(20));
         }
 
         public static bool Contains(this string source, string message, int count)

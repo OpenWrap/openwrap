@@ -19,27 +19,28 @@ namespace OpenWrap.Resharper
     {
         public const string ACTION_REANALYZE = "ErrorsView.ReanalyzeFilesWithErrors";
         public const string OUTPUT_RESHARPER_TESTS = "OpenWrap-Tests";
-        const int MAX_RETRIES = 50;
-        const int RETRY_DELAY = 2000;
         readonly DTE2 _dte;
         List<Assembly> _loadedAssemblies = new List<Assembly>();
         bool _resharperLoaded;
         resharper::JetBrains.UI.Application.PluginSupport.Plugin _selfPlugin;
         System.Threading.Thread _debugThread;
         bool runTestRunner = true;
+        OpenWrapOutput _output;
         public const string RESHARPER_TEST = "?ReSharper";
 
         public PluginManager()
         {
             _dte = (DTE2)SiteManager.GetGlobalService<DTE>();
-            OpenWrapOutput.Write("Resharper Plugin Manager loaded ({0}).", GetType().Assembly.GetName().Version);
+            _output = new OpenWrapOutput();
+            _output.Write("Resharper Plugin Manager loaded ({0}).", GetType().Assembly.GetName().Version);
 
+            
             Guard.Run("Loading plugins...", StartDetection);
         }
 
         public void Dispose()
         {
-            OpenWrapOutput.Write("Unloading Resharper Plugin Manager.");
+            _output.Write("Unloading Resharper Plugin Manager.");
             runTestRunner = false;
             _selfPlugin.Enabled = false;
             ResharperPluginManager.Instance.Plugins.Remove(_selfPlugin);
@@ -68,6 +69,7 @@ namespace OpenWrap.Resharper
         System.Threading.Thread _debugThread;
         DTE2 _dte;
         OutputWindowPane _pane;
+        OpenWrapOutput _output;
 
         public void Dispose()
         {
@@ -77,7 +79,7 @@ namespace OpenWrap.Resharper
         {
             
             _dte = (DTE2)SiteManager.GetGlobalService<DTE>();
-
+            _output = new OpenWrapOutput();
             var output = (OutputWindow)_dte.Windows.Item(Constants.vsWindowKindOutput).Object;
             _pane = output.OutputWindowPanes.Add(PluginManager.OUTPUT_RESHARPER_TESTS);
             _debugThread = new System.Threading.Thread(WaitForOutput) { Name = "OpenWrap Test Runner Thread" };
@@ -87,7 +89,7 @@ namespace OpenWrap.Resharper
 
         void WaitForOutput()
         {
-            OpenWrapOutput.Write("ReSharper test runner starting.");
+            _output.Write("ReSharper test runner starting.");
             while (runTestRunner)
             {
                 ProcessTest(_pane);
@@ -114,7 +116,7 @@ namespace OpenWrap.Resharper
             var result = typeof(ResharperTests).GetMethod(methodName).Invoke(runner, new object[0]);
 
             var msg = string.Format("!ReSharper{0}:{1}\r\n", methodName, result);
-            OpenWrapOutput.Write(msg);
+            _output.Write(msg);
             pane.OutputString(msg);
         }
 
@@ -194,12 +196,12 @@ namespace OpenWrap.Resharper
         }
     }
 
-    public static class OpenWrapOutput
+    public  class OpenWrapOutput
     {
-        static readonly DTE2 _dte;
-        static OutputWindowPane _outputWindow;
+         readonly DTE2 _dte;
+         OutputWindowPane _outputWindow;
 
-        static OpenWrapOutput()
+        public OpenWrapOutput()
         {
             try
             {
@@ -210,7 +212,7 @@ namespace OpenWrap.Resharper
             }
         }
 
-        public static void Write(string text, params object[] args)
+        public void Write(string text, params object[] args)
         {
             if (_dte == null) return;
             if (_outputWindow == null)

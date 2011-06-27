@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using OpenWrap.PackageManagement;
@@ -60,31 +61,51 @@ namespace OpenWrap.Commands.Core
             var solutionPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
                 .SelectMany(x => x);
 
-            foreach (var plugin in solutionPlugins)
-            {
-                yield return new Info("Starting plugin {0}.", plugin.Name);
+            foreach (var m in solutionPlugins.SelectMany(LoadPlugin))
+                yield return m;
 
-                Exception error = null;
-                if (!TryDo(()=> _plugins.Add(new KeyValuePair<string,IDisposable>(plugin.Name,plugin.Start())), ex => error = ex))
-                    yield return new Warning("Plugin initialization failed.\r\n" + error);
-            }
             yield return new Info(SOLUTION_PLUGINS_STARTED);
 
             _exit = new ManualResetEvent(false);
             var unloadEvent = AppDomain.CurrentDomain.GetData("openwrap.vs.events.unloading") as ManualResetEvent;
-            
-            WaitHandle.WaitAny(unloadEvent == null ? new WaitHandle[] { _exit } : new WaitHandle[]{_exit, unloadEvent});
-            yield return new Info(SOLUTION_PLUGIN_UNLOADING);
-            foreach(var plugin in _plugins)
+
+            do
             {
+                
+                var exitPoint = WaitHandle.WaitAny(unloadEvent == null ? new WaitHandle[] { _exit } : new WaitHandle[] { _exit, unloadEvent });
+                
+                if (exitPoint == 1) break;
+                var newPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
+                    .SelectMany(x => x).ToList();
+                if (solutionPlugins.Any(x => newPlugins.Contains(x) == false)) break;
+                unloadEvent.Reset();
+                foreach (var m in newPlugins.Where(x => solutionPlugins.Contains(x) == false).SelectMany(LoadPlugin))
+                    yield return m;
+            } while (true);
+            yield return new Info(SOLUTION_PLUGIN_UNLOADING);
+            
+            foreach (var m in _plugins.SelectMany(UnloadPlugin)) yield return m;
+
+            _plugins.Clear();
+            yield return new Info(SOLUTION_PLUGIN_UNLOADED);
+            CommitSuicide();
+        }
+        
+        IEnumerable<ICommandOutput> UnloadPlugin(KeyValuePair<string,IDisposable> plugin)
+        {
                 yield return new Info("Stopping plugin {0}.", plugin.Key);
                 Exception error = null;
                 if (!TryDo(() => plugin.Value.Dispose(), ex => error = ex))
                     yield return new Warning("An error occured while unloading plugin.\r\n" + error);
-            }
-            _plugins.Clear();
-            yield return new Info(SOLUTION_PLUGIN_UNLOADED);
-            CommitSuicide();
+            
+        }
+        IEnumerable<ICommandOutput> LoadPlugin(Exports.ISolutionPlugin plugin)
+        {
+            yield return new Info("Starting plugin {0}.", plugin.Name);
+
+            Exception error = null;
+            if (!TryDo(()=> _plugins.Add(new KeyValuePair<string,IDisposable>(plugin.Name,plugin.Start())), ex => error = ex))
+                yield return new Warning("Plugin initialization failed.\r\n" + error);
         }
 
         public void Dispose()
@@ -97,7 +118,8 @@ namespace OpenWrap.Commands.Core
             if (!AppDomain.CurrentDomain.IsFinalizingForUnload())
                 AppDomain.Unload(AppDomain.CurrentDomain);
         }
-        bool TryDo(Action action, Action<Exception> onError)
+
+        static bool TryDo(Action action, Action<Exception> onError)
         {
             bool success = false;
             Exception error = null;

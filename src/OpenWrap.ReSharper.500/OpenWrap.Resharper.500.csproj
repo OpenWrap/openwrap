@@ -107,13 +107,7 @@
     <Compile Include="..\OpenWrap.ReSharper.450\ProjectReferenceUpdater.cs">
       <Link>ProjectReferenceUpdater.cs</Link>
     </Compile>
-    <Compile Include="..\OpenWrap.Resharper.450\ResharperIntegrationService.cs">
-      <Link>ResharperIntegrationService.cs</Link>
-    </Compile>
-    <Compile Include="..\OpenWrap.Resharper.450\ResharperProjectUpdater.cs">
-      <Link>ResharperProjectUpdater.cs</Link>
-    </Compile>
-    <Compile Include="..\OpenWrap.Resharper.450\SiteManager.cs">
+    <Compile Include="..\OpenWrap.VisualStudio.Shared\SiteManager.cs">
       <Link>SiteManager.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

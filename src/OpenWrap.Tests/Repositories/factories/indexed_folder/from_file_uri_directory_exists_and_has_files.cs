@@ -4,12 +4,12 @@ using Tests.Repositories.contexts;
 
 namespace Tests.Repositories.factories.indexed_folder
 {
-    public class from_user_file_not_index : indexed_folder_repository
+    public class from_file_uri_directory_exists_and_has_files : indexed_folder_repository
     {
-        public from_user_file_not_index()
+        public from_file_uri_directory_exists_and_has_files()
         {
-            given_file(@"c:\middle-earth\somewhere.txt", "test content");
-            when_detecting(@"file:///c:/middle-earth/somewhere.txt");
+            given_file(@"c:\middle-earth\something.txt", "test content");
+            when_detecting(@"file:///c:/middle-earth/");
         }
 
         [Test]
@@ -23,6 +23,5 @@ namespace Tests.Repositories.factories.indexed_folder
         {
             Repository.ShouldBeNull();
         }
-
     }
 }

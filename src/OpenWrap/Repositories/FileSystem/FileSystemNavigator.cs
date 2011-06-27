@@ -59,7 +59,7 @@ namespace OpenWrap.Repositories.FileSystem
 
             var packageFile = _directory.GetFile(packageFileName);
             using (var destinationStream = packageFile.OpenWrite())
-                StreamExtensions.CopyTo(packageStream, destinationStream);
+                packageStream.CopyTo(destinationStream);
 
             var zipPackage = new CachedZipPackage(null, packageFile, null);
             IndexDocument.Document.Root.Add(

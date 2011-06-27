@@ -21,7 +21,8 @@ namespace Tests.VisualStudio.solution_addin
 
             given_command("init-wrap . -name MyProject -all");
             given_vs_action(dte => dte.Solution.SaveAll(true));
-            when_executing_vs2010();
+
+            when_executing_vs2010(true);
         }
 
         [Test]

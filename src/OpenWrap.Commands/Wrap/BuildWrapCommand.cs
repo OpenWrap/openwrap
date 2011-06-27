@@ -44,6 +44,18 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public IEnumerable<string> Flavour { get; set; }
+        [CommandInput]
+        public bool Debug
+        { 
+            get { return Configuration.EqualsNoCase("Debug"); }
+            set { Configuration = "Debug"; }
+        }
+        [CommandInput]
+        public bool Release
+        {
+            get { return Configuration.EqualsNoCase("Release"); }
+            set { Configuration = "Release"; }
+        }
 
         IEnvironment _environment;
 
@@ -298,7 +310,11 @@ namespace OpenWrap.Commands.Wrap
             {
                 var pi = builder.GetType().GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
                 if (pi != null)
-                    pi.SetValue(builder, property.ToList(), null);
+                {
+                    var existingValues = pi.GetValue(builder, null) as IEnumerable<string>;
+                    if (existingValues == null || existingValues.Count() == 0)
+                        pi.SetValue(builder, property.ToList(), null);
+                }
             }
             return builder;
         }
@@ -307,13 +323,24 @@ namespace OpenWrap.Commands.Wrap
         {
             commandLine = commandLine.Trim();
             if (commandLine.StartsWithNoCase("msbuild"))
-                return new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser()) { Incremental = Incremental};
+            {
+                var builder = new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser())
+                {
+                    Incremental = Incremental
+                };
+                if (Configuration != null)
+                    builder.Configuration = new[] { Configuration };
+                return builder;
+            }
             if (commandLine.StartsWithNoCase("files"))
                 return new FilePackageBuilder();
             if (commandLine.StartsWithNoCase("command"))
                 return new CommandLinePackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
             return new NullPackageBuilder(_environment);
         }
+
+        [CommandInput]
+        public string Configuration { get; set; }
 
         string GetCurrentVersion()
         {

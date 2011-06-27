@@ -358,6 +358,8 @@
     <Compile Include="Repositories\contexts\remote_manager.cs" />
     <Compile Include="Repositories\contexts\indexed_http_repository.cs" />
     <Compile Include="Repositories\AtomContent.cs" />
+    <Compile Include="Repositories\factories\indexed_folder\from_file_uri_directory_exists_and_has_files.cs" />
+    <Compile Include="Repositories\factories\indexed_folder\from_indexed_folder_uri_directory_exists_and_has_files.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_token.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unc_path.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unknown_token.cs" />
