@@ -43,9 +43,8 @@ namespace OpenWrap.Preloading
             }
             else
             {
-                var proxyUriForUri = _systemProxy.GetProxy(uri);
                 if (!_systemProxy.IsBypassed(uri))
-                    finalProxySettings = new WebProxy(proxyUriForUri, false);
+                    finalProxySettings = new WebProxy(_systemProxy.GetProxy(uri), false);
 
             }
             if (finalProxySettings != null)

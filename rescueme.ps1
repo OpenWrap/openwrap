@@ -1,1 +1,0 @@
- copy scratch\bin\openwrap.build.tasks-debug-anycpu\* wraps\openwrap\build; copy scratch\bin\openwrap.commands-debug-anycpu\* wraps\openwrap\commands; copy scratch\bin\openwrap-debug-anycpu\* wraps\openwrap\bin-net35

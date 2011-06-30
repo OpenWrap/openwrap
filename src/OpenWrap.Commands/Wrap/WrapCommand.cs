@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
-using OpenWrap.Commands.Remote;
+using OpenWrap.Collections;
+using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Configuration;
+using OpenWrap.Configuration.Remotes;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
+using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -19,33 +22,94 @@ namespace OpenWrap.Commands.Wrap
         {
             Successful = true;
         }
+
         public IEnvironment HostEnvironment
         {
-            get { return Services.ServiceLocator.GetService<IEnvironment>(); }
+            get { return ServiceLocator.GetService<IEnvironment>(); }
+        }
 
-        }
-        protected IPackageManager PackageManager
+        protected IConfigurationManager ConfigurationManager
         {
-            get { return Services.ServiceLocator.GetService<IPackageManager>(); }
+            get { return ServiceLocator.GetService<IConfigurationManager>(); }
         }
-        protected IPackageResolver PackageResolver
+        protected IRemoteManager Remotes { get
         {
-            get { return Services.ServiceLocator.GetService<IPackageResolver>(); }
+            return ServiceLocator.GetService<IRemoteManager>();
+        }}
+
+        protected IFileSystem FileSystem
+        {
+            get { return ServiceLocator.GetService<IFileSystem>(); }
+        }
+
+        protected IPackageDeployer PackageDeployer
+        {
+            get { return ServiceLocator.GetService<IPackageDeployer>(); }
         }
 
         protected IPackageExporter PackageExporter
         {
-            get { return Services.ServiceLocator.GetService<IPackageExporter>(); }
+            get { return ServiceLocator.GetService<IPackageExporter>(); }
         }
-        protected IPackageDeployer PackageDeployer
+
+        protected IPackageManager PackageManager
         {
-            get { return Services.ServiceLocator.GetService<IPackageDeployer>(); }
+            get { return ServiceLocator.GetService<IPackageManager>(); }
         }
-        protected IFileSystem FileSystem
+
+        protected IPackageResolver PackageResolver
         {
-            get { return Services.ServiceLocator.GetService<IFileSystem>(); }
+            get { return ServiceLocator.GetService<IPackageResolver>(); }
         }
-        protected IConfigurationManager ConfigurationManager { get { return Services.ServiceLocator.GetService<IConfigurationManager>(); } }
+
+        protected IEnumerable<IRemoteRepositoryFactory> RemoteFactories
+        {
+            get { return ServiceLocator.GetService<IEnumerable<IRemoteRepositoryFactory>>(); }
+        }
+
+        protected bool Successful { get; private set; }
+
+        protected IDisposable ChangeMonitor(FileBased<IPackageDescriptor> descriptor)
+        {
+            bool packagesChanged = false;
+            PackageChanged change = (a, b, c, d) =>
+            {
+                packagesChanged = true;
+                return Enumerable.Empty<object>();
+            };
+            PackageUpdated update = (a, b, c, d, e) =>
+            {
+                packagesChanged = true;
+                return Enumerable.Empty<object>();
+            };
+            var listener = PackageManager.Monitor(change, change, update);
+            return new ActionOnDispose(() =>
+            {
+                listener.Dispose();
+                if (packagesChanged)
+                {
+                    if (HostEnvironment.Descriptor != descriptor.Value)
+                    {
+                        descriptor.File.Touch();
+                        HostEnvironment.DescriptorFile.Touch();
+                    }
+                    else
+                    {
+                        foreach (var file in HostEnvironment.ScopedDescriptors.Select(x => x.Value.File))
+                            file.Touch();
+                    }
+                }
+            });
+        }
+
+        protected IEnumerable<ICommandOutput> HintRemoteRepositories()
+        {
+            yield return new Info("The list of configured repositories can be seen using the 'list-remote' command. The currently configured repositories are:");
+            foreach (var m in ConfigurationManager.Load<RemoteRepositories>()
+                .OrderBy(x => x.Value.Priority)
+                .Select(x => new RemoteRepositoryData(x.Value.Priority, x.Value.Name, x.Value.PublishRepositories.Count > 0, x.Value.FetchRepository != null)))
+                yield return m;
+        }
 
         protected DependencyResolutionResult ResolveDependencies(PackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repos)
         {
@@ -59,71 +123,11 @@ namespace OpenWrap.Commands.Wrap
             return output;
         }
 
-        protected bool Successful { get; private set; }
-
-
         protected void TrySaveDescriptorFile(FileBased<IPackageDescriptor> targetDescriptor)
         {
             if (!Successful) return;
             using (var descriptorStream = targetDescriptor.File.OpenWrite())
                 new PackageDescriptorReaderWriter().Write(targetDescriptor.Value, descriptorStream);
-        }
-
-        protected IEnumerable<ICommandOutput> HintRemoteRepositories()
-        {
-            yield return new Info("The list of configured repositories can be seen using the 'list-remote' command. The currently configured repositories are:");
-            foreach(var m in ConfigurationManager.LoadRemoteRepositories()
-                    .OrderBy(x => x.Value.Priority)
-                    .Select(x => new RemoteRepositoryMessage(this, x.Key, x.Value)))
-                yield return m;
-        }
-
-        protected IPackageRepository GetRemoteRepository(string repository)
-        {
-            Uri possibleUri;
-            try
-            {
-                possibleUri = new Uri(repository, UriKind.Absolute);
-            }
-            catch
-            {
-                possibleUri = null;
-            }
-            return possibleUri != null
-                           ? new RemoteRepositoryBuilder(FileSystem, ConfigurationManager).BuildPackageRepositoryForUri(repository, possibleUri)
-                           : HostEnvironment.RemoteRepositories.FirstOrDefault(x => x.Name.EqualsNoCase(repository));
-        }
-        protected IDisposable ChangeMonitor(FileBased<IPackageDescriptor> descriptor)
-        {
-                bool packagesChanged = false;
-                PackageChanged change = (a, b, c, d) =>
-                {
-                    packagesChanged = true;
-                    return Enumerable.Empty<object>();
-                };
-                PackageUpdated update = (a, b, c, d, e) =>
-                {
-                    packagesChanged = true;
-                    return Enumerable.Empty<object>();
-                };
-                var listener = PackageManager.Monitor(change, change, update);
-                return new ActionOnDispose(()=>
-                {
-                    listener.Dispose();
-                    if (packagesChanged)
-                    {
-                        if (HostEnvironment.Descriptor != descriptor.Value)
-                        {
-                            descriptor.File.Touch();
-                            HostEnvironment.DescriptorFile.Touch();
-                        }
-                        else
-                        {
-                            foreach (var file in HostEnvironment.ScopedDescriptors.Select(x => x.Value.File))
-                                file.Touch();
-                        }
-                    }
-                });
         }
     }
 }

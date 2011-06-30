@@ -7,7 +7,7 @@ namespace OpenWrap.Configuration.Persistence
     public class ConfigurationParser
     {
         static readonly Regex _configurationLineRegex = new Regex(@"^\s*(?<name>[^\s:]+)\s*:\s*(?<value>.*?)\s*$");
-        static readonly Regex _configurationSectionRegex = new Regex(@"^\s*\[(?<type>\w+?)(\s+(?<name>\S+)\s*)?]\s*$");
+        static readonly Regex _configurationSectionRegex = new Regex(@"^\s*\[(?<type>\w+?)(\s+(?<name>.+)\s*)?]\s*$");
 
         public IEnumerable<ConfigurationEntry> Parse(string data)
         {
@@ -21,8 +21,8 @@ namespace OpenWrap.Configuration.Persistence
                         yield return currentSection;
                     currentSection = new ConfigurationSection
                     {
-                            Type = sectionMatch.Groups["type"].Value,
-                            Name = sectionMatch.Groups["name"].Success ? sectionMatch.Groups["name"].Value : string.Empty
+                        Type = sectionMatch.Groups["type"].Value,
+                        Name = sectionMatch.Groups["name"].Success ? sectionMatch.Groups["name"].Value : string.Empty
                     };
                     continue;
                 }
@@ -31,8 +31,8 @@ namespace OpenWrap.Configuration.Persistence
                 {
                     var configLine = new ConfigurationLine
                     {
-                            Name = lineMatch.Groups["name"].Value,
-                            Value = lineMatch.Groups["value"].Value
+                        Name = lineMatch.Groups["name"].Value,
+                        Value = lineMatch.Groups["value"].Value
                     };
                     if (currentSection != null)
                         currentSection.Lines.Add(configLine);

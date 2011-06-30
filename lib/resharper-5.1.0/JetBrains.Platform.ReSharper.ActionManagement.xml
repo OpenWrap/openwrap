@@ -1,0 +1,215 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JetBrains.Platform.ReSharper.ActionManagement</name>
+    </assembly>
+    <members>
+        <member name="T:JetBrains.ActionManagement.ShellComponentsEx">
+            <summary>
+            <see cref="T:JetBrains.Application.ShellComponents"/> in this assembly.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.TryGetAction(System.String)">
+            <summary>
+            Get an action by its ID. Returns <c>Null</c> if missing.
+            Use <see cref="M:JetBrains.ActionManagement.ActionManager.GetExecutableAction(System.String)"/>, <see cref="M:JetBrains.ActionManagement.ActionManager.GetUpdatableAction(System.String)"/>, <see cref="M:JetBrains.ActionManagement.ActionManager.GetActionGroup(System.String)"/> wherever possible because they validate the action ID and assert that the action is of the required type with explicit error messages.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.GetUpdatableAction(System.String)">
+            <summary>
+            Gets an updatable action by its unique ID. Fails if there is no such action or it is not updatable.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.GetExecutableAction(System.String)">
+            <summary>
+            Gets an executable action by its unique ID. Fails if there is no such action or it is not executable.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.GetActionGroup(System.String)">
+            <summary>
+            Gets an action group by its unique ID. Fails if there is no such action ID or it is not an action group.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.ExecuteActionUnsafe(JetBrains.ActionManagement.IExecutableAction)">
+            <summary>
+            Call the method if and only if you're absolutely sure the action is available. Better call <see cref="M:JetBrains.ActionManagement.ActionManager.ExecuteActionIfAvailable(JetBrains.ActionManagement.IExecutableAction)"/> instead.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.ExecuteActionIfAvailable(JetBrains.ActionManagement.IExecutableAction)">
+            <summary>
+            <para>Calls <see cref="M:JetBrains.ActionManagement.ActionManager.UpdateAction(JetBrains.ActionManagement.IUpdatableAction)"/> on the action and, if the action is available, executes it.</para>
+            <para>It's an error if the action does not exist or is not executable.</para>
+            <para>It's not an error if the action is unavailable (<c>False</c> is returned in such a case).</para>
+            </summary>
+            <param name="action">Action to execute.</param>
+            <returns>Whether the action was available (= was executed).</returns>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.ExecuteShortcut(System.Windows.Forms.Keys,System.Boolean)">
+            <summary>
+            Attempts to execute the keyboard shortcut.
+            Composite keyboard shortcuts, eg “Ctrl+K,F”, should be executed twice, once for each of the components.
+            </summary>
+            <param name="shortcut">The keyboard shortcut to execute. May be a part of a composite shortcut.</param>
+            <param name="bIncludeHostActions">In a standalone configuration, has no meaning. In an embedded configurations, includes the host actions in the search list together with own actions managed by the action-manager.</param>
+            <returns>Whether the action has been executed.</returns>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.GetActivityIdByActionId(System.String)">
+            <summary>
+            Converts ActionId into identifier used through VS
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionManager.GetLocationInMainMenu(JetBrains.ActionManagement.IExecutableAction)">
+            <summary>
+            <para>Looks up the action in the main menu. If found, returns the step-by-step path to the action, including the name of the command that represents the action.</para>
+            <para>If not found, returns <c>""</c>.</para>
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.ActionPresentation">
+            <summary>
+            Visual presentation of an Action
+            </summary>
+        </member>
+        <member name="F:JetBrains.ActionManagement.ActionPresentation.myFImageLoader">
+            <summary>
+            If delay-loading image (see <see cref="F:JetBrains.ActionManagement.ActionPresentation.myImageId"/>), the function to perform the load. Cannot reference UI to call ImageLoader :(.
+            </summary>
+        </member>
+        <member name="F:JetBrains.ActionManagement.ActionPresentation.myImage">
+            <summary>
+            A ready-for-use image. Means either <see cref="M:JetBrains.ActionManagement.ActionPresentation.SetImage(System.Drawing.Image)"/> has been called with an explicit image instance, or <see cref="M:JetBrains.ActionManagement.ActionPresentation.SetImage(System.String,System.Func{System.String,System.Reflection.Assembly[],System.Drawing.Image},System.Reflection.Assembly[])"/> with an image ID that has been loaded into an image upon someone's request.
+            </summary>
+        </member>
+        <member name="F:JetBrains.ActionManagement.ActionPresentation.myImageId">
+            <summary>
+            A delay-loaded image ID.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionPresentation.EqualsImage(JetBrains.ActionManagement.ActionPresentation)">
+            <summary>
+            Checks if images are the same (without actually calling Load).
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionPresentation.GetImage">
+            <summary>
+            Get the image of the action. Could well be <c>Null</c>.
+            If a delay-load image ID has been set with <see cref="M:JetBrains.ActionManagement.ActionPresentation.SetImage(System.String,System.Func{System.String,System.Reflection.Assembly[],System.Drawing.Image},System.Reflection.Assembly[])"/>, tries loading the image and caches the result.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionPresentation.HasLoadedImage">
+            <summary>
+            Checks if we already have an image (set with <see cref="M:JetBrains.ActionManagement.ActionPresentation.SetImage(System.Drawing.Image)"/> explicitly, or already delay-loaded by <see cref="M:JetBrains.ActionManagement.ActionPresentation.GetImage"/> from an ID given to <see cref="M:JetBrains.ActionManagement.ActionPresentation.SetImage(System.String,System.Func{System.String,System.Reflection.Assembly[],System.Drawing.Image},System.Reflection.Assembly[])"/>). Does not load anything on its own.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionPresentation.SetImage(System.String,System.Func{System.String,System.Reflection.Assembly[],System.Drawing.Image},System.Reflection.Assembly[])">
+            <summary>
+            Fluent. Sets a delay-load image.
+            </summary>
+            <example><code>
+            presentation.SetImage("Warning", ImageLoader.GetImage);
+            </code></example>
+            <param name="imageid">ID of the image. Will be passed to the Image Loader. Used for equality.</param>
+            <param name="FImageLoader"><c>ImageLoader</c> (cannot call the class because it's in the UI assembly and we're lower than that). Pass <c>ImageLoader.GetImage</c> here. The result must always be non-<c>Null</c> (use image placeholder if image missing).</param>
+            <param name="assemblies">Hint assembly for looking for images in. Calling assembly by default.</param>
+            <returns>Self.</returns>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionPresentation.SetImage(System.Drawing.Image)">
+            <summary>
+            Fluent. Sets a preloaded image, or resets the image on the action.
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.IDataConstant">
+            <summary>
+            Type of data, returned by IDataContextProvider
+            </summary>
+        </member>
+        <member name="P:JetBrains.ActionManagement.IDataConstant.Id">
+            <summary>
+            Gets the unique ID of this data constant instance.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.DataConstant`1.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+            </summary>
+            
+            <returns>
+            A <see cref="T:System.String"></see> that represents the current <see cref="T:System.Object"></see>.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="T:JetBrains.ActionManagement.DataRule">
+            <summary>
+            Rule for data contstant generation. 
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.IDataContext">
+            <summary>
+            The context, passed to Action.
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.IDataProvider">
+            <summary>
+            The control, that implements this interface returns typed data used by Action.
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.IActionBase">
+            <summary>
+            Base for all actions. Has no implementation.
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.ISeparator">
+            <summary>
+            Separator. The Action manager handles its appearance according to the 
+            presentation of surrounding actions.
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.IUpdatableAction">
+            <summary>
+            Action which presentation can be updated.
+            </summary>    
+        </member>
+        <member name="T:JetBrains.ActionManagement.IActionGroup">
+            <summary>
+            Group of actions.
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.IExecutableAction">
+            <summary>
+            Action that can be executed.
+            </summary>
+        </member>
+        <member name="P:JetBrains.ActionManagement.IExecutableAction.ShowConflict">
+            <summary>
+            Option whether to show shortcut conflict dialog or not.
+            Default value is true
+            </summary>
+        </member>
+        <member name="T:JetBrains.ActionManagement.IActionWithGroup">
+            <summary>
+            Action with group (i.e. 'NavigateBackwards' or 'Undo' in visual studio).
+            In menu represented as simple menu item, in toolbar - as toolbar button with drop-down menu.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ActionManagement.IActionHandler.Update(JetBrains.ActionManagement.IDataContext,JetBrains.ActionManagement.ActionPresentation,JetBrains.ActionManagement.DelegateUpdate)">
+            <summary>
+            Updates action visual presentation. If presentation.Enabled is set to false, Execute
+            will not be called.
+            </summary>
+            <param name="context">DataContext</param>
+            <param name="presentation">presentation to update</param>
+            <param name="nextUpdate">delegate to call</param>
+        </member>
+        <member name="M:JetBrains.ActionManagement.IActionHandler.Execute(JetBrains.ActionManagement.IDataContext,JetBrains.ActionManagement.DelegateExecute)">
+            <summary>
+            Executes action. Called after Update, that set ActionPresentation.Enabled to true.
+            </summary>
+            <param name="context">DataContext</param>
+            <param name="nextExecute">delegate to call</param>
+        </member>
+        <member name="M:JetBrains.ActionManagement.ActionShortcut.ToString">
+            <summary>
+            ToString must provide a human-readable string for the shortcut.
+            </summary>
+        </member>
+    </members>
+</doc>

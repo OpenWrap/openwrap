@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Mono.Cecil;
-using OpenWrap.Collections;
 using OpenWrap.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;

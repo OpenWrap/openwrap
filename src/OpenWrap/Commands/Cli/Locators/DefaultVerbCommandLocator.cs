@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using OpenWrap.Collections;
 
 namespace OpenWrap.Commands.Cli.Locators
@@ -22,9 +20,9 @@ namespace OpenWrap.Commands.Cli.Locators
             if (string.IsNullOrEmpty(firstToken)) return null;
 
             var noun = firstToken.SelectHumps(_commandRepository.Nouns).OneOrDefault();
-            return noun == null 
-                ? null
-                : _commandRepository.Distinct(CommandDescriptorComparer.VerbNoun).Where(x => x != null && x.Noun.EqualsNoCase(noun) && x.IsDefault).OneOrDefault();
+            return noun == null
+                       ? null
+                       : _commandRepository.Distinct(CommandDescriptorComparer.VerbNoun).Where(x => x != null && x.Noun.EqualsNoCase(noun) && x.IsDefault).OneOrDefault();
         }
     }
 }

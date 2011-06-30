@@ -9,7 +9,7 @@ namespace OpenWrap.Commands
         string Description { get; }
 
         IDictionary<string, ICommandInputDescriptor> Inputs { get; }
-        bool Visible { get;  }
+        bool Visible { get; }
         bool IsDefault { get; set; }
 
         ICommand Create();

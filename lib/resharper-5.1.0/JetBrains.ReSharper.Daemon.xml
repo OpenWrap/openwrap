@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JetBrains.ReSharper.Daemon</name>
+    </assembly>
+    <members>
+        <member name="M:JetBrains.ReSharper.Daemon.DaemonUtil.HasNecessarySeverity(JetBrains.ReSharper.Daemon.Severity,System.Collections.Generic.IEnumerable{System.Type})">
+            <summary>
+            Check if any of the given highlighting list has severity equals or higher than <paramref name="severity"/>
+            </summary>
+        </member>
+        <member name="T:JetBrains.ReSharper.Daemon.Stages.IgnoreWarningsRegionsInfo">
+            <summary>
+            Info about regions where to ignore warnings or errors
+            </summary>
+        </member>
+        <member name="T:JetBrains.ReSharper.Daemon.Stages.GlobalFileStructureCollectorStage">
+            <summary>
+            Marker stage to order all of file structure collector stages. All of them must precede this one.
+            </summary>
+        </member>
+        <member name="T:JetBrains.ReSharper.Daemon.Stages.IgnoreWarningsRegionsTreeInfo">
+            <summary>
+            Info about regions where to ignore warnings or errors
+            </summary>
+        </member>
+        <member name="T:JetBrains.ReSharper.Daemon.ILanguageSpecificDaemonBehavior">
+            <summary>
+            Language-specific implementation which defines some daemon behavour aspects
+            </summary>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.ILanguageSpecificDaemonBehavior.InitialErrorStripe(JetBrains.ProjectModel.IProjectFile)">
+            <summary>
+            Get the error stripe visibility before analysis starts.
+            Should not commit PSI!
+            </summary>
+        </member>
+        <member name="P:JetBrains.ReSharper.Daemon.ILanguageSpecificDaemonBehavior.CanShowErrorBox">
+            <summary>
+            Check if this language can show error box
+            </summary>
+        </member>
+        <member name="F:JetBrains.ReSharper.Daemon.Impl.ChangeSeverityDialog.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.Impl.ChangeSeverityDialog.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.Impl.ChangeSeverityDialog.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.Impl.DaemonProcessBase.HighlightingOverlapResolver.Compare(JetBrains.ReSharper.Daemon.HighlightingInfo,JetBrains.ReSharper.Daemon.HighlightingInfo)">
+            <summary>
+            Compare highlightings.
+            </summary>
+            <returns>0 if both should be present. -1 if <paramref name="iInfo"/> should be removed, +1 if <paramref name="jInfo"/> should be removed</returns>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.Impl.DaemonProcessBase.HighlightingOverlapResolver.Resolve(System.Collections.Generic.ICollection{JetBrains.ReSharper.Daemon.HighlightingInfo},System.Boolean,JetBrains.Util.TextRange)">
+            <summary>
+            Resolve overlapping highlighters. Receives new highlighters in given range (either full document, if <paramref name="fullRehighlight"/> is <c>true</c>, 
+            and returns infos to be added and infos to be deleted
+            </summary>
+        </member>
+        <member name="T:JetBrains.ReSharper.Daemon.Impl.SolutionAnalysisService">
+            <summary>
+            Interface which is used by daemon to interact with SWEA
+            </summary>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.Impl.VisibleDocumentDaemonProcess.Commiter.DaemonResultCommiter.Step">
+            <summary>
+            Returns <c>true</c> when this commiter is done
+            </summary>
+        </member>
+        <member name="T:JetBrains.ReSharper.Daemon.Impl.StatusBarMessenger">
+            <summary>
+            When a caret is placed over a highlighter (error/warning etc), advertises its text in the status bar.
+            This way you can see the text of the error under caret without using mouse.
+            </summary>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.Impl.StatusBarMessenger.UpdateMessage">
+            <summary>
+            Applies a new message to the status bar based on the current text control caret position.
+            </summary>
+        </member>
+        <member name="F:JetBrains.ReSharper.Daemon.UsageChecking.UsageState.MUTABLE_FIELD_ACCESS_IN_MEMBER">
+            <summary>
+            This flag is used to determine if the field could not be declared readonly
+            <list type="bullet">
+            <item>For instance fields, it indicates that it is assigned in instance members</item>
+            <item>For static fileds, it indicates that it is assigned in any member except of static ctor</item>
+            <item>For fields of non-predefined value type, no methods are invoked in members</item>
+            </list>
+            </summary>
+        </member>
+        <member name="F:JetBrains.ReSharper.Daemon.UsageChecking.LocalMembersUsageFilter.myReferenceNames">
+            <summary>
+            Set of suspicious reference names which should be resolved to check usages
+            </summary>
+        </member>
+        <member name="F:JetBrains.ReSharper.Daemon.UsageChecking.LocalMembersUsageFilter.myMembers">
+            <summary>
+            Set of declared elements declared in this file. Only their usages should be checked
+            </summary>
+        </member>
+    </members>
+</doc>

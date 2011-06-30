@@ -18,8 +18,8 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         {
             return string.Format(MESSAGE,
                                  Result.Package.Identifier.Name,
-                                 Result.Package.Packages.Select(x => x.Version.ToString()).Join(", "),
-                                 Result.Package.DependencyStacks.Select(x => "\t" + x.ToString()).Join(System.Environment.NewLine));
+                                 Result.Package.Packages.Select(x => x.Version.ToString()).JoinString(", "),
+                                 Result.Package.DependencyStacks.Select(x => "\t" + x.ToString()).JoinString(System.Environment.NewLine));
         }
     }
 }

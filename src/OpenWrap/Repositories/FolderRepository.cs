@@ -9,12 +9,13 @@ using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
+
 namespace OpenWrap.Repositories
 {
     /// <summary>
     ///   Provides a repository that can read packages from a directory using the default structure.
     /// </summary>
-    public class FolderRepository : ISupportCleaning, ISupportPublishing, ISupportAnchoring
+    public class FolderRepository : ISupportCleaning, ISupportPublishing, ISupportAnchoring, IPackageRepository
     {
         readonly bool _anchoringEnabled;
         readonly IDirectory _rootCacheDirectory;
@@ -35,6 +36,16 @@ namespace OpenWrap.Repositories
 
         public IDirectory BasePath { get; set; }
         public string Name { get; set; }
+        public string Type { get { return "Folder"; } }
+        public string Token
+        {
+            get { return "[folder]" + BasePath.Path.FullPath; }
+        }
+
+        public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
+        {
+            return this as TFeature;
+        }
 
         public ILookup<string, IPackageInfo> PackagesByName
         {
@@ -73,7 +84,7 @@ namespace OpenWrap.Repositories
                 if (package.Source != this)
                     continue;
                 if (package.Load() == null)
-                    yield return new PackageAnchoredResult(package.Source as ISupportAnchoring, package, false);
+                    yield return new PackageAnchoredResult(package.Source, package, false);
 
                 var success = anchorageStrategy.Anchor(BasePath, Packages.First(x => x.Package == package).CacheDirectory, package.Name);
                 if (success != null)

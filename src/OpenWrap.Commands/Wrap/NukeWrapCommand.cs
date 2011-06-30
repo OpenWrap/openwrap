@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.Commands.Errors;
@@ -21,14 +20,15 @@ namespace OpenWrap.Commands.Wrap
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            IPackageRepository repo = GetRemoteRepository(Remote);
+            // TODO: HACK HACK HACK
+            IPackageRepository repo = Remotes.PublishRepositories(Remote).SelectMany(_=>_).FirstOrDefault();
             if (repo == null)
             {
-                yield return new UnknownRemoteRepository(Remote);
+                yield return new UnknownRemoteName(Remote);
                 foreach (var m in HintRemoteRepositories()) yield return m;
                 yield break;
             }
-            var nukingRepo = repo as ISupportNuking;
+            var nukingRepo = repo.Feature<ISupportNuking>();
             if (nukingRepo == null)
             {
                 yield return new Error("The remote repository {0} does not support nuking.", Remote);
@@ -58,7 +58,7 @@ namespace OpenWrap.Commands.Wrap
 
             nukingRepo.Nuke(packageToNuke);
 
-            yield return new GenericMessage("{0} {1} was successfully nuked from the remote repository {2}.",
+            yield return new Info("{0} {1} was successfully nuked from the remote repository {2}.",
                                             Name,
                                             Version,
                                             Remote);

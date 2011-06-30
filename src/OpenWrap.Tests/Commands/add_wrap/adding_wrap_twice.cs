@@ -1,19 +1,19 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
-    class adding_wrap_twice : command_context<AddWrapCommand>
+    class adding_wrap_twice : command<AddWrapCommand>
     {
         public adding_wrap_twice()
         {
             given_dependency("depends: sauron");
             given_project_package("sauron", "1.0.0.0");
 
-            when_executing_command("sauron", "-content");
+            when_executing_command("sauron -content");
         }
 
         [Test]

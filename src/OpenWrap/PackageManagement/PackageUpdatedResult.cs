@@ -6,7 +6,7 @@ namespace OpenWrap.PackageManagement
 {
     public class PackageUpdatedResult : PackageAddedResult
     {
-        public PackageUpdatedResult(IPackageInfo previousPackage, IPackageInfo package, ISupportPublishing repository)
+        public PackageUpdatedResult(IPackageInfo previousPackage, IPackageInfo package, IPackageRepository repository)
                 : base(package, repository)
         {
             PreviousPackage = previousPackage;

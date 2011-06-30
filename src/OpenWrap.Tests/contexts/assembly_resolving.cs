@@ -5,7 +5,6 @@ using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenFileSystem.IO.FileSystems.Local;
-using OpenWrap.Commands.contexts;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
@@ -13,10 +12,11 @@ using OpenWrap.PackageManagement.Exporters.Assemblies;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
+using Tests.Commands.contexts;
 
 namespace Tests.contexts
 {
-    public abstract class assembly_resolving : command
+    public abstract class assembly_resolving : openwrap_context
     {
         protected IEnumerable<Exports.IAssembly> AssemblyReferences;
         ITemporaryDirectory TempDirectory;

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.clean_wrap
 {
-    class cleaning_across_two_scopes : command_context<CleanWrapCommand>
+    class cleaning_across_two_scopes : command<CleanWrapCommand>
     {
         public cleaning_across_two_scopes()
         {

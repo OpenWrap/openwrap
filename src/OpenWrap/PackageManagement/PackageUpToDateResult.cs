@@ -8,9 +8,9 @@ namespace OpenWrap.PackageManagement
     internal class PackageUpToDateResult : PackageOperationResult
     {
         readonly IPackageInfo _existingUpToDateVersion;
-        readonly ISupportPublishing _repository;
+        readonly IPackageRepository _repository;
 
-        public PackageUpToDateResult(IPackageInfo existingUpToDateVersion, ISupportPublishing repository)
+        public PackageUpToDateResult(IPackageInfo existingUpToDateVersion, IPackageRepository repository)
         {
             _existingUpToDateVersion = existingUpToDateVersion;
             _repository = repository;

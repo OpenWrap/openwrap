@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using OpenRasta.Client.IO;
 
@@ -7,36 +9,57 @@ namespace OpenRasta.Client
 {
     public class HttpWebRequestBasedRequest : IClientRequest
     {
-        readonly HttpWebRequest _request;
-        readonly HttpEntity _entity;
         readonly MemoryStream _emptyStream;
+        readonly HttpEntity _entity;
+        readonly List<KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>> _handlers = new List<KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>>();
+        readonly HttpWebRequest _request;
+        readonly Uri _requestUri;
+        NetworkCredential _explicitCredentials;
 
-        public HttpWebRequestBasedRequest(Uri requestUri) : this()
+
+        public HttpWebRequestBasedRequest(Uri requestUri, WebProxy proxy)
         {
-            _request = (HttpWebRequest)WebRequest.Create(requestUri);
-        }
-
-        public HttpWebRequestBasedRequest(Uri requestUri, string username, string password)
-            : this()
-        {
-            var cc = new CredentialCache
-            {
-                    { requestUri, "Digest", new NetworkCredential(username, password) }
-            };
-
-            _request = (HttpWebRequest)WebRequest.Create(requestUri);
-            _request.Credentials = cc;
-        }
-
-        private HttpWebRequestBasedRequest()
-        {
+            _requestUri = requestUri;
             _emptyStream = new MemoryStream();
             _entity = new HttpEntity(_emptyStream);
+            _request = (HttpWebRequest)WebRequest.Create(requestUri);
+            if (proxy != null) _request.Proxy = proxy;
         }
 
-        public event EventHandler<StatusChangedEventArgs> StatusChanged;
         public event EventHandler<ProgressEventArgs> Progress;
+        public event EventHandler<StatusChangedEventArgs> StatusChanged;
 
+        public NetworkCredential Credentials
+        {
+            get { return _explicitCredentials; }
+            set
+            {
+                _explicitCredentials = value;
+                _request.Credentials = new CredentialCache { { _requestUri, "Basic", value }, { _requestUri, "Digest", value } };
+            }
+        }
+
+
+        public IEntity Entity
+        {
+            get { return _entity; }
+        }
+
+        public string Method
+        {
+            get { return _request.Method; }
+            set { _request.Method = value; }
+        }
+
+        public Uri RequestUri
+        {
+            get { return _request.RequestUri; }
+        }
+
+        public void RegisterHandler(Func<IClientResponse, bool> predicate, Action<IClientResponse> handler)
+        {
+            _handlers.Add(new KeyValuePair<Func<IClientResponse, bool>, Action<IClientResponse>>(predicate, handler));
+        }
 
         public IClientResponse Send()
         {
@@ -44,10 +67,35 @@ namespace OpenRasta.Client
             RaiseStatusChanged("Connecting to {0}", RequestUri.ToString());
             if (_entity.Stream != null &&
                 ((_entity.Stream.CanSeek && _entity.Stream.Length > 0) ||
-                _entity.Stream != _emptyStream))
+                 _entity.Stream != _emptyStream))
                 SendRequestStream();
 
-            return new HttpWebResponseBasedResponse(this, _request);
+            var response = new HttpWebResponseBasedResponse(this, _request);
+            var exceptions = new List<Exception>();
+
+            foreach (var handler in _handlers.Where(x => x.Key(response)).Select(x => x.Value))
+            {
+                try
+                {
+                    handler(response);
+                }
+                catch (Exception e)
+                {
+                    exceptions.Add(e);
+                }
+            }
+            response.HandlerErrors = exceptions;
+            return response;
+        }
+
+        protected void RaiseProgress(int progress)
+        {
+            Progress.Raise(this, new ProgressEventArgs(progress));
+        }
+
+        protected void RaiseStatusChanged(string status, params object[] args)
+        {
+            StatusChanged.Raise(this, new StatusChangedEventArgs(string.Format(status, args)));
         }
 
         void SendRequestStream()
@@ -61,32 +109,6 @@ namespace OpenRasta.Client
                 streamToWriteTo = new ProgressStream(_entity.Stream.Length, RaiseProgress, streamToWriteTo);
 
             _entity.Stream.CopyTo(streamToWriteTo);
-        }
-
-        protected void RaiseStatusChanged(string status, params object[] args)
-        {
-            StatusChanged.Raise(this, new StatusChangedEventArgs(string.Format(status, args)));
-
-        }
-        protected void RaiseProgress(int progress)
-        {
-            Progress.Raise(this, new ProgressEventArgs(progress));
-        }
-
-        public IEntity Entity
-        {
-            get { return _entity; }
-        }
-        
-        public string Method
-        {
-            get { return _request.Method; }
-            set { _request.Method = value; }
-        }
-
-        public Uri RequestUri
-        {
-            get { return _request.RequestUri; }
         }
     }
 }

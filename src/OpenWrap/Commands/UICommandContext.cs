@@ -4,7 +4,7 @@ namespace OpenWrap.Commands
 {
     public enum UICommandContext
     {
-        Global ,
+        Global,
         Solution,
         OpenWrapProject,
         StandardProject

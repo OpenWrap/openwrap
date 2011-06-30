@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E24298AF-B37B-4DCB-9F7E-1C4A85DBC821}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tests.VisualStudio</RootNamespace>
+    <AssemblyName>Tests.VisualStudio</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="envdte80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="addin_install\alread_up_to_date.cs" />
+    <Compile Include="addin_install\installing_fresh.cs" />
+    <Compile Include="addin_install\installing_two_types_from_same_assembly.cs" />
+    <Compile Include="addin_install\IOExtensions.cs" />
+    <Compile Include="addin_install\TemporaryComAddIn.cs" />
+    <Compile Include="addin_install\TemporaryComAddIn2.cs" />
+    <Compile Include="addin_install\upgrading.cs" />
+    <Compile Include="CloseOptions.cs" />
+    <Compile Include="contexts\addin_installer.cs" />
+    <Compile Include="contexts\VisualStudioError.cs" />
+    <Compile Include="contexts\visual_studio.cs" />
+    <Compile Include="DteExtensions.cs" />
+    <Compile Include="IOleMessageFilter.cs" />
+    <Compile Include="MessageFilter.cs" />
+    <Compile Include="resharper\resharper_detects_existing_openwrap_assemblies.cs" />
+    <Compile Include="resharper\resharper_plugin_manager_loads.cs" />
+    <Compile Include="solution_addin\loads_add_in_on_already_configured_solution.cs" />
+    <Compile Include="solution_plugins\reloads_on_descriptor_change.cs" />
+    <Compile Include="solution_plugins\unloads_on_solution_close.cs" />
+    <Compile Include="solution_plugins\loads_with_vs.cs" />
+    <Compile Include="v2010\can_create_and_build_new_solution.cs" />
+    <Compile Include="Artifacts\VsFiles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VsFiles.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="solution_addin\adds_vs_addin_on_first_launch.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
+      <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
+      <Name>OpenRasta.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Build.Bootstrap\OpenWrap.Build.Bootstrap.csproj">
+      <Project>{DFF6974F-5148-4B2C-8D76-190C3D92D9FF}</Project>
+      <Name>OpenWrap.Build.Bootstrap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj">
+      <Project>{AAEFFF67-5AA4-41A0-84CF-050B59EC7EBA}</Project>
+      <Name>OpenWrap.Build.Tasks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Commands\OpenWrap.Commands.csproj">
+      <Project>{9A57F4E3-A3C0-4AFF-BE34-A2F4FC038FF5}</Project>
+      <Name>OpenWrap.Commands</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.450\OpenWrap.Resharper.450.csproj">
+      <Project>{05F146AE-9315-44B7-AF52-9B5925C90E27}</Project>
+      <Name>OpenWrap.Resharper.450</Name>
+      <Aliases>resharper450</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.500\OpenWrap.Resharper.500.csproj">
+      <Project>{F8FB3BBD-58F0-4944-B5B2-899C29EBD9C6}</Project>
+      <Name>OpenWrap.Resharper.500</Name>
+      <Aliases>resharper500</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.510\OpenWrap.Resharper.510.csproj">
+      <Project>{A9FA9F17-3DBE-4848-9044-DD734FDF554B}</Project>
+      <Name>OpenWrap.Resharper.510</Name>
+      <Aliases>resharper510</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.600\OpenWrap.Resharper.600.csproj">
+      <Project>{9673FD11-2970-4902-B018-0B799F893535}</Project>
+      <Name>OpenWrap.Resharper.600</Name>
+      <Aliases>resharper600</Aliases>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Tests\Tests.csproj">
+      <Project>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</Project>
+      <Name>Tests</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.VisualStudio.SolutionAddIn\OpenWrap.VisualStudio.SolutionAddIn.csproj">
+      <Project>{FB5A5815-E2C6-4FDB-8BA4-26192CB06ECC}</Project>
+      <Name>OpenWrap.VisualStudio.SolutionAddIn</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj">
+      <Project>{955C1309-6376-4BFE-A36B-144EFE172D8B}</Project>
+      <Name>OpenWrap.VisualStudio.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.SolutionPlugins.VisualStudio.csproj">
+      <Project>{5433F587-B9B9-42F2-A5BA-005AF1025EE2}</Project>
+      <Name>OpenWrap.SolutionPlugins.VisualStudio</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
+      <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
+      <Name>OpenWrap</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\openwrap.wrapdesc">
+      <Link>Artifacts\openwrap.wrapdesc</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Artifacts\VsFiles.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>VsFiles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\wraps\Mono.Cecil-0.9.4.1.wrap">
+      <Link>Artifacts\Mono.Cecil-0.9.4.1.wrap</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\wraps\openfilesystem-1.0.0.61263243.wrap">
+      <Link>Artifacts\openfilesystem-1.0.0.61263243.wrap</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\wraps\SharpZipLib-0.86.0.wrap">
+      <Link>Artifacts\SharpZipLib-0.86.0.wrap</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\wraps\tdnet-framework-2.0.0.48555719.wrap">
+      <Link>Artifacts\tdnet-framework-2.0.0.48555719.wrap</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\OpenWrap.Build.Tasks\OpenWrap.CSharp.targets">
+      <Link>Artifacts\OpenWrap.CSharp.targets</Link>
+    </None>
+    <None Include="..\OpenWrap.Build.Tasks\OpenWrap.tasks">
+      <Link>Artifacts\OpenWrap.tasks</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="..\..\build\common.project.properties" />
+  <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

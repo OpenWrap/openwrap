@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.project
 {
-    public class not_in_project : command_context<UpdateWrapCommand>
+    public class not_in_project: contexts.update_wrap
     {
         public not_in_project()
         {

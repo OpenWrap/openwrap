@@ -14,7 +14,7 @@ namespace Tests.Commands.add_wrap.from_path
             given_file_package("c:\\rohan", "sauron", "2.0.0");
             given_file_package("c:\\mordor", "sauron", "1.0.0");
 
-            when_executing_command("sauron", "-from", @"c:\mordor", "-version", "1.0");
+            when_executing_command(@"sauron -from c:\mordor -version 1.0");
         }
         [Test]
         public void package_is_added()

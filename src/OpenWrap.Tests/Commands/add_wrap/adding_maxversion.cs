@@ -1,18 +1,16 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
-using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
-    class adding_maxversion : add_wrap
+    class adding_maxversion : contexts.add_wrap
     {
         public adding_maxversion()
         {
             given_file_based_project_repository();
             given_system_package("sauron", "1.0.0");
             given_system_package("sauron", "2.0.0");
-            when_executing_command("sauron", "-maxversion", "2.0.0");
+            when_executing_command("sauron -maxversion 2.0.0");
         }
 
         [Test]

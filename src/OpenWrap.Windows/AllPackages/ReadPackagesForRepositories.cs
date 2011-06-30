@@ -14,7 +14,7 @@ namespace OpenWrap.Windows.AllPackages
             // todo: constructor-inject services
             IEnvironment environment = GetEnvironment();
 
-            ReadPackagesFromRepositories(environment.RemoteRepositories);
+            //ReadPackagesFromRepositories(environment.RemoteRepositories);
         }
 
         private static void ReadPackagesFromRepositories(IEnumerable<IPackageRepository> repositories)

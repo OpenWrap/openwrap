@@ -29,7 +29,7 @@ namespace OpenWrap.PackageManagement
             return
                     new Warning(
                             "{0} contains assemblies already present in the GAC. OpenWrap cannot override the GAC, for the version you just added to be used, you need to remove those assemblies from it.\r\n"
-                            + _assemblyNames.Select(x => "\t - " + x.FullName).Join(Environment.NewLine),
+                            + _assemblyNames.Select(x => "\t - " + x.FullName).JoinString(Environment.NewLine),
                             _packageInfo.FullName);
         }
     }

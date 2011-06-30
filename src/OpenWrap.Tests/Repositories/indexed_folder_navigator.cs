@@ -30,7 +30,7 @@ namespace OpenWrap.Tests.Repositories
         [Test]
         public void index_file_exists()
         {
-            Repository.IndexDocument.ShouldNotBeNull();
+            Repository.IndexFeed.ShouldNotBeNull();
         }
         [Test]
         public void index_file_is_not_empty()

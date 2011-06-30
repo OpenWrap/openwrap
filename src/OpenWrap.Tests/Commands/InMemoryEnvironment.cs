@@ -14,18 +14,18 @@ namespace OpenWrap.Tests.Commands
     public class InMemoryEnvironment : IEnvironment
     {
         public IPackageRepository ProjectRepository;
-        public IList<InMemoryRepository> RemoteRepositories;
+        //public IList<InMemoryRepository> RemoteRepositories;
         public InMemoryRepository SystemRepository;
-        public InMemoryRepository RemoteRepository;
+        //public InMemoryRepository RemoteRepository;
         public IPackageRepository CurrentDirectoryRepository;
 
         public InMemoryEnvironment(IDirectory currentDirectory, IDirectory configDirectory = null)
         {
             CurrentDirectory = currentDirectory;
             SystemRepository = new InMemoryRepository("System repository");
-            RemoteRepository = new InMemoryRepository("Remote repository");
+            //RemoteRepository = new InMemoryRepository("Remote repository");
             CurrentDirectoryRepository = new InMemoryRepository("Current directory repository"); 
-            RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };
+            //RemoteRepositories = new List<InMemoryRepository> { RemoteRepository };
             DescriptorFile = CurrentDirectory.GetFile("descriptor.wrapdesc").MustExist();
             Descriptor = new PackageDescriptor();
             ConfigurationDirectory = configDirectory;
@@ -53,12 +53,6 @@ namespace OpenWrap.Tests.Commands
         public IDictionary<string, FileBased<IPackageDescriptor>> ScopedDescriptors { get; private set; }
 
         public IPackageDescriptor Descriptor { get; set; }
-
-        IEnumerable<IPackageRepository> IEnvironment.RemoteRepositories
-        {
-            get { return RemoteRepositories.Cast<IPackageRepository>(); }
-             
-        }
 
         IPackageRepository IEnvironment.SystemRepository
         {

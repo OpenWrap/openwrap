@@ -225,7 +225,6 @@ namespace Tests
         TypeReference _returnType;
         MethodAttributes _visibility;
         MethodAttributes _instance;
-        object _returnValue;
 
         public FluentMethodBuilder(ModuleDefinition module, string name)
         {

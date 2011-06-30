@@ -23,16 +23,22 @@ namespace OpenWrap.Build.PackageBuilders
             Profile = new List<string>();
             Platform = new List<string>();
             Project = new List<string>();
+            Configuration = new List<string>();
         }
+
+        protected ILookup<string, string> Properties { get; set; }
 
         public IEnumerable<string> Platform { get; set; }
         public IEnumerable<string> Profile { get; set; }
         public IEnumerable<string> Project { get; set; }
+        public IEnumerable<string> Configuration { get; set; }
 
         protected override string ExecutablePath
         {
             get { return GetMSBuildExecutablePath(); }
         }
+
+        public bool Incremental { get; set; }
 
         public override IEnumerable<BuildResult> Build()
         {
@@ -63,6 +69,7 @@ namespace OpenWrap.Build.PackageBuilders
 
             yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", ExecutablePath));
 
+            if (!Incremental)
             foreach(var project in builds)
             {
                 using(var responseFile = _fileSystem.CreateTempFile())
@@ -115,11 +122,15 @@ namespace OpenWrap.Build.PackageBuilders
                 if (platform != null) writer.WriteLine("/p:OpenWrap-TargetPlatform=" + platform);
                 if (profile != null)
                 {
-                    var msbuildVersioning = FrameworkVersioning.OpenWrapToMSBuild(profile);
+                    var msbuildVersioning = TargetFramework.ParseOpenWrapIdentifier(profile);
                     writer.WriteLine("/p:OpenWrap-TargetProfile=" + profile);
                     writer.WriteLine("/p:TargetFrameworkVersion=" + msbuildVersioning.Version);
                     writer.WriteLine("/p:TargetFrameworkIdentifier=" + msbuildVersioning.Identifier);
                     writer.WriteLine("/p:TargetFrameworkProfile=" + msbuildVersioning.Profile);
+                }
+                if (Configuration.Any())
+                {
+                    writer.WriteLine("/p:Configuration=" + Configuration.Last());
                 }
                 if (Debugger.IsAttached)
                     writer.WriteLine("/p:OpenWrap-StartDebug=true");

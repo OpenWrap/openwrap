@@ -2,7 +2,7 @@
 {
     public interface IResponse : IMessage
     {
-        int StatusCode { get; }
+        HttpStatus Status { get; }
         IResponseHeaders Headers { get; }
     }
 }

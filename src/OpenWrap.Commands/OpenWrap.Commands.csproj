@@ -51,19 +51,36 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\CommonProperties.cs">
-      <Link>Properties\CommonProperties.cs</Link>
-    </Compile>
     <Compile Include="Core\CommandDescriptionOutput.cs" />
     <Compile Include="Core\CommandGroupResult.cs" />
+    <Compile Include="Core\ConfigurationData.cs" />
+    <Compile Include="Core\ConfigurationUpdated.cs" />
+    <Compile Include="Core\EmptyConfiguration.cs" />
+    <Compile Include="Core\GetConfigurationCommand.cs" />
+    <Compile Include="Core\InvalidProxy.cs" />
+    <Compile Include="Core\RemoveConfigurationCommand.cs" />
+    <Compile Include="Core\SetConfigurationCommand.cs" />
+    <Compile Include="Core\StartSolutionPlugin.cs" />
     <Compile Include="Errors\FileNotFound.cs" />
-    <Compile Include="Errors\IncompleteAuthentication.cs" />
     <Compile Include="Gui\ShowPackageExplorerCommand.cs" />
     <Compile Include="Gui\InvokeGuiCommand.cs" />
-    <Compile Include="Remote\RemoteRepositoryMessage.cs" />
+    <Compile Include="Messages\IncompleteCredentials.cs" />
+    <Compile Include="Remote\AbstractRemoteCommand.cs" />
+    <Compile Include="Remote\Messages\RemoteAdded.cs" />
+    <Compile Include="Remote\Messages\RemoteEndpointData.cs" />
+    <Compile Include="Remote\Messages\RemoteEndpointReadOnly.cs" />
+    <Compile Include="Remote\Messages\RemoteNameInUse.cs" />
+    <Compile Include="Remote\Messages\RemoteNameInvalid.cs" />
+    <Compile Include="Remote\Messages\RemotePublishEndpointAdded.cs" />
+    <Compile Include="Remote\Messages\RemoteRemoved.cs" />
+    <Compile Include="Remote\Messages\RemoteRepositoryData.cs" />
+    <Compile Include="Remote\Messages\RemoteRepositoryDetailedData.cs" />
+    <Compile Include="Remote\Messages\RemoteUpdated.cs" />
+    <Compile Include="Errors\UnknownRemoteName.cs" />
     <Compile Include="Remote\SetRemoteCommand.cs" />
+    <Compile Include="Remote\Messages\UnknownEndpointType.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
-    <Compile Include="Wrap\DependenciesConflictMessage.cs" />
+    <Compile Include="Wrap\Messages\DependenciesConflictMessage.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
     <Compile Include="Wrap\TestWrapCommand.cs" />
     <Compile Include="Wrap\UpdatePackageVertex.cs" />
@@ -91,10 +108,13 @@
     <Compile Include="Wrap\InitWrapCommand.cs" />
     <Compile Include="Wrap\PublishWrapCommand.cs" />
     <Compile Include="Wrap\RemoveWrapCommand.cs" />
-    <Compile Include="Errors\UnknownRemoteRepository.cs" />
     <Compile Include="Wrap\UpdateWrapCommand.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OpenRasta.Client\OpenRasta.Client.csproj">
+      <Project>{42F90C40-827D-4CF6-B206-EB2315AACDDB}</Project>
+      <Name>OpenRasta.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Testing\OpenWrap.Testing.csproj">
       <Project>{C8271D09-7581-4DC5-B47B-6763062506C2}</Project>
       <Name>OpenWrap.Testing</Name>
@@ -128,6 +148,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

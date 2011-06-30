@@ -1,13 +1,13 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.clean_wrap
 {
-    public class cleaning_a_wrap_with_two_versions : command_context<CleanWrapCommand>
+    public class cleaning_a_wrap_with_two_versions : command<CleanWrapCommand>
     {
         static readonly string LionelVersion = "1.0.0.123";
         public cleaning_a_wrap_with_two_versions()
@@ -16,7 +16,7 @@ namespace Tests.Commands.clean_wrap
             given_project_package("lionel", "1.0.0.0");
             given_project_package("lionel", LionelVersion);
             given_dependency("depends: lionel");
-            when_executing_command("lionel", "-Project");
+            when_executing_command("lionel -Project");
         }
 
         [Test]

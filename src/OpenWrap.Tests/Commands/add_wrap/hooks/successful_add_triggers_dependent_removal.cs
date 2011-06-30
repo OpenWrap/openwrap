@@ -19,7 +19,7 @@ namespace Tests.Commands.add_wrap.hooks
             given_remote_package("sauron", "1.0.0".ToVersion(), "depends: one-ring = 1.1.0");
             given_remote_package("one-ring", "1.1.0".ToVersion());
 
-            when_executing_command("sauron", "-project");
+            when_executing_command("sauron -project");
         }
 
         [Test]

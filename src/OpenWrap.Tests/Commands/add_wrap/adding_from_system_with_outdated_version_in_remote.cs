@@ -1,12 +1,13 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
+using OpenWrap;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
+using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
-    class adding_from_system_with_outdated_version_in_remote : command_context<AddWrapCommand>
+    class adding_from_system_with_outdated_version_in_remote : contexts.add_wrap
     {
         public adding_from_system_with_outdated_version_in_remote()
         {

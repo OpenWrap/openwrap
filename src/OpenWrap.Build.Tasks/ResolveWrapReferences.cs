@@ -24,7 +24,6 @@ namespace OpenWrap.Build.Tasks
 
         public ResolveWrapReferences()
         {
-            InternalServices.Initialize();
             _fileSystem = LocalFileSystem.Instance;
         }
 
@@ -80,6 +79,8 @@ namespace OpenWrap.Build.Tasks
 
         public override bool Execute()
         {
+            //Debugger.Launch();
+
             try
             {
                 EnsurePackageRepositoryIsInitialized();

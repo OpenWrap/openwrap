@@ -21,7 +21,7 @@ namespace OpenWrap.contexts
         protected void given_descriptor(string fileName, params string[] lines)
         {
             using (var writer = new StreamWriter(FileSystem.GetCurrentDirectory().GetFile(fileName).OpenWrite()))
-                writer.Write(lines.Join("\r\n"));
+                writer.Write(lines.JoinString("\r\n"));
         }
         protected void when_reading_all()
         {

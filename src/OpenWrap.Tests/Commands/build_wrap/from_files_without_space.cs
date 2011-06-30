@@ -2,17 +2,17 @@
 using System.Linq;
 using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.build_wrap
 {
     [TestFixture("test.txt", "files; file=bin-net35->test.txt")]
     [TestFixture("test.txt", "files; file = bin-net35 -> test.txt ")]
-    public class from_existing_files : command_context<BuildWrapCommand>
+    public class from_existing_files : command<BuildWrapCommand>
     {
         readonly string _filePath;
 
@@ -26,7 +26,7 @@ namespace Tests.Commands.build_wrap
 
             given_file(filePath, new MemoryStream(new byte[]{0x0}));
 
-            when_executing_command();
+            when_executing_command("");
         }
 
         [Test]

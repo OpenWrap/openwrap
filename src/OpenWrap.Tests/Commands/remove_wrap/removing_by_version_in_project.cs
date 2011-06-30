@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
 using Tests.Commands;
+using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
 
 namespace OpenWrap.Commands.remove_wrap
@@ -15,7 +15,7 @@ namespace OpenWrap.Commands.remove_wrap
             given_dependency("depends: saruman");
             given_project_package("saruman", "1.0.0.0");
             given_project_package("saruman", "1.0.0.1");
-            when_executing_command("saruman", "-project", "-version", "1.0.0.0");
+            when_executing_command("saruman -project -version 1.0.0.0");
         }
 
         [Test]

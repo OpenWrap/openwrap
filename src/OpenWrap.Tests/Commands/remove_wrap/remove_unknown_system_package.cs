@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using Tests.Commands;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Commands.remove_wrap
 {
@@ -8,7 +8,7 @@ namespace OpenWrap.Commands.remove_wrap
     {
         public remove_unknown_system_package()
         {
-            when_executing_command("saruman", "-system");
+            when_executing_command("saruman -system");
         }
         [Test]
         public void an_error_is_triggered()

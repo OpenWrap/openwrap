@@ -8,7 +8,7 @@ namespace OpenWrap.Repositories.Http
 {
     public static class RequestExtensions
     {
-        public static PackageDocument AsPackageDocument<T>(this T response) where T : IClientResponse
+        public static PackageFeed AsPackageDocument<T>(this T response) where T : IClientResponse
         {
             if (response == null)
                 return null;
@@ -22,11 +22,11 @@ namespace OpenWrap.Repositories.Http
             return request;
         }
 
-        public static PackageDocument ParsePackageDocument(this XDocument xmlDocument)
+        public static PackageFeed ParsePackageDocument(this XDocument xmlDocument)
         {
             if (xmlDocument == null)
                 return null;
-            return new PackageDocument
+            return new PackageFeed
             {
                     CanPublish = GetCanPublish(xmlDocument),
                     PublishHref = GetPublishHref(xmlDocument),
@@ -44,7 +44,7 @@ namespace OpenWrap.Repositories.Http
                                let absoluteLink = baseUri == null ? new Uri(link.Value, UriKind.RelativeOrAbsolute) : new Uri(baseUri, new Uri(link.Value, UriKind.RelativeOrAbsolute))
                                where name != null && version != null && link != null
                                let depends = wrapList.Elements("depends").Select(x => x.Value)
-                               select new PackageItem
+                               select new PackageEntry
                                {
                                        Name = name.Value,
                                        Version = new Version(version.Value),

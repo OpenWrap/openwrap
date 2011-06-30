@@ -1,8 +1,9 @@
 ﻿using NUnit.Framework;
+using OpenWrap;
 using OpenWrap.Testing;
 using Tests.Commands.contexts;
 
-namespace OpenWrap.Commands.add_wrap.hooks
+namespace Tests.Commands.add_wrap.hooks
 {
     class successful_add_to_system : add_wrap_with_hooks
     {
@@ -10,7 +11,7 @@ namespace OpenWrap.Commands.add_wrap.hooks
         {
             given_remote_package("sauron", "1.0.0".ToVersion());
 
-            when_executing_command("sauron", "-system");
+            when_executing_command("sauron -system");
         }
 
         [Test]

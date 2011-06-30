@@ -19,7 +19,7 @@ namespace Tests.Commands.init_wrap
             given_project_repository(new FolderRepository(Environment.CurrentDirectory.GetDirectory("wraps"), FolderRepositoryOptions.AnchoringEnabled));
 
             given_csharp_project_file(@"c:\newpackage\src\project1\project1.csproj");
-            when_executing_command(".", "-all");
+            when_executing_command(". -all");
             Environment.ProjectRepository.RefreshPackages();
         }
         [Test]

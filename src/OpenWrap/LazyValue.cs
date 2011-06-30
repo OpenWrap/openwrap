@@ -12,7 +12,7 @@ namespace OpenWrap
         {
             _factory = factory;
         }
-
+        public T Value { get { return (T)this; } }
         public static implicit operator T(LazyValue<T> lazy)
         {
             if (lazy._valueBuilt)

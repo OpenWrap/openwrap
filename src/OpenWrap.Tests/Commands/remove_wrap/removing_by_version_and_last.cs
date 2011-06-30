@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using Tests.Commands;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Commands.remove_wrap
 {
@@ -9,7 +9,7 @@ namespace OpenWrap.Commands.remove_wrap
         public removing_by_version_and_last()
         {
             given_system_package("saruman", "1.0.0.0");
-            when_executing_command("saruman", "-version", "1.0.0.0", "-last");
+            when_executing_command("saruman -version 1.0.0.0 -last");
         }
         [Test]
         public void error_is_displayed()

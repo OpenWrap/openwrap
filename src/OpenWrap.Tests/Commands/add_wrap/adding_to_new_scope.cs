@@ -2,9 +2,8 @@
 using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Testing;
-using Tests.Commands;
 
-namespace OpenWrap.Commands.add_wrap
+namespace Tests.Commands.add_wrap
 {
     class adding_to_new_scope : global::Tests.Commands.contexts.add_wrap
     {
@@ -19,7 +18,7 @@ namespace OpenWrap.Commands.add_wrap
 
             DefaultDescriptorTimeStamp = Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc;
             ScopedDescriptorTimeStamp = Environment.ScopedDescriptors[string.Empty].File.LastModifiedTimeUtc;
-            when_executing_command("sauron", "-scope", "tests");
+            when_executing_command("sauron -scope tests");
         }
         [Test]
         public void should_succeed()

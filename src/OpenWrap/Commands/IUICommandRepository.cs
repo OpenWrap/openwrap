@@ -2,5 +2,7 @@
 
 namespace OpenWrap.Commands
 {
-    public interface IUICommandRepository : ICollection<IUICommandDescriptor>{}
+    public interface IUICommandRepository : ICollection<IUICommandDescriptor>
+    {
+    }
 }

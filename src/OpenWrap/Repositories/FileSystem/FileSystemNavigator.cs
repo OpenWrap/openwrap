@@ -8,7 +8,7 @@ using OpenFileSystem.IO;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories.Http;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
+
 
 namespace OpenWrap.Repositories.FileSystem
 {
@@ -42,14 +42,14 @@ namespace OpenWrap.Repositories.FileSystem
         }
 
 
-        public PackageDocument Index()
+        public PackageFeed Index()
         {
             return IndexDocument.ParsePackageDocument();
         }
 
-        public Stream LoadPackage(PackageItem packageItem)
+        public Stream LoadPackage(PackageEntry packageEntry)
         {
-            var packageFile = _directory.GetFile(packageItem.PackageHref.ToString());
+            var packageFile = _directory.GetFile(packageEntry.PackageHref.ToString());
             return packageFile.Exists ? packageFile.OpenRead() : null;
         }
 
@@ -59,7 +59,7 @@ namespace OpenWrap.Repositories.FileSystem
 
             var packageFile = _directory.GetFile(packageFileName);
             using (var destinationStream = packageFile.OpenWrite())
-                StreamExtensions.CopyTo(packageStream, destinationStream);
+                packageStream.CopyTo(destinationStream);
 
             var zipPackage = new CachedZipPackage(null, packageFile, null);
             IndexDocument.Document.Root.Add(

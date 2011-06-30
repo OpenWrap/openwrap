@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.runner
+namespace Tests.Commands.command_line_runner
 {
     public class named_inputs_provided : contexts.command_line_runner
     {

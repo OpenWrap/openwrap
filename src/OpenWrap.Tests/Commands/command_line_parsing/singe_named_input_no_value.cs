@@ -1,13 +1,11 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.Cli;
 using OpenWrap.Commands.Cli.Parser;
 using OpenWrap.Testing;
 
-
 namespace Tests.Commands.command_line_parsing
 {
-    class singe_named_input_no_value : contexts.input_parser
+    class singe_named_input_no_value : input_parser
     {
         public singe_named_input_no_value()
         {

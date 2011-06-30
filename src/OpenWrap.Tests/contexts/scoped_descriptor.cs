@@ -19,7 +19,7 @@ namespace OpenWrap.contexts
         }
         protected void scoped_descriptor_should_be(params string[] expectedContent)
         {
-            var joinedContent = expectedContent.Join("\r\n");
+            var joinedContent = expectedContent.JoinString("\r\n");
             if (!string.IsNullOrEmpty(joinedContent))
                 joinedContent += "\r\n";
             ScopedDescriptorContent.ShouldBe(joinedContent);

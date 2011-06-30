@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.build_wrap
 {
-    public class building_a_meta_package : command_context<BuildWrapCommand>
+    public class building_a_meta_package : command<BuildWrapCommand>
     {
         static Version version = new Version("1.2.3.4");
         const string packageName = "mypackage";

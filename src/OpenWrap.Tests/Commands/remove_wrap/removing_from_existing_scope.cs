@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Commands.remove_wrap
 {
@@ -11,7 +11,7 @@ namespace OpenWrap.Commands.remove_wrap
             given_project_package("one-ring", "1.0.0");
                 
             given_dependency("tests", "one-ring");
-            when_executing_command("one-ring", "-scope", "tests");
+            when_executing_command("one-ring -scope tests");
         }
 
         [Test]

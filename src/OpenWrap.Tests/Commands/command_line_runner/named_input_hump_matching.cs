@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.runner
+namespace Tests.Commands.command_line_runner
 {
     public class named_input_hump_matching : contexts.command_line_runner
     {
@@ -13,15 +13,15 @@ namespace Tests.Commands.runner
         }
 
         [Test]
-        public void input_is_assigned()
-        {
-            Input("from").Single().ShouldBe("Frodo");
-        }
-
-        [Test]
         public void command_executes()
         {
             CommandExecuted.ShouldBeTrue();
+        }
+
+        [Test]
+        public void input_is_assigned()
+        {
+            Input("from").Single().ShouldBe("Frodo");
         }
     }
 }

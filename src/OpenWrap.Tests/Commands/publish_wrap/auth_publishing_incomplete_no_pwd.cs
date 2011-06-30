@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.Errors;
+using OpenWrap.Commands.Messages;
+using OpenWrap.Testing;
 using OpenWrap.Tests;
 using Tests.Commands.contexts;
 
@@ -11,13 +13,13 @@ namespace publish_wrap_specifications
         {
             given_remote_repository("mordor");
             given_currentdirectory_package("sauron", "1.0.0.123");
-            when_executing_command("-remote", "mordor", "-path", "sauron-1.0.0.123.wrap", "-user", "frodo");
+            when_executing_command("-remote mordor -path sauron-1.0.0.123.wrap -user frodo");
         }
 
         [Test]
         public void command_fails()
         {
-            Results.ShouldContain<IncompleteAuthentication>();
+            Results.ShouldHaveOne<IncompleteCredentials>();
         }
     }
 }

@@ -3,7 +3,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
+
 
 namespace OpenWrap.PackageManagement.Packages
 {

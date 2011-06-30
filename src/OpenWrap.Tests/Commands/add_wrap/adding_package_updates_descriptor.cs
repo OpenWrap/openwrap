@@ -12,7 +12,7 @@ namespace Tests.Commands.add_wrap
             given_project_repository(new InMemoryRepository("ProjectRepository"));
             given_system_package("sauron", "1.0.0.0");
 
-            when_executing_command("sauron", "-content");   
+            when_executing_command("sauron -content");   
         }
 
         [Test]

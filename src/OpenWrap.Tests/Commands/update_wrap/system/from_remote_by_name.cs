@@ -1,11 +1,11 @@
 ﻿using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.system
 {
-    public class from_remote_by_name : command_context<UpdateWrapCommand>
+    public class from_remote_by_name: contexts.update_wrap
     {
         public from_remote_by_name()
         {
@@ -14,7 +14,7 @@ namespace Tests.Commands.update_wrap.system
             given_remote_package("one-ring", "1.1".ToVersion());
             given_remote_package("goldberry", "2.1".ToVersion());
 
-            when_executing_command("one-ring", "-sys");
+            when_executing_command("one-ring -sys");
         }
         [Test]
         public void project_is_updated()

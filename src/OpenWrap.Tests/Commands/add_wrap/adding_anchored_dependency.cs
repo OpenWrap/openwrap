@@ -1,11 +1,9 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Testing;
-using Tests.Commands.contexts;
 
-namespace OpenWrap.Tests.Commands
+namespace Tests.Commands.add_wrap
 {
-    public class adding_anchored_dependency : add_wrap
+    public class adding_anchored_dependency : contexts.add_wrap
     {
         public adding_anchored_dependency()
         {
@@ -13,7 +11,7 @@ namespace OpenWrap.Tests.Commands
 
             given_system_package("sauron", "1.0.0");
 
-            when_executing_command("sauron", "-anchored");
+            when_executing_command("sauron -anchored");
         }
         [Test]
         public void link_is_created()

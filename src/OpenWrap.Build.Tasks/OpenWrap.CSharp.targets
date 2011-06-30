@@ -45,13 +45,7 @@
     </InitializeOpenWrap>
 
     <InitializeVisualStudioIntegration
-      WrapDescriptor="$(OpenWrap-DescriptorPath)"
-      WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
-      Platform="$(OpenWrap-TargetPlatform)"
-      Profile="$(OpenWrap-TargetProfile)"
-      ProjectFilePath="$(MSBuildProjectFullPath)"
       EnableVisualStudioIntegration="$(OpenWrap-EnableVisualStudioIntegration)"
-      ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)"
       />
     <!-- Sanity checks -->
     
@@ -67,7 +61,7 @@
 
   </PropertyGroup>
 
-  <Target Name="OpenWrap-ResolveReferences">
+  <Target Name="OpenWrap-ResolveReferences" DependsOnTargets="OpenWrap-Initialize">
     <ResolveWrapReferences
       WrapDescriptor="$(OpenWrap-DescriptorPath)"
       WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"

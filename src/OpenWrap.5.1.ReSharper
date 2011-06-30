@@ -8,7 +8,7 @@
         <ANONYMOUS_METHOD_DECLARATION_BRACES>NEXT_LINE</ANONYMOUS_METHOD_DECLARATION_BRACES>
         <BLANK_LINES_INSIDE_REGION>0</BLANK_LINES_INSIDE_REGION>
         <CASE_BLOCK_BRACES>NEXT_LINE</CASE_BLOCK_BRACES>
-        <CONTINUOUS_INDENT_MULTIPLIER>2</CONTINUOUS_INDENT_MULTIPLIER>
+        <EXPLICIT_INTERNAL_MODIFIER>False</EXPLICIT_INTERNAL_MODIFIER>
         <EXPLICIT_PRIVATE_MODIFIER>False</EXPLICIT_PRIVATE_MODIFIER>
         <INDENT_ANONYMOUS_METHOD_BLOCK>False</INDENT_ANONYMOUS_METHOD_BLOCK>
         <INDENT_EMBRACED_INITIALIZER_BLOCK>False</INDENT_EMBRACED_INITIALIZER_BLOCK>
@@ -40,6 +40,7 @@
         <WRAP_PARAMETERS_STYLE>CHOP_IF_LONG</WRAP_PARAMETERS_STYLE>
       </FormatSettings>
       <UsingsSettings>
+        <AllowAlias>False</AllowAlias>
         <KeepImports IsNull="False">
           <Item>System</Item>
         </KeepImports>
@@ -321,11 +322,7 @@
       <Naming2 />
     </Web>
     <Xaml>
-      <Naming2>
-        <UserRule Name="XAML_FIELD" Inspect="True" Prefix="_" Suffix="" Style="aaBb" />
-        <UserRule Name="NAMESPACE_ALIAS" Inspect="True" Prefix="" Suffix="" Style="AaBb" />
-        <UserRule Name="XAML_RESOURCE" Inspect="True" Prefix="" Suffix="" Style="AaBb" />
-      </Naming2>
+      <Naming2 />
     </Xaml>
     <XML>
       <FormatSettings />
@@ -336,10 +333,10 @@
       <EventHandlerPatternShort>$event$Handler</EventHandlerPatternShort>
       <ExceptionName IsNull="False">
       </ExceptionName>
-      <PredefinedRule Inspect="False" Prefix="" Suffix="" Style="AaBb" ElementKind="MethodPropertyEvent">
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="MethodPropertyEvent">
         <ExtraRule Prefix="" Suffix="" Style="aa_bb" />
       </PredefinedRule>
-      <PredefinedRule Inspect="False" Prefix="" Suffix="" Style="AaBb" ElementKind="TypesAndNamespaces">
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="TypesAndNamespaces">
         <ExtraRule Prefix="" Suffix="" Style="aa_bb" />
       </PredefinedRule>
       <PredefinedRule Inspect="True" Prefix="I" Suffix="" Style="AaBb" ElementKind="Interfaces" />
@@ -347,14 +344,14 @@
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="Locals" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="LocalConstants" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="Parameters" />
-      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PublicFields">
-        <ExtraRule Prefix="" Suffix="" Style="aa_bb" />
-      </PredefinedRule>
+      <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="PublicFields" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AA_BB" ElementKind="Constants" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="StaticReadonly" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="EnumMember" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="Other" />
-      <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="PrivateInstanceFields" />
+      <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="PrivateInstanceFields">
+        <ExtraRule Prefix="" Suffix="" Style="AaBb" />
+      </PredefinedRule>
       <PredefinedRule Inspect="True" Prefix="_" Suffix="" Style="aaBb" ElementKind="PrivateStaticFields" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AA_BB" ElementKind="PrivateConstants" />
       <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AA_BB" ElementKind="PrivateStaticReadonly">
@@ -365,9 +362,20 @@
       <Abbreviation Text="MS" />
       <Abbreviation Text="GAC" />
       <Abbreviation Text="UTF" />
+      <Abbreviation Text="UI" />
     </Naming2>
   </CodeStyleSettings>
   <SharedSolutionTemplateManager>
+    <LiveTemplates>
+      <Template uid="4434600c-5393-4814-8f56-3ed467dd9d7a" shortcut="merr" description="new error for commands" text="public class $NAME$ : $Error$ {&#xD;&#xA;  public $NAME$(&#xD;&#xA;}" reformat="True" shortenQualifiedReferences="True">
+        <Categories />
+        <Variables>
+          <Variable name="NAME" expression="" initialRange="0" />
+          <Variable name="Error" expression="" initialRange="0" />
+        </Variables>
+        <CustomProperties />
+      </Template>
+    </LiveTemplates>
     <FileTemplates>
       <Template uid="80b7b756-ae40-46e5-bf05-4da38bddd804" shortcut="" description="test" text="using System;&#xD;&#xA;using System.Collections.Generic;&#xD;&#xA;using System.Linq;&#xD;&#xA;using NUnit.Framework;&#xD;&#xA;using OpenWrap;&#xD;&#xA;using OpenWrap.Testing;&#xD;&#xA;using Tests;&#xD;&#xA;&#xD;&#xA;namespace $namespace$&#xD;&#xA;{&#xD;&#xA;    public class $spec$ : contexts.$context$&#xD;&#xA;	{&#xD;&#xA;		public $spec$()&#xD;&#xA;		{&#xD;&#xA;		}&#xD;&#xA;	}&#xD;&#xA;}" reformat="True" shortenQualifiedReferences="True">
         <Context>
@@ -387,4 +395,21 @@
       </Template>
     </FileTemplates>
   </SharedSolutionTemplateManager>
+  <CustomStructuralPatterns>
+    <Pattern Severity="DO_NOT_SHOW">
+      <Comment>generic error</Comment>
+      <ReplaceComment>specific error</ReplaceComment>
+      <ReplacePattern><![CDATA[new $customErrorType$($messageParams$);
+
+]]></ReplacePattern>
+      <SearchPattern>new $error$($message$,$messageParams$)</SearchPattern>
+      <Params />
+      <Placeholders>
+        <TypePlaceholder Name="error" Type="OpenWrap.Commands.Error" ExactType="True" />
+        <ArgumentPlaceholder Name="message" Minimal="1" Maximal="1" />
+        <ArgumentPlaceholder Name="messageParams" Minimal="-1" Maximal="-1" />
+        <TypePlaceholder Name="customErrorType" Type="Error" ExactType="False" />
+      </Placeholders>
+    </Pattern>
+  </CustomStructuralPatterns>
 </Configuration>

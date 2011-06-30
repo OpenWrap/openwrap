@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using Tests.Commands;
+using Tests.Commands.contexts;
 
 namespace OpenWrap.Commands.remove_wrap
 {

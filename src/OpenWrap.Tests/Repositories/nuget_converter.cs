@@ -166,7 +166,7 @@ namespace nuget_converter_specs
         }
         string version(string s)
         {
-            return NuSpecConverter.ConvertNuGetVersionRange(s).Select(x=>x.ToString()).Join(" and ");
+            return NuConverter.ConvertNuGetVersionRange(s).Select(x=>x.ToString()).JoinString(" and ");
         }
     }
     namespace contexts
@@ -201,7 +201,7 @@ namespace nuget_converter_specs
                 var spec = String.Format(template, id, version, authors, description, title, owners, projectUrl, licenseUrl, requireLicenseAcceptance, tags);
                 var doc = new XmlDocument();
                 doc.LoadXml(spec);
-                return Descriptor =  NuSpecConverter.ConvertSpecificationToDescriptor(doc);
+                return Descriptor =  NuConverter.ConvertSpecificationToDescriptor(doc);
             }
 
             protected PackageDescriptor Descriptor { get; set; }

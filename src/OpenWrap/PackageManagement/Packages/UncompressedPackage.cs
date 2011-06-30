@@ -18,7 +18,6 @@ namespace OpenWrap.PackageManagement.Packages
     {
         static readonly TraceSource _log = new TraceSource("openwrap", SourceLevels.All);
         readonly IFile _originalPackageFile;
-        Version _version;
         IPackageDescriptor _descriptor;
 
         public UncompressedPackage(IPackageRepository source,
@@ -86,7 +85,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public Version Version
         {
-            get { return PackageInfo.Version ?? _version; }
+            get { return PackageInfo.Version; }
         }
 
         protected IDirectory BaseDirectory { get; set; }

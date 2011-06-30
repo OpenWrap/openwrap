@@ -7,7 +7,7 @@ using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
+
 
 namespace OpenWrap.Repositories.Http
 {
@@ -16,13 +16,13 @@ namespace OpenWrap.Repositories.Http
         readonly IFileSystem _fileSystem;
         readonly IHttpRepositoryNavigator _httpNavigator;
         readonly LazyValue<PackageIdentifier> _identifier;
-        readonly PackageItem _package;
+        readonly PackageEntry _package;
         IPackage _loadedPackage;
 
         public HttpPackage(IFileSystem fileSystem,
                            IPackageRepository source,
                            IHttpRepositoryNavigator httpNavigator,
-                           PackageItem package)
+                           PackageEntry package)
         {
             _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;
@@ -106,7 +106,7 @@ namespace OpenWrap.Repositories.Http
             IFile temporaryFile = _fileSystem.CreateTempFile();
             using (var sourceStream = _httpNavigator.LoadPackage(_package))
             using (var destinationStream = temporaryFile.OpenWrite())
-                StreamExtensions.CopyTo(sourceStream, destinationStream);
+                sourceStream.CopyTo(destinationStream);
 
             _loadedPackage = new CachedZipPackage(Source, temporaryFile, _fileSystem.CreateTempDirectory()).Load();
         }

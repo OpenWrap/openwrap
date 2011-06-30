@@ -13,7 +13,7 @@ namespace Tests.Commands.add_wrap.from_path
             given_remote_package("one-ring", "2.0.0".ToVersion());
             given_file_package(@"c:\mordor", "sauron", "1.0.0", "depends: one-ring");
 
-            when_executing_command("sauron", "-from", @"c:\mordor");
+            when_executing_command(@"sauron -from c:\mordor");
         }
 
         [Test]

@@ -5,21 +5,21 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.IO;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.build_wrap
 {
-    class building_from_different_directory : command_context<BuildWrapCommand>
+    class building_from_different_directory : command<BuildWrapCommand>
     {
         public building_from_different_directory()
         {
 
             given_current_directory(@"c:\current");
             given_file(@"c:\other\myPackage.wrapdesc", Content("name: myPackage\r\nversion: 1.0\r\nbuild: none"));
-            when_executing_command("-from", @"c:\other");
+            when_executing_command(@"-from c:\other");
         }
 
         [Test]

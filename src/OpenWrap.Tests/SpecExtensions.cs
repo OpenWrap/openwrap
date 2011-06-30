@@ -9,6 +9,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -194,6 +195,7 @@ namespace OpenWrap.Testing
             return baseString;
         }
 
+        
         public static IEnumerable<T> ShouldHaveCountOf<T>(this IEnumerable<T> values, int count)
         {
             values.ShouldNotBeNull().Count().ShouldBe(count);
@@ -224,7 +226,7 @@ namespace OpenWrap.Testing
             bool moveNext1 = false, moveNext2 = false;
             while (((moveNext1 = enumerator1.MoveNext()) & (moveNext2 = enumerator2.MoveNext()))
                    && moveNext1 == moveNext2)
-                Assert.AreEqual(enumerator1.Current, enumerator2.Current);
+                Assert.AreEqual(enumerator2.Current, enumerator1.Current);
             if (moveNext1 != moveNext2)
                 Assert.Fail("The two enumerables didn't have the same number of elements.");
             enumerator1.Dispose();
@@ -280,10 +282,11 @@ namespace OpenWrap.Testing
             Assert.That(actual, Is.Not.SameAs(expected));
         }
 
-        public static void ShouldNotContain(this string baseString, string textToFind)
+        public static string ShouldNotContain(this string baseString, string textToFind)
         {
             if (baseString.IndexOf(textToFind) != -1)
                 Assert.Fail("text '{0}' found in '{1}'", textToFind, baseString);
+            return baseString;
         }
 
         public static void ShouldReturn<T>(this Func<T> codeToExecute, T expectedValue)
@@ -326,7 +329,24 @@ namespace OpenWrap.Testing
             enumerable.Any(predicate).ShouldBeTrue();
             return enumerable;
         }
-
+        public static T ShouldHaveOne<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable.ShouldHaveCountOf(1).Single();
+        }
+        public static IEnumerable<T> ShouldHaveOne<T>(this IEnumerable<T> enumerable, T value) where T : class
+        {
+            enumerable.SingleOrDefault(x => x.Equals(value)).ShouldNotBeNull();
+            return enumerable;
+        }
+        public static T ShouldHaveOne<T>(this IEnumerable enumerable) where T : class
+        {
+            return enumerable.OfType<T>().SingleOrDefault().ShouldNotBeNull();
+        }
+        public static IEnumerable<T> ShouldHaveOne<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
+        {
+            enumerable.SingleOrDefault(predicate).ShouldNotBeNull();
+            return enumerable;
+        }
         public static IEnumerable<T> ShouldHaveAll<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate) where T : class
         {
             enumerable.All(predicate).ShouldBeTrue();

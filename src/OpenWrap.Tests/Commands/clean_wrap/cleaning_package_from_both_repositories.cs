@@ -1,12 +1,12 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.clean_wrap
 {
-    public class cleaning_package_from_both_repositories : command_context<CleanWrapCommand>
+    public class cleaning_package_from_both_repositories : command<CleanWrapCommand>
     {
         static readonly string LionelVersion = "1.0.0.123";
 
@@ -21,7 +21,7 @@ namespace Tests.Commands.clean_wrap
             given_system_package("lionel", "1.0.0.0");
             given_system_package("lionel", LionelVersion);
 
-            when_executing_command("lionel", "-sys", "-proj");
+            when_executing_command("lionel -sys -proj");
         }
 
         [Test]

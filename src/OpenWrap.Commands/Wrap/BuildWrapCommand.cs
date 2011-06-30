@@ -40,7 +40,22 @@ namespace OpenWrap.Commands.Wrap
         public string From { get; set; }
 
         [CommandInput]
+        public bool Incremental { get; set; }
+
+        [CommandInput]
         public IEnumerable<string> Flavour { get; set; }
+        [CommandInput]
+        public bool Debug
+        { 
+            get { return Configuration.EqualsNoCase("Debug"); }
+            set { Configuration = "Debug"; }
+        }
+        [CommandInput]
+        public bool Release
+        {
+            get { return Configuration.EqualsNoCase("Release"); }
+            set { Configuration = "Release"; }
+        }
 
         IEnvironment _environment;
 
@@ -94,10 +109,10 @@ namespace OpenWrap.Commands.Wrap
                                     GenerateDescriptorFile(packageDescriptorForEmbedding)
                                  ).ToList();
             foreach (var item in packageContent)
-                yield return new GenericMessage(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
+                yield return new Info(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
 
             Packager.NewFromFiles(packageFilePath, packageContent);
-            yield return new GenericMessage(string.Format("Package built at '{0}'.", packageFilePath));
+            yield return new Info(string.Format("Package built at '{0}'.", packageFilePath));
 
         }
 
@@ -186,14 +201,14 @@ namespace OpenWrap.Commands.Wrap
             foreach (var t in packageBuilders.SelectMany(x => x.Build()))
             {
                 if (t is TextBuildResult && !Quiet)
-                    yield return new GenericMessage(t.Message);
+                    yield return new Info(t.Message);
                 else if (t is FileBuildResult)
                 {
                     var buildResult = (FileBuildResult)t;
 
                     onFound(buildResult);
                     if (!Quiet)
-                        yield return new GenericMessage(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
+                        yield return new Info(string.Format("Output found - {0}: '{1}'", buildResult.ExportName, buildResult.Path));
                 }
                 else if (t is ErrorBuildResult)
                 {
@@ -295,7 +310,11 @@ namespace OpenWrap.Commands.Wrap
             {
                 var pi = builder.GetType().GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
                 if (pi != null)
-                    pi.SetValue(builder, property.ToList(), null);
+                {
+                    var existingValues = pi.GetValue(builder, null) as IEnumerable<string>;
+                    if (existingValues == null || existingValues.Count() == 0)
+                        pi.SetValue(builder, property.ToList(), null);
+                }
             }
             return builder;
         }
@@ -304,13 +323,24 @@ namespace OpenWrap.Commands.Wrap
         {
             commandLine = commandLine.Trim();
             if (commandLine.StartsWithNoCase("msbuild"))
-                return new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
+            {
+                var builder = new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser())
+                {
+                    Incremental = Incremental
+                };
+                if (Configuration != null)
+                    builder.Configuration = new[] { Configuration };
+                return builder;
+            }
             if (commandLine.StartsWithNoCase("files"))
                 return new FilePackageBuilder();
             if (commandLine.StartsWithNoCase("command"))
                 return new CommandLinePackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
             return new NullPackageBuilder(_environment);
         }
+
+        [CommandInput]
+        public string Configuration { get; set; }
 
         string GetCurrentVersion()
         {

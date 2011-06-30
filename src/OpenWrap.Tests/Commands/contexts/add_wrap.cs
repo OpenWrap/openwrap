@@ -1,5 +1,4 @@
 ﻿using OpenFileSystem.IO;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageModel;
@@ -8,15 +7,19 @@ using OpenWrap.Repositories;
 
 namespace Tests.Commands.contexts
 {
-    public class add_wrap : command_context<AddWrapCommand>
+    public class add_wrap : command<AddWrapCommand>
     {
         protected IDirectory ProjectRepositoryDir;
         protected IPackageDescriptor PostExecutionDescriptor;
 
-        protected override void when_executing_command(params string[] parameters)
+        public add_wrap()
+        {
+            given_remote_repository("iron-hills");
+        }
+        protected override void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
-
+            
             PostExecutionDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);
         }
 

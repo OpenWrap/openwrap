@@ -60,7 +60,7 @@ namespace OpenWrap.Tests.IO.template_processor
             Properties["source"].ShouldBe("src");
         }
     }
-    [TestFixture(@"projects\**\{source: src}")]
+    [TestFixture(@"projects\**\{source: src}\**")]
     [TestFixture(@"projects\{source: src}")]
     [TestFixture(@"**\{source: src}")]
     public class parsing_path_with_relative_template : contexts.template_processor
@@ -82,6 +82,20 @@ namespace OpenWrap.Tests.IO.template_processor
         public void property_value_is_name_of_folder()
         {
             Properties["source"].ShouldBe("src");
+        }
+    }
+    public class parsing_path_with_relative_template_repeating_segments : contexts.template_processor
+    {
+        public parsing_path_with_relative_template_repeating_segments()
+        {
+            given_template(@"src\{scope: project}\**");
+            when_parsing_path(@"c:\src\middle-earth\src\project\project.csproj");
+        }
+
+        [Test]
+        public void property_is_found()
+        {
+            Properties["scope"].ShouldBe("project");
         }
     }
     namespace contexts
@@ -112,7 +126,7 @@ namespace OpenWrap.Tests.IO.template_processor
             protected void when_parsing_path(string path)
             {
                 IDictionary<string,string> props;
-                SuccessfulParsing = Processor.TryParsePath(new Path(path), out props);
+                SuccessfulParsing = Processor.TryParsePath(new Path(path), false, out props);
                 Properties = props;
             }
 

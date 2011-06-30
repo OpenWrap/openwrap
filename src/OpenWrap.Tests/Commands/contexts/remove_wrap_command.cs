@@ -2,13 +2,13 @@
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 
-namespace OpenWrap.Commands.contexts
+namespace Tests.Commands.contexts
 {
-    public abstract class remove_wrap_command : command_context<RemoveWrapCommand>
+    public abstract class remove_wrap_command : command<RemoveWrapCommand>
     {
 
         protected IPackageDescriptor PostCommandDescriptor;
-        protected override void when_executing_command(params string[] parameters)
+        protected override void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
             PostCommandDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);

@@ -1,12 +1,12 @@
 ﻿using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Commands.contexts;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Tests.Commands;
+using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.project_and_system
 {
-    public class from_remote : command_context<UpdateWrapCommand>
+    public class from_remote: contexts.update_wrap
     {
         
         public from_remote()
@@ -19,7 +19,7 @@ namespace Tests.Commands.update_wrap.project_and_system
             given_remote_package("goldberry", "3.0.0".ToVersion());
 
 
-            when_executing_command("-system","-project");
+            when_executing_command("-system -project");
         }
         [Test]
         public void project_repo_updated()

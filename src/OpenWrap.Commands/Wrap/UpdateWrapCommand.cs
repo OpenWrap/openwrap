@@ -55,7 +55,7 @@ namespace OpenWrap.Commands.Wrap
         {
             yield return new Result("Updating project packages...");
 
-            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(HostEnvironment.RemoteRepositories);
+            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(Remotes.FetchRepositories());
             var errors = new List<PackageOperationResult>();
             foreach (var x in (string.IsNullOrEmpty(Name)
                                        ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor)
@@ -70,7 +70,8 @@ namespace OpenWrap.Commands.Wrap
 
                 var details = failed.SelectMany(_ => new[] { " - " + _.First() }.Concat(_.Skip(1).Select(x => "   " + x)));
 
-                yield return new Error(errorMessage, failed.Key, details.Join("\r\n"));
+
+                yield return new Error(errorMessage, failed.Key, details.JoinString(@"\r\n"));
             }
         }
 
@@ -83,7 +84,7 @@ namespace OpenWrap.Commands.Wrap
 
 
 
-            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository }.Concat(HostEnvironment.RemoteRepositories).ToList();
+            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository }.Concat(Remotes.FetchRepositories()).ToList();
 
             var errors = new List<PackageOperationResult>();
 
@@ -95,7 +96,7 @@ namespace OpenWrap.Commands.Wrap
             foreach (var failed in stacks)
             {
                 var key = failed.Key;
-                var errorTraces = failed.SelectMany(_=>new[] { " - " + _.First() }.Concat(_.Skip(1).Select(x => "   " + x))).Join("\r\n");
+                var errorTraces = failed.SelectMany(_=>new[] { " - " + _.First() }.Concat(_.Skip(1).Select(x => "   " + x))).JoinString("\r\n");
                 var errorMessage = "{0} could not be updated:\r\n{1}";
 
                 if (isByName)

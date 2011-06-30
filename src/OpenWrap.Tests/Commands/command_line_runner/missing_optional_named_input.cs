@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using OpenWrap;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.runner
+namespace Tests.Commands.command_line_runner
 {
     public class missing_optional_named_input : contexts.command_line_runner
     {
@@ -16,15 +12,15 @@ namespace Tests.Commands.runner
         }
 
         [Test]
-        public void input_not_assigned()
-        {
-            Input("command").ShouldBeEmpty();
-        }
-
-        [Test]
         public void command_is_executed()
         {
             CommandExecuted.ShouldBeTrue();
+        }
+
+        [Test]
+        public void input_not_assigned()
+        {
+            Input("command").ShouldBeEmpty();
         }
     }
 }

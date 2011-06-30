@@ -2,7 +2,7 @@
 
 namespace OpenWrap.Repositories
 {
-    public interface ISupportNuking : IPackageRepository
+    public interface ISupportNuking : IRepositoryFeature
     {
         void Nuke(IPackageInfo packageInfo);
     }

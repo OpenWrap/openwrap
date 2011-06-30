@@ -15,7 +15,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         {
             var packageSelection = new PackageSelectionContext();
 
-                Debug.WriteLine("Resolving descriptor " + packageDescriptor.Dependencies.Select(x => x.ToString()).Join(", "));
+                Debug.WriteLine("Resolving descriptor " + packageDescriptor.Dependencies.Select(x => x.ToString()).JoinString(", "));
             for (int i = 0; i < MAX_RETRIES; i++)
             {
                 var exclusionList = packageSelection.IncompatiblePackageVersions.Select(x => x.Key);

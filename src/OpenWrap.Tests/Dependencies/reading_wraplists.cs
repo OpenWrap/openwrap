@@ -66,17 +66,17 @@ namespace OpenWrap.Repositories.Wrap.Tests.Dependencies
         {
             protected void given_repository()
             {
-                Repository = new HttpRepository(LocalFileSystem.Instance, "remote", new InMemoryNavigator());
+                Repository = new IndexedHttpRepository(LocalFileSystem.Instance, "remote", new InMemoryNavigator());
             }
             class InMemoryNavigator : IHttpRepositoryNavigator
             {
-                public PackageDocument Index()
+                public PackageFeed Index()
                 {
                     var doc = XDocument.Parse(WrapListDocument, LoadOptions.SetBaseUri);
                     return doc.ParsePackageDocument();
                 }
 
-                public Stream LoadPackage(PackageItem packageItem)
+                public Stream LoadPackage(PackageEntry packageEntry)
                 {
                     throw new NotSupportedException();
                 }

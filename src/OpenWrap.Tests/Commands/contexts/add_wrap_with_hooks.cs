@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap;
-using OpenWrap.Commands.contexts;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageModel;
 using OpenWrap.Services;

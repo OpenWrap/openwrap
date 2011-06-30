@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using NUnit.Framework;
-using OpenWrap;
-using OpenWrap.Commands;
-using OpenWrap.Commands.Cli;
 using OpenWrap.Testing;
-using Tests.Commands.usage;
 
-namespace Tests.Commands.runner
+namespace Tests.Commands.command_line_runner
 {
     public class named_input_provided : contexts.command_line_runner
     {
@@ -25,5 +18,4 @@ namespace Tests.Commands.runner
             Input("command").Single().ShouldBe("test");
         }
     }
-    
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Defines targets for projects that consume wraps -->
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="_Initialize">
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="OpenWrap-Initialize">
 
   <!-- Default folder locations -->
   <PropertyGroup>
@@ -37,7 +37,7 @@
   	<OpenWrap-IncludeSourceFiles Condition="'$(OpenWrap-IncludeSourceFiles)' == ''">false</OpenWrap-IncludeSourceFiles>
   </PropertyGroup>
 
-  <Target Name="_Initialize">
+  <Target Name="OpenWrap-Initialize">
     <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" CurrentProjectFile="$(MSBuildProjectFullPath)" >
       <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
       <Output TaskParameter="Scope" PropertyName="OpenWrap-Scope" Condition="'$(OpenWrap-Scope)' == ''" />
@@ -45,13 +45,8 @@
     </InitializeOpenWrap>
 
     <InitializeVisualStudioIntegration
-      WrapDescriptor="$(OpenWrap-DescriptorPath)"
-      WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
-      Platform="$(OpenWrap-TargetPlatform)"
-      Profile="$(OpenWrap-TargetProfile)"
-      ProjectFilePath="$(MSBuildProjectFullPath)"
       EnableVisualStudioIntegration="$(OpenWrap-EnableVisualStudioIntegration)"
-      ExcludeAssemblies="$(AssemblyName);$(OpenWrap-ExcludeAssemblies)" />
+      />
     <!-- Sanity checks -->
     
     <Error Condition="'$(OutputType)' != 'winexe' and '$(OutputType)' != 'exe' and '$(OutputType)' != 'library'" Text="The project type '$(OutputType)' is not supported." />
@@ -66,7 +61,7 @@
 
   </PropertyGroup>
 
-  <Target Name="OpenWrap-ResolveReferences">
+  <Target Name="OpenWrap-ResolveReferences" DependsOnTargets="OpenWrap-Initialize">
     <ResolveWrapReferences
       WrapDescriptor="$(OpenWrap-DescriptorPath)"
       WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
@@ -80,7 +75,7 @@
     </ResolveWrapReferences>
   </Target>
 
-  <Target Name="OpenWrap-BeforeBuild" DependsOnTargets="_Initialize">
+  <Target Name="OpenWrap-BeforeBuild" DependsOnTargets="OpenWrap-Initialize">
 
   </Target>
 
