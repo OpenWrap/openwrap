@@ -6,25 +6,18 @@ using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageManagement.Exporters.Assemblies;
+using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using Path = OpenFileSystem.IO.Path;
 
 namespace OpenWrap.PackageManagement.Monitoring
 {
-    class DescriptorMonitor
-    {
-        
-    }
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
     public class PackageDescriptorMonitor : IPackageDescriptorMonitor
     {
         readonly Dictionary<Path, DescriptorSubscriptions> _notificationClients = new Dictionary<Path, DescriptorSubscriptions>();
 
-        IPackageResolver PackageResolver
-        {
-            get { return Services.ServiceLocator.GetService<IPackageResolver>(); }
-        }
         IPackageManager PackageManager
         {
             get { return Services.ServiceLocator.GetService<IPackageManager>(); }

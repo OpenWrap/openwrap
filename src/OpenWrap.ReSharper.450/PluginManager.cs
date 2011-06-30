@@ -62,17 +62,24 @@ namespace OpenWrap.Resharper
 
 
     }
+#if DEBUG
     [resharper::JetBrains.ProjectModel.SolutionComponentImplementation]
     public class TestRunner : resharper::JetBrains.ProjectModel.ISolutionComponent
     {
-        bool runTestRunner = true;
+        bool _runTestRunner = true;
         System.Threading.Thread _debugThread;
         DTE2 _dte;
         OutputWindowPane _pane;
         OpenWrapOutput _output;
+        ManualResetEvent _unloading = new ManualResetEvent(false);
 
         public void Dispose()
         {
+            if (!_debugThread.Join(TimeSpan.FromSeconds(10)))
+            {
+                _output.Write("ReSharper TestRunner hasn't stopped on time, killing.");
+                _debugThread.Abort();
+            }
         }
 
         public void Init()
@@ -90,7 +97,7 @@ namespace OpenWrap.Resharper
         void WaitForOutput()
         {
             _output.Write("ReSharper test runner starting.");
-            while (runTestRunner)
+            while (_runTestRunner)
             {
                 ProcessTest(_pane);
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -99,16 +106,12 @@ namespace OpenWrap.Resharper
 
         void ProcessTest(OutputWindowPane pane)
         {
-            string text = null;
-            Guard.Run("Reading pane",
-                      () =>
-                      {
-                          text = pane.Read()
-                                     .Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
-                                     .LastOrDefault(x => x.StartsWith(PluginManager.RESHARPER_TEST));
-                      });
-            if (text == null) return;
-            var methodName = text.Substring(PluginManager.RESHARPER_TEST.Length);
+            string paneText;
+            var success = Guard.BeginInvokeAndWait("Reading pane",()=> ReadTest(pane), out paneText, _unloading);
+            if (!success) return;
+
+            if (paneText == null || paneText.Length <= PluginManager.RESHARPER_TEST.Length) return;
+            var methodName = paneText.Substring(PluginManager.RESHARPER_TEST.Length);
 
             pane.Clear();
             Debug.WriteLine("Running test " + methodName);
@@ -120,6 +123,12 @@ namespace OpenWrap.Resharper
             pane.OutputString(msg);
         }
 
+        string ReadTest(OutputWindowPane pane)
+        {
+            return pane.Read().Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
+                .LastOrDefault(x => x.StartsWith(PluginManager.RESHARPER_TEST));
+        }
+
         public void AfterSolutionOpened()
         {
             _debugThread.Start();
@@ -127,11 +136,10 @@ namespace OpenWrap.Resharper
 
         public void BeforeSolutionClosed()
         {
-            runTestRunner = false;
-            _debugThread.Join();
+            _unloading.Set();
+            _runTestRunner = false;
         }
     }
-
     public class ResharperTests
     {
         readonly OutputWindowPane _pane;
@@ -157,7 +165,7 @@ namespace OpenWrap.Resharper
 #if v450
                               var action = resharper::JetBrains.ActionManagement.ActionManager.Instance.GetAction(PluginManager.ACTION_REANALYZE);
 #else
-                          var action = resharper::JetBrains.ActionManagement.ActionManager.Instance.GetUpdatableAction(PluginManager.ACTION_REANALYZE);
+                              var action = resharper::JetBrains.ActionManagement.ActionManager.Instance.GetUpdatableAction(PluginManager.ACTION_REANALYZE);
 #endif
                               hasErrors = resharper::JetBrains.ActionManagement.ActionManager.Instance.UpdateAction(action);
                               if (hasErrors)
@@ -171,7 +179,8 @@ namespace OpenWrap.Resharper
             } while (hasErrors && CanContinueWaiting(sw, TimeSpan.FromSeconds(60)));
             return !hasErrors;
         }
-        bool CanContinueWaiting(Stopwatch sw, TimeSpan time)
+
+        static bool CanContinueWaiting(Stopwatch sw, TimeSpan time)
         {
             System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
             return sw.Elapsed < time;
@@ -183,6 +192,8 @@ namespace OpenWrap.Resharper
             sas.AnalysisEnabledOption = true;
         }
     }
+
+#endif
     public static class DteExtensions
     {
         public static string Read(this OutputWindowPane pane)

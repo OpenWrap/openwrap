@@ -34,11 +34,10 @@ namespace OpenWrap.Resharper
             _output = new OpenWrapOutput();
 
             _output.Write("Solution opened " + solution.Name);
-            _thread = new System.Threading.Thread(LoadAssemblies)
-                {Name = "OpenWrap assembly change listener" };
+            _thread = new System.Threading.Thread(LoadAssemblies) { Name = "OpenWrap assembly change listener" };
 
-            
-           
+
+
         }
 
         void LoadAssemblies()
@@ -58,8 +57,8 @@ namespace OpenWrap.Resharper
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
                     continue;
                 }
-                
-                WaitHandle.WaitAny(new WaitHandle[]{wait, _shutdownSync});
+
+                WaitHandle.WaitAny(new WaitHandle[] { wait, _shutdownSync });
                 if (_shuttingDown) return;
                 _assemblyMap = (Dictionary<string, List<string>>)AppDomain.CurrentDomain.GetData(ASSEMBLY_DATA);
                 Guard.Run("Updating references.", RefreshProjects);
@@ -68,7 +67,7 @@ namespace OpenWrap.Resharper
 
         void RefreshProjects()
         {
-            foreach(var project in _solution.GetAllProjects())
+            foreach (var project in _solution.GetAllProjects())
             {
                 if (project.ProjectFile == null) continue;
                 var projectPath = project.ProjectFile.Location.FullPath;
@@ -105,11 +104,12 @@ namespace OpenWrap.Resharper
         public void Init()
         {
             _thread.Start();
-            RegisterChangeMonitor();
+            resharper::JetBrains.Application.ChangeManager.Instance.Changed += HandleChanges;
         }
 
         public void Dispose()
         {
+            resharper::JetBrains.Application.ChangeManager.Instance.Changed -= HandleChanges;
         }
 
         public void AfterSolutionOpened()
@@ -122,11 +122,6 @@ namespace OpenWrap.Resharper
             _shuttingDown = true;
             _shutdownSync.Set();
             _thread.Join();
-        }
-
-        void RegisterChangeMonitor()
-        {
-            resharper::JetBrains.Application.ChangeManager.Instance.Changed += HandleChanges;
         }
 
         void HandleChanges(object sender, resharper::JetBrains.Application.ChangeEventArgs changeeventargs)
@@ -181,11 +176,27 @@ namespace OpenWrap.Resharper
         }
         public static void Run(string description, Action invoke)
         {
-
             resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Dispatcher
                     .Invoke(description,
                             () => resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Execute
                                           (description, () => invoke()));
+        }
+        public static bool BeginInvokeAndWait<T>(string description, Func<T> invoker, out T value, params WaitHandle[] waitHandles)
+        {
+            var shell = resharper::JetBrains.Application.Shell.Instance;
+            var guard = shell.Invocator.ReentrancyGuard;
+            var disp = guard.Dispatcher;
+            T returnValue = default(T);
+            ManualResetEvent finished = new ManualResetEvent(false);
+            disp.BeginOrInvoke(description, () => guard.Execute(description, () => { returnValue = invoker();
+                                                                                       finished.Set();}));
+            var handles = new WaitHandle[waitHandles.Length + 1];
+            waitHandles[0] = finished;
+            waitHandles.CopyTo(handles, 1);
+
+            var breakage = WaitHandle.WaitAny(waitHandles);
+            value = returnValue;
+            return breakage == 0;
         }
     }
 

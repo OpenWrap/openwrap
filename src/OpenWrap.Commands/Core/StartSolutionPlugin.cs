@@ -18,10 +18,11 @@ namespace OpenWrap.Commands.Core
         public const string SOLUTION_PLUGIN_UNLOADING = "Solution plugins stopping...";
         public const string SOLUTION_PLUGIN_UNLOADED = "All solution plugins stopped.";
         readonly IEnvironment _environment;
-        ManualResetEvent _exit;
+        ManualResetEvent _refreshRequired;
         readonly IPackageManager _manager;
         readonly IPackageDescriptorMonitor _monitor;
         readonly List<KeyValuePair<string,IDisposable>> _plugins = new List<KeyValuePair<string, IDisposable>>();
+        bool _disposed;
 
         public StartSolutionPlugin()
             : this(ServiceLocator.GetService<IPackageDescriptorMonitor>(), ServiceLocator.GetService<IPackageManager>(), ServiceLocator.GetService<IEnvironment>())
@@ -47,8 +48,8 @@ namespace OpenWrap.Commands.Core
 
         public void AssembliesUpdated(IEnumerable<Exports.IAssembly> assemblyPaths)
         {
-            if (_exit != null)
-                _exit.Set();
+            if (_refreshRequired != null)
+                _refreshRequired.Set();
         }
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
@@ -66,19 +67,19 @@ namespace OpenWrap.Commands.Core
 
             yield return new Info(SOLUTION_PLUGINS_STARTED);
 
-            _exit = new ManualResetEvent(false);
+            _refreshRequired = new ManualResetEvent(false);
             var unloadEvent = AppDomain.CurrentDomain.GetData("openwrap.vs.events.unloading") as ManualResetEvent;
 
             do
             {
+                var events = unloadEvent == null ? new WaitHandle[] { _refreshRequired } : new WaitHandle[] { unloadEvent, _refreshRequired };
+                var exitPoint = WaitHandle.WaitAny(events);
                 
-                var exitPoint = WaitHandle.WaitAny(unloadEvent == null ? new WaitHandle[] { _exit } : new WaitHandle[] { _exit, unloadEvent });
-                
-                if (exitPoint == 1) break;
+                if (_disposed || (events.Length > 1 && exitPoint == 0)) break;
                 var newPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
                     .SelectMany(x => x).ToList();
                 if (solutionPlugins.Any(x => newPlugins.Contains(x) == false)) break;
-                unloadEvent.Reset();
+                _refreshRequired.Reset();
                 foreach (var m in newPlugins.Where(x => solutionPlugins.Contains(x) == false).SelectMany(LoadPlugin))
                     yield return m;
             } while (true);
@@ -110,7 +111,10 @@ namespace OpenWrap.Commands.Core
 
         public void Dispose()
         {
-            _exit.Set();
+            if (_disposed) return;
+
+            _disposed = true;
+            _refreshRequired.Set();
         }
 
         static void CommitSuicide()

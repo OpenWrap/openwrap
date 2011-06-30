@@ -13,8 +13,8 @@ namespace OpenWrap.Runtime
     public class CurrentDirectoryEnvironment : IEnvironment
     {
         public CurrentDirectoryEnvironment()
+            : this(LocalFileSystem.Instance.GetDirectory(System.Environment.CurrentDirectory))
         {
-            CurrentDirectory = LocalFileSystem.Instance.GetDirectory(System.Environment.CurrentDirectory);
         }
 
         public CurrentDirectoryEnvironment(IDirectory currentDirectory)

@@ -4,7 +4,7 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.PackageManagement.Exporters
 {
-    public class SolutionPlugin : Exports.ISolutionPlugin
+    public class SolutionPlugin : Exports.ISolutionPlugin, IEquatable<SolutionPlugin>
     {
         readonly TypeDefinition _type;
 
@@ -12,9 +12,12 @@ namespace OpenWrap.PackageManagement.Exporters
         {
             _type = type;
             Package = package;
+            VersionIdentifier = type.FullName + ":" + type.Module.Name + ":" + package.Descriptor.Identifier;
             Path = path;
             Name = type.Name;
         }
+
+        protected string VersionIdentifier { get; set; }
 
         public string Path { get; private set; }
 
@@ -31,6 +34,36 @@ namespace OpenWrap.PackageManagement.Exporters
             return new PluginWrapper(plugin);
         }
 
+        public bool Equals(SolutionPlugin other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other.VersionIdentifier, VersionIdentifier);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(SolutionPlugin)) return false;
+            return Equals((SolutionPlugin)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return VersionIdentifier.GetHashCode();
+        }
+
+        public static bool operator ==(SolutionPlugin left, SolutionPlugin right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(SolutionPlugin left, SolutionPlugin right)
+        {
+            return !Equals(left, right);
+        }
+
         class PluginWrapper : IDisposable
         {
             object _plugin;
@@ -44,26 +77,6 @@ namespace OpenWrap.PackageManagement.Exporters
             {
                 _plugin = null;
             }
-        }
-
-        public bool Equals(SolutionPlugin other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals(other._type.FullName, _type.FullName);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof(SolutionPlugin)) return false;
-            return Equals((SolutionPlugin)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (_type != null ? _type.GetHashCode() : 0);
         }
     }
 }

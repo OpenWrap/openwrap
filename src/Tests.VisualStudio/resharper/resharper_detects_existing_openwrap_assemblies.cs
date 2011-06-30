@@ -2,8 +2,8 @@
 extern alias resharper500;
 extern alias resharper510;
 using NUnit.Framework;
+using OpenWrap.SolutionPlugins.VisualStudio.ReSharper;
 using OpenWrap.Testing;
-using OpenWrap.VisualStudio.SolutionPlugins.ReSharper;
 using Tests.VisualStudio.contexts;
 
 namespace Tests.VisualStudio.resharper

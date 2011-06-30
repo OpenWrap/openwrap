@@ -7,5 +7,5 @@ name: openwrap
 depends: tdnet-framework
 use-symlinks: true
 depends: mono.cecil
-directory-structure: src\*{scope: Tests=tests}\**
-version: 1.1.0.68608825
+directory-structure: src\{scope: OpenWrap.Tests=tests}
+version: 1.1.0.68601235
