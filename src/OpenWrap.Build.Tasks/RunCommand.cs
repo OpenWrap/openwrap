@@ -17,7 +17,7 @@ namespace OpenWrap.Build.Tasks
     {
         readonly IEnvironment _environment;
         readonly IPackageManager _packageManager;
-        bool _success;
+        bool _success = true;
 
         public RunCommand()
             : this(ServiceLocator.GetService<IPackageManager>(),
