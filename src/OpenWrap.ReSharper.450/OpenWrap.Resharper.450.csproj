@@ -106,9 +106,20 @@
     <Compile Include="..\OpenWrap.VisualStudio.Shared\SiteManager.cs">
       <Link>SiteManager.cs</Link>
     </Compile>
+    <Compile Include="DteExtensions.cs" />
+    <Compile Include="Guard.cs" />
+    <Compile Include="IResharperTests.cs" />
+    <Compile Include="IThreading.cs" />
+    <Compile Include="LegacyProjectReferenceUpdater.cs" />
+    <Compile Include="LegacyTestRunner.cs" />
+    <Compile Include="OpenWrapOutput.cs" />
     <Compile Include="PluginManager.cs" />
     <Compile Include="ProjectReferenceUpdater.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResharperLogger.cs" />
+    <Compile Include="ResharperTests5.cs" />
+    <Compile Include="LegacyShellThreading.cs" />
+    <Compile Include="TestRunner.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">

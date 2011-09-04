@@ -39,6 +39,278 @@
             Element of set
             </summary>
         </member>
+        <member name="T:JetBrains.Util.Collections.JetBinaryTree.NodeColor">
+            <summary>
+            A node in a red black tree can have one of the following two colors.
+            </summary>
+        </member>
+        <member name="T:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2">
+            <summary>
+            The JetBinaryTreeEnumerator class returns the keys or data objects of the treap in sorted order. 
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.#ctor">
+            <summary>
+            Creates an instance of this class.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.#ctor(JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode{`0,`1},System.Boolean,JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode{`0,`1})">
+            <summary>
+             Determine order, walk the tree and push the nodes onto the stack
+            </summary>
+             <param name="node"></param>
+             <param name="ascending"></param>
+             <param name="sentinelNode"></param>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.InsertNewNode(JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode{`0,`1})">
+            <summary>
+            Use depth-first traversal to push nodes into stack the lowest node will be at the top of the stack.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.NextElement">
+            <summary>
+             Next element.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.HasMoreElements">
+            <summary>
+             Has more elements.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.MoveNext">
+            <summary>
+             Move next.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.Key">
+            <summary>
+             Key.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.Value">
+            <summary>
+             The data or value associated with the key.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeEnumerator`2.Node">
+            <summary>
+             The data or value associated with the key.
+            </summary>
+        </member>
+        <member name="T:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode`2">
+            <summary>
+            A single node that is encapsulated in a red black tree data structure.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode`2.#ctor">
+            <summary>
+            Creates an instance of this class.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode`2.Color">
+            <summary>
+             Color - used to balance the tree.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode`2.Left">
+            <summary>
+             Left node.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode`2.Right">
+            <summary>
+             Right node.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode`2.Parent">
+            <summary>
+            Parent node.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode`2.Key">
+            <summary>
+             Key provided by the calling class.
+            </summary>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode`2.Data">
+            <summary>
+             Data available in this node
+            </summary>
+        </member>
+        <member name="T:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2">
+            <summary>
+             Red-black tree implementation. Not thread-safe
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.#ctor(System.Collections.Generic.IComparer{`0})">
+            <summary>
+            Creates an instance of this class.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Clear">
+            <summary>
+            Clears the tree.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.IsEmpty">
+            <summary>
+            Returns true if the tree is empty.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.RemoveMin">
+            <summary>
+            Removes the node with the minimum key.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.RemoveMax">
+            <summary>
+            Removes the node with the maximum key.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.GetMinKey">
+            <summary>
+            Returns the minimum key value.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.GetMaxKey">
+            <summary>
+            Returns the maximum key value.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.GetMinValue">
+            <summary>
+            Returns the object having the minimum key value.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.GetMaxValue">
+            <summary>
+            Returns the object having the maximum key.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.GetNode(`0)">
+            <summary>
+            Gets node for the specified key.
+            WARNING: This is hackish. Use it only when you really need it and understand all side-effects.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.GetData(`0)">
+            <summary>
+            Gets the data object associated with the specified key.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.InplaceReplace(`0,`0,`1)">
+            <summary>
+             This method updates key and value for existing node.
+             WARNING: It doesn't check that replaced key is in correct place! Use this method only if you are shifting keys and you're sure that this won't cause any corruption to the tree!
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Add(`0,`1)">
+            <summary>
+             Adds data to the tree.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.RotateLeft(JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode{`0,`1})">
+            <summary>
+             Rebalance the tree by rotating the nodes to the left.
+            </summary>        
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.RotateRight(JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode{`0,`1})">
+            <summary>
+             Rebalance the tree by rotating the nodes to the right.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Remove(`0)">
+            <summary>
+            Removes the key and data object (delete).
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Nodes(System.Boolean)">
+            <summary>
+            Returns an enumerator that returns nodes in order.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Pairs(System.Boolean)">
+            <summary>
+            Returns an enumerator that returns the key-value pairs in order.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Keys(System.Boolean)">
+            <summary>
+            Returns keys in order as specified in parameter.
+            </summary>
+            <param name="ascending"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Values(System.Boolean)">
+            <summary>
+            Returns all the values in the tree in order as specifed in the parameter.
+            </summary>
+            <param name="ascending"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the collection.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through a collection.
+            </summary>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Elements(System.Boolean)">
+            <summary>
+            Returns an enumeration of the data objects in order as specifed in the parameter.
+            </summary>
+            <param name="ascending"></param>
+            <returns></returns>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.RestoreAfterInsert(JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode{`0,`1})">
+            <summary>
+            RestoreAfterInsert
+            Additions to red-black trees usually destroy the red-black 
+            properties. Examine the tree and restore. Rotations are normally 
+            required to restore it
+            </summary>
+            <param name="x"></param>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.RestoreAfterDelete(JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode{`0,`1})">
+            <summary>
+            Deletions from red-black trees may destroy the red-black 
+            properties. Examine the tree and restore. Rotations are normally 
+            required to restore it.
+            </summary>
+            <param name="x"></param>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Delete(JetBrains.Util.Collections.JetBinaryTree.JetBinaryTreeNode{`0,`1})">
+            <summary>
+            Deletes a node from the tree and restores red black properties.
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="M:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.System#ICloneable#Clone">
+            <summary>
+            Creates a new object that is a copy of the current instance.
+            </summary>
+            <returns>
+            A new object that is a copy of this instance.
+            </returns>
+            <filterpriority>2</filterpriority>
+        </member>
+        <member name="P:JetBrains.Util.Collections.JetBinaryTree.JetBinaryTree`2.Size">
+            <summary>
+            The number of nodes contained in the tree.
+            </summary>
+        </member>
         <member name="T:JetBrains.Util.CompoundException">
             <summary>
             Aggregates multiple exceptions.
@@ -644,12 +916,12 @@
             Fires the <see cref="E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged"/> event.
             </summary>
         </member>
-        <member name="M:JetBrains.DataFlow.CollectionEvents`1.InternalAdd(`0,System.Object)">
+        <member name="M:JetBrains.DataFlow.CollectionEvents`1.InternalAddAnnotatee(`0,System.Object)">
             <summary>
             One of the core methods that implement the actual functionality.
             </summary>
         </member>
-        <member name="M:JetBrains.DataFlow.CollectionEvents`1.InternalRemove(`0,System.Object)">
+        <member name="M:JetBrains.DataFlow.CollectionEvents`1.InternalRemoveAnnotatee(`0,System.Object)">
             <summary>
             One of the core methods that implement the actual functionality.
             </summary>
@@ -1001,12 +1273,12 @@
             <param name="bNullKeysAllowed">Whether <c>Null</c> values are allowed for keys (take caution with value types).</param>
             <param name="bNullValuesAllowed">Whether <c>Null</c> values are allowed for values (take caution with value types).</param>
         </member>
-        <member name="M:JetBrains.DataFlow.DictionaryEvents`2.InternalAdd(System.Collections.Generic.KeyValuePair{`0,`1},System.Object)">
+        <member name="M:JetBrains.DataFlow.DictionaryEvents`2.InternalAddAnnotatee(System.Collections.Generic.KeyValuePair{`0,`1},System.Object)">
             <summary>
             One of the core methods that implement the actual functionality.
             </summary>
         </member>
-        <member name="M:JetBrains.DataFlow.DictionaryEvents`2.InternalRemove(System.Collections.Generic.KeyValuePair{`0,`1},System.Object)">
+        <member name="M:JetBrains.DataFlow.DictionaryEvents`2.InternalRemoveAnnotatee(System.Collections.Generic.KeyValuePair{`0,`1},System.Object)">
             <summary>
             One of the core methods that implement the actual functionality.
             </summary>
@@ -3373,6 +3645,11 @@
             If the actions schedulled on a terminated lifetime should be executed immediately (for actions; brackets are just ignored; disposes are disposed; etc).
             </summary>
         </member>
+        <member name="F:JetBrains.DataFlow.Lifetime.myId">
+            <summary>
+            ID for callstack annotation.
+            </summary>
+        </member>
         <member name="F:JetBrains.DataFlow.Lifetime.myItems">
             <summary>
             Stores the items to execute upon termination.
@@ -3598,7 +3875,7 @@
             </returns>
             <seealso cref="M:JetBrains.DataFlow.Lifetimes.Using(System.Action{JetBrains.DataFlow.Lifetime})"/>
         </member>
-        <member name="M:JetBrains.DataFlow.Lifetimes.CreateIntersection(JetBrains.DataFlow.Lifetime[])">
+        <member name="M:JetBrains.DataFlow.Lifetimes.CreateIntersection2(JetBrains.DataFlow.Lifetime[])">
             <summary>
             Creates an intersection of some lifetimes — a lifetime to terminate when either one terminates.
             </summary>
@@ -3942,12 +4219,12 @@
             Called when someone attempts to sink the <see cref="P:JetBrains.DataFlow.ListEvents`1.BeforeAddRemove"/> signal. Acknowledges the handler.
             </summary>
         </member>
-        <member name="M:JetBrains.DataFlow.ListEvents`1.InternalAdd(`0,System.Object)">
+        <member name="M:JetBrains.DataFlow.ListEvents`1.InternalAddAnnotatee(`0,System.Object)">
             <summary>
             One of the core methods that implement the actual functionality.
             </summary>
         </member>
-        <member name="M:JetBrains.DataFlow.ListEvents`1.InternalRemove(`0,System.Object)">
+        <member name="M:JetBrains.DataFlow.ListEvents`1.InternalRemoveAnnotatee(`0,System.Object)">
             <summary>
             One of the core methods that implement the actual functionality.
             </summary>
@@ -15928,6 +16205,13 @@
             Waiting for event to be SET
             </summary>
         </member>
+        <member name="M:JetBrains.Text.ArrayBuffer.AssertOffsetAndLength(System.Int32,System.Int32)">
+            <summary>
+            Assertion method to avoid creating closure objects when no exceptions are thrown
+            </summary>
+            <param name="offset"></param>
+            <param name="length"></param>
+        </member>
         <member name="T:JetBrains.Util.BidirectionalMap`2">
             <summary>
             Mapping from one family of objects into another and vice versa.
@@ -17715,11 +17999,6 @@
         <member name="F:JetBrains.Util.EnsureWritableResult.CHANGES_DETECTED">
             <summary>
             Some files were modified as a result of the attempt to make them writable
-            </summary>
-        </member>
-        <member name="F:JetBrains.Util.EnsureWritableResult.HAS_HIDDEN_FILES">
-            <summary>
-            Files list contains hidden files
             </summary>
         </member>
         <member name="T:JetBrains.Util.Events.EventDispatcher">

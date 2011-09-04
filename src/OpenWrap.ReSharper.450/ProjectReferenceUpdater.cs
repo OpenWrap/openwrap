@@ -7,14 +7,63 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using EnvDTE;
-using OpenWrap.IO;
-using OpenWrap.Runtime;
 using JetBrainsKey = resharper::JetBrains.Util.Key;
+
+#if v600
+using ResharperPluginManager = resharper::JetBrains.Application.PluginSupport.PluginManager;
+using ResharperPlugin = resharper::JetBrains.Application.PluginSupport.Plugin;
+using ResharperPluginTitleAttribute = resharper::JetBrains.Application.PluginSupport.PluginTitleAttribute;
+using ResharperPluginDescriptionAttribute = resharper::JetBrains.Application.PluginSupport.PluginDescriptionAttribute;
+using ResharperSolutionComponentAttribute = resharper::JetBrains.ProjectModel.SolutionComponentAttribute;
+using ResharperAssemblyReference = resharper::JetBrains.ProjectModel.IProjectToAssemblyReference;
+using ResharperThreading = resharper::JetBrains.Threading.IThreading;
+#else
+using ResharperPluginManager = resharper::JetBrains.UI.Application.PluginSupport.PluginManager;
+using ResharperPlugin = resharper::JetBrains.UI.Application.PluginSupport.Plugin;
+using ResharperPluginTitleAttribute = resharper::JetBrains.UI.Application.PluginSupport.PluginTitleAttribute;
+using ResharperPluginDescriptionAttribute = resharper::JetBrains.UI.Application.PluginSupport.PluginDescriptionAttribute;
+using ResharperThreading = OpenWrap.Resharper.IThreading;
+using ResharperAssemblyReference = resharper::JetBrains.ProjectModel.IAssemblyReference;
+#endif
 
 namespace OpenWrap.Resharper
 {
-    [resharper::JetBrains.ProjectModel.SolutionComponentImplementationAttribute]
-    public class ProjectReferenceUpdater : resharper::JetBrains.ProjectModel.ISolutionComponent
+    public static class ProjectModelExtensions
+    {
+        public static void RemoveAssemblyReference(this  resharper::JetBrains.ProjectModel.IProject project, ResharperAssemblyReference assembly)
+        {
+            
+#if v600
+            var projectImpl = project as resharper::JetBrains.ProjectModel.Impl.ProjectImpl;
+            if (projectImpl == null) return;
+            projectImpl.DoRemoveReference(assembly);
+#else
+            project.RemoveModuleReference(assembly);
+#endif
+        }
+#if v600
+        public static ResharperAssemblyReference AddAssemblyReference(this resharper::JetBrains.ProjectModel.IProject project, string path)
+        {
+            var projectImpl = project as resharper::JetBrains.ProjectModel.Impl.ProjectImpl;
+            if (projectImpl == null) return null;
+            var reference = resharper::JetBrains.ProjectModel.Impl.ProjectToAssemblyReference.CreateFromLocation(project, new resharper::JetBrains.Util.FileSystemPath(path));
+            projectImpl.DoAddReference(reference);
+            return reference;
+        }
+#endif
+        public static string HintLocation(this ResharperAssemblyReference assemblyRef)
+        {
+#if v600
+            return assemblyRef.ReferenceTarget.HintLocation.FullPath;
+#else
+            return assemblyRef.HintLocation.FullPath;
+#endif
+        }
+    }
+#if v600
+    [ResharperSolutionComponent]
+#endif
+    public class ProjectReferenceUpdater : IDisposable
     {
         const string ASSEMBLY_NOTIFY = "ASSEMBLY_CHANGE_NOTIFY";
         const string ASSEMBLY_DATA = "RESHARPER_ASSEMBLY_DATA";
@@ -22,21 +71,27 @@ namespace OpenWrap.Resharper
 
         static readonly JetBrainsKey ISWRAP = new JetBrainsKey("FromOpenWrap");
         readonly resharper::JetBrains.ProjectModel.ISolution _solution;
+        readonly resharper::JetBrains.Application.ChangeManager _changeManager;
+        readonly ResharperThreading _threading;
         System.Threading.Thread _thread;
         ManualResetEvent _shutdownSync = new ManualResetEvent(false);
         Dictionary<string, List<string>> _assemblyMap;
         bool _shuttingDown = false;
         OpenWrapOutput _output;
 
-        public ProjectReferenceUpdater(resharper::JetBrains.ProjectModel.ISolution solution)
+        public ProjectReferenceUpdater(resharper::JetBrains.ProjectModel.ISolution solution, resharper::JetBrains.Application.ChangeManager changeManager, ResharperThreading threading)
         {
             _solution = solution;
+            _changeManager = changeManager;
+            _threading = threading;
             _output = new OpenWrapOutput();
 
             _output.Write("Solution opened " + solution.Name);
             _thread = new System.Threading.Thread(LoadAssemblies) { Name = "OpenWrap assembly change listener" };
 
 
+            _thread.Start();
+            _changeManager.Changed += HandleChanges;
 
         }
 
@@ -61,7 +116,7 @@ namespace OpenWrap.Resharper
                 WaitHandle.WaitAny(new WaitHandle[] { wait, _shutdownSync });
                 if (_shuttingDown) return;
                 _assemblyMap = (Dictionary<string, List<string>>)AppDomain.CurrentDomain.GetData(ASSEMBLY_DATA);
-                Guard.Run("Updating references.", RefreshProjects);
+                _threading.Run("Updating references.", RefreshProjects);
             }
         }
 
@@ -77,7 +132,7 @@ namespace OpenWrap.Resharper
                         .Where(x => x.GetProperty(ISWRAP) != null).ToList();
 
                 var existingOpenWrapReferencePaths = existingOpenWrapReferences
-                        .Select(x => x.HintLocation.FullPath).ToList();
+                        .Select(assemblyRef => assemblyRef.HintLocation()).ToList();
 
                 var assemblies = _assemblyMap[projectPath];
                 foreach (var path in assemblies
@@ -94,34 +149,16 @@ namespace OpenWrap.Resharper
                     ResharperLogger.Debug("Removing reference {0} from {1}",
                                           projectPath,
                                           toRemove);
-                    project.RemoveModuleReference(
-                            existingOpenWrapReferences.First(
-                                    x => x.HintLocation.FullPath == remove));
+                    project.RemoveAssemblyReference(existingOpenWrapReferences.First(x => x.HintLocation() == remove));
                 }
             }
         }
-
-        public void Init()
-        {
-            _thread.Start();
-            resharper::JetBrains.Application.ChangeManager.Instance.Changed += HandleChanges;
-        }
-
         public void Dispose()
-        {
-            resharper::JetBrains.Application.ChangeManager.Instance.Changed -= HandleChanges;
-        }
-
-        public void AfterSolutionOpened()
-        {
-            _thread.Start();
-        }
-
-        public void BeforeSolutionClosed()
         {
             _shuttingDown = true;
             _shutdownSync.Set();
             _thread.Join();
+            _changeManager.Changed -= HandleChanges;
         }
 
         void HandleChanges(object sender, resharper::JetBrains.Application.ChangeEventArgs changeeventargs)
@@ -141,7 +178,7 @@ namespace OpenWrap.Resharper
             }
         }
 
-        bool HasProjectChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
+        static bool HasProjectChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
         {
             var children = solutionChanges.GetChildren();
             foreach (var child in children.OfType<resharper::JetBrains.ProjectModel.ProjectItemChange>())
@@ -152,59 +189,18 @@ namespace OpenWrap.Resharper
             return false;
         }
 
-        bool HasProjectItemChanges(resharper::JetBrains.ProjectModel.ProjectItemChange child)
+        static bool HasProjectItemChanges(resharper::JetBrains.ProjectModel.ProjectItemChange child)
         {
             var children = child.GetChildren();
             return children.OfType<resharper::JetBrains.ProjectModel.AssemblyChange>().Any();
         }
 
-        bool HasSolutionChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
+        static bool HasSolutionChanges(resharper::JetBrains.ProjectModel.SolutionChange solutionChanges)
         {
             return solutionChanges.IsAdded ||
                    solutionChanges.IsRemoved ||
                    solutionChanges.IsOpeningSolution ||
                    solutionChanges.IsClosingSolution;
-        }
-    }
-
-    public static class Guard
-    {
-        public static void Run(Action invoke)
-        {
-            Run(invoke.Method.Name, invoke);
-
-        }
-        public static void Run(string description, Action invoke)
-        {
-            resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Dispatcher
-                    .Invoke(description,
-                            () => resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Execute
-                                          (description, () => invoke()));
-        }
-        public static bool BeginInvokeAndWait<T>(string description, Func<T> invoker, out T value, params WaitHandle[] waitHandles)
-        {
-            var shell = resharper::JetBrains.Application.Shell.Instance;
-            var guard = shell.Invocator.ReentrancyGuard;
-            var disp = guard.Dispatcher;
-            T returnValue = default(T);
-            ManualResetEvent finished = new ManualResetEvent(false);
-            disp.BeginOrInvoke(description, () => guard.Execute(description, () => { returnValue = invoker();
-                                                                                       finished.Set();}));
-            var handles = new WaitHandle[waitHandles.Length + 1];
-            waitHandles[0] = finished;
-            waitHandles.CopyTo(handles, 1);
-
-            var breakage = WaitHandle.WaitAny(waitHandles);
-            value = returnValue;
-            return breakage == 0;
-        }
-    }
-
-    internal static class ResharperLogger
-    {
-        public static void Debug(string text, params string[] args)
-        {
-            System.Diagnostics.Debugger.Log(0, "resharper", DateTime.Now.ToShortTimeString() + ":" + string.Format(text, args) + "\r\n");
         }
     }
 }

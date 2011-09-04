@@ -3,9 +3,9 @@ using EnvDTE;
 using EnvDTE80;
 using OpenWrap.VisualStudio;
 
-namespace OpenWrap.SolutionPlugins.VisualStudio
+namespace OpenWrap.Resharper
 {
-    public class OpenWrapOutput
+    public  class OpenWrapOutput
     {
         readonly DTE2 _dte;
         OutputWindowPane _outputWindow;

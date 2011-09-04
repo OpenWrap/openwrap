@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using OpenWrap.SolutionPlugins.VisualStudio.ReSharper;
 using OpenWrap.Testing;
 using Tests.VisualStudio.contexts;
 
@@ -8,6 +9,8 @@ namespace Tests.VisualStudio.v2010
     {
         public can_create_and_build_new_solution()
         {
+            given_openwrap_assemblyOf<ReSharperLoaderPlugin>("solution");
+
             given_solution_file("mySolution.sln");
             given_project_2010("MyProject");
             given_file("Class1.cs", "public class ClassName { public static void MainMethod(OpenFileSystem.IO.IFile file) {} }");

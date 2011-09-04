@@ -45,6 +45,18 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\lib\vs2008\Extensibility.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Platform.ReSharper.ActionManagement">
+      <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.ActionManagement.dll</HintPath>
+      <Aliases>resharper</Aliases>
+    </Reference>
+    <Reference Include="JetBrains.Platform.ReSharper.ComponentModel">
+      <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.ComponentModel.dll</HintPath>
+      <Aliases>resharper</Aliases>
+    </Reference>
+    <Reference Include="JetBrains.Platform.ReSharper.Metadata">
+      <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.Metadata.dll</HintPath>
+      <Aliases>resharper</Aliases>
+    </Reference>
     <Reference Include="JetBrains.Platform.ReSharper.ProjectModel">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.ProjectModel.dll</HintPath>
       <Aliases>resharper</Aliases>
@@ -64,6 +76,18 @@
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.Util.dll</HintPath>
       <Aliases>resharper</Aliases>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="JetBrains.Platform.ReSharper.VSIntegration">
+      <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.VSIntegration.dll</HintPath>
+      <Aliases>resharper</Aliases>
+    </Reference>
+    <Reference Include="JetBrains.ReSharper.Daemon">
+      <HintPath>..\..\lib\resharper-6.0.0\JetBrains.ReSharper.Daemon.dll</HintPath>
+      <Aliases>resharper</Aliases>
+    </Reference>
+    <Reference Include="JetBrains.ReSharper.SolutionAnalysis">
+      <HintPath>..\..\lib\resharper-6.0.0\JetBrains.ReSharper.SolutionAnalysis.dll</HintPath>
+      <Aliases>resharper</Aliases>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.CommandBars, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>
@@ -86,15 +110,51 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\lib\vs2008\Microsoft.VisualStudio.Shell.Interop.8.0.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\OpenWrap.ReSharper.450\DteExtensions.cs">
+      <Link>DteExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\Guard.cs">
+      <Link>Guard.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\IResharperTests.cs">
+      <Link>IResharperTests.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\OpenWrapOutput.cs">
+      <Link>OpenWrapOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\PluginManager.cs">
+      <Link>PluginManager.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\ProjectReferenceUpdater.cs">
+      <Link>ProjectReferenceUpdater.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\ResharperLogger.cs">
+      <Link>ResharperLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\ResharperTests5.cs">
+      <Link>ResharperTests5.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\TestRunner.cs">
+      <Link>TestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.VisualStudio.Shared\SiteManager.cs">
+      <Link>SiteManager.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />

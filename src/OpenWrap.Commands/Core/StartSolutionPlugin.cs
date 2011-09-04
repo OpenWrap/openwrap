@@ -74,8 +74,9 @@ namespace OpenWrap.Commands.Core
             {
                 var events = unloadEvent == null ? new WaitHandle[] { _refreshRequired } : new WaitHandle[] { unloadEvent, _refreshRequired };
                 var exitPoint = WaitHandle.WaitAny(events);
-                
+                //Debugger.Launch();//
                 if (_disposed || (events.Length > 1 && exitPoint == 0)) break;
+                _environment.ProjectRepository.RefreshPackages();
                 var newPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
                     .SelectMany(x => x).ToList();
                 if (solutionPlugins.Any(x => newPlugins.Contains(x) == false)) break;
@@ -87,7 +88,7 @@ namespace OpenWrap.Commands.Core
             
             foreach (var m in _plugins.SelectMany(UnloadPlugin)) yield return m;
 
-            _plugins.Clear();
+            _plugins.Clear();       
             yield return new Info(SOLUTION_PLUGIN_UNLOADED);
             CommitSuicide();
         }

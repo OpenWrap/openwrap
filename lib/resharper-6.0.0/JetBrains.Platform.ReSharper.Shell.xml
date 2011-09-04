@@ -6628,7 +6628,7 @@
         <member name="F:JetBrains.Application.Defines.IsModeAnnotateCallStacks">
              <summary>
               <para>
-                <c>#define IsModeAnnotateCallStacks False</c>
+                <c>#define IsModeAnnotateCallStacks True</c>
               </para>
               <para>Whether call stacks should be annotated when calling standard object methods. If there's a graph of standard objects identifyable only by names (eg IProperty, ICollection, ISignal, etc), a callstack of their interaction does not give out the names of the entities, unless this option is turned on. Has a perf impact.</para>
               <para>Default is ON. OFF for production builds.</para>
@@ -6637,7 +6637,7 @@
         <member name="F:JetBrains.Application.Defines.IsModeAssert">
              <summary>
               <para>
-                <c>#define IsModeAssert False</c>
+                <c>#define IsModeAssert True</c>
               </para>
               <para>Whether debug asserts should be active and throw runtime exceptions.</para>
               <para>Default is ON. OFF for production builds.</para>
@@ -6655,7 +6655,7 @@
         <member name="F:JetBrains.Application.Defines.IsMsiIncludePdb">
              <summary>
               <para>
-                <c>#define IsMsiIncludePdb False</c>
+                <c>#define IsMsiIncludePdb True</c>
               </para>
               <para>Whether PDBs for product binaries should be packed into the Setup.</para>
               <para>If True, it is an error if a PDB is missing.</para>
@@ -6681,7 +6681,7 @@
         <member name="F:JetBrains.Application.Defines.IsProductionBuild">
              <summary>
               <para>
-                <c>#define IsProductionBuild True</c>
+                <c>#define IsProductionBuild False</c>
               </para>
               <para>Defines whether this is the Production Build — that is, production license should be used instead of the EAP license, and any optional checks should be deactivated.</para>
             </summary>
@@ -6713,7 +6713,7 @@
         <member name="F:JetBrains.Application.Defines.LicenseSupportIdentifier">
              <summary>
               <para>
-                <c>#define LicenseSupportIdentifier E6EF44CE-A7F4-4C23-AD3D-E91D05774D0B</c>
+                <c>#define LicenseSupportIdentifier BA057D9F-70E9-40B3-B565-87E743F8337F</c>
               </para>
               <para>An identifier for the evaluation license. Change it to reset the evaluation period.</para>
               <para>Note: do not change LicenseSupportIdentifier here, edit the property on TeamCity instead.</para>
@@ -6810,7 +6810,7 @@
         <member name="F:JetBrains.Application.Defines.NumTimeBombDays">
              <summary>
               <para>
-                <c>#define NumTimeBombDays 21</c>
+                <c>#define NumTimeBombDays 0</c>
               </para>
               <para>The product will be inoperational when this time since build date expires. 0 means never expire (release mode), which is the default.</para>
             </summary>
@@ -6866,7 +6866,7 @@
         <member name="F:JetBrains.Application.Defines.ProductFullName">
              <summary>
               <para>
-                <c>#define ProductFullName ReSharper 6.0 EAP</c>
+                <c>#define ProductFullName ReSharper 6.0</c>
               </para>
               <para>This full name is actually displayed in the User Interface in the About Boxes and such.
                   It should include the short product name and the marketing version of the product.
@@ -7038,7 +7038,7 @@
         <member name="F:JetBrains.Application.Defines.Const.IsModeAnnotateCallStacks">
              <summary>
               <para>
-                <c>#define IsModeAnnotateCallStacks False</c>
+                <c>#define IsModeAnnotateCallStacks True</c>
               </para>
               <para>Whether call stacks should be annotated when calling standard object methods. If there's a graph of standard objects identifyable only by names (eg IProperty, ICollection, ISignal, etc), a callstack of their interaction does not give out the names of the entities, unless this option is turned on. Has a perf impact.</para>
               <para>Default is ON. OFF for production builds.</para>
@@ -7048,7 +7048,7 @@
         <member name="F:JetBrains.Application.Defines.Const.IsModeAssert">
              <summary>
               <para>
-                <c>#define IsModeAssert False</c>
+                <c>#define IsModeAssert True</c>
               </para>
               <para>Whether debug asserts should be active and throw runtime exceptions.</para>
               <para>Default is ON. OFF for production builds.</para>
@@ -7068,7 +7068,7 @@
         <member name="F:JetBrains.Application.Defines.Const.IsMsiIncludePdb">
              <summary>
               <para>
-                <c>#define IsMsiIncludePdb False</c>
+                <c>#define IsMsiIncludePdb True</c>
               </para>
               <para>Whether PDBs for product binaries should be packed into the Setup.</para>
               <para>If True, it is an error if a PDB is missing.</para>
@@ -7097,7 +7097,7 @@
         <member name="F:JetBrains.Application.Defines.Const.IsProductionBuild">
              <summary>
               <para>
-                <c>#define IsProductionBuild True</c>
+                <c>#define IsProductionBuild False</c>
               </para>
               <para>Defines whether this is the Production Build — that is, production license should be used instead of the EAP license, and any optional checks should be deactivated.</para>
               <para>Use this const field only where use of a constant is mandatory. Otherwise use the static readonly field in the outer class, which stands better in the compiled assembly, and has a more concrete type for non-primitive-type properties.</para>
@@ -7133,7 +7133,7 @@
         <member name="F:JetBrains.Application.Defines.Const.LicenseSupportIdentifier">
              <summary>
               <para>
-                <c>#define LicenseSupportIdentifier E6EF44CE-A7F4-4C23-AD3D-E91D05774D0B</c>
+                <c>#define LicenseSupportIdentifier BA057D9F-70E9-40B3-B565-87E743F8337F</c>
               </para>
               <para>An identifier for the evaluation license. Change it to reset the evaluation period.</para>
               <para>Note: do not change LicenseSupportIdentifier here, edit the property on TeamCity instead.</para>
@@ -7242,7 +7242,7 @@
         <member name="F:JetBrains.Application.Defines.Const.NumTimeBombDays">
              <summary>
               <para>
-                <c>#define NumTimeBombDays 21</c>
+                <c>#define NumTimeBombDays 0</c>
               </para>
               <para>The product will be inoperational when this time since build date expires. 0 means never expire (release mode), which is the default.</para>
               <para>Use this const field only where use of a constant is mandatory. Otherwise use the static readonly field in the outer class, which stands better in the compiled assembly, and has a more concrete type for non-primitive-type properties.</para>
@@ -7305,7 +7305,7 @@
         <member name="F:JetBrains.Application.Defines.Const.ProductFullName">
              <summary>
               <para>
-                <c>#define ProductFullName ReSharper 6.0 EAP</c>
+                <c>#define ProductFullName ReSharper 6.0</c>
               </para>
               <para>This full name is actually displayed in the User Interface in the About Boxes and such.
                   It should include the short product name and the marketing version of the product.

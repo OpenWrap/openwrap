@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using EnvDTE;
+using EnvDTE80;
 
 namespace Tests.VisualStudio
 {
@@ -48,7 +49,7 @@ namespace Tests.VisualStudio
                 System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(50));
         }
 
-        public static void WaitFor(this DTE dte, Func<bool> predicate, TimeSpan waitFor = new TimeSpan())
+        public static void WaitFor(this DTE2 dte, Func<bool> predicate, TimeSpan waitFor = new TimeSpan())
         {
             if (waitFor == TimeSpan.Zero) waitFor = TimeSpan.FromMinutes(1);
             var start = DateTime.Now;
@@ -59,11 +60,18 @@ namespace Tests.VisualStudio
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
             }
         }
-
+        public static void WaitForOutputMessage(this DTE2 dte, string outputWindowName, string message, int messageCount)
+        {
+            dte.WaitFor(() =>
+            {
+                var output = dte.Windows.Output(outputWindowName);
+                return output != null && output.Read().Contains(message, messageCount);
+            }, TimeSpan.FromMinutes(1));
+        }
         public static void WaitForMessage(this OutputWindowPane outputWindow, string message, int messageCount = 1, TimeSpan waitFor = new TimeSpan())
         {
             if (waitFor == TimeSpan.Zero) waitFor = TimeSpan.FromMinutes(1);
-            outputWindow.DTE.WaitFor(() => outputWindow.Read().Contains(message, messageCount), waitFor);
+            ((DTE2)outputWindow.DTE).WaitFor(() => outputWindow.Read().Contains(message, messageCount), waitFor);
         }
     }
 }

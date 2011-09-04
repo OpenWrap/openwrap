@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>JetBrains.ReSharper.SolutionAnalysis</name>
+    </assembly>
+    <members>
+        <member name="M:JetBrains.ReSharper.Daemon.SolutionAnalysis.ElementIdToElementIdAndCountMap.IncrementCount(JetBrains.ReSharper.Daemon.UsageChecking.ElementId,JetBrains.ReSharper.Daemon.UsageChecking.ElementId)">
+            <returns>true if new key-value pair is created</returns>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.SolutionAnalysis.ElementIdToElementIdAndCountMap.DecrementCount(JetBrains.ReSharper.Daemon.UsageChecking.ElementId,JetBrains.ReSharper.Daemon.UsageChecking.ElementId)">
+            <returns>true if key-value pair is removed</returns>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.SolutionAnalysis.ElementIdToElementIdAndCountMap.SmartElementIdToCountMap.IncrementCount(JetBrains.ReSharper.Daemon.UsageChecking.ElementId,System.Boolean@)">
+            <returns>true if new id is added</returns>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.SolutionAnalysis.ElementIdToElementIdAndCountMap.SmartElementIdToCountMap.DecrementCount(JetBrains.ReSharper.Daemon.UsageChecking.ElementId,System.Boolean@,System.Boolean@)">
+            <returns>true if id is removed</returns>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.SolutionAnalysis.FileImages.ProjectReferencesCache.UpdateAndFlushChanges(JetBrains.Application.CheckForInterrupt,System.Collections.Generic.ICollection{JetBrains.ReSharper.Psi.Dependencies.MetaModuleId}@)">
+            <param name="checkForInterrupt"></param>
+            <param name="modulesChanged">List of modules whose "visibility" to other projects changed</param>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.SolutionAnalysis.ElementIdToCountMap.IncrementCount(JetBrains.ReSharper.Daemon.UsageChecking.ElementId)">
+            <returns>true if new id is added</returns>
+        </member>
+        <member name="M:JetBrains.ReSharper.Daemon.SolutionAnalysis.ElementIdToCountMap.DecrementCount(JetBrains.ReSharper.Daemon.UsageChecking.ElementId)">
+            <returns>true if id is removed</returns>
+        </member>
+        <member name="T:JetBrains.ReSharper.Daemon.SolutionAnalysis.AdditionalAnalysisInfoIndex.UseCountMapProcessor">
+            <returns>false if no need to continue</returns>
+        </member>
+    </members>
+</doc>

@@ -44,7 +44,6 @@ namespace Tests.VisualStudio.contexts
         readonly IDirectory ConfigDir;
         readonly LocalFileSystem FileSystem;
         readonly List<Func<PackageContent>> OpenWrapAssemblies = new List<Func<PackageContent>>();
-        readonly IFile OpenWrapPackage;
         readonly IDirectory SourceDir;
         readonly IDirectory SysRepoDir;
         readonly List<string> _commands = new List<string>();
@@ -55,6 +54,7 @@ namespace Tests.VisualStudio.contexts
         ClassLibraryProject _project;
         bool _solutionHasAddin;
         string _solutionName;
+        string _packageVersion = "99.99";
 
 
         public visual_studio()
@@ -71,7 +71,6 @@ namespace Tests.VisualStudio.contexts
             SysRepoDir = _tempDir.GetDirectory("sys").MustExist();
             SourceDir = RootDir.GetDirectory("src");
 
-            OpenWrapPackage = SysRepoDir.GetFile("openwrap-99.99.wrap");
         }
 
         public void Dispose()
@@ -129,6 +128,8 @@ namespace Tests.VisualStudio.contexts
             CreateProjectFiles();
 
             BuildOpenWrapPackage();
+            CopyPackageDependencies();
+
 
             InitializeServices();
 
@@ -164,7 +165,13 @@ namespace Tests.VisualStudio.contexts
 
         void BuildOpenWrapPackage()
         {
-            Packager.NewFromFiles(OpenWrapPackage, GetOpenWrapPackageContent());
+            Packager.NewFromFiles(
+                SysRepoDir.GetFile("openwrap-" + _packageVersion + ".wrap"),
+                GetOpenWrapPackageContent());
+        }
+
+        void CopyPackageDependencies()
+        {
             foreach (var file in FileSystem.GetFile(GetType().Assembly.Location).Parent.GetDirectory("Artifacts").Files("*.wrap"))
                 file.CopyTo(SysRepoDir.GetFile(file.Name));
         }
@@ -195,7 +202,8 @@ namespace Tests.VisualStudio.contexts
         IEnumerable<PackageContent> GetOpenWrapPackageContent()
         {
             yield return Static("openwrap.wrapdesc", ".", VsFiles.openwrap_wrapdesc);
-            yield return Static("version", ".", Encoding.UTF8.GetBytes("99.99"));
+            
+            yield return Static("version", ".", Encoding.UTF8.GetBytes(_packageVersion));
             // bin-net35
             yield return AssemblyOf<ICommand>(); // openwrap.dll
             yield return AssemblyOf<IHttpClient>(); // openrasta.client.dll
@@ -275,6 +283,12 @@ namespace Tests.VisualStudio.contexts
                 .Last();
             resharperTestWindow.Clear();
             return returnValue;
+        }
+
+        protected void BumpPackageVersion()
+        {
+            _packageVersion = "99.100";
+            BuildOpenWrapPackage();
         }
     }
 }

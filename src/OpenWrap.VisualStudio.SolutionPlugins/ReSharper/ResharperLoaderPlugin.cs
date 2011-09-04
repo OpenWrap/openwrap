@@ -26,6 +26,7 @@ namespace OpenWrap.SolutionPlugins.VisualStudio.ReSharper
         readonly IDirectory _rootAssemblyCacheDir;
         object _pluginManager;
         int _retries;
+        OpenWrapOutput _output;
 
         public ReSharperLoaderPlugin() : this(ServiceLocator.GetService<IFileSystem>())
         {
@@ -41,7 +42,7 @@ namespace OpenWrap.SolutionPlugins.VisualStudio.ReSharper
                 .MustExist();
 
             var vsAppDomain = AppDomain.CurrentDomain.GetData("openwrap.vs.appdomain") as AppDomain;
-
+            _output = new OpenWrapOutput();
             if (vsAppDomain == null) return;
 
             DetectResharperLoading(vsAppDomain);
@@ -93,7 +94,7 @@ namespace OpenWrap.SolutionPlugins.VisualStudio.ReSharper
             {
                 if (_retries++ <= MAX_RETRIES)
                 {
-                    OpenWrapOutput.Write("ReSharper not found, try {0}/{1}", _retries, MAX_RETRIES);
+                    _output.Write("ReSharper not found, try {0}/{1}", _retries, MAX_RETRIES);
                 }
 
                 return;

@@ -101,11 +101,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\OpenWrap.Resharper.450\PluginManager.cs">
+    <Compile Include="..\OpenWrap.ReSharper.450\DteExtensions.cs">
+      <Link>DteExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\Guard.cs">
+      <Link>Guard.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\IResharperTests.cs">
+      <Link>IResharperTests.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\IThreading.cs">
+      <Link>IThreading.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\LegacyProjectReferenceUpdater.cs">
+      <Link>LegacyProjectReferenceUpdater.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\LegacyShellThreading.cs">
+      <Link>LegacyShellThreading.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\LegacyTestRunner.cs">
+      <Link>LegacyTestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\OpenWrapOutput.cs">
+      <Link>OpenWrapOutput.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\PluginManager.cs">
       <Link>PluginManager.cs</Link>
     </Compile>
     <Compile Include="..\OpenWrap.ReSharper.450\ProjectReferenceUpdater.cs">
       <Link>ProjectReferenceUpdater.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\ResharperLogger.cs">
+      <Link>ResharperLogger.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\ResharperTests5.cs">
+      <Link>ResharperTests5.cs</Link>
+    </Compile>
+    <Compile Include="..\OpenWrap.ReSharper.450\TestRunner.cs">
+      <Link>TestRunner.cs</Link>
     </Compile>
     <Compile Include="..\OpenWrap.VisualStudio.Shared\SiteManager.cs">
       <Link>SiteManager.cs</Link>

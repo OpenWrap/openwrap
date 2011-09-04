@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using NUnit.Framework;
 using OpenWrap.Commands.Core;
 using OpenWrap.PackageModel;
+using OpenWrap.SolutionPlugins.VisualStudio.ReSharper;
 using OpenWrap.Testing;
 using Tests.VisualStudio.contexts;
 
@@ -13,6 +14,7 @@ namespace Tests.VisualStudio.solution_addin
         public reloads_on_descriptor_change()
         {
             given_solution_addin_com_reg();
+            
             given_solution_file("mySolution.sln", true);
             given_project_2010("MyProject");
             given_file("Class1.cs", "public class ClassName { public static void MainMethod() {} }");
@@ -20,9 +22,10 @@ namespace Tests.VisualStudio.solution_addin
             given_command("init-wrap . -name MyProject -all");
             given_vs_action(
                 dte => dte.Solution.SaveAll(true),
-                dte => dte.Windows.Output("OpenWrap").WaitForMessage(StartSolutionPlugin.SOLUTION_PLUGINS_STARTED),
+                dte => dte.WaitForOutputMessage("OpenWrap", StartSolutionPlugin.SOLUTION_PLUGINS_STARTED, 1),
+                dte => BumpPackageVersion(),
                 dte => RootDir.GetFile("MyProject.wrapdesc").Touch(),
-                dte => dte.Windows.Output("OpenWrap").WaitForMessage(StartSolutionPlugin.SOLUTION_PLUGINS_STARTED, 2));
+                dte => dte.WaitForOutputMessage("OpenWrap", StartSolutionPlugin.SOLUTION_PLUGINS_STARTED, 2));
 
             when_executing_vs2010();
         }
@@ -30,7 +33,10 @@ namespace Tests.VisualStudio.solution_addin
         [Test]
         public void app_domain_is_reloaded()
         {
+
+            Console.WriteLine(Output);
             Regex.Matches(Output, StartSolutionPlugin.SOLUTION_PLUGINS_STARTED).Count.ShouldBe(2);
+
         }
 
         [Test]

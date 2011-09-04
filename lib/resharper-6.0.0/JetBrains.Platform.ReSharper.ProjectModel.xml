@@ -53,12 +53,11 @@
             Tries to find Windows SDK v6 or higher and returns the path to its Bin folder, or <c>Null</c> if not found.
             </summary>
         </member>
-        <member name="M:JetBrains.ProjectModel.model2.Assemblies.Interfaces.IAssemblyFactory.AddRef(JetBrains.Util.FileSystemPath,JetBrains.Metadata.Utils.AssemblyNameInfo,System.String,JetBrains.ProjectModel.PlatformID)">
+        <member name="M:JetBrains.ProjectModel.model2.Assemblies.Interfaces.IAssemblyFactory.AddRef(JetBrains.ProjectModel.AssemblyReferenceResolveResult,System.String,JetBrains.ProjectModel.PlatformID)">
             <summary>
             Adds assembly to assembly collection
             </summary>
-            <param name="assemblyFilePath">Path to the assembly file</param>
-            <param name="assemblyName">Assembly name</param>
+            <param name="resolveResult"></param>
             <param name="holderId">Caller ID</param>
             <param name="platformID">Specific platform id or null to autodetect</param>
         </member>
