@@ -6,7 +6,7 @@ build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src
 name: openwrap
 depends: tdnet-framework
 use-symlinks: true
-depends: mono.cecil
+depends: Mono.Cecil
 directory-structure: src\*{scope: Tests=tests}*\**
 directory-structure: src\{scope: Tests.VisualStudio=tests}\**
-version: 1.1.0.71124620
+version: 2.0.0.80247933
