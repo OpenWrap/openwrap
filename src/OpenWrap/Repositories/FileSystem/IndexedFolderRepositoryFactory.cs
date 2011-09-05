@@ -42,9 +42,12 @@ namespace OpenWrap.Repositories.FileSystem
             }
             else if ((directory = _fileSystem.GetDirectory(identifier)).Exists == false)
                 directory.MustExist();
-            if (fileUri.Scheme == "file" && directory.Files().Where(_ => _.Name != "index.wraplist").Any())
-                return null;
             var wrapList = directory.GetFile("index.wraplist");
+
+            // if there are existing files in a folder but no wraplist, not an indexed folder
+            if (fileUri.Scheme == "file" && wrapList.Exists == false && directory.Files().Where(_ => _.Name != "index.wraplist").Any())
+                return null;
+
             if (wrapList.Exists == false) wrapList.MustExist().WriteString("<package-list />");
             // TODO: Fix the Path problem in OFS (see https://api.github.com/repos/openrasta/openfilesystem/issues/8)
             // Right now this code will break mono for UNC paths (although they're not supported anyway)
