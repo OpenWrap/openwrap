@@ -10,24 +10,24 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
 {
     public class AddInAppDomainManager : MarshalByRefObject, IDisposable
     {
-        ManualResetEvent _manualResetEvent;
-        Thread _initThread;
+        ManualResetEvent _vsUnloading;
+        readonly Thread _mainThread;
 
         public AddInAppDomainManager()
         {
             var appDomain = AppDomain.CurrentDomain;
-            _manualResetEvent = new ManualResetEvent(false);
-            appDomain.SetData("openwrap.vs.events.unloading", _manualResetEvent);
+            _vsUnloading = new ManualResetEvent(false);
+            appDomain.SetData("openwrap.vs.events.unloading", _vsUnloading);
             AppDomain.CurrentDomain.AssemblyResolve += (src, ev) =>
             {
                 var currentAssembly = typeof(AddInAppDomainManager).Assembly;
                 return (new AssemblyName(ev.Name).Name == currentAssembly.GetName().Name) ? currentAssembly : null;
             };
-            _initThread = new Thread(() => Load((string)appDomain.GetData("openwrap.vs.version"),
+            _mainThread = new Thread(() => Load((string)appDomain.GetData("openwrap.vs.version"),
                                                        (string)appDomain.GetData("openwrap.vs.currentdirectory"),
                                                        (string[])appDomain.GetData("openwrap.vs.packages"))) { Name = "OpenWrap Main Thread"};
-            _initThread.SetApartmentState(ApartmentState.STA);
-            _initThread.Start();
+            _mainThread.SetApartmentState(ApartmentState.STA);
+            _mainThread.Start();
         }
 
         // todo: make this return a lease so the object does't keep on living forever?
@@ -77,10 +77,11 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
         
         public void Dispose()
         {
-            _manualResetEvent.Set();
-            _manualResetEvent = null;
+            _vsUnloading.Set();
 
-            _initThread.Join(TimeSpan.FromSeconds(20));
+            _mainThread.Join(TimeSpan.FromSeconds(20));
+            _vsUnloading.Close();
+            _vsUnloading = null;
         }
     }
 }

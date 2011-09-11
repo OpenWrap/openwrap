@@ -8,24 +8,37 @@ using OpenWrap.Runtime;
 
 namespace OpenWrap.VisualStudio.ProjectModel
 {
-
     public class DteProject : IProject
     {
         const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
-        public Project DteObject { get; private set; }
+        readonly LazyValue<IFile> _file;
+        readonly LazyValue<bool> _openWrapEnabled;
 
         public DteProject(Project project)
         {
             DteObject = project;
-            OpenWrapEnabled = MSBuildProject.OpenWrapEnabled(project.FullName);
-            File = LocalFileSystem.Instance.GetFile(project.FullName);
+            _openWrapEnabled = Lazy.Is(() => MSBuildProject.OpenWrapEnabled(project.FullName), true);
+            _file = Lazy.Is(() => LocalFileSystem.Instance.GetFile(project.FullName));
         }
+
+        public Project DteObject { get; private set; }
+
+        public IFile File
+        {
+            get { return _file.Value; }
+        }
+
+        public bool OpenWrapEnabled
+        {
+            get { return _openWrapEnabled.Value; }
+        }
+
         public TargetFramework TargetFramework
         {
             get
             {
                 var targetFramework = (uint)DteObject.Properties.Item("TargetFramework").Value;
-                var monikerProperty = DteObject.Properties.OfType<Property>().FirstOrDefault(x=>x.Name=="TargetFrameworkMoniker");
+                var monikerProperty = DteObject.Properties.OfType<Property>().FirstOrDefault(x => x.Name == "TargetFrameworkMoniker");
                 var targetMoniker = monikerProperty == null ? null : (string)monikerProperty.Value;
                 return TargetFramework.ParseDTEIdentifier(targetFramework, targetMoniker);
             }
@@ -35,9 +48,5 @@ namespace OpenWrap.VisualStudio.ProjectModel
         {
             get { return (string)DteObject.ConfigurationManager.ActiveConfiguration.Properties.Item("PlatformTarget").Value; }
         }
-
-        public bool OpenWrapEnabled { get; private set; }
-
-        public IFile File { get; private set; }
     }
 }

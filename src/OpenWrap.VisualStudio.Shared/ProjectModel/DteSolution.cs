@@ -12,6 +12,7 @@ namespace OpenWrap.VisualStudio.ProjectModel
     {
         Solution _solution;
         List<DteProject> _projects;
+        bool _disposed;
 
         public event EventHandler<EventArgs> ProjectChanged = (src,ea)=> { };
 
@@ -27,11 +28,14 @@ namespace OpenWrap.VisualStudio.ProjectModel
 
         void HandleProjectRenamed(Project project, string oldname)
         {
+            if (_disposed) return;
             ProjectChanged.Raise(this, EventArgs.Empty);
         }
 
         void HandleProjectRemoved(Project project)
         {
+            if (_disposed) return;
+
             lock (_projects)
                 _projects.RemoveAll(x => x.DteObject == project);
             ProjectChanged.Raise(this, EventArgs.Empty);
@@ -40,6 +44,8 @@ namespace OpenWrap.VisualStudio.ProjectModel
 
         void HandleProjectAdded(Project project)
         {
+            if (_disposed) return;
+
             lock(_projects)
                 _projects.Add(new DteProject(project));
             ProjectChanged.Raise(this, EventArgs.Empty);
@@ -49,6 +55,7 @@ namespace OpenWrap.VisualStudio.ProjectModel
         {
             get
             {
+                CheckAccess();
                 lock (_projects)
                 {
                     return _projects.Cast<IProject>().ToList();
@@ -62,11 +69,13 @@ namespace OpenWrap.VisualStudio.ProjectModel
         {
             get
             {
+                CheckAccess();
                 _solution.AddIns.Update();
                 return _solution.AddIns.OfType<AddIn>().Any(x => x.ProgID == ComConstants.ADD_IN_PROGID_2010 || x.ProgID == ComConstants.ADD_IN_PROGID_2008);
             }
             set
             {
+                CheckAccess();
                 if (value && !OpenWrapAddInEnabled)
                 {
                     if (_solution.DTE.Version == "9.0")
@@ -86,6 +95,7 @@ namespace OpenWrap.VisualStudio.ProjectModel
 
         public void Save()
         {
+            CheckAccess();
             if (!_solution.IsDirty) return;
             _solution.DTE.ExecuteCommand("File.SaveAll");
             while (_solution.IsDirty)
@@ -96,11 +106,24 @@ namespace OpenWrap.VisualStudio.ProjectModel
 
         public IProject AddProject(IFile projectFile)
         {
+            CheckAccess();
             return new DteProject(_solution.AddFromFile(projectFile.Path));
+        }
+        void CheckAccess()
+        {
+            if (_disposed)
+                throw new ObjectDisposedException("The DteSolution instance has been disposed.");
         }
 
         public void Dispose()
         {
+            if (_disposed) return;
+            _disposed = true;
+            _solution.DTE.Events.SolutionEvents.ProjectAdded -= HandleProjectAdded;
+            _solution.DTE.Events.SolutionEvents.ProjectRemoved -= HandleProjectRemoved;
+            _solution.DTE.Events.SolutionEvents.ProjectRenamed -= HandleProjectRenamed;
+            _projects = null;
+
             _solution = null;
         }
     }

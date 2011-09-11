@@ -68,7 +68,6 @@ namespace OpenWrap.Resharper
         const string ASSEMBLY_NOTIFY = "ASSEMBLY_CHANGE_NOTIFY";
         const string ASSEMBLY_DATA = "RESHARPER_ASSEMBLY_DATA";
 
-
         static readonly JetBrainsKey ISWRAP = new JetBrainsKey("FromOpenWrap");
         readonly resharper::JetBrains.ProjectModel.ISolution _solution;
         readonly resharper::JetBrains.Application.ChangeManager _changeManager;
@@ -92,12 +91,10 @@ namespace OpenWrap.Resharper
 
             _thread.Start();
             _changeManager.Changed += HandleChanges;
-
         }
 
         void LoadAssemblies()
         {
-            TryLoadInitialAssemblies();
             while (!_shuttingDown)
             {
                 EventWaitHandle wait = null;
@@ -121,14 +118,10 @@ namespace OpenWrap.Resharper
             }
         }
 
-        void TryLoadInitialAssemblies()
-        {
-            // does the first pass, for when OpenWrap has just been loaded even though the solution already
-            
-        }
-
         void RefreshProjects()
         {
+            if (_shuttingDown) return;
+            _output.Write("Changes detected, updating assembly references ({0}).", GetHashCode());
             foreach (var project in _solution.GetAllProjects())
             {
                 if (project.ProjectFile == null) continue;
@@ -162,14 +155,17 @@ namespace OpenWrap.Resharper
         }
         public void Dispose()
         {
+            if (_shuttingDown) return;
+            _output.Write("Unloading.");
             _shuttingDown = true;
+            _changeManager.Changed -= HandleChanges;
             _shutdownSync.Set();
             _thread.Join();
-            _changeManager.Changed -= HandleChanges;
         }
-
+       
         void HandleChanges(object sender, resharper::JetBrains.Application.ChangeEventArgs changeeventargs)
         {
+            if (_shuttingDown) return;
             var solutionChanges = changeeventargs.ChangeMap.GetChange(_solution) as resharper::JetBrains.ProjectModel.SolutionChange;
             if (solutionChanges == null)
             {

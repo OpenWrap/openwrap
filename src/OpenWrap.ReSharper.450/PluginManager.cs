@@ -53,6 +53,7 @@ namespace OpenWrap.Resharper
         resharper::JetBrains.VsIntegration.Application.JetVisualStudioHost _host;
         resharper::JetBrains.Application.Parts.AssemblyPartsCatalogue _catalog;
         resharper::JetBrains.Application.PluginSupport.PluginsDirectory _pluginsDirectory;
+        resharper::JetBrains.DataFlow.LifetimeDefinition _lifetimeDefinition;
 #endif
 
         public const string RESHARPER_TEST = "?ReSharper";
@@ -88,15 +89,19 @@ namespace OpenWrap.Resharper
             _selfPlugin.Enabled = false;
             ResharperPluginManager.Instance.Plugins.Remove(_selfPlugin);
 #else
+            _selfPlugin.IsEnabled.SetValue(false);
             _pluginsDirectory.Plugins.Remove(_selfPlugin);
-
+            _lifetimeDefinition.Terminate();
             _host = null;
             _catalog = null;
 #endif
             _selfPlugin = null;
         }
 
-
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
         void StartDetection()
         {
             try
@@ -104,10 +109,12 @@ namespace OpenWrap.Resharper
                 var asm = GetType().Assembly;
                 var id = "ReSharper OpenWrap Integration";
 #if v600
+                _lifetimeDefinition = resharper::JetBrains.DataFlow.Lifetimes.Define(resharper::JetBrains.DataFlow.EternalLifetime.Instance, "OpenWrap Solution");
                 _pluginsDirectory =
                     (resharper::JetBrains.Application.PluginSupport.PluginsDirectory)_host.Environment.Container.ResolveDynamic(typeof(resharper::JetBrains.Application.PluginSupport.PluginsDirectory)).Instance;
 
-                _selfPlugin = new ResharperPlugin(resharper::JetBrains.DataFlow.EternalLifetime.Instance, new[] { new resharper::JetBrains.Util.FileSystemPath(asm.Location) }, null, null, null);
+                _selfPlugin = new ResharperPlugin(_lifetimeDefinition.Lifetime, new[] { new resharper::JetBrains.Util.FileSystemPath(asm.Location) }, null, null, null);
+                
                 _pluginsDirectory.Plugins.Add(_selfPlugin);
 #else
             _selfPlugin = new ResharperPlugin(id, new[] { asm });
