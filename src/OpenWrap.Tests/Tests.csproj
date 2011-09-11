@@ -293,7 +293,7 @@
     <Compile Include="Commands\update_wrap\project\from_remote_by_name.cs" />
     <Compile Include="Commands\update_wrap\system\from_remote_by_name.cs" />
     <Compile Include="Commands\update_wrap\project\not_in_project.cs" />
-    <Compile Include="Commands\update_wrap\project\from_remote.cs" />
+    <Compile Include="Commands\update_wrap\project\updating_from_remote.cs" />
     <Compile Include="Commands\usage\command_description.cs" />
     <Compile Include="Commands\usage\command_with_positioned_and_optional_parameters.cs" />
     <Compile Include="Commands\usage\command_with_positioned_and_other_parameters.cs" />

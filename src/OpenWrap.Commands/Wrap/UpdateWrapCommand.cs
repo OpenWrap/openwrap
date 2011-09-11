@@ -4,6 +4,7 @@ using System.Linq;
 using OpenWrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -57,12 +58,21 @@ namespace OpenWrap.Commands.Wrap
 
             var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(Remotes.FetchRepositories());
             var errors = new List<PackageOperationResult>();
+                    bool updated = false;
             foreach (var x in (string.IsNullOrEmpty(Name)
                                        ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor)
                                        : PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor, Name)))
-                if (x is PackageMissingResult || x is PackageConflictResult) errors.Add(x);
-                else yield return x.ToOutput();
-
+                if (x is PackageMissingResult || x is PackageConflictResult)
+                {
+                    errors.Add(x);
+                }
+                else
+                {
+                    updated = true;
+                    yield return x.ToOutput();
+                }
+            if (updated)
+                HostEnvironment.DescriptorFile.Touch();
             foreach (var failed in errors.GetFailures())
             {
 
