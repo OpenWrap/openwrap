@@ -5,6 +5,7 @@ using OpenWrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageModel;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -13,6 +14,7 @@ namespace OpenWrap.Commands.Wrap
     {
         bool? _project;
         bool? _system;
+        IEnumerable<IPackageRepository> _remoteRepositories;
 
         [CommandInput(Position = 0)]
         public string Name { get; set; }
@@ -32,8 +34,34 @@ namespace OpenWrap.Commands.Wrap
         }
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
-            yield return VerifyInputs;
+            yield return ProjectExistsWhenProjectFlagSpecified;
+            yield return SetRemoteRepositories;
+            yield return AddUserSpecifiedRepository;
         }
+
+        IEnumerable<ICommandOutput> SetRemoteRepositories()
+        {
+            _remoteRepositories = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(Remotes.FetchRepositories());
+            yield break;
+        }
+
+        IEnumerable<ICommandOutput> AddUserSpecifiedRepository()
+        {
+            if (From != null)
+            {
+                var remoteDir = FileSystem.GetDirectory(From);
+                if (remoteDir.Exists)
+                {
+                    _remoteRepositories = new[] { new FolderRepository(remoteDir) }.Concat(_remoteRepositories);
+                }
+                else
+                {
+                    yield return new Error("The -From input is not recognized as an existing directory.");
+                }
+            }
+        }
+        [CommandInput]
+        public string From { get; set; }
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
@@ -47,16 +75,16 @@ namespace OpenWrap.Commands.Wrap
 
         protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
-            if (packageOperationResult is PackageMissingResult)
-                return new Warning("Cannot update package because of missing packages: {0}.", ((PackageMissingResult)packageOperationResult).Package.Identifier);
-            else return base.ToOutput(packageOperationResult);
+            return packageOperationResult is PackageMissingResult
+                       ? new Warning("Cannot update package because of missing packages: {0}.", ((PackageMissingResult)packageOperationResult).Package.Identifier)
+                       : base.ToOutput(packageOperationResult);
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
         {
             yield return new Result("Updating project packages...");
 
-            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(Remotes.FetchRepositories());
+            var sourceRepos = _remoteRepositories;
             var errors = new List<PackageOperationResult>();
                     bool updated = false;
             foreach (var x in (string.IsNullOrEmpty(Name)
@@ -94,7 +122,7 @@ namespace OpenWrap.Commands.Wrap
 
 
 
-            var sourceRepos = new[] { HostEnvironment.CurrentDirectoryRepository }.Concat(Remotes.FetchRepositories()).ToList();
+            var sourceRepos = _remoteRepositories;
 
             var errors = new List<PackageOperationResult>();
 
@@ -116,7 +144,7 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        IEnumerable<ICommandOutput> VerifyInputs()
+        IEnumerable<ICommandOutput> ProjectExistsWhenProjectFlagSpecified()
         {
             if (Project && HostEnvironment.ProjectRepository == null)
                 yield return new Error("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");

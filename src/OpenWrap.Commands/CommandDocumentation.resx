@@ -430,4 +430,16 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="build-wrap-incremental" xml:space="preserve">
     <value>Only build what has changes since the last build.</value>
   </data>
+  <data name="build-wrap-configuration" xml:space="preserve">
+    <value>Specifies the configuration used to build the package (the configuration is dependent on the build provider being used).</value>
+  </data>
+  <data name="build-wrap-debug" xml:space="preserve">
+    <value>Specifies that the package will be built using a debug configuration.</value>
+  </data>
+  <data name="build-wrap-release" xml:space="preserve">
+    <value>Specifies that the package will be built using a release configuration.</value>
+  </data>
+  <data name="update-wrap-from" xml:space="preserve">
+    <value>Specifies the path to a directory containing openwrap packages.</value>
+  </data>
 </root>
