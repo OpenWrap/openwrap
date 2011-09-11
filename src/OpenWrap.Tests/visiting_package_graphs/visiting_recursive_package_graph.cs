@@ -61,7 +61,7 @@ namespace Tests.visiting_package_graphs
         }
 
         [Test]
-        public void all_pacakges_are_visited()
+        public void all_packages_are_visited()
         {
             Packages.All(x => visited.Contains(x)).ShouldBeTrue();
         }

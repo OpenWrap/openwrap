@@ -7,6 +7,6 @@ namespace OpenWrap.PackageManagement
 {
     public interface IExportProvider
     {
-        IEnumerable<IGrouping<string, TItem>> Items<TItem>(IPackage pacakge, ExecutionEnvironment environment) where TItem : IExportItem;
+        IEnumerable<IGrouping<string, TItem>> Items<TItem>(IPackage package, ExecutionEnvironment environment) where TItem : IExportItem;
     }
 }

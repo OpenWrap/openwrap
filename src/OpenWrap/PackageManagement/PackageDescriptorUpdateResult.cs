@@ -24,7 +24,7 @@ namespace OpenWrap.PackageManagement
             if (Result == PackageDescriptorDependencyUpdate.Removed)
                 return new Info("Package removed from the descriptor.");
             if (Result == PackageDescriptorDependencyUpdate.Updated)
-                return new Info("Trying to update pacakge.");
+                return new Info("Trying to update package.");
             if (Result == PackageDescriptorDependencyUpdate.DependencyNotFound)
                 return new Error("Could not find a package to remove from the descriptor.");
             return null;
