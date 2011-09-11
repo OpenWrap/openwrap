@@ -48,14 +48,17 @@
     <Reference Include="JetBrains.Platform.ReSharper.ActionManagement">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.ActionManagement.dll</HintPath>
       <Aliases>resharper</Aliases>
+      <Private>False</Private>
     </Reference>
     <Reference Include="JetBrains.Platform.ReSharper.ComponentModel">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.ComponentModel.dll</HintPath>
       <Aliases>resharper</Aliases>
+      <Private>False</Private>
     </Reference>
     <Reference Include="JetBrains.Platform.ReSharper.Metadata">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.Metadata.dll</HintPath>
       <Aliases>resharper</Aliases>
+      <Private>False</Private>
     </Reference>
     <Reference Include="JetBrains.Platform.ReSharper.ProjectModel">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.ProjectModel.dll</HintPath>
@@ -80,14 +83,17 @@
     <Reference Include="JetBrains.Platform.ReSharper.VSIntegration">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.VSIntegration.dll</HintPath>
       <Aliases>resharper</Aliases>
+      <Private>False</Private>
     </Reference>
     <Reference Include="JetBrains.ReSharper.Daemon">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.ReSharper.Daemon.dll</HintPath>
       <Aliases>resharper</Aliases>
+      <Private>False</Private>
     </Reference>
     <Reference Include="JetBrains.ReSharper.SolutionAnalysis">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.ReSharper.SolutionAnalysis.dll</HintPath>
       <Aliases>resharper</Aliases>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.CommandBars, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>

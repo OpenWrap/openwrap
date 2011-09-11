@@ -10,6 +10,7 @@ using OpenWrap.VisualStudio;
 using ResharperPluginManager = resharper::JetBrains.Application.PluginSupport.PluginManager;
 using ResharperPlugin = resharper::JetBrains.Application.PluginSupport.Plugin;
 using ResharperPluginTitleAttribute = resharper::JetBrains.Application.PluginSupport.PluginTitleAttribute;
+using ResharperPluginVendorAttribute = resharper::JetBrains.Application.PluginSupport.PluginVendorAttribute;
 using ResharperPluginDescriptionAttribute = resharper::JetBrains.Application.PluginSupport.PluginDescriptionAttribute;
 using ResharperSolutionComponentAttribute = resharper::JetBrains.ProjectModel.SolutionComponentAttribute;
 using ResharperAssemblyReference = resharper::JetBrains.ProjectModel.IProjectToAssemblyReference;
@@ -19,18 +20,21 @@ using ResharperPluginManager = resharper::JetBrains.UI.Application.PluginSupport
 using ResharperPlugin = resharper::JetBrains.UI.Application.PluginSupport.Plugin;
 using ResharperPluginTitleAttribute = resharper::JetBrains.UI.Application.PluginSupport.PluginTitleAttribute;
 using ResharperPluginDescriptionAttribute = resharper::JetBrains.UI.Application.PluginSupport.PluginDescriptionAttribute;
+using ResharperPluginVendorAttribute = resharper::JetBrains.UI.Application.PluginSupport.PluginVendorAttribute;
 using ResharperThreading = OpenWrap.Resharper.IThreading;
 using ResharperAssemblyReference = resharper::JetBrains.ProjectModel.IAssemblyReference;
 #endif
 
 
 [assembly: ResharperPluginTitleAttribute("OpenWrap ReSharper Integration")]
-
-
 [assembly: ResharperPluginDescription("Provides integration of OpenWrap features within ReSharper.")]
+[assembly: ResharperPluginVendorAttribute("Caffeine IT")]
 
 namespace OpenWrap.Resharper
 {
+    /// <summary>
+    /// Provides support for dynamic loading and unloading of ReSharper plugins, always lives in the same AppDomain as ReSharper.
+    /// </summary>
     public class PluginManager : MarshalByRefObject, IDisposable
     {
         public const string ACTION_REANALYZE = "ErrorsView.ReanalyzeFilesWithErrors";
@@ -56,8 +60,8 @@ namespace OpenWrap.Resharper
         public PluginManager()
         {
             _dte = (DTE2)SiteManager.GetGlobalService<DTE>();
-            _output = new OpenWrapOutput();
-            _output.Write("Resharper Plugin Manager loaded ({0}).", GetType().Assembly.GetName().Version);
+            _output = new OpenWrapOutput("Resharper Plugin Manager");
+            _output.Write("Loaded ({0}).", GetType().Assembly.GetName().Version);
 
 #if !v600
             _threading = new LegacyShellThreading();
@@ -67,14 +71,18 @@ namespace OpenWrap.Resharper
             if (resolvedObj != null)
                 _threading = (ResharperThreading)resolvedObj.Instance;
 #endif
-
+            if (_threading == null)
+            {
+                _output.Write("Threading not found, the plugin manager will not initialize.");
+                return;
+            }
             _threading.Run("Loading plugins...", StartDetection);
 
         }
 
         public void Dispose()
         {
-            _output.Write("Unloading Resharper Plugin Manager.");
+            _output.Write("Unloading.");
             runTestRunner = false;
 #if !v600
             _selfPlugin.Enabled = false;
@@ -91,15 +99,16 @@ namespace OpenWrap.Resharper
 
         void StartDetection()
         {
-
-            var asm = GetType().Assembly;
-            var id = "ReSharper OpenWrap Integration";
+            try
+            {
+                var asm = GetType().Assembly;
+                var id = "ReSharper OpenWrap Integration";
 #if v600
-            _pluginsDirectory = (resharper::JetBrains.Application.PluginSupport.PluginsDirectory)_host.Environment.Container.ResolveDynamic(typeof(resharper::JetBrains.Application.PluginSupport.PluginsDirectory));
-            _selfPlugin = new ResharperPlugin(null, new[] { new resharper::JetBrains.Util.FileSystemPath(asm.Location) }, null, null, null);
-            _pluginsDirectory.Plugins.Add(_selfPlugin);
+                _pluginsDirectory =
+                    (resharper::JetBrains.Application.PluginSupport.PluginsDirectory)_host.Environment.Container.ResolveDynamic(typeof(resharper::JetBrains.Application.PluginSupport.PluginsDirectory)).Instance;
 
-            
+                _selfPlugin = new ResharperPlugin(resharper::JetBrains.DataFlow.EternalLifetime.Instance, new[] { new resharper::JetBrains.Util.FileSystemPath(asm.Location) }, null, null, null);
+                _pluginsDirectory.Plugins.Add(_selfPlugin);
 #else
             _selfPlugin = new ResharperPlugin(id, new[] { asm });
 
@@ -107,6 +116,11 @@ namespace OpenWrap.Resharper
             _selfPlugin.Enabled = true;
             resharper::JetBrains.Application.Shell.Instance.LoadAssemblies(id, asm);
 #endif
+            }
+            catch (Exception e)
+            {
+                _output.Write("Plugin integration failed.\r\n" + e.ToString());
+            }
         }
     }
 

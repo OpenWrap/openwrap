@@ -9,9 +9,11 @@ namespace OpenWrap.Resharper
     {
         readonly DTE2 _dte;
         OutputWindowPane _outputWindow;
+        string _prefix;
 
-        public OpenWrapOutput()
+        public OpenWrapOutput(string prefix = null)
         {
+            _prefix = prefix == null ? string.Empty : prefix + ": ";
             try
             {
                 _dte = (DTE2)SiteManager.GetGlobalService<DTE>();
@@ -32,7 +34,7 @@ namespace OpenWrap.Resharper
                                 ?? output.OutputWindowPanes.Add("OpenWrap");
             }
 
-            _outputWindow.OutputString(string.Format(text + "\r\n", args));
+            _outputWindow.OutputString(string.Format(_prefix + text + "\r\n", args));
         }
     }
 }

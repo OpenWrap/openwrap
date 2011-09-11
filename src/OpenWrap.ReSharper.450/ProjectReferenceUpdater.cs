@@ -84,7 +84,7 @@ namespace OpenWrap.Resharper
             _solution = solution;
             _changeManager = changeManager;
             _threading = threading;
-            _output = new OpenWrapOutput();
+            _output = new OpenWrapOutput("ReSharper Project Reference Updater");
 
             _output.Write("Solution opened " + solution.Name);
             _thread = new System.Threading.Thread(LoadAssemblies) { Name = "OpenWrap assembly change listener" };
@@ -97,6 +97,7 @@ namespace OpenWrap.Resharper
 
         void LoadAssemblies()
         {
+            TryLoadInitialAssemblies();
             while (!_shuttingDown)
             {
                 EventWaitHandle wait = null;
@@ -118,6 +119,12 @@ namespace OpenWrap.Resharper
                 _assemblyMap = (Dictionary<string, List<string>>)AppDomain.CurrentDomain.GetData(ASSEMBLY_DATA);
                 _threading.Run("Updating references.", RefreshProjects);
             }
+        }
+
+        void TryLoadInitialAssemblies()
+        {
+            // does the first pass, for when OpenWrap has just been loaded even though the solution already
+            
         }
 
         void RefreshProjects()

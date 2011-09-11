@@ -27,20 +27,20 @@ namespace OpenWrap.SolutionPlugins.VisualStudio
         readonly Timer _timer;
         IDisposable _changeMonitor;
         bool _running;
+        DTE _dte;
 
         public AssemblyReferenceNotificationsPlugin()
         {
-            DTE dte;
             try
             {
-                dte = SiteManager.GetGlobalService<DTE>();
+                _dte = SiteManager.GetGlobalService<DTE>();
             }
             catch
             {
                 _running = false;
                 return;
             }
-            _solution = new DteSolution(dte.Solution);
+            _solution = new DteSolution(_dte.Solution);
             _solution.ProjectChanged += HandleProjectChange;
             var environment = ServiceLocator.GetService<IEnvironment>();
             _packageManager = ServiceLocator.GetService<IPackageManager>();
@@ -61,7 +61,7 @@ namespace OpenWrap.SolutionPlugins.VisualStudio
             _running = false;
             _solution.ProjectChanged -= HandleProjectChange;
             _solution.Dispose();
-            
+            _dte = null;
         }
 
         void RefreshProjects()

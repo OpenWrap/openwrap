@@ -107,7 +107,6 @@ namespace OpenWrap.SolutionPlugins.VisualStudio.ReSharper
             var destinationAssemblyFile = CopyAndSign(assemblyLocation);
 
             _pluginManager = vsAppDomain.CreateInstanceFromAndUnwrap(destinationAssemblyFile.Path, pluginManagerType.FullName);
-            //_pluginManager = (IDisposable)vsAppDomain.CreateInstanceFromAndUnwrap(sourceAssemblyFile.Path, pluginManagerType.FullName);
         }
     }
 }
