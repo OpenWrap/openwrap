@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using OpenWrap.Commands.Cli.Locators;
+using OpenWrap.Testing;
 using Tests.Commands.contexts;
 
 namespace Tests.Commands.command_line_locators.default_verb
@@ -16,6 +17,11 @@ namespace Tests.Commands.command_line_locators.default_verb
         public void command_is_selected()
         {
             command_should_be("get", "help");
+        }
+        [Test]
+        public void command_line_is_cleared()
+        {
+            ResultingLine.ShouldBeEmpty();
         }
     }
 }

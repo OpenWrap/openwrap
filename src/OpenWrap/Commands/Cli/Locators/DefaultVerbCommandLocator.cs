@@ -20,9 +20,14 @@ namespace OpenWrap.Commands.Cli.Locators
             if (string.IsNullOrEmpty(firstToken)) return null;
 
             var noun = firstToken.SelectHumps(_commandRepository.Nouns).OneOrDefault();
-            return noun == null
-                       ? null
-                       : _commandRepository.Distinct(CommandDescriptorComparer.VerbNoun).Where(x => x != null && x.Noun.EqualsNoCase(noun) && x.IsDefault).OneOrDefault();
+
+            if (noun == null) return null;
+
+            var command = _commandRepository.Distinct(CommandDescriptorComparer.VerbNoun).Where(x => x != null && x.Noun.EqualsNoCase(noun) && x.IsDefault).OneOrDefault();
+            if (command != null)
+                input = input.TrimStart().Substring(noun.Length).TrimStart();
+
+            return command;
         }
     }
 }
