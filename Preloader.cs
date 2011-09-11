@@ -21,7 +21,10 @@ namespace OpenWrap.Preloading
         public static IEnumerable<string> GetPackageFolders(RemoteInstall remote, string currentDirectory, string systemRepositoryPath, params string[] packageNamesToLoad)
         {
             var regex = new Regex(string.Format(@"^(?<name>{0})-(?<version>\d+(\.\d+(\.\d+(\.\d+)?)?)?)$", string.Join("|", packageNamesToLoad.ToArray())), RegexOptions.IgnoreCase);
-            EnsurePackagesUnzippedInRepository(Environment.CurrentDirectory);
+
+            currentDirectory = currentDirectory ?? Environment.CurrentDirectory;
+
+            EnsurePackagesUnzippedInRepository(currentDirectory);
 
             var bootstrapPackagePaths = currentDirectory != null
                 ? GetLatestPackagesForProjectRepository(packageNamesToLoad, currentDirectory) 
@@ -316,10 +319,10 @@ namespace OpenWrap.Preloading
         }
         static void AddPackageAndDependents(XDocument document, string currentPackage, List<string> packageNames)
         {
-            if (!packageNames.Contains(currentPackage)) packageNames.Add(currentPackage);
+            if (!packageNames.Contains(currentPackage, StringComparer.OrdinalIgnoreCase)) packageNames.Add(currentPackage);
             foreach (var dependent in GetDependents(document, currentPackage))
             {
-                if (packageNames.Contains(dependent) == false)
+                if (packageNames.Contains(dependent, StringComparer.OrdinalIgnoreCase) == false)
                 {
                     packageNames.Add(dependent);
                     AddPackageAndDependents(document, dependent, packageNames);
