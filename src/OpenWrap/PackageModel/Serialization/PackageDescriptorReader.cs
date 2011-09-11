@@ -48,6 +48,9 @@ namespace OpenWrap.PackageModel.Serialization
         {
             var stringReader = new StreamReader(content, true);
             var lines = stringReader.ReadToEnd().GetUnfoldedLines();
+            if (lines.Any(l => l.Contains('\n')))
+                throw new InvalidPackageException("Package descriptor contains invalid line endings.");
+
             return ctor != null
                 ? ctor(lines.Select(ParseLine))
                 : new PackageDescriptor(lines.Select(ParseLine)) as T;

@@ -36,6 +36,10 @@ namespace OpenWrap.PackageModel.Serialization
                         return descriptor;
                     }
                 }
+                catch (InvalidPackageException ex)
+                {
+                    throw new InvalidPackageException(String.Format("Invalid package for file '{0}'.", filePath.Path), ex);
+                }
                 catch (IOException ex)
                 {
                     ioException = ex;
