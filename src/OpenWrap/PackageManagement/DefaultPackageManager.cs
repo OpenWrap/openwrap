@@ -21,6 +21,9 @@ namespace OpenWrap.PackageManagement
 
         public IEnumerable<IPackageInfo> ListProjectPackages(IPackageDescriptor descriptor, IPackageRepository projectRepository)
         {
+            Check.NotNull(projectRepository, "projectRepository");
+            Check.NotNull(descriptor, "descriptor");
+
             return _resolver.TryResolveDependencies(descriptor, new[] { projectRepository }).SuccessfulPackages.Select(_ => _.Packages.First());
         }
 
