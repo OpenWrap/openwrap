@@ -1,4 +1,6 @@
-﻿using System.Text;
+using System;
+using System.IO;
+using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.Commands.Wrap;
 
@@ -26,6 +28,17 @@ namespace Tests.Commands.contexts
 </Project>
 ");
                 fileStream.Write(xmlDoc, 0, xmlDoc.Length);
+            }
+        }
+
+        protected string[] AllLinesOf(IFile file)
+        {
+            using (var s = file.OpenRead())
+            {
+                using (var r = new StreamReader(s))
+                {
+                    return r.ReadToEnd().Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                }
             }
         }
     }
