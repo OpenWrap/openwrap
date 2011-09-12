@@ -239,7 +239,15 @@ namespace OpenWrap.Commands.Wrap
         void AddIgnores(IDirectory projectDirectory)
         {
             if (IgnoreFileName == null) return;
-            projectDirectory.GetDirectory("wraps").GetFile(IgnoreFileName).WriteString("_cache\r\n_cache\\*");
+            if (Hg)
+            {
+                // mercurial is a bit special when it comes to ignores
+                projectDirectory.GetFile(IgnoreFileName).WriteString("syntax: glob\r\nwraps/_cache");
+            }
+            else
+            {
+                projectDirectory.GetDirectory("wraps").GetFile(IgnoreFileName).WriteString("_cache\r\n_cache\\*");
+            }
         }
 
         void WriteDescriptor(IFile descriptor, PackageDescriptor packageDescriptor)

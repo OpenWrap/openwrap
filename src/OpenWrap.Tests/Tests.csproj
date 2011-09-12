@@ -63,6 +63,8 @@
     <Compile Include="Commands\configuration\set_proxy_password.cs" />
     <Compile Include="Commands\configuration\set_proxy_to_invalid_uri.cs" />
     <Compile Include="Commands\configuration\set_proxy_username.cs" />
+    <Compile Include="Commands\init_wrap\init_dot_in_empty_git_ignores.cs" />
+    <Compile Include="Commands\init_wrap\init_dot_in_empty_mercurial_ignores.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_supporting_fetch_and_publish.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_with_authentication.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_with_authentication_missing_inputs.cs" />
