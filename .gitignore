@@ -22,3 +22,5 @@ Thumbs.db
 *.ndproj
 *.xls
 *.htm
+*.bin
+*/*.bin

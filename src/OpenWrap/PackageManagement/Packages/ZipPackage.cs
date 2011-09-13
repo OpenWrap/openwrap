@@ -30,7 +30,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public DateTimeOffset Created
         {
-            get { return PackageFile.LastModifiedTimeUtc != null ? new DateTimeOffset(PackageFile.LastModifiedTimeUtc.Value) : DateTimeOffset.UtcNow; }
+            get { return PackageFile.LastModifiedTimeUtc ?? DateTimeOffset.UtcNow; }
         }
 
         public ICollection<PackageDependency> Dependencies

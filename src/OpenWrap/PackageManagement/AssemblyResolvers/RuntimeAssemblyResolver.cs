@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using OpenWrap.PackageManagement.Exporters;
@@ -25,6 +26,7 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
         {
             AppDomain.CurrentDomain.AssemblyResolve += TryResolveAssembly;
             AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += TryResolveReflectionOnlyAssembly;
+            
         }
 
         void EnsureAssemblyReferencesAreLoaded()
@@ -38,13 +40,17 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
                                                                                   Environment.ExecutionEnvironment,
                                                                                   Environment.Descriptor,
                                                                                   Environment.ProjectRepository,
-                                                                                  Environment.SystemRepository).ToLookup(x => x.AssemblyName.Name);
+                                                                                  Environment.SystemRepository)
+                                                                                  .ToLookup(x => x.AssemblyName.Name);
         }
 
         Assembly TryResolveAssembly(object sender, ResolveEventArgs args)
         {
-            EnsureAssemblyReferencesAreLoaded();
             var simpleName = new AssemblyName(args.Name).Name;
+            var existingAssembly =
+                    AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(x => x.GetName().Name.Equals(simpleName, StringComparison.OrdinalIgnoreCase));
+            if (existingAssembly != null) return existingAssembly;
+            EnsureAssemblyReferencesAreLoaded();
             if (_assemblyReferences.Contains(simpleName))
                 return Assembly.LoadFrom(_assemblyReferences[simpleName].First().FullPath);
 
