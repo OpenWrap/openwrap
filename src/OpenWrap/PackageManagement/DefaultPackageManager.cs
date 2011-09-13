@@ -548,16 +548,16 @@ namespace OpenWrap.PackageManagement
                 return (Version.Major == version.Major
                         && Version.Minor == version.Minor
                         && Version.Build == version.Build
-                        && Version.Revision < version.Revision)
+                        && Version.Revision <= version.Revision)
                        ||
                        (Version.Major == version.Major
                         && Version.Minor == version.Minor
-                        && Version.Build < version.Build)
+                        && Version.Build <= version.Build)
                        ||
                        (Version.Major == version.Major
-                        && Version.Minor < version.Minor)
+                        && Version.Minor <= version.Minor)
                        ||
-                       (Version.Major < version.Major);
+                       (Version.Major <= version.Major);
             }
             public override string ToString()
             {
