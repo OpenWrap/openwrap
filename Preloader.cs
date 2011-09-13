@@ -50,13 +50,21 @@ namespace OpenWrap.Preloading
         {
             return (
                            from asm in packageFolders
-                           from assemblyPath in CombinePaths(asm, "bin-net35", "bin-net40")
+                           from assemblyPath in CombinePaths(asm, GetFxVersions().ToArray())
                            where Directory.Exists(assemblyPath)
                            from file in Directory.GetFiles(assemblyPath, "*.dll").Concat(Directory.GetFiles(assemblyPath, "*.exe"))
                            let assembly = TryLoadAssembly(file)
                            where assembly != null
                            select new KeyValuePair<Assembly, string>(assembly, file)
                    ).ToList();
+        }
+
+        static IEnumerable<string> GetFxVersions()
+        {
+            if (Environment.Version.Major >= 4) yield return "bin-net40";
+            yield return "bin-net35";
+            yield return "bin-net30";
+            yield return "bin-net20";
         }
 
         static IEnumerable<string> CombinePaths(string packageFolder, params string[] subFolders)
