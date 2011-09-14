@@ -104,7 +104,8 @@ namespace OpenWrap.Commands.Wrap
             var packageFilePath = destinationPath.GetFile(
                 PackageNameUtility.PackageFileName(packageName, generatedVersion.ToString()));
 
-            var packageContent = GeneratePackageContent(_buildResults).Concat(
+            var packageContent = GeneratePackageContent(_buildResults)
+                                 .Concat(
                                     GenerateVersionFile(generatedVersion),
                                     GenerateDescriptorFile(packageDescriptorForEmbedding)
                                  ).ToList();

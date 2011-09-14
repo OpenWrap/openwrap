@@ -1,26 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Mono.Cecil;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
-using OpenRasta.Client;
 using OpenWrap.Commands.Cli.Locators;
-using OpenWrap.PackageManagement;
-using OpenWrap.PackageManagement.AssemblyResolvers;
-using OpenWrap.PackageManagement.DependencyResolvers;
-using OpenWrap.PackageManagement.Deployers;
-using OpenWrap.PackageManagement.Exporters;
-using OpenWrap.PackageManagement.Exporters.Assemblies;
-using OpenWrap.PackageManagement.Exporters.Commands;
-using OpenWrap.Repositories;
-using OpenWrap.Repositories.FileSystem;
-using OpenWrap.Repositories.Http;
-using OpenWrap.Repositories.NuFeed;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
-using OpenWrap.Tasks;
 
 namespace OpenWrap.Commands.Cli
 {
@@ -39,20 +23,20 @@ namespace OpenWrap.Commands.Cli
         public static int Main(IDictionary<string, object> env)
         {
             var serviceRegistry = new ServiceRegistry().Override<IEnvironment>(() =>
-                {
-                    var cdenv = new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(env.CurrentDirectory()));
-                    if (env.SysPath() != null)
-                        cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(new Path(env.SysPath()).Combine("wraps"));
-                    return cdenv;
-                });
-            var formatterType = env.Formatter();
-            if(formatterType != null)
             {
-                serviceRegistry.Override<ICommandOutputFormatter>(() => (ICommandOutputFormatter)Activator.CreateInstance(Type.GetType(formatterType)));
+                var cdenv = new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(env.CurrentDirectory()));
+                if (env.SysPath() != null)
+                    cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(new Path(env.SysPath()).Combine("wraps"));
+                return cdenv;
+            });
+            var formatterType = env.Formatter();
+            if (formatterType != null)
+            {
+                serviceRegistry.Override(() => (ICommandOutputFormatter)Activator.CreateInstance(Type.GetType(formatterType)));
             }
             serviceRegistry.Initialize();
 
-            return new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>(),  ServiceLocator.GetService<IEventHub>(),ServiceLocator.GetService<ICommandOutputFormatter>())
+            return new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>(), ServiceLocator.GetService<IEventHub>(), ServiceLocator.GetService<ICommandOutputFormatter>())
                 .Execute(env.CommandLine(), env.ShellArgs());
         }
 #pragma warning restore 28

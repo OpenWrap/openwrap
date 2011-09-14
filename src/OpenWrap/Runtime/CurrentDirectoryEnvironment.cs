@@ -50,16 +50,20 @@ namespace OpenWrap.Runtime
         {
             get
             {
-                TryInitializeProject(); return _projectRepository; 
-            }
-        }
+                if (_projectRepository == null)
+                    TryInitializeProject();
 
+                return _projectRepository;
+            }
+            set { _projectRepository = value; }
+        }
+        
         public IPackageRepository SystemRepository { get; private set; }
         public IDirectory SystemRepositoryDirectory { get; set; }
 
         public void Initialize()
         {
-            
+
             FileSystem = LocalFileSystem.Instance;
             SystemRepositoryDirectory = SystemRepositoryDirectory ?? FileSystem.GetDirectory(DefaultInstallationPaths.SystemRepositoryDirectory);
 
@@ -69,7 +73,7 @@ namespace OpenWrap.Runtime
 
             SystemRepository = new FolderRepository(SystemRepositoryDirectory)
             {
-                    Name = "System repository"
+                Name = "System repository"
             };
 
             ConfigurationDirectory = FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory);
@@ -77,8 +81,8 @@ namespace OpenWrap.Runtime
 
             ExecutionEnvironment = new ExecutionEnvironment
             {
-                    Platform = IntPtr.Size == 4 ? "x86" : "x64",
-                    Profile = Environment.Version.Major >= 4 ? "net40" : "net35"
+                Platform = IntPtr.Size == 4 ? "x86" : "x64",
+                Profile = Environment.Version.Major >= 4 ? "net40" : "net35"
             };
         }
 
@@ -96,19 +100,16 @@ namespace OpenWrap.Runtime
         {
             if (Descriptor.UseProjectRepository)
             {
-                var projectRepositoryDirectory = DescriptorFile.Parent.FindProjectRepositoryDirectory();
+                var projectRepositoryDirectory = DescriptorFile.Parent.FindProjectRepositoryDirectory().MustExist();
 
 
-                if (projectRepositoryDirectory != null)
+                var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
+                if (Descriptor.UseSymLinks)
+                    repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
+                _projectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions)
                 {
-                    var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
-                    if (Descriptor.UseSymLinks)
-                        repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
-                    _projectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions)
-                    {
-                            Name = "Project repository"
-                    };
-                }
+                    Name = "Project repository"
+                };
             }
         }
     }

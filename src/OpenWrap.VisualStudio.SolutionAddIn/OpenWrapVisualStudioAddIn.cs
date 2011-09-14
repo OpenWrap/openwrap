@@ -95,13 +95,10 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
         {
         }
 
-        static ResolveEventHandler HandleSelfLoad()
+        static Assembly HandleSelfLoad(object src, ResolveEventArgs ev)
         {
-            return (src, ev) =>
-            {
                 var currentAssembly = typeof(AddInAppDomainManager).Assembly;
                 return (new AssemblyName(ev.Name).Name == currentAssembly.GetName().Name) ? currentAssembly : null;
-            };
         }
 
         string GetRootLocation(string fullName)
@@ -137,9 +134,9 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
 
                 // replace that with the location in the codebase we just registered, ensuring the correct version is loaded
                 var location = Type.GetTypeFromProgID(_progId).Assembly.Location;
-                AppDomain.CurrentDomain.AssemblyResolve += HandleSelfLoad();
+                AppDomain.CurrentDomain.AssemblyResolve += HandleSelfLoad;
                 _appDomainManager = (IDisposable)_appDomain.CreateInstanceFromAndUnwrap(location, typeof(AddInAppDomainManager).FullName);
-                AppDomain.CurrentDomain.AssemblyResolve -= HandleSelfLoad();
+                AppDomain.CurrentDomain.AssemblyResolve -= HandleSelfLoad;
                 _appDomain.DomainUnload += HandleAppDomainChange;
             }
             catch (Exception e)

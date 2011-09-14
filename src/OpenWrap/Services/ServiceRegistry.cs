@@ -93,6 +93,7 @@ namespace OpenWrap.Services
                                                    Get<IPackageManager>().CommandExports(Get<IEnvironment>())
                                                        .SelectMany(x => x)
                                                        .Select(x => x.Descriptor)));
+
             Register(() => new RuntimeAssemblyResolver());
             Register<IPackageDescriptorMonitor>(() => new PackageDescriptorMonitor());
             Register<ICommandOutputFormatter>(() => new ConsoleCommandOutputFormatter());
