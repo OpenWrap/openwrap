@@ -13,6 +13,7 @@ namespace OpenWrap.VisualStudio.ProjectModel
         Solution _solution;
         List<DteProject> _projects;
         bool _disposed;
+        SolutionEvents _solutionEvents;
 
         public event EventHandler<EventArgs> ProjectChanged = (src,ea)=> { };
 
@@ -20,9 +21,10 @@ namespace OpenWrap.VisualStudio.ProjectModel
         {
             _solution = solution;
             _projects = _solution.Projects.OfType<Project>().Select(x => new DteProject(x)).ToList();
-            _solution.DTE.Events.SolutionEvents.ProjectAdded += HandleProjectAdded;
-            _solution.DTE.Events.SolutionEvents.ProjectRemoved += HandleProjectRemoved;
-            _solution.DTE.Events.SolutionEvents.ProjectRenamed += HandleProjectRenamed;
+            _solutionEvents = _solution.DTE.Events.SolutionEvents;
+            _solutionEvents.ProjectAdded += HandleProjectAdded;
+            _solutionEvents.ProjectRemoved += HandleProjectRemoved;
+            _solutionEvents.ProjectRenamed += HandleProjectRenamed;
             Version = new Version(solution.DTE.Version);
         }
 
@@ -119,9 +121,10 @@ namespace OpenWrap.VisualStudio.ProjectModel
         {
             if (_disposed) return;
             _disposed = true;
-            _solution.DTE.Events.SolutionEvents.ProjectAdded -= HandleProjectAdded;
-            _solution.DTE.Events.SolutionEvents.ProjectRemoved -= HandleProjectRemoved;
-            _solution.DTE.Events.SolutionEvents.ProjectRenamed -= HandleProjectRenamed;
+            _solutionEvents.ProjectAdded -= HandleProjectAdded;
+            _solutionEvents.ProjectRemoved -= HandleProjectRemoved;
+            _solutionEvents.ProjectRenamed -= HandleProjectRenamed;
+            _solutionEvents = null;
             _projects = null;
 
             _solution = null;
