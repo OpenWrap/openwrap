@@ -33,7 +33,7 @@
     <OpenWrap-CopyLocal Condition="'$(OpenWrap-CopyLocal)' == ''">true</OpenWrap-CopyLocal>
 
     <OpenWrap-IncludePdbFiles Condition="'$(OpenWrap-IncludePdbFiles)' == ''">true</OpenWrap-IncludePdbFiles>
-  	<OpenWrap-IncludeCodeDocFiles Condition="'$(OpenWrap-IncludeCodeDocFiles)' == ''">true</OpenWrap-IncludeCodeDocFiles>
+     <OpenWrap-IncludeCodeDocFiles Condition="'$(OpenWrap-IncludeCodeDocFiles)' == ''">true</OpenWrap-IncludeCodeDocFiles>
   	<OpenWrap-IncludeSourceFiles Condition="'$(OpenWrap-IncludeSourceFiles)' == ''">false</OpenWrap-IncludeSourceFiles>
   </PropertyGroup>
 
@@ -80,7 +80,7 @@
   </Target>
 
   <Target Name="OpenWrap-AfterBuild"
-          Condition="$(OpenWrap-EmitOutputInstructions)">
+          Condition="'$(OpenWrap-EmitOutputInstructions)' != 'false'">
 
     <!-- Referenced projects -->
     <ItemGroup>

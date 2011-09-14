@@ -80,7 +80,7 @@
   </Target>
 
   <Target Name="OpenWrap-AfterBuild"
-          Condition="$(OpenWrap-EmitOutputInstructions)">
+          Condition="'$(OpenWrap-EmitOutputInstructions)' != 'false'">
 
     <!-- Referenced projects -->
     <ItemGroup>
