@@ -113,6 +113,7 @@ namespace OpenWrap.Services
 
         public void Initialize()
         {
+            ServiceLocator.Clear();
             foreach (var reg in _services.Values) reg();
             ServiceLocator.GetService<RuntimeAssemblyResolver>();
         }

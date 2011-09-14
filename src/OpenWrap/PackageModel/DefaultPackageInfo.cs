@@ -60,6 +60,11 @@ namespace OpenWrap.PackageModel
             get { return false; }
         }
 
+        public bool IsValid
+        {
+            get { return true; }
+        }
+
         public IPackageRepository Source
         {
             get { return null; }

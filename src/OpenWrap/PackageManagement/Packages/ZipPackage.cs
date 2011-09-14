@@ -16,6 +16,7 @@ namespace OpenWrap.PackageManagement.Packages
     {
         readonly LazyValue<PackageIdentifier> _identifier;
         IPackageInfo _descriptor;
+        bool? _isValid;
 
         public ZipPackage(IFile packageFile)
         {
@@ -73,6 +74,30 @@ namespace OpenWrap.PackageManagement.Packages
             get { return Descriptor.Nuked; }
         }
 
+        public bool IsValid
+        {
+            get
+            {
+                if (_isValid == null)
+                {
+                    using(var stream = PackageFile.OpenRead())
+                    using (var zip = new ZipFile(stream))
+                    {
+                        try
+                        {
+                            var entries = zip.Cast<ZipEntry>().ToList();
+                            _isValid =  entries.Count > 1 && entries.Any(x => x.Name.EndsWithNoCase(".wrapdesc"));
+
+                        }catch
+                        {
+                            _isValid = false;
+                        }
+                    }
+                }
+                return (bool)_isValid;
+            }
+        }
+
         public IFile PackageFile { get; set; }
 
         public IPackageRepository Source { get; set; }
@@ -95,7 +120,7 @@ namespace OpenWrap.PackageManagement.Packages
             using (var zip = new ZipFile(zipStream))
             {
                 var entries = zip.Cast<ZipEntry>();
-                ZipEntry descriptorFile = entries.FirstOrDefault(x => x.Name.EndsWith(".wrapdesc"));
+                ZipEntry descriptorFile = entries.FirstOrDefault(x => x.Name.EndsWithNoCase(".wrapdesc"));
                 if (descriptorFile == null)
                     throw new InvalidOperationException(String.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", PackageFile.Name));
 

@@ -53,5 +53,10 @@ namespace OpenWrap.Repositories.Http
         public DateTimeOffset Created { get { return _entry.CreationTime; } }
         public bool Anchored { get { return false; } }
         public bool Nuked { get { return _entry.Nuked; } }
+
+        public bool IsValid
+        {
+            get { return true; }
+        }
     }
 }

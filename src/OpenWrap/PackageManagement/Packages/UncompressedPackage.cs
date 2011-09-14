@@ -30,8 +30,9 @@ namespace OpenWrap.PackageManagement.Packages
             var descriptorName = originalPackageFile.NameWithoutExtension;
             Source = source;
             var wrapDescriptor = wrapCacheDirectory.Files("*.wrapdesc").SingleOrDefault();
-            if (wrapDescriptor == null)
-                throw new InvalidOperationException("Could not find descriptor in wrap cache directory, or there are multiple .wrapdesc files in the package.");
+
+            if (wrapDescriptor == null) IsValid = false;
+             
             var versionFile = wrapCacheDirectory.GetFile("version");
             _descriptor = new PackageDescriptorReaderWriter().Read(wrapDescriptor);
             PackageInfo = new DefaultPackageInfo(originalPackageFile.Name,
@@ -80,6 +81,8 @@ namespace OpenWrap.PackageManagement.Packages
         {
             get { return false; }
         }
+
+        public bool IsValid { get; private set; }
 
         public IPackageRepository Source { get; private set; }
 

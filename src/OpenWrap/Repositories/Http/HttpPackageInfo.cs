@@ -76,6 +76,11 @@ namespace OpenWrap.Repositories.Http
             get { return _nuked; }
         }
 
+        public bool IsValid
+        {
+            get { return true; }
+        }
+
         public IPackageRepository Source { get; private set; }
 
         public Version Version

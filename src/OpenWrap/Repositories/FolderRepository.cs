@@ -66,9 +66,11 @@ namespace OpenWrap.Repositories
                         let packageVersion = PackageNameUtility.GetVersion(packageFullName)
                         where packageVersion != null
                         let packageCacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
+                        let package = CreatePackageInstance(packageCacheDirectory, wrapFile)
+                        where package.IsValid
                         select new PackageLocation(
                                 packageCacheDirectory,
-                                CreatePackageInstance(packageCacheDirectory, wrapFile)
+                                package
                                 )).ToList();
         }
 

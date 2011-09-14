@@ -18,5 +18,6 @@ namespace OpenWrap.PackageModel
         bool Anchored { get; }
 
         bool Nuked { get; }
+        bool IsValid { get; }
     }
 }

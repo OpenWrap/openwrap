@@ -40,6 +40,11 @@ namespace OpenWrap.PackageManagement.Packages
         public string Name { get; set; }
         public bool Nuked { get; set; }
 
+        public bool IsValid
+        {
+            get { return true; }
+        }
+
         public IPackageRepository Source { get; set; }
         public Version Version { get; set; }
         Dictionary<string, List<Exports.IFile>> _content = new Dictionary<string, List<Exports.IFile>>();

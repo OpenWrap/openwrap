@@ -38,12 +38,14 @@
   </PropertyGroup>
 
   <Target Name="OpenWrap-Initialize">
-    <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" CurrentProjectFile="$(MSBuildProjectFullPath)" >
+    <InitializeOpenWrap StartDebug="$(OpenWrap-StartDebug)" CurrentProjectFile="$(MSBuildProjectFullPath)"  >
       <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
-      <Output TaskParameter="Scope" PropertyName="OpenWrap-Scope" Condition="'$(OpenWrap-Scope)' == ''" />
-      <Output TaskParameter="DescriptorPath" PropertyName="OpenWrap-DescriptorPath" Condition="'$(OpenWrap-DescriptorPath)' == ''" />
+      <Output TaskParameter="Scope" PropertyName="_OpenWrap-Scope" Condition="'$(OpenWrap-Scope)' == ''" />
+      <Output TaskParameter="DescriptorPath" PropertyName="_OpenWrap-DescriptorPath" Condition="'$(OpenWrap-DescriptorPath)' == ''" />
     </InitializeOpenWrap>
-
+    <PropertyGroup>
+      <_OpenWrap-DescriptorPath Condition="'$(OpenWrap-DescriptorPath)' != ''">$(OpenWrap-DescriptorPath)</_OpenWrap-DescriptorPath>
+    </PropertyGroup>
     <InitializeVisualStudioIntegration
       EnableVisualStudioIntegration="$(OpenWrap-EnableVisualStudioIntegration)"
       />

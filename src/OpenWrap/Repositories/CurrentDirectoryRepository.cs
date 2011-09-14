@@ -45,7 +45,9 @@ namespace OpenWrap.Repositories
                 if (_packages == null)
                     _packages = (from wrapFile in Environment.CurrentDirectory.Files("*.wrap")
                                  let tempFolder = FileSystem.GetTempDirectory().GetDirectory(Guid.NewGuid().ToString())
-                                 select (IPackageInfo)new CachedZipPackage(this, wrapFile, tempFolder))
+                                 let package = (IPackageInfo)new CachedZipPackage(this, wrapFile, tempFolder)
+                                 where package.IsValid
+                                 select package)
                             .ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase);
                 return _packages;
             }
