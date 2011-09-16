@@ -10,8 +10,8 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
 {
     public class AddInAppDomainManager : MarshalByRefObject, IDisposable
     {
-        ManualResetEvent _vsUnloading;
         readonly Thread _mainThread;
+        ManualResetEvent _vsUnloading;
 
         public AddInAppDomainManager()
         {
@@ -24,8 +24,8 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                 return (new AssemblyName(ev.Name).Name == currentAssembly.GetName().Name) ? currentAssembly : null;
             };
             _mainThread = new Thread(() => Load((string)appDomain.GetData("openwrap.vs.version"),
-                                                       (string)appDomain.GetData("openwrap.vs.currentdirectory"),
-                                                       (string[])appDomain.GetData("openwrap.vs.packages"))) { Name = "OpenWrap Main Thread"};
+                                                (string)appDomain.GetData("openwrap.vs.currentdirectory"),
+                                                (string[])appDomain.GetData("openwrap.vs.packages"))) { Name = "OpenWrap Main Thread" };
             _mainThread.SetApartmentState(ApartmentState.STA);
             _mainThread.Start();
         }
@@ -34,6 +34,15 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
         public override object InitializeLifetimeService()
         {
             return null;
+        }
+
+        public void Dispose()
+        {
+            _vsUnloading.Set();
+
+            _mainThread.Join(TimeSpan.FromSeconds(20));
+            _vsUnloading.Close();
+            _vsUnloading = null;
         }
 
         static void Load(string vsVersion, string currentDirectory, IEnumerable<string> packagePaths)
@@ -71,17 +80,14 @@ namespace OpenWrap.VisualStudio.SolutionAddIn
                 { "openwrap.scope", "build" },
                 { "openwrap.shell.formatter", "OpenWrap.VisualStudio.OutputWindowCommandOutputFormatter, OpenWrap.VisualStudio.Shared" }
             };
-
-            runner(info);
-        }
-        
-        public void Dispose()
-        {
-            _vsUnloading.Set();
-
-            _mainThread.Join(TimeSpan.FromSeconds(20));
-            _vsUnloading.Close();
-            _vsUnloading = null;
+            try
+            {
+                runner(info);
+            }
+            catch (Exception e)
+            {
+                Trace.Write("An error occured while running the runner, solution addin not loaded.\r\n" + e);
+            }
         }
     }
 }

@@ -9,18 +9,21 @@ namespace OpenWrap.VisualStudio
 {
     public class PerUserComComponentInstaller<T> : PerUserComComponentInstaller
     {
-        public PerUserComComponentInstaller(string path)
-            : base(path, typeof(T))
+        public PerUserComComponentInstaller(string installPath, string assemblySource = null)
+            : base(installPath, typeof(T), assemblySource)
         {
         }
     }
     public class PerUserComComponentInstaller
     {
+        readonly string _assemblySource;
         protected string _basePath;
+        
 
-        protected PerUserComComponentInstaller(string path, Type typeToRegister)
+        protected PerUserComComponentInstaller(string installPath, Type typeToRegister, string assemblySource = null)
         {
-            _basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), path);
+            _assemblySource = assemblySource ?? Path.GetDirectoryName(typeToRegister.Assembly.Location);
+            _basePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), installPath);
             VersionProvider = file => FileVersionInfo.GetVersionInfo(file).FileVersion.ToVersion();
             Type = typeToRegister;
             ProgId = Type.Attribute<ProgIdAttribute>().Value;
@@ -125,12 +128,13 @@ namespace OpenWrap.VisualStudio
             if (!Directory.Exists(_basePath))
                 Directory.CreateDirectory(_basePath);
 
-            var sourceAssemblyPath = Type.Assembly.Location;
+            var assemblyFileName = Path.GetFileName(Type.Assembly.Location);
+            if (assemblyFileName == null) return null;
+
+
+            var sourceAssemblyPath = Path.Combine(_assemblySource, assemblyFileName);
             var sourceAssemblyFileName = Path.GetFileName(sourceAssemblyPath);
-
-            if (sourceAssemblyFileName == null)
-                return null;
-
+            
             var currentVersion = VersionProvider(sourceAssemblyPath);
 
             var latestInstalledVersion = Directory.GetDirectories(_basePath)

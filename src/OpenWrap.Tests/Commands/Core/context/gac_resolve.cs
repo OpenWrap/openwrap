@@ -26,6 +26,7 @@ namespace OpenWrap.Tests.Dependencies
     public abstract class gac_resolve : OpenWrap.Testing.context
     {
         protected ILookup<IPackageInfo, AssemblyName> result;
+        InMemoryRepository Repository = new InMemoryRepository("Memory");
 
         public gac_resolve()
         {
@@ -57,7 +58,7 @@ namespace OpenWrap.Tests.Dependencies
             result = Exporter.InGac(new[]
             {
                     new CachedZipPackage(
-                        null,
+                        Repository,
                         Packager.NewWithDescriptor(
                             PackageFile,
                             "package",

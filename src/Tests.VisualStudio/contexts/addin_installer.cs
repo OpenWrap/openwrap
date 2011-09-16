@@ -27,7 +27,7 @@ namespace Tests.VisualStudio.contexts
             _installer.Uninstall();
         }
 
-        protected string CodeBase<T>()
+        protected static string CodeBase<T>()
         {
             var guid = ((GuidAttribute)Attribute.GetCustomAttribute(typeof(T), typeof(GuidAttribute))).Value;
             var regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Software\Classes\CLSID\{{{0}}}\InprocServer32", guid));

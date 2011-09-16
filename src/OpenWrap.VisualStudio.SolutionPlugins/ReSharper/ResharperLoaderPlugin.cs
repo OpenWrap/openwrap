@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using OpenFileSystem.IO;
 using OpenWrap.Reflection;
 using OpenWrap.Resources;
@@ -81,32 +82,33 @@ namespace OpenWrap.SolutionPlugins.VisualStudio.ReSharper
 
         void DetectResharperLoading(AppDomain vsAppDomain)
         {
-            Assembly resharperAssembly;
-            try
+            while (_retries <= MAX_RETRIES)
             {
-                resharperAssembly = vsAppDomain.Load("JetBrains.Platform.ReSharper.Shell");
-            }
-            catch
-            {
-                resharperAssembly = null;
-            }
-            if (resharperAssembly == null)
-            {
-                if (_retries++ <= MAX_RETRIES)
+                Assembly resharperAssembly;
+                try
                 {
-                    _output.Write("ReSharper not found, try {0}/{1}", _retries, MAX_RETRIES);
+                    resharperAssembly = vsAppDomain.Load("JetBrains.Platform.ReSharper.Shell");
                 }
+                catch
+                {
+                    resharperAssembly = null;
+                }
+                if (resharperAssembly == null && _retries++ <= MAX_RETRIES)
+                {
+                    _output.Write("ReSharper not found, try {0}/{1}, sleeping for 2 seconds.", _retries, MAX_RETRIES);
+                    Thread.Sleep(TimeSpan.FromSeconds(2));
+                    continue;
+                }
+                var resharperVersion = resharperAssembly.GetName().Version;
+                var pluginManagerType = LoadTypeFromVersion(resharperVersion);
+                if (pluginManagerType == null) return;
 
+                var assemblyLocation = pluginManagerType.Assembly.Location;
+                var destinationAssemblyFile = CopyAndSign(assemblyLocation);
+
+                _pluginManager = vsAppDomain.CreateInstanceFromAndUnwrap(destinationAssemblyFile.Path, pluginManagerType.FullName);
                 return;
             }
-            var resharperVersion = resharperAssembly.GetName().Version;
-            var pluginManagerType = LoadTypeFromVersion(resharperVersion);
-            if (pluginManagerType == null) return;
-
-            var assemblyLocation = pluginManagerType.Assembly.Location;
-            var destinationAssemblyFile = CopyAndSign(assemblyLocation);
-
-            _pluginManager = vsAppDomain.CreateInstanceFromAndUnwrap(destinationAssemblyFile.Path, pluginManagerType.FullName);
         }
     }
 }

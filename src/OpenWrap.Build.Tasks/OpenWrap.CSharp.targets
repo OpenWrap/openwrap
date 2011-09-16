@@ -65,7 +65,7 @@
 
   <Target Name="OpenWrap-ResolveReferences" DependsOnTargets="OpenWrap-Initialize">
     <ResolveWrapReferences
-      WrapDescriptor="$(OpenWrap-DescriptorPath)"
+      WrapDescriptor="$(_OpenWrap-DescriptorPath)"
       WrapsDirectory="$(OpenWrap-ProjectRepositoryPath)"
       Platform="$(OpenWrap-TargetPlatform)"
       Profile="$(OpenWrap-TargetProfile)"

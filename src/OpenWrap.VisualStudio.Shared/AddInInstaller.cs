@@ -6,11 +6,10 @@ namespace OpenWrap.VisualStudio
     public static class AddInInstaller
     {
         static readonly string _addInPath = Path.Combine("openwrap", "VisualStudio");
-        public static void Install()
+        public static void Install(string assemblySource = null)
         {
-            // TODO: This prevents upgrading in scenarios where the assembly is already loaded <sigh>
-            RegisterComAddIn<OpenWrapVisualStudioAddIn2008>(PerUserComComponentInstaller.ClrVersion2);
-            RegisterComAddIn<OpenWrapVisualStudioAddIn2010>(PerUserComComponentInstaller.ClrVersion4);
+            RegisterComAddIn<OpenWrapVisualStudioAddIn2008>(PerUserComComponentInstaller.ClrVersion2, assemblySource);
+            RegisterComAddIn<OpenWrapVisualStudioAddIn2010>(PerUserComComponentInstaller.ClrVersion4, assemblySource);
         }
         public static void Uninstall()
         {
@@ -18,14 +17,14 @@ namespace OpenWrap.VisualStudio
             UnregisterComAddIn<OpenWrapVisualStudioAddIn2010>();
         }
 
-        static void UnregisterComAddIn<T>()
+        static void UnregisterComAddIn<T>(string assemblySource = null)
         {
-            new PerUserComComponentInstaller<T>(_addInPath).Uninstall();
+            new PerUserComComponentInstaller<T>(_addInPath, assemblySource).Uninstall();
         }
 
-        static void RegisterComAddIn<T>(string targetVersion)
+        static void RegisterComAddIn<T>(string targetVersion, string assemblySource = null)
         {
-            new PerUserComComponentInstaller<T>(_addInPath).Install(targetVersion);
+            new PerUserComComponentInstaller<T>(_addInPath, assemblySource).Install(targetVersion);
         }
     }
 }

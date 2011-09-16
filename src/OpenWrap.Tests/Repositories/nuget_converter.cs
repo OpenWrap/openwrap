@@ -209,6 +209,7 @@ namespace nuget_converter_specs
         public abstract class nuget_converter : OpenWrap.Testing.context
         {
             IFileSystem FileSystem;
+            InMemoryRepository Repository = new InMemoryRepository("In memory");
 
             public nuget_converter()
             {
@@ -225,7 +226,7 @@ namespace nuget_converter_specs
                 using(var openWrapPackage = wrapFile.OpenWrite())
                     NuGetConverter.Convert(NuPackage, openWrapPackage);
                 
-                Package = new CachedZipPackage(null, wrapFile, cacheDir);
+                Package = new CachedZipPackage(Repository, wrapFile, cacheDir);
             }
 
             protected IPackageInfo Package { get; set; }

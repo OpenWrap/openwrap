@@ -22,6 +22,7 @@ namespace OpenWrap.PackageManagement.Packages
         {
             PackageFile = packageFile;
             _identifier = new LazyValue<PackageIdentifier>(() => new PackageIdentifier(Name, Version));
+            Source = new InMemoryRepository("Null repository.") { Packages = { this } };
         }
 
         public bool Anchored
@@ -100,7 +101,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IFile PackageFile { get; set; }
 
-        public IPackageRepository Source { get; set; }
+        public IPackageRepository Source { get; protected set; }
 
         public Version Version
         {

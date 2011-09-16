@@ -24,14 +24,24 @@ namespace OpenWrap.PackageManagement.Packages
                                    IFile originalPackageFile,
                                    IDirectory wrapCacheDirectory)
         {
+            Check.NotNull(source, "source");
+            if (originalPackageFile == null || originalPackageFile.Exists == false)
+            {
+                IsValid = false;
+                return;
+            }
             _originalPackageFile = originalPackageFile;
             BaseDirectory = wrapCacheDirectory;
             // get the descriptor file inside the package
-            var descriptorName = originalPackageFile.NameWithoutExtension;
+            
             Source = source;
             var wrapDescriptor = wrapCacheDirectory.Files("*.wrapdesc").SingleOrDefault();
 
-            if (wrapDescriptor == null) IsValid = false;
+            if (wrapDescriptor == null)
+            {
+                IsValid = false;
+                return;
+            }
              
             var versionFile = wrapCacheDirectory.GetFile("version");
             _descriptor = new PackageDescriptorReaderWriter().Read(wrapDescriptor);
@@ -39,6 +49,7 @@ namespace OpenWrap.PackageManagement.Packages
                                                 versionFile.Exists ? versionFile.Read(x => x.ReadString().ToVersion()) : null,
                                                 _descriptor);
             Identifier = new PackageIdentifier(Name, Version);
+            IsValid = true;
         }
 
         public bool Anchored

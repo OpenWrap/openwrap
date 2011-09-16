@@ -18,9 +18,9 @@ namespace OpenWrap.Repositories
     {
         ICollection<IPackageInfo> _packages = new List<IPackageInfo>();
 
-        public InMemoryRepository(string name)
+        public InMemoryRepository(string name = null)
         {
-            Name = name;
+            Name = name ?? string.Empty;
             CanPublish = true;
             Token = "[memory]" + Name;
         }
@@ -86,7 +86,7 @@ namespace OpenWrap.Repositories
             using (var stream = FileExtensions.OpenWrite(inMemoryFile))
                 IO.StreamExtensions.CopyTo(packageStream, stream);
 
-            var tempFolder = new CachedZipPackage(null, inMemoryFile, null);
+            var tempFolder = new ZipPackage(inMemoryFile);
 
             var package = new InMemoryPackage
             {

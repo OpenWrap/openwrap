@@ -29,7 +29,15 @@ namespace Tests.IO
         {
             scope_should_be(@"c:\src\tests\src\MyProject.Tests\MyProject.Tests.csproj", "tests", @"{source: src}\*{scope: Tests = tests}*");
         }
-
+        [Test]
+        
+        public void scope_for_exact_match_is_found()
+        {
+            scope_should_be(
+                @"c:\pacakge\src\Project.Tests\Project.Tests.csproj", "tests", 
+                @"src\{scope: Project.Tests = tests}"
+                );
+        }
         [TestCase(@"c:\src\tests\src\MyProject.Tests\MyProject.Tests.csproj")]
         [TestCase(@"c:\src\tests\src\MyProject.Tests.Unit\MyProject.Tests.Unit.csproj")]
         public void scope_without_source_is_found(string path)

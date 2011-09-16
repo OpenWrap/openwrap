@@ -121,9 +121,12 @@ namespace OpenWrap.VisualStudio.ProjectModel
         {
             if (_disposed) return;
             _disposed = true;
-            _solutionEvents.ProjectAdded -= HandleProjectAdded;
-            _solutionEvents.ProjectRemoved -= HandleProjectRemoved;
-            _solutionEvents.ProjectRenamed -= HandleProjectRenamed;
+            try
+            {
+                _solutionEvents.ProjectAdded -= HandleProjectAdded;
+                _solutionEvents.ProjectRemoved -= HandleProjectRemoved;
+                _solutionEvents.ProjectRenamed -= HandleProjectRenamed;
+            }catch{}
             _solutionEvents = null;
             _projects = null;
 
