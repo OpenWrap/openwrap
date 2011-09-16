@@ -9,5 +9,6 @@ namespace OpenWrap.PackageManagement.Monitoring
         void AssembliesUpdated(IEnumerable<Exports.IAssembly> assemblyPaths);
         ExecutionEnvironment Environment { get; }
         bool IsLongRunning { get; }
+        void AssembliesError(string errorMessage);
     }
 }

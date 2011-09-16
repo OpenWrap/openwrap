@@ -76,22 +76,16 @@ namespace OpenWrap.PackageManagement.Monitoring
 
         void NotifyAllClients(IFile wrapPath)
         {
-            var subscriptions = GetSubsriptionsFor(wrapPath);
-            if (subscriptions == null) return;
-
-            subscriptions.Repository.RefreshPackages();
-            var descriptor = new PackageDescriptorReader()
-                    .ReadAll(wrapPath.Parent)
-                    .Where(x => x.Value.File.Path == wrapPath.Path)
-                    .Select(x=>x.Value.Value)
-                    .Single();
-
-            foreach (var client in subscriptions.Clients)
-                client.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, client.Environment, false));
+            NotifyCore(wrapPath);
         }
 
         void NotifyClient(IFile wrapPath, IResolvedAssembliesUpdateListener listener)
         {
+            NotifyCore(wrapPath, new[] { listener });
+        }
+        void NotifyCore(IFile wrapPath, IEnumerable<IResolvedAssembliesUpdateListener> listeners = null)
+        {
+
             var subscriptions = GetSubsriptionsFor(wrapPath);
             if (subscriptions == null) return;
 
@@ -100,12 +94,16 @@ namespace OpenWrap.PackageManagement.Monitoring
                     .ReadAll(wrapPath.Parent)
                     .Where(x => x.Value.File.Path == wrapPath.Path)
                     .Select(x => x.Value.Value)
-                    .Single();
+                    .SingleOrDefault();
 
-
-            listener.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, listener.Environment, false));
+            foreach (var listener in listeners ?? subscriptions.Clients)
+            {
+                if (descriptor == null)
+                    listener.AssembliesError(string.Format("Descriptor for '{0}' was not found, check the scope of the project is correct.", wrapPath.Path));
+                else
+                    listener.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, listener.Environment, false));
+            }
         }
-
         class DescriptorSubscriptions
         {
             public DescriptorSubscriptions(IFile path, IPackageRepository repository, FileSystemEventHandler handler)

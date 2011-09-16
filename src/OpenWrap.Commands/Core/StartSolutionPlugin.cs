@@ -23,6 +23,7 @@ namespace OpenWrap.Commands.Core
         readonly IPackageDescriptorMonitor _monitor;
         readonly List<KeyValuePair<string,IDisposable>> _plugins = new List<KeyValuePair<string, IDisposable>>();
         bool _disposed;
+        List<string> _errors = new List<string>();
 
         public StartSolutionPlugin()
             : this(ServiceLocator.GetService<IPackageDescriptorMonitor>(), ServiceLocator.GetService<IPackageManager>(), ServiceLocator.GetService<IEnvironment>())
@@ -44,6 +45,13 @@ namespace OpenWrap.Commands.Core
         public bool IsLongRunning
         {
             get { return true; }
+        }
+
+        public void AssembliesError(string errorMessage)
+        {
+
+            _errors.Add(errorMessage);
+
         }
 
         public void AssembliesUpdated(IEnumerable<Exports.IAssembly> assemblyPaths)
@@ -74,8 +82,15 @@ namespace OpenWrap.Commands.Core
             {
                 var events = unloadEvent == null ? new WaitHandle[] { _refreshRequired } : new WaitHandle[] { unloadEvent, _refreshRequired };
                 var exitPoint = WaitHandle.WaitAny(events);
-                //Debugger.Launch();//
+
                 if (_disposed || (events.Length > 1 && exitPoint == 0)) break;
+                if (_errors.Count > 0)
+                {
+                    foreach (var error in _errors)
+                        yield return new Error(error);
+                    _errors.Clear();
+                    continue;
+                }
                 _environment.ProjectRepository.RefreshPackages();
                 var newPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
                     .SelectMany(x => x).ToList();

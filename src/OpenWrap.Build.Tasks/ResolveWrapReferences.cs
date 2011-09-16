@@ -48,6 +48,11 @@ namespace OpenWrap.Build.Tasks
             get { return false; }
         }
 
+        public void AssembliesError(string errorMessage)
+        {
+            Log.LogError(errorMessage);
+        }
+
         [Required]
         public string Platform { get; set; }
 
