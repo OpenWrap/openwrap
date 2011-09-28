@@ -25,7 +25,7 @@ namespace Tests.Commands.build_wrap
 
 
         [Test]
-        public void wrap_exists()
+        public void is_packaged()
         {
             Environment.CurrentDirectoryRepository
                     .PackagesByName[packageName]
@@ -33,12 +33,18 @@ namespace Tests.Commands.build_wrap
         }
 
         [Test]
-        public void wrap_has_correct_version_number()
+        public void has_correct_version_number()
         {
             Environment.CurrentDirectoryRepository
                     .PackagesByName[packageName]
                     .ShouldHaveCountOf(1)
                     .First().Version.ShouldBe(version);
+        }
+
+        [Test]
+        public void package_information_is_output()
+        {
+            Results.OfType<PackageBuilt>().Single().ShouldNotBeNull().PackageFile.Exists.ShouldBeTrue();
         }
     }
 }

@@ -113,7 +113,7 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Info(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
 
             Packager.NewFromFiles(packageFilePath, packageContent);
-            yield return new Info(string.Format("Package built at '{0}'.", packageFilePath));
+            yield return new PackageBuilt(packageFilePath);
 
         }
 

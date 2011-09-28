@@ -42,7 +42,7 @@ namespace Tests
 
         protected openwrap_context()
         {
-            
+            // TODO: Review if we should use the Service registry?
             RemoteRepositories = new List<IPackageRepository>();
             ConfiguredRemotes = new RemoteRepositories();
             ServiceLocator.Clear();

@@ -52,6 +52,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\indexed_dic.cs" />
+    <Compile Include="Commands\build_wrap\from_path\path_does_not_exist.cs" />
+    <Compile Include="Commands\build_wrap\from_path\path_has_descriptor.cs" />
+    <Compile Include="Commands\build_wrap\from_path\path_no_descriptor.cs" />
     <Compile Include="Commands\contexts\configuration_command.cs" />
     <Compile Include="Commands\configuration\get_wihtout_config.cs" />
     <Compile Include="Commands\configuration\get_without_arguments_with_config.cs" />

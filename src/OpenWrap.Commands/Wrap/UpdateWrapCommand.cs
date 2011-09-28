@@ -82,7 +82,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
         {
-            yield return new Result("Updating project packages...");
+            yield return new Info("Updating project packages...");
 
             var sourceRepos = _remoteRepositories;
             var errors = new List<PackageOperationResult>();
@@ -116,7 +116,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> UpdateSystemPackages()
         {
             var isByName = !string.IsNullOrEmpty(Name);
-            yield return new Result(isByName
+            yield return new Info(isByName
                                             ? "Updating system packages..."
                                             : string.Format("Updating system package '{0}'", Name));
 

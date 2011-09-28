@@ -2,24 +2,12 @@
 
 namespace OpenWrap.Commands
 {
-    public class Result : ICommandOutput
+    public class Data : AbstractOutput
     {
-        readonly string _value;
-
-        public Result(string str, params object[] parameters)
+        public Data(string str, params object[] parameters) : base(str, parameters)
         {
-            _value = string.Format(str, parameters);
+            this.Type = CommandResultType.Data;
         }
 
-
-        public CommandResultType Type
-        {
-            get { return CommandResultType.Data; }
-        }
-
-        public override string ToString()
-        {
-            return _value;
-        }
     }
 }

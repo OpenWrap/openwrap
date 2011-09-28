@@ -99,7 +99,7 @@ namespace OpenWrap.PackageManagement.Monitoring
             foreach (var listener in listeners ?? subscriptions.Clients)
             {
                 if (descriptor == null)
-                    listener.AssembliesError(string.Format("Descriptor for '{0}' was not found, check the scope of the project is correct.", wrapPath.Path));
+                    listener.AssembliesError(string.Format("Descriptor for '{0}' has a file name that does not match the package name, or is in an invalid scope. Check the scope of the project is correct.", wrapPath.Path));
                 else
                     listener.AssembliesUpdated(PackageManager.GetProjectAssemblyReferences(descriptor, subscriptions.Repository, listener.Environment, false));
             }

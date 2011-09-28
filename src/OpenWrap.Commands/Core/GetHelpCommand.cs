@@ -33,8 +33,8 @@ namespace OpenWrap.Commands.Core
 
         IEnumerable<ICommandOutput> ListAllCommands(IEnumerable<ICommandDescriptor> commandRepository)
         {
-            yield return new Result(Environment.NewLine + "List of available commands" + Environment.NewLine + "--------------------------");
-            yield return new Result(Environment.NewLine + "Usage:" + Environment.NewLine + "  o {{verb}}-{{noun}} <command-arguments>" + Environment.NewLine);
+            yield return new Info(Environment.NewLine + "List of available commands" + Environment.NewLine + "--------------------------");
+            yield return new Info(Environment.NewLine + "Usage:" + Environment.NewLine + "  o {{verb}}-{{noun}} <command-arguments>" + Environment.NewLine);
             var groups = commandRepository
                 .Where(x => string.IsNullOrEmpty(x.Noun) == false && string.IsNullOrEmpty(x.Verb) == false)
                 .GroupBy(r => r.Noun)
@@ -45,7 +45,7 @@ namespace OpenWrap.Commands.Core
                 yield return group;
             }
 
-            yield return new Result(Environment.NewLine + "For detailed help on a particular command, run:" + Environment.NewLine + "  o get-help {{verb}}-{{noun}}");
+            yield return new Info(Environment.NewLine + "For detailed help on a particular command, run:" + Environment.NewLine + "  o get-help {{verb}}-{{noun}}");
         }
 
         IEnumerable<ICommandOutput> ListCommand()

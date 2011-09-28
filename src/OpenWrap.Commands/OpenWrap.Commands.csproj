@@ -81,6 +81,7 @@
     <Compile Include="Remote\Messages\UnknownEndpointType.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
     <Compile Include="Wrap\Messages\DependenciesConflictMessage.cs" />
+    <Compile Include="Wrap\Messages\PackageBuilt.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
     <Compile Include="Wrap\TestWrapCommand.cs" />
     <Compile Include="Wrap\UpdatePackageVertex.cs" />
@@ -118,7 +119,7 @@
     <ProjectReference Include="..\OpenWrap.Testing\OpenWrap.Testing.csproj">
       <Project>{C8271D09-7581-4DC5-B47B-6763062506C2}</Project>
       <Name>OpenWrap.Testing</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
