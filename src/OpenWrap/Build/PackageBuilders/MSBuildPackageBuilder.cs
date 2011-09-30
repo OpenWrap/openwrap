@@ -28,13 +28,14 @@ namespace OpenWrap.Build.PackageBuilders
             ProjectFiles = new List<IFile>();
         }
 
-        protected ILookup<string, string> Properties { get; set; }
+        public ILookup<string, string> Properties { get; set; }
 
         public IEnumerable<string> Platform { get; set; }
         public IEnumerable<string> Profile { get; set; }
         public IEnumerable<string> Project { get; set; }
         public IEnumerable<string> Configuration { get; set; }
         public ICollection<IFile> ProjectFiles { get; set; }
+        
 
         protected override string ExecutablePath
         {
@@ -116,6 +117,7 @@ namespace OpenWrap.Build.PackageBuilders
 
         IProcess CreateMSBuildProcess(IFile responseFile, IFile project, string platform, string profile, string msbuildTargets)
         {
+            
             using (var stream = responseFile.OpenWrite())
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             {
@@ -146,6 +148,13 @@ namespace OpenWrap.Build.PackageBuilders
                     writer.WriteLine("/p:OpenWrap-StartDebug=true");
                 writer.WriteLine("/p:OpenWrap-EmitOutputInstructions=true");
                 writer.WriteLine("/p:OpenWrap-CurrentProjectFile=\"" + project.Path.FullPath + "\"");
+
+                foreach(var kv in Properties)
+                {
+                    var value = kv.LastOrDefault();
+                    if (value != null)
+                        writer.WriteLine("/p:{0}={1}", kv.Key, value);
+                }
                 if (msbuildTargets != null)
                     writer.WriteLine("/t:" + msbuildTargets);
 
