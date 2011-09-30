@@ -7,4 +7,11 @@
             Message = text;
         }
     }
+    public class InfoBuildResult : BuildResult
+    {
+        public InfoBuildResult(string text)
+        {
+            Message = text;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -403,7 +404,7 @@ namespace OpenWrap.Commands.Wrap
         {
             foreach (var t in packageBuilders.SelectMany(x => x.Build()))
             {
-                if (t is TextBuildResult && !Quiet)
+                if (t is InfoBuildResult || (t is TextBuildResult && !Quiet))
                     yield return new Info(t.Message);
                 else if (t is FileBuildResult)
                 {
@@ -431,7 +432,10 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> TriggerBuild()
         {
             _buildResults.Clear();
+            var buildTime = new Stopwatch();
+            buildTime.Start();
             foreach (var m in ProcessBuildResults(_builders, _buildResults.Add)) yield return m;
+            yield return new Info("Build completed in {0}.", buildTime.Elapsed);
             _buildResults = _buildResults.Distinct().ToList();
         }
 

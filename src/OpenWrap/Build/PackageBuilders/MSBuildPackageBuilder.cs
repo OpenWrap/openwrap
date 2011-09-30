@@ -52,8 +52,8 @@ namespace OpenWrap.Build.PackageBuilders
                 foreach(var proj in Project)
                 {
                     var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(proj).FullPath;
-                    var specFiles = _fileSystem.Files(pathSpec);
-                    if (specFiles.Count() == 0 || specFiles.Any(x => x.Exists == false))
+                    var specFiles = _fileSystem.Files(pathSpec).DefaultIfEmpty(_fileSystem.GetFile(pathSpec));
+                    if (specFiles.Any(x => x.Exists == false))
                     {
                         yield return new UnknownProjectFileResult(proj);
                         yield break;
@@ -96,12 +96,10 @@ namespace OpenWrap.Build.PackageBuilders
                 using (var responseFile = _fileSystem.CreateTempFile())
                 {
                     var msbuildProcess = CreateMSBuildProcess(responseFile, project.file, project.platform, project.profile, "Build");
-                    yield return new TextBuildResult(string.Format("Building '{0}'...", project.file.Path.FullPath));
+                    yield return new InfoBuildResult(string.Format("Building '{0}'...", project.file.Path.FullPath));
 
 
                     foreach (var m in ExecuteEngine(msbuildProcess)) yield return m;
-
-                    yield return new TextBuildResult("Build complete.");
                 }
             }
         }
