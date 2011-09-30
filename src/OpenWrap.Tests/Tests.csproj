@@ -52,6 +52,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\indexed_dic.cs" />
+    <Compile Include="Commands\build_wrap\inputs_to_providers\defaults.cs" />
+    <Compile Include="Commands\build_wrap\inputs_to_providers\input_configuration.cs" />
+    <Compile Include="Commands\build_wrap\inputs_to_providers\input_debug.cs" />
+    <Compile Include="Commands\build_wrap\inputs_to_providers\input_incremental.cs" />
+    <Compile Include="Commands\build_wrap\inputs_to_providers\input_release.cs" />
+    <Compile Include="Commands\build_wrap\inputs_to_providers\PackageBuilderWithConfig.cs" />
+    <Compile Include="Commands\build_wrap\inputs_to_providers\unknown_properties.cs" />
     <Compile Include="Commands\build_wrap\providers.custom\existing_class.cs" />
     <Compile Include="Commands\build_wrap\NullPackageBuilder.cs" />
     <Compile Include="Commands\build_wrap\providers.custom\unknown_class.cs" />

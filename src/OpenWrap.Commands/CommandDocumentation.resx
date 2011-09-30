@@ -442,4 +442,7 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="update-wrap-from" xml:space="preserve">
     <value>Specifies the path to a directory containing openwrap packages.</value>
   </data>
+  <data name="build-wrap-version" xml:space="preserve">
+    <value>Overrides the package version with the provided version specification.</value>
+  </data>
 </root>

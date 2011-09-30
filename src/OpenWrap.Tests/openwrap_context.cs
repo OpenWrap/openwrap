@@ -51,7 +51,7 @@ namespace Tests
             Environment = new InMemoryEnvironment(
                     FileSystem.GetDirectory(currentDirectory),
                     FileSystem.GetDirectory(DefaultInstallationPaths.ConfigurationDirectory));
-            Environment.DescriptorFile.MustExist();
+            //Environment.DescriptorFile.MustExist();
             ServiceLocator.RegisterService<IFileSystem>(FileSystem);
             ServiceLocator.RegisterService<IEnvironment>(Environment);
             ServiceLocator.RegisterService<IPackageResolver>(new ExhaustiveResolver());

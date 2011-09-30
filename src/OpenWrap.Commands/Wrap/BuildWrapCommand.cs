@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.Build;
 using OpenWrap.Build.PackageBuilders;
@@ -129,13 +128,18 @@ namespace OpenWrap.Commands.Wrap
             return build.ExportName == "." && build.FileName.EqualsNoCase("version");
         }
 
-        IPackageBuilder AssignProperties(IPackageBuilder builder, IEnumerable<IGrouping<string, string>> properties)
+        static IPackageBuilder AssignProperties(IPackageBuilder builder, IEnumerable<IGrouping<string, string>> properties)
         {
+            List<KeyValuePair<string, string>> unknown = new List<KeyValuePair<string, string>>();
+
+
+            var builderType = builder.GetType();
             foreach (var property in properties)
             {
-                var pi = builder.GetType().GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
+                var pi = builderType.GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
                 if (pi != null)
                 {
+                    bool boolProperty;
                     if (typeof(IEnumerable<string>).IsAssignableFrom(pi.PropertyType))
                     {
                         var existingValues = pi.GetValue(builder, null) as IEnumerable<string>;
@@ -146,9 +150,22 @@ namespace OpenWrap.Commands.Wrap
                     {
                         pi.SetValue(builder, property.Last(), null);
                     }
-
-
+                    else if (pi.PropertyType == typeof(bool) && property.Count() > 0 && bool.TryParse(property.Last(), out boolProperty))
+                    {
+                        pi.SetValue(builder, boolProperty, null);
+                    }
                 }
+                    else
+                    {
+                        
+                        unknown.AddRange(property.Select(x=>new KeyValuePair<string,string>(property.Key, x)));
+                    }
+            }
+            var propertiesPi = builderType.GetProperty("Properties", BindingFlags.Instance | BindingFlags.Public);
+            if (propertiesPi != null && typeof(IEnumerable<IGrouping<string,string>>).IsAssignableFrom(propertiesPi.PropertyType))
+            {
+                var unknownLookup = unknown.ToLookup(x=>x.Key, x=>x.Value);
+                propertiesPi.SetValue(builder, unknownLookup, null);
             }
             return builder;
         }
@@ -194,8 +211,6 @@ namespace OpenWrap.Commands.Wrap
                 {
                     Incremental = Incremental
                 };
-                if (Configuration != null)
-                    builder.Configuration = new[] { Configuration };
                 return builder;
             }
             if (commandLine.StartsWithNoCase("files"))
@@ -203,8 +218,21 @@ namespace OpenWrap.Commands.Wrap
             if (commandLine.StartsWithNoCase("command"))
                 return new CommandLinePackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
             if (commandLine.StartsWithNoCase("custom"))
-                return new CustomPackageBuilder();
+                return CreateCustomBuilder(commandLine);
             return new NullPackageBuilder(_environment);
+        }
+
+        IPackageBuilder CreateCustomBuilder(string commandLine)
+        {
+            var typeName = ParseBuilderProperties(commandLine).Where(x => x.Key.EqualsNoCase("TypeName")).Select(x=>x.FirstOrDefault()).FirstOrDefault();
+            if (typeName == null)
+                return new ErrorPackageBuilder("Cannot find a TypeName parameter to the custom build provider.");
+
+            var type = Type.GetType(typeName, false);
+            if (type == null)
+                return new ErrorPackageBuilder(string.Format("Cannot load type '{0}'. Make sure the type exists and is avaialble.", typeName));
+
+            return (IPackageBuilder)Activator.CreateInstance(type);
         }
 
         IEnumerable<ICommandOutput> CreateBuilder()
@@ -212,15 +240,33 @@ namespace OpenWrap.Commands.Wrap
             _builders = (
                             from commandLine in _environment.Descriptor.Build.DefaultIfEmpty("msbuild")
                             let builder = ChooseBuilderInstance(commandLine)
-                            let parameters = from segment in commandLine.Split(';').Skip(1)
-                                             let keyValues = segment.Split('=')
-                                             where keyValues.Length >= 2
-                                             let key = keyValues[0]
-                                             let value = segment.Substring(key.Length + 1).Trim()
-                                             group value by key.Trim()
-                            select AssignProperties(builder, parameters)
+                            let parameters = ParseBuilderProperties(commandLine)
+                            select AssignProperties(builder, OverrideWithInputs(parameters))
                         ).ToList();
             yield break;
+        }
+
+        IEnumerable<IGrouping<string, string>> ParseBuilderProperties(string commandLine)
+        {
+            return from segment in commandLine.Split(';').Skip(1)
+                   let keyValues = segment.Split('=')
+                   where keyValues.Length >= 2
+                   let key = keyValues[0]
+                   let value = segment.Substring(key.Length + 1).Trim()
+                   group value by key.Trim();
+        }
+
+        IEnumerable<IGrouping<string, string>> OverrideWithInputs(IEnumerable<IGrouping<string,string>> parameters)
+        {
+            var overrides = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            if (Configuration != null)
+                overrides.Add("Configuration", Configuration);
+            if (Incremental)
+                overrides.Add("Incremental", "True");
+
+            return overrides.GroupBy(x => x.Key, x => x.Value).Concat(parameters.Where(param => !overrides.ContainsKey(param.Key)));
+
         }
 
         string FormatBytes(long? size)
@@ -360,16 +406,6 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        string ReadVersionFile()
-        {
-            var versionFile = _environment.CurrentDirectory.GetFile("version");
-            if (versionFile.Exists)
-                using (var stream = versionFile.OpenRead())
-                using (var streamReader = new StreamReader(stream, Encoding.UTF8))
-                    return streamReader.ReadLine();
-            return null;
-        }
-
         IEnumerable<IFile> ResolveFiles(FileBuildResult fileDescriptor)
         {
             return fileDescriptor.Path.FullPath.Contains("*")
@@ -395,20 +431,18 @@ namespace OpenWrap.Commands.Wrap
         }
     }
 
-    public class CustomPackageBuilder : IPackageBuilder
+    class ErrorPackageBuilder : IPackageBuilder
     {
-        public string TypeName { get; set; }
+        readonly string _message;
+
+        public ErrorPackageBuilder(string message)
+        {
+            _message = message;
+        }
+
         public IEnumerable<BuildResult> Build()
         {
-            var type = Type.GetType(TypeName, false);
-            if (type == null)
-            {
-                yield return new ErrorBuildResult(string.Format("Could not locate a custom package builder with type name '{0}'.", TypeName));
-                yield break;
-            }
-            var packageBuilder = (IPackageBuilder)Activator.CreateInstance(type);
-            foreach(var result in packageBuilder.Build())
-                yield return result;
+            yield return new ErrorBuildResult(_message);
         }
     }
 

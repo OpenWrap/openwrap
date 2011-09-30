@@ -96,9 +96,6 @@ namespace OpenWrap.Build.PackageBuilders
 
         static string GetMSBuildExecutablePath()
         {
-            if (Type.GetType("Mono.Runtime") != null)
-                return "xbuild";
-
             var versionedFolders = from version in Directory.GetDirectories(Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\"), "v*")
                                    orderby version descending
                                    let msbuildPath = Path.Combine(version, "msbuild.exe")

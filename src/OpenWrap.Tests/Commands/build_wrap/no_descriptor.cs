@@ -12,7 +12,9 @@ namespace Tests.Commands.build_wrap
         public no_descriptor()
         {
             given_current_directory_repository(new CurrentDirectoryRepository());
-            
+            Environment.Descriptor = null;
+            Environment.DescriptorFile.Delete();
+            Environment.ScopedDescriptors.Clear();
             when_executing_command();
         }
 
