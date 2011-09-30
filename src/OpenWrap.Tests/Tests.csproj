@@ -63,6 +63,8 @@
     <Compile Include="Commands\build_wrap\providers.custom\existing_class.cs" />
     <Compile Include="Commands\build_wrap\NullPackageBuilder.cs" />
     <Compile Include="Commands\build_wrap\providers.custom\unknown_class.cs" />
+    <Compile Include="Commands\build_wrap\to_path\directory_doesnt_exists.cs" />
+    <Compile Include="Commands\build_wrap\to_path\directory_exists.cs" />
     <Compile Include="Commands\build_wrap\version\from_descriptor.cs" />
     <Compile Include="Commands\build_wrap\version\from_descriptor_and_file.cs" />
     <Compile Include="Commands\build_wrap\version\from_input.cs" />

@@ -94,9 +94,17 @@ namespace OpenWrap.Commands.Wrap
         {
             yield return SetEnvironmentToFromInput;
             yield return VerifyDescriptorPresent;
-            yield return VerifyPath;
             yield return VerifyVersion;
+            yield return SetOutputPath;
             yield return CreateBuilder;
+        }
+
+        IEnumerable<ICommandOutput> SetOutputPath()
+        {
+            _destinationPath = Path != null
+                ? _fileSystem.GetDirectory(Path).MustExist()
+                : _fileSystem.GetCurrentDirectory();
+            yield break;
         }
 
         IEnumerable<ICommandOutput> VerifyVersion()
@@ -181,7 +189,6 @@ namespace OpenWrap.Commands.Wrap
         {
             
             var packageName = Name ?? _environment.Descriptor.Name;
-            var destinationPath = _destinationPath ?? _currentDirectory;
 
             var packageDescriptorForEmbedding = new PackageDescriptor(GetCurrentPackageDescriptor());
 
@@ -195,7 +202,7 @@ namespace OpenWrap.Commands.Wrap
             packageDescriptorForEmbedding.Version = generatedVersion;
             packageDescriptorForEmbedding.Name = packageName;
 
-            var packageFilePath = destinationPath.GetFile(
+            var packageFilePath = _destinationPath.GetFile(
                 PackageNameUtility.PackageFileName(packageName, generatedVersion.ToString()));
 
             var packageContent = GeneratePackageContent(_buildResults)
@@ -428,15 +435,6 @@ namespace OpenWrap.Commands.Wrap
             _buildResults = _buildResults.Distinct().ToList();
         }
 
-        IEnumerable<ICommandOutput> VerifyPath()
-        {
-            if (Path != null)
-            {
-                _destinationPath = _fileSystem.GetDirectory(Path);
-                if (_destinationPath.Exists == false)
-                    yield return new Error("Path '{0}' doesn't exist.", Path);
-            }
-        }
     }
 
     class ErrorPackageBuilder : IPackageBuilder
