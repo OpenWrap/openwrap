@@ -30,3 +30,5 @@ reports
 reports/*
 /*.wrap
 .milestone
+*.bin
+*/*.bin

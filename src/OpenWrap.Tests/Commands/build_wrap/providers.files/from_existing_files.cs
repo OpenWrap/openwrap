@@ -4,11 +4,9 @@ using NUnit.Framework;
 using OpenWrap;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Repositories;
-using OpenWrap.Runtime;
 using OpenWrap.Testing;
-using Tests.Commands.contexts;
 
-namespace Tests.Commands.build_wrap
+namespace Tests.Commands.build_wrap.providers.files
 {
     [TestFixture("test.txt", "files; file=bin-net35->test.txt")]
     [TestFixture("test.txt", "files; file = bin-net35 -> test.txt ")]

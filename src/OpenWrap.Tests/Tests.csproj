@@ -52,14 +52,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\indexed_dic.cs" />
+    <Compile Include="Commands\build_wrap\version\from_descriptor.cs" />
+    <Compile Include="Commands\build_wrap\version\from_descriptor_and_file.cs" />
+    <Compile Include="Commands\build_wrap\version\from_input.cs" />
+    <Compile Include="Commands\build_wrap\version\from_version_file.cs" />
+    <Compile Include="Commands\build_wrap\version\none.cs" />
+    <Compile Include="Commands\contexts\build_wrap.cs" />
+    <Compile Include="Commands\build_wrap\no_descriptor.cs" />
     <Compile Include="Commands\build_wrap\from_path\path_does_not_exist.cs" />
     <Compile Include="Commands\build_wrap\from_path\path_has_descriptor.cs" />
     <Compile Include="Commands\build_wrap\from_path\path_no_descriptor.cs" />
+    <Compile Include="Commands\contexts\cecil_command_exporter.cs" />
+    <Compile Include="Commands\contexts\command_locator.cs" />
     <Compile Include="Commands\contexts\configuration_command.cs" />
     <Compile Include="Commands\configuration\get_wihtout_config.cs" />
     <Compile Include="Commands\configuration\get_without_arguments_with_config.cs" />
     <Compile Include="Commands\configuration\remove_nothing.cs" />
     <Compile Include="Commands\configuration\remove_proxy.cs" />
+    <Compile Include="Commands\contexts\noun_verb_locator.cs" />
     <Compile Include="Commands\contexts\set_configuration.cs" />
     <Compile Include="Commands\configuration\set_nothing.cs" />
     <Compile Include="Commands\configuration\set_proxy_href.cs" />
@@ -203,7 +213,6 @@
     <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_dependent_downgrade.cs" />
     <Compile Include="Commands\add_wrap\hooks\successful_add_triggering_dependent_upgrade.cs" />
     <Compile Include="Commands\add_wrap\hooks\successful_add_triggers_dependent_removal.cs" />
-    <Compile Include="Commands\build_wrap\building_from_different_directory.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_across_two_scopes.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_a_wrap_with_one_version.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_a_wrap_with_two_versions.cs" />
@@ -458,7 +467,7 @@
     <Compile Include="Commands\InMemoryEnvironment.cs" />
     <Compile Include="Commands\build_wrap\building_a_meta_package.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_a_non_existing_wrap.cs" />
-    <Compile Include="Commands\build_wrap\from_files_without_space.cs" />
+    <Compile Include="Commands\build_wrap\providers.files\from_existing_files.cs" />
     <Compile Include="Commands\list_wrap\filtering_project_package_list_by_name.cs" />
     <Compile Include="Commands\Wrap\nukeWrapCommand.cs" />
     <Compile Include="Commands\publish_wrap\publishing_to_unknown_remote.cs" />

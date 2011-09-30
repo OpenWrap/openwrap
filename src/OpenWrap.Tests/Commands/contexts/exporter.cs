@@ -9,7 +9,6 @@ using OpenWrap;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
-using OpenWrap.PackageManagement.Exporters.Commands;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Runtime;
 using OpenWrap.Testing;
@@ -17,17 +16,6 @@ using OpenWrap.Tests.Commands;
 
 namespace Tests.Commands.contexts
 {
-    public class cecil_command_exporter : exporter<CecilCommandExporter, Exports.ICommand>
-    {
-        public cecil_command_exporter()
-        {
-            Exporter = new CecilCommandExporter();
-        }
-        protected Exports.ICommand command(string verb, string noun)
-        {
-            return Items.SelectMany(_ => _).FirstOrDefault(x => x.Descriptor.Noun.EqualsNoCase(noun) && x.Descriptor.Verb.EqualsNoCase(verb));
-        }
-    }
     public class exporter<TExporter, T> : context where T:IExportItem where TExporter : IExportProvider
     {
         InMemoryFileSystem FileSystem;

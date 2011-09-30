@@ -64,6 +64,7 @@
     <Compile Include="Errors\FileNotFound.cs" />
     <Compile Include="Gui\ShowPackageExplorerCommand.cs" />
     <Compile Include="Gui\InvokeGuiCommand.cs" />
+    <Compile Include="Messages\DirectoryNotFound.cs" />
     <Compile Include="Messages\IncompleteCredentials.cs" />
     <Compile Include="Remote\AbstractRemoteCommand.cs" />
     <Compile Include="Remote\Messages\RemoteAdded.cs" />
