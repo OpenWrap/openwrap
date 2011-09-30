@@ -53,6 +53,9 @@
   <ItemGroup>
     <Compile Include="Build\builders.msbuild\explicit_projects_without_source_folder.cs" />
     <Compile Include="Build\builders.msbuild\project_doesnt_exist.cs" />
+    <Compile Include="Build\builders.msbuild\project_use_filename_wildcard.cs" />
+    <Compile Include="Build\builders.msbuild\project_use_non_matching_wildcard.cs" />
+    <Compile Include="Build\builders.msbuild\project_use_recursive_wildcard.cs" />
     <Compile Include="Build\contexts\msbuild_builder.cs" />
     <Compile Include="Collections\indexed_dic.cs" />
     <Compile Include="Commands\build_wrap\failed_build.cs" />

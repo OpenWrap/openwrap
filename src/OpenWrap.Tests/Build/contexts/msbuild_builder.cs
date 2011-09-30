@@ -18,9 +18,10 @@ namespace Tests.Build.contexts
     {
         protected IEnumerable<BuildResult> Results;
         IFileSystem _fileSystem;
-        IDirectory _testDir;
+        protected IDirectory rootPath;
         string _text;
         int _returnCode;
+        protected MSBuildPackageBuilder Builder;
 
         protected IEnumerable<ErrorBuildResult> SrcRelatedErrorResults
         {
@@ -34,18 +35,22 @@ namespace Tests.Build.contexts
         public msbuild_builder()
         {
             _fileSystem = new InMemoryFileSystem();
-            _testDir = _fileSystem.CreateDirectory("testdir");
+            rootPath = _fileSystem.CreateDirectory("testdir");
         }
 
         protected void given_empty_directory()
         {
-            _testDir.GetFile("test.wrapdesc").MustExist();
+            rootPath.GetFile("test.wrapdesc").MustExist();
         }
 
         protected void given_file(string fileName)
         {
-            _testDir = _fileSystem.CreateDirectory("testdir");
-            _testDir.GetFile(fileName).MustExist();
+            rootPath.GetFile(fileName).MustExist();
+        }
+        protected void given_file(Func<IDirectory,IDirectory> dir, string fileName)
+        {
+            var currentDir = dir(_fileSystem.GetDirectory("testdir")).MustExist();
+            currentDir.GetFile(fileName).MustExist();
         }
         protected void given_msbuild_result(int returnCode, string text)
         {
@@ -54,20 +59,20 @@ namespace Tests.Build.contexts
         }
         protected void when_building_package()
         {
-            Results = CreateBuilder().Build();
+            Results = CreateBuilder().Build().ToList();
         }
 
         protected void when_building(string project)
         {
-            var builder = CreateBuilder();
-            builder.Project = new[] { project };
-            Results = builder.Build();
+            CreateBuilder();
+            Builder.Project = new[] { project };
+            Results = Builder.Build().ToList();
         }
 
         MSBuildPackageBuilder CreateBuilder()
         {
-            return new SpyMSBuildPackageBuilder(_fileSystem,
-                                             new InMemoryEnvironment(_testDir, _testDir)
+            return Builder = new SpyMSBuildPackageBuilder(_fileSystem,
+                                             new InMemoryEnvironment(rootPath, rootPath)
                                              {
                                                  ExecutionEnvironment = new ExecutionEnvironment("AnyCPU", "net35")
                                              },

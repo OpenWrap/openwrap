@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using OpenFileSystem.IO;
+using OpenWrap.Collections;
 using OpenWrap.IO;
 using OpenWrap.Runtime;
 using Path = System.IO.Path;
@@ -24,6 +25,7 @@ namespace OpenWrap.Build.PackageBuilders
             Platform = new List<string>();
             Project = new List<string>();
             Configuration = new List<string>();
+            ProjectFiles = new List<IFile>();
         }
 
         protected ILookup<string, string> Properties { get; set; }
@@ -32,6 +34,7 @@ namespace OpenWrap.Build.PackageBuilders
         public IEnumerable<string> Profile { get; set; }
         public IEnumerable<string> Project { get; set; }
         public IEnumerable<string> Configuration { get; set; }
+        public ICollection<IFile> ProjectFiles { get; set; }
 
         protected override string ExecutablePath
         {
@@ -43,8 +46,7 @@ namespace OpenWrap.Build.PackageBuilders
         public override IEnumerable<BuildResult> Build()
         {
             var currentDirectory = _environment.CurrentDirectory;
-
-            List<IFile> projectFiles =  new List<IFile>();
+            ProjectFiles.Clear();
             if (Project.Count() > 0)
             {
                 foreach(var proj in Project)
@@ -56,7 +58,7 @@ namespace OpenWrap.Build.PackageBuilders
                         yield return new UnknownProjectFileResult(proj);
                         yield break;
                     }
-                    projectFiles.AddRange(specFiles);
+                    ProjectFiles.AddRange(specFiles);
                 }
             }
             else
@@ -69,10 +71,10 @@ namespace OpenWrap.Build.PackageBuilders
                                                                _environment.CurrentDirectory.Path.FullPath));
                     yield break;
                 }
-                projectFiles.AddRange(sourceDirectory.Files("*.*proj", SearchScope.SubFolders));
+                ProjectFiles.AddRange(sourceDirectory.Files("*.*proj", SearchScope.SubFolders));
             }
 
-            var builds = from file in projectFiles
+            var builds = from file in ProjectFiles
                          from platform in Platform.DefaultIfEmpty(null)
                          from profile in Profile.DefaultIfEmpty(null)
                          select new { file, platform, profile };
