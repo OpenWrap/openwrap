@@ -71,6 +71,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\PackageBuilders\IProcess.cs" />
+    <Compile Include="Build\PackageBuilders\ProcessWrapper.cs" />
+    <Compile Include="Build\PackageBuilders\UnknownProjectFileResult.cs" />
     <Compile Include="Collections\IndexedDictionary.cs" />
     <Compile Include="Commands\Cli\CecilStaticAssemblyResolver.cs" />
     <Compile Include="Commands\Cli\ColoredText.cs" />

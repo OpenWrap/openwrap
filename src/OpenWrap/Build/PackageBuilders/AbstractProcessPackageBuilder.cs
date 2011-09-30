@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using OpenFileSystem.IO;
@@ -20,9 +21,9 @@ namespace OpenWrap.Build.PackageBuilders
 
         public abstract IEnumerable<BuildResult> Build();
 
-        protected Process CreateProcess(string arguments)
+        protected virtual IProcess CreateProcess(string arguments)
         {
-            return new Process
+            return new ProcessWrapper(new Process
             {
                     StartInfo = new ProcessStartInfo
                     {
@@ -31,10 +32,10 @@ namespace OpenWrap.Build.PackageBuilders
                             Arguments = arguments,
                             UseShellExecute = false
                     }
-            };
+            });
         }
 
-        protected IEnumerable<BuildResult> ExecuteEngine(Process process)
+        protected IEnumerable<BuildResult> ExecuteEngine(IProcess process)
         {
             process.Start();
             var reader = process.StandardOutput;

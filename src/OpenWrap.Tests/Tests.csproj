@@ -51,6 +51,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Build\builders.msbuild\explicit_projects_without_source_folder.cs" />
+    <Compile Include="Build\builders.msbuild\project_doesnt_exist.cs" />
+    <Compile Include="Build\contexts\msbuild_builder.cs" />
     <Compile Include="Collections\indexed_dic.cs" />
     <Compile Include="Commands\build_wrap\failed_build.cs" />
     <Compile Include="Commands\build_wrap\inputs_to_providers\defaults.cs" />
@@ -464,7 +467,7 @@
     <Compile Include="Build\build_instruction_emitter\assembly_reference.cs" />
     <Compile Include="Build\build_instruction_emitter\contexts\msbuild_emitter.cs" />
     <Compile Include="Build\build_result_parser_specs\build_result.cs" />
-    <Compile Include="Build\package_builder_specs\msbuild_builder_spec.cs" />
+    <Compile Include="Build\builders.msbuild\implicit_projects_without_source_folder.cs" />
     <Compile Include="Collections\MultiThreaded_specs.cs" />
     <Compile Include="CommandsExtensions.cs" />
     <Compile Include="Commands\CommandsExtension.cs" />
@@ -572,6 +575,7 @@
     <EmbeddedResource Include="Repositories\TestPackageOld.nupkg" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Build\package_builder_specs\" />
     <Folder Include="Commands\add_wrap\from_remote\" />
     <Folder Include="Commands\remove_wrap\hooks\" />
     <Folder Include="Commands\repository\" />

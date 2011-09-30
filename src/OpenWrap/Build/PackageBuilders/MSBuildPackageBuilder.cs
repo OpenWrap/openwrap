@@ -44,10 +44,20 @@ namespace OpenWrap.Build.PackageBuilders
         {
             var currentDirectory = _environment.CurrentDirectory;
 
-            IEnumerable<IFile> projectFiles;
+            List<IFile> projectFiles =  new List<IFile>();
             if (Project.Count() > 0)
             {
-                projectFiles = Project.Select(x => _fileSystem.GetFile(_environment.DescriptorFile.Parent.Path.Combine(x).FullPath)).Where(x => x.Exists);
+                foreach(var proj in Project)
+                {
+                    var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(proj).FullPath;
+                    var specFiles = _fileSystem.Files(pathSpec);
+                    if (specFiles.Count() == 0 || specFiles.Any(x => x.Exists == false))
+                    {
+                        yield return new UnknownProjectFileResult(proj);
+                        yield break;
+                    }
+                    projectFiles.AddRange(specFiles);
+                }
             }
             else
             {
@@ -59,7 +69,7 @@ namespace OpenWrap.Build.PackageBuilders
                                                                _environment.CurrentDirectory.Path.FullPath));
                     yield break;
                 }
-                projectFiles = sourceDirectory.Files("*.*proj", SearchScope.SubFolders);
+                projectFiles.AddRange(sourceDirectory.Files("*.*proj", SearchScope.SubFolders));
             }
 
             var builds = from file in projectFiles
@@ -104,7 +114,7 @@ namespace OpenWrap.Build.PackageBuilders
             return versionedFolders.FirstOrDefault();
         }
 
-        Process CreateMSBuildProcess(IFile responseFile, IFile project, string platform, string profile, string msbuildTargets)
+        IProcess CreateMSBuildProcess(IFile responseFile, IFile project, string platform, string profile, string msbuildTargets)
         {
             using (var stream = responseFile.OpenWrite())
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
@@ -147,11 +157,11 @@ namespace OpenWrap.Build.PackageBuilders
             }
         }
 
-        void CopyEnvVars(Process getCurrentProcess, Process msBuildProcess)
+        void CopyEnvVars(Process getCurrentProcess, IProcess msBuildProcess)
         {
             foreach(string key in getCurrentProcess.StartInfo.EnvironmentVariables.Keys)
             {
-                msBuildProcess.StartInfo.EnvironmentVariables[key] = getCurrentProcess.StartInfo.EnvironmentVariables[key];
+                msBuildProcess.SetEnvironmentVariable(key, getCurrentProcess.StartInfo.EnvironmentVariables[key]);
             }
         }
         static bool NotTarget(string str)
