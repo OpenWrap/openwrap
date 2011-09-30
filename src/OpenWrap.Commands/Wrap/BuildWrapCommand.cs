@@ -80,7 +80,14 @@ namespace OpenWrap.Commands.Wrap
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            return CreateBuilder().Concat(TriggerBuild()).Concat(Build());
+            foreach (var m in CreateBuilder()) yield return m;
+            foreach(var m in TriggerBuild())
+            {
+                yield return m;
+                if (m.Type == CommandResultType.Error)
+                    yield break;
+            }
+            foreach (var m in Build()) yield return m;
         }
 
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
@@ -172,6 +179,7 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> Build()
         {
+            
             var packageName = Name ?? _environment.Descriptor.Name;
             var destinationPath = _destinationPath ?? _currentDirectory;
 
