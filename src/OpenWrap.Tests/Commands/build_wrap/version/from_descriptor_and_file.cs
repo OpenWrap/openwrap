@@ -30,10 +30,9 @@ namespace Tests.Commands.build_wrap.version
         [Test]
         public void version_file_takes_precedence()
         {
-            Enumerable.First<IPackageInfo>(this.
-                                         Environment.CurrentDirectoryRepository
-                                         .PackagesByName["test"]
-                                         .ShouldHaveCountOf(1)).Version.ShouldBe("2.0.0.0".ToVersion());
+            Environment.CurrentDirectoryRepository
+                .PackagesByName["test"]
+                .ShouldHaveCountOf(1).First().Version.ShouldBe("2.0.0.0".ToVersion());
         }
     }
 }

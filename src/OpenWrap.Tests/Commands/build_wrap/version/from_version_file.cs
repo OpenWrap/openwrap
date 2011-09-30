@@ -11,11 +11,12 @@ namespace Tests.Commands.build_wrap.version
     {
         public from_version_file()
         {
-            given_descriptor(FileSystem.GetCurrentDirectory(), new PackageDescriptor()
-            {
-                Name = "test",
-                Build = { "none" }
-            });
+            given_descriptor(FileSystem.GetCurrentDirectory(),
+                             new PackageDescriptor
+                             {
+                                 Name = "test",
+                                 Build = { "none" }
+                             });
             given_file("version", "1.0.0.0".ToUTF8Stream());
             given_current_directory_repository(new CurrentDirectoryRepository());
             when_executing_command();
@@ -26,13 +27,13 @@ namespace Tests.Commands.build_wrap.version
         {
             Results.ShouldHaveNoError();
         }
+
         [Test]
         public void package_has_correct_version()
         {
-            Enumerable.First<IPackageInfo>(this.
-                                         Environment.CurrentDirectoryRepository
-                                         .PackagesByName["test"]
-                                         .ShouldHaveCountOf(1)).Version.ShouldBe("1.0.0.0".ToVersion());
+            Environment.CurrentDirectoryRepository
+                .PackagesByName["test"]
+                .ShouldHaveCountOf(1).First().Version.ShouldBe("1.0.0.0".ToVersion());
         }
     }
 }

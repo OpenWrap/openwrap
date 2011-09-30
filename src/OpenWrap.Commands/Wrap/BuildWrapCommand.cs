@@ -136,9 +136,18 @@ namespace OpenWrap.Commands.Wrap
                 var pi = builder.GetType().GetProperty(property.Key, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
                 if (pi != null)
                 {
-                    var existingValues = pi.GetValue(builder, null) as IEnumerable<string>;
-                    if (existingValues == null || existingValues.Count() == 0)
-                        pi.SetValue(builder, property.ToList(), null);
+                    if (typeof(IEnumerable<string>).IsAssignableFrom(pi.PropertyType))
+                    {
+                        var existingValues = pi.GetValue(builder, null) as IEnumerable<string>;
+                        if (existingValues == null || existingValues.Count() == 0)
+                            pi.SetValue(builder, property.ToList(), null);
+                    }
+                    else if (pi.PropertyType == typeof(string) && property.Count() > 0)
+                    {
+                        pi.SetValue(builder, property.Last(), null);
+                    }
+
+
                 }
             }
             return builder;
@@ -193,6 +202,8 @@ namespace OpenWrap.Commands.Wrap
                 return new FilePackageBuilder();
             if (commandLine.StartsWithNoCase("command"))
                 return new CommandLinePackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
+            if (commandLine.StartsWithNoCase("custom"))
+                return new CustomPackageBuilder();
             return new NullPackageBuilder(_environment);
         }
 
@@ -381,6 +392,23 @@ namespace OpenWrap.Commands.Wrap
                 if (_destinationPath.Exists == false)
                     yield return new Error("Path '{0}' doesn't exist.", Path);
             }
+        }
+    }
+
+    public class CustomPackageBuilder : IPackageBuilder
+    {
+        public string TypeName { get; set; }
+        public IEnumerable<BuildResult> Build()
+        {
+            var type = Type.GetType(TypeName, false);
+            if (type == null)
+            {
+                yield return new ErrorBuildResult(string.Format("Could not locate a custom package builder with type name '{0}'.", TypeName));
+                yield break;
+            }
+            var packageBuilder = (IPackageBuilder)Activator.CreateInstance(type);
+            foreach(var result in packageBuilder.Build())
+                yield return result;
         }
     }
 

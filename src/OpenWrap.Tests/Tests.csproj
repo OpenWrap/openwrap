@@ -52,6 +52,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\indexed_dic.cs" />
+    <Compile Include="Commands\build_wrap\providers.custom\existing_class.cs" />
+    <Compile Include="Commands\build_wrap\NullPackageBuilder.cs" />
+    <Compile Include="Commands\build_wrap\providers.custom\unknown_class.cs" />
     <Compile Include="Commands\build_wrap\version\from_descriptor.cs" />
     <Compile Include="Commands\build_wrap\version\from_descriptor_and_file.cs" />
     <Compile Include="Commands\build_wrap\version\from_input.cs" />

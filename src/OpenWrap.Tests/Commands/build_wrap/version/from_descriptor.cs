@@ -28,10 +28,9 @@ namespace Tests.Commands.build_wrap.version
         [Test]
         public void package_has_correct_version()
         {
-            Enumerable.First<IPackageInfo>(this.
-                                         Environment.CurrentDirectoryRepository
-                                         .PackagesByName["test"]
-                                         .ShouldHaveCountOf(1)).Version.ShouldBe("1.0.0.0".ToVersion());
+            Environment.CurrentDirectoryRepository
+                .PackagesByName["test"]
+                .ShouldHaveCountOf(1).First().Version.ShouldBe("1.0.0.0".ToVersion());
         }
     }
 }

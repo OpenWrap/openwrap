@@ -11,12 +11,13 @@ namespace Tests.Commands.build_wrap.version
     {
         public from_input()
         {
-            given_descriptor(FileSystem.GetCurrentDirectory(), new PackageDescriptor()
-            {
-                Name = "test",
-                Build = { "none" },
-                Version = "1.0.0.0".ToVersion()
-            });
+            given_descriptor(FileSystem.GetCurrentDirectory(),
+                             new PackageDescriptor
+                             {
+                                 Name = "test",
+                                 Build = { "none" },
+                                 Version = "1.0.0.0".ToVersion()
+                             });
             given_file("version", "2.0.0.0".ToUTF8Stream());
             given_current_directory_repository(new CurrentDirectoryRepository());
             when_executing_command("-version 3.0.0.0");
@@ -27,12 +28,13 @@ namespace Tests.Commands.build_wrap.version
         {
             Results.ShouldHaveNoError();
         }
+
         [Test]
         public void version_file_takes_precedence()
         {
-            Enumerable.First<IPackageInfo>(Environment.CurrentDirectoryRepository
-                                         .PackagesByName["test"]
-                                         .ShouldHaveCountOf(1)).Version.ShouldBe("3.0.0.0".ToVersion());
+            Environment.CurrentDirectoryRepository
+                .PackagesByName["test"]
+                .ShouldHaveCountOf(1).First().Version.ShouldBe("3.0.0.0".ToVersion());
         }
     }
 }
