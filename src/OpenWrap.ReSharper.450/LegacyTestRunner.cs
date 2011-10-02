@@ -2,6 +2,7 @@
 using ResharperSolutionComponentAttribute = resharper::JetBrains.ProjectModel.SolutionComponentImplementationAttribute;
 namespace OpenWrap.Resharper
 {
+#if DEBUG
     [ResharperSolutionComponent]
     public class LegacyTestRunner :  resharper::JetBrains.ProjectModel.ISolutionComponent
     {
@@ -38,4 +39,5 @@ namespace OpenWrap.Resharper
         }
 
     }
+#endif
 }

@@ -26,6 +26,7 @@ namespace OpenWrap.Build.PackageBuilders
             Project = new List<string>();
             Configuration = new List<string>();
             ProjectFiles = new List<IFile>();
+            Properties = new string[0].ToLookup(_ => _);
         }
 
         public ILookup<string, string> Properties { get; set; }
@@ -53,8 +54,20 @@ namespace OpenWrap.Build.PackageBuilders
                 foreach(var proj in Project)
                 {
                     var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(proj).FullPath;
-                    var specFiles = _fileSystem.Files(pathSpec).DefaultIfEmpty(_fileSystem.GetFile(pathSpec));
-                    if (specFiles.Any(x => x.Exists == false))
+                    var specFiles = Enumerable.Empty<IFile>();
+                    // Horribe construction, the Files extension method seems to be buggy as fuck.
+                    try
+                    {
+                        specFiles = _fileSystem.Files(pathSpec);
+                    }
+                    catch (Exception)
+                    {
+                        specFiles = GetWildcardFile(pathSpec);
+                    }
+                    if (specFiles.Any() == false)
+                        specFiles = GetWildcardFile(pathSpec);
+
+                    if (specFiles.Any() == false || specFiles.Any(x => x.Exists == false))
                     {
                         yield return new UnknownProjectFileResult(proj);
                         yield break;
@@ -103,6 +116,16 @@ namespace OpenWrap.Build.PackageBuilders
                     foreach (var m in ExecuteEngine(msbuildProcess)) yield return m;
                 }
             }
+        }
+
+        IEnumerable<IFile> GetWildcardFile(string pathSpec)
+        {
+            IEnumerable<IFile> specFiles = null;
+            try
+            {
+                specFiles = new[] { _fileSystem.GetFile(pathSpec) };
+            }catch{}
+            return specFiles ?? Enumerable.Empty<IFile>();
         }
 
         static string GetMSBuildExecutablePath()
