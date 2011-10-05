@@ -110,7 +110,7 @@ namespace OpenWrap.Repositories.Http
                 yield return new HttpPackageInfo(fileSystem, this, navigator, package);
         }
 
-        IPackageInfo Publish(string packageFileName, Stream packageStream)
+        IPackageInfo Publish(IPackageRepository packageRepository, string packageFileName, Stream packageStream)
         {
             if (!Navigator.CanPublish)
                 throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));

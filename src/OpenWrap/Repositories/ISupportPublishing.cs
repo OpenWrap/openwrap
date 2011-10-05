@@ -12,4 +12,8 @@ namespace OpenWrap.Repositories
     {
         IPackageInfo Publish(string packageFileName, Stream packageStream);        
     }
+    public interface IPackagePublisherWithSource : IPackagePublisher
+    {
+        IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream);
+    }
 }

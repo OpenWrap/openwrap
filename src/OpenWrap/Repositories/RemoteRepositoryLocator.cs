@@ -13,7 +13,7 @@ namespace OpenWrap.Repositories
 {
     public interface IRemoteRepositoryFactory
     {
-        IPackageRepository FromUserInput(string identifier);
+        IPackageRepository FromUserInput(string directoryPath);
 
         IPackageRepository FromToken(string token);
     }

@@ -31,15 +31,15 @@ namespace OpenWrap.Repositories.NuFeed
             return new NuFeedRepository(_fileSystem, _client, destinationUri.Groups["target"].Value.ToUri(), destinationUri.Groups["uri"].Value.ToUri());
         }
 
-        public IPackageRepository FromUserInput(string identifier)
+        public IPackageRepository FromUserInput(string directoryPath)
         {
-            identifier = identifier.Trim();
-            if (identifier.EqualsNoCase("nuget"))
+            directoryPath = directoryPath.Trim();
+            if (directoryPath.EqualsNoCase("nuget"))
                 return TryLocate(DEFAULT_HREF);
-            if (!identifier.StartsWithNoCase("http://") || !identifier.StartsWith("https://"))
-                return TryLocate("https://" + identifier) ?? TryLocate("http://" + identifier);
+            if (!directoryPath.StartsWithNoCase("http://") || !directoryPath.StartsWith("https://"))
+                return TryLocate("https://" + directoryPath) ?? TryLocate("http://" + directoryPath);
 
-            return TryLocate(identifier);
+            return TryLocate(directoryPath);
         }
 
         IPackageRepository TryLocate(string uri)

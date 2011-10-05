@@ -137,8 +137,14 @@
     <Compile Include="Commands\update_wrap\locks\existing_lock.cs" />
     <Compile Include="Commands\update_wrap\project\by_name\already_up_to_date.cs" />
     <Compile Include="Commands\update_wrap\project\by_name\not_found.cs" />
+    <Compile Include="Repositories\factories\indexed_folder\from_pre_beta_token.cs" />
     <Compile Include="Repositories\folder\locking\enabled_through_option.cs" />
     <Compile Include="Repositories\folder\locking\existing_lock.cs" />
+    <Compile Include="Repositories\folder\locking\locking_existing_locked_package_different_version.cs" />
+    <Compile Include="Repositories\folder\locking\locking_new.cs" />
+    <Compile Include="Repositories\folder\locking\unlocking.cs" />
+    <Compile Include="Repositories\folder_repo\persisted_source\importing_existing_package_unknown_source.cs" />
+    <Compile Include="RepositoryAssertions.cs" />
     <Compile Include="resolving_assemblies\locks.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_supporting_fetch_and_publish.cs" />
@@ -177,6 +183,7 @@
     <Compile Include="Commands\remote.set\changing_publish_to_unknown.cs" />
     <Compile Include="Commands\remote.set\remote_name_doesnt_exist.cs" />
     <Compile Include="Commands\update_wrap\by_name_only_updates_affected_dependency.cs" />
+    <Compile Include="Commands\update_wrap\by_name_only_updates_direct_dependnecy.cs" />
     <Compile Include="Commands\update_wrap\system\from_remote_when_already_at_latest.cs" />
     <Compile Include="Commands\update_wrap\system\by_name_only_updates_direct_dependency.cs" />
     <Compile Include="Configuration\dictionaries\wirting_to_readonly_dictionary.cs" />
@@ -363,7 +370,6 @@
     <Compile Include="Commands\update_wrap\project_and_system\from_remote.cs" />
     <Compile Include="Commands\update_wrap\command_flags\system_flag_specified.cs" />
     <Compile Include="Commands\update_wrap\command_flags\project_flag_specified.cs" />
-    <Compile Include="Commands\update_wrap\project\RepositoryAssertions.cs" />
     <Compile Include="Commands\update_wrap\system\by_name_from_remote_with_missing_dependents.cs" />
     <Compile Include="Commands\update_wrap\system\from_remote_with_missing_dependents.cs" />
     <Compile Include="Commands\update_wrap\system\from_remote_with_revision_change.cs" />
@@ -440,7 +446,6 @@
     <Compile Include="Repositories\AtomContent.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_file_uri_directory_exists_and_has_files.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_indexed_folder_uri_directory_exists_and_has_files.cs" />
-    <Compile Include="Repositories\factories\indexed_folder\from_token.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unc_path.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unknown_token.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unrecognized_user_input.cs" />
@@ -456,6 +461,8 @@
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_exists_in_sub_directory.cs" />
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_exists.cs" />
     <Compile Include="Repositories\folder\locking\not_enabled_by_default.cs" />
+    <Compile Include="Repositories\folder_repo\persisted_source\cleaning_package.cs" />
+    <Compile Include="Repositories\folder_repo\persisted_source\publishing_package.cs" />
     <Compile Include="Repositories\manager\all_configured_remotes.cs" />
     <Compile Include="Repositories\manager\legacy\old_config_and_new.cs" />
     <Compile Include="Repositories\manager\legacy\old_config_no_new.cs" />
@@ -634,6 +641,7 @@
     <Folder Include="descriptors\" />
     <Folder Include="Exporters\content\" />
     <Folder Include="solution_plugins\" />
+    <Folder Include="upgrade_from_1_0\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Repositories\feedodata2.xml" />

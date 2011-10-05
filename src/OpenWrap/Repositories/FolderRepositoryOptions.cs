@@ -7,8 +7,10 @@ namespace OpenWrap.Repositories
     {
         UseSymLinks = 1,
         AnchoringEnabled = 2,
-
+        PersistPackageSources = 4,
+        PersistPackages = 8,
         SupportLocks = 32,
-        Default = UseSymLinks
+
+        Default = 0
     }
 }

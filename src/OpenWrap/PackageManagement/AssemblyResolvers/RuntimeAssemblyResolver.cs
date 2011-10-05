@@ -19,6 +19,7 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
         {
         }
 
+        public bool IgnoreProjectAssemblies { get; set; }
         public RuntimeAssemblyResolver(IPackageManager packageManager, IEnvironment environment)
         {
             _packageManager = packageManager;
@@ -36,7 +37,7 @@ namespace OpenWrap.PackageManagement.AssemblyResolvers
             if (_assemblyReferences != null)
                 return;
 
-            _assemblyReferences = (_environment.Descriptor == null || _environment.Descriptor.UseProjectRepository == false
+            _assemblyReferences = (IgnoreProjectAssemblies || _environment.Descriptor == null || _environment.Descriptor.UseProjectRepository == false
                                            ? _packageManager.GetSystemExports<Exports.IAssembly>(_environment.SystemRepository, _environment.ExecutionEnvironment).SelectMany(_ => _)
                                            : _packageManager.GetProjectAssemblyReferences
                                                      (

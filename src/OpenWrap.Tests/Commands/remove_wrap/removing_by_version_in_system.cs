@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Tests.Commands.update_wrap.project;
 
 namespace Tests.Commands.remove_wrap
 {

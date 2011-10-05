@@ -78,7 +78,7 @@ namespace OpenWrap.Repositories
             return new PackagePublisher(Publish);
         }
 
-        IPackageInfo Publish(string packageFileName, Stream packageStream)
+        IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream)
         {
             var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
                                            ? System.IO.Path.GetFileNameWithoutExtension(packageFileName)

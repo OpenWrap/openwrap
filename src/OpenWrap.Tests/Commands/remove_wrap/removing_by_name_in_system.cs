@@ -1,7 +1,9 @@
 ﻿using System;
 using NUnit.Framework;
 using OpenWrap.Testing;
-using Tests.Commands.update_wrap.project;
+using OpenWrap.Tests.Commands;
+using Tests.Commands.contexts;
+using Tests.Commands.update_wrap;
 
 namespace Tests.Commands.remove_wrap
 {

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using OpenFileSystem.IO;
-using OpenFileSystem.IO.FileSystems;
 using OpenWrap.IO;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageModel;
@@ -13,7 +12,6 @@ using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -23,9 +21,9 @@ namespace OpenWrap.Commands.Wrap
         const string MSBUILD_NS = "http://schemas.microsoft.com/developer/msbuild/2003";
         const string OPENWRAP_BUILD = @"wraps\openwrap\build\OpenWrap.CSharp.targets";
         bool? _allProjects;
-        IEnumerable<IFile> _projectsToPatch;
-        IFile _packageDescriptorFile;
         string _name;
+        IFile _packageDescriptorFile;
+        IEnumerable<IFile> _projectsToPatch;
 
         public InitWrapCommand()
         {
@@ -40,10 +38,7 @@ namespace OpenWrap.Commands.Wrap
         }
 
         [CommandInput]
-        public bool Meta { get; set; }
-
-        [CommandInput]
-        public string Projects { get; set; }
+        public bool Bazaar { get; set; }
 
         [CommandInput]
         public bool Git { get; set; }
@@ -52,7 +47,20 @@ namespace OpenWrap.Commands.Wrap
         public bool Hg { get; set; }
 
         [CommandInput]
-        public bool Bazaar { get; set; }
+        public string IgnoreFileName { get; set; }
+
+        [CommandInput]
+        public bool Meta { get; set; }
+
+        [CommandInput(Position = 1)]
+        public string Name
+        {
+            get { return _name ?? (Target == "." ? Environment.CurrentDirectory.Name : Target); }
+            set { _name = value; }
+        }
+
+        [CommandInput]
+        public string Projects { get; set; }
 
         [CommandInput]
         public bool Svn { get; set; }
@@ -60,30 +68,17 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool SymLinks { get; set; }
 
-        [CommandInput]
-        public string IgnoreFileName { get; set; }
-
         [CommandInput(Position = 0)]
         public string Target { get; set; }
 
         IEnvironment Environment
         {
-            get { return Services.ServiceLocator.GetService<IEnvironment>(); }
+            get { return ServiceLocator.GetService<IEnvironment>(); }
         }
 
         IFileSystem FileSystem
         {
-            get { return Services.ServiceLocator.GetService<IFileSystem>(); }
-        }
-        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
-        {
-            yield return VerifyArguments;
-        }
-
-        protected override IEnumerable<ICommandOutput> ExecuteCore()
-        {
-            return SetupDirectoriesAndDescriptor()
-                    .Concat(ModifyProjects(Environment.DescriptorFile));
+            get { return ServiceLocator.GetService<IFileSystem>(); }
         }
 
         public IEnumerable<ICommandOutput> VerifyArguments()
@@ -95,7 +90,7 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Warning(@"No project was specified. Either specify -all for all the projects in any folders under the current path, or -Project path\to\project.csproj.");
             }
             _projectsToPatch = All ? GetAllProjects() : GetSpecificProjects();
-            foreach (IFile proj in _projectsToPatch.Where(x => x.Exists == false))
+            foreach (var proj in _projectsToPatch.Where(x => x.Exists == false))
                 yield return new Warning("The project at path '{0}' does not exist. Check the path and try again.", proj.Path.FullPath);
 
             if (Git)
@@ -111,29 +106,56 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
+        {
+            return SetupDirectoriesAndDescriptor()
+                .Concat(ModifyProjects(Environment.DescriptorFile));
+        }
+
+        protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
+        {
+            yield return VerifyArguments;
+        }
+
         static void AddPackageFolders(IDirectory projectDirectory)
         {
             projectDirectory.GetDirectory("src").MustExist();
             projectDirectory.GetDirectory("wraps").GetDirectory("_cache").MustExist();
         }
 
+        void AddIgnores(IDirectory projectDirectory)
+        {
+            if (IgnoreFileName == null) return;
+            if (Hg)
+            {
+                // mercurial is a bit special when it comes to ignores
+                projectDirectory.GetFile(IgnoreFileName).WriteString("syntax: glob\r\nwraps/_cache");
+            }
+            else
+            {
+                projectDirectory.GetDirectory("wraps").GetFile(IgnoreFileName).WriteString("_cache\r\n_cache\\*");
+            }
+        }
+
         IEnumerable<ICommandOutput> CopyOpenWrap(PackageDescriptor projectDescriptor, IDirectory projectDirectory)
         {
-            var packageManager = Services.ServiceLocator.GetService<IPackageManager>();
+            var packageManager = ServiceLocator.GetService<IPackageManager>();
 
             var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
             if (projectDescriptor.UseSymLinks)
                 repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
+            if (projectDescriptor.StorePackages)
+                repositoryOptions |= FolderRepositoryOptions.PersistPackages;
             var projectRepository = new FolderRepository(projectDirectory.GetDirectory("wraps"), repositoryOptions)
             {
-                    Name = "Project repository"
+                Name = "Project repository"
             };
             packageManager.AddProjectPackage(PackageRequest.Any("openwrap"),
                                              new[] { Environment.SystemRepository },
                                              projectDescriptor,
                                              projectRepository,
                                              PackageAddOptions.Default | PackageAddOptions.Anchor | PackageAddOptions.Content).ToList();
-            
+
             yield return new Info("Project repository initialized.");
         }
 
@@ -142,18 +164,35 @@ namespace OpenWrap.Commands.Wrap
             return Environment.CurrentDirectory.Files("*.csproj", SearchScope.SubFolders);
         }
 
+        string GetOpenWrapPath(IDirectory projectPath, IDirectory rootPath)
+        {
+            if (projectPath.Path == rootPath.Path) return OPENWRAP_BUILD;
+            int deepness = 1;
+
+            for (var current = projectPath;
+                 (current = current.Parent) != null;
+                 deepness++)
+            {
+                if (current.Path == rootPath.Path)
+                    return Enumerable.Repeat("..", deepness).JoinString("\\")
+                           + "\\"
+                           + OPENWRAP_BUILD;
+            }
+            throw new InvalidOperationException("Could not find a descriptor.");
+        }
+
         IEnumerable<IFile> GetSpecificProjects()
         {
             return string.IsNullOrEmpty(Projects)
-                           ? Enumerable.Empty<IFile>()
-                           : Projects.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries)
-                                     .Select(x => Environment.CurrentDirectory.GetFile(x));
+                       ? Enumerable.Empty<IFile>()
+                       : Projects.Split(new[] { ";" }, StringSplitOptions.RemoveEmptyEntries)
+                             .Select(x => Environment.CurrentDirectory.GetFile(x));
         }
 
         IEnumerable<ICommandOutput> ModifyProjects(IFile descriptorFile)
         {
             descriptorFile = _packageDescriptorFile ?? descriptorFile;
-            foreach (IFile project in _projectsToPatch)
+            foreach (var project in _projectsToPatch)
             {
                 var xmlDoc = new XmlDocument();
                 var namespaceManager = new XmlNamespaceManager(xmlDoc.NameTable);
@@ -162,9 +201,9 @@ namespace OpenWrap.Commands.Wrap
                 using (Stream projectFileStream = project.OpenRead())
                     xmlDoc.Load(projectFileStream);
                 var csharpTarget = (from node in xmlDoc.SelectNodes(@"//msbuild:Import", namespaceManager).OfType<XmlElement>()
-                                   let attr = node.GetAttribute("Project")
-                                   where attr != null && attr.EndsWith("Microsoft.CSharp.targets")
-                                   select node).FirstOrDefault();
+                                    let attr = node.GetAttribute("Project")
+                                    where attr != null && attr.EndsWith("Microsoft.CSharp.targets")
+                                    select node).FirstOrDefault();
 
                 if (csharpTarget == null)
                     yield return new Info("Project '{0}' was not a recognized csharp project file. Ignoring.", project.Name);
@@ -178,29 +217,6 @@ namespace OpenWrap.Commands.Wrap
                 }
             }
         }
-
-        string GetOpenWrapPath(IDirectory projectPath, IDirectory rootPath)
-        {
-            if (projectPath.Path == rootPath.Path) return OPENWRAP_BUILD;
-            int deepness = 1;
-            
-            for (var current = projectPath; 
-                (current = current.Parent) != null;
-                deepness++)
-            {
-                if (current.Path == rootPath.Path)
-                    return Enumerable.Repeat("..", deepness).JoinString("\\")
-                           + "\\"
-                           + OPENWRAP_BUILD;
-            }
-            throw new InvalidOperationException("Could not find a descriptor.");
-        }
-  [CommandInput (Position = 1)]
-  public string Name
-  {
-      get { return _name ?? (Target == "." ? Environment.CurrentDirectory.Name : Target); }
-      set { _name = value; }
-  }
 
 
         IEnumerable<ICommandOutput> SetupDirectoriesAndDescriptor()
@@ -218,7 +234,7 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
-            var packageDescriptor = new PackageDescriptor(){Name = packageName};
+            var packageDescriptor = new PackageDescriptor { Name = packageName };
             if (SymLinks)
                 packageDescriptor.UseSymLinks = true;
             if (Meta)
@@ -229,25 +245,11 @@ namespace OpenWrap.Commands.Wrap
             {
                 AddPackageFolders(projectDirectory);
                 AddIgnores(projectDirectory);
-                foreach (ICommandOutput m in CopyOpenWrap(packageDescriptor, projectDirectory)) yield return m;
+                foreach (var m in CopyOpenWrap(packageDescriptor, projectDirectory)) yield return m;
             }
             WriteVersionFile(projectDirectory);
             WriteDescriptor(_packageDescriptorFile, packageDescriptor);
             yield return new Info("Package '{0}' initialized. Start adding packages by using the 'add-wrap' command.", packageName);
-        }
-
-        void AddIgnores(IDirectory projectDirectory)
-        {
-            if (IgnoreFileName == null) return;
-            if (Hg)
-            {
-                // mercurial is a bit special when it comes to ignores
-                projectDirectory.GetFile(IgnoreFileName).WriteString("syntax: glob\r\nwraps/_cache");
-            }
-            else
-            {
-                projectDirectory.GetDirectory("wraps").GetFile(IgnoreFileName).WriteString("_cache\r\n_cache\\*");
-            }
         }
 
         void WriteDescriptor(IFile descriptor, PackageDescriptor packageDescriptor)
@@ -262,7 +264,7 @@ namespace OpenWrap.Commands.Wrap
         {
             using (Stream versionFile = projectDirectory.GetFile("version").OpenWrite())
             {
-                StreamExtensions.Write(versionFile, Encoding.UTF8.GetBytes(("0.0.1.*")));
+                IO.StreamExtensions.Write(versionFile, Encoding.UTF8.GetBytes(("0.0.1.*")));
             }
         }
     }

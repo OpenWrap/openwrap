@@ -56,7 +56,7 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool System
         {
-            get { return _system ?? _project == null; }
+            get { return _system == true; }
             set { _system = value; }
         }
 

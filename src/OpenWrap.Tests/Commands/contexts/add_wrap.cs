@@ -26,7 +26,10 @@ namespace Tests.Commands.contexts
         protected void given_file_based_project_repository()
         {
             ProjectRepositoryDir = FileSystem.GetDirectory(@"c:\repo");
-            given_project_repository(new FolderRepository(ProjectRepositoryDir, FolderRepositoryOptions.UseSymLinks | FolderRepositoryOptions.AnchoringEnabled));
+            given_project_repository(
+                new FolderRepository(ProjectRepositoryDir, FolderRepositoryOptions.UseSymLinks | FolderRepositoryOptions.AnchoringEnabled)
+                    { Name = "Project repository" }
+                );
         }
 
         protected void given_file_package(string directory, string name, string version, params string[] lines)

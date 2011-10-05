@@ -21,6 +21,7 @@ namespace OpenWrap.PackageModel
         Version Version { get; set; }
         string ReferencedAssemblies { get; }
         ICollection<string> DirectoryStructure { get; }
+        bool StorePackages { get; }
         IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read);
         IEnumerable<IPackageDescriptorEntry> GetPersistableEntries();
     }

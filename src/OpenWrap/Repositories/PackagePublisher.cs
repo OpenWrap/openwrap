@@ -4,12 +4,12 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
-    public class PackagePublisher : IPackagePublisher
+    public class PackagePublisher : IPackagePublisher, IPackagePublisherWithSource
     {
-        readonly Func<string, Stream, IPackageInfo> _publish;
+        readonly Func<IPackageRepository, string, Stream, IPackageInfo> _publish;
         readonly Action _end;
 
-        public PackagePublisher(Func<string, Stream, IPackageInfo> publish, Action end = null)
+        public PackagePublisher(Func<IPackageRepository, string, Stream, IPackageInfo> publish, Action end = null)
         {
             _publish = publish;
             _end = end;
@@ -23,7 +23,12 @@ namespace OpenWrap.Repositories
 
         public IPackageInfo Publish(string packageFileName, Stream packageStream)
         {
-            return _publish(packageFileName, packageStream);
+            return _publish(null,packageFileName, packageStream);
+        }
+
+        public IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream)
+        {
+            return _publish(source, packageFileName, packageStream);
         }
     }
 }
