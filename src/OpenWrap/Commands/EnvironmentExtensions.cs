@@ -8,9 +8,9 @@ namespace OpenWrap.Commands
 {
     public static class EnvironmentExtensions
     {
-        public static IEnumerable<IGrouping<string, Exports.ICommand>> CommandExports(this IPackageManager manager, IEnvironment environment)
+        public static IEnumerable<IGrouping<string, Exports.ICommand>> CommandExports(this IPackageManager manager, IEnvironment environment, bool ignoreProjectAssemblies = false)
         {
-            var projectCommands = environment.Descriptor != null && environment.ProjectRepository != null
+            var projectCommands = (ignoreProjectAssemblies == false && environment.Descriptor != null && environment.ProjectRepository != null)
                                       ? manager.GetProjectExports<Exports.ICommand>(environment.Descriptor, environment.ProjectRepository, environment.ExecutionEnvironment).SelectMany(x => x).GroupBy(
                                           x => x.Package.Name)
                                       : Enumerable.Empty<IGrouping<string, Exports.ICommand>>();

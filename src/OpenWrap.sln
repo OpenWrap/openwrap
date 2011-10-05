@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.VisualStudio", "Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.600", "OpenWrap.Resharper.600\OpenWrap.Resharper.600.csproj", "{9673FD11-2970-4902-B018-0B799F893535}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Hooks", "OpenWrap.Hooks\OpenWrap.Hooks.csproj", "{CF3ABCDD-0188-42A7-A8AF-178D9A452893}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -118,6 +120,10 @@ Global
 		{9673FD11-2970-4902-B018-0B799F893535}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9673FD11-2970-4902-B018-0B799F893535}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9673FD11-2970-4902-B018-0B799F893535}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF3ABCDD-0188-42A7-A8AF-178D9A452893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF3ABCDD-0188-42A7-A8AF-178D9A452893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF3ABCDD-0188-42A7-A8AF-178D9A452893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF3ABCDD-0188-42A7-A8AF-178D9A452893}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,6 +20,7 @@ namespace OpenWrap.Runtime
         public CurrentDirectoryEnvironment(IDirectory currentDirectory)
         {
             CurrentDirectory = currentDirectory;
+            BeforeProjectRepositoryInitialized = (dir, options) => { };
         }
 
         public IDirectory ConfigurationDirectory { get; private set; }
@@ -96,6 +97,7 @@ namespace OpenWrap.Runtime
                 TryInitializeProjectRepository();
         }
 
+        public Action<IDirectory, FolderRepositoryOptions> BeforeProjectRepositoryInitialized { get; set; }
         void TryInitializeProjectRepository()
         {
             if (Descriptor.UseProjectRepository)
@@ -103,9 +105,12 @@ namespace OpenWrap.Runtime
                 var projectRepositoryDirectory = DescriptorFile.Parent.FindProjectRepositoryDirectory().MustExist();
 
 
-                var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
+                var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled | FolderRepositoryOptions.PersistPackageSources;
                 if (Descriptor.UseSymLinks)
                     repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
+                if (Descriptor.StorePackages)
+                    repositoryOptions |= FolderRepositoryOptions.PersistPackages;
+                BeforeProjectRepositoryInitialized(projectRepositoryDirectory, repositoryOptions);
                 _projectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions)
                 {
                     Name = "Project repository"

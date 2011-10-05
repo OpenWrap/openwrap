@@ -7,11 +7,12 @@ namespace OpenWrap.PackageModel
     {
         static readonly Regex VERSION_REGEX = new Regex(@"\-(?<version>\d+(\.\d+(\.\d+(\.\d+)?)?)?)(\.wrap)?$", RegexOptions.Compiled);
 
+        // TODO: Remove remove remove, file name matching is evil
         public static string GetName(string name)
         {
             return GetVersion(name) == null ? name : name.Substring(0, name.LastIndexOf('-'));
         }
-
+        // TODO: Remove remove remove, file name matching is evil
         public static Version GetVersion(string name)
         {
             var versionMAtch = VERSION_REGEX.Match(name);

@@ -125,6 +125,11 @@ namespace OpenWrap.PackageModel
                 get { return _parent.DirectoryStructure; }
             }
 
+            public bool StorePackages
+            {
+                get { return _parent.StorePackages; }
+            }
+
             public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read)
             {
                 throw new InvalidOperationException("Can only have one level of nesting for scoped descriptors.");

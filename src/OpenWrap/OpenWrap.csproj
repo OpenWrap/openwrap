@@ -120,6 +120,7 @@
     <Compile Include="PackageManagement\Exporters\Commands\CecilUICommandDescriptor.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CecilCommandExporter.cs" />
     <Compile Include="PackageManagement\Exporters\Commands\CommandExportItem.cs" />
+    <Compile Include="PackageManagement\Exporters\InstallHooks\InstallHookExporter.cs" />
     <Compile Include="PackageManagement\Exporters\SolutionPlugin.cs" />
     <Compile Include="PackageManagement\Exporters\SolutionPluginExporter.cs" />
     <Compile Include="PackageManagement\Exporters\StringConversion.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Reflection\AssemblyFiddler.cs" />
     <Compile Include="Repositories\DefaultRemoteManager.cs" />
     <Compile Include="Repositories\FileSystem\IndexedFolderRepositoryFactory.cs" />
+    <Compile Include="Repositories\FileSystem\IOExtensions.cs" />
     <Compile Include="Repositories\IRemoteManager.cs" />
     <Compile Include="Repositories\IRepositoryFeature.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedReader.cs" />
@@ -446,6 +448,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensibility\" />
+    <Folder Include="PackageManagement\Hooks\" />
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />

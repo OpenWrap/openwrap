@@ -6,9 +6,9 @@ namespace Tests
     public class MemoryRepositoryFactory : IRemoteRepositoryFactory
     {
         public Func<string, IPackageRepository> FromUserInput = input=>null;
-        IPackageRepository IRemoteRepositoryFactory.FromUserInput(string identifier)
+        IPackageRepository IRemoteRepositoryFactory.FromUserInput(string directoryPath)
         {
-            return FromUserInput(identifier);
+            return FromUserInput(directoryPath);
         }
 
         public Func<string, IPackageRepository> FromToken = input => null;

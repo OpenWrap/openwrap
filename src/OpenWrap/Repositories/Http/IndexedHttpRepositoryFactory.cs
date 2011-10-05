@@ -22,11 +22,11 @@ namespace OpenWrap.Repositories.Http
             return GetIndexedRepository(token.Substring(PREFIX.Length).ToUri());
         }
 
-        public IPackageRepository FromUserInput(string identifier)
+        public IPackageRepository FromUserInput(string directoryPath)
         {
             // try a HEAD on /index.wraplist to see if it is the correct one
             bool found = false;
-            var targetUri = identifier.ToUri();
+            var targetUri = directoryPath.ToUri();
             if (targetUri == null ||
                 targetUri.IsAbsoluteUri == false ||
                 !(targetUri.Scheme.EqualsNoCase("http") || targetUri.Scheme.EqualsNoCase("https")))

@@ -31,7 +31,7 @@ namespace Tests.Repositories.factories.indexed_folder
         [Test]
         public void token_is_generated()
         {
-            Repository.Token.ShouldBe("[indexed-folder]c:\\middle-earth\\index.wraplist");
+            Repository.Token.ShouldBe("[indexed-folder]indexed-folder:///c:/middle-earth/index.wraplist");
         }
     }
 }

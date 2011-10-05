@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Commands.Cli.Locators;
+using OpenWrap.PackageManagement;
+using OpenWrap.PackageManagement.AssemblyResolvers;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 
@@ -22,19 +25,53 @@ namespace OpenWrap.Commands.Cli
 #pragma warning disable 28
         public static int Main(IDictionary<string, object> env)
         {
-            var serviceRegistry = new ServiceRegistry().Override<IEnvironment>(() =>
+            bool requireFirstRunOnProjectUpgrade = false;
+            bool inSystem = true;
+            var serviceRegistry = new ServiceRegistry();
+            serviceRegistry = serviceRegistry.Override<IEnvironment>(() =>
             {
-                var cdenv = new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(env.CurrentDirectory()));
+                var cdenv = new CurrentDirectoryEnvironment(LocalFileSystem.Instance.GetDirectory(env.CurrentDirectory()))
+                {
+                    BeforeProjectRepositoryInitialized = (dir, options) =>
+                    {
+                        requireFirstRunOnProjectUpgrade = dir.GetFile("packages").Exists == false;
+                        inSystem = false;
+                    }
+                };
                 if (env.SysPath() != null)
                     cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(new Path(env.SysPath()).Combine("wraps"));
+
                 return cdenv;
             });
+
+            if (env.ShellArgs().ContainsNoCase("-UseSystem"))
+            {
+                
+                serviceRegistry
+                    .Override(() => new RuntimeAssemblyResolver
+                    {
+                        IgnoreProjectAssemblies = true
+                    })
+                    .Override<ICommandRepository>(() => new CommandRepository(
+                                                            ServiceLocator.GetService<IPackageManager>().CommandExports(
+                                                                ServiceLocator.GetService<IEnvironment>(), true)
+                                                                .SelectMany(x => x)
+                                                                .Select(x => x.Descriptor)));
+            }
             var formatterType = env.Formatter();
             if (formatterType != null)
             {
                 serviceRegistry.Override(() => (ICommandOutputFormatter)Activator.CreateInstance(Type.GetType(formatterType)));
             }
             serviceRegistry.Initialize();
+
+            if (requireFirstRunOnProjectUpgrade)
+            {
+                ServiceLocator.GetService<ICommandOutputFormatter>().Render(
+                    new Warning("This is the first time you run a version of OpenWrap that supports post-install hooks on this project. Please wait while we run the hooks for the current packages."));
+
+                serviceRegistry.Initialize();
+            }
 
             return new ConsoleCommandExecutor(ServiceLocator.GetService<IEnumerable<ICommandLocator>>(), ServiceLocator.GetService<IEventHub>(), ServiceLocator.GetService<ICommandOutputFormatter>())
                 .Execute(env.CommandLine(), env.ShellArgs());

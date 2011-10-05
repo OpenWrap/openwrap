@@ -17,8 +17,7 @@ namespace OpenWrap.Build.PackageBuilders
         readonly IEnvironment _environment;
 
         public MSBuildPackageBuilder(IFileSystem fileSystem, IEnvironment environment, IFileBuildResultParser parser)
-                : base(fileSystem, parser)
-
+            : base(fileSystem, parser)
         {
             _environment = environment;
             Profile = new List<string>();
@@ -36,7 +35,7 @@ namespace OpenWrap.Build.PackageBuilders
         public IEnumerable<string> Project { get; set; }
         public IEnumerable<string> Configuration { get; set; }
         public ICollection<IFile> ProjectFiles { get; set; }
-        
+
 
         protected override string ExecutablePath
         {
@@ -51,10 +50,10 @@ namespace OpenWrap.Build.PackageBuilders
             ProjectFiles.Clear();
             if (Project.Count() > 0)
             {
-                foreach(var proj in Project)
+                foreach (var proj in Project)
                 {
                     var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(proj).FullPath;
-                    var specFiles = Enumerable.Empty<IFile>();
+                    IEnumerable<IFile> specFiles;
                     // Horribe construction, the Files extension method seems to be buggy as fuck.
                     try
                     {
@@ -96,14 +95,14 @@ namespace OpenWrap.Build.PackageBuilders
             yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", ExecutablePath));
 
             if (!Incremental)
-            foreach(var project in builds)
-            {
-                using(var responseFile = _fileSystem.CreateTempFile())
+                foreach (var project in builds)
                 {
-                    foreach (var value in ExecuteEngine(CreateMSBuildProcess(responseFile, project.file, project.platform, project.profile, "Clean")))
-                        yield return value;
+                    using (var responseFile = _fileSystem.CreateTempFile())
+                    {
+                        foreach (var value in ExecuteEngine(CreateMSBuildProcess(responseFile, project.file, project.platform, project.profile, "Clean")))
+                            yield return value;
+                    }
                 }
-            }
 
             foreach (var project in builds)
             {
@@ -124,7 +123,8 @@ namespace OpenWrap.Build.PackageBuilders
             try
             {
                 specFiles = new[] { _fileSystem.GetFile(pathSpec) };
-            }catch{}
+            }
+            catch { }
             return specFiles ?? Enumerable.Empty<IFile>();
         }
 
@@ -140,7 +140,7 @@ namespace OpenWrap.Build.PackageBuilders
 
         IProcess CreateMSBuildProcess(IFile responseFile, IFile project, string platform, string profile, string msbuildTargets)
         {
-            
+
             using (var stream = responseFile.OpenWrite())
             using (var writer = new StreamWriter(stream, Encoding.UTF8))
             {
@@ -148,7 +148,7 @@ namespace OpenWrap.Build.PackageBuilders
                         .Select(x => x.Trim())
                         .Where(x => x.StartsWith("@"))
                         .Select(x => _fileSystem.GetFile(x.Substring(1)))
-                        .FirstOrDefault(x=>x.Exists);
+                        .FirstOrDefault(x => x.Exists);
                 if (existingResponseFile != null && existingResponseFile.Exists)
                 {
                     foreach (var line in existingResponseFile.ReadLines().Where(NotTarget))
@@ -172,7 +172,7 @@ namespace OpenWrap.Build.PackageBuilders
                 writer.WriteLine("/p:OpenWrap-EmitOutputInstructions=true");
                 writer.WriteLine("/p:OpenWrap-CurrentProjectFile=\"" + project.Path.FullPath + "\"");
 
-                foreach(var kv in Properties)
+                foreach (var kv in Properties)
                 {
                     var value = kv.LastOrDefault();
                     if (value != null)
@@ -191,7 +191,7 @@ namespace OpenWrap.Build.PackageBuilders
 
         void CopyEnvVars(Process getCurrentProcess, IProcess msBuildProcess)
         {
-            foreach(string key in getCurrentProcess.StartInfo.EnvironmentVariables.Keys)
+            foreach (string key in getCurrentProcess.StartInfo.EnvironmentVariables.Keys)
             {
                 msBuildProcess.SetEnvironmentVariable(key, getCurrentProcess.StartInfo.EnvironmentVariables[key]);
             }

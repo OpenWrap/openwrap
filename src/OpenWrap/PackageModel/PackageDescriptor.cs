@@ -23,6 +23,7 @@ namespace OpenWrap.PackageModel
         MultiLine<string> _directoryStructure;
         SingleStringValue _title;
         SingleStringValue _namespace;
+        SingleBoolValue _storePackages;
 
         public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> entries)
         {
@@ -122,6 +123,12 @@ namespace OpenWrap.PackageModel
             get { return _directoryStructure; }
         }
 
+        public bool StorePackages
+        {
+            get { return _storePackages.Value; }
+            set { _storePackages.Value = value; }
+        }
+
         public PackageDescriptorEntryCollection Entries
         {
             get { return _entries; }
@@ -154,6 +161,7 @@ namespace OpenWrap.PackageModel
             _directoryStructure = new MultiLine<string>(Entries, "directory-structure", _ => _, _ => _);
             _title = new SingleStringValue(Entries, "title");
             _namespace = new SingleStringValue(Entries, "string");
+            _storePackages = new SingleBoolValue(Entries, "store-packages", true);
         }
         public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)
         {

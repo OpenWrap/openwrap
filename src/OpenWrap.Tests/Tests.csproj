@@ -391,6 +391,7 @@
     </Compile>
     <Compile Include="ProjectModel\drivers.file\visual_studio.cs" />
     <Compile Include="Reflection\can_sign_unsigned_assembly.cs" />
+    <Compile Include="Repositories\contexts\folder_repository.cs" />
     <Compile Include="Repositories\contexts\indexed_folder_repository.cs" />
     <Compile Include="Repositories\contexts\nuget_repository_factory.cs" />
     <Compile Include="Repositories\contexts\remote_manager.cs" />
@@ -398,7 +399,7 @@
     <Compile Include="Repositories\AtomContent.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_file_uri_directory_exists_and_has_files.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_indexed_folder_uri_directory_exists_and_has_files.cs" />
-    <Compile Include="Repositories\factories\indexed_folder\from_token.cs" />
+    <Compile Include="Repositories\factories\indexed_folder\from_pre_beta_token.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unc_path.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unknown_token.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_unrecognized_user_input.cs" />
@@ -413,6 +414,9 @@
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_does_not_exist.cs" />
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_exists_in_sub_directory.cs" />
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_exists.cs" />
+    <Compile Include="Repositories\folder.cs" />
+    <Compile Include="Repositories\folder_repo\persisted_source\cleaning_package.cs" />
+    <Compile Include="Repositories\folder_repo\persisted_source\publishing_package.cs" />
     <Compile Include="Repositories\manager\all_configured_remotes.cs" />
     <Compile Include="Repositories\manager\legacy\old_config_and_new.cs" />
     <Compile Include="Repositories\manager\legacy\old_config_no_new.cs" />
@@ -592,6 +596,7 @@
     <Folder Include="descriptors\" />
     <Folder Include="Exporters\content\" />
     <Folder Include="solution_plugins\" />
+    <Folder Include="upgrade_from_1_0\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Repositories\feedodata2.xml" />

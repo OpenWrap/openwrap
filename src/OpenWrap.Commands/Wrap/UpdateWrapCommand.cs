@@ -52,7 +52,7 @@ namespace OpenWrap.Commands.Wrap
                 var remoteDir = FileSystem.GetDirectory(From);
                 if (remoteDir.Exists)
                 {
-                    _remoteRepositories = new[] { new FolderRepository(remoteDir) }.Concat(_remoteRepositories);
+                    _remoteRepositories = new[] { new FolderRepository(remoteDir) }.Concat(_remoteRepositories).ToList();
                 }
                 else
                 {
