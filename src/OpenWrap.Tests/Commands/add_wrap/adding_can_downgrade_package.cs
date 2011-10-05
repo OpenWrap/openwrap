@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 ﻿using NUnit.Framework;
 using OpenWrap;
+=======
+﻿using System.Linq;
+using NUnit.Framework;
+using OpenWrap;
+using OpenWrap.PackageModel;
+using OpenWrap.Testing;
+>>>>>>> Fixes issue with unrelated packages being updated
 using Tests.Commands.update_wrap.project;
 
 namespace Tests.Commands.add_wrap
@@ -23,7 +31,11 @@ namespace Tests.Commands.add_wrap
         [Test]
         public void unrelated_dependency_is_not_updated()
         {
+<<<<<<< HEAD
             Environment.ProjectRepository.ShouldHavePackage("one-ring", "1.0.1");
+=======
+            Environment.ProjectRepository.ShouldHavePackage("one-ring","1.0.1");
+>>>>>>> Fixes issue with unrelated packages being updated
         }
     }
 }

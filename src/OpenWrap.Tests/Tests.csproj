@@ -363,7 +363,7 @@
     <Compile Include="Commands\update_wrap\project_and_system\from_remote.cs" />
     <Compile Include="Commands\update_wrap\command_flags\system_flag_specified.cs" />
     <Compile Include="Commands\update_wrap\command_flags\project_flag_specified.cs" />
-    <Compile Include="RepositoryAssertions.cs" />
+    <Compile Include="Commands\update_wrap\project\RepositoryAssertions.cs" />
     <Compile Include="Commands\update_wrap\system\by_name_from_remote_with_missing_dependents.cs" />
     <Compile Include="Commands\update_wrap\system\from_remote_with_missing_dependents.cs" />
     <Compile Include="Commands\update_wrap\system\from_remote_with_revision_change.cs" />
