@@ -2,6 +2,7 @@
 using OpenWrap.Tests.Commands;
 using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
+using Tests.Commands.update_wrap.project;
 
 namespace OpenWrap.Commands.remove_wrap
 {

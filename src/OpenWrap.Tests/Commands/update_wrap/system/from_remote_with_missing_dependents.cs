@@ -2,6 +2,7 @@
 using OpenWrap;
 using OpenWrap.Commands.Wrap;
 using Tests.Commands.contexts;
+using Tests.Commands.update_wrap.project;
 
 namespace Tests.Commands.update_wrap.system
 {

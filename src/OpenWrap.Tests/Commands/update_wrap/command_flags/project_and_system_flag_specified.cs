@@ -19,7 +19,7 @@ namespace Tests.Commands.update_wrap.command_flags
             CommandInstance.Project.ShouldBeTrue();
         }
         [Test]
-        public void system_is_not_selected()
+        public void system_is_selected()
         {
             CommandInstance.System.ShouldBeTrue();
         }

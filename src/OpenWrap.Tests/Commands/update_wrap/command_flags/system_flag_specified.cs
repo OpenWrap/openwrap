@@ -14,12 +14,12 @@ namespace Tests.Commands.update_wrap.command_flags
             CommandInstance = new UpdateWrapCommand() { System = true };
         }
         [Test]
-        public void project_is_selected()
+        public void project_is_not_selected()
         {
             CommandInstance.Project.ShouldBeFalse();
         }
         [Test]
-        public void system_is_not_selected()
+        public void system_is_selected()
         {
             CommandInstance.System.ShouldBeTrue();
         }

@@ -2,7 +2,7 @@
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.update_wrap
+namespace Tests.Commands.update_wrap.project
 {
     public static class RepositoryAssertions
     {

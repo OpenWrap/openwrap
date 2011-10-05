@@ -355,7 +355,7 @@ namespace OpenWrap.PackageManagement
 
             finalDescriptor.Dependencies.Add(ToDependency(packageToAdd, options));
 
-            foreach (var m in CopyPackageCore(sourceRepositories, new[] { projectRepository }, finalDescriptor, x => true))
+            foreach (var m in CopyPackageCore(sourceRepositories, new[] { projectRepository }, finalDescriptor, x => x.EqualsNoCase(packageToAdd.Name)))
                 yield return m;
         }
 
@@ -364,7 +364,7 @@ namespace OpenWrap.PackageManagement
                                                                  PackageRequest packageToAdd,
                                                                  PackageAddOptions options)
         {
-            return  CopyPackageCore(sourceRepositories, new[] { systemRepository }, ToDescriptor(packageToAdd, options), x => true);
+            return  CopyPackageCore(sourceRepositories, new[] { systemRepository }, ToDescriptor(packageToAdd, options), x => packageToAdd.Name.EqualsNoCase(x));
         }
 
         IEnumerable<PackageOperationResult> CleanProjectPackagesCore(IEnumerable<IPackageDescriptor> projectDescriptors, IPackageRepository projectRepository, Func<string, bool> packageName)
@@ -411,27 +411,34 @@ namespace OpenWrap.PackageManagement
                                                             Func<string, bool> nameSelector)
         {
             var updateDescriptor = new PackageDescriptor(descriptor);
-            updateDescriptor.Dependencies.Clear();
-            updateDescriptor.Dependencies.AddRange(descriptor.Dependencies.Where(x => nameSelector(x.Name)));
 
             var resolvedPackages = _resolver.TryResolveDependencies(
                     updateDescriptor,
                     sourceRepositories);
-
+            
             if (!resolvedPackages.IsSuccess)
             {
                 foreach (var packageResolution in ReturnError(resolvedPackages))
                     yield return packageResolution;
                 yield break;
             }
-
+            var rootPackages = resolvedPackages.SuccessfulPackages.Where(_ => nameSelector(_.Identifier.Name));
+            var affectedPackageNames = new List<string>();
+            new PackageGraphVisitor(resolvedPackages.SuccessfulPackages.Select(x => x.Packages.First()))
+                .VisitFrom(rootPackages.Select(_ => new PackageDependency(_.Identifier.Name)),
+                           (from, dep, to) =>
+                           {
+                               affectedPackageNames.Add(to.Name);
+                               return true;
+                           });
             var packagesForGacDetection = GetSelectedPackages(resolvedPackages);
 
             foreach (var conflict in from errors in _exporter.InGac(packagesForGacDetection)
                                      select new PackageGacConflictResult(errors.Key, errors))
                 yield return conflict;
 
-            foreach (var m in CopyPackagesToRepositories(sourceRepositories, resolvedPackages, destinationRepositories))
+            var packagesToCopy = resolvedPackages.SuccessfulPackages.Where(x=>affectedPackageNames.ContainsNoCase(x.Identifier.Name));
+            foreach (var m in CopyPackagesToRepositories(sourceRepositories, packagesToCopy, destinationRepositories))
                 yield return m;
 
 
@@ -453,7 +460,7 @@ namespace OpenWrap.PackageManagement
         }
 
         IEnumerable<PackageOperationResult> CopyPackagesToRepositories(IEnumerable<IPackageRepository> sourceRepositories,
-                                                                       DependencyResolutionResult resolvedPackages,
+                                                                       IEnumerable<ResolvedPackage> resolvedPackages,
                                                                        IEnumerable<IPackageRepository> destinationRepositories)
         {
             var publishingRepos = destinationRepositories.Select(x=>new{repo=x,pub=x.Feature<ISupportPublishing>()}).NotNull().ToList();
@@ -461,7 +468,7 @@ namespace OpenWrap.PackageManagement
             {
                 using (var publisher = destinationRepository.pub.Publisher())
                 {
-                    foreach (var foundPackage in resolvedPackages.SuccessfulPackages)
+                    foreach (var foundPackage in resolvedPackages)
                     {
                         if (foundPackage == null) throw new InvalidOperationException("A null package was selected in the package resolution phase. Something's gone badly wrong.");
                         var package = foundPackage;

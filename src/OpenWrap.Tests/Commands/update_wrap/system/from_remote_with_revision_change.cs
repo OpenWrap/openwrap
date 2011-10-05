@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenWrap;
 using OpenWrap.Tests.Commands;
+using Tests.Commands.update_wrap.project;
 
 namespace Tests.Commands.update_wrap.system
 {
