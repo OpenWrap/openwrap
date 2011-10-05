@@ -15,7 +15,7 @@ namespace Tests.Commands.add_wrap
             given_project_repository(new InMemoryRepository("Project repository"));
             given_currentdirectory_package("sauron", new Version(1, 0, 0));
 
-            when_executing_command("-Name sauron");
+            when_executing_command("-Name sauron -project -system");
         }
 
         [Test]
