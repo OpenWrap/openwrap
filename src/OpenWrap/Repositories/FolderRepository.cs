@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using OpenFileSystem.IO;
+using OpenRasta.Client;
+using OpenWrap.Configuration;
 using OpenWrap.IO;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Packages;
@@ -15,16 +17,22 @@ namespace OpenWrap.Repositories
     /// <summary>
     ///   Provides a repository that can read packages from a directory using the default structure.
     /// </summary>
-    public class FolderRepository : ISupportCleaning, ISupportPublishing, ISupportAnchoring, IPackageRepository
+    public class FolderRepository : ISupportCleaning, ISupportPublishing, ISupportAnchoring, IPackageRepository, ISupportLocking
     {
         readonly bool _anchoringEnabled;
         readonly IDirectory _rootCacheDirectory;
         readonly bool _useSymLinks;
+        bool _canLock;
+        IFile _lockFile;
 
         public FolderRepository(IDirectory packageBasePath, FolderRepositoryOptions options = FolderRepositoryOptions.Default)
         {
             _useSymLinks = (options & FolderRepositoryOptions.UseSymLinks) == FolderRepositoryOptions.UseSymLinks;
             _anchoringEnabled = (options & FolderRepositoryOptions.AnchoringEnabled) == FolderRepositoryOptions.AnchoringEnabled;
+            _canLock = (options & FolderRepositoryOptions.SupportLocks) == FolderRepositoryOptions.SupportLocks;
+
+            LockedPackages = Enumerable.Empty<IPackageInfo>().ToLookup(_ => string.Empty);
+
             if (packageBasePath == null) throw new ArgumentNullException("packageBasePath");
 
             BasePath = packageBasePath;
@@ -44,6 +52,9 @@ namespace OpenWrap.Repositories
 
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
+            if (typeof(TFeature) == typeof(ISupportAnchoring) && !_anchoringEnabled) return null;
+            if (typeof(TFeature) == typeof(ISupportLocking) && !_canLock) return null;
+            
             return this as TFeature;
         }
 
@@ -72,6 +83,24 @@ namespace OpenWrap.Repositories
                                 packageCacheDirectory,
                                 package
                                 )).ToList();
+            RefreshLockFiles();
+        }
+
+        void RefreshLockFiles()
+        {
+            if (!_canLock) return;
+            _lockFile = BasePath.Files("*.lock").Where(x => x.Name.StartsWith("packages.")).OrderBy(x => x.Name.Length).FirstOrDefault()
+                        ?? BasePath.GetFile("packages.lock");
+            if (_lockFile.Exists == false) return;
+
+            var uri = new Uri(ConstantUris.URI_BASE, UriKind.Absolute).Combine(new Uri(_lockFile.Name, UriKind.Relative));
+            var lockedPackageInfo = new DefaultConfigurationManager(BasePath).Load<LockedPackages>(uri)
+                .Lock;
+            var lockedPackages = lockedPackageInfo.Select(
+                locked => Packages.Single(package => locked.Name.EqualsNoCase(package.Package.Name) &&
+                                                     locked.Version == package.Package.Version).Package);
+
+            LockedPackages = lockedPackages.ToLookup(x => string.Empty);
         }
 
         public IEnumerable<PackageAnchoredResult> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor)
@@ -240,5 +269,35 @@ namespace OpenWrap.Repositories
             public IPackageInfo Package { get; set; }
         }
 
+        public void Lock(string scope, IEnumerable<IPackageInfo> currentPackages)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ILookup<string, IPackageInfo> LockedPackages { get; private set; }
+    }
+    public class LockedPackages
+    {
+        public LockedPackages()
+        {
+            Lock = new List<LockedPackage>();
+
+        }
+        public IList<LockedPackage> Lock { get; set; }
+    }
+
+    public class LockedPackage
+    {
+        public LockedPackage()
+        {
+        }
+        public LockedPackage(string name, Version version)
+        {
+            Name = name;
+            Version = version;
+        }
+
+        public string Name { get; set; }
+        public Version Version { get; set; }
     }
 }

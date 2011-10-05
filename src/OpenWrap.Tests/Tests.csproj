@@ -91,6 +91,7 @@
     <Compile Include="Commands\configuration\get_without_arguments_with_config.cs" />
     <Compile Include="Commands\configuration\remove_nothing.cs" />
     <Compile Include="Commands\configuration\remove_proxy.cs" />
+    <Compile Include="Commands\contexts\lock_wrap.cs" />
     <Compile Include="Commands\contexts\noun_verb_locator.cs" />
     <Compile Include="Commands\contexts\set_configuration.cs" />
     <Compile Include="Commands\configuration\set_nothing.cs" />
@@ -100,6 +101,18 @@
     <Compile Include="Commands\configuration\set_proxy_username.cs" />
     <Compile Include="Commands\init_wrap\init_dot_in_empty_git_ignores.cs" />
     <Compile Include="Commands\init_wrap\init_dot_in_empty_mercurial_ignores.cs" />
+    <Compile Include="Commands\lock_wrap\all.cs" />
+    <Compile Include="Commands\lock_wrap\ignore_dependencies.cs" />
+    <Compile Include="Commands\lock_wrap\locking_not_enabled.cs" />
+    <Compile Include="Commands\lock_wrap\name\doesnt_exist.cs" />
+    <Compile Include="Commands\lock_wrap\name\ignore_dependencies.cs" />
+    <Compile Include="Commands\lock_wrap\name\leaf_dependency.cs" />
+    <Compile Include="Commands\lock_wrap\name\one_of_many_doesnt_exist.cs" />
+    <Compile Include="Commands\lock_wrap\name\root_dependency.cs" />
+    <Compile Include="Commands\lock_wrap\not_in_project.cs" />
+    <Compile Include="Repositories\folder\locking\enabled_through_option.cs" />
+    <Compile Include="Repositories\folder\locking\existing_is_read.cs" />
+    <Compile Include="TestExtensions.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_supporting_fetch_and_publish.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_with_authentication.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_with_authentication_missing_inputs.cs" />
@@ -391,6 +404,7 @@
     </Compile>
     <Compile Include="ProjectModel\drivers.file\visual_studio.cs" />
     <Compile Include="Reflection\can_sign_unsigned_assembly.cs" />
+    <Compile Include="Repositories\contexts\folder.cs" />
     <Compile Include="Repositories\contexts\indexed_folder_repository.cs" />
     <Compile Include="Repositories\contexts\nuget_repository_factory.cs" />
     <Compile Include="Repositories\contexts\remote_manager.cs" />
@@ -413,6 +427,7 @@
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_does_not_exist.cs" />
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_exists_in_sub_directory.cs" />
     <Compile Include="Repositories\factories\indexed_http\from_user_input_index_exists.cs" />
+    <Compile Include="Repositories\folder\locking\not_enabled_by_default.cs" />
     <Compile Include="Repositories\manager\all_configured_remotes.cs" />
     <Compile Include="Repositories\manager\legacy\old_config_and_new.cs" />
     <Compile Include="Repositories\manager\legacy\old_config_no_new.cs" />

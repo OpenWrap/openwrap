@@ -14,9 +14,11 @@ namespace OpenWrap.Repositories
     public class InMemoryRepository : IPackageRepository, 
         ISupportPublishing,
         ISupportCleaning,
-        ISupportAuthentication
+        ISupportAuthentication,
+        ISupportLocking
     {
         ICollection<IPackageInfo> _packages = new List<IPackageInfo>();
+        public bool CanLock { get; set; }
 
         public InMemoryRepository(string name = null)
         {
@@ -48,6 +50,8 @@ namespace OpenWrap.Repositories
             if (typeof(TFeature) == typeof(ISupportPublishing) && !CanPublish)
                 return null;
             if (typeof(TFeature) == typeof(ISupportAuthentication) && !CanAuthenticate)
+                return null;
+            if (typeof(TFeature) == typeof(ISupportLocking) && !CanLock)
                 return null;
             return this as TFeature;
         }
@@ -103,6 +107,25 @@ namespace OpenWrap.Repositories
         public IDisposable WithCredentials(NetworkCredential credentials)
         {
             return ActionOnDispose.None;
+        }
+
+        IDictionary<string, IEnumerable<IPackageInfo>> LockedPackages = new Dictionary<string,IEnumerable< IPackageInfo>>();
+
+        public void Lock(string scope, IEnumerable<IPackageInfo> currentPackages)
+        {
+            LockedPackages[scope] = LockedPackages.ContainsKey(scope)
+                                        ? LockedPackages[scope].Concat(currentPackages).ToList()
+                                        : currentPackages.ToList();
+        }
+
+        ILookup<string, IPackageInfo> ISupportLocking.LockedPackages
+        {
+            get
+            {
+                return (from kv in LockedPackages
+                        from package in kv.Value
+                        select new { kv.Key, package }).ToLookup(x=>x.Key, x=>x.package);
+            }
         }
     }
 }

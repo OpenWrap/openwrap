@@ -142,6 +142,7 @@
     <Compile Include="Repositories\FileSystem\IndexedFolderRepositoryFactory.cs" />
     <Compile Include="Repositories\IRemoteManager.cs" />
     <Compile Include="Repositories\IRepositoryFeature.cs" />
+    <Compile Include="Repositories\ISupportLocking.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedReader.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepository.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepositoryFactory.cs" />

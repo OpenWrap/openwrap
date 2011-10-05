@@ -445,4 +445,13 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="build-wrap-version" xml:space="preserve">
     <value>Overrides the package version with the provided version specification.</value>
   </data>
+  <data name="lock-wrap" xml:space="preserve">
+    <value>Locks certain dependencies so they do not get updated during add/update/remove operations.</value>
+  </data>
+  <data name="lock-wrap-ignoredependencies" xml:space="preserve">
+    <value>Do not lock any dependency a package being locked depends on.</value>
+  </data>
+  <data name="lock-wrap-name" xml:space="preserve">
+    <value>Specifies which packages to lock. By default, all packages get locked.</value>
+  </data>
 </root>

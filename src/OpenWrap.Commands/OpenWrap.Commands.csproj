@@ -81,6 +81,7 @@
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Remote\Messages\UnknownEndpointType.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
+    <Compile Include="Wrap\LockWrapCommand.cs" />
     <Compile Include="Wrap\Messages\DependenciesConflictMessage.cs" />
     <Compile Include="Wrap\Messages\PackageBuilt.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />

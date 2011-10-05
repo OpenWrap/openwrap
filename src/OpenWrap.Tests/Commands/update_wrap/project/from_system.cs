@@ -23,7 +23,8 @@ namespace Tests.Commands.update_wrap.project
         [Test]
         public void the_package_is_installed_in_project_repo()
         {
-            Environment.ProjectRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 1, 0));
+            Environment.ProjectRepository.PackagesByName["goldberry"].Last()
+                .Version.ShouldBe(new Version(2, 1, 0));
         }
     }
 }
