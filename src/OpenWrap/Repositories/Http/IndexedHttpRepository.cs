@@ -8,7 +8,7 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories.Http
 {
-    public class IndexedHttpRepository : IPackageRepository, ISupportAuthentication
+    public class IndexedHttpRepository : IPackageRepository, ISupportPublishing, ISupportAuthentication
     {
         readonly IHttpRepositoryNavigator _navigator;
         readonly IEnumerable<HttpPackageInfo> _packagesQuery;
