@@ -31,6 +31,7 @@ namespace OpenWrap.Repositories.Http
         {
             get
             {
+                EnsureFileListLoaded();
                 return _fileList != null && _fileList.CanPublish;
             }
         }
