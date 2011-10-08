@@ -49,7 +49,7 @@ namespace OpenWrap.Commands.Wrap
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield return ValidateInputs;
-            yield return ValidatePackageDoesntExist;
+            //yield return ValidatePackageDoesntExist;
         }
 
         IEnumerable<ICommandOutput> ValidateInputs()
