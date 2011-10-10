@@ -440,27 +440,4 @@ namespace OpenWrap.Commands.Wrap
         }
 
     }
-
-    class ErrorPackageBuilder : IPackageBuilder
-    {
-        readonly string _message;
-
-        public ErrorPackageBuilder(string message)
-        {
-            _message = message;
-        }
-
-        public IEnumerable<BuildResult> Build()
-        {
-            yield return new ErrorBuildResult(_message);
-        }
-    }
-
-
-    public class PackageVersionMissing : Error
-    {
-        public PackageVersionMissing():base("No version was found for this package. Try putting the value in a version file, adding a 'Version' instruction in your descriptor or using a -Version input on the command.")
-        {
-        }
-    }
 }

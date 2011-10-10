@@ -102,25 +102,18 @@ namespace Tests
         protected void given_dependency(string dependency)
         {
             given_dependency(string.Empty, dependency);
-
         }
-
 
         protected void given_project_package(string name, string version, params string[] dependencies)
         {
-            given_project_repository(new InMemoryRepository("Project repository"));
+            given_project_repository();
             AddPackage(Environment.ProjectRepository, name, version, dependencies);
         }
 
-        protected void given_project_repository()
-        {
-            given_project_repository(new InMemoryRepository("Project repository"));
-        }
-
-        protected void given_project_repository(IPackageRepository repository)
+        protected void given_project_repository(IPackageRepository repository = null)
         {
             if (Environment.ProjectRepository == null)
-                Environment.ProjectRepository = repository;
+                Environment.ProjectRepository = repository ?? new InMemoryRepository("Project repository") { CanLock = true };
         }
 
         protected void given_current_directory_repository(CurrentDirectoryRepository repository)
@@ -279,6 +272,16 @@ namespace Tests
                 FromToken = fromToken ?? (input => null),
                 FromUserInput = fromUserInput ?? (input => null)
             });
+        }
+
+        protected void given_locked_package(string name, string version)
+        {
+            Environment.ProjectRepository.Feature<ISupportLocking>()
+                .Lock(string.Empty,
+                      Environment.ProjectRepository
+                          .PackagesByName[name]
+                          .Where(x => x.Version == version.ToVersion()));
+
         }
     }
 

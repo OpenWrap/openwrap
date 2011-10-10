@@ -454,4 +454,13 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="lock-wrap-name" xml:space="preserve">
     <value>Specifies which packages to lock. By default, all packages get locked.</value>
   </data>
+  <data name="unlock-wrap" xml:space="preserve">
+    <value>Unlocks packages so they can be updated.</value>
+  </data>
+  <data name="unlock-wrap-ignoredependencies" xml:space="preserve">
+    <value>Prevents unlocking of dependent packages.</value>
+  </data>
+  <data name="unlock-wrap-name" xml:space="preserve">
+    <value>Specifies the names of the packages to unlock.</value>
+  </data>
 </root>

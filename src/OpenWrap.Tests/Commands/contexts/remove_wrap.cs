@@ -4,7 +4,7 @@ using OpenWrap.PackageModel.Serialization;
 
 namespace Tests.Commands.contexts
 {
-    public abstract class remove_wrap_command : command<RemoveWrapCommand>
+    public abstract class remove_wrap : command<RemoveWrapCommand>
     {
 
         protected IPackageDescriptor PostCommandDescriptor;

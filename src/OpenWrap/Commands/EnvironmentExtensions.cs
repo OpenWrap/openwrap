@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.PackageManagement;
+using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
 
 namespace OpenWrap.Commands
@@ -11,7 +12,7 @@ namespace OpenWrap.Commands
         public static IEnumerable<IGrouping<string, Exports.ICommand>> CommandExports(this IPackageManager manager, IEnvironment environment)
         {
             var projectCommands = environment.Descriptor != null && environment.ProjectRepository != null
-                                      ? manager.GetProjectExports<Exports.ICommand>(environment.Descriptor, environment.ProjectRepository, environment.ExecutionEnvironment).SelectMany(x => x).GroupBy(
+                                      ? manager.GetProjectExports<Exports.ICommand>(environment.Descriptor.Lock(environment.ProjectRepository), environment.ProjectRepository, environment.ExecutionEnvironment).SelectMany(x => x).GroupBy(
                                           x => x.Package.Name)
                                       : Enumerable.Empty<IGrouping<string, Exports.ICommand>>();
 

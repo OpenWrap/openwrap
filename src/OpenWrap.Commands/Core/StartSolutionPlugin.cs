@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Monitoring;
+using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
 
@@ -67,7 +68,8 @@ namespace OpenWrap.Commands.Core
             _monitor.RegisterListener(_environment.DescriptorFile, _environment.ProjectRepository, this);
 
 
-            var solutionPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
+            var packageDescriptor = _environment.Descriptor.Lock(_environment.ProjectRepository);
+            var solutionPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(packageDescriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
                 .SelectMany(x => x);
 
             foreach (var m in solutionPlugins.SelectMany(LoadPlugin))
@@ -92,7 +94,7 @@ namespace OpenWrap.Commands.Core
                     continue;
                 }
                 _environment.ProjectRepository.RefreshPackages();
-                var newPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(_environment.Descriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
+                var newPlugins = _manager.GetProjectExports<Exports.ISolutionPlugin>(packageDescriptor, _environment.ProjectRepository, _environment.ExecutionEnvironment)
                     .SelectMany(x => x).ToList();
                 if (solutionPlugins.Any(x => newPlugins.Contains(x) == false)) break;
                 _refreshRequired.Reset();

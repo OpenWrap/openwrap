@@ -11,7 +11,6 @@ namespace Tests.Commands.add_wrap
     {
         public adding_wrap_from_local_package_in_project_path()
         {
-            given_dependency("depends: sauron");
             given_project_repository(new InMemoryRepository("Project repository"));
             given_currentdirectory_package("sauron", new Version(1, 0, 0));
 

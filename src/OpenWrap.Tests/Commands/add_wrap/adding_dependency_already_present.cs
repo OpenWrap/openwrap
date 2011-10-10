@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.PackageManagement;
+using OpenWrap.Testing;
 using Tests.Commands.contexts;
 using Tests.Commands.update_wrap;
 using Tests.Commands.update_wrap.project;
@@ -18,14 +20,15 @@ namespace Tests.Commands.add_wrap
         }
 
         [Test]
-        public void command_succeeds()
+        public void command_fails()
         {
-            Results.ShouldHaveNoError();
+            Results.ShouldHaveOne<PackageDependencyAlreadyExists>()
+                .PackageName.ShouldBe("sauron");
         }
         [Test]
-        public void package_is_updated()
+        public void package_is_not_updated()
         {
-            Environment.ProjectRepository.ShouldHavePackage("sauron", "2.0.0");
+            Environment.ProjectRepository.ShouldHavePackage("sauron", "1.0.0");
         }
     }
 }

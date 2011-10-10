@@ -41,7 +41,10 @@ namespace OpenWrap.Commands.Wrap
 
         IEnumerable<ICommandOutput> SetRemoteRepositories()
         {
-            _remoteRepositories = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }.Concat(Remotes.FetchRepositories());
+            _remoteRepositories = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }
+                .Concat(Remotes.FetchRepositories());
+            if (HostEnvironment.ProjectRepository != null)
+                _remoteRepositories = _remoteRepositories.Concat(new[] { HostEnvironment.ProjectRepository });
             yield break;
         }
 
@@ -87,9 +90,12 @@ namespace OpenWrap.Commands.Wrap
             var sourceRepos = _remoteRepositories;
             var errors = new List<PackageOperationResult>();
                     bool updated = false;
+            
+            var packageDescriptor = HostEnvironment.Descriptor.Lock(HostEnvironment.ProjectRepository);
+
             foreach (var x in (string.IsNullOrEmpty(Name)
-                                       ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor)
-                                       : PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, HostEnvironment.Descriptor, Name)))
+                                       ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, packageDescriptor)
+                                       : PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, packageDescriptor, Name)))
                 if (x is PackageMissingResult || x is PackageConflictResult)
                 {
                     errors.Add(x);
@@ -147,7 +153,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> ProjectExistsWhenProjectFlagSpecified()
         {
             if (Project && HostEnvironment.ProjectRepository == null)
-                yield return new Error("Project repository not found, cannot update. If you meant to update the system repository, use the -System input.");
+                yield return new NotInProject();
         }
     }
 }

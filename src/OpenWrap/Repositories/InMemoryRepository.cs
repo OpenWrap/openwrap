@@ -111,11 +111,15 @@ namespace OpenWrap.Repositories
 
         IDictionary<string, IEnumerable<IPackageInfo>> LockedPackages = new Dictionary<string,IEnumerable< IPackageInfo>>();
 
-        public void Lock(string scope, IEnumerable<IPackageInfo> currentPackages)
+        public void Lock(string scope, IEnumerable<IPackageInfo> packages)
         {
+            var namesToLock = packages.Select(x => x.Name).ToList();
             LockedPackages[scope] = LockedPackages.ContainsKey(scope)
-                                        ? LockedPackages[scope].Concat(currentPackages).ToList()
-                                        : currentPackages.ToList();
+                                        ? LockedPackages[scope]
+                                            .Where(x=>!namesToLock.ContainsNoCase(x.Name))
+                                            .Concat(packages)
+                                            .ToList()
+                                        : packages.ToList();
         }
 
         ILookup<string, IPackageInfo> ISupportLocking.LockedPackages
@@ -126,6 +130,17 @@ namespace OpenWrap.Repositories
                         from package in kv.Value
                         select new { kv.Key, package }).ToLookup(x=>x.Key, x=>x.package);
             }
+        }
+
+        public void Unlock(string scope, IEnumerable<IPackageInfo> packages)
+        {
+
+            var namesToUnlock = packages.Select(x => x.Name).ToList();
+            LockedPackages[scope] = LockedPackages.ContainsKey(scope)
+                                        ? LockedPackages[scope]
+                                            .Where(x => !namesToUnlock.ContainsNoCase(x.Name))
+                                            .ToList()
+                                        : Enumerable.Empty<IPackageInfo>();
         }
     }
 }

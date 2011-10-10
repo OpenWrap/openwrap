@@ -8,11 +8,11 @@ using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.project
 {
-    public class updating_from_remote: contexts.update_wrap
+    public class from_remote: contexts.update_wrap
     {
         DateTimeOffset? descriptor_modified_time;
 
-        public updating_from_remote()
+        public from_remote()
         {
             given_dependency("depends: goldberry >= 2.0");
 

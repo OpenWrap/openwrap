@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageModel;
+using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
 {
@@ -11,6 +12,7 @@ namespace OpenWrap.Commands.Wrap
     {
         bool? _last;
         bool? _project;
+        FileBased<IPackageDescriptor> _targetDescriptor;
 
         [CommandInput]
         public bool Clean { get; set; }
@@ -73,23 +75,43 @@ namespace OpenWrap.Commands.Wrap
                         new Warning(
                                 "Because you have selected a specific version to remove from the project repository, your descriptor file will not be updated. To remove the dependency from your descriptor, either do not specify a version or use the set-wrap command to update the version of a package in use by your project.")
                         ;
-            var targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope);
+            
 
             if (Project)
             {
-                using (ChangeMonitor(targetDescriptor))
+                var lockedRepo = HostEnvironment.ProjectRepository.Feature<ISupportLocking>();
+                
+                
+                var packageDescriptor = _targetDescriptor.Value;
+                if (lockedRepo != null)
                 {
-                    foreach (var m in PackageManager.RemoveProjectPackage(PackageRequest, targetDescriptor.Value, HostEnvironment.ProjectRepository, options)) yield return ToOutput(m);
-                    if (Successful) TrySaveDescriptorFile(targetDescriptor);
+                    if (lockedRepo.LockedPackages[string.Empty].Any(_=>_.Name.EqualsNoCase(Name)))
+                    {
+                        yield return new PackageLockedNotRemoved(Name);
+                        yield break;
+                    }
+                    packageDescriptor = packageDescriptor.Lock(HostEnvironment.ProjectRepository);
+                }
+                using (SaveDescriptorOnSuccess(_targetDescriptor))
+                {
+                    foreach (var m in PackageManager.RemoveProjectPackage(PackageRequest, packageDescriptor, HostEnvironment.ProjectRepository, options)) 
+                        yield return ToOutput(m);
                 }
             }
             if (System)
                 foreach (var m in PackageManager.RemoveSystemPackage(PackageRequest, HostEnvironment.SystemRepository, Options)) yield return ToOutput(m);
         }
-
+        protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
+        {
+            if (Version == null)
+                If<PackageDependencyRemovedResult>(packageOperationResult, 
+                    _ => _targetDescriptor.Value.Dependencies.Remove(_.Dependency));
+            return base.ToOutput(packageOperationResult);
+        }
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield return VerifyInputs;
+            yield return InProject;
         }
 
         IEnumerable<ICommandOutput> VerifyInputs()
@@ -98,8 +120,25 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Error("Cannot use '-Last' and '-Version' together.");
             if (System && !HostEnvironment.SystemRepository.PackagesByName[Name].Any())
                 yield return new Error("Cannot find package named '{0}' in system repository.", Name);
-            if (Project && HostEnvironment.ProjectRepository == null)
+        }
+
+        IEnumerable<ICommandOutput> InProject()
+        {
+            if (!Project) yield break;
+
+            if (HostEnvironment.ProjectRepository != null)
+                _targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope);
+            else
                 yield return new Error("Not in a package directory.");
+        }
+    }
+    public class PackageLockedNotRemoved : Error
+    {
+        public string PackageName { get; set; }
+
+        public PackageLockedNotRemoved(string packageName) : base("Cannont remove package '{0}' as it is currently locked. Unlock the package with 'unlock-wrap {0}' first, then remove.", packageName)
+        {
+            PackageName = packageName;
         }
     }
 }

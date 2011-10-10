@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OpenWrap;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.Testing;
 using Tests.Commands.contexts;
 
 namespace Tests.Commands.update_wrap.project
@@ -17,7 +18,7 @@ namespace Tests.Commands.update_wrap.project
         [Test]
         public void error_message_is_generated()
         {
-            Results.ShouldHaveError();
+            Results.ShouldHaveOne<NotInProject>();
         }
         [Test]
         public void package_in_system_repository_is_not_updated()

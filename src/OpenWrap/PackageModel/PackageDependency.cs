@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace OpenWrap.PackageModel
 {
-    public class PackageDependency
+    public class PackageDependency : IEquatable<PackageDependency>
     {
         public PackageDependency(
                 string name,
@@ -33,7 +33,7 @@ namespace OpenWrap.PackageModel
                                       ? Name
                                       : Name + " " + versions;
             if (Tags.Count() > 0)
-                returnValue += " " + string.Join(" ", Tags.ToArray());
+                returnValue += " " + Tags.JoinString(" ");
             return returnValue;
         }
 
@@ -42,29 +42,34 @@ namespace OpenWrap.PackageModel
             return VersionVertices.All(x => x.IsCompatibleWith(version));
         }
 
-        internal bool IsExactlyFulfilledBy(Version version)
+        public bool Equals(PackageDependency other)
         {
-            bool exactlyFulfilled = false;
-            if (VersionVertices.Count() == 1)
-            {
-                var thisVersion = VersionVertices.FirstOrDefault();
-                if (thisVersion is EqualVersionVertex)
-                {
-                    // only exactly fulfilled if both are of the same length
-                    if (thisVersion.Version.Major
-                        == version.Major
-                        && thisVersion.Version.Minor
-                           == version.Minor
-                        && thisVersion.Version.Build
-                           == version.Build
-                        && thisVersion.Version.Revision == -1
-                        && version.Revision == -1)
-                    {
-                        exactlyFulfilled = true;
-                    }
-                }
-            }
-            return exactlyFulfilled;
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(other.ToString(), ToString());
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(PackageDependency)) return false;
+            return Equals((PackageDependency)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
+        }
+
+        public static bool operator ==(PackageDependency left, PackageDependency right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PackageDependency left, PackageDependency right)
+        {
+            return !Equals(left, right);
         }
     }
 }

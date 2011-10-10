@@ -81,11 +81,19 @@
     <Compile Include="Remote\SetRemoteCommand.cs" />
     <Compile Include="Remote\Messages\UnknownEndpointType.cs" />
     <Compile Include="Wrap\BuildWrapCommand.cs" />
+    <Compile Include="Wrap\ErrorPackageBuilder.cs" />
+    <Compile Include="Wrap\Messages\LockingNotSupported.cs" />
     <Compile Include="Wrap\LockWrapCommand.cs" />
     <Compile Include="Wrap\Messages\DependenciesConflictMessage.cs" />
     <Compile Include="Wrap\Messages\PackageBuilt.cs" />
+    <Compile Include="Wrap\Messages\NotInProject.cs" />
+    <Compile Include="Wrap\Messages\PackageLocked.cs" />
+    <Compile Include="Wrap\Messages\PackageNotFound.cs" />
+    <Compile Include="Wrap\Messages\PackageUnlocked.cs" />
+    <Compile Include="Wrap\Messages\PackageVersionMissing.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
     <Compile Include="Wrap\TestWrapCommand.cs" />
+    <Compile Include="Wrap\UnlockWrapCommand.cs" />
     <Compile Include="Wrap\UpdatePackageVertex.cs" />
     <Compile Include="Wrap\WrapCommand.cs" />
   </ItemGroup>

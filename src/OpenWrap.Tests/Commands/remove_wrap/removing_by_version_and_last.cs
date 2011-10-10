@@ -1,10 +1,8 @@
 ﻿using NUnit.Framework;
-using Tests.Commands;
-using Tests.Commands.contexts;
 
-namespace OpenWrap.Commands.remove_wrap
+namespace Tests.Commands.remove_wrap
 {
-    public class removing_by_version_and_last : remove_wrap_command
+    public class removing_by_version_and_last : global::Tests.Commands.contexts.remove_wrap
     {
         public removing_by_version_and_last()
         {

@@ -24,6 +24,7 @@ namespace OpenWrap.Repositories
         readonly bool _useSymLinks;
         bool _canLock;
         IFile _lockFile;
+        Uri _lockFileUri;
 
         public FolderRepository(IDirectory packageBasePath, FolderRepositoryOptions options = FolderRepositoryOptions.Default)
         {
@@ -91,10 +92,10 @@ namespace OpenWrap.Repositories
             if (!_canLock) return;
             _lockFile = BasePath.Files("*.lock").Where(x => x.Name.StartsWith("packages.")).OrderBy(x => x.Name.Length).FirstOrDefault()
                         ?? BasePath.GetFile("packages.lock");
+            _lockFileUri = new Uri(ConstantUris.URI_BASE, UriKind.Absolute).Combine(new Uri(_lockFile.Name, UriKind.Relative));
             if (_lockFile.Exists == false) return;
 
-            var uri = new Uri(ConstantUris.URI_BASE, UriKind.Absolute).Combine(new Uri(_lockFile.Name, UriKind.Relative));
-            var lockedPackageInfo = new DefaultConfigurationManager(BasePath).Load<LockedPackages>(uri)
+            var lockedPackageInfo = new DefaultConfigurationManager(BasePath).Load<LockedPackages>(_lockFileUri)
                 .Lock;
             var lockedPackages = lockedPackageInfo.Select(
                 locked => Packages.Single(package => locked.Name.EqualsNoCase(package.Package.Name) &&
@@ -269,12 +270,30 @@ namespace OpenWrap.Repositories
             public IPackageInfo Package { get; set; }
         }
 
-        public void Lock(string scope, IEnumerable<IPackageInfo> currentPackages)
+        public void Lock(string scope, IEnumerable<IPackageInfo> packages)
         {
-            throw new NotImplementedException();
+            if (scope != string.Empty) throw new NotImplementedException("Can only lock in default scope.");
+            var packageNames = packages.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            var locked = LockedPackages[scope].Where(_=>packageNames.ContainsNoCase(_.Name) == false).Concat(packages)
+                .Select(x=>new LockedPackage(x.Name, x.Version)).ToList();
+            
+            new DefaultConfigurationManager(BasePath).Save(new LockedPackages { Lock = locked }, _lockFileUri);
+            RefreshLockFiles();
         }
 
         public ILookup<string, IPackageInfo> LockedPackages { get; private set; }
+
+        public void Unlock(string scope, IEnumerable<IPackageInfo> packages)
+        {
+            if (scope != string.Empty) throw new NotImplementedException("Can only lock in default scope.");
+
+            var packageNames = packages.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            var locked = LockedPackages[scope].Where(_ => packageNames.ContainsNoCase(_.Name) == false)
+                .Select(x => new LockedPackage(x.Name, x.Version)).ToList();
+
+            new DefaultConfigurationManager(BasePath).Save(new LockedPackages { Lock = locked }, _lockFileUri);
+            RefreshLockFiles();
+        }
     }
     public class LockedPackages
     {

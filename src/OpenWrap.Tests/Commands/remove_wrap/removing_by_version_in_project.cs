@@ -1,15 +1,12 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using OpenWrap.Commands;
 using OpenWrap.Testing;
-using OpenWrap.Tests.Commands;
-using Tests.Commands;
-using Tests.Commands.contexts;
-using Tests.Commands.update_wrap;
 using Tests.Commands.update_wrap.project;
 
-namespace OpenWrap.Commands.remove_wrap
+namespace Tests.Commands.remove_wrap
 {
-    public class removing_by_version_in_project : remove_wrap_command
+    public class removing_by_version_in_project : global::Tests.Commands.contexts.remove_wrap
     {
         public removing_by_version_in_project()
         {

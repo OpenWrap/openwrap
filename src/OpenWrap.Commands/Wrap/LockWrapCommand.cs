@@ -53,7 +53,8 @@ namespace OpenWrap.Commands.Wrap
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            var allPackages = _packageManager.ListProjectPackages(_env.Descriptor, _repository);
+            var lockingRepo = _repository.Feature<ISupportLocking>();
+            var allPackages = _packageManager.ListProjectPackages(_env.Descriptor.Lock(_repository), _repository);
             if (Name.Any())
             {
                 var notFound = Name.Where(_ => allPackages.FirstOrDefault(package => package.Name.EqualsNoCase(_)) == null).ToList();
@@ -61,9 +62,8 @@ namespace OpenWrap.Commands.Wrap
                     return notFound.Select(x => new PackageNotFound(x)).Cast<ICommandOutput>();
             }
             var currentPackages = GetPackagesToLock(_env.Descriptor, allPackages);
-            var repo = (ISupportLocking)_repository;
 
-            repo.Lock(string.Empty, currentPackages);
+            lockingRepo.Lock(string.Empty, currentPackages);
             return OutputLock(currentPackages);
         }
 
@@ -76,17 +76,10 @@ namespace OpenWrap.Commands.Wrap
             if (names.Any())
             {
                 var rootPackages = currentPackages.Where(_ => names.ContainsNoCase(_.Name));
-                if (IgnoreDependencies) return rootPackages;
-
-                var packageNamesToLoad = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                new PackageGraphVisitor(currentPackages).VisitFrom(
-                    rootPackages.Select(x => new PackageDependency(x.Name)),
-                    (from, dep, to) =>
-                    {
-                        packageNamesToLoad.Add(to.Name);
-                        return true;
-                    });
-                currentPackages = currentPackages.Where(x => packageNamesToLoad.Contains(x.Name));
+                
+                currentPackages = IgnoreDependencies
+                    ? rootPackages
+                    : currentPackages.AffectedPackages(rootPackages);
             }
             return currentPackages;
         }
@@ -94,40 +87,6 @@ namespace OpenWrap.Commands.Wrap
         static IEnumerable<ICommandOutput> OutputLock(IEnumerable<IPackageInfo> currentPackages)
         {
             return currentPackages.Select(x => new PackageLocked(x)).Cast<ICommandOutput>();
-        }
-    }
-    public class PackageNotFound : Error
-    {
-        public string PackageName { get; set; }
-
-        public PackageNotFound(string packageName)
-            : base("Package with name'{0}' was not found.", packageName)
-        {
-            PackageName = packageName;
-        }
-    }
-    public class PackageLocked : Info
-    {
-        public IPackageInfo Package { get; set; }
-
-        public PackageLocked(IPackageInfo package) : base("Package '{0}' locked at version '{1}'.", package.Name, package.Version)
-    {
-        Package = package;
-    }
-    }
-    public class NotInProject : Error
-    {
-        public NotInProject() : base("The current path was not recognized as being in an OpenWrap project or is missing a wrap descriptor.")
-        {
-        }
-    }
-    public class LockingNotSupported : Error
-    {
-        public IPackageRepository Repository { get; set; }
-
-        public LockingNotSupported(IPackageRepository repository) : base("The repository '{0}' does not support locking.", repository.Name)
-        {
-            Repository = repository;
         }
     }
 }

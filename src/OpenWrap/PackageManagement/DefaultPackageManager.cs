@@ -139,22 +139,27 @@ namespace OpenWrap.PackageManagement
         }
 
         public IPackageRemoveResult RemoveProjectPackage(PackageRequest packageToRemove,
-                                                         IPackageDescriptor packageDescriptor,
+                                                         IPackageDescriptor projectDescriptor,
                                                          IPackageRepository projectRepository,
                                                          PackageRemoveOptions options = PackageRemoveOptions.Default)
         {
             if (packageToRemove == null) throw new ArgumentNullException("packageToRemove");
-            if (packageDescriptor == null) throw new ArgumentNullException("packageDescriptor");
+            if (projectDescriptor == null) throw new ArgumentNullException("projectDescriptor");
             if (projectRepository == null) throw new ArgumentNullException("projectRepository");
 
-            return new PackageRemoveResultIterator(RemoveProjectPackageCore(packageToRemove, packageDescriptor, projectRepository, options));
+            var resultIterator = RemoveProjectPackageCore(packageToRemove, projectDescriptor, projectRepository, options);
+            if ((options & PackageRemoveOptions.Hooks) == PackageRemoveOptions.Hooks && _hooks != null)
+                resultIterator = WrapWithHooks(resultIterator, projectDescriptor, projectRepository, "project");
+            return new PackageRemoveResultIterator(resultIterator);
         }
 
         public IPackageRemoveResult RemoveSystemPackage(PackageRequest packageToRemove, IPackageRepository systemRepository, PackageRemoveOptions options = PackageRemoveOptions.Default)
         {
             if (packageToRemove == null) throw new ArgumentNullException("packageToRemove");
             if (systemRepository == null) throw new ArgumentNullException("systemRepository");
-            return new PackageRemoveResultIterator(RemoveSystemPackageCore(packageToRemove, systemRepository));
+            var resultIterator = RemoveSystemPackageCore(packageToRemove, systemRepository);
+
+            return new PackageRemoveResultIterator(resultIterator);
         }
 
         public IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories,
@@ -339,23 +344,18 @@ namespace OpenWrap.PackageManagement
                                                                   IPackageRepository projectRepository,
                                                                   PackageAddOptions options)
         {
-            var finalDescriptor = (options & PackageAddOptions.UpdateDescriptor) == PackageAddOptions.UpdateDescriptor
-                                          ? projectDescriptor
-                                          : new PackageDescriptor(projectDescriptor);
-            var existingEntries = finalDescriptor.Dependencies.Where(x => x.Name.EqualsNoCase(packageToAdd.Name)).ToList();
-            if (existingEntries.Count > 0)
+            if (projectDescriptor.Dependencies.Where(x => x.Name.EqualsNoCase(packageToAdd.Name)).Any())
             {
-                finalDescriptor.Dependencies.RemoveRange(existingEntries);
-                yield return new PackageDescriptorUpdateResult(PackageDescriptorDependencyUpdate.Updated);
-            }
-            else
-            {
-                yield return new PackageDescriptorUpdateResult(PackageDescriptorDependencyUpdate.Added);
+                yield return new PackageDependencyAlreadyExists(packageToAdd.Name);
+                yield break;
             }
 
-            finalDescriptor.Dependencies.Add(ToDependency(packageToAdd, options));
+            
+            var dependency = ToDependency(packageToAdd, options);
+            projectDescriptor.Dependencies.Add(dependency);
+            yield return new PackageDependencyAddedResult(dependency);
 
-            foreach (var m in CopyPackageCore(sourceRepositories, new[] { projectRepository }, finalDescriptor, x => x.EqualsNoCase(packageToAdd.Name)))
+            foreach (var m in CopyPackageCore(sourceRepositories, new[] { projectRepository }, projectDescriptor, x => x.EqualsNoCase(packageToAdd.Name)))
                 yield return m;
         }
 
@@ -506,6 +506,8 @@ namespace OpenWrap.PackageManagement
                 yield break;
             }
             packageDescriptor.Dependencies.Remove(dependency);
+            yield return new PackageDependencyRemovedResult(dependency);
+
         }
 
         IEnumerable<PackageOperationResult> RemoveProjectPackageCore(PackageRequest packageToRemove,
@@ -513,12 +515,14 @@ namespace OpenWrap.PackageManagement
                                                                      IPackageRepository projectRepository,
                                                                      PackageRemoveOptions options)
         {
-            return (packageToRemove.ExactVersion == null && !packageToRemove.LastVersion)
+            foreach (var m in (packageToRemove.ExactVersion == null && !packageToRemove.LastVersion)
                            ? RemoveFromDescriptor(packageToRemove, packageDescriptor, projectRepository, options)
-                           : RemovePackageFilesFromProjectRepo(packageToRemove, projectRepository);
+                           : RemovePackageFilesFromProjectRepo(packageToRemove, projectRepository))
+                yield return m;
         }
 
-        IEnumerable<PackageOperationResult> RemoveSystemPackageCore(PackageRequest packageToRemove, IPackageRepository systemRepository)
+        IEnumerable<PackageOperationResult> 
+            RemoveSystemPackageCore(PackageRequest packageToRemove, IPackageRepository systemRepository)
         {
             return RemovePackageFromRepository(packageToRemove, systemRepository);
         }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenWrap;
 using OpenWrap.IO;
 using OpenWrap.IO.Packaging;
 using OpenWrap.PackageModel;
@@ -42,6 +43,15 @@ namespace Tests.Repositories.contexts
             Packager.NewWithDescriptor(repository_directory.GetFile(PackageNameUtility.PackageFileName(name, version)),
                                        name,
                                        version);
+        }
+
+        protected void when_locking_package(string name, string version)
+        {
+            repository.Lock(string.Empty, repository.PackagesByName[name].Where(x => x.Version == version.ToVersion()));
+        }
+        protected void when_unlocking_package(string name)
+        {
+            repository.Unlock(string.Empty, repository.PackagesByName[name].Where(x=>x.Name.EqualsNoCase(name)));
         }
     }
 }

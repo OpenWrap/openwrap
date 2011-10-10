@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Testing;
-using Tests.Commands.contexts;
 
-namespace OpenWrap.Commands.remove_wrap
+namespace Tests.Commands.remove_wrap
 {
-    public class removing_by_name_in_project : remove_wrap_command
+    public class removing_by_name_in_project : global::Tests.Commands.contexts.remove_wrap
     {
         public removing_by_name_in_project()
         {
@@ -17,6 +16,11 @@ namespace OpenWrap.Commands.remove_wrap
             when_executing_command("foo");
         }
 
+        [Test]
+        public void command_succeeds()
+        {
+            Results.ShouldHaveNoError();
+        }
 
         [Test]
         public void dependency_is_removed_from_descriptor()

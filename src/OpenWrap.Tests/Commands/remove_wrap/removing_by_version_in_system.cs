@@ -1,18 +1,21 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Tests.Commands;
-using Tests.Commands.contexts;
-using Tests.Commands.update_wrap;
 using Tests.Commands.update_wrap.project;
 
-namespace OpenWrap.Commands.remove_wrap
+namespace Tests.Commands.remove_wrap
 {
-    public class removing_by_version_in_system : remove_wrap_command
+    public class removing_by_version_in_system : global::Tests.Commands.contexts.remove_wrap
     {
         public removing_by_version_in_system()
         {
             given_system_package("saruman", "1.0.0.0");
             given_system_package("saruman", "1.0.0.1");
             when_executing_command("saruman -system -version 1.0.0.1");
+        }
+
+        [Test]
+        public void command_succeeds()
+        {
+            Results.ShouldHaveNoError();
         }
         [Test]
         public void version_is_removed()

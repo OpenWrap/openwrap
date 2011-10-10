@@ -7,6 +7,7 @@ namespace OpenWrap.PackageManagement
     {
         Recurse = 1,
         //Clean = 2,
-        Default = Recurse
+        Hooks = 4,
+        Default = Recurse | Hooks
     }
 }

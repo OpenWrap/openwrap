@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Commands.Wrap;
+using OpenWrap.PackageManagement;
 using OpenWrap.Testing;
 using Tests.Commands.contexts;
 
@@ -24,10 +25,10 @@ namespace Tests.Commands.add_wrap
         }
 
         [Test]
-        public void entry_is_overwritten()
+        public void error_is_displayed()
         {
-            Environment.Descriptor.Dependencies.Single()
-                    .ContentOnly.ShouldBeTrue();
+            Results.ShouldHaveOne<PackageDependencyAlreadyExists>()
+                .PackageName.ShouldBe("sauron");
         }
     }
 }

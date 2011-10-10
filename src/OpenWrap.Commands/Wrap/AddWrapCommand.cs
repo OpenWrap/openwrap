@@ -17,6 +17,7 @@ namespace OpenWrap.Commands.Wrap
 
         bool? _system;
         FolderRepository _userSpecifiedRepository;
+        FileBased<IPackageDescriptor> _targetDescriptor;
 
         [CommandInput]
         public bool Anchored { get; set; }
@@ -95,27 +96,27 @@ namespace OpenWrap.Commands.Wrap
             get
             {
                 return NoDescriptorUpdate == false &&
-                       HostEnvironment.Descriptor != null;
+                       _targetDescriptor != null;
             }
         }
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            var targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope ?? string.Empty);
+            _targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope ?? string.Empty);
 
-            yield return VerifyDescriptor(targetDescriptor);
+            yield return VerifyDescriptor(_targetDescriptor);
             yield return VerifyProjectRepository();
 
             yield return SetupEnvironmentForAdd();
             var sourceRepositories = GetSourceRepositories();
 
-
+            var descriptor = new PackageDescriptor(_targetDescriptor.Value);
             if (Project && System)
             {
                 var sysToAdd = new List<PackageIdentifier>();
-                using (ChangeMonitor(targetDescriptor))
+                using (SaveDescriptorOnSuccess(_targetDescriptor))
                 {
-                    foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, HostEnvironment.ProjectRepository, AddOptions))
+                    foreach (var m in AddProjectPackage(descriptor, sourceRepositories))
                     {
                         yield return ToOutput(m);
                         ParseSuccess(m, sysToAdd.Add);
@@ -127,9 +128,9 @@ namespace OpenWrap.Commands.Wrap
             }
             else if (Project)
             {
-                using (ChangeMonitor(targetDescriptor))
+                using (SaveDescriptorOnSuccess(_targetDescriptor))
                 {
-                    foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, targetDescriptor.Value, HostEnvironment.ProjectRepository, AddOptions))
+                    foreach (var m in AddProjectPackage(descriptor, sourceRepositories))
                     {
                         yield return ToOutput(m);
                     }
@@ -156,14 +157,23 @@ namespace OpenWrap.Commands.Wrap
                     yield return ToOutput(m);
                 }
             }
-            if (ShouldUpdateDescriptor)
-                TrySaveDescriptorFile(targetDescriptor);
+        }
+
+        IEnumerable<PackageOperationResult> AddProjectPackage(IPackageDescriptor targetDescriptor, IEnumerable<IPackageRepository> sourceRepositories)
+        {
+            var packageDescriptor = targetDescriptor.Lock(HostEnvironment.ProjectRepository);
+            
+            foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, packageDescriptor, HostEnvironment.ProjectRepository, AddOptions))
+                yield return m;
+
         }
 
         protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
-            if (packageOperationResult is PackageMissingResult)
-                _packageNotFound = true;
+            If<PackageMissingResult>(packageOperationResult, _ => _packageNotFound = true);
+            if (!NoDescriptorUpdate)
+                If<PackageDependencyAddedResult>(packageOperationResult, _ => _targetDescriptor.Value.Dependencies.Add(_.Dependency));
+
             return base.ToOutput(packageOperationResult);
         }
 
@@ -272,6 +282,7 @@ namespace OpenWrap.Commands.Wrap
 
         ICommandOutput VerifyDescriptor(FileBased<IPackageDescriptor> descriptor)
         {
+            if (Project == false) return null;
             if (NoDescriptorUpdate)
                 return new Info("Descriptor file will not be updated.");
             return descriptor.File.Exists

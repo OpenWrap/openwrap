@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.PackageManagement
 {

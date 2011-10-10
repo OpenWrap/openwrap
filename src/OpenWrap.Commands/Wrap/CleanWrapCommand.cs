@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenWrap.PackageModel;
+using OpenWrap.Repositories;
 using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
@@ -31,10 +34,15 @@ namespace OpenWrap.Commands.Wrap
         {
             IEnumerable<ICommandOutput> outputs = Enumerable.Empty<ICommandOutput>();
             if (IncludeProject)
+            {
+                
+                var descriptors = HostEnvironment.ScopedDescriptors.Select(x=>x.Value.Value.Lock(HostEnvironment.ProjectRepository));
+
                 outputs = outputs.Concat((string.IsNullOrEmpty(Name)
-                                                ? PackageManager.CleanProjectPackages(HostEnvironment.ScopedDescriptors.Select(x=>x.Value.Value), HostEnvironment.ProjectRepository)
-                                                : PackageManager.CleanProjectPackages(HostEnvironment.ScopedDescriptors.Select(x => x.Value.Value), HostEnvironment.ProjectRepository, Name))
-                                          .Select(ToOutput));
+                                              ? PackageManager.CleanProjectPackages(descriptors, HostEnvironment.ProjectRepository)
+                                              : PackageManager.CleanProjectPackages(descriptors, HostEnvironment.ProjectRepository, Name))
+                                             .Select(ToOutput));
+            }
             if (System)
                 outputs = outputs.Concat((string.IsNullOrEmpty(Name)
                                                 ? PackageManager.CleanSystemPackages(HostEnvironment.SystemRepository)

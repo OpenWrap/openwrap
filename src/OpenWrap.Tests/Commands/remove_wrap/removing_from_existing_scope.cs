@@ -1,10 +1,9 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
-using Tests.Commands.contexts;
 
-namespace OpenWrap.Commands.remove_wrap
+namespace Tests.Commands.remove_wrap
 {
-    public class removing_from_existing_scope : remove_wrap_command
+    public class removing_from_existing_scope : global::Tests.Commands.contexts.remove_wrap
     {
         public removing_from_existing_scope()
         {

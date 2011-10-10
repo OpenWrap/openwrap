@@ -7,7 +7,6 @@ using OpenWrap.Commands.Remote.Messages;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.Remotes;
 using OpenWrap.PackageManagement;
-using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
@@ -69,7 +68,7 @@ namespace OpenWrap.Commands.Wrap
 
         protected bool Successful { get; private set; }
 
-        protected IDisposable ChangeMonitor(FileBased<IPackageDescriptor> descriptor)
+        protected IDisposable SaveDescriptorOnSuccess(FileBased<IPackageDescriptor> descriptor)
         {
             bool packagesChanged = false;
             PackageChanged change = (a, b, c, d) =>
@@ -86,18 +85,14 @@ namespace OpenWrap.Commands.Wrap
             return new ActionOnDispose(() =>
             {
                 listener.Dispose();
-                if (packagesChanged)
+                if (Successful && packagesChanged)
                 {
+                    descriptor.Save();
                     if (HostEnvironment.Descriptor != descriptor.Value)
-                    {
-                        descriptor.File.Touch();
                         HostEnvironment.DescriptorFile.Touch();
-                    }
                     else
-                    {
                         foreach (var file in HostEnvironment.ScopedDescriptors.Select(x => x.Value.File))
                             file.Touch();
-                    }
                 }
             });
         }
@@ -111,11 +106,6 @@ namespace OpenWrap.Commands.Wrap
                 yield return m;
         }
 
-        protected DependencyResolutionResult ResolveDependencies(PackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repos)
-        {
-            return PackageResolver.TryResolveDependencies(packageDescriptor, repos);
-        }
-
         protected virtual ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
             var output = packageOperationResult.ToOutput();
@@ -123,11 +113,10 @@ namespace OpenWrap.Commands.Wrap
             return output;
         }
 
-        protected void TrySaveDescriptorFile(FileBased<IPackageDescriptor> targetDescriptor)
+        protected static void If<T>(PackageOperationResult result, Action<T> action) where T:PackageOperationResult
         {
-            if (!Successful) return;
-            using (var descriptorStream = targetDescriptor.File.OpenWrite())
-                new PackageDescriptorReaderWriter().Write(targetDescriptor.Value, descriptorStream);
+            T resultTyped;
+            if ((resultTyped = result as T) != null) action(resultTyped);
         }
     }
 }

@@ -12,16 +12,17 @@ namespace OpenWrap.PackageManagement.Exporters.Assemblies
         public static IEnumerable<Exports.IAssembly> GetProjectAssemblyReferences(this IPackageManager manager,
                                                                                     IPackageDescriptor descriptor,
                                                                                     IPackageRepository repository,
-            ExecutionEnvironment environment,
+                                                                                    ExecutionEnvironment environment,
                                                                                     bool includeContentOnly)
         {
-            var sourcePackages = manager.ListProjectPackages(descriptor, repository);
-            var assemblies = manager.GetProjectExports<Exports.IAssembly>(descriptor, repository, environment)
+            var lockedDescriptor = descriptor.Lock(repository);
+            var sourcePackages = manager.ListProjectPackages(lockedDescriptor, repository);
+            var assemblies = manager.GetProjectExports<Exports.IAssembly>(lockedDescriptor, repository, environment)
                     .SelectMany(x => x);
 
             if (includeContentOnly) return assemblies;
 
-            var packagesToInclude = sourcePackages.NotInContentBranch(descriptor.Dependencies).Select(x=>x.Identifier).ToList();
+            var packagesToInclude = sourcePackages.NotInContentBranch(lockedDescriptor.Dependencies).Select(x=>x.Identifier).ToList();
             return assemblies.Where(x => packagesToInclude.Contains(x.Package.Identifier)).ToList();
         }
 

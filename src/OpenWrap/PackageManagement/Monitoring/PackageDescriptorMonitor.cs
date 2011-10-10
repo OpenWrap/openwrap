@@ -14,6 +14,7 @@ using Path = OpenFileSystem.IO.Path;
 namespace OpenWrap.PackageManagement.Monitoring
 {
     // TODO: Implement file monitoring in the IFileSystem implementation and remove FileSystemEventHandler
+    // TODO: Refactor *and* put the code under test, in its current form its evil.
     public class PackageDescriptorMonitor : IPackageDescriptorMonitor
     {
         readonly Dictionary<Path, DescriptorSubscriptions> _notificationClients = new Dictionary<Path, DescriptorSubscriptions>();

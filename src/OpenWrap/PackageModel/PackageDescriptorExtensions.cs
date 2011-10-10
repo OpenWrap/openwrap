@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel.Serialization;
+using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 
 namespace OpenWrap.PackageModel
@@ -28,6 +31,37 @@ namespace OpenWrap.PackageModel
         public static void Touch(this IFile file)
         {
             file.MustExist().LastModifiedTimeUtc = DateTimeOffset.UtcNow;
+        }
+
+        public static IPackageDescriptor Lock(this IPackageDescriptor descriptor, IPackageRepository repository, string scope = null)
+        {
+            scope = scope ?? string.Empty;
+            var lockedRepo = repository.Feature<ISupportLocking>();
+            if (lockedRepo == null)
+                return descriptor;
+            var lockedDescriptor = new PackageDescriptor(descriptor);
+            var lockedPackages = lockedRepo.LockedPackages[scope];
+            return Lock(lockedDescriptor, lockedPackages);
+        }
+
+        public static IPackageDescriptor Lock(this IPackageDescriptor lockedDescriptor, IEnumerable<IPackageInfo> lockedPackages)
+        {
+            foreach (var lockedPackage in lockedPackages)
+            {
+                var existingDep = lockedDescriptor.Dependencies.FirstOrDefault(x => x.Name == lockedPackage.Name);
+                PackageDependencyBuilder builder;
+                if (existingDep != null)
+                {
+                    lockedDescriptor.Dependencies.Remove(existingDep);
+                    builder = new PackageDependencyBuilder(existingDep);
+                }
+                else
+                {
+                    builder = new PackageDependencyBuilder(lockedPackage.Name);
+                }
+                lockedDescriptor.Dependencies.Add(builder.SetVersionVertices(new[] { new AbsolutelyEqualVersionVertex(lockedPackage.Version) }));
+            }
+            return lockedDescriptor;
         }
     }
 }

@@ -4,9 +4,9 @@ using Tests.Commands.update_wrap.project;
 
 namespace Tests.Commands.update_wrap
 {
-    public class by_name_only_updates_direct_dependency : contexts.update_wrap
+    public class by_name_only_updates_affected_dependency : contexts.update_wrap
     {
-        public by_name_only_updates_direct_dependency()
+        public by_name_only_updates_affected_dependency()
         {
             given_dependency("depends: narnya");
             given_dependency("depends: vilya");

@@ -131,6 +131,7 @@
     <Compile Include="PackageManagement\PackageHookResult.cs" />
     <Compile Include="PackageManagement\PackageManagerExtensions.cs" />
     <Compile Include="PackageManagement\PackageUpdated.cs" />
+    <Compile Include="PackageModel\PackageGraphExtensions.cs" />
     <Compile Include="ProjectModel\MSBuildProject.cs" />
     <Compile Include="ProjectModel\Drivers.File\ProjectConstants.cs" />
     <Compile Include="ProjectModel\Drivers.File\SolutionConstants.cs" />

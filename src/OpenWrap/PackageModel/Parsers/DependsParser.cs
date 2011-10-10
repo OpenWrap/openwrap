@@ -87,6 +87,10 @@ namespace OpenWrap.PackageModel.Parsers
                     return new EqualVersionVertex(version);
                 case "<":
                     return new LessThanVersionVertex(version);
+                case "<=":
+                    return new LessThanOrEqualVersionVertex(version);
+                case "≡":
+                    return new AbsolutelyEqualVersionVertex(version);
                 default:
                     return null;
             }

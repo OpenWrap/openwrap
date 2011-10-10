@@ -40,7 +40,7 @@ namespace OpenWrap.PackageManagement
                                            PackageAddOptions options = PackageAddOptions.Default);
 
         IPackageRemoveResult RemoveProjectPackage(PackageRequest packageToRemove,
-                                                  IPackageDescriptor packageDescriptor,
+                                                  IPackageDescriptor projectDescriptor,
                                                   IPackageRepository projectRepository,
                                                   PackageRemoveOptions optiosn = PackageRemoveOptions.Default);
 

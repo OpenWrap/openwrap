@@ -1,10 +1,8 @@
 ﻿using NUnit.Framework;
-using Tests.Commands;
-using Tests.Commands.contexts;
 
-namespace OpenWrap.Commands.remove_wrap
+namespace Tests.Commands.remove_wrap
 {
-    public class remove_unknown_system_package : remove_wrap_command
+    public class remove_unknown_system_package : global::Tests.Commands.contexts.remove_wrap
     {
         public remove_unknown_system_package()
         {

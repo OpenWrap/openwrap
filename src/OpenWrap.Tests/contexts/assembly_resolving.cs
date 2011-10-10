@@ -23,7 +23,7 @@ namespace Tests.contexts
 
         public assembly_resolving()
         {
-            given_project_repository(new FolderRepository(FileSystem.GetTempDirectory().GetDirectory(Guid.NewGuid().ToString()).MustExist()));
+            given_project_repository(new FolderRepository(FileSystem.GetTempDirectory().GetDirectory(Guid.NewGuid().ToString()).MustExist(), FolderRepositoryOptions.SupportLocks));
                 
         }
 
