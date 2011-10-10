@@ -63,7 +63,8 @@ namespace OpenRasta.Client
 
         public IClientResponse Send()
         {
-            _request.ContentType = _entity.ContentType.ToString();
+            //_request.ContentType = _entity.ContentType.ToString();
+                                                                
             RaiseStatusChanged("Connecting to {0}", RequestUri.ToString());
             if (_entity.Stream != null &&
                 ((_entity.Stream.CanSeek && _entity.Stream.Length > 0) ||
