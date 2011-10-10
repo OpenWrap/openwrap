@@ -106,7 +106,8 @@ namespace OpenWrap.Runtime
                 var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled;
                 if (Descriptor.UseSymLinks)
                     repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
-                _projectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions)
+
+                _projectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions | FolderRepositoryOptions.SupportLocks)
                 {
                     Name = "Project repository"
                 };
