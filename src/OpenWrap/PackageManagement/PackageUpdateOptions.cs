@@ -6,6 +6,7 @@ namespace OpenWrap.PackageManagement
     public enum PackageUpdateOptions
     {
         Recurse = 1,
-        Default = Recurse
+        Default = Recurse | Hooks,
+        Hooks = 2
     }
 }

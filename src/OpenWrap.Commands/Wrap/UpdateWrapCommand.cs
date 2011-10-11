@@ -76,13 +76,6 @@ namespace OpenWrap.Commands.Wrap
             return update;
         }
 
-        protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
-        {
-            return packageOperationResult is PackageMissingResult
-                       ? new Warning("Cannot update package because of missing packages: {0}.", ((PackageMissingResult)packageOperationResult).Package.Identifier)
-                       : base.ToOutput(packageOperationResult);
-        }
-
         IEnumerable<ICommandOutput> UpdateProjectPackages()
         {
             yield return new Info("Updating project packages...");
@@ -107,6 +100,7 @@ namespace OpenWrap.Commands.Wrap
                 }
             if (updated)
                 HostEnvironment.DescriptorFile.Touch();
+
             foreach (var failed in errors.GetFailures())
             {
 
@@ -122,7 +116,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> UpdateSystemPackages()
         {
             var isByName = !string.IsNullOrEmpty(Name);
-            yield return new Info(isByName
+            yield return new Info(!isByName
                                             ? "Updating system packages..."
                                             : string.Format("Updating system package '{0}'", Name));
 

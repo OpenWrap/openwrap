@@ -119,6 +119,8 @@
     <Compile Include="Commands\unlock_wrap\not_in_project.cs" />
     <Compile Include="Commands\unlock_wrap\repository_deosnt_supoort_locking.cs" />
     <Compile Include="Commands\update_wrap\locks\existing_lock.cs" />
+    <Compile Include="Commands\update_wrap\project\by_name\already_up_to_date.cs" />
+    <Compile Include="Commands\update_wrap\project\by_name\not_found.cs" />
     <Compile Include="Repositories\folder\locking\enabled_through_option.cs" />
     <Compile Include="Repositories\folder\locking\existing_lock.cs" />
     <Compile Include="resolving_assemblies\locks.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using OpenWrap.Collections;
+using OpenWrap.Commands;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
@@ -172,7 +173,10 @@ namespace OpenWrap.PackageManagement
             if (projectDescriptor == null) throw new ArgumentNullException("projectDescriptor");
             if (sourceRepositories.Any(x => x == null)) throw new ArgumentException("Some repositories are null.", "sourceRepositories");
 
-            return new PackageUpdateResultIterator(UpdateProjectPackageCore(sourceRepositories, projectRepository, projectDescriptor, x => true));
+            var resultIterator = UpdateProjectPackageCore(sourceRepositories, projectRepository, projectDescriptor, x => true);
+            if ((options & PackageUpdateOptions.Hooks) == PackageUpdateOptions.Hooks)
+                resultIterator = WrapWithHooks(resultIterator, projectDescriptor, projectRepository, "project");
+            return new PackageUpdateResultIterator(resultIterator);
         }
 
         public IPackageUpdateResult UpdateProjectPackages(IEnumerable<IPackageRepository> sourceRepositories,
@@ -186,7 +190,10 @@ namespace OpenWrap.PackageManagement
             if (projectDescriptor == null) throw new ArgumentNullException("projectDescriptor");
             if (sourceRepositories.Any(x => x == null)) throw new ArgumentException("Some repositories are null.", "sourceRepositories");
 
-            return new PackageUpdateResultIterator(UpdateProjectPackageCore(sourceRepositories, projectRepository, projectDescriptor, x => x.EqualsNoCase(packageName)));
+            var resultIterator = UpdateProjectPackageCore(sourceRepositories, projectRepository, projectDescriptor, x => x.EqualsNoCase(packageName));
+            if ((options & PackageUpdateOptions.Hooks) == PackageUpdateOptions.Hooks)
+                resultIterator = WrapWithHooks(resultIterator, projectDescriptor, projectRepository, "project");
+            return new PackageUpdateResultIterator(resultIterator);
         }
 
         public IPackageUpdateResult UpdateSystemPackages(IEnumerable<IPackageRepository> sourceRepositories,
@@ -422,6 +429,7 @@ namespace OpenWrap.PackageManagement
                     yield return packageResolution;
                 yield break;
             }
+
             var rootPackages = resolvedPackages.SuccessfulPackages.Where(_ => nameSelector(_.Identifier.Name));
             var affectedPackageNames = new List<string>();
             new PackageGraphVisitor(resolvedPackages.SuccessfulPackages.Select(x => x.Packages.First()))
@@ -538,7 +546,20 @@ namespace OpenWrap.PackageManagement
                                                                      IPackageDescriptor projectDescriptor,
                                                                      Func<string, bool> nameSelector)
         {
-            return CopyPackageCore(sourceRepositories, new[] { projectRepository }, projectDescriptor, nameSelector);
+
+            foreach (var m in CopyPackageCore(sourceRepositories, new[] { projectRepository }, projectDescriptor, nameSelector))
+                yield return m;
+
+            var resolved = _resolver.TryResolveDependencies(projectDescriptor, sourceRepositories);
+            if (resolved.IsSuccess)
+            {
+                foreach (var missing in from package in resolved.SuccessfulPackages
+                                        let name = package.Identifier.Name
+                                        where nameSelector(name) &&
+                                        sourceRepositories.Where(_=>_ != projectRepository).Any(repo => repo.PackagesByName.Contains(name)) == false
+                                        select name)
+                    yield return new PackageOnlyInCurrentRepository(missing, projectRepository);
+            }
         }
 
         IEnumerable<PackageOperationResult> UpdateSystemPackageCore(IEnumerable<IPackageRepository> sourceRepositories, IPackageRepository systemRepository, Func<string, bool> packageNameSelector)
@@ -574,6 +595,36 @@ namespace OpenWrap.PackageManagement
             {
                 return string.Empty;
             }
+        }
+    }
+
+    public class PackageOnlyInCurrentRepository : PackageOperationResult, ICommandOutput
+    {
+        public string PackageName { get; set; }
+        public IPackageRepository PackageRepository { get; set; }
+
+        public PackageOnlyInCurrentRepository(string packageName, IPackageRepository packageRepository)
+        {
+            PackageName = packageName;
+            PackageRepository = packageRepository;
+            Type = CommandResultType.Warning;
+        }
+
+        public override bool Success
+        {
+            get { return true; }
+        }
+
+        public override ICommandOutput ToOutput()
+        {
+            return this;
+        }
+
+        public CommandResultType Type { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Package '{0}' is only found in repository '{1}', are you missing a remote?", PackageName, PackageRepository.Name);
         }
     }
 }

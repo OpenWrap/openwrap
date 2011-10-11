@@ -5,15 +5,15 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement
 {
-    internal class PackageUpToDateResult : PackageOperationResult
+    public class PackageUpToDateResult : PackageOperationResult, ICommandOutput
     {
-        readonly IPackageInfo _existingUpToDateVersion;
-        readonly IPackageRepository _repository;
+        public IPackageInfo Package { get; private set; }
+        public IPackageRepository DestinationRepository { get; private set; }
 
         public PackageUpToDateResult(IPackageInfo existingUpToDateVersion, IPackageRepository repository)
         {
-            _existingUpToDateVersion = existingUpToDateVersion;
-            _repository = repository;
+            Package = existingUpToDateVersion;
+            DestinationRepository = repository;
         }
 
         public override bool Success
@@ -23,7 +23,16 @@ namespace OpenWrap.PackageManagement
 
         public override ICommandOutput ToOutput()
         {
-            return new Info("{0}: {1} up-to-date.", _repository.Name, _existingUpToDateVersion.Identifier.Name);
+            return this;
+        }
+
+        public CommandResultType Type
+        {
+            get { return CommandResultType.Info;}
+        }
+        public override string ToString()
+        {
+            return string.Format("{0}: {1} up-to-date.", DestinationRepository.Name, Package.Identifier.Name);
         }
     }
 }

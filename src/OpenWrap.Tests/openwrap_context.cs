@@ -299,11 +299,13 @@ namespace Tests
 
         protected virtual void when_executing_command(string args = null)
         {
+            Console.WriteLine("> {0}-{1} {2}", Command.Verb, Command.Noun, args);
             args = args ?? string.Empty;
             foreach (var descriptor in Environment.ScopedDescriptors.Values)
                 descriptor.Save();
 
             Results = new CommandLineRunner().Run(Command, args).ToList();
+            Results.ForEach(_ => _.ToString().Split(new[]{"\r\n", "\r", "\n"},StringSplitOptions.None).Select(line => "< " + line).ToList().ForEach(Console.WriteLine));
             ReloadRepositories();
         }
 

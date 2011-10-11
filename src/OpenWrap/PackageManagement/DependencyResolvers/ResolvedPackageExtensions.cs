@@ -12,7 +12,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                           select new
                           {
                                   who = trace.First(),
-                                  traces = new[] { string.Format("not found: {0}", missing.Package.Identifier.Name) }
+                                  traces = new[] { string.Format("'{0}' dependency not found", missing.Package.Identifier.Name) }
                                   .Concat(trace.Skip(1).Select(ParseStack))
                           })
                     .Union
@@ -22,7 +22,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                             select new
                             {
                                     who = trace.First(),
-                                    traces = new[] { string.Format("conflict: {0}", conflict.Package.Identifier.Name) }
+                                    traces = new[] { string.Format("'{0}; in conflict", conflict.Package.Identifier.Name) }
                                     .Concat(trace.Skip(1).Select(ParseStack))
                             }
                     );
@@ -32,8 +32,8 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         static string ParseStack(Node node)
         {
             return node is DependencyNode
-                           ? "Dependends on " + node
-                           : "Package version " + node;
+                           ? "('dependends: " + node + "')"
+                           : "From package " + node;
 
         }
     }
