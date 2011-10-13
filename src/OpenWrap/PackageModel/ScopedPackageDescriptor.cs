@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using OpenWrap.PackageModel.Parsers;
 
 namespace OpenWrap.PackageModel
@@ -137,8 +138,13 @@ namespace OpenWrap.PackageModel
 
             IEnumerator<IPackageDescriptorEntry> IEnumerable<IPackageDescriptorEntry>.GetEnumerator()
             {
-                foreach (var line in _entries)
+                foreach (var line in _parent.Entries.Where(_ => !_.Name.EqualsNoCase("depends") && !_.Name.EqualsNoCase("override")))
                     yield return line;
+                foreach (var dependency in _dependencies)
+                    yield return new GenericDescriptorEntry("depends", dependency.ToString());
+
+                foreach (var packageOverride in _overrides)
+                    yield return new GenericDescriptorEntry("override", string.Format("{0} {1}", packageOverride.OldPackage, packageOverride.NewPackage));
             }
 
             void InitializeHeaders()

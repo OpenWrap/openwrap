@@ -9,6 +9,8 @@ namespace OpenWrap.ProjectModel
         string TargetPlatform { get; }
         bool OpenWrapEnabled { get; }
         IFile File { get; }
+
+
     }
 
 }

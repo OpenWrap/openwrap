@@ -9,17 +9,19 @@ namespace OpenWrap.PackageModel.Parsers
     {
         readonly PackageDependencyCollection _parent;
         readonly PackageDependencyCollection _current;
+        readonly List<string> _removed;
 
         public ScopedPackageDependencyCollection(PackageDependencyCollection parent, PackageDependencyCollection current)
         {
             _parent = parent;
             _current = current;
+            _removed = new List<string>();
         }
 
         public IEnumerator<PackageDependency> GetEnumerator()
         {
-            var currentKeys = _current.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-            foreach (var val in _current.Concat(_parent.Where(p => currentKeys.Contains(p.Name, StringComparer.OrdinalIgnoreCase) == false)))
+            var overriddenPackages = _current.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            foreach (var val in _current.Concat(_parent.Where(p => !overriddenPackages.ContainsNoCase(p.Name) && !_removed.ContainsNoCase(p.Name))))
                 yield return val;
         }
 
@@ -40,7 +42,7 @@ namespace OpenWrap.PackageModel.Parsers
 
         public bool Contains(PackageDependency item)
         {
-            return _current.Contains(item) || _parent.Contains(item);
+            return _current.Contains(item) || (_parent.Contains(item) && !_removed.ContainsNoCase(item.Name));
         }
 
         public void CopyTo(PackageDependency[] array, int arrayIndex)
@@ -50,7 +52,15 @@ namespace OpenWrap.PackageModel.Parsers
 
         public bool Remove(PackageDependency item)
         {
-            return _current.Remove(item);
+            if (_current.Contains(item))
+                _current.Remove(item);
+            if (_removed.ContainsNoCase(item.Name)) return true;
+            if (_parent.Any(_=>_.Name.EqualsNoCase(item.Name)))
+            {
+                _removed.Add(item.Name);
+                return true;
+            }
+            return false;
         }
 
         public int Count

@@ -17,9 +17,11 @@ namespace OpenWrap.VisualStudio.ProjectModel
         public DteProject(Project project)
         {
             DteObject = project;
+            
             _openWrapEnabled = Lazy.Is(() => MSBuildProject.OpenWrapEnabled(project.FullName), true);
             _file = Lazy.Is(() => LocalFileSystem.Instance.GetFile(project.FullName));
         }
+
 
         public Project DteObject { get; private set; }
 
