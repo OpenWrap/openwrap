@@ -44,7 +44,9 @@ namespace OpenWrap.Repositories.FileSystem
 
         public PackageFeed Index()
         {
-            return IndexDocument.ParsePackageDocument();
+            var feed = IndexDocument.ParsePackageDocument();
+            feed.CanPublish = true;
+            return feed;
         }
 
         public Stream LoadPackage(PackageEntry packageEntry)

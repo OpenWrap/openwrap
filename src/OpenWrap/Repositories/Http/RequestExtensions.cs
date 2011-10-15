@@ -26,44 +26,35 @@ namespace OpenWrap.Repositories.Http
         {
             if (xmlDocument == null)
                 return null;
-            return new PackageFeed
+            var feed = new PackageFeed
             {
-                    CanPublish = GetCanPublish(xmlDocument),
-                    PublishHref = GetPublishHref(xmlDocument),
-                    Packages = from wrapList in xmlDocument.Descendants("wrap")
-                               let name = wrapList.Attribute("name")
-                               let version = wrapList.Attribute("version")
-                               let nuked = wrapList.Attribute("nuked")
-                               let lastModifiedTimeUtc = GetModifiedTimeUtc(wrapList.Attribute("last-modified-time-utc"))
-                               let link = (from link in wrapList.Elements("link")
-                                           let relAttribute = link.Attribute("rel")
-                                           let hrefAttribute = link.Attribute("href")
-                                           where hrefAttribute != null && relAttribute != null && relAttribute.Value.EqualsNoCase("package")
-                                           select hrefAttribute).FirstOrDefault()
-                               let baseUri = !string.IsNullOrEmpty(xmlDocument.BaseUri) ? new Uri(xmlDocument.BaseUri, UriKind.Absolute) : null
-                               let absoluteLink = baseUri == null ? new Uri(link.Value, UriKind.RelativeOrAbsolute) : new Uri(baseUri, new Uri(link.Value, UriKind.RelativeOrAbsolute))
-                               where name != null && version != null && link != null
-                               let depends = wrapList.Elements("depends").Select(x => x.Value)
-                               select new PackageEntry
-                               {
-                                       Name = name.Value,
-                                       Version = new Version(version.Value),
-                                       PackageHref = absoluteLink,
-                                       Dependencies = depends,
-                                       CreationTime = lastModifiedTimeUtc,
-                                       Nuked = nuked == null ? false : GetNuked(nuked.Value)
-                               }
+                PublishHref = GetPublishHref(xmlDocument),
+                Packages = from wrapList in xmlDocument.Descendants("wrap")
+                           let name = wrapList.Attribute("name")
+                           let version = wrapList.Attribute("version")
+                           let nuked = wrapList.Attribute("nuked")
+                           let lastModifiedTimeUtc = GetModifiedTimeUtc(wrapList.Attribute("last-modified-time-utc"))
+                           let link = (from link in wrapList.Elements("link")
+                                       let relAttribute = link.Attribute("rel")
+                                       let hrefAttribute = link.Attribute("href")
+                                       where hrefAttribute != null && relAttribute != null && relAttribute.Value.EqualsNoCase("package")
+                                       select hrefAttribute).FirstOrDefault()
+                           let baseUri = !string.IsNullOrEmpty(xmlDocument.BaseUri) ? new Uri(xmlDocument.BaseUri, UriKind.Absolute) : null
+                           let absoluteLink = baseUri == null ? new Uri(link.Value, UriKind.RelativeOrAbsolute) : new Uri(baseUri, new Uri(link.Value, UriKind.RelativeOrAbsolute))
+                           where name != null && version != null && link != null
+                           let depends = wrapList.Elements("depends").Select(x => x.Value)
+                           select new PackageEntry
+                           {
+                               Name = name.Value,
+                               Version = new Version(version.Value),
+                               PackageHref = absoluteLink,
+                               Dependencies = depends,
+                               CreationTime = lastModifiedTimeUtc,
+                               Nuked = nuked == null ? false : GetNuked(nuked.Value)
+                           }
             };
-        }
-
-        static bool GetCanPublish(XDocument doc)
-        {
-            var wraplist = doc.Element("wraplist");
-            var canPublishNode = wraplist != null ? wraplist.Attribute("read-only") : null;
-            bool readOnly;
-            if (canPublishNode != null && bool.TryParse(canPublishNode.Value, out readOnly))
-                return !readOnly;
-            return false;
+            feed.CanPublish = feed.PublishHref != null;
+            return feed;
         }
 
         static DateTimeOffset GetModifiedTimeUtc(XAttribute attribute)
