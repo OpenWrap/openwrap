@@ -53,6 +53,7 @@ namespace OpenWrap.Repositories.Http
 
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
+            if (typeof(TFeature) == typeof(ISupportPublishing) && _navigator.CanPublish == false) return null;
             return this as TFeature;
         }
 

@@ -57,12 +57,35 @@ namespace OpenWrap.Commands.Remote
                 yield return new UnknownEndpointType(repositoryInput);
                 yield break;
             }
-            var publishTokens = (repository.Feature<ISupportPublishing>() != null)
+            List<RemoteRepositoryEndpoint> publishTokens;
+            if (Publish != null)
+            {
+                var publishRepository = Factories.Select(x => x.FromUserInput(Publish)).NotNull().FirstOrDefault();
+                if (publishRepository == null)
+                {
+                    // TODO: add tests to check that
+                    yield return new UnknownEndpointType(Publish);
+                    yield break;
+                }
+                publishTokens = new List<RemoteRepositoryEndpoint>
+                {
+                    new RemoteRepositoryEndpoint
+                    {
+                        Token = publishRepository.Token,
+                        Username = Username,
+                        Password = Password
+                    }
+                };
+            }
+            else
+            {
+                publishTokens = (repository.Feature<ISupportPublishing>() != null)
                                     ? new List<RemoteRepositoryEndpoint>
                                     {
                                         new RemoteRepositoryEndpoint { Token = repository.Token, Username = Username, Password = Password }
                                     }
                                     : new List<RemoteRepositoryEndpoint>();
+            }
 
             int position = GetNewRemotePriority(repositories);
 

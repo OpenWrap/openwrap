@@ -22,7 +22,7 @@ namespace Tests.Commands.remote.add
         [Test]
         public void publish_is_set()
         {
-            ConfiguredRemotes["iron-hills"].PublishRepositories.Single().Token.ShouldBe("[memory]http://localhost/one");
+            ConfiguredRemotes["iron-hills"].PublishRepositories.Single().Token.ShouldBe("[memory]http://localhost/two");
         }
     }
 }
