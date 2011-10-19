@@ -19,17 +19,38 @@ namespace OpenWrap.SolutionPlugins.VisualStudio
     {
         const string ASSEMBLY_DATA = "RESHARPER_ASSEMBLY_DATA";
         const string ASSEMBLY_NOTIFY = "ASSEMBLY_CHANGE_NOTIFY";
-        readonly EventWaitHandle _assembliesChanged;
-        readonly IPackageManager _packageManager;
-        readonly IPackageRepository _projectRepository;
-        readonly IDirectory _rootDirectory;
-        readonly DteSolution _solution;
-        readonly Timer _timer;
+        const int MAX_TRIES = 100;
+        int _initTries = 0;
+        EventWaitHandle _assembliesChanged;
+        IPackageManager _packageManager;
+        IPackageRepository _projectRepository;
+        IDirectory _rootDirectory;
+        DteSolution _solution;
+        Timer _timer;
         IDisposable _changeMonitor;
         bool _running;
         DTE _dte;
 
         public AssemblyReferenceNotificationsPlugin()
+        {
+            if (!TryInitialize())
+            {
+                ScheduleTryInitialize();
+            }
+        }
+        void ScheduleTryInitialize()
+        {
+            if (_initTries++ < MAX_TRIES)
+                _timer = new Timer(_ =>
+                {
+                    if (!TryInitialize())
+                        ScheduleTryInitialize();
+                },
+                                   null,
+                                   TimeSpan.FromSeconds(2),
+                                   TimeSpan.FromMilliseconds(-1));
+        }
+        bool TryInitialize()
         {
             try
             {
@@ -38,7 +59,7 @@ namespace OpenWrap.SolutionPlugins.VisualStudio
             catch
             {
                 _running = false;
-                return;
+                return false;
             }
 
             // TODO:  seen in the wild, _dte.Solution is null (?), need to schedule and restart initialization for those scenarios.
@@ -53,6 +74,7 @@ namespace OpenWrap.SolutionPlugins.VisualStudio
             RegisterFileListener();
             RefreshProjects();
             _timer = new Timer(_ => RefreshProjects(), null, Timeout.Infinite, Timeout.Infinite);
+            return true;
         }
 
         public void Dispose()
