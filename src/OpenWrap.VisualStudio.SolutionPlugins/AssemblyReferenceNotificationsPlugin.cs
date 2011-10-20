@@ -55,13 +55,13 @@ namespace OpenWrap.SolutionPlugins.VisualStudio
             try
             {
                 _dte = SiteManager.GetGlobalService<DTE>();
+                _running = _dte != null;
             }
             catch
             {
                 _running = false;
-                return false;
             }
-
+            if (!_running) return false;
             // TODO:  seen in the wild, _dte.Solution is null (?), need to schedule and restart initialization for those scenarios.
             _solution = new DteSolution(_dte.Solution);
             _solution.ProjectChanged += HandleProjectChange;
