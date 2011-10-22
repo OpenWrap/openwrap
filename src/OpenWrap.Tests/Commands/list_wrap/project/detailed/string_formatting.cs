@@ -30,7 +30,7 @@ namespace Tests.Commands.list_wrap.project.detailed
  │   └─depends: one-ring
  │     └─one-ring 1.0.0
  │       └─depends: mount-doom >= 2.0
- │         └─mount-doom 2.0.0  (The mount of doom)
+ │         └─mount-doom 2.0.0 (The mount of doom)
  ├─depends: frodo
  │ └─frodo 2.0.0
  └─depends: mount-doom

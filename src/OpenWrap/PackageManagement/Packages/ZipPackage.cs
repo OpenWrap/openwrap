@@ -133,7 +133,7 @@ namespace OpenWrap.PackageManagement.Packages
                 _descriptor = new DefaultPackageInfo(PackageFile.Name, versionFromVersionFile, descriptor);
 
                 if (Descriptor.Version == null)
-                    throw new InvalidOperationException("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.");
+                    throw new InvalidOperationException(string.Format("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.", descriptor.Name));
             }
         }
 

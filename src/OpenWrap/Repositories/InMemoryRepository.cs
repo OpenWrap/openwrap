@@ -92,7 +92,7 @@ namespace OpenWrap.Repositories
 
             var tempFolder = new ZipPackage(inMemoryFile);
 
-            var package = new InMemoryPackage(tempFolder);
+            var package = new InMemoryPackage(tempFolder) { Source = this };
             Packages.Add(package);
             return package;
         }

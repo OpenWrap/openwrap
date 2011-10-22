@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
 using OpenFileSystem.IO;
+using OpenWrap.Collections;
 using Path = System.IO.Path;
 
 namespace OpenWrap.IO.Packaging
@@ -38,7 +39,13 @@ namespace OpenWrap.IO.Packaging
 
         public static IFile NewWithDescriptor(IFile wrapFile, string name, string version, IEnumerable<PackageContent> addedContent, params string[] descriptorLines)
         {
-            var descriptorContent = (descriptorLines.Any() ? String.Join("\r\n", descriptorLines) : " ").ToUTF8Stream();
+            var lines = descriptorLines.ToList();
+            if (lines.None(_ => _.StartsWithNoCase("name:")))
+                lines.Add("name: " + name);
+            if (lines.None(_ => _.StartsWithNoCase("version:")))
+                lines.Add("version: " + name);
+
+            var descriptorContent = lines.JoinString("\r\n").ToUTF8Stream();
             var versionContent = version.ToUTF8Stream();
             var content = new List<PackageContent>
             {
