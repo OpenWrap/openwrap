@@ -91,6 +91,7 @@
     <Compile Include="Wrap\Messages\PackageNotFound.cs" />
     <Compile Include="Wrap\Messages\PackageUnlocked.cs" />
     <Compile Include="Wrap\Messages\PackageVersionMissing.cs" />
+    <Compile Include="Wrap\NodeExtensions.cs" />
     <Compile Include="Wrap\SetWrapCommand.cs" />
     <Compile Include="Wrap\TestWrapCommand.cs" />
     <Compile Include="Wrap\UnlockWrapCommand.cs" />

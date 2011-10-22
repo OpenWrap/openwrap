@@ -62,6 +62,10 @@ namespace OpenWrap
             return string.Join(separator, strings.ToArray());
         }
 
+        public static string JoinString<T>(this IEnumerable<T> strings, string separator)
+        {
+            return string.Join(separator, strings.Select(_=>_.ToString()).ToArray());
+        }
         public static string JoinString(this IEnumerable<string> strings, char separator)
         {
             return string.Join(separator + string.Empty, strings.ToArray());

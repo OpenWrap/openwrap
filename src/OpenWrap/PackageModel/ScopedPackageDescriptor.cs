@@ -131,6 +131,12 @@ namespace OpenWrap.PackageModel
                 throw new InvalidOperationException("Can only have one level of nesting for scoped descriptors.");
             }
 
+            public IEnumerable<IPackageDescriptorEntry> GetPersistableEntries()
+            {
+                foreach (var entry in _entries)
+                    yield return entry;
+            }
+
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return ((IEnumerable<IPackageDescriptorEntry>)this).GetEnumerator();

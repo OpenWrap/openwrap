@@ -22,7 +22,7 @@ namespace OpenWrap.contexts
         protected static string WriteDescriptor(IPackageDescriptor descriptor)
         {
             var memString = new MemoryStream();
-            new PackageDescriptorReaderWriter().Write(descriptor, memString);
+            new PackageDescriptorReaderWriter().Write(descriptor.GetPersistableEntries(), memString);
             memString.Position = 0;
             return memString.ReadString();
         }

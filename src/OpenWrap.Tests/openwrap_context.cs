@@ -139,22 +139,12 @@ namespace Tests
 
         static void AddPackage(IPackageRepository repository, string name, string version, string[] dependencies)
         {
-            if (repository is InMemoryRepository)
-            {
-                ((InMemoryRepository)repository).Packages.Add(new InMemoryPackage
-                {
-                    Name = name,
-                    Source = repository,
-                    Version = version.ToVersion(),
-                    Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies).ToList()
-                });
-                return;
-            }
             var packageFileName = name + "-" + version + ".wrap";
             var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
             using (var readStream = packageStream)
             using (var publisher = repository.Feature<ISupportPublishing>().Publisher())
                 publisher.Publish(packageFileName, readStream);
+            repository.RefreshPackages();
         }
 
         protected void given_currentdirectory_package(string packageName, string version, params string[] dependencies)
@@ -289,6 +279,7 @@ namespace Tests
     {
         protected ICommandDescriptor Command;
         protected List<ICommandOutput> Results;
+        protected T CommandInstance;
 
         public command()
         {
@@ -304,7 +295,9 @@ namespace Tests
             foreach (var descriptor in Environment.ScopedDescriptors.Values)
                 descriptor.Save();
 
-            Results = new CommandLineRunner().Run(Command, args).ToList();
+            var runner = new CommandLineRunner();
+            Results = runner.Run(Command, args).ToList();
+            CommandInstance = (T)runner.LastCommand;
             Results.ForEach(_ => _.ToString().Split(new[]{"\r\n", "\r", "\n"},StringSplitOptions.None).Select(line => "< " + line).ToList().ForEach(Console.WriteLine));
             ReloadRepositories();
         }

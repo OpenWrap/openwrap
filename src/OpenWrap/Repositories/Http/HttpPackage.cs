@@ -36,6 +36,11 @@ namespace OpenWrap.Repositories.Http
             get { return false; }
         }
 
+        public string Title
+        {
+            get { return _package.Title; }
+        }
+
         public DateTimeOffset Created
         {
             get { return _package.CreationTime; }

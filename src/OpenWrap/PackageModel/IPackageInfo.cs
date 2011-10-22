@@ -14,7 +14,9 @@ namespace OpenWrap.PackageModel
         IPackageRepository Source { get; }
         string FullName { get; }
         string Description { get; }
+        string Title { get; }
         DateTimeOffset Created { get; }
+        
         bool Anchored { get; }
 
         bool Nuked { get; }

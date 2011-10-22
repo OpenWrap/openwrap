@@ -38,7 +38,7 @@ namespace OpenWrap.Repositories.Http
                            )
                     .ToList();
         }
-
+        public string Title { get { return _package.Title; } }
         public bool Anchored
         {
             get { return false; }

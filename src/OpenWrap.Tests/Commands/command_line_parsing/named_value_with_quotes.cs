@@ -9,7 +9,7 @@ namespace Tests.Commands.command_line_parsing
     [TestFixture(@"-named ' tom bombadil'", " tom bombadil")]
     [TestFixture(@"-named ' tom ""bombadil""'", " tom \"bombadil\"")]
     [TestFixture(@"-named "" tom o'bombadil""", " tom o'bombadil")]
-    class named_value_with_quotes : input_parser
+    public class named_value_with_quotes : input_parser
     {
         readonly string _expected;
 

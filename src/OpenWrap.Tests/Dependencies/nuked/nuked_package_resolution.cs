@@ -21,7 +21,7 @@ namespace contexts
 
         protected void given_package_version(string version)
         {
-            _repo.Packages.Add(new InMemoryPackage()
+            _repo.Packages.Add(new InMemoryPackage
             {
                     Name = PACKAGE_NAME,
                     Version = new Version(version)
@@ -30,7 +30,7 @@ namespace contexts
 
         protected void given_nuked_package_version(string version)
         {
-            _repo.Packages.Add(new InMemoryPackage()
+            _repo.Packages.Add(new InMemoryPackage
             {
                     Name = PACKAGE_NAME,
                     Version = new Version(version),

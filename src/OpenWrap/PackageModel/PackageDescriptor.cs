@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Repositories;
 
@@ -158,6 +159,11 @@ namespace OpenWrap.PackageModel
         public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)
         {
             return new ScopedPackageDescriptor(this, scopedEntries);
+        }
+
+        public IEnumerable<IPackageDescriptorEntry> GetPersistableEntries()
+        {
+            return Entries;
         }
     }
 }

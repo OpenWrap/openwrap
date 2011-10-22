@@ -12,15 +12,13 @@ namespace OpenWrap.PackageModel
             Name = name;
             _nameForComparison = name.ToLowerInvariant();
             Value = value;
+            IncludeInPackage = true;
         }
 
         public string Name { get; set; }
         public string Value { get; set; }
 
-        public bool IncludeInPackage
-        {
-            get { return true; }
-        }
+        public bool IncludeInPackage { get; set; }
 
         public static bool operator ==(GenericDescriptorEntry left, GenericDescriptorEntry right)
         {

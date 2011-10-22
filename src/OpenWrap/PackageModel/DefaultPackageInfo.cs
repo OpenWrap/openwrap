@@ -54,7 +54,11 @@ namespace OpenWrap.PackageModel
             get { return _descriptor.Name ?? _packageName; }
             set { _descriptor.Name = value; }
         }
-
+        public string Title
+        {
+            get { return _descriptor.Title;  }
+            set { _descriptor.Title = value; }
+        }
         public bool Nuked
         {
             get { return false; }

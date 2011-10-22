@@ -39,6 +39,7 @@ namespace OpenWrap.PackageManagement.Packages
         {
             get { return Descriptor.Dependencies; }
         }
+        public string Title { get { return Descriptor.Title; } }
 
         public string Description
         {

@@ -103,6 +103,18 @@
     <Compile Include="Commands\configuration\set_proxy_username.cs" />
     <Compile Include="Commands\init_wrap\init_dot_in_empty_git_ignores.cs" />
     <Compile Include="Commands\init_wrap\init_dot_in_empty_mercurial_ignores.cs" />
+    <Compile Include="Commands\list_wrap\flags\in_project_with_named_remote.cs" />
+    <Compile Include="Commands\list_wrap\flags\in_project_with_remote_flag.cs" />
+    <Compile Include="Commands\list_wrap\flags\in_project_with_system_flag.cs" />
+    <Compile Include="Commands\list_wrap\flags\not_in_project_defaults.cs" />
+    <Compile Include="Commands\list_wrap\flags\not_in_project_with_project_flag.cs" />
+    <Compile Include="Commands\list_wrap\flags\in_project_defaults.cs" />
+    <Compile Include="Commands\list_wrap\project\default_scope.cs" />
+    <Compile Include="Commands\list_wrap\project\detailed\dependency_at_two_levels.cs" />
+    <Compile Include="Commands\list_wrap\project\detailed\detailed_default_scope.cs" />
+    <Compile Include="Commands\list_wrap\project\detailed\string_formatting.cs" />
+    <Compile Include="Commands\list_wrap\project\locked_package.cs" />
+    <Compile Include="Commands\list_wrap\project\multiple_scopes.cs" />
     <Compile Include="Commands\lock_wrap\all.cs" />
     <Compile Include="Commands\lock_wrap\ignore_dependencies.cs" />
     <Compile Include="Commands\lock_wrap\locking_not_enabled.cs" />
@@ -293,7 +305,7 @@
     <Compile Include="Commands\init_wrap\init_for_all_projects.cs" />
     <Compile Include="Commands\contexts\init_wrap.cs" />
     <Compile Include="Commands\init_wrap\init_wrap_in_empty_dot_folder.cs" />
-    <Compile Include="Commands\list_wrap\filtering_project_with_different_casing.cs" />
+    <Compile Include="Commands\list_wrap\project\filtering_with_casing.cs" />
     <Compile Include="Commands\list_wrap\listing_packages_from_all_repositories.cs" />
     <Compile Include="Commands\MemoryCommand.cs" />
     <Compile Include="Commands\contexts\remove_wrap.cs" />
@@ -519,7 +531,7 @@
     <Compile Include="Commands\build_wrap\building_a_meta_package.cs" />
     <Compile Include="Commands\clean_wrap\cleaning_a_non_existing_wrap.cs" />
     <Compile Include="Commands\build_wrap\providers.files\from_existing_files.cs" />
-    <Compile Include="Commands\list_wrap\filtering_project_package_list_by_name.cs" />
+    <Compile Include="Commands\list_wrap\project\filtering_direct_package_by_name.cs" />
     <Compile Include="Commands\Wrap\nukeWrapCommand.cs" />
     <Compile Include="Commands\publish_wrap\publishing_to_unknown_remote.cs" />
     <Compile Include="Commands\remove_wrap\removing_from_project_when_not_in_project.cs" />

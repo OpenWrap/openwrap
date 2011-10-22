@@ -117,7 +117,7 @@ namespace OpenWrap.Commands.Wrap
         static PackageContent GenerateDescriptorFile(PackageDescriptor descriptor)
         {
             var descriptorStream = new MemoryStream();
-            new PackageDescriptorReaderWriter().Write(descriptor, descriptorStream);
+            new PackageDescriptorReaderWriter().Write(descriptor.GetPersistableEntries(), descriptorStream);
             return new PackageContent
             {
                 FileName = descriptor.Name + ".wrapdesc",

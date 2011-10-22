@@ -87,19 +87,12 @@ namespace OpenWrap.Repositories
                 throw new InvalidOperationException("Package already exists in repository.");
 
             var inMemoryFile = new InMemoryFile("c:\\" + Guid.NewGuid());
-            using (var stream = FileExtensions.OpenWrite(inMemoryFile))
+            using (var stream = inMemoryFile.OpenWrite())
                 IO.StreamExtensions.CopyTo(packageStream, stream);
 
             var tempFolder = new ZipPackage(inMemoryFile);
 
-            var package = new InMemoryPackage
-            {
-                Name = PackageNameUtility.GetName(fileWithoutExtension),
-                Version = PackageNameUtility.GetVersion(fileWithoutExtension),
-                Source = this,
-                Dependencies = tempFolder.Dependencies.ToList(),
-                Anchored = tempFolder.Anchored
-            };
+            var package = new InMemoryPackage(tempFolder);
             Packages.Add(package);
             return package;
         }

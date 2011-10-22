@@ -24,7 +24,7 @@ namespace OpenWrap.PackageManagement
 
         public override ICommandOutput ToOutput()
         {
-            return new PackageFoundCommandOutput(this);
+            return new Info("Package. Please advised if this is seen anywhere.");
         }
     }
 }

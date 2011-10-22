@@ -50,6 +50,12 @@ namespace OpenWrap.Repositories.Http
         public IPackageRepository Source { get; private set; }
         public string FullName { get { return _entry.Name + "-" + _entry.Version; } }
         public string Description { get { return _entry.Description; } }
+
+        public string Title
+        {
+            get { return _entry.Title; }
+        }
+
         public DateTimeOffset Created { get { return _entry.CreationTime; } }
         public bool Anchored { get { return false; } }
         public bool Nuked { get { return _entry.Nuked; } }

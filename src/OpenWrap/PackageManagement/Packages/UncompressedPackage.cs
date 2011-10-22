@@ -57,6 +57,11 @@ namespace OpenWrap.PackageManagement.Packages
             get { return PackageInfo.Anchored; }
         }
 
+        public string Title
+        {
+            get { return _descriptor.Title; }
+        }
+
         public DateTimeOffset Created
         {
             get
