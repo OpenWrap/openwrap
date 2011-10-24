@@ -463,7 +463,7 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="unlock-wrap-name" xml:space="preserve">
     <value>Specifies the names of the packages to unlock.</value>
   </data>
-  <data name="list-wrap-detailed" xml:space="preserve">
+  <data name="list-wrap-includedependencies" xml:space="preserve">
     <value>Outputs more details about packages (their dependencies and specifications)</value>
   </data>
   <data name="list-wrap-project" xml:space="preserve">

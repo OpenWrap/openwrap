@@ -9,6 +9,24 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
 {
+    public class NoPackages : Info
+    {
+        public IEnumerable<IPackageRepository> Repositories { get; set; }
+        public string Search { get; set; }
+
+        public NoPackages(IEnumerable<IPackageRepository> repositories, string search = null)
+        {
+            Repositories = repositories;
+            Search = search;
+        }
+        public override string ToString()
+        {
+            var template = Search != null
+                               ? "No package found for '{0}' in the following repositories: {1}"
+                               : "No packages in the following repositories: {1}";
+            return string.Format(template, Search, Repositories.Select(_ => _.Name).JoinString(", "));
+        }
+    }
     [Command(Noun = "wrap", Verb = "list", IsDefault = true)]
     public class ListWrapCommand : WrapCommand
     {
@@ -40,7 +58,7 @@ namespace OpenWrap.Commands.Wrap
         bool? _system;
 
         [CommandInput]
-        public bool Detailed { get; set; }
+        public bool IncludeDependencies { get; set; }
 
         [CommandInput]
         public bool Project
@@ -80,18 +98,32 @@ namespace OpenWrap.Commands.Wrap
                         HostEnvironment.ProjectRepository).ToList();
 
                     var lockedRepository = HostEnvironment.ProjectRepository.Feature<ISupportLocking>();
-                    yield return new DescriptorPackages(
+                    var packages = new DescriptorPackages(
                         descriptor.Key,
                         descriptor.Value.Value.Dependencies,
                         resolvedPackages,
-                        Detailed,
+                        IncludeDependencies,
                         packageNameSelector,
                         lockedRepository == null ? null : lockedRepository.LockedPackages[string.Empty]
                         );
+                    yield return !packages.Packages.Any() ? new NoPackages(new[]{HostEnvironment.ProjectRepository}, search: Query) : (ICommandOutput)packages;
+
                 }
             }
+            List<IPackageRepository> emptyRepos = new List<IPackageRepository>();
+
             foreach (var repository in repoToList)
-                yield return new RepositoryPackages(repository, PackageManager.ListPackages(new[]{repository}, Query).OfType<PackageFoundResult>());
+            {
+                var packages = PackageManager.ListPackages(new[]{repository}, Query).OfType<PackageFoundResult>();
+                if (packages.Any())
+                 yield return new RepositoryPackages(repository, packages);
+                else
+                    emptyRepos.Add(repository);
+            }
+            if (emptyRepos.Any())
+            {
+                yield return new NoPackages(emptyRepos, Query);
+            }
         }
 
 
@@ -136,23 +168,23 @@ namespace OpenWrap.Commands.Wrap
         public string DescriptorName { get; set; }
         public IEnumerable<Package> Packages { get; set; }
 
-        public bool Detailed { get; private set; }
+        public bool IncludeDependencies { get; private set; }
 
         public DescriptorPackages(string descriptorName,
             IEnumerable<PackageDependency> dependencies, 
             IEnumerable<IPackageInfo> resolvedPackages,
-            bool detailed,
+            bool includeDependencies,
             Func<string,bool> nameSelector = null,
             IEnumerable<IPackageInfo> lockedPackages = null) : base()
         {
-            Detailed = detailed;
+            IncludeDependencies = includeDependencies;
             lockedPackages = lockedPackages ?? Enumerable.Empty<IPackageInfo>();
             DescriptorName = descriptorName == string.Empty
                                  ? "default scope"
                                  : descriptorName + " scope";
             
             var recursionDefender = new Stack<string>();
-            var includeChildren = detailed || nameSelector != null;
+            var includeChildren = includeDependencies || nameSelector != null;
             Packages = dependencies
                 .Select(_ => 
                     CreatePackageInfo(_, resolvedPackages, lockedPackages, includeChildren, recursionDefender))
@@ -254,12 +286,12 @@ namespace OpenWrap.Commands.Wrap
                 packageName += " [locked]";
             var dependsLine = "depends: " + package.Spec;
 
-            tree.PrintLine(Detailed ? dependsLine : packageName);
+            tree.PrintLine(IncludeDependencies ? dependsLine : packageName);
 
             var childNodes = package.Children == Truncated
                                  ? new[] { new Node<string>("...", (t, val) => t.PrintLine(val)) }
                                  : package.Children.Select(_ => new Node<Package>(_, PrintPackage)).Cast<Node>();
-            if (!Detailed) childNodes.Render(tree);
+            if (!IncludeDependencies) childNodes.Render(tree);
             else
             {
                 

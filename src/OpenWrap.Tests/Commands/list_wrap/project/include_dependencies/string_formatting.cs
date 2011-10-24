@@ -3,7 +3,7 @@ using NUnit.Framework;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.list_wrap.project.detailed
+namespace Tests.Commands.list_wrap.project.include_dependencies
 {
     public class string_formatting : command<ListWrapCommand>
     {
@@ -16,7 +16,7 @@ namespace Tests.Commands.list_wrap.project.detailed
             given_dependency("depends: sauron = 1.0.0");
             given_dependency("depends: frodo");
             given_dependency("depends: mount-doom");
-            when_executing_command("-detailed");
+            when_executing_command("-includedependencies");
         }
         [Test]
         public void output_is_correct()

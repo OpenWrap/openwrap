@@ -3,21 +3,21 @@ using NUnit.Framework;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.list_wrap.project.detailed
+namespace Tests.Commands.list_wrap.project.include_dependencies
 {
-    public class detailed_default_scope : command<ListWrapCommand>
+    public class default_scope : command<ListWrapCommand>
     {
-        public detailed_default_scope()
+        public default_scope()
         {
             given_project_package("sauron", "1.0.0", "depends: one-ring");
             given_project_package("one-ring", "1.0.0");
             given_dependency("depends: sauron = 1.0.0");
-            when_executing_command("-detailed");
+            when_executing_command("-includedependencies");
         }
         [Test]
         public void detailed_is_set()
         {
-            Results.ShouldHaveOne<DescriptorPackages>().Detailed.ShouldBeTrue();
+            Results.ShouldHaveOne<DescriptorPackages>().IncludeDependencies.ShouldBeTrue();
         }
         [Test]
         public void spec_is_displayed()

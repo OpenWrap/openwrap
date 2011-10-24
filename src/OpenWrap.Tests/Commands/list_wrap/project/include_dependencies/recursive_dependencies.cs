@@ -3,7 +3,7 @@ using NUnit.Framework;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.Testing;
 
-namespace Tests.Commands.list_wrap.project.detailed
+namespace Tests.Commands.list_wrap.project.include_dependencies
 {
     public class recursive_dependencies : command<ListWrapCommand>
     {
@@ -14,7 +14,7 @@ namespace Tests.Commands.list_wrap.project.detailed
             given_project_package("one-ring", "1.0.0", "depends: sauron");
             
             given_dependency("depends: one-ring");
-            when_executing_command("-detailed");
+            when_executing_command("-includedependencies");
         }
         [Test]
         public void dependency_graph_goes_to_least_nested_node()

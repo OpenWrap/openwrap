@@ -26,4 +26,21 @@ namespace Tests.Commands.list_wrap.project
                 .Check(_=>_.Packages.Single().PackageInfo.Version.ShouldBe("1.0.1".ToVersion()));
         }
     }
+    //public class default_scope_string : command<ListWrapCommand>
+    //{
+    //    public default_scope_string()
+    //    {
+    //        given_project_package("sauron", "1.0.0");
+    //        given_project_package("sauron", "1.0.1", "depends: one-ring");
+    //        given_project_package("one-ring", "1.0.1");
+    //        given_dependency("depends: sauron");
+    //        when_executing_command();
+    //    }
+    //    [Test]
+    //    public void output_is_correct()
+    //    {
+    //        Results.ShouldHaveOne<DescriptorPackages>()
+    //            .ToString().ShouldBe(@"");
+    //    }
+    //}
 }

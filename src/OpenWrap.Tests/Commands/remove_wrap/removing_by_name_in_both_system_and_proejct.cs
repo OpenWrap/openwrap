@@ -18,8 +18,8 @@ namespace Tests.Commands.remove_wrap
         [Test]
         public void package_removed_from_both_repositories()
         {
-            SpecExtensions.ShouldBeEmpty<PackageDependency>(PostCommandDescriptor.Dependencies
-                                                              .Where(x => x.Name == "galdalf"));
+            PostCommandDescriptor.Dependencies
+                .Where(x => x.Name == "galdalf").ShouldBeEmpty();
             Environment.SystemRepository.PackagesByName["gandalf"]
                     .ShouldBeEmpty();
         }
