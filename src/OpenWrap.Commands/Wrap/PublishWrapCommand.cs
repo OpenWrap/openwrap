@@ -29,18 +29,18 @@ namespace OpenWrap.Commands.Wrap
         public string Path { get; set; }
 
         [CommandInput]
-        public string Pwd { get; set; }
+        public string Password { get; set; }
 
         [CommandInput(IsRequired = true, Position = 0)]
         public string Remote { get; set; }
 
         [CommandInput]
-        public string User { get; set; }
+        public string Username { get; set; }
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new Info(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
-            using (_authenticationSupport.WithCredentials(new NetworkCredential(User, Pwd)))
+            using (_authenticationSupport.WithCredentials(new NetworkCredential(Username, Password)))
             using (var publisher = _remoteRepository.Feature<ISupportPublishing>().Publisher())
             using (var packageStream = _packageStream())
                 publisher.Publish(_packageFileName, packageStream);
@@ -55,7 +55,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> ValidateInputs()
         {
             // TODO: HACK HACK HACK
-            var namedRepository = Remotes.PublishRepositories(Remote).SelectMany(_=>_).FirstOrDefault();
+            var namedRepository = Remotes.PublishRepositories(Remote).SelectMany(_ => _).FirstOrDefault();
 
             if (namedRepository == null)
             {
@@ -64,19 +64,23 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
-            if (User != null && Pwd == null)
+            if ((Username != null && Password == null) || (Username == null && Password != null))
             {
                 yield return new IncompleteCredentials();
                 yield break;
             }
 
-            _authenticationSupport = namedRepository.Feature<ISupportAuthentication>();
+            bool hasAuth = Username != null && Password != null;
 
-            if (_authenticationSupport == null)
+            _authenticationSupport = namedRepository.Feature<ISupportAuthentication>();
+            if (hasAuth && _authenticationSupport == null)
             {
-                yield return new Warning("Remote repository '{0}' does not support authentication, ignoring authentication info.", namedRepository.Name);
-                _authenticationSupport = new NullAuthentication();
+                yield return new Error("Remote repository '{0}' does not support authentication, ignoring authentication info.", namedRepository.Name);
+                yield break;
             }
+
+            _authenticationSupport = _authenticationSupport ?? new NullAuthentication();
+
             //_repositories = namedRepository.
             _remoteRepository = namedRepository;
             var publishingRepo = _remoteRepository.Feature<ISupportPublishing>();

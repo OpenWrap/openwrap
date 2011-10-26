@@ -37,7 +37,7 @@ namespace OpenWrap.Repositories
                                     select from publish in config.PublishRepositories
                                            let remote = FromToken(publish.Token)
                                            where remote != null
-                                           select remote;
+                                           select InjectAuthentication(remote, publish);
             var ambient = GetAmbient(input, remotes).FirstOrDefault();
             return ambient != null
                        ? new[] { new[] { ambient } }.Concat(configuredPublish).ToList()
