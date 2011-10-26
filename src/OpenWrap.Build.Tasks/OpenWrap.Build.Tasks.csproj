@@ -110,12 +110,6 @@
       <Aliases>resharper510</Aliases>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\OpenWrap.Resharper.v511\OpenWrap.Resharper.v511.csproj">
-      <Project>{9F5D9D90-DD43-45E9-BB70-B8EADE27FE82}</Project>
-      <Name>OpenWrap.Resharper.v511</Name>
-      <Aliases>resharper511</Aliases>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\OpenWrap\OpenWrap.csproj">
       <Project>{6CE52051-0070-423D-96CB-8B16700A2251}</Project>
       <Name>OpenWrap</Name>

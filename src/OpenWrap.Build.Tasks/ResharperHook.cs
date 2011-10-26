@@ -1,7 +1,6 @@
 ﻿extern alias resharper450;
 extern alias resharper500;
 extern alias resharper510;
-extern alias resharper511;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +30,7 @@ namespace OpenWrap.Build.Tasks
         {
             {new Version("4.5.1288.2"), typeof(resharper450::OpenWrap.Resharper.ResharperIntegrationService)},
             {new Version("5.0.1659.36"), typeof(resharper500::OpenWrap.Resharper.ResharperIntegrationService)},
-            {new Version("5.1.1727.12"), typeof(resharper510::OpenWrap.Resharper.ResharperIntegrationService)},
-            {new Version("5.1.1751.8"), typeof(resharper511::OpenWrap.Resharper.ResharperIntegrationService)}
+            {new Version("5.1.1727.12"), typeof(resharper510::OpenWrap.Resharper.ResharperIntegrationService)}
         };
 
         static bool _called = false;
