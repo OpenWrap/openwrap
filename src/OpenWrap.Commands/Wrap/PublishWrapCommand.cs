@@ -21,6 +21,7 @@ namespace OpenWrap.Commands.Wrap
         Func<Stream> _packageStream;
         Version _packageVersion;
         IPackageRepository _remoteRepository;
+        NetworkCredential _credentials;
 
         [CommandInput]
         public string Name { get; set; }
@@ -40,16 +41,26 @@ namespace OpenWrap.Commands.Wrap
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             yield return new Info(String.Format("Publishing package '{0}' to '{1}'", _packageFileName, Remote));
-            using (_authenticationSupport.WithCredentials(new NetworkCredential(Username, Password)))
-            using (var publisher = _remoteRepository.Feature<ISupportPublishing>().Publisher())
-            using (var packageStream = _packageStream())
-                publisher.Publish(_packageFileName, packageStream);
+
+            var credentialCookie =_credentials != null
+                                      ? _authenticationSupport.WithCredentials(_credentials)
+                                      : null;
+            try
+            {
+                using (var publisher = _remoteRepository.Feature<ISupportPublishing>().Publisher())
+                using (var packageStream = _packageStream())
+                    publisher.Publish(_packageFileName, packageStream);
+            }
+            finally
+            {
+                if (credentialCookie != null) credentialCookie.Dispose();
+            }
         }
 
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield return ValidateInputs;
-            yield return ValidatePackageDoesntExist;
+            yield return PackageDoesNotAlreadyExist;
         }
 
         IEnumerable<ICommandOutput> ValidateInputs()
@@ -71,7 +82,7 @@ namespace OpenWrap.Commands.Wrap
             }
 
             bool hasAuth = Username != null && Password != null;
-
+            if (hasAuth) _credentials = new NetworkCredential(Username, Password);
             _authenticationSupport = namedRepository.Feature<ISupportAuthentication>();
             if (hasAuth && _authenticationSupport == null)
             {
@@ -125,7 +136,7 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        IEnumerable<ICommandOutput> ValidatePackageDoesntExist()
+        IEnumerable<ICommandOutput> PackageDoesNotAlreadyExist()
         {
             if (_remoteRepository.HasPackage(_packageName, _packageVersion.ToString()))
                 yield return new Error("The package '{0}' already exists. Please create a new version before uploading.", _packageFileName);
