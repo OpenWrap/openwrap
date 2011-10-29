@@ -13,7 +13,7 @@ namespace Tests.Commands.build_wrap.from_path
             public path_does_not_exist()
             {
                 path_to_project = FileSystem.GetTempDirectory().GetDirectory("doesnotexist");
-                when_executing_command("-from " + path_to_project.Path.FullPath);
+                when_executing_command(string.Format("-from \"{0}\"", path_to_project.Path.FullPath));
             }
 
             [Test]

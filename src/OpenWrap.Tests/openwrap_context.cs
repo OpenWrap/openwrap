@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap;
 using OpenWrap.Commands;
@@ -238,7 +239,7 @@ namespace Tests
             Environment.Descriptor = packageDescriptor;
         }
 
-        protected void given_remote_factory(Func<string, IPackageRepository> repoFactory = null, Func<string,IPackageRepository> tokenFactory = null)
+        protected void given_remote_factory(Func<string, NetworkCredential, IPackageRepository> repoFactory = null, Func<string, IPackageRepository> tokenFactory = null)
         {
             if (repoFactory != null) Factory.FromUserInput = repoFactory;
             if (tokenFactory != null) Factory.FromToken = tokenFactory;
@@ -252,15 +253,15 @@ namespace Tests
                 if (factory != null) factory(repo);
                 return repo;
             };
-            given_remote_factory(name => build(name), token => build(token.Substring("[memory]".Length)));
+            given_remote_factory((name,cred) => build(name), token => build(token.Substring("[memory]".Length)));
         }
 
-        protected void given_remote_factory_additional(Func<string, IPackageRepository> fromUserInput = null, Func<string, IPackageRepository> fromToken = null)
+        protected void given_remote_factory_additional(Func<string, NetworkCredential, IPackageRepository> fromUserInput = null, Func<string, IPackageRepository> fromToken = null)
         {
             RemoteFactories.Add(new MemoryRepositoryFactory
             {
                 FromToken = fromToken ?? (input => null),
-                FromUserInput = fromUserInput ?? (input => null)
+                FromUserInput = fromUserInput ?? ((input,cred) => null)
             });
         }
 

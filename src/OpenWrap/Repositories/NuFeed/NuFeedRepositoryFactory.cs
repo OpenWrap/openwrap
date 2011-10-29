@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -31,15 +32,15 @@ namespace OpenWrap.Repositories.NuFeed
             return new NuFeedRepository(_fileSystem, _client, destinationUri.Groups["target"].Value.ToUri(), destinationUri.Groups["uri"].Value.ToUri());
         }
 
-        public IPackageRepository FromUserInput(string directoryPath)
+        public IPackageRepository FromUserInput(string userInput, NetworkCredential credentails = null)
         {
-            directoryPath = directoryPath.Trim();
-            if (directoryPath.EqualsNoCase("nuget"))
+            userInput = userInput.Trim();
+            if (userInput.EqualsNoCase("nuget"))
                 return TryLocate(DEFAULT_HREF);
-            if (!directoryPath.StartsWithNoCase("http://") || !directoryPath.StartsWith("https://"))
-                return TryLocate("https://" + directoryPath) ?? TryLocate("http://" + directoryPath);
+            if (!userInput.StartsWithNoCase("http://") && !userInput.StartsWith("https://"))
+                return TryLocate("https://" + userInput) ?? TryLocate("http://" + userInput);
 
-            return TryLocate(directoryPath);
+            return TryLocate(userInput);
         }
 
         IPackageRepository TryLocate(string uri)

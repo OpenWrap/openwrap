@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using OpenFileSystem.IO;
 using OpenRasta.Client;
 using OpenWrap.IO;
@@ -16,14 +17,14 @@ namespace OpenWrap.Repositories.FileSystem
             _fileSystem = fileSystem;
         }
 
-        public IPackageRepository FromUserInput(string identifier)
+        public IPackageRepository FromUserInput(string userInput, NetworkCredential crendentials = null)
         {
-            if (!identifier.StartsWith("file://") && !identifier.StartsWith("indexed-folder://"))
+            if (!userInput.StartsWith("file://") && !userInput.StartsWith("indexed-folder://"))
             {
                 return null;
             }
             
-            var fileUri = identifier.ToUri();
+            var fileUri = userInput.ToUri();
 
             var directoryPath = fileUri.ToPath();
 

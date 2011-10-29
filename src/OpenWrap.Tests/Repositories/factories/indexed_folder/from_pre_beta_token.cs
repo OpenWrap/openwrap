@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using OpenWrap.Repositories.FileSystem;
 using OpenWrap.Testing;
 using Tests.Repositories.contexts;
 
@@ -15,6 +16,7 @@ namespace Tests.Repositories.factories.indexed_folder
         public void repository_is_built()
         {
             Repository.ShouldNotBeNull()
+                .ShouldBeOfType<IndexedFolderRepository>()
                 .Directory.ShouldBe(FileSystem.GetDirectory("c:\\folder\\"));
         }
 

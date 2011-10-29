@@ -30,5 +30,9 @@ namespace Tests.Repositories.factories
                 };
         }
         public IDictionary<string, Func<IClientRequest, IClientResponse>> Operations { get; private set; }
+
+        public string Username { get; set; }
+
+        public string Password { get; set; }
     }
 }

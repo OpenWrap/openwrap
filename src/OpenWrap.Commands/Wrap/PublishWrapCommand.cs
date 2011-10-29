@@ -75,7 +75,7 @@ namespace OpenWrap.Commands.Wrap
             _authenticationSupport = namedRepository.Feature<ISupportAuthentication>();
             if (hasAuth && _authenticationSupport == null)
             {
-                yield return new Error("Remote repository '{0}' does not support authentication, ignoring authentication info.", namedRepository.Name);
+                yield return new RemoteAuthenticatioNotSupported(namedRepository);
                 yield break;
             }
 
@@ -98,7 +98,7 @@ namespace OpenWrap.Commands.Wrap
                     yield return new FileNotFound(Path);
                     yield break;
                 }
-                _packageStream = () => packageFile.OpenRead();
+                _packageStream = packageFile.OpenRead;
                 _packageFileName = packageFile.Name;
                 // TODO: This looks iffy at best
                 var package = new ZipPackage(packageFile);
@@ -129,6 +129,17 @@ namespace OpenWrap.Commands.Wrap
         {
             if (_remoteRepository.HasPackage(_packageName, _packageVersion.ToString()))
                 yield return new Error("The package '{0}' already exists. Please create a new version before uploading.", _packageFileName);
+        }
+    }
+
+    public class RemoteAuthenticatioNotSupported : Error
+    {
+        public IPackageRepository Repository { get; set; }
+
+        public RemoteAuthenticatioNotSupported(IPackageRepository repository)
+            : base("Remote repository '{0}' does not support authentication.", repository.Name)
+        {
+            Repository = repository;
         }
     }
 }

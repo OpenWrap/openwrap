@@ -12,7 +12,7 @@ namespace Tests.Repositories.manager.legacy
     {
         public old_config_and_new()
         {
-            given_remote_factory(input => new InMemoryRepository(input.Substring(7, input.Length - 8)), token => new InMemoryRepository(token.Substring("[memory]".Length)));
+            given_remote_factory((input,cred) => new InMemoryRepository(input.Substring(7, input.Length - 8)), token => new InMemoryRepository(token.Substring("[memory]".Length)));
             given_remote_config("mithlond");
             given_configuration(new RemoteRepositories
             {

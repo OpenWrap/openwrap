@@ -11,7 +11,7 @@ namespace Tests.Repositories.manager.legacy
     {
         public old_config_no_new_unknown_uri()
         {
-            given_remote_factory(input => null, token => new InMemoryRepository(token.Substring("[memory]".Length)));
+            given_remote_factory((input,cred) => null, token => new InMemoryRepository(token.Substring("[memory]".Length)));
             given_configuration(new RemoteRepositories
             {
                 { "iron-hills", new RemoteRepository { Href = "http://iron-hills".ToUri(), Priority = 1 } }

@@ -11,7 +11,7 @@ namespace Tests.Repositories.manager
         public repositories_by_user_input()
         {
             given_remote_repository("iron-hills", priority: 10);
-            given_remote_factory_additional(userInput => userInput == "celduin" ? new InMemoryRepository("celduin") : null);
+            given_remote_factory_additional((userInput,cred) => userInput == "celduin" ? new InMemoryRepository("celduin") : null);
             when_listing_repositories("celduin");
         }
 

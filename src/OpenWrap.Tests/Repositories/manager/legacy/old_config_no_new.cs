@@ -15,7 +15,7 @@ namespace Tests.Repositories.manager.legacy
         public old_config_no_new()
         {
             given_remote_factory(
-                input => new InMemoryRepository(input.Substring(7, input.Length - 8)) { CanPublish = input == "http://iron-hills/" },
+                (input,cred) => new InMemoryRepository(input.Substring(7, input.Length - 8)) { CanPublish = input == "http://iron-hills/" },
                 token => new InMemoryRepository(token.Substring("[memory]".Length)));
             given_configuration(new LegacyRemotes
             {

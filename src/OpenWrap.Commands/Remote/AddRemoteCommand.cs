@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using OpenWrap.Collections;
 using OpenWrap.Commands.Messages;
@@ -14,6 +15,8 @@ namespace OpenWrap.Commands.Remote
     [Command(Noun = "remote", Verb = "add")]
     public class AddRemoteCommand : AbstractRemoteCommand
     {
+        NetworkCredential _credentials;
+
         [CommandInput(Position = 1)]
         public string Href { get; set; }
 
@@ -46,12 +49,13 @@ namespace OpenWrap.Commands.Remote
             yield return NameValid;
             yield return NameAvailable;
             yield return AuthIsCorrect;
+
         }
 
         IEnumerable<ICommandOutput> AddNew(RemoteRepositories repositories)
         {
             var repositoryInput = Href ?? Name;
-            var repository = Factories.Select(x => x.FromUserInput(repositoryInput)).NotNull().FirstOrDefault();
+            var repository = Factories.Select(x => x.FromUserInput(repositoryInput, _credentials)).NotNull().FirstOrDefault();
             if (repository == null)
             {
                 yield return new UnknownEndpointType(repositoryInput);
@@ -60,7 +64,7 @@ namespace OpenWrap.Commands.Remote
             List<RemoteRepositoryEndpoint> publishTokens;
             if (Publish != null)
             {
-                var publishRepository = Factories.Select(x => x.FromUserInput(Publish)).NotNull().FirstOrDefault();
+                var publishRepository = Factories.Select(x => x.FromUserInput(Publish,_credentials)).NotNull().FirstOrDefault();
                 if (publishRepository == null)
                 {
                     // TODO: add tests to check that
@@ -79,7 +83,8 @@ namespace OpenWrap.Commands.Remote
             }
             else
             {
-                publishTokens = (repository.Feature<ISupportPublishing>() != null)
+                var supportPublishing = repository.Feature<ISupportPublishing>();
+                publishTokens = (supportPublishing != null)
                                     ? new List<RemoteRepositoryEndpoint>
                                     {
                                         new RemoteRepositoryEndpoint { Token = repository.Token, Username = Username, Password = Password }
@@ -103,7 +108,7 @@ namespace OpenWrap.Commands.Remote
         IEnumerable<ICommandOutput> Append(RemoteRepositories repositories)
         {
             var existingReg = repositories[Name];
-            var publishRepo = Factories.Select(x => x.FromUserInput(Publish)).NotNull().FirstOrDefault();
+            var publishRepo = Factories.Select(x => x.FromUserInput(Publish, _credentials)).NotNull().FirstOrDefault();
             if (publishRepo == null)
             {
                 yield return new UnknownEndpointType(Publish);
@@ -129,6 +134,9 @@ namespace OpenWrap.Commands.Remote
         {
             if ((Username != null || Password != null) && (Username == null || Password == null))
                 yield return new IncompleteCredentials();
+            else
+                _credentials = new NetworkCredential(Username, Password);
+
         }
 
         int GetNewRemotePriority(RemoteRepositories repositories)

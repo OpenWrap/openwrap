@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenRasta.Client;
 
@@ -22,11 +23,10 @@ namespace OpenWrap.Repositories.Http
             return GetIndexedRepository(token.Substring(PREFIX.Length).ToUri());
         }
 
-        public IPackageRepository FromUserInput(string directoryPath)
+        public IPackageRepository FromUserInput(string userInput, NetworkCredential credentials = null)
         {
-            // try a HEAD on /index.wraplist to see if it is the correct one
             bool found = false;
-            var targetUri = directoryPath.ToUri();
+            var targetUri = userInput.ToUri();
             if (targetUri == null ||
                 targetUri.IsAbsoluteUri == false ||
                 !(targetUri.Scheme.EqualsNoCase("http") || targetUri.Scheme.EqualsNoCase("https")))
@@ -34,13 +34,20 @@ namespace OpenWrap.Repositories.Http
 
             if (!targetUri.Segments.Last().EqualsNoCase("index.wraplist"))
                 targetUri = new Uri(targetUri.EnsureTrailingSlash(), new Uri("index.wraplist", UriKind.Relative));
-            _client.Head(targetUri).Handle(200, _ => found = true).Send();
-            return found ? GetIndexedRepository(targetUri) : null;
+            _client.Head(targetUri)
+                                 .Credentials(credentials)
+                                 .Handle(200, _ => found = true)
+                                 .Send();
+            var repository = GetIndexedRepository(targetUri);
+            if (credentials != null)
+                repository = new PreAuthenticatedRepository(repository, repository.Feature<ISupportAuthentication>(), credentials);
+            return found ? repository : null;
         }
 
         IPackageRepository GetIndexedRepository(Uri targetUri)
         {
             // TODO: Remove the inmemory file system
+            // TODO: Rename repository
             return new IndexedHttpRepository(new InMemoryFileSystem(), "local", new HttpRepositoryNavigator(_client, targetUri))
             {
                 Token = PREFIX + targetUri

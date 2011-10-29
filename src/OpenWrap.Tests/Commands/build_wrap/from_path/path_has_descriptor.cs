@@ -26,7 +26,7 @@ namespace Tests.Commands.build_wrap.from_path
         {
             given_remote_project();
             given_descriptor(path_to_project, new PackageDescriptor { Name = "test", Version = "1.0.0.0".ToVersion(), Build = {"none"} });
-            when_executing_command("-from " + path_to_project.Path.FullPath);
+            when_executing_command(string.Format("-from \"{0}\"", path_to_project.Path.FullPath));
         }
 
         [Test]

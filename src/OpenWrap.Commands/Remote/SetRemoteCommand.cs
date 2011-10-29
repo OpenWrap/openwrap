@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using OpenWrap.Collections;
 using OpenWrap.Commands.Errors;
 using OpenWrap.Commands.Messages;
@@ -18,6 +19,7 @@ namespace OpenWrap.Commands.Remote
         IPackageRepository _publishRepo;
         RemoteRepositories _remotes;
         RemoteRepository _targetRemote;
+        NetworkCredential _credentials;
 
         [CommandInput]
         public string Href { get; set; }
@@ -85,13 +87,16 @@ namespace OpenWrap.Commands.Remote
         {
             if ((Username != null || Password != null) && (Username == null || Password == null))
                 yield return new IncompleteCredentials();
+            else
+                _credentials = new NetworkCredential(Username, Password);
+
         }
 
         IEnumerable<ICommandOutput> FetchRepoFound()
         {
             if (Href != null)
             {
-                _fetchRepo = Factories.Select(x => x.FromUserInput(Href)).NotNull().FirstOrDefault();
+                _fetchRepo = Factories.Select(x => x.FromUserInput(Href,_credentials)).NotNull().FirstOrDefault();
                 if (_fetchRepo == null)
                     yield return new UnknownEndpointType(Href);
             }
@@ -117,7 +122,7 @@ namespace OpenWrap.Commands.Remote
         {
             if (Publish != null)
             {
-                var publishRepo = Factories.Select(x => x.FromUserInput(Publish)).NotNull().FirstOrDefault();
+                var publishRepo = Factories.Select(x => x.FromUserInput(Publish, _credentials)).NotNull().FirstOrDefault();
                 if (publishRepo == null)
                     yield return new UnknownEndpointType(Publish);
                 else if (publishRepo.Feature<ISupportPublishing>() == null)

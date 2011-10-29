@@ -89,6 +89,19 @@ namespace OpenRasta.Client.Memory
                         Headers = { { "Content-Length", "0" } }
                 };
             }
+            if (
+                resource.Username != null &&
+                resource.Password != null &&
+                (request.Credentials == null ||
+                 resource.Username != request.Credentials.UserName ||
+                 resource.Password != request.Credentials.Password))
+            {
+                return new MemoryResponse
+                {
+                    Status = new HttpStatus(401, "Unauthorized"),
+                    Headers= {{"Content-Length", "0"}}
+                };
+            }
             return methodHandler(request);
 
         }

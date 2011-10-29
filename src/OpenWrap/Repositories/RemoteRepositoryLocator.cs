@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using OpenFileSystem.IO;
 using OpenRasta.Client;
@@ -13,8 +14,7 @@ namespace OpenWrap.Repositories
 {
     public interface IRemoteRepositoryFactory
     {
-        IPackageRepository FromUserInput(string directoryPath);
-
+        IPackageRepository FromUserInput(string userInput, NetworkCredential credentials = null);
         IPackageRepository FromToken(string token);
     }
 
