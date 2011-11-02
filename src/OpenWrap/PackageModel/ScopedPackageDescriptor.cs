@@ -131,6 +131,21 @@ namespace OpenWrap.PackageModel
                 get { return _parent.StorePackages; }
             }
 
+            public IEnumerable<string> AssemblyInfo
+            {
+                get { return _parent.AssemblyInfo; }
+            }
+
+            public IEnumerable<string> Authors
+            {
+                get { return _parent.Authors; }
+            }
+
+            public string Copyright
+            {
+                get { return _parent.Copyright; }
+            }
+
             public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read)
             {
                 throw new InvalidOperationException("Can only have one level of nesting for scoped descriptors.");

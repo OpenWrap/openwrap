@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\AssemblyInfoGenerator.cs" />
     <Compile Include="Build\PackageBuilders\IProcess.cs" />
     <Compile Include="Build\PackageBuilders\ProcessWrapper.cs" />
     <Compile Include="Build\PackageBuilders\UnknownProjectFileResult.cs" />

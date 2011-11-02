@@ -51,6 +51,7 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Build\assembly_info\none.cs" />
     <Compile Include="Build\builders.msbuild\explicit_projects_without_source_folder.cs" />
     <Compile Include="Build\builders.msbuild\project_doesnt_exist.cs" />
     <Compile Include="Build\builders.msbuild\project_use_filename_wildcard.cs" />
@@ -77,7 +78,7 @@
     <Compile Include="Commands\build_wrap\to_path\directory_exists.cs" />
     <Compile Include="Commands\build_wrap\version\from_descriptor.cs" />
     <Compile Include="Commands\build_wrap\version\from_descriptor_and_file.cs" />
-    <Compile Include="Commands\build_wrap\version\from_input.cs" />
+    <Compile Include="Commands\build_wrap\version\from_input_and_other_sources.cs" />
     <Compile Include="Commands\build_wrap\version\from_version_file.cs" />
     <Compile Include="Commands\build_wrap\version\none.cs" />
     <Compile Include="Commands\clean_wrap\locks\existing_lock.cs" />

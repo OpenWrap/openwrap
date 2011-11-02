@@ -7,9 +7,9 @@ using OpenWrap.Testing;
 
 namespace Tests.Commands.build_wrap.version
 {
-    public class from_input : contexts.build_wrap
+    public class from_input_and_other_sources : contexts.build_wrap
     {
-        public from_input()
+        public from_input_and_other_sources()
         {
             given_descriptor(FileSystem.GetCurrentDirectory(),
                              new PackageDescriptor

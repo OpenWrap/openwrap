@@ -99,15 +99,15 @@ namespace OpenWrap.ProjectModel.Drivers.File
                                    select guid.Value).First();
                 var projectTypeGuid = GetFromFileName(projectFile);
 
-                var newProject = new Project
+                var newProject = new SolutionProjectReference
                 {
                     Guid = new Guid(projectGuid),
                     Name = projectFile.NameWithoutExtension,
                     Path = projectFile.Path.MakeRelative(_file.Parent.Path),
                     Type = projectTypeGuid
                 };
-                var indexToInsert = _content.OfType<Project>().Any()
-                                        ? _content.IndexOf(_content.OfType<Project>().Last()) + 1
+                var indexToInsert = _content.OfType<SolutionProjectReference>().Any()
+                                        ? _content.IndexOf(_content.OfType<SolutionProjectReference>().Last()) + 1
                                         : _content.Count;
                 _content.Insert(indexToInsert, newProject);
                 return newProject;
@@ -153,7 +153,7 @@ namespace OpenWrap.ProjectModel.Drivers.File
                 _content.Add(
                     SolutionFormatVersion.TryParse(lines, ref i) ??
                     SolutionVisualStudioVersion.TryParse(lines, ref i) ??
-                    Project.TryParse(_file.FileSystem, lines, ref i) ??
+                    SolutionProjectReference.TryParse(_file.FileSystem, lines, ref i) ??
                     Global.TryParse(lines, ref i) ??
                     (object)lines[i]
                     );
@@ -294,7 +294,7 @@ namespace OpenWrap.ProjectModel.Drivers.File
         // ReSharper restore InconsistentNaming
 
         // TODO: Make public class once fully implemented
-        class Project : IProject
+        class SolutionProjectReference : IProject
         {
             public Guid Guid;
             public string Name;
@@ -313,11 +313,11 @@ namespace OpenWrap.ProjectModel.Drivers.File
             readonly List<string> _lines = new List<string>();
             
 
-            public static Project TryParse(IFileSystem fileSystem, string[] lines, ref int index)
+            public static SolutionProjectReference TryParse(IFileSystem fileSystem, string[] lines, ref int index)
             {
                 var match = _projectRegex.Match(lines[index]);
                 if (match.Success == false) return null;
-                var project = new Project
+                var project = new SolutionProjectReference
                 {
                     Name = match.Groups["name"].Value,
                     Path = match.Groups["path"].Value,
@@ -358,7 +358,14 @@ namespace OpenWrap.ProjectModel.Drivers.File
             }
 
             public bool OpenWrapEnabled
-            { get { return MSBuildProject.OpenWrapEnabled(Path); } }
+            {
+                get { return MSBuildProject.OpenWrapEnabled(Path); }
+            }
+            public string RootNamespace
+            {
+                get { throw new NotImplementedException(); }
+                set { throw new NotImplementedException(); }
+            }
         }
 
         class SolutionFormatVersion
