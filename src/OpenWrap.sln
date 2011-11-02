@@ -5,7 +5,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F
 	ProjectSection(SolutionItems) = preProject
 		..\build\openwrap.proj = ..\build\openwrap.proj
 		..\build\self-build.test = ..\build\self-build.test
-		..\version = ..\version
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FF7BA218-B2A1-462A-8F51-153337027853}"

@@ -1,5 +1,4 @@
 ﻿depends: sharpziplib = 0.86
-depends: openfilesystem = 1.0
 depends: openwrap content = 2.0
 anchored: true
 build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj; project=src\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj; project=src\OpenWrap.Commands\OpenWrap.Commands.csproj; project=src\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.SolutionPlugins.VisualStudio.csproj
@@ -9,3 +8,4 @@ use-symlinks: true
 depends: Mono.Cecil = 0.9.4
 directory-structure: src\*{scope: Tests=tests}*\**
 directory-structure: src\{scope: Tests.VisualStudio=tests}\**
+depends: openfilesystem = 1.0.1

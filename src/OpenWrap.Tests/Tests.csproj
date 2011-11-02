@@ -137,7 +137,8 @@
     <Compile Include="Commands\update_wrap\locks\existing_lock.cs" />
     <Compile Include="Commands\update_wrap\project\by_name\already_up_to_date.cs" />
     <Compile Include="Commands\update_wrap\project\by_name\not_found.cs" />
-    <Compile Include="Repositories\factories\indexed_folder\from_pre_beta_token.cs" />
+    <Compile Include="Repositories\factories\indexed_folder\from_pre_beta_local_token.cs" />
+    <Compile Include="Repositories\factories\indexed_folder\from_pre_beta_unc_token.cs" />
     <Compile Include="Repositories\factories\indexed_http\from_user_input_with_authentication.cs" />
     <Compile Include="Repositories\folder\locking\enabled_through_option.cs" />
     <Compile Include="Repositories\folder\locking\existing_lock.cs" />

@@ -9,12 +9,36 @@ namespace OpenWrap.Repositories.FileSystem
 {
     public class IndexedFolderRepositoryFactory : IRemoteRepositoryFactory
     {
-        readonly IFileSystem _fileSystem;
         const string PREFIX = "[indexed-folder]";
+        readonly IFileSystem _fileSystem;
 
         public IndexedFolderRepositoryFactory(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
+        }
+
+        public IPackageRepository FromToken(string token)
+        {
+            if (token.StartsWith(PREFIX) == false)
+                return null;
+
+            string path = token.Substring(PREFIX.Length);
+            IFile file = null;
+            Uri uri;
+            
+            if (Uri.TryCreate(path, UriKind.Absolute, out uri))
+            {
+                // TODO : fix this crap in OFS urgently!
+
+                var pathAsString = uri.ToPath().ToString();
+                var uncPrefix = new string(System.IO.Path.DirectorySeparatorChar,2);
+                var filePath = uri.IsUnc && !pathAsString.StartsWith(uncPrefix) ? "\\\\" + pathAsString : pathAsString;
+                file = _fileSystem.GetFile(filePath);
+            }
+            if (file == null)
+                file = _fileSystem.GetFile(path);
+
+            return new IndexedFolderRepository(file.Name, file.Parent) { Token = PREFIX + file.Path.ToUri("indexed-folder") };
         }
 
         public IPackageRepository FromUserInput(string userInput, NetworkCredential crendentials = null)
@@ -23,13 +47,13 @@ namespace OpenWrap.Repositories.FileSystem
             {
                 return null;
             }
-            
-            var fileUri = userInput.ToUri();
 
-            var directoryPath = fileUri.ToPath();
+            Uri fileUri = userInput.ToUri();
+
+            Path directoryPath = fileUri.ToPath();
 
             IDirectory directory;
-            var wrapFile = _fileSystem.GetFile(directoryPath.FullPath);
+            IFile wrapFile = _fileSystem.GetFile(directoryPath.FullPath);
             if (IsFileUriPontingToUnknownFileName(fileUri, wrapFile))
                 return null;
             if (wrapFile.Exists || wrapFile.Name == "index.wraplist")
@@ -56,22 +80,6 @@ namespace OpenWrap.Repositories.FileSystem
         static bool IsFileUriPontingToUnknownFileName(Uri fileUri, IFile file)
         {
             return fileUri.Scheme == "file" && file.Exists && file.Name != "index.wraplist";
-        }
-
-        public IPackageRepository FromToken(string token)
-        {
-            if (token.StartsWith(PREFIX) == false)
-                return null;
-
-            var path = token.Substring(PREFIX.Length);
-            IFile file = null;
-                Uri uri;
-                if (Uri.TryCreate(path, UriKind.Absolute, out uri))
-                    file = _fileSystem.GetFile(uri.ToPath().ToString());
-            if (file == null)
-                    file = _fileSystem.GetFile(path);
-
-            return new IndexedFolderRepository(file.Name, file.Parent) { Token = PREFIX + file.Path.ToUri("indexed-folder") };
         }
     }
 }
