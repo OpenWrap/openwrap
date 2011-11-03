@@ -24,6 +24,7 @@ namespace OpenWrap.PackageModel
         public string Name { get; private set; }
 
         public IEnumerable<string> Tags { get; set; }
+        // TODO: Remove this implementation detail.
         public IEnumerable<VersionVertex> VersionVertices { get; private set; }
 
         public override string ToString()
