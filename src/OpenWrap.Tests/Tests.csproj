@@ -138,6 +138,11 @@
     <Compile Include="Commands\update_wrap\locks\existing_lock.cs" />
     <Compile Include="Commands\update_wrap\project\by_name\already_up_to_date.cs" />
     <Compile Include="Commands\update_wrap\project\by_name\not_found.cs" />
+    <Compile Include="Dependencies\versions\aproximately_greater.cs" />
+    <Compile Include="Dependencies\versions\exact_version.cs" />
+    <Compile Include="Dependencies\versions\greater_than_or_equal.cs" />
+    <Compile Include="Dependencies\versions\less_than.cs" />
+    <Compile Include="Dependencies\versions\less_than_or_equal.cs" />
     <Compile Include="Repositories\convertings_package_from_non_seekable_stream.cs" />
     <Compile Include="Repositories\converting_description_with_line_breaks.cs" />
     <Compile Include="Repositories\converting_package.cs" />
@@ -583,7 +588,7 @@
     <Compile Include="PackageModel\descriptors\removing_a_multiline_value.cs" />
     <Compile Include="Dependencies\reading_wraplists.cs" />
     <Compile Include="Dependencies\resolving_dependencies_tree.cs" />
-    <Compile Include="Dependencies\version_vertices_specs.cs" />
+    <Compile Include="Dependencies\versions\version_vertice_context.cs" />
     <Compile Include="Extensions\strings\CamelToSpacedName.cs" />
     <Compile Include="IO\template_path_segment.cs" />
     <Compile Include="IO\template_processor\parsing_path_with_absolute_template.cs" />
