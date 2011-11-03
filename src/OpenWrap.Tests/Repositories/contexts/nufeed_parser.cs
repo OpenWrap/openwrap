@@ -7,7 +7,7 @@ using OpenWrap.Testing;
 
 namespace Tests.Repositories.contexts
 {
-    public abstract class nufeed_parser : context
+    public abstract class nufeed_parser : OpenWrap.Testing.context
     {
         XDocument _xFeed;
         protected PackageFeed Feed;

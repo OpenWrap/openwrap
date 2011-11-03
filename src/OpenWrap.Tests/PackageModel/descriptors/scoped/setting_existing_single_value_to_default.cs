@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
+using Tests.contexts;
 
 namespace OpenWrap.PackageModel.descriptors.scoped
 {
     public class setting_existing_single_value_to_default
-            : contexts.scoped_descriptor
+            : scoped_descriptor
     {
         public setting_existing_single_value_to_default()
         {

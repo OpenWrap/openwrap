@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.PackageModel;
+using Tests.contexts;
+
 namespace OpenWrap.PackageModel.descriptors.scoped
 {
 
     public class setting_inexistant_single_value
-        : contexts.scoped_descriptor
+        : scoped_descriptor
     {
         public setting_inexistant_single_value()
         {

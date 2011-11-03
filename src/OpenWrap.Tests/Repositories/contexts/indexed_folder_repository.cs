@@ -7,7 +7,7 @@ using Tests.contexts;
 
 namespace Tests.Repositories.contexts
 {
-    public class indexed_folder_repository : repository_factory<IndexedFolderRepositoryFactory, IndexedFolderRepository>
+    public abstract class indexed_folder_repository : repository_factory<IndexedFolderRepositoryFactory, IndexedFolderRepository>
     {
         protected IFileSystem FileSystem;
 

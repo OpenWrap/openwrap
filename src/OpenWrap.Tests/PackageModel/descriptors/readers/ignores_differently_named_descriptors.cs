@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.contexts;
 
 namespace OpenWrap.PackageModel.descriptors.readers
 {
-    public class ignores_differently_named_descriptors : contexts.descriptor_readers
+    public class ignores_differently_named_descriptors : descriptor_readers
     {
         public ignores_differently_named_descriptors()
         {

@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.contexts;
 
 namespace OpenWrap.PackageModel.descriptors.readers
 {
-    public class reads_scoped_descirptor : contexts.descriptor_readers
+    public class reads_scoped_descirptor : descriptor_readers
     {
         public reads_scoped_descirptor()
         {

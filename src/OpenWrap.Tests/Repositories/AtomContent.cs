@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using OpenWrap;
 using OpenWrap.Repositories.NuFeed;
 
-namespace Tests.Repositories.factories.nuget
+namespace Tests.Repositories
 {
     public static class AtomContent
     {

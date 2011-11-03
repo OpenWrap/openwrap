@@ -12,7 +12,7 @@ using OpenWrap.Reflection;
 
 namespace Tests.contexts
 {
-    public class signing : context
+    public abstract class signing : context
     {
         ITemporaryDirectory Dir;
         IFileSystem FileSystem;

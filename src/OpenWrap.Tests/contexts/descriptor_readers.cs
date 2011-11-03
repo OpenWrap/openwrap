@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenWrap;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 
-namespace OpenWrap.contexts
+namespace Tests.contexts
 {
-    public class descriptor_readers : OpenWrap.Testing.context
+    public abstract class descriptor_readers : OpenWrap.Testing.context
     {
         protected InMemoryFileSystem FileSystem;
         protected IDictionary<string, FileBased<IPackageDescriptor>> Descriptors;

@@ -10,6 +10,7 @@ namespace OpenWrap.Repositories.FileSystem
     public class IndexedFolderRepositoryFactory : IRemoteRepositoryFactory
     {
         const string PREFIX = "[indexed-folder]";
+
         readonly IFileSystem _fileSystem;
 
         public IndexedFolderRepositoryFactory(IFileSystem fileSystem)
@@ -31,9 +32,9 @@ namespace OpenWrap.Repositories.FileSystem
                 // TODO : fix this crap in OFS urgently!
 
                 var pathAsString = uri.ToPath().ToString();
-                var uncPrefix = new string(System.IO.Path.DirectorySeparatorChar,2);
-                var filePath = uri.IsUnc && !pathAsString.StartsWith(uncPrefix) ? "\\\\" + pathAsString : pathAsString;
-                file = _fileSystem.GetFile(filePath);
+                //var uncPrefix = new string(System.IO.Path.DirectorySeparatorChar,2);
+                //var filePath = uri.IsUnc && !pathAsString.StartsWith(uncPrefix) ? "\\\\" + pathAsString : pathAsString;
+                file = _fileSystem.GetFile(pathAsString);
             }
             if (file == null)
                 file = _fileSystem.GetFile(path);

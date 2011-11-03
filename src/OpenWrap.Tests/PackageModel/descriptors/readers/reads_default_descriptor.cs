@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.contexts;
 
 namespace OpenWrap.PackageModel.descriptors.readers
 {
-    public class reads_default_descriptor : contexts.descriptor_readers
+    public class reads_default_descriptor : descriptor_readers
     {
         public reads_default_descriptor()
         {

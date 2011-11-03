@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.contexts;
+using Tests.contexts;
 
 namespace package_descriptor_specs
 {

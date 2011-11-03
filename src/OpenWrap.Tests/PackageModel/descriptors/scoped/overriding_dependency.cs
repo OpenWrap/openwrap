@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using NUnit.Framework;
 using OpenWrap.Testing;
+using Tests.contexts;
 
 namespace OpenWrap.PackageModel.descriptors.scoped
 {
-    public class overriding_dependency : contexts.scoped_descriptor
+    public class overriding_dependency : scoped_descriptor
     {
         public overriding_dependency()
         {

@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using OpenWrap.contexts;
+using Tests.contexts;
 
 namespace package_descriptor_specs
 {

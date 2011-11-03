@@ -9,6 +9,7 @@ namespace OpenWrap.Repositories.Http
     public class IndexedHttpRepositoryFactory : IRemoteRepositoryFactory
     {
         const string PREFIX = "[indexed-http]";
+        const string PREFIX_LEGACY = "[indexed]";
         readonly IHttpClient _client;
 
         public IndexedHttpRepositoryFactory(IHttpClient client)
@@ -18,6 +19,10 @@ namespace OpenWrap.Repositories.Http
 
         public IPackageRepository FromToken(string token)
         {
+            // legacy prefix was used by mistake in 2.0.0, fixed in 2.0.1 but 
+            // need parsing, which we do in 2.0.2
+            if (token.StartsWith(PREFIX_LEGACY))
+                token = PREFIX + token.Substring(PREFIX_LEGACY.Length).ToUri().Combine("index.wraplist");
             if (token.StartsWith(PREFIX) == false)
                 return null;
             return GetIndexedRepository(token.Substring(PREFIX.Length).ToUri());
@@ -33,7 +38,7 @@ namespace OpenWrap.Repositories.Http
                 return null;
 
             if (!targetUri.Segments.Last().EqualsNoCase("index.wraplist"))
-                targetUri = new Uri(targetUri.EnsureTrailingSlash(), new Uri("index.wraplist", UriKind.Relative));
+                targetUri = targetUri.EnsureTrailingSlash().Combine("index.wraplist");
             _client.Head(targetUri)
                                  .Credentials(credentials)
                                  .Handle(200, _ => found = true)

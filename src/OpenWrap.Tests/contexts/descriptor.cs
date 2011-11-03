@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using OpenWrap;
 using OpenWrap.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Testing;
 
-namespace OpenWrap.contexts
+namespace Tests.contexts
 {
     public abstract class descriptor : context
     {

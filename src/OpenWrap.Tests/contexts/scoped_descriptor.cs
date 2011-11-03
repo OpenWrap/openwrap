@@ -1,7 +1,8 @@
-﻿using OpenWrap.PackageModel;
+﻿using OpenWrap;
+using OpenWrap.PackageModel;
 using OpenWrap.Testing;
 
-namespace OpenWrap.contexts
+namespace Tests.contexts
 {
     public abstract class scoped_descriptor : descriptor
     {

@@ -11,7 +11,7 @@ using Tests.Repositories.factories;
 
 namespace Tests.contexts
 {
-    public class http : context
+    public abstract class http : context
     {
         protected MemoryHttpClient Client = new MemoryHttpClient();
 

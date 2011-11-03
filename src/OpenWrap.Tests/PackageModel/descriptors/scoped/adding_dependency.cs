@@ -1,8 +1,9 @@
 ﻿using NUnit.Framework;
+using Tests.contexts;
 
 namespace OpenWrap.PackageModel.descriptors.scoped
 {
-    public class adding_dependency : contexts.scoped_descriptor
+    public class adding_dependency : scoped_descriptor
     {
         public adding_dependency()
         {

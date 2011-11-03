@@ -13,7 +13,7 @@ using OpenWrap.Testing;
 
 namespace Tests.Repositories.contexts
 {
-    public abstract class folder : context
+    public abstract class folder : OpenWrap.Testing.context
     {
         InMemoryFileSystem file_system;
         protected ITemporaryDirectory repository_directory;

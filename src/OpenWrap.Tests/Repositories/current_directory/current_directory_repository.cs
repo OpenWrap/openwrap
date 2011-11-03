@@ -1,8 +1,5 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
-using current_directory_specifications.context;
-using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap;
@@ -12,71 +9,10 @@ using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
-using OpenWrap.Testing;
 using OpenWrap.Tests.Commands;
 
-namespace current_directory_specifications
+namespace Tests.Repositories
 {
-    public class when_reading_packages_by_name : current_directory_repository
-    {
-        public when_reading_packages_by_name()
-        {
-            given_file_system(@"c:\mordor\");
-            given_current_folder_repository();
-
-            given_packages(Package("isenmouthe", "1.0.0"), Package("gorgoroth", "2.0.0"));
-            given_current_folder_repository();
-            when_getting_package_names();
-        }
-
-        [Test]
-        public void the_packages_are_available_by_name()
-        {
-            PackagesByName.Contains("isenmouthe").ShouldBeTrue();
-            PackagesByName.Contains("gorgoroth").ShouldBeTrue();
-        }
-    }
-
-    public class publishing_package : current_directory_repository
-    {
-        public publishing_package()
-        {
-            given_current_folder_repository();
-        }
-
-        [Test]
-        public void attempting_publish_results_in_error()
-        {
-            Executing(() => Repository.Publish("isengard", new MemoryStream()))
-                    .ShouldThrow<NotSupportedException>();
-        }
-
-        [Test]
-        public void publish_is_disabled()
-        {
-            Repository.CanPublish.ShouldBeFalse();
-        }
-    }
-
-    public class finding_a_package : current_directory_repository
-    {
-        public finding_a_package()
-        {
-            given_file_system(@"c:\mordor\");
-            given_current_folder_repository();
-            given_packages(Package("isenmouthe", "1.0.0"));
-            given_current_folder_repository();
-            when_finding_packages("depends: isenmouthe");
-        }
-
-        [Test]
-        public void the_package_is_found()
-        {
-            FoundPackage.ShouldNotBeNull()
-                    .Name.ShouldBe("isenmouthe");
-        }
-    }
-
     namespace context
     {
         public abstract class current_directory_repository : OpenWrap.Testing.context

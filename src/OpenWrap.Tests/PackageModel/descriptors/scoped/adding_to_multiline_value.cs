@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
+using Tests.contexts;
 
 namespace OpenWrap.PackageModel.descriptors.scoped
 {
     public class adding_to_multiline_value
-            : contexts.scoped_descriptor
+            : scoped_descriptor
     {
         public adding_to_multiline_value()
         {
