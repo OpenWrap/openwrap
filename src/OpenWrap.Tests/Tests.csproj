@@ -165,6 +165,10 @@
     <Compile Include="Repositories\when_nuking_a_package.cs" />
     <Compile Include="RepositoryAssertions.cs" />
     <Compile Include="resolving_assemblies\locks.cs" />
+    <Compile Include="source_dir\context_source_dir.cs" />
+    <Compile Include="source_dir\custom_source.cs" />
+    <Compile Include="source_dir\custom_source_not_found.cs" />
+    <Compile Include="source_dir\default_for_source.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_supporting_fetch_and_publish.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_with_authentication.cs" />

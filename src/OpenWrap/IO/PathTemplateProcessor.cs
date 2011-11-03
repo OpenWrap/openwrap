@@ -101,6 +101,7 @@ namespace OpenWrap.IO
     {
         public static IDirectory GetSourceDirectory(IEnumerable<string> templates, IDirectory dir)
         {
+            templates = templates.Any() ? templates : new[] { "{source: source}", "{source: src}" };
             return (from t in templates
                     let processor = new PathTemplateProcessor(t)
                     from directory in processor.Directories(dir)
