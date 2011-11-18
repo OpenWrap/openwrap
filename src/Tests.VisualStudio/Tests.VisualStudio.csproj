@@ -150,10 +150,6 @@
       <Link>Artifacts\Mono.Cecil-0.9.4.1.wrap</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="..\..\wraps\openfilesystem-1.0.0.61263243.wrap">
-      <Link>Artifacts\openfilesystem-1.0.0.61263243.wrap</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="..\..\wraps\SharpZipLib-0.86.0.wrap">
       <Link>Artifacts\SharpZipLib-0.86.0.wrap</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

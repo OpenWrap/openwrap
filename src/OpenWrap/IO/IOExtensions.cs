@@ -10,6 +10,7 @@ namespace OpenWrap.IO
 {
     public static class IOExtensions
     {
+        
         public static T Read<T>(this IFile file, Func<Stream, T> read)
         {
             return Read(() => file.OpenRead(), read);
@@ -55,7 +56,19 @@ namespace OpenWrap.IO
             using (var stream = file.OpenRead())
                 return stream.ReadString(encoding);
         }
+        public static IFile GetUniqueFile(this IDirectory directory, string fileName)
+        {
 
+            int count = -1;
+            IFile file;
+            while ((file = directory.GetFile(string.Format(
+                "{1}{0}.{2}", 
+                count++ <= 0 ? string.Empty : count.ToString(),                                                      System.IO.Path.GetFileNameWithoutExtension(fileName), 
+                System.IO.Path.GetExtension(fileName)))).Exists)
+            {
+            }
+            return file;
+        }
         public static bool TryDelete(this IDirectory directory)
         {
             try

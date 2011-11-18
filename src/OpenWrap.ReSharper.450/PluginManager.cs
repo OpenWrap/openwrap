@@ -41,17 +41,16 @@ namespace OpenWrap.Resharper
         public const string OUTPUT_RESHARPER_TESTS = "OpenWrap-Tests";
         readonly DTE2 _dte;
         List<Assembly> _loadedAssemblies = new List<Assembly>();
-        bool _resharperLoaded;
+        //bool _resharperLoaded;
 
         static ResharperPlugin _selfPlugin;
-        System.Threading.Thread _debugThread;
-        bool runTestRunner = true;
+        //System.Threading.Thread _debugThread;
+        //bool runTestRunner = true;
         OpenWrapOutput _output;
         ResharperThreading _threading;
 
 #if v600
         resharper::JetBrains.VsIntegration.Application.JetVisualStudioHost _host;
-        resharper::JetBrains.Application.Parts.AssemblyPartsCatalogue _catalog;
         resharper::JetBrains.Application.PluginSupport.PluginsDirectory _pluginsDirectory;
         resharper::JetBrains.DataFlow.LifetimeDefinition _lifetimeDefinition;
 #endif
@@ -84,7 +83,7 @@ namespace OpenWrap.Resharper
         public void Dispose()
         {
             _output.Write("Unloading.");
-            runTestRunner = false;
+            //runTestRunner = false;
 #if !v600
             _selfPlugin.Enabled = false;
             ResharperPluginManager.Instance.Plugins.Remove(_selfPlugin);
@@ -93,7 +92,6 @@ namespace OpenWrap.Resharper
             _pluginsDirectory.Plugins.Remove(_selfPlugin);
             _lifetimeDefinition.Terminate();
             _host = null;
-            _catalog = null;
 #endif
             _selfPlugin = null;
         }
@@ -109,7 +107,7 @@ namespace OpenWrap.Resharper
                 var asm = GetType().Assembly;
                 var id = "ReSharper OpenWrap Integration";
 #if v600
-                _lifetimeDefinition = resharper::JetBrains.DataFlow.Lifetimes.Define(resharper::JetBrains.DataFlow.EternalLifetime.Instance, "OpenWrap Solution");
+                _lifetimeDefinition = resharper::JetBrains.DataFlow.Lifetimes.Define(resharper::JetBrains.DataFlow.EternalLifetime.Instance, id);
                 _pluginsDirectory =
                     (resharper::JetBrains.Application.PluginSupport.PluginsDirectory)_host.Environment.Container.ResolveDynamic(typeof(resharper::JetBrains.Application.PluginSupport.PluginsDirectory)).Instance;
 

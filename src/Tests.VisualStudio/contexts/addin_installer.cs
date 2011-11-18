@@ -15,7 +15,6 @@ namespace Tests.VisualStudio.contexts
         protected ITemporaryDirectory InstallDir;
         PerUserComComponentInstaller _installer;
 
-
         public addin_installer()
         {
             InstallDir = LocalFileSystem.Instance.CreateTempDirectory();

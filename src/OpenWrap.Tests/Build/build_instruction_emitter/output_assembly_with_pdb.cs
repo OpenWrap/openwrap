@@ -1,15 +1,15 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts;
+using Tests.Build.build_instruction_emitter.contexts;
 
-namespace OpenWrap.Build.build_instruction_emitter
+namespace Tests.Build.build_instruction_emitter
 {
     public class output_assembly_with_pdb : msbuild_emitter
     {
         public output_assembly_with_pdb()
         {
             given_export_name("bin-net35");
-            given_output_assembly("sauron.dll");
-            given_pdb("sauron.pdb");
+            given_output("sauron.dll");
+            given_output("sauron.pdb");
             when_generating_instructions();
         }
 

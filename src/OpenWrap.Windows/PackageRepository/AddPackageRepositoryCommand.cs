@@ -30,14 +30,14 @@ namespace OpenWrap.Windows.PackageRepository
         protected override void Execute(AddPackageRepositoryViewModel parameter)
         {
             throw new NotImplementedException();
-            AddRemoteCommand addRemoteCommand = new AddRemoteCommand
-            {
-                    Name = parameter.RepositoryName, 
-                    //Href = new Uri(parameter.RepositoryUrl)
-            };
+            //AddRemoteCommand addRemoteCommand = new AddRemoteCommand
+            //{
+            //        Name = parameter.RepositoryName, 
+            //        //Href = new Uri(parameter.RepositoryUrl)
+            //};
 
-            CommandHelper.ExecuteAndSend(addRemoteCommand);
-            Messenger.Default.Send(MessageNames.RepositoryListChanged);
+            //CommandHelper.ExecuteAndSend(addRemoteCommand);
+            //Messenger.Default.Send(MessageNames.RepositoryListChanged);
         }
     }
 }

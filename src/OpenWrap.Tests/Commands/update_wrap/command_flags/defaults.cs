@@ -7,8 +7,6 @@ namespace Tests.Commands.update_wrap.command_flags
 {
     public class defaults: contexts.update_wrap
     {
-        UpdateWrapCommand CommandInstance;
-
         public defaults()
         {
             CommandInstance = new UpdateWrapCommand();

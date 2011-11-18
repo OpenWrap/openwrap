@@ -1,22 +1,22 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using Tests.Build.build_instruction_emitter.contexts;
 
 namespace Tests.Build.build_instruction_emitter
 {
-    public class pdb_for_referenced_assembly : msbuild_emitter
+    public class output_assembly_with_bin_disabled : msbuild_emitter
     {
-        public pdb_for_referenced_assembly()
+        public output_assembly_with_bin_disabled()
         {
             given_export_name("bin-net35");
             given_output("sauron.dll");
-            given_output("sauron.pdb");
+            given_includes(bin: false);
             when_generating_instructions();
         }
 
         [Test]
-        public void pdb_is_included()
+        public void is_exported()
         {
-            should_have_file("bin-net35", "sauron.pdb");
+            should_not_have_file("bin-net35", "sauron.dll");
         }
     }
 }

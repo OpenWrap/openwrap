@@ -76,6 +76,7 @@
     <Compile Include="GenerateRevisionNumber.cs" />
     <Compile Include="Hooks\SolutionAddIn.cs" />
     <Compile Include="InitializeVisualStudioIntegration.cs" />
+    <Compile Include="Lookup.cs" />
     <Compile Include="MSBuildInstructionEmitter.cs" />
     <Compile Include="PublishPackageContent.cs" />
     <Compile Include="Hooks\ResharperHook.cs" />

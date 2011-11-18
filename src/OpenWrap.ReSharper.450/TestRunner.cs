@@ -69,7 +69,7 @@ namespace OpenWrap.Resharper
             _debugThread = new System.Threading.Thread(WaitForOutput) { Name = "OpenWrap Test Runner Thread" };
             _debugThread.SetApartmentState(ApartmentState.STA);
             _debugThread.Start();
-
+            _solution = solution;
         }
 
         void WaitForOutput()

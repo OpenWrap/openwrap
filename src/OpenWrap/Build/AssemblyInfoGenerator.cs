@@ -14,10 +14,12 @@ namespace OpenWrap.Build
         const string ATTRIBUTE_TEXT = "[assembly: {0}(\"{1}\")]";
         
         readonly IPackageDescriptor _descriptor;
+        public Version Version { get; set; }
 
         public AssemblyInfoGenerator(IPackageDescriptor descriptor)
         {
             _descriptor = descriptor;
+            Version = descriptor.Version;
         }
         public void Write(IFile destination)
         {
@@ -30,19 +32,19 @@ namespace OpenWrap.Build
             TryAppend<AssemblyCompanyAttribute>(sb, "author", _descriptor.Authors.JoinString(", "));
             TryAppend<AssemblyProductAttribute>(sb, "title", _descriptor.Title);
             TryAppend<AssemblyCopyrightAttribute>(sb, "copyright", _descriptor.Copyright);
-            if (_descriptor.Version != null)
+            if (Version != null)
             {
                 TryAppend<AssemblyVersionAttribute>(sb,
                                                     "assembly-version",
                                                     new Version(
-                                                        _descriptor.Version.Major % ushort.MaxValue,
-                                                        _descriptor.Version.Minor % ushort.MaxValue,
-                                                        _descriptor.Version.Build % ushort.MaxValue,
-                                                        _descriptor.Version.Revision % ushort.MaxValue
+                                                        Version.Major % ushort.MaxValue,
+                                                        Version.Minor % ushort.MaxValue,
+                                                        Version.Build == -1 ? 0 : Version.Build % ushort.MaxValue,
+                                                        Version.Revision == -1 ? 0 : Version.Revision % ushort.MaxValue
                                                         ).ToString());
                 TryAppend<AssemblyFileVersionAttribute>(sb,
                                                         "file-version",
-                                                        _descriptor.Version.ToString());
+                                                        Version.ToString());
             }
             return sb.ToString();
         }

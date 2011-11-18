@@ -7,8 +7,6 @@ namespace Tests.Commands.update_wrap.command_flags
 {
     public class system_flag_specified: contexts.update_wrap
     {
-        UpdateWrapCommand CommandInstance;
-
         public system_flag_specified()
         {
             CommandInstance = new UpdateWrapCommand() { System = true };

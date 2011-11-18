@@ -93,7 +93,6 @@ namespace Tests.Build.contexts
         {
             readonly string _output;
             readonly int _returnCode;
-            public string ResponseFilePath;
 
             public SpyMSBuildPackageBuilder(IFileSystem fileSystem, IEnvironment environment, IFileBuildResultParser parser, string output, int returnCode) : base(fileSystem, environment, parser)
             {

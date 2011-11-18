@@ -2,7 +2,7 @@
 
 namespace Tests.Commands.contexts
 {
-    public class update_wrap : command<UpdateWrapCommand>
+    public abstract class update_wrap : command<UpdateWrapCommand>
     {
         public update_wrap()
         {

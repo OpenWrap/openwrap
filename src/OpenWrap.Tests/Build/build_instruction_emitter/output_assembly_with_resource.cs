@@ -1,15 +1,15 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts;
+using Tests.Build.build_instruction_emitter.contexts;
 
-namespace OpenWrap.Build.build_instruction_emitter
+namespace Tests.Build.build_instruction_emitter
 {
     public class output_assembly_with_resource : msbuild_emitter
     {
         public output_assembly_with_resource()
         {
             given_export_name("bin-net35");
-            given_output_assembly("sauron.dll");
-            given_satellite("sauron.resources.dll");
+            given_output(".", "sauron.dll");
+            given_output(".", "sauron.resources.dll");
             when_generating_instructions();
         }
 
