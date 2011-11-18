@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using NUnit.Framework;
 using OpenWrap;
-using OpenWrap.Build;
-using OpenWrap.Build.PackageBuilders;
 using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
@@ -38,14 +35,6 @@ namespace Tests.Commands.build_wrap
         public void no_package_file_output()
         {
             Results.ShouldHaveError();
-        }
-    }
-
-    public class FailingBuild : IPackageBuilder
-    {
-        public IEnumerable<BuildResult> Build()
-        {
-            yield return new ErrorBuildResult();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
-using OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts;
+using Tests.Build.build_instruction_emitter.contexts;
 
-namespace OpenWrap.Build.build_instruction_emitter
+namespace Tests.Build.build_instruction_emitter
 {
     public class assembly_reference : msbuild_emitter
     {

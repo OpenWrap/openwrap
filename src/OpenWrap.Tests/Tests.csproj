@@ -63,7 +63,10 @@
     <Compile Include="Commands\add_wrap\adding_doesnt_impact_unrelated_packages.cs" />
     <Compile Include="Commands\add_wrap\adding_major_version.cs" />
     <Compile Include="Commands\add_wrap\locks\lock_is_respected.cs" />
+    <Compile Include="Commands\build_wrap\assembly_info\specified.cs" />
     <Compile Include="Commands\build_wrap\failed_build.cs" />
+    <Compile Include="Commands\build_wrap\FailingBuild.cs" />
+    <Compile Include="Commands\build_wrap\from_path\from_remote_path.cs" />
     <Compile Include="Commands\build_wrap\inputs_to_providers\defaults.cs" />
     <Compile Include="Commands\build_wrap\inputs_to_providers\input_configuration.cs" />
     <Compile Include="Commands\build_wrap\inputs_to_providers\input_debug.cs" />

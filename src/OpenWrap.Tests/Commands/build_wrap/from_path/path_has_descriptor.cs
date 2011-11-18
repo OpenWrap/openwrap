@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using OpenFileSystem.IO;
 using OpenWrap;
 
 using OpenWrap.Commands.Wrap;
@@ -10,16 +9,6 @@ using OpenWrap.Testing;
 
 namespace Tests.Commands.build_wrap.from_path
 {
-    public class from_remote_path : contexts.build_wrap
-    {
-        protected IDirectory path_to_project;
-
-        protected void given_remote_project()
-        {
-            path_to_project = FileSystem.CreateTempDirectory();
-        }
-    }
-
     public class path_has_descriptor : from_remote_path
     {
         public path_has_descriptor()

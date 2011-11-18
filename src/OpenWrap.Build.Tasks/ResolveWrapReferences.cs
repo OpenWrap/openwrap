@@ -8,9 +8,12 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.Local;
+using OpenWrap.IO;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Exporters;
 using OpenWrap.PackageManagement.Monitoring;
+using OpenWrap.PackageModel;
+using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
@@ -59,6 +62,11 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string Profile { get; set; }
 
+        public bool GenerateSharedAssemblyInfo { get; set; }
+
+        [Output]
+        public ITaskItem GeneratedSharedAssemblyInfo { get; set; } 
+
         public ITaskItem[] ExcludeAssemblies { get; set; }
 
         [Output]
@@ -84,8 +92,6 @@ namespace OpenWrap.Build.Tasks
 
         public override bool Execute()
         {
-            //Debugger.Launch();
-
             try
             {
                 EnsurePackageRepositoryIsInitialized();
@@ -100,7 +106,28 @@ namespace OpenWrap.Build.Tasks
                 Log.LogErrorFromException(e, false, false, WrapDescriptor.ItemSpec);
                 return false;
             }
+            TryGenerateAssemblyInfo();
             return RefreshWrapDependencies();
+        }
+
+        void TryGenerateAssemblyInfo()
+        {
+            if (!GenerateSharedAssemblyInfo)
+                return;
+            IPackageDescriptor descriptor;
+            using (var str = WrapDescriptorPath.OpenRead())
+                descriptor = new PackageDescriptorReader().Read(str);
+            var versionFile = WrapDescriptorPath.Parent.GetFile("version");
+            var version = versionFile.Exists
+                          ? versionFile.ReadString().GenerateVersionNumber(WrapDescriptorPath.FileSystem.GetDirectory(WrapsDirectory))
+                          : descriptor.Version != null
+                                ? descriptor.Version.ToString()
+                                : null;
+            if (version == null) return;
+            var generator = new AssemblyInfoGenerator(descriptor) { Version = version.ToVersion() };
+            var projectAsmFile = WrapDescriptorPath.Parent.GetUniqueFile("SharedAssemblyInfo.cs");
+            generator.Write(projectAsmFile);
+            GeneratedSharedAssemblyInfo = new TaskItem(projectAsmFile.Path.FullPath);
         }
         
         public void AssembliesUpdated(IEnumerable<Exports.IAssembly> assemblyPaths)

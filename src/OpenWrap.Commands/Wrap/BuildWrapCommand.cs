@@ -29,6 +29,7 @@ namespace OpenWrap.Commands.Wrap
         IDirectory _destinationPath;
         IEnvironment _environment;
         Version _generatedVersion;
+        IFile _sharedAssemblyInfoFile;
 
         public BuildWrapCommand()
             : this(ServiceLocator.GetService<IFileSystem>(), ServiceLocator.GetService<IEnvironment>())
@@ -82,14 +83,32 @@ namespace OpenWrap.Commands.Wrap
 
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            foreach (var m in CreateBuilder()) yield return m;
-            foreach (var m in Build())
+            using(CreateSharedAssemblyInfo())
             {
-                yield return m;
-                if (m.Type == CommandResultType.Error)
-                    yield break;
+                foreach (var m in CreateBuilder()) yield return m;
+                foreach (var m in Build())
+                {
+                    yield return m;
+                    if (m.Type == CommandResultType.Error)
+                        yield break;
+                }
+                foreach (var m in Package()) yield return m;
             }
-            foreach (var m in Package()) yield return m;
+        }
+
+        IDisposable CreateSharedAssemblyInfo()
+        {
+            if (_generatedVersion != null && _environment.Descriptor.AssemblyInfo.Any())
+            {
+                var descriptor = new PackageDescriptor(_environment.Descriptor);
+                descriptor.Version = _generatedVersion;
+                _sharedAssemblyInfoFile = _environment.DescriptorFile.Parent.GetUniqueFile("SharedAssemblyInfo.cs");
+                var generator = new AssemblyInfoGenerator(descriptor);
+                generator.Write(_sharedAssemblyInfoFile);
+                return new ActionOnDispose(_sharedAssemblyInfoFile.Delete);
+
+            }
+            return new ActionOnDispose(()=>{});
         }
 
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
@@ -117,7 +136,7 @@ namespace OpenWrap.Commands.Wrap
             else
             {
                 var versionFileContent = versionFile.Exists ? versionFile.ReadString() : null;
-                _generatedVersion = (Version ?? versionFileContent ?? _environment.Descriptor.Version.ToString()).GenerateVersionNumber().ToVersion();
+                _generatedVersion = (Version ?? versionFileContent ?? _environment.Descriptor.Version.ToString()).GenerateVersionNumber(_environment.DescriptorFile.Parent.GetDirectory("wraps")).ToVersion();
             }
         }
 
@@ -180,7 +199,6 @@ namespace OpenWrap.Commands.Wrap
                 }
                 else
                 {
-
                     unknown.AddRange(property.Select(x => new KeyValuePair<string, string>(property.Key, x)));
                 }
             }
@@ -295,6 +313,8 @@ namespace OpenWrap.Commands.Wrap
             if (Incremental)
                 overrides.Add("Incremental", "True");
             overrides.Add("BuildVersion", _generatedVersion.ToString());
+            if (_sharedAssemblyInfoFile != null)
+                overrides.Add("OpenWrap-SharedAssemblyInfoFile", _sharedAssemblyInfoFile.Path.FullPath);
 
             return overrides.GroupBy(x => x.Key, x => x.Value).Concat(parameters.Where(param => !overrides.ContainsKey(param.Key)));
 
@@ -332,7 +352,7 @@ namespace OpenWrap.Commands.Wrap
             // 3. 'version:' header in wrap descriptor
             
             return Version != null
-                ? Version.GenerateVersionNumber().ToVersion()
+                ? Version.GenerateVersionNumber(_environment.DescriptorFile.Parent.GetDirectory("wraps")).ToVersion()
                 : new DefaultPackageInfo(GetVersionFromVersionFiles(buildFiles), packageDescriptorForEmbedding).Version;
         }
 

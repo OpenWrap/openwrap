@@ -234,7 +234,7 @@ namespace Tests
 
         }
 
-        protected void given_default_descriptor(PackageDescriptor packageDescriptor)
+        protected void given_default_descriptor(IPackageDescriptor packageDescriptor)
         {
             Environment.Descriptor = packageDescriptor;
         }
@@ -322,6 +322,11 @@ namespace Tests
         {
             scope = scope ?? string.Empty;
             return new PackageDescriptorReaderWriter().Read(Environment.ScopedDescriptors[scope].File);
+        }
+
+        protected void given_descriptor(params string[] lines)
+        {
+            given_default_descriptor(new PackageDescriptorReader().Read(lines.JoinString("\r\n").ToUTF8Stream()));
         }
     }
 }

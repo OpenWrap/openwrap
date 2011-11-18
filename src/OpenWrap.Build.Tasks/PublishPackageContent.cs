@@ -21,12 +21,13 @@ namespace OpenWrap.Build.Tasks
         public ITaskItem[] SatelliteAssemblies { get; set; }
         public ITaskItem[] SerializationAssemblies { get; set; }
         public ITaskItem[] SourceFiles { get; set; }
+        public ITaskItem[] BaseOutputPaths { get; set; }
 
         public bool IncludeCodeDocFiles { get; set; }
         public bool IncludePdbFiles { get; set; }
         public bool IncludeSourceFiles { get; set; }
-        public string BasePath { get; set; }
         public bool AllowBinDuplicates { get; set; }
+        public string ProjectPath { get; set; } 
 
         public string ExportName { get; set; }
 
@@ -34,9 +35,11 @@ namespace OpenWrap.Build.Tasks
         {
             WriteLow("IncludeDocumentation: " + IncludeCodeDocFiles);
             WriteLow("IncludePdbs: " + IncludePdbFiles);
-            WriteLow("BasePath: " + BasePath);
-            WriteLow("ExportName: " + BasePath);
+            WriteLow("IncludeSourceFiles: " + IncludeSourceFiles);
+            WriteLow("ExportName: " + ExportName);
             WriteLow("AllowBinDuplicates: " + AllowBinDuplicates);
+
+            WriteLow("BaseOutputPaths: " + BaseOutputPaths);
 
             WriteFiles("OutputAssemblyFiles", OutputAssemblyFiles);
             WriteFiles("ContentFiles", ContentFiles);
@@ -44,6 +47,7 @@ namespace OpenWrap.Build.Tasks
             WriteFiles("OpenWrapReferenceFiles", OpenWrapReferenceFiles);
             WriteFiles("PdbFiles", PdbFiles);
             WriteFiles("CodeDocFiles", CodeDocFiles);
+            WriteFiles("SourceFiles", SourceFiles);
             WriteFiles("SatelliteAssemblies", SatelliteAssemblies);
             WriteFiles("SerializationAssemblies", SerializationAssemblies);
 
@@ -54,23 +58,20 @@ namespace OpenWrap.Build.Tasks
                     OpenWrapReferenceFiles = Files(OpenWrapReferenceFiles),
                     PdbFiles = Files(PdbFiles),
                     CodeDocFiles = Files(CodeDocFiles),
+                    SourceFiles = Files(SourceFiles),
                     SatelliteAssemblies = Files(SatelliteAssemblies),
                     SerializationAssemblies = Files(SerializationAssemblies),
                     OutputAssemblyFiles = Files(OutputAssemblyFiles),
+                    BaseOutputPaths = Files(BaseOutputPaths),
                     IncludePdbFiles = IncludePdbFiles,
                     IncludeCodeDocFiles = IncludeCodeDocFiles,
-                    BasePath = BasePath,
-                    ExportName = ExportName
+                    IncludeSourceFiles = IncludeSourceFiles,
+                    ExportName = ExportName,
+                    ProjectPath = ProjectPath
             };
             foreach (var kv in emitter.GenerateInstructions())
                 BuildEngine.LogMessageEvent(new BuildMessageEventArgs(
-                                                         "[built(" +
-                                                         kv.Key +
-                                                         ", '" +
-                                                         kv.Value +
-                                                         "', " + 
-                                                         AllowBinDuplicates.ToString().ToLowerInvariant() +
-                                                         ")]",
+                                                         string.Format("[built({0}, '{1}', {2})]", kv.Key, kv.Value, AllowBinDuplicates.ToString().ToLowerInvariant()),
                                                          null,
                                                          "OpenWrap",
                                                          MessageImportance.Normal));

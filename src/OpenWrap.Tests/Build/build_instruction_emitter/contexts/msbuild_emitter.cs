@@ -5,7 +5,7 @@ using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.Build.Tasks;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts
+namespace Tests.Build.build_instruction_emitter.contexts
 {
     public class msbuild_emitter
     {
@@ -17,7 +17,8 @@ namespace OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts
         {
             _fileSystem = new InMemoryFileSystem();
             _emitter = new MSBuildInstructionEmitter(_fileSystem);
-            _emitter.BasePath = Path.GetTempPath();
+            _emitter.ProjectPath = Path.GetTempPath();
+            _emitter.BaseOutputPaths = new[]{System.IO.Path.Combine(_emitter.ProjectPath, "bin")};
         }
         protected void given_assembly_reference(string path)
         {
@@ -74,7 +75,7 @@ namespace OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts
 
         protected string RootedPath(string fileName)
         {
-            return Path.Combine(_emitter.BasePath, fileName);
+            return Path.Combine(_emitter.ProjectPath, fileName);
         }
 
         protected void given_output_assembly(string assemblyPath)
@@ -82,9 +83,9 @@ namespace OpenWrap.Tests.Build.build_instruction_emitter_specs.contexts
             _emitter.OutputAssemblyFiles.Add(RootedPath(assemblyPath));
         }
 
-        protected void given_base_path(string basePath)
+        protected void given_project_path(string basePath)
         {
-            _emitter.BasePath = basePath;
+            _emitter.ProjectPath = basePath;
         }
         protected void given_includes(bool? pdbs = null, bool? source = null, bool? codeDoc = null)
         {

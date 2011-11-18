@@ -15,11 +15,11 @@ namespace Tests.Commands.build_wrap
         public building_a_meta_package()
         {
             given_current_directory_repository(new CurrentDirectoryRepository());
-            Environment.Descriptor.Name = packageName;
-            Environment.Descriptor.Version = version;
-            Environment.Descriptor.Build.Add("none");
-            Environment.Descriptor.Version = version;
-            
+            given_descriptor(
+                "name: " + packageName,
+                "version: " + version,
+                "build: none"
+                );
             when_executing_command();
         }
 
