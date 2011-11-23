@@ -105,6 +105,7 @@ namespace OpenWrap.Resharper
                 catch
                 {
                 }
+
                 if (wait == null)
                 {
                     System.Threading.Thread.Sleep(TimeSpan.FromSeconds(1));
