@@ -35,5 +35,17 @@ namespace package_descriptor_specs
         {
             Descriptor.UseProjectRepository.ShouldBeTrue();
         }
+
+        [Test]
+        public void runtime_assemblies_should_be_blank()
+        {
+            Descriptor.RuntimeAssemblies.ShouldBeEmpty();
+        }
+
+        [Test]
+        public void referenced_assemblies_should_be_wildcard()
+        {
+            Descriptor.ReferencedAssemblies.ShouldBe("*");
+        }
     }
 }

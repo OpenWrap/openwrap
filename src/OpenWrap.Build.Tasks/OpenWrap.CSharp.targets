@@ -73,8 +73,16 @@
       InputReferences="@(Reference)"
       CopyLocal="$(OpenWrap-CopyLocal)">
       <Output TaskParameter="OutputReferences" ItemName="Reference" />
-
+      <Output TaskParameter="ReferenceCopyLocalPaths" ItemName="_OpenWrapReferenceCopyLocalPaths" />
     </ResolveWrapReferences>
+
+    <ItemGroup Condition="$(OpenWrap-IncludePdbFiles)">
+      <_OpenWrapReferenceCopyLocalPaths Include="@(_OpenWrapReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).pdb')"/>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Include="@(_OpenWrapReferenceCopyLocalPaths)"/>
+    </ItemGroup>
   </Target>
 
   <Target Name="OpenWrap-BeforeBuild" DependsOnTargets="OpenWrap-Initialize">

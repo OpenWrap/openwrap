@@ -64,6 +64,9 @@ namespace OpenWrap.Build.Tasks
         [Output]
         public ITaskItem[] OutputReferences { get; set; }
 
+        [Output]
+        public ITaskItem[] ReferenceCopyLocalPaths { get; set; }
+
         [Required]
         public ITaskItem WrapDescriptor { get; set; }
 
@@ -105,33 +108,52 @@ namespace OpenWrap.Build.Tasks
         
         public void AssembliesUpdated(IEnumerable<Exports.IAssembly> assemblyPaths)
         {
-            
-
-            var items = new List<ITaskItem>();
+            var references = new List<ITaskItem>();
+            var referenceCopyLocalPaths = new List<ITaskItem>();
             
             var excludedAssemblies = ExcludeAssemblies != null ? ExcludeAssemblies.Select(x => x.ItemSpec).ToList() : new List<string>(0);
 
             var assemblies = assemblyPaths.Distinct(new PathComparer()).ToList();
             foreach (var assemblyRef in assemblies)
             {
+                var fullPath = assemblyRef.File.Path.FullPath;
                 if (excludedAssemblies.Contains(assemblyRef.AssemblyName.Name, StringComparer.OrdinalIgnoreCase))
                 {
-                    Log.LogMessage("Ignoring OpenWrap reference to '{0}'", assemblyRef.File.Path.FullPath);
+                    Log.LogMessage("Ignoring OpenWrap reference to '{0}'", fullPath);
                     continue;
                 }
                 if (InputReferences.Any(x=>string.Equals(x.ItemSpec, assemblyRef.AssemblyName.Name, StringComparison.OrdinalIgnoreCase)))
                 {
-                    Log.LogMessage("OpenWrap reference to '{0}' already added", assemblyRef.File.Path.FullPath);
+                    Log.LogMessage("OpenWrap reference to '{0}' already added", fullPath);
                     continue;
                 }
-                Log.LogMessage("Adding OpenWrap reference to '{0}'", assemblyRef.File.Path.FullPath);
-                var item = new TaskItem(assemblyRef.AssemblyName.FullName);
-                item.SetMetadata("HintPath", assemblyRef.File.Path.FullPath);
-                item.SetMetadata("Private", CopyLocal ? "True" : "False");
-                item.SetMetadata("FromOpenWrap", "True");
-                items.Add(item);
+
+
+                if (assemblyRef.IsAssemblyReference)
+                {
+                    Log.LogMessage("Adding OpenWrap reference to '{0}'", fullPath);
+                    var item = new TaskItem(assemblyRef.AssemblyName.FullName);
+                    item.SetMetadata("HintPath", fullPath);
+                    item.SetMetadata("Private", CopyLocal ? "True" : "False");
+                    item.SetMetadata("FromOpenWrap", "True");
+                    references.Add(item);
+                }
+                else if (assemblyRef.IsRuntimeAssembly)
+                {
+                    if (!CopyLocal)
+                    {
+                        Log.LogMessage("Not adding '{0}' to ReferenceCopyLocalPaths because CopyLocal is false.", fullPath);
+                        continue;
+                    }
+
+                    Log.LogMessage("Adding OpenWrap runtime-only reference to '{0}'", fullPath);
+                    var item = new TaskItem(fullPath);
+                    item.SetMetadata("FromOpenWrap", "True");
+                    referenceCopyLocalPaths.Add(item);
+                }
             }
-            OutputReferences = items.ToArray();
+            OutputReferences = references.ToArray();
+            ReferenceCopyLocalPaths = referenceCopyLocalPaths.ToArray();
         }
 
         class PathComparer : IEqualityComparer<Exports.IAssembly>
@@ -167,6 +189,7 @@ namespace OpenWrap.Build.Tasks
         {
             var monitoringService = Services.ServiceLocator.GetService<IPackageDescriptorMonitor>();
             
+            // Note: registering a listener implicitly notifies the newly registered listener
             monitoringService.RegisterListener(WrapDescriptorPath, PackageRepository, this);
             return true;
         }

@@ -6,7 +6,6 @@ using OpenWrap.Commands;
 
 namespace OpenWrap.PackageManagement
 {
-
     public static class Exports
     {
         public interface IFile : IExportItem
@@ -18,6 +17,9 @@ namespace OpenWrap.PackageManagement
             string Platform { get; }
             string Profile { get; }
             AssemblyName AssemblyName { get; }
+            AssemblyExportFlags Flags { get; }
+            bool IsAssemblyReference { get; }
+            bool IsRuntimeAssembly { get; }
         }
         public interface ICommand : IExportItem
         {

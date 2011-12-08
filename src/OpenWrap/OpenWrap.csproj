@@ -109,6 +109,7 @@
     <Compile Include="Configuration\Remotes\Legacy\RemoteRepository.cs" />
     <Compile Include="Configuration\Remotes\RemoteRepositoryEndpoint.cs" />
     <Compile Include="Configuration\StringBuilderExtensions.cs" />
+    <Compile Include="PackageManagement\AssemblyExportFlags.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />
