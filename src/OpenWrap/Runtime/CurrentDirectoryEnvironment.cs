@@ -105,7 +105,9 @@ namespace OpenWrap.Runtime
                 var projectRepositoryDirectory = DescriptorFile.Parent.FindProjectRepositoryDirectory().MustExist();
 
 
-                var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled | FolderRepositoryOptions.SupportLocks;
+                var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled | 
+                    FolderRepositoryOptions.SupportLocks |
+                    FolderRepositoryOptions.PersistPackageSources;
                 if (Descriptor.UseSymLinks)
                     repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
                 if (Descriptor.StorePackages)
