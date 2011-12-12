@@ -12,6 +12,7 @@ namespace Tests.Dependencies.versions
         [TestCase("1.0", "1.0.1.2")]
         [TestCase("1.0", "1.0.1")]
         [TestCase("1.0", "1.0")]
+        [TestCase("1", "1.0")]
         public void positive_matches(string vertex, string version)
         {
             should_match(vertex, version);
@@ -27,6 +28,7 @@ namespace Tests.Dependencies.versions
         [TestCase("1.1", "1.2.3")]
         [TestCase("1.1", "1.2")]
         [TestCase("1.1.0", "1.1")]
+        [TestCase("1", "2")]
         public void negative_matches(string vertex, string version)
         {
             base.should_not_match(vertex, version);
@@ -34,7 +36,7 @@ namespace Tests.Dependencies.versions
 
         protected override VersionVertex CreateVertex(string versionvertice)
         {
-            return new EqualVersionVertex(versionvertice.ToVersion());
+            return new EqualVersionVertex(versionvertice.ToSemVer());
         }
     }
 }

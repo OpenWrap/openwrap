@@ -14,7 +14,7 @@ namespace Tests.Commands.build_wrap.from_path
         public path_has_descriptor()
         {
             given_remote_project();
-            given_descriptor(path_to_project, new PackageDescriptor { Name = "test", Version = "1.0.0.0".ToVersion(), Build = {"none"} });
+            given_descriptor(path_to_project, new PackageDescriptor { Name = "test", Version = "1.0.0.0".ToSemVer(), Build = {"none"} });
             when_executing_command(string.Format("-from \"{0}\"", path_to_project.Path.FullPath));
         }
 
@@ -28,7 +28,7 @@ namespace Tests.Commands.build_wrap.from_path
         public void package_details_are_output()
         {
             Results.OfType<PackageBuilt>().SingleOrDefault().ShouldNotBeNull()
-                .PackageFile.ShouldBe(FileSystem.GetCurrentDirectory().GetFile("test-1.0.0.0.wrap"));
+                .PackageFile.ShouldBe(FileSystem.GetCurrentDirectory().GetFile("test-1.0.0+0.wrap"));
         }
 
     }

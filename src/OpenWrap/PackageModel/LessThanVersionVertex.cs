@@ -4,15 +4,15 @@ namespace OpenWrap.PackageModel
 {
     public class LessThanVersionVertex : VersionVertex
     {
-        public LessThanVersionVertex(Version version) : base(version)
+        public LessThanVersionVertex(SemanticVersion version) : base(version)
         {
         }
 
-        public override bool IsCompatibleWith(Version version)
+        public override bool IsCompatibleWith(SemanticVersion version)
         {
             return (Version.Major == version.Major
                     && Version.Minor == version.Minor
-                    && Version.Build > version.Build)
+                    && Version.Patch > version.Patch)
                    ||
                    (Version.Major == version.Major
                     && Version.Minor > version.Minor)
@@ -22,7 +22,7 @@ namespace OpenWrap.PackageModel
 
         public override string ToString()
         {
-            return "< " + Version.IgnoreRevision();
+            return "< " + Version.Numeric();
         }
     }
 }

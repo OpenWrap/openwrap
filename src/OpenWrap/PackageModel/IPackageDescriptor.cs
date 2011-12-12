@@ -10,7 +10,6 @@ namespace OpenWrap.PackageModel
         ICollection<string> Build { get; }
         ICollection<PackageDependency> Dependencies { get; }
         string Title { get; set; }
-        string Namespace { get; }
         string Description { get; }
         string FullName { get; }
         PackageIdentifier Identifier { get; }
@@ -18,7 +17,7 @@ namespace OpenWrap.PackageModel
         ICollection<PackageNameOverride> Overrides { get; }
         bool UseProjectRepository { get; }
         bool UseSymLinks { get; }
-        Version Version { get; set; }
+        SemanticVersion Version { get; set; }
         string ReferencedAssemblies { get; }
         ICollection<string> DirectoryStructure { get; }
         bool StorePackages { get; }

@@ -8,7 +8,7 @@ namespace OpenWrap.PackageModel
         {
         }
 
-        public PackageIdentifier(string name, Version version)
+        public PackageIdentifier(string name, SemanticVersion version)
         {
             if (name == null) throw new ArgumentNullException("name");
             Name = name;
@@ -16,7 +16,7 @@ namespace OpenWrap.PackageModel
         }
 
         public string Name { get; private set; }
-        public Version Version { get; private set; }
+        public SemanticVersion Version { get; private set; }
 
         public override bool Equals(object obj)
         {

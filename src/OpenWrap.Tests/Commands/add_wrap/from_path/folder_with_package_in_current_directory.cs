@@ -25,7 +25,7 @@ namespace Tests.Commands.add_wrap.from_path
         [Test]
         public void package_is_from_directory_specified_in_from_parameter()
         {
-            Environment.ProjectRepository.PackagesByName["sauron"].Single().Version.ShouldBe("1.0.0".ToVersion());
+            Environment.ProjectRepository.PackagesByName["sauron"].Single().Version.ShouldBe("1.0.0");
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Tests.Commands.add_wrap.hooks
         [Test]
         public void new_dependency_is_added()
         {
-            add_hook_should_be_called("project", "sauron", string.Empty, "1.0.0".ToVersion());
+            add_hook_should_be_called("project", "sauron", string.Empty, "1.0.0".ToSemVer());
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace Tests.Commands.add_wrap.hooks
         [Test]
         public void unused_dependency_is_removed()
         {
-            remove_hook_should_be_called("project", "fire", string.Empty, "1.0".ToVersion());
+            remove_hook_should_be_called("project", "fire", string.Empty, "1.0".ToSemVer());
         }
     }
 }

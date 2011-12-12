@@ -14,26 +14,26 @@ namespace OpenWrap.Repositories.NuGet
         {
             if (string.IsNullOrEmpty(value))
                 yield break;
-            var simpleVersion = value.ToVersion();
+            var simpleVersion = value.ToSemVer();
             if (simpleVersion != null)
             {
                 // play around with version ranges to account for NuGet not making distinction between
                 // revisions and implementation details of their tool algorithm.
-                if (simpleVersion.Build == -1)
+                if (simpleVersion.Patch == -1)
                 {
                     yield return new EqualVersionVertex(simpleVersion);
                 }
                 else
                 {
                     var lowerBound = RemoveInsignificantVersionNumbers(value);
-                    var upperBound = new Version(lowerBound.Major, lowerBound.Minor + 1);
+                    var upperBound = new SemanticVersion(lowerBound.Major, lowerBound.Minor + 1);
                     yield return new GreaterThanOrEqualVersionVertex(lowerBound);
                     yield return new LessThanVersionVertex(upperBound);
                 }
                 yield break;
             }
-            Version beginVersion = null;
-            Version endVersion = null;
+            SemanticVersion beginVersion = null;
+            SemanticVersion endVersion = null;
             StringBuilder currentIdentifier = new StringBuilder();
             bool inclusiveBeginning = false;
             bool inclusiveEnding = false;
@@ -75,9 +75,9 @@ namespace OpenWrap.Repositories.NuGet
                 }
             }
             if (currentIdentifier.Length > 0 && endIncluded)
-                endVersion = currentIdentifier.ToString().ToVersion();
+                endVersion = currentIdentifier.ToString().ToSemVer();
             else if (currentIdentifier.Length > 0 && endIncluded == false && beginVersion == null)
-                beginVersion = currentIdentifier.ToString().ToVersion();
+                beginVersion = currentIdentifier.ToString().ToSemVer();
 
 
             if (beginVersion != null && !endIncluded)
@@ -107,7 +107,7 @@ namespace OpenWrap.Repositories.NuGet
             var descriptor = new PackageDescriptor
             {
                     Name = nuspec.Element(XPaths.PackageName, ns),
-                    Version = nuspec.Element(XPaths.PackageVersion, ns).ToVersion(),
+                    Version = nuspec.Element(XPaths.PackageVersion, ns).ToSemVer(),
                     Description = StripLines(nuspec.Element(XPaths.PackageDescription, ns))
             };
             descriptor.Dependencies.AddRange(
@@ -126,9 +126,9 @@ namespace OpenWrap.Repositories.NuGet
             if (minversion != null || maxversion != null)
             {
                 if (minversion != null)
-                    dep.VersionVertex(new GreaterThanOrEqualVersionVertex(minversion.Value.ToVersion()));
+                    dep.VersionVertex(new GreaterThanOrEqualVersionVertex(minversion.Value.ToSemVer()));
                 if (maxversion != null)
-                    dep.VersionVertex(new LessThanVersionVertex(maxversion.Value.ToVersion()));
+                    dep.VersionVertex(new LessThanVersionVertex(maxversion.Value.ToSemVer()));
             }
             else
             {
@@ -137,18 +137,18 @@ namespace OpenWrap.Repositories.NuGet
             return dep;
         }
 
-        static Version RemoveInsignificantVersionNumbers(string versionString)
+        static SemanticVersion RemoveInsignificantVersionNumbers(string versionString)
         {
             if (versionString == null)
                 return null;
 
-            var ver = versionString.ToVersion();
+            var ver = versionString.ToSemVer();
             if (ver == null)
                 return null;
-            return new Version(ver.Major, ver.Minor);
+            return new SemanticVersion(ver.Major, ver.Minor);
         }
 
-        static Version RemoveInsignificantVersionNumbers(StringBuilder currentIdentifier)
+        static SemanticVersion RemoveInsignificantVersionNumbers(StringBuilder currentIdentifier)
         {
             var versionString = currentIdentifier.ToString();
             return RemoveInsignificantVersionNumbers(versionString);

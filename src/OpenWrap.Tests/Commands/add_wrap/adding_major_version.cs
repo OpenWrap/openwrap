@@ -15,9 +15,9 @@ namespace Tests.Commands.add_wrap
         }
 
         [Test]
-        public void fails()
+        public void succeeds()
         {
-            Results.ShouldHaveError();
+            Results.ShouldHaveNoError();
         }
     }
 }

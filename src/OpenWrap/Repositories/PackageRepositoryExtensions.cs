@@ -9,7 +9,7 @@ namespace OpenWrap.Repositories
     {
         public static bool HasPackage(this IPackageRepository packageRepository, string name, string version)
         {
-            var typedVersion = new Version(version);
+            var typedVersion = SemanticVersion.TryParseExact(version);
             return packageRepository.PackagesByName[name].Any(x => x.Version == typedVersion);
         }
         public static ILookup<string,IPackageInfo> Packages(this IEnumerable<IPackageRepository> repositories)

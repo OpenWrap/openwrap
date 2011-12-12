@@ -62,7 +62,7 @@ namespace OpenWrap.IO
             int count = -1;
             IFile file;
             while ((file = directory.GetFile(string.Format(
-                "{1}{0}.{2}", 
+                "{1}{0}{2}", 
                 count++ <= 0 ? string.Empty : count.ToString(),                                                      System.IO.Path.GetFileNameWithoutExtension(fileName), 
                 System.IO.Path.GetExtension(fileName)))).Exists)
             {

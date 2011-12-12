@@ -28,7 +28,7 @@ namespace Tests.Repositories.nufeed.parser
         [Test]
         public void version_is_correct()
         {
-            Feed.Packages.First().Version.ShouldBe("1.1.0".ToVersion());
+            Feed.Packages.First().Version.ShouldBe("1.1.0");
         }
 
         [Test]

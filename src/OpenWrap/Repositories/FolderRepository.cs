@@ -202,10 +202,10 @@ namespace OpenWrap.Repositories
 
         public class FolderPublisher : IPackagePublisherWithSource
         {
-            readonly Func<IPackageRepository, string, Stream, IPackageInfo> _publish;
+            readonly Action<IPackageRepository, string, Stream> _publish;
             readonly Action _publishCompleted;
 
-            public FolderPublisher(Func<IPackageRepository, string, Stream, IPackageInfo> publish, Action publishCompleted)
+            public FolderPublisher(Action<IPackageRepository, string, Stream> publish, Action publishCompleted)
             {
                 _publish = publish;
                 _publishCompleted = publishCompleted;
@@ -216,14 +216,14 @@ namespace OpenWrap.Repositories
                 _publishCompleted();
             }
 
-            public IPackageInfo Publish(string packageFileName, Stream packageStream)
+            public void Publish(string packageFileName, Stream packageStream)
             {
-                return Publish(null, packageFileName, packageStream);
+                Publish(null, packageFileName, packageStream);
             }
 
-            public IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream)
+            public void Publish(IPackageRepository source, string packageFileName, Stream packageStream)
             {
-                return _publish(source, packageFileName, packageStream);
+                _publish(source, packageFileName, packageStream);
             }
         }
 
@@ -386,7 +386,7 @@ namespace OpenWrap.Repositories
         {
             public string Name { get; set; }
             public string Source { get; set; }
-            public Version Version { get; set; }
+            public SemanticVersion Version { get; set; }
         }
     
         public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
@@ -400,12 +400,10 @@ namespace OpenWrap.Repositories
             ChangeCompleted();
         }
 
-        public IPackageInfo Publish(IPackageRepository repository, string packageFileName, Stream packageStream)
+        public void Publish(IPackageRepository repository, string packageFileName, Stream packageStream)
         {
             packageFileName = PackageNameUtility.NormalizeFileName(packageFileName);
-            var newPackage = _packageLoader.Publish(repository, packageFileName, packageStream);
-
-            return newPackage.Package;
+            _packageLoader.Publish(repository, packageFileName, packageStream);
         }
 
 
@@ -456,14 +454,14 @@ namespace OpenWrap.Repositories
         public LockedPackage()
         {
         }
-        public LockedPackage(string name, Version version)
+        public LockedPackage(string name, SemanticVersion version)
         {
             Name = name;
             Version = version;
         }
 
         public string Name { get; set; }
-        public Version Version { get; set; }
+        public SemanticVersion Version { get; set; }
    
 }
 }

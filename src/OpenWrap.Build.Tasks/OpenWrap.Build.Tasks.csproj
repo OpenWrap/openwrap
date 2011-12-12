@@ -73,7 +73,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GenerateRevisionNumber.cs" />
     <Compile Include="Hooks\SolutionAddIn.cs" />
     <Compile Include="InitializeVisualStudioIntegration.cs" />
     <Compile Include="Lookup.cs" />

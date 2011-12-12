@@ -22,7 +22,7 @@ namespace OpenWrap.Repositories.Http
         public IEnumerable<string> Authors { get; set; }
         public bool Nuked { get; set; }
         public Uri PackageHref { get; set; }
-        public Version Version { get; set; }
+        public SemanticVersion Version { get; set; }
     }
     public class PackageEntryWrapper : IPackageInfo
     {
@@ -41,7 +41,7 @@ namespace OpenWrap.Repositories.Http
         public PackageIdentifier Identifier { get; private set; }
         public ICollection<PackageDependency> Dependencies { get; private set; }
         public string Name { get { return _entry.Name; } }
-        public Version Version { get { return _entry.Version; } }
+        public SemanticVersion Version { get { return _entry.Version; } }
         public IPackage Load()
         {
             return _load();

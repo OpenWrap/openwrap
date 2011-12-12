@@ -52,6 +52,8 @@ namespace OpenWrap.Reflection
                 {
                 }
             }
+            if (type == typeof(SemanticVersion))
+                return SemanticVersion.TryParseExact(propertyValue);
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ICollection<>))
             {
                 var collectionArg = type.GetGenericArguments()[0];

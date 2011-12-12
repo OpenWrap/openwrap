@@ -109,6 +109,11 @@ namespace OpenWrap
             return new MemoryStream(Encoding.UTF8.GetBytes(value));
         }
 
+        public static SemanticVersion ToSemVer(this string version)
+        {
+            return SemanticVersion.TryParseExact(version);
+        }
+
         public static Version ToVersion(this string version)
         {
             if (string.IsNullOrEmpty(version) || !Regex.IsMatch(version, @"\d+\.\d+(\.\d+(\.\d+)?)?"))

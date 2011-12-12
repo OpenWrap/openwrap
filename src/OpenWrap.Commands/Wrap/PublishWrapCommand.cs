@@ -19,7 +19,7 @@ namespace OpenWrap.Commands.Wrap
         string _packageFileName;
         string _packageName;
         Func<Stream> _packageStream;
-        Version _packageVersion;
+        SemanticVersion _packageVersion;
         IPackageRepository _remoteRepository;
         NetworkCredential _credentials;
 
@@ -112,7 +112,7 @@ namespace OpenWrap.Commands.Wrap
                 _packageStream = packageFile.OpenRead;
                 _packageFileName = packageFile.Name;
                 // TODO: This looks iffy at best
-                var package = new ZipPackage(packageFile);
+                var package = new ZipFilePackage(packageFile);
                 _packageName = package.Name;
                 _packageVersion = package.Version;
             }

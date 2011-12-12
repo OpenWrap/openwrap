@@ -150,10 +150,10 @@ namespace Tests
 
         protected void given_currentdirectory_package(string packageName, string version, params string[] dependencies)
         {
-            given_currentdirectory_package(packageName, new Version(version), dependencies);
+            given_currentdirectory_package(packageName, version.ToSemVer(), dependencies);
         }
 
-        protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
+        protected void given_currentdirectory_package(string packageName, SemanticVersion version, params string[] dependencies)
         {
             if (Environment.CurrentDirectoryRepository is InMemoryRepository)
                 AddPackage(Environment.CurrentDirectoryRepository, packageName, version.ToString(), dependencies);
@@ -271,7 +271,7 @@ namespace Tests
                 .Lock(string.Empty,
                       Environment.ProjectRepository
                           .PackagesByName[name]
-                          .Where(x => x.Version == version.ToVersion()));
+                          .Where(x => x.Version == version.ToSemVer()));
 
         }
     }
@@ -303,7 +303,7 @@ namespace Tests
             ReloadRepositories();
         }
 
-        protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
+        protected void package_is_not_in_repository(IPackageRepository repository, string packageName, SemanticVersion packageVersion)
         {
             (repository.PackagesByName.Contains(packageName)
                               ? repository.PackagesByName[packageName].FirstOrDefault(x => x.Version.Equals(packageVersion))
@@ -311,7 +311,7 @@ namespace Tests
 
 
         }
-        protected void package_is_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
+        protected void package_is_in_repository(IPackageRepository repository, string packageName, SemanticVersion packageVersion)
         {
             repository.PackagesByName[packageName]
                 .ShouldHaveCountOf(1)

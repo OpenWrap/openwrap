@@ -20,7 +20,7 @@ namespace Tests.Repositories.folder.locking
         public void lock_is_persisted()
         {
             repository_directory.GetFile("packages.lock").ReadString()
-                .ShouldBe("lock: name=sauron; version=1.0.0.0\r\n");
+                .ShouldBe("lock: name=sauron; version=1.0.0+0\r\n");
         }
     }
 }

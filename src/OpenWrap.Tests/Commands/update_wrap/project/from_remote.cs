@@ -28,13 +28,13 @@ namespace Tests.Commands.update_wrap.project
         [Test]
         public void package_is_not_installed_in_system_repo()
         {
-            Environment.SystemRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 1, 0));
+            Environment.SystemRepository.PackagesByName["goldberry"].Last().Version.ShouldBe("2.1.0");
         }
 
         [Test]
         public void package_is_installed_in_project_repo()
         {
-            Environment.ProjectRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
+            Environment.ProjectRepository.PackagesByName["goldberry"].Last().Version.ShouldBe("2.2.0");
         }
 
         [Test]

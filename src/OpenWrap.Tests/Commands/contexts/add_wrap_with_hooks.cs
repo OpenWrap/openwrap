@@ -33,25 +33,25 @@ namespace Tests.Commands.contexts
             manager.PackageUpdated += (repo, name, fromVersion, toVersion, packages) => Update(repo, name, scope, fromVersion, toVersion, packages);
         }
 
-        IEnumerable<object> Removed(string repository, string name, string scope, Version version, IEnumerable<IPackageInfo> packages)
+        IEnumerable<object> Removed(string repository, string name, string scope, SemanticVersion version, IEnumerable<IPackageInfo> packages)
         {
             RemoveCalls.Add(new ChangedCall(repository, name, scope, version, packages));
             yield break;
         }
 
-        IEnumerable<object> Update(string repository, string name, string scope, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages)
+        IEnumerable<object> Update(string repository, string name, string scope, SemanticVersion fromVersion, SemanticVersion toVersion, IEnumerable<IPackageInfo> packages)
         {
             UpdateCalls.Add(new ChangedCall(repository, name, scope, fromVersion, toVersion, packages));
             yield break;
 
         }
 
-        IEnumerable<object> Add(string repository, string name, string scope, Version version, IEnumerable<IPackageInfo> packages)
+        IEnumerable<object> Add(string repository, string name, string scope, SemanticVersion version, IEnumerable<IPackageInfo> packages)
         {
             AddCalls.Add(new ChangedCall(repository, name, scope, version, packages));
             yield break;
         }
-        protected void remove_hook_should_be_called(string expectedRepository, string expectedName, string expectedScope, Version expectedVersion)
+        protected void remove_hook_should_be_called(string expectedRepository, string expectedName, string expectedScope, SemanticVersion expectedVersion)
         {
 
             RemoveCalls.FirstOrDefault(x => x.Repository == expectedRepository &&
@@ -59,7 +59,7 @@ namespace Tests.Commands.contexts
                                             x.Scope == expectedScope &&
                                             x.Version == expectedVersion).ShouldNotBeNull();
         }
-        protected void add_hook_should_be_called(string expectedRepository, string expectedName, string expectedScope, Version expectedVersion)
+        protected void add_hook_should_be_called(string expectedRepository, string expectedName, string expectedScope, SemanticVersion expectedVersion)
         {
             AddCalls.FirstOrDefault(x => x.Repository == expectedRepository &&
                                          x.Name == expectedName &&
@@ -71,20 +71,20 @@ namespace Tests.Commands.contexts
             UpdateCalls.FirstOrDefault(x => x.Repository == expectedRepository &&
                                             x.Name == expectedName &&
                                             x.Scope == expectedScope &&
-                                            x.FromVersion == expectedFrom.ToVersion() &&
-                                            x.ToVersion == expectedTo.ToVersion()).ShouldNotBeNull();
+                                            x.FromVersion == expectedFrom.ToSemVer() &&
+                                            x.ToVersion == expectedTo.ToSemVer()).ShouldNotBeNull();
         }
         protected class ChangedCall
         {
             public string Repository { get; set; }
             public string Name { get; set; }
             public string Scope { get; set; }
-            public Version Version { get; set; }
-            public Version FromVersion { get; set; }
-            public Version ToVersion { get; set; }
+            public SemanticVersion Version { get; set; }
+            public SemanticVersion FromVersion { get; set; }
+            public SemanticVersion ToVersion { get; set; }
             public IEnumerable<IPackageInfo> Packages { get; set; }
-            
-            public ChangedCall(string repository, string name, string scope, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages)
+
+            public ChangedCall(string repository, string name, string scope, SemanticVersion fromVersion, SemanticVersion toVersion, IEnumerable<IPackageInfo> packages)
             {
                 Repository = repository;
                 Name = name;
@@ -93,7 +93,7 @@ namespace Tests.Commands.contexts
                 ToVersion = toVersion;
                 Packages = packages;
             }
-            public ChangedCall(string repository, string name, string scope, Version version, IEnumerable<IPackageInfo> packages)
+            public ChangedCall(string repository, string name, string scope, SemanticVersion version, IEnumerable<IPackageInfo> packages)
             {
                 Repository = repository;
                 Name = name;

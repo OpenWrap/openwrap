@@ -45,7 +45,7 @@ namespace OpenWrap.PackageManagement.Packages
              
             var versionFile = wrapCacheDirectory.GetFile("version");
             _descriptor = new PackageDescriptorReaderWriter().Read(wrapDescriptor);
-            PackageInfo = new DefaultPackageInfo(versionFile.Exists ? versionFile.ReadString().ToVersion() : null,
+            PackageInfo = new DefaultPackageInfo(versionFile.Exists ? versionFile.ReadString().ToSemVer() : null,
                                                 _descriptor);
             Identifier = new PackageIdentifier(Name, Version);
             IsValid = true;
@@ -101,7 +101,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageRepository Source { get; private set; }
 
-        public Version Version
+        public SemanticVersion Version
         {
             get { return PackageInfo.Version; }
         }

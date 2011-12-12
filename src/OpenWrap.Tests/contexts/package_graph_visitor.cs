@@ -22,7 +22,7 @@ namespace Tests.contexts
         public void given_package(string name, string version, params string[] dependencies)
         {
             InMemoryPackage package;
-            Packages.Add(package = new InMemoryPackage() { Name = name, Version = version.ToVersion(), Dependencies = dependencies.Select(DependsParser.ParseDependsValue).ToList() });
+            Packages.Add(package = new InMemoryPackage() { Name = name, Version = version.ToSemVer(), Dependencies = dependencies.Select(DependsParser.ParseDependsValue).ToList() });
 
         }
 

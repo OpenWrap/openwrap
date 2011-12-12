@@ -17,7 +17,7 @@ namespace Tests.Commands.add_wrap.hooks
         [Test]
         public void add_hook_is_called()
         {
-            add_hook_should_be_called("system", "sauron", string.Empty, "1.0.0".ToVersion());
+            add_hook_should_be_called("system", "sauron", string.Empty, "1.0.0".ToSemVer());
         }
         [Test]
         public void add_hook_called_once()

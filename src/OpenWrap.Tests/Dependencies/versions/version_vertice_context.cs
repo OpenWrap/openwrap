@@ -10,13 +10,13 @@ namespace Tests.Dependencies.versions
         protected void should_match(string versionvertice, string version)
         {
             CreateVertex(versionvertice)
-                .IsCompatibleWith(version.ToVersion()).ShouldBeTrue();
+                .IsCompatibleWith(version.ToSemVer()).ShouldBeTrue();
         }
 
         protected void should_not_match(string versionvertice, string version)
         {
             CreateVertex(versionvertice)
-                .IsCompatibleWith(version.ToVersion()).ShouldBeFalse();
+                .IsCompatibleWith(version.ToSemVer()).ShouldBeFalse();
         }
 
         protected abstract VersionVertex CreateVertex(string versionvertice);

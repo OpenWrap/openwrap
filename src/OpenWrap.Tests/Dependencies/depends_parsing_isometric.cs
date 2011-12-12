@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 using OpenWrap.PackageModel.Parsers;
 using OpenWrap.Testing;
 
-namespace OpenWrap.Tests.Dependencies
+namespace Tests.Dependencies
 {
-    public class PackageDependency_specs : context
+    public class depends_parsing_isometric : context
     {
         [Test]
         public void no_version()

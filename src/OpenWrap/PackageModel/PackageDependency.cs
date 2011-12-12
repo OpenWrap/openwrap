@@ -38,7 +38,7 @@ namespace OpenWrap.PackageModel
             return returnValue;
         }
 
-        public bool IsFulfilledBy(Version version)
+        public bool IsFulfilledBy(SemanticVersion version)
         {
             return VersionVertices.All(x => x.IsCompatibleWith(version));
         }

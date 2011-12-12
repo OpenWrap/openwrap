@@ -9,10 +9,10 @@ namespace OpenWrap.PackageManagement
         {
         }
 
-        public Version ExactVersion { get; private set; }
+        public SemanticVersion ExactVersion { get; private set; }
         public bool LastVersion { get; private set; }
-        public Version MaxVersion { get; private set; }
-        public Version MinVersion { get; private set; }
+        public SemanticVersion MaxVersion { get; private set; }
+        public SemanticVersion MinVersion { get; private set; }
         public string Name { get; private set; }
 
         public static PackageRequest Any(string packageName)
@@ -20,7 +20,7 @@ namespace OpenWrap.PackageManagement
             return new PackageRequest { Name = packageName };
         }
 
-        public static PackageRequest Between(string packageName, Version minVersion, Version maxVersion)
+        public static PackageRequest Between(string packageName, SemanticVersion minVersion, SemanticVersion maxVersion)
         {
             return new PackageRequest
             {
@@ -30,7 +30,7 @@ namespace OpenWrap.PackageManagement
             };
         }
 
-        public static PackageRequest Exact(string packageName, Version exactVersion)
+        public static PackageRequest Exact(string packageName, SemanticVersion exactVersion)
         {
             return new PackageRequest { Name = packageName, ExactVersion = exactVersion };
         }

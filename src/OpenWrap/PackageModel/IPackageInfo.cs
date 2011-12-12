@@ -9,7 +9,7 @@ namespace OpenWrap.PackageModel
         PackageIdentifier Identifier { get; }
         ICollection<PackageDependency> Dependencies { get; }
         string Name { get; }
-        Version Version { get; }
+        SemanticVersion Version { get; }
         IPackage Load();
         IPackageRepository Source { get; }
         string FullName { get; }

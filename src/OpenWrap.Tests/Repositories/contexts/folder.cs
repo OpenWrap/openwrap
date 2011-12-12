@@ -52,7 +52,7 @@ namespace Tests.Repositories.contexts
 
         protected void when_locking_package(string name, string version)
         {
-            repository.Lock(string.Empty, repository.PackagesByName[name].Where(x => x.Version == version.ToVersion()));
+            repository.Lock(string.Empty, repository.PackagesByName[name].Where(x => x.Version == version.ToSemVer()));
         }
         protected void when_unlocking_package(string name)
         {
@@ -66,7 +66,7 @@ namespace Tests.Repositories.contexts
         protected void when_cleaning_package(string name, string version)
         {
             repository.RefreshPackages();
-            clean_result = repository.Clean(repository.PackagesByName[name].Where(_ => _.Version != version.ToVersion())
+            clean_result = repository.Clean(repository.PackagesByName[name].Where(_ => _.Version != version.ToSemVer())
                 .Concat(repository.PackagesByName.Where(_ => _.Key.EqualsNoCase(name) == false).SelectMany(_ => _))).ToList();
         }
 

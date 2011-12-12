@@ -25,6 +25,7 @@ namespace OpenWrap.PackageManagement
         {
             var sb = new StringBuilder();
             sb.AppendLine(Repository.Name);
+
             foreach(var package in Packages)
                 sb.AppendFormat("└─{0} ({1})\r\n", package.Name, GenerateVersions(package));
             return sb.ToString();
@@ -32,8 +33,8 @@ namespace OpenWrap.PackageManagement
 
         string GenerateVersions(PackageFoundResult package)
         {
-            Func<IPackageInfo, Version> versionSelector = x => 
-                Detailed ? x.Version : x.Version.IgnoreRevision();
+            Func<IPackageInfo, SemanticVersion> versionSelector = x => 
+                Detailed ? x.Version : x.Version.Numeric();
             return package.Packages.Select(versionSelector)
                                    .Distinct()
                                    .OrderByDescending(_=>_)

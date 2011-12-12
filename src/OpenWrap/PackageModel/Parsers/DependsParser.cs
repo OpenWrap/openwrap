@@ -74,7 +74,7 @@ namespace OpenWrap.PackageModel.Parsers
         static VersionVertex GetVersionVertice(string[] strings, int offset)
         {
             var comparator = strings[offset];
-            var version = strings[offset + 1].ToVersion();
+            var version = strings[offset + 1].ToSemVer();
             if (version == null)
                 return null;
             switch (comparator)

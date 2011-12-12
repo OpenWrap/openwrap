@@ -12,13 +12,15 @@ using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 namespace OpenWrap.PackageManagement.Packages
 {
-    public class ZipPackage : IPackageInfo
+    // TODO: Move to Stream-based API
+    public class ZipFilePackage : IPackageInfo
     {
         readonly LazyValue<PackageIdentifier> _identifier;
         IPackageInfo _descriptor;
         bool? _isValid;
 
-        public ZipPackage(IFile packageFile)
+
+        public ZipFilePackage(IFile packageFile)
         {
             PackageFile = packageFile;
             _identifier = new LazyValue<PackageIdentifier>(() => new PackageIdentifier(Name, Version));
@@ -104,7 +106,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageRepository Source { get; protected set; }
 
-        public Version Version
+        public SemanticVersion Version
         {
             get { return Descriptor.Version; }
         }
@@ -127,7 +129,7 @@ namespace OpenWrap.PackageManagement.Packages
                     throw new InvalidOperationException(String.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", PackageFile.Name));
 
                 ZipEntry versionFile = entries.SingleOrDefault(x => x.Name.EqualsNoCase("version"));
-                Version versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().ToVersion()) : null;
+                SemanticVersion versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().ToSemVer()) : null;
                 var descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReader().Read(x));
 
                 _descriptor = new DefaultPackageInfo(versionFromVersionFile, descriptor);
@@ -159,7 +161,8 @@ namespace OpenWrap.PackageManagement.Packages
                             using (var targetFile = destinationFile.MustExist().OpenWrite())
                             using (var sourceFile = zipFile.GetInputStream(zipEntry))
                                 StreamExtensions.CopyTo(sourceFile, targetFile);
-                            // TODO: restore last write time here by adding it to OFS
+
+                            destinationFile.LastModifiedTimeUtc = zipEntry.DateTime.ToUniversalTime();
                         }
                     }
                 }

@@ -8,7 +8,7 @@ namespace OpenWrap.Windows.AllPackages
         private const int MaximumShortDescriptionLength = 40;
 
         public string Name { get; set; }
-        public Version LatestVersion { get; set; }
+        public SemanticVersion LatestVersion { get; set; }
         public int VersionCount { get; set; }
 
         public string Description { get; set; }

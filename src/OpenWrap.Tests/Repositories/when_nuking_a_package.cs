@@ -20,7 +20,7 @@ namespace Tests.Repositories
         {
             (from XElement node in IndexDocument.Descendants("wrap")
              where node.Attribute("name").Value.Equals("pharrell") &&
-                   node.Attribute("version").Value.Equals("1.0.0.0") &&
+                   node.Attribute("version").Value.Equals("1.0.0+0") &&
                    node.Attribute("nuked").Value.Equals("true")
              select node)
                 .ShouldHaveCountOf(1);
@@ -29,7 +29,7 @@ namespace Tests.Repositories
         public void returned_packageinfo_is_marked_as_nuked()
         {
             Repository.PackagesByName["pharrell"]
-                .Where(p => p.Version.ToString().Equals("1.0.0.0"))
+                .Where(p => p.Version.ToString().Equals("1.0.0+0"))
                 .FirstOrDefault()
                 .ShouldNotBeNull()
                 .Nuked

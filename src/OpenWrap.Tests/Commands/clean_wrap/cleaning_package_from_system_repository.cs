@@ -8,7 +8,7 @@ namespace Tests.Commands.clean_wrap
 {
     public class cleaning_package_from_system_repository : command<CleanWrapCommand>
     {
-        static readonly string LionelVersion = "1.0.0.123";
+        static readonly string LionelVersion = "1.0.0+123";
 
         public cleaning_package_from_system_repository()
         {

@@ -18,7 +18,7 @@ namespace OpenWrap.PackageModel
             DelegatedValue<string> _name;
             DelegatedValue<bool> _useProjectRepository;
             DelegatedValue<bool> _useSymLinks;
-            DelegatedValue<Version> _version;
+            DelegatedValue<SemanticVersion> _version;
             DelegatedValue<string> _referencedAssemblies;
 
             ScopedPackageNameOverrideCollection _overrides;
@@ -109,7 +109,7 @@ namespace OpenWrap.PackageModel
                 set { _useSymLinks.Value = value; }
             }
 
-            public Version Version
+            public SemanticVersion Version
             {
                 get { return _version.Value; }
                 set { _version.Value = value; }
@@ -189,7 +189,7 @@ namespace OpenWrap.PackageModel
                 _description = CreateDelegated<string>("description", SingleStringValue.New);
 
                 _name = CreateDelegated<string>("name", SingleStringValue.New);
-                _version = CreateDelegated<Version>("version", SingleVersionValue.New);
+                _version = CreateDelegated<SemanticVersion>("version", SingleVersionValue.New);
                 _useProjectRepository = CreateDelegated("use-project-repository", SingleBoolValue.New, true);
                 _useSymLinks = CreateDelegated("use-symlinks", SingleBoolValue.New, false);
                 _referencedAssemblies = CreateDelegated("referenced-assemblies", SingleStringValue.New, "*");

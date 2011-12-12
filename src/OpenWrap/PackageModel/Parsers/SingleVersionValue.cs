@@ -2,13 +2,17 @@
 
 namespace OpenWrap.PackageModel.Parsers
 {
-    public class SingleVersionValue : SingleValue<Version>
+    public class SingleVersionValue : SingleValue<SemanticVersion>
     {
         public SingleVersionValue(PackageDescriptorEntryCollection entries, string name)
-                : base(entries, name, x => x != null ? x.ToString() : null, x => x.ToVersion())
+                : base(
+            entries,
+            name, 
+            x => x != null ? x.ToString() : null, 
+            SemanticVersion.TryParseExact)
         {
         }
-        public static SingleVersionValue New(PackageDescriptorEntryCollection entries, string name, Version defaultVal)
+        public static SingleVersionValue New(PackageDescriptorEntryCollection entries, string name, SemanticVersion defaultVal)
         {
             return new SingleVersionValue(entries, name);
         }

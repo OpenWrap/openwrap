@@ -26,7 +26,7 @@ namespace Tests.Commands.add_wrap.from_path
         [Test]
         public void dependency_is_added()
         {
-            package_is_in_repository(Environment.ProjectRepository, "one-ring", "2.0.0".ToVersion());
+            package_is_in_repository(Environment.ProjectRepository, "one-ring", "2.0.0".ToSemVer());
         }
     }
 }

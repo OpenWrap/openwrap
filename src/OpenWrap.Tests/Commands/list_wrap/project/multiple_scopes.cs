@@ -24,7 +24,7 @@ namespace Tests.Commands.list_wrap.project
                 .ElementAt(0)
                 .Check(_ => _.DescriptorName.ShouldBe("default scope"))
                 .Check(_ => _.Packages.First().Spec.ShouldBe("sauron = 1.0.1"))
-                .Check(_ => _.Packages.First().PackageInfo.Version.ShouldBe("1.0.1".ToVersion()));
+                .Check(_ => _.Packages.First().PackageInfo.Version.ShouldBe("1.0.1".ToSemVer()));
         }
         [Test]
         public void selected_pacakge_for_different_scope_is_displayed()
@@ -33,7 +33,7 @@ namespace Tests.Commands.list_wrap.project
                 .ElementAt(1)
                 .Check(_ => _.DescriptorName.ShouldBe("tests scope"))
                 .Check(_ => _.Packages.First().Spec.ShouldBe("sauron = 1.0.0"))
-                .Check(_ => _.Packages.First().PackageInfo.Version.ShouldBe("1.0.0".ToVersion()));
+                .Check(_ => _.Packages.First().PackageInfo.Version.ShouldBe("1.0.0".ToSemVer()));
         }
     }
 }

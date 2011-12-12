@@ -4,7 +4,7 @@ namespace OpenWrap.PackageModel
 {
     public abstract class VersionVertex
     {
-        protected VersionVertex(Version version)
+        protected VersionVertex(SemanticVersion version)
         {
             if (version == null) throw new ArgumentNullException("version");
             Version = version;
@@ -14,8 +14,8 @@ namespace OpenWrap.PackageModel
         {
         }
 
-        public Version Version { get; private set; }
+        public SemanticVersion Version { get; private set; }
 
-        public abstract bool IsCompatibleWith(Version version);
+        public abstract bool IsCompatibleWith(SemanticVersion version);
     }
 }

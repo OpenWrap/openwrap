@@ -256,7 +256,7 @@ namespace OpenWrap.PackageManagement
                     .First();
         }
 
-        static IPackageInfo GetExistingPackage(IPackageRepository destinationRepository, ResolvedPackage foundPackage, Func<Version, bool> versionSelector)
+        static IPackageInfo GetExistingPackage(IPackageRepository destinationRepository, ResolvedPackage foundPackage, Func<SemanticVersion, bool> versionSelector)
         {
             return destinationRepository.PackagesByName.Contains(foundPackage.Identifier.Name)
                            ? destinationRepository.PackagesByName[foundPackage.Identifier.Name]
@@ -569,26 +569,14 @@ namespace OpenWrap.PackageManagement
 
         class UpdatePackageVertex : VersionVertex
         {
-            public UpdatePackageVertex(Version existingVersion)
+            public UpdatePackageVertex(SemanticVersion existingVersion)
                 : base(existingVersion)
             {
             }
 
-            public override bool IsCompatibleWith(Version version)
+            public override bool IsCompatibleWith(SemanticVersion version)
             {
-                return (Version.Major == version.Major
-                        && Version.Minor == version.Minor
-                        && Version.Build == version.Build
-                        && Version.Revision <= version.Revision)
-                       ||
-                       (Version.Major == version.Major
-                        && Version.Minor == version.Minor
-                        && Version.Build <= version.Build)
-                       ||
-                       (Version.Major == version.Major
-                        && Version.Minor <= version.Minor)
-                       ||
-                       (Version.Major <= version.Major);
+                return Version <= version;
             }
             public override string ToString()
             {

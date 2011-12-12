@@ -110,7 +110,7 @@ namespace OpenWrap.PackageModel
             set { _useSymLinks.Value = value; }
         }
 
-        public Version Version
+        public SemanticVersion Version
         {
             get { return _version.Value; }
             set { _version.Value = value; }

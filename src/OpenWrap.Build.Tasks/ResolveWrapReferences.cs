@@ -114,22 +114,11 @@ namespace OpenWrap.Build.Tasks
         {
             if (!GenerateSharedAssemblyInfo)
                 return;
-            IPackageDescriptor descriptor;
-            using (var str = WrapDescriptorPath.OpenRead())
-                descriptor = new PackageDescriptorReader().Read(str);
-            var versionFile = WrapDescriptorPath.Parent.GetFile("version");
-            var version = versionFile.Exists
-                          ? versionFile.ReadString().GenerateVersionNumber(WrapDescriptorPath.FileSystem.GetDirectory(WrapsDirectory))
-                          : descriptor.Version != null
-                                ? descriptor.Version.ToString()
-                                : null;
-            if (version == null) return;
-            var generator = new AssemblyInfoGenerator(descriptor) { Version = version.ToVersion() };
-            var projectAsmFile = WrapDescriptorPath.Parent.GetUniqueFile("SharedAssemblyInfo.cs");
-            generator.Write(projectAsmFile);
-            GeneratedSharedAssemblyInfo = new TaskItem(projectAsmFile.Path.FullPath);
+            var file = BuildManagement.TryGenerateAssemblyInfo(WrapDescriptorPath);
+            if (file != null)
+                GeneratedSharedAssemblyInfo = new TaskItem(file.Path.FullPath);
         }
-        
+
         public void AssembliesUpdated(IEnumerable<Exports.IAssembly> assemblyPaths)
         {
             

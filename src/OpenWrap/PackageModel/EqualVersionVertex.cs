@@ -4,11 +4,11 @@ namespace OpenWrap.PackageModel
 {
     public class EqualVersionVertex : VersionVertex
     {
-        public EqualVersionVertex(Version version) : base(version)
+        public EqualVersionVertex(SemanticVersion version) : base(version)
         {
         }
 
-        public override bool IsCompatibleWith(Version version)
+        public override bool IsCompatibleWith(SemanticVersion version)
         {
             return MajorMatches(version)
                    && MinorMatches(version)
@@ -17,22 +17,22 @@ namespace OpenWrap.PackageModel
 
         public override string ToString()
         {
-            return "= " + Version.IgnoreRevision();
+            return "= " + Version.Numeric();
         }
 
-        bool BuildMatches(Version version)
+        bool BuildMatches(SemanticVersion version)
         {
-            return Version.Build == -1 || Version.Build == version.Build;
+            return Version.Patch == -1 || Version.Patch == version.Patch;
         }
 
-        bool MajorMatches(Version version)
+        bool MajorMatches(SemanticVersion version)
         {
             return Version.Major == version.Major;
         }
 
-        bool MinorMatches(Version version)
+        bool MinorMatches(SemanticVersion version)
         {
-            return Version.Minor == version.Minor;
+            return Version.Minor == -1 || Version.Minor == version.Minor;
         }
     }
 }

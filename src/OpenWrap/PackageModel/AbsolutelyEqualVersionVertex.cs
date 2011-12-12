@@ -4,11 +4,11 @@ namespace OpenWrap.PackageModel
 {
     public class AbsolutelyEqualVersionVertex : VersionVertex
     {
-        public AbsolutelyEqualVersionVertex(Version version) : base(version)
+        public AbsolutelyEqualVersionVertex(SemanticVersion version) : base(version)
         {
         }
 
-        public override bool IsCompatibleWith(Version version)
+        public override bool IsCompatibleWith(SemanticVersion version)
         {
             return Version.Equals(version);
         }

@@ -4,5 +4,5 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.PackageManagement
 {
-    public delegate IEnumerable<object> PackageUpdated(string repository, string name, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages);
+    public delegate IEnumerable<object> PackageUpdated(string repository, string name, SemanticVersion fromVersion, SemanticVersion toVersion, IEnumerable<IPackageInfo> packages);
 }

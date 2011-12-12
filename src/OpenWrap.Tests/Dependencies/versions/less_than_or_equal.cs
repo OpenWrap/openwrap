@@ -39,7 +39,7 @@ namespace Tests.Dependencies.versions
 
         protected override VersionVertex CreateVertex(string versionvertice)
         {
-            return new LessThanOrEqualVersionVertex(versionvertice.ToVersion());
+            return new LessThanOrEqualVersionVertex(versionvertice.ToSemVer());
         }
     }
 }

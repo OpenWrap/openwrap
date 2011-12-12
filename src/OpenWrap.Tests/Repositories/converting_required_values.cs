@@ -20,7 +20,7 @@ namespace Tests.Repositories
         [Test]
         public void version_is_converted()
         {
-            Descriptor.Version.ShouldBe("1.0.0".ToVersion());
+            Descriptor.Version.ShouldBe("1.0.0".ToSemVer());
         }
 
 

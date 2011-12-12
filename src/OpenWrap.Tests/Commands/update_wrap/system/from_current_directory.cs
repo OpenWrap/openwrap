@@ -12,7 +12,7 @@ namespace Tests.Commands.update_wrap.system
         {
             given_project_package("goldberry", "2.0.0");
             given_system_package("goldberry", "2.1.0");
-            given_currentdirectory_package("goldberry", "2.2.0".ToVersion());
+            given_currentdirectory_package("goldberry", "2.2.0".ToSemVer());
 
             when_executing_command("-system");
         }

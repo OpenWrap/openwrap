@@ -19,6 +19,7 @@ namespace Tests.Dependencies.versions
         [TestCase("2.0", "1.0.0")]
         [TestCase("2.0", "1.0.1")]
         [TestCase("2.0", "1.0")]
+        [TestCase("2", "1.0")]
         public void positive_matches(string vertex, string version)
         {
             should_match(vertex, version);
@@ -36,7 +37,7 @@ namespace Tests.Dependencies.versions
 
         protected override VersionVertex CreateVertex(string versionvertice)
         {
-            return new LessThanVersionVertex(versionvertice.ToVersion());
+            return new LessThanVersionVertex(versionvertice.ToSemVer());
         }
     }
 }

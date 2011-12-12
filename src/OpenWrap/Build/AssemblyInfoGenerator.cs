@@ -14,7 +14,7 @@ namespace OpenWrap.Build
         const string ATTRIBUTE_TEXT = "[assembly: {0}(\"{1}\")]";
         
         readonly IPackageDescriptor _descriptor;
-        public Version Version { get; set; }
+        public SemanticVersion Version { get; set; }
 
         public AssemblyInfoGenerator(IPackageDescriptor descriptor)
         {
@@ -34,17 +34,22 @@ namespace OpenWrap.Build
             TryAppend<AssemblyCopyrightAttribute>(sb, "copyright", _descriptor.Copyright);
             if (Version != null)
             {
+                int revision;
+                if (!int.TryParse(Version.Build, out revision)) revision = -1;
+                var clrVersion = new Version(
+                    Version.Major % ushort.MaxValue,
+                    Version.Minor % ushort.MaxValue,
+                    Version.Patch == -1 ? 0 : Version.Patch % ushort.MaxValue,
+                    revision == -1 ? 0 : revision % ushort.MaxValue
+                    );
                 TryAppend<AssemblyVersionAttribute>(sb,
                                                     "assembly-version",
-                                                    new Version(
-                                                        Version.Major % ushort.MaxValue,
-                                                        Version.Minor % ushort.MaxValue,
-                                                        Version.Build == -1 ? 0 : Version.Build % ushort.MaxValue,
-                                                        Version.Revision == -1 ? 0 : Version.Revision % ushort.MaxValue
-                                                        ).ToString());
+                                                    clrVersion.ToString());
+                TryAppend<AssemblyInformationalVersionAttribute>(sb, "assembly-info-version", Version.ToString());
+
                 TryAppend<AssemblyFileVersionAttribute>(sb,
                                                         "file-version",
-                                                        Version.ToString());
+                                                        Version.ToVersion().ToString());
             }
             return sb.ToString();
         }

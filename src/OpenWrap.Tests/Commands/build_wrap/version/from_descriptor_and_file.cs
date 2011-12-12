@@ -15,7 +15,7 @@ namespace Tests.Commands.build_wrap.version
             {
                 Name = "test",
                 Build = { "none" },
-                Version = "1.0.0.0".ToVersion()
+                Version = "1.0.0.0".ToSemVer()
             });
             given_file("version", "2.0.0.0".ToUTF8Stream());
             given_current_directory_repository(new CurrentDirectoryRepository());
@@ -32,7 +32,7 @@ namespace Tests.Commands.build_wrap.version
         {
             Environment.CurrentDirectoryRepository
                 .PackagesByName["test"]
-                .ShouldHaveCountOf(1).First().Version.ShouldBe("2.0.0.0".ToVersion());
+                .ShouldHaveCountOf(1).First().Version.ShouldBe("2.0.0.0".ToSemVer());
         }
     }
 }

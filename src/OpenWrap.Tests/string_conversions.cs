@@ -22,7 +22,12 @@ namespace Tests
         {
             cannot_convert<string>("value", "value2");
         }
+        [Test]
+        public void can_convert_to_semver()
+        {
+            can_convert<SemanticVersion>("1.0.0").ShouldBe(new SemanticVersion(1, 0, 0));
 
+        }
         [Test]
         public void can_convert_to_version()
         {

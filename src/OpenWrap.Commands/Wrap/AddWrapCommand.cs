@@ -84,8 +84,8 @@ namespace OpenWrap.Commands.Wrap
         {
             get
             {
-                if (Version != null) return PackageRequest.Exact(Name, Version.ToVersion());
-                if (MinVersion != null || MaxVersion != null) return PackageRequest.Between(Name, MinVersion.ToVersion(), MaxVersion.ToVersion());
+                if (Version != null) return PackageRequest.Exact(Name, Version.ToSemVer());
+                if (MinVersion != null || MaxVersion != null) return PackageRequest.Between(Name, MinVersion.ToSemVer(), MaxVersion.ToSemVer());
                 return PackageRequest.Any(Name);
             }
         }
@@ -249,19 +249,19 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
-            if (gotVersion && Version.ToVersion() == null)
+            if (gotVersion && Version.ToSemVer() == null)
             {
                 yield return new Error("Could not parse version: " + Version);
                 yield break;
             }
 
-            if (gotMinVersion && MinVersion.ToVersion() == null)
+            if (gotMinVersion && MinVersion.ToSemVer() == null)
             {
                 yield return new Error("Could not parse minversion: " + MinVersion);
                 yield break;
             }
 
-            if (gotMaxVersion && MaxVersion.ToVersion() == null)
+            if (gotMaxVersion && MaxVersion.ToSemVer() == null)
             {
                 yield return new Error("Could not parse maxversion: " + MaxVersion);
                 yield break;

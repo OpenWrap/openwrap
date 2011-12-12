@@ -4,13 +4,13 @@ namespace OpenWrap.PackageModel
 {
     public class LessThanOrEqualVersionVertex : VersionVertex
     {
-        public LessThanOrEqualVersionVertex(Version version)
+        public LessThanOrEqualVersionVertex(SemanticVersion version)
                 : base(version)
         {
         }
 
 
-        public override bool IsCompatibleWith(Version version)
+        public override bool IsCompatibleWith(SemanticVersion version)
         {
             return MajorMatches(version)
                    && MinorMatches(version)
@@ -19,25 +19,25 @@ namespace OpenWrap.PackageModel
 
         public override string ToString()
         {
-            return "<= " + Version.IgnoreRevision();
+            return "<= " + Version.Numeric();
         }
 
-        bool BuildMatches(Version version)
+        bool BuildMatches(SemanticVersion version)
         {
-            return Version.Build == -1 ||
+            return Version.Patch == -1 ||
                    (version.Major < Version.Major ||
                     (version.Major == Version.Major &&
                      (version.Minor < Version.Minor ||
                       (version.Minor == Version.Minor &&
-                       (version.Build == -1 || version.Build <= Version.Build)))));
+                       (version.Patch == -1 || version.Patch <= Version.Patch)))));
         }
 
-        bool MajorMatches(Version version)
+        bool MajorMatches(SemanticVersion version)
         {
             return version.Major <= Version.Major;
         }
 
-        bool MinorMatches(Version version)
+        bool MinorMatches(SemanticVersion version)
         {
             return version.Major < Version.Major ||
                    (version.Major == Version.Major &&
@@ -46,36 +46,35 @@ namespace OpenWrap.PackageModel
     }
     public class AproximatelyGreaterVersionVertex : VersionVertex
     {
-        Version _upperBound;
-        Func<Version, bool> _upperBoundFunc;
+        Func<SemanticVersion, bool> _upperBoundFunc;
 
-        public AproximatelyGreaterVersionVertex(Version version)
+        public AproximatelyGreaterVersionVertex(SemanticVersion version)
             : base(version)
         {
-            if (version.Build != -1)
+            if (version.Patch != -1)
                 _upperBoundFunc = v => v < IncreaseNextToLast(version);
             else
                 _upperBoundFunc = v => v.Major < (version.Major+1);
         }
 
-        static Version IncreaseNextToLast(Version version)
+        static SemanticVersion IncreaseNextToLast(SemanticVersion version)
         {
-            var v = new Version(version.ToString().Substring(0, version.ToString().LastIndexOf(".")));
+            var v = SemanticVersion.TryParseExact(version.ToString().Substring(0, version.ToString().LastIndexOf(".")));
 
-            return v.Build == -1
-                       ? new Version(v.Major, v.Minor + 1)
-                       : new Version(v.Major, v.Minor, v.Build + 1);
+            return v.Patch == -1
+                       ? new SemanticVersion(v.Major, v.Minor + 1)
+                       : new SemanticVersion(v.Major, v.Minor, v.Patch + 1);
         }
 
 
-        public override bool IsCompatibleWith(Version version)
+        public override bool IsCompatibleWith(SemanticVersion version)
         {
             return version >= Version && _upperBoundFunc(version);
         }
 
         public override string ToString()
         {
-            return "~> " + Version.IgnoreRevision();
+            return "~> " + Version.Numeric();
         }
     }
 }

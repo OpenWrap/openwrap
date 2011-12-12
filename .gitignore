@@ -32,3 +32,5 @@ reports/*
 .milestone
 *.bin
 */*.bin
+*.orig
+*/*.orig

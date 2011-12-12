@@ -14,7 +14,7 @@ namespace OpenWrap.PackageManagement
         public HooksStore()
         {   
         }
-        public IEnumerable<object> Installed(string repository, string packageName, Version version, IEnumerable<IPackageInfo> packages)
+        public IEnumerable<object> Installed(string repository, string packageName, SemanticVersion version, IEnumerable<IPackageInfo> packages)
         {
             var hooks = PackageAdded;
             if (hooks != null)
@@ -22,7 +22,7 @@ namespace OpenWrap.PackageManagement
             //return hooks.I((repository, packageName, version, packages);
             return Enumerable.Empty<object>();
         }
-        public IEnumerable<object> Updated(string repository, string packageName, Version fromVersion, Version toVersion, IEnumerable<IPackageInfo> packages)
+        public IEnumerable<object> Updated(string repository, string packageName, SemanticVersion fromVersion, SemanticVersion toVersion, IEnumerable<IPackageInfo> packages)
         {
             var hooks = PackageUpdated;
             if (hooks != null)
@@ -30,7 +30,7 @@ namespace OpenWrap.PackageManagement
 
             return Enumerable.Empty<object>();
         }
-        public IEnumerable<object> Removed(string repository, string packageName, Version version, IEnumerable<IPackageInfo> packages)
+        public IEnumerable<object> Removed(string repository, string packageName, SemanticVersion version, IEnumerable<IPackageInfo> packages)
         {
             var hooks = PackageRemoved;
             if (hooks != null)

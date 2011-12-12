@@ -4,7 +4,7 @@ namespace OpenWrap.PackageModel
 {
     public class AnyVersionVertex : VersionVertex
     {
-        public override bool IsCompatibleWith(Version version)
+        public override bool IsCompatibleWith(SemanticVersion version)
         {
             return true;
         }

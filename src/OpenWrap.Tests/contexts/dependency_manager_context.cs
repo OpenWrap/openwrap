@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using OpenWrap;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
@@ -22,7 +23,7 @@ namespace Tests.contexts
             DependencyDescriptor = new PackageDescriptor
             {
                     Name = "test",
-                    Version = new Version("1.0")
+                    Version = "1.0".ToSemVer()
             };
             ProjectRepository = new InMemoryRepository("Local repository");
             SystemRepository = new InMemoryRepository("System repository");
@@ -75,18 +76,16 @@ namespace Tests.contexts
 
         void Add(InMemoryRepository repository, string name, string[] dependencies)
         {
-            var packageNamespace = name.Contains("/") ? name.Substring(0,name.IndexOf("/")) : "global";
-            name = name.Contains("/") ? name.Substring(name.IndexOf("/") + 1) : name;
             var package = new InMemoryPackage
             {
                     Name = PackageNameUtility.GetName(name),
                     Version = PackageNameUtility.GetVersion(name),
-                    Namespace = packageNamespace,
                     Source = repository,
                     Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
                             .ToList()
             };
             repository.Packages.Add(package);
         }
+
     }
 }

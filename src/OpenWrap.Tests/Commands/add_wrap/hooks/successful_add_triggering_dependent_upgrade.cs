@@ -21,7 +21,7 @@ namespace Tests.Commands.add_wrap.hooks
         [Test]
         public void add_hook_is_called_for_new_dependency()
         {
-            add_hook_should_be_called("project", "sauron", string.Empty, "1.0.0".ToVersion());
+            add_hook_should_be_called("project", "sauron", string.Empty, "1.0.0".ToSemVer());
         }
 
         [Test]

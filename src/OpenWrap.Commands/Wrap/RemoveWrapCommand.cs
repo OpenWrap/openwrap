@@ -41,7 +41,7 @@ namespace OpenWrap.Commands.Wrap
         public bool System { get; set; }
 
         [CommandInput]
-        public Version Version { get; set; }
+        public SemanticVersion Version { get; set; }
 
 
         protected PackageRemoveOptions Options

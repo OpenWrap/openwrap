@@ -9,9 +9,9 @@ namespace OpenWrap.PackageModel
     {
         readonly IPackageDescriptor _descriptor;
         //readonly string _packageName;
-        readonly Version _packageVersion;
+        readonly SemanticVersion _packageVersion;
 
-        public DefaultPackageInfo(Version versionFileContent, IPackageDescriptor descriptor)
+        public DefaultPackageInfo(SemanticVersion versionFileContent, IPackageDescriptor descriptor)
         {
             _descriptor = descriptor;
             _packageVersion = versionFileContent
@@ -74,7 +74,7 @@ namespace OpenWrap.PackageModel
             get { return null; }
         }
 
-        public Version Version
+        public SemanticVersion Version
         {
             get { return _packageVersion; }
         }

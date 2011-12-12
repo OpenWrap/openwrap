@@ -125,15 +125,15 @@ namespace OpenWrap.Commands.Wrap
             }
             if (Version != null)
             {
-                builder = builder.VersionVertex(new EqualVersionVertex(Version.ToVersion()));
+                builder = builder.VersionVertex(new EqualVersionVertex(Version.ToSemVer()));
             }
             if (MinVersion != null)
             {
-                builder = builder.VersionVertex(new GreaterThanOrEqualVersionVertex(MinVersion.ToVersion()));
+                builder = builder.VersionVertex(new GreaterThanOrEqualVersionVertex(MinVersion.ToSemVer()));
             }
             if (MaxVersion != null)
             {
-                builder = builder.VersionVertex(new LessThanVersionVertex(MaxVersion.ToVersion()));
+                builder = builder.VersionVertex(new LessThanVersionVertex(MaxVersion.ToSemVer()));
             }
             return builder;
         }

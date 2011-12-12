@@ -83,7 +83,7 @@ namespace OpenWrap.Repositories.Http
 
         public IPackageRepository Source { get; private set; }
 
-        public Version Version
+        public SemanticVersion Version
         {
             get { return _package.Version; }
         }

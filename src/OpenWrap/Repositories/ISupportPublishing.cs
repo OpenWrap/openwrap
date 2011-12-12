@@ -10,10 +10,10 @@ namespace OpenWrap.Repositories
     }
     public interface IPackagePublisher : IDisposable
     {
-        IPackageInfo Publish(string packageFileName, Stream packageStream);        
+        void Publish(string packageFileName, Stream packageStream);        
     }
     public interface IPackagePublisherWithSource : IPackagePublisher
     {
-        IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream);
+        void Publish(IPackageRepository source, string packageFileName, Stream packageStream);
     }
 }

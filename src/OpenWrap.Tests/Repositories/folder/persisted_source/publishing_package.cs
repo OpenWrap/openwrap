@@ -1,13 +1,10 @@
 using System;
 using NUnit.Framework;
-using OpenFileSystem.IO;
 using OpenWrap.IO;
-using OpenWrap.IO.Packaging;
-using OpenWrap.PackageManagement.Packages;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
-namespace Tests.Repositories.folder_repo.persisted_source
+namespace Tests.Repositories.folder.persisted_source
 {
     public class publishing_package : contexts.folder
     {

@@ -69,7 +69,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageRepository Source { get; set; }
         public string Title { get; set; }
-        public Version Version { get; set; }
+        public SemanticVersion Version { get; set; }
 
         public ICollection<Exports.IFile> this[string exportName]
         {

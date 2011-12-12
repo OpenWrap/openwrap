@@ -58,7 +58,7 @@ namespace Tests.Commands.contexts
                         Stream = ()=> AssemblyBuilder.CreateAssemblyStream(assembly.Key, assembly.Value)
                 });
 
-            Items = Exporter.Items<T>(new ZipPackage(package).Load(), new ExecutionEnvironment("AnyCPU", "net35"));
+            Items = Exporter.Items<T>(new ZipFilePackage(package).Load(), new ExecutionEnvironment("AnyCPU", "net35"));
         }
     }
 }

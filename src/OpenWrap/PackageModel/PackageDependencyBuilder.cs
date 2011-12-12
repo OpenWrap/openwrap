@@ -64,18 +64,18 @@ namespace OpenWrap.PackageModel
         }
         public PackageDependencyBuilder Version(string version)
         {
-            _versions.Add(new EqualVersionVertex(version.ToVersion()));
+            _versions.Add(new EqualVersionVertex(version.ToSemVer()));
             return this;
         }
 
         public PackageDependencyBuilder MinVersion(string version)
         {
-            _versions.Add(new GreaterThanOrEqualVersionVertex(version.ToVersion()));
+            _versions.Add(new GreaterThanOrEqualVersionVertex(version.ToSemVer()));
             return this;
         }
         public PackageDependencyBuilder MaxVersion(string version)
         {
-            _versions.Add(new LessThanVersionVertex(version.ToVersion()));
+            _versions.Add(new LessThanVersionVertex(version.ToSemVer()));
             return this;
         }
         public PackageDependencyBuilder SetVersionVertices(IEnumerable<VersionVertex> vertices)

@@ -76,7 +76,7 @@ namespace OpenWrap.Repositories
             return new PackagePublisher(Publish);
         }
 
-        IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream)
+        void Publish(IPackageRepository source, string packageFileName, Stream packageStream)
         {
             var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
                                            ? System.IO.Path.GetFileNameWithoutExtension(packageFileName)
@@ -88,11 +88,10 @@ namespace OpenWrap.Repositories
             using (var stream = inMemoryFile.OpenWrite())
                 IO.StreamExtensions.CopyTo(packageStream, stream);
 
-            var tempFolder = new ZipPackage(inMemoryFile);
+            var tempFolder = new ZipFilePackage(inMemoryFile);
 
             var package = new InMemoryPackage(tempFolder) { Source = this };
             Packages.Add(package);
-            return package;
         }
 
         public IDisposable WithCredentials(NetworkCredential credentials)

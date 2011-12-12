@@ -46,7 +46,7 @@ namespace OpenWrap.Repositories.Http
                            select new PackageEntry
                            {
                                Name = name.Value,
-                               Version = new Version(version.Value),
+                               Version = SemanticVersion.TryParseExact(version.Value),
                                PackageHref = absoluteLink,
                                Dependencies = depends,
                                CreationTime = lastModifiedTimeUtc,

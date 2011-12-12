@@ -11,7 +11,7 @@ namespace Tests.Commands.add_wrap
     {
         public adding_non_existant_wrap()
         {
-            given_currentdirectory_package("sauron", new Version(1, 0, 0));
+            given_currentdirectory_package("sauron", "1.0.0");
             when_executing_command("-Name saruman");
         }
         [Test]
