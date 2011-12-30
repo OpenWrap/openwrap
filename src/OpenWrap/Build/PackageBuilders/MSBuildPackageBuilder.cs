@@ -15,27 +15,36 @@ namespace OpenWrap.Build.PackageBuilders
     public class MSBuildPackageBuilder : AbstractProcessPackageBuilder
     {
         readonly IEnvironment _environment;
+        readonly IDictionary<string, string> _properties;
 
         public MSBuildPackageBuilder(IFileSystem fileSystem, IEnvironment environment, IFileBuildResultParser parser)
             : base(fileSystem, parser)
         {
+            _properties = new Dictionary<string, string>();
             _environment = environment;
             Profile = new List<string>();
             Platform = new List<string>();
             Project = new List<string>();
             Configuration = new List<string>();
             ProjectFiles = new List<IFile>();
-            Properties = new string[0].ToLookup(_ => _);
         }
 
-        public ILookup<string, string> Properties { get; set; }
+        public ILookup<string, string> Properties {
+            set
+            {
+                foreach (var kv in value)
+                {
+                    _properties[kv.Key] = value[kv.Key].Last();
+                }
+            }
+        }
 
         public IEnumerable<string> Platform { get; set; }
         public IEnumerable<string> Profile { get; set; }
         public IEnumerable<string> Project { get; set; }
         public IEnumerable<string> Configuration { get; set; }
         public ICollection<IFile> ProjectFiles { get; set; }
-
+        public string Targets { get; set; }
 
         protected override string ExecutablePath
         {
@@ -94,7 +103,7 @@ namespace OpenWrap.Build.PackageBuilders
 
             yield return new TextBuildResult(string.Format("Using MSBuild from path '{0}'.", ExecutablePath));
 
-            if (!Incremental)
+            if (!Incremental && string.IsNullOrEmpty(Targets))
                 foreach (var project in builds)
                 {
                     using (var responseFile = _fileSystem.CreateTempFile())
@@ -108,7 +117,7 @@ namespace OpenWrap.Build.PackageBuilders
             {
                 using (var responseFile = _fileSystem.CreateTempFile())
                 {
-                    var msbuildProcess = CreateMSBuildProcess(responseFile, project.file, project.platform, project.profile, "Build");
+                    var msbuildProcess = CreateMSBuildProcess(responseFile, project.file, project.platform, project.profile, Targets ?? "Build");
                     yield return new InfoBuildResult(string.Format("Building '{0}'...", project.file.Path.FullPath));
 
 
@@ -172,9 +181,9 @@ namespace OpenWrap.Build.PackageBuilders
                 writer.WriteLine("/p:OpenWrap-EmitOutputInstructions=true");
                 writer.WriteLine("/p:OpenWrap-CurrentProjectFile=\"" + project.Path.FullPath + "\"");
 
-                foreach (var kv in Properties)
+                foreach (var kv in _properties)
                 {
-                    var value = kv.LastOrDefault();
+                    var value = kv.Value;
                     if (value != null)
                         writer.WriteLine("/p:{0}={1}", kv.Key, value);
                 }

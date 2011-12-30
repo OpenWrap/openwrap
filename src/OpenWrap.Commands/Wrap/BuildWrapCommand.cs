@@ -55,6 +55,9 @@ namespace OpenWrap.Commands.Wrap
         public IEnumerable<string> Flavour { get; set; }
 
         [CommandInput]
+        public IEnumerable<string> Properties { get; set; }
+
+        [CommandInput]
         public string From { get; set; }
 
         [CommandInput]
@@ -71,6 +74,9 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public string Version { get; set; }
+
+        [CommandInput]
+        public string Targets { get; set; }
 
         [CommandInput]
         public bool Release
@@ -225,8 +231,13 @@ namespace OpenWrap.Commands.Wrap
             {
                 var builder = new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser())
                 {
-                    Incremental = Incremental
+                    Incremental = Incremental,
+                    Targets = Targets
                 };
+                if (Properties != null && Properties.Count() > 0)
+                {
+                    builder.Properties = Properties.ToLookup(p => p.Split('=')[0], p => p.Split('=')[1]);
+                }
                 return builder;
             }
             if (commandLine.StartsWithNoCase("files"))

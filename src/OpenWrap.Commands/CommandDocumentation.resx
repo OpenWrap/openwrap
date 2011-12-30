@@ -187,6 +187,9 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="build-wrap-flavour" xml:space="preserve">
     <value>Defines the flavour to build the project for, which defines what will be included in the package. Can be a combination of "src", "bin", "codedoc" and "pdb". Multiple values separated by a coma will trigger multiple builds.</value>
   </data>
+  <data name="build-wrap-properties" xml:space="preserve">
+    <value>Defines properties in the form prop1=value to pass into package builder. Multiple properties can be specified with a comma delimeter.</value>
+  </data>
   <data name="build-wrap-from" xml:space="preserve">
     <value>Specifies the location of the project to build.</value>
   </data>
