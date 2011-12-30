@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Mono.Cecil;
+using OpenFileSystem.IO;
 using OpenWrap.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
@@ -47,7 +48,7 @@ namespace OpenWrap.PackageManagement.Exporters.Assemblies
                                         directory = directory.Key,
                                         env = new EnvironmentDependentFile { Platform = platform, Profile = profile }
                                 } by file.File.Name;
-
+            
             return allAssemblies
                     .Select(x => x.OrderBy(_ => _.env)
                                          .Select(_ =>
@@ -77,14 +78,28 @@ namespace OpenWrap.PackageManagement.Exporters.Assemblies
                                                      _.file.File,
                                                      _.env.Platform,
                                                      _.env.Profile,
-                                                     an
-                                                     );
+                                                     an,
+                                                     GetAssemblyExportFlags(_.file, an));
                                          })
-                                         .Where(MatchesReferenceSection)
+                                         .Where(HasExportFlags)
                                          .Cast<TItems>()
                                          .FirstOrDefault())
                     .Where(x=>!ReferenceEquals(x,null))
                     .GroupBy(x => x.Path);
+        }
+
+        static bool HasExportFlags(Assembly a)
+        {
+            return a.Flags != AssemblyExportFlags.None;
+        }
+
+        static AssemblyExportFlags GetAssemblyExportFlags(Exports.IFile file, AssemblyName an)
+        {
+            if (file.Package.Descriptor == null) return AssemblyExportFlags.None;
+
+            var flags = MatchesReferenceSection(file, an, file.Package.Descriptor.ReferencedAssemblies) ? AssemblyExportFlags.ReferencedAssembly : AssemblyExportFlags.None;
+            flags |= MatchesReferenceSection(file, an, file.Package.Descriptor.RuntimeAssemblies) ? AssemblyExportFlags.RuntimeAssembly : AssemblyExportFlags.None;
+            return flags;
         }
 
         static bool CanUseBinFolderForProfile(string binFolder, string profile)
@@ -127,13 +142,13 @@ namespace OpenWrap.PackageManagement.Exporters.Assemblies
             return false;
         }
 
-        static bool MatchesReferenceSection(Exports.IAssembly assembly)
+        static bool MatchesReferenceSection(Exports.IFile file, AssemblyName assemblyName, string list)
         {
-            if (assembly.Package.Descriptor == null || assembly.Package.Descriptor.ReferencedAssemblies == null) return true;
-            var specs = assembly.Package.Descriptor.ReferencedAssemblies.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
+            if (list == null) return true;
+            var specs = list.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(spec => spec.Trim().Wildcard());
-            var fileName = assembly.File.Name;
-            return specs.Any(spec => spec.IsMatch(assembly.AssemblyName.Name) || spec.IsMatch(fileName));
+            var fileName = file.File.Name;
+            return specs.Any(spec => spec.IsMatch(assemblyName.Name) || spec.IsMatch(fileName));
         }
 
         static bool PlatformMatches(string binPlatform, string envPlatform)

@@ -137,6 +137,7 @@
     <Compile Include="Commands\update_wrap\locks\existing_lock.cs" />
     <Compile Include="Commands\update_wrap\project\by_name\already_up_to_date.cs" />
     <Compile Include="Commands\update_wrap\project\by_name\not_found.cs" />
+    <Compile Include="PackageModel\descriptors\specify_values_in_descriptor.cs" />
     <Compile Include="Repositories\factories\indexed_folder\from_pre_beta_token.cs" />
     <Compile Include="Repositories\folder\locking\enabled_through_option.cs" />
     <Compile Include="Repositories\folder\locking\existing_lock.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Repositories\folder\locking\unlocking.cs" />
     <Compile Include="Repositories\folder_repo\persisted_source\importing_existing_package_unknown_source.cs" />
     <Compile Include="RepositoryAssertions.cs" />
+    <Compile Include="resolving_assemblies\assemblies_defined_in_runtime_section_are_resolved_by_assembly_name.cs" />
     <Compile Include="resolving_assemblies\locks.cs" />
     <Compile Include="TestExtensions.cs" />
     <Compile Include="Commands\remote.add\adding_new_remote_supporting_fetch_and_publish.cs" />

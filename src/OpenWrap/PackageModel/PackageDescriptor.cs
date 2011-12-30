@@ -20,6 +20,7 @@ namespace OpenWrap.PackageModel
         SingleBoolValue _useSymLinks;
         SingleVersionValue _version;
         SingleStringValue _referencedAssemblies;
+        SingleStringValue _runtimeAssemblies;
         MultiLine<string> _buildCommands;
         MultiLine<string> _directoryStructure;
         SingleStringValue _title;
@@ -119,6 +120,12 @@ namespace OpenWrap.PackageModel
             set { _referencedAssemblies.Value = value; }
         }
 
+        public string RuntimeAssemblies
+        {
+            get { return _runtimeAssemblies.Value; }
+            set { _runtimeAssemblies.Value = value; }
+        }
+
         public ICollection<string> DirectoryStructure
         {
             get { return _directoryStructure; }
@@ -159,6 +166,7 @@ namespace OpenWrap.PackageModel
             _useProjectRepository = new SingleBoolValue(Entries, "use-project-repository", true);
             _useSymLinks = new SingleBoolValue(Entries, "use-symlinks", false);
             _referencedAssemblies = new SingleStringValue(Entries, "referenced-assemblies", "*");
+            _runtimeAssemblies = new SingleStringValue(Entries, "runtime-assemblies", "");
             _directoryStructure = new MultiLine<string>(Entries, "directory-structure", _ => _, _ => _);
             _title = new SingleStringValue(Entries, "title");
             _namespace = new SingleStringValue(Entries, "string");

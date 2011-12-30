@@ -20,6 +20,7 @@ namespace OpenWrap.PackageModel
         bool UseSymLinks { get; }
         Version Version { get; set; }
         string ReferencedAssemblies { get; }
+        string RuntimeAssemblies { get; }
         ICollection<string> DirectoryStructure { get; }
         bool StorePackages { get; }
         IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read);

@@ -20,6 +20,7 @@ namespace OpenWrap.PackageModel
             DelegatedValue<bool> _useSymLinks;
             DelegatedValue<Version> _version;
             DelegatedValue<string> _referencedAssemblies;
+            DelegatedValue<string> _runtimeAssemblies;
 
             ScopedPackageNameOverrideCollection _overrides;
             ScopedPackageDependencyCollection _dependencies;
@@ -121,6 +122,12 @@ namespace OpenWrap.PackageModel
                 set { _referencedAssemblies.Value = value; }
             }
 
+            public string RuntimeAssemblies
+            {
+                get { return _runtimeAssemblies.Value; }
+                set { _runtimeAssemblies.Value = value; }
+            }
+
             public ICollection<string> DirectoryStructure
             {
                 get { return _parent.DirectoryStructure; }
@@ -178,6 +185,7 @@ namespace OpenWrap.PackageModel
                 _useProjectRepository = CreateDelegated("use-project-repository", SingleBoolValue.New, true);
                 _useSymLinks = CreateDelegated("use-symlinks", SingleBoolValue.New, false);
                 _referencedAssemblies = CreateDelegated("referenced-assemblies", SingleStringValue.New, "*");
+                _runtimeAssemblies = CreateDelegated("runtime-assemblies", SingleStringValue.New, "");
                 _title = CreateDelegated<string>("title", SingleStringValue.New);
 
                 _directoryStructures = new DelegatedMultiLine<string>(
