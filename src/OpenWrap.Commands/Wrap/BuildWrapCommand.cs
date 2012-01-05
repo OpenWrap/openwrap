@@ -405,7 +405,9 @@ namespace OpenWrap.Commands.Wrap
             foreach (var t in packageBuilders.SelectMany(x => x.Build()))
             {
                 if (t is InfoBuildResult || (t is TextBuildResult && !Quiet))
-                    yield return new Info(t.Message);
+                {
+                    yield return new Info("{0}", t.Message);
+                }
                 else if (t is FileBuildResult)
                 {
                     var buildResult = (FileBuildResult)t;
@@ -416,7 +418,7 @@ namespace OpenWrap.Commands.Wrap
                 }
                 else if (t is ErrorBuildResult)
                 {
-                    yield return new Error(t.Message);
+                    yield return new Error("{0}", t.Message);
                     yield break;
                 }
             }
