@@ -14,21 +14,21 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         readonly Dictionary<string, PackageDependency> _hints;
         readonly IEnumerable<PackageNameOverride> _nameOverrides;
         readonly List<KeyValuePair<PackageDependency, CallStack>> _notFound;
-        readonly IEnumerable<IPackageRepository> _repositories;
         readonly PackageSelectionContext _selectionContext;
+        ILookup<string, IPackageInfo> _packages;
 
 
-        public DependencyVisitor(IEnumerable<IPackageRepository> repositories,
+        public DependencyVisitor(ILookup<string,IPackageInfo> packages,
                                  PackageSelectionContext selectionContext,
                                  IEnumerable<PackageDependency> hints,
                                  IEnumerable<PackageNameOverride> nameOverrides)
         {
             Check.NotNull(selectionContext, "selectionContext");
-            Check.NoNullElements(repositories, "repositories");
+            Check.NoNullElements(packages, "repositories");
             Check.NoNullElements(hints, "hints");
             Check.NoNullElements(nameOverrides, "nameOverrides");
 
-            _repositories = repositories;
+            _packages = packages;
             _selectionContext = selectionContext;
             _nameOverrides = nameOverrides;
             _hints = hints.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
@@ -60,7 +60,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         PackageDependency ApplyPackageHintOverride(PackageDependency originalDependency)
         {
             // TODO: Investigate being smarter in how overrides are applied
-            return _hints.ContainsKey(originalDependency.Name) && _hints[originalDependency.Name].VersionVertices.OfType<AnyVersionVertex>().Any() == false
+            return _hints.ContainsKey(originalDependency.Name) && _hints[originalDependency.Name] != new PackageDependency(originalDependency.Name)
                 ? _hints[originalDependency.Name] : originalDependency;
         }
 
@@ -69,19 +69,19 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             return _nameOverrides.Aggregate(originalDependency, (modifiedDependency, wrapOverride) => wrapOverride.Apply(modifiedDependency));
         }
 
-        KeyValuePair<PackageIdentifier, IPackageInfo>? NextAvailablePackageVersion(IEnumerable<PackageIdentifier> seen, PackageDependency dependency)
+        IPackageInfo NextAvailablePackageVersion(IEnumerable<PackageIdentifier> seen, PackageDependency dependency)
         {
-            return (from packageById in from repo in _repositories
-                                        from package in repo.FindAll(dependency)
-                                        where _selectionContext.IsIgnored(package.Identifier) == false
-                                        group package by package.Identifier
-                    where seen.Contains(packageById.Key) == false && packageById.Count() > 0
-                    orderby packageById.Key.Version descending
-                    select new KeyValuePair<PackageIdentifier, IPackageInfo>?(
-                            new KeyValuePair<PackageIdentifier, IPackageInfo>(
-                                    packageById.Key,
-                                    packageById.First())))
-                    .FirstOrDefault();
+            var availablePackages = Match(dependency).Where(_=>!_selectionContext.IsIgnored(_.Identifier) && !seen.Contains(_.Identifier));
+            return Select(availablePackages);
+        }
+        IPackageInfo Select(IEnumerable<IPackageInfo> availablePackages)
+        {
+            return availablePackages.OrderByDescending(_ => _.Identifier.Version).FirstOrDefault();
+        }
+
+        IEnumerable<IPackageInfo> Match(PackageDependency dependency)
+        {
+            return _packages.FindAll(dependency);
         }
 
         void PopStack()
@@ -141,23 +141,22 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         bool VisitPackageVersions(PackageDependency dependency)
         {
-            KeyValuePair<PackageIdentifier, IPackageInfo>? packageVersion;
+            IPackageInfo packageVersion;
             var seen = new List<PackageIdentifier>();
             while ((packageVersion = NextAvailablePackageVersion(seen, dependency)) != null)
             {
-                seen.Add(packageVersion.Value.Key);
-                _selectionContext.Trying(packageVersion.Value.Key);
-                PushStack(packageVersion.Value.Key);
+                seen.Add(packageVersion.Identifier);
+                _selectionContext.Trying(packageVersion.Identifier);
+                PushStack(packageVersion.Identifier);
 
-                IPackageInfo package = packageVersion.Value.Value;
-                if (package != null && VisitDependencies(package.Dependencies))
+                if (VisitDependencies(packageVersion.Dependencies))
                 {
-                    _selectionContext.PackageSucceeds(packageVersion.Value.Key, CurrentCallStack);
+                    _selectionContext.PackageSucceeds(packageVersion.Identifier, CurrentCallStack);
                     WriteDebug("dependency: version found");
                     PopStack();
                     return true;
                 }
-                _selectionContext.PackageHasChildrenConflicting(packageVersion.Value.Key);
+                _selectionContext.PackageHasChildrenConflicting(packageVersion.Identifier);
                 WriteDebug("dependency: version didn't match");
                 PopStack();
             }

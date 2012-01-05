@@ -21,9 +21,7 @@ namespace Tests.Commands.set_wrap
         [Test]
         public void dependency_version_is_greaterthan_2()
         {
-            var vertex = Environment.Descriptor.Dependencies.First().VersionVertices.First();
-            var greater = vertex as GreaterThanOrEqualVersionVertex;
-            greater.Version.ShouldBe(new Version("2.0.0"));
+            Environment.Descriptor.Dependencies.First().ToString().ShouldBe("sauron >= 2.0.0");
         }
     }
 }

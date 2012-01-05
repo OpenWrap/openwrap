@@ -20,7 +20,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             {
                 var exclusionList = packageSelection.IncompatiblePackageVersions.Select(x => x.Key);
 
-                var visitor = new DependencyVisitor(repositoriesToQuery, packageSelection, packageDescriptor.Dependencies, packageDescriptor.Overrides);
+                var visitor = new DependencyVisitor(repositoriesToQuery.Packages(), packageSelection, packageDescriptor.Dependencies, packageDescriptor.Overrides);
                 var resolutionSucceeded = visitor.VisitDependencies(packageDescriptor.Dependencies);
 
                 if (resolutionSucceeded == false)
@@ -50,7 +50,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             var success = (from compatible in packageSelectionContext.CompatiblePackageVersions
                            let id = compatible.Key
                            let packages = from repo in repositoriesToQuery
-                                          from package in repo.FindAll(ToDependency(id))
+                                          from package in repo.PackagesByName.FindAll(ToDependency(id))
                                           select package
                            select new ResolvedPackage(id, packages.ToList(), compatible.Value.Successful))
                     .ToList();

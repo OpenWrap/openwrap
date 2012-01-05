@@ -51,7 +51,7 @@ namespace Tests.Repositories
                 var dep = new PackageDescriptor();
                 new DependsParser().Parse(dependency, dep);
 
-                FoundPackage = Repository.FindAll(dep.Dependencies.First()).FirstOrDefault();
+                FoundPackage = Repository.PackagesByName.FindAll(dep.Dependencies.First()).FirstOrDefault();
             }
 
             protected void when_getting_package_names()

@@ -15,22 +15,16 @@ namespace Tests.Commands.set_wrap
             given_dependency("depends: sauron = 1.0.0");
             given_project_package("sauron", "1.0.0.0");
 
-            when_executing_command("sauron -version 2.0.0");
-            verticies = Environment.Descriptor.Dependencies.First().VersionVertices.ToArray();
-        }
-
-        VersionVertex[] verticies;
-
-        [Test]
-        public void dependency_has_one_version_vertex()
-        {
-            verticies.ShouldHaveCountOf(1);
+            when_executing_command("sauron -version 2");
         }
 
         [Test]
-        public void dependency_version_equals_2()
+        public void dependency_has_exact_version()
         {
-            verticies.First().Version.Equals(new Version("2.0.0"));
+            Environment.Descriptor.Dependencies.First().ToString().ShouldBe("sauron = 2");
+
         }
+
+        
     }
 }

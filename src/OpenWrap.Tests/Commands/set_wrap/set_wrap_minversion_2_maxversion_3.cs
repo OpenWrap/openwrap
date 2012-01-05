@@ -16,24 +16,12 @@ namespace Tests.Commands.set_wrap
             given_project_package("sauron", "1.0.0.0");
 
             when_executing_command("sauron -minversion 2.0.0 -maxversion 3.0.0");
-
-            vertices = Environment.Descriptor.Dependencies.First().VersionVertices.ToArray();
-        }
-
-        readonly VersionVertex[] vertices;
-
-        [Test]
-        public void vertex_0_is_greaterthanorequal_2()
-        {
-            var greater = vertices[0] as GreaterThanOrEqualVersionVertex;
-            greater.Version.ShouldBe(new Version("2.0.0"));
         }
 
         [Test]
-        public void vertex_1_is_lessthan_3()
+        public void depends_contains_both_vertices()
         {
-            var lessThan = vertices[1] as LessThanVersionVertex;
-            lessThan.Version.ShouldBe(new Version("3.0.0"));
+            Environment.Descriptor.Dependencies.First().ToString().ShouldBe("sauron >= 2.0.0 and < 3.0.0");
         }
     }
 }

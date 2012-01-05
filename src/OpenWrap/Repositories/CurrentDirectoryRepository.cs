@@ -68,11 +68,6 @@ namespace OpenWrap.Repositories
             throw new NotSupportedException();
         }
 
-        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
-        {
-            return PackagesByName.FindAll(dependency);
-        }
-
         public void RefreshPackages()
         {
             _packages = null;

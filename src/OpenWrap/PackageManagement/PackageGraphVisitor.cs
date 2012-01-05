@@ -74,7 +74,6 @@ namespace OpenWrap.PackageManagement
 
             var unvisited = _byName.Values.Where(x => visited.Contains(x.Name) == false).ToList();
             var recursives = new List<IPackageInfo>();
-            var ignore = new List<string>();
 
             IPackageInfo current;
             while ((current = unvisited.FirstOrDefault()) != null)
@@ -96,9 +95,7 @@ namespace OpenWrap.PackageManagement
             var visitResult = visitor(from, dependency, to);
             return visitResult &&
                    (DecreaseVisitCount(visitsLeft, to.Name) != 0 ||
-                    to.Dependencies.All(dependencyNode => _byName.ContainsKey(dependencyNode.Name) ?
-                                                          VisitDependencyNode(to, dependencyNode, _byName[dependencyNode.Name], visitor, visitsLeft)
-                                                          : true));
+                    to.Dependencies.All(dependencyNode => !_byName.ContainsKey(dependencyNode.Name) || VisitDependencyNode(to, dependencyNode, _byName[dependencyNode.Name], visitor, visitsLeft)));
         }
 
         TReturn AddReturn<T, TReturn>(ICollection<T> collection, T value, TReturn returnValue)

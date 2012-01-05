@@ -18,6 +18,7 @@ namespace OpenWrap.Repositories
         ISupportLocking
     {
         ICollection<IPackageInfo> _packages = new List<IPackageInfo>();
+
         public bool CanLock { get; set; }
 
         public InMemoryRepository(string name = null)
@@ -26,6 +27,7 @@ namespace OpenWrap.Repositories
             CanPublish = true;
             Token = "[memory]" + Name;
         }
+
         public string Type { get { return "memory"; } }
         public bool CanAuthenticate { get; set; }
 
@@ -57,10 +59,6 @@ namespace OpenWrap.Repositories
         }
 
 
-        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
-        {
-            return PackagesByName.FindAll(dependency);
-        }
 
         public void RefreshPackages()
         {

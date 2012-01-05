@@ -57,11 +57,6 @@ namespace OpenWrap.Repositories.Http
             return this as TFeature;
         }
 
-        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
-        {
-            return PackagesByName.FindAll(dependency);
-        }
-
         public void RefreshPackages()
         {
             _packagesByName = null;

@@ -21,11 +21,6 @@ namespace OpenWrap.Repositories
             get { return _remote.PackagesByName; }
         }
 
-        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
-        {
-            return _remote.FindAll(dependency);
-        }
-
         public void RefreshPackages()
         {
             _remote.RefreshPackages();

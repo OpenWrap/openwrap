@@ -76,11 +76,6 @@ namespace OpenWrap.Repositories.NuFeed
             get { return _packages.Value.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
         }
 
-        public IEnumerable<IPackageInfo> FindAll(PackageDependency dependency)
-        {
-            return PackagesByName.FindAll(dependency);
-        }
-
         public void RefreshPackages()
         {
             _packages = Lazy.Is(LoadPackages);
