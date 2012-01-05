@@ -36,7 +36,13 @@ namespace OpenWrap.Repositories.NuGet
                 { "35", "35" },
                 { "40", "40" },
                 { "40ClientProfile", "40cp" },
-                { "35ClientProfile", "35cp" }
+                { "35ClientProfile", "35cp" },
+                
+                { "40-client", "40cp" },
+                { "35-client", "35cp" },
+                
+                { "40-Full", "40" },
+                { "35-Full", "35" }
         };
 
         public static IEnumerable<PackageContent> Content(Stream nuGetPackage)
