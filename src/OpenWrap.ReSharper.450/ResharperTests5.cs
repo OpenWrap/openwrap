@@ -60,7 +60,7 @@ namespace OpenWrap.Resharper
                           {
 #if v450
                               var action = _actionManager.GetAction(PluginManager.ACTION_REANALYZE);
-#elif !v600
+#elif !v600 && !v610
                               var action = _actionManager.GetUpdatableAction(PluginManager.ACTION_REANALYZE);
 #else
                               var action = _actionManager.TryGetAction(PluginManager.ACTION_REANALYZE);
