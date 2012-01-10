@@ -3,7 +3,7 @@ using System;
 using System.Diagnostics;
 using EnvDTE;
 
-#if v600
+#if v600 || v610
 using resharper::JetBrains.ActionManagement;
 using resharper::JetBrains.ReSharper.Daemon.Impl;
 using ResharperPluginManager = resharper::JetBrains.Application.PluginSupport.PluginManager;
