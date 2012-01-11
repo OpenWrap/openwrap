@@ -35,6 +35,7 @@ namespace OpenWrap.Repositories.NuGet
                 { "30", "30" },
                 { "35", "35" },
                 { "40", "40" },
+
                 { "40ClientProfile", "40cp" },
                 { "35ClientProfile", "35cp" },
                 

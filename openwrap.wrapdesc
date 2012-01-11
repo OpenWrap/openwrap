@@ -1,7 +1,7 @@
 ﻿depends: sharpziplib = 0.86
-depends: openwrap content = 2.0
+depends: openwrap content >= 2.0 and < 3.0
 anchored: true
-build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj; project=src\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj; project=src\OpenWrap.Commands\OpenWrap.Commands.csproj; project=src\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.SolutionPlugins.VisualStudio.csproj
+build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj; project=src\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj; project=src\OpenWrap.Commands\OpenWrap.Commands.csproj; project=src\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.SolutionPlugins.VisualStudio.csproj;CreateHardLinksForAdditionalFilesIfPossible=true;CreateHardLinksForCopyAdditionalFilesIfPossible=true;CreateHardLinksForCopyFilesToOutputDirectoryIfPossible=true;CreateHardLinksForCopyLocalIfPossible=true;CreateHardLinksForPublishFilesIfPossible=true;BuildInParallel=true;
 name: openwrap
 depends: tdnet-framework
 use-symlinks: true
