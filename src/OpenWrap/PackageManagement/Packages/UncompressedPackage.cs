@@ -45,8 +45,7 @@ namespace OpenWrap.PackageManagement.Packages
              
             var versionFile = wrapCacheDirectory.GetFile("version");
             _descriptor = new PackageDescriptorReaderWriter().Read(wrapDescriptor);
-            PackageInfo = new DefaultPackageInfo(originalPackageFile.Name,
-                                                versionFile.Exists ? versionFile.Read(x => x.ReadString().ToVersion()) : null,
+            PackageInfo = new DefaultPackageInfo(versionFile.Exists ? versionFile.ReadString().ToVersion() : null,
                                                 _descriptor);
             Identifier = new PackageIdentifier(Name, Version);
             IsValid = true;

@@ -130,7 +130,7 @@ namespace OpenWrap.PackageManagement.Packages
                 Version versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().ToVersion()) : null;
                 var descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReader().Read(x));
 
-                _descriptor = new DefaultPackageInfo(PackageFile.Name, versionFromVersionFile, descriptor);
+                _descriptor = new DefaultPackageInfo(versionFromVersionFile, descriptor);
 
                 if (Descriptor.Version == null)
                     throw new InvalidOperationException(string.Format("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.", descriptor.Name));

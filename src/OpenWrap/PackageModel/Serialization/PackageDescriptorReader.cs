@@ -49,7 +49,7 @@ namespace OpenWrap.PackageModel.Serialization
             var stringReader = new StreamReader(content, true);
             var lines = stringReader.ReadToEnd().GetUnfoldedLines();
             if (lines.Any(l => l.Contains('\n')))
-                throw new InvalidPackageException("Package descriptor contains invalid line endings (<LF> instead of <CR><LF>). Either the descriptor is in the wrong format or a source control system that plays around with line endings (like git) has been misconfigured (autocrlf may help).");
+                throw new InvalidPackageException("Package descriptor contains invalid line endings (<LF> instead of <CR><LF>). Either the descriptor is in the wrong format or a source control system that plays around with line endings (like git) has been misconfigured (core.autocrlf may help).");
 
             return ctor != null
                 ? ctor(lines.Select(ParseLine))

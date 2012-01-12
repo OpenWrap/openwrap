@@ -4,19 +4,19 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageModel
 {
+    
     public class DefaultPackageInfo : IPackageInfo
     {
         readonly IPackageDescriptor _descriptor;
-        readonly string _packageName;
+        //readonly string _packageName;
         readonly Version _packageVersion;
 
-        public DefaultPackageInfo(string packageFileName, Version versionFileContent, IPackageDescriptor descriptor)
+        public DefaultPackageInfo(Version versionFileContent, IPackageDescriptor descriptor)
         {
             _descriptor = descriptor;
             _packageVersion = versionFileContent
-                              ?? descriptor.Version
-                              ?? PackageNameUtility.GetVersion(packageFileName);
-            _packageName = PackageNameUtility.GetName(packageFileName);
+                              ?? descriptor.Version;
+            //_packageName = PackageNameUtility.GetName(packageFileName);
             Identifier = new PackageIdentifier(Name, Version);
         }
 
@@ -51,7 +51,7 @@ namespace OpenWrap.PackageModel
 
         public string Name
         {
-            get { return _descriptor.Name ?? _packageName; }
+            get { return _descriptor.Name; }
             set { _descriptor.Name = value; }
         }
         public string Title
