@@ -22,9 +22,12 @@ namespace OpenWrap.PackageModel
         SingleStringValue _referencedAssemblies;
         MultiLine<string> _buildCommands;
         MultiLine<string> _directoryStructure;
+        MultiLine<string> _assemblyInfo;
+        SingleStringValue _copyright;
         SingleStringValue _title;
         SingleStringValue _namespace;
         SingleBoolValue _storePackages;
+        MultiLine<string> _author;
 
         public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> entries)
         {
@@ -130,6 +133,19 @@ namespace OpenWrap.PackageModel
             set { _storePackages.Value = value; }
         }
 
+        public IEnumerable<string> AssemblyInfo
+        {
+            get { return _assemblyInfo; }
+        }
+
+        public IEnumerable<string> Authors
+        {
+            get { return _author; }
+        }
+        public string Copyright
+        {
+            get { return _copyright.Value; }
+        }
         public PackageDescriptorEntryCollection Entries
         {
             get { return _entries; }
@@ -161,8 +177,11 @@ namespace OpenWrap.PackageModel
             _referencedAssemblies = new SingleStringValue(Entries, "referenced-assemblies", "*");
             _directoryStructure = new MultiLine<string>(Entries, "directory-structure", _ => _, _ => _);
             _title = new SingleStringValue(Entries, "title");
-            _namespace = new SingleStringValue(Entries, "string");
+            _namespace = new SingleStringValue(Entries, "namespace");
             _storePackages = new SingleBoolValue(Entries, "store-packages", true);
+            _assemblyInfo = new MultiLine<string>(Entries, "assembly-info", _ => _, _ => _);
+            _author = new MultiLine<string>(Entries, "author", _ => _, _ => _);
+            _copyright = new SingleStringValue(Entries, "copyright");
         }
         public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)
         {
