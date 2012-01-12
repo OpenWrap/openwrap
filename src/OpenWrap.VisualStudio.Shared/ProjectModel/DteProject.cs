@@ -30,6 +30,12 @@ namespace OpenWrap.VisualStudio.ProjectModel
             get { return _file.Value; }
         }
 
+        public string RootNamespace
+        {
+            get { return DteObject.Properties.Item("RootNamespace").Value as string; }
+            set { DteObject.Properties.Item("RootNamespace").Value = value; }
+        }
+
         public bool OpenWrapEnabled
         {
             get { return _openWrapEnabled.Value; }
