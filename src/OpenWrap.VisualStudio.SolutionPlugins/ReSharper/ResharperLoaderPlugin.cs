@@ -19,7 +19,8 @@ namespace OpenWrap.SolutionPlugins.VisualStudio.ReSharper
             { new Version("4.5.1288.2"), "OpenWrap.Resharper.PluginManager, OpenWrap.Resharper.450" },
             { new Version("5.0.1659.36"), "OpenWrap.Resharper.PluginManager, OpenWrap.Resharper.500" },
             { new Version("5.1.1727.12"), "OpenWrap.Resharper.PluginManager, OpenWrap.Resharper.510" },
-            { new Version("6.0.2162.902"), "OpenWrap.Resharper.PluginManager, OpenWrap.Resharper.600" }
+            { new Version("6.0.2162.902"), "OpenWrap.Resharper.PluginManager, OpenWrap.Resharper.600" },
+            { new Version("6.1.37.86"), "OpenWrap.Resharper.PluginManager, OpenWrap.Resharper.610" }
         };
 
         readonly IFileSystem _fileSystem;
