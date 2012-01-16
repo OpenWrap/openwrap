@@ -88,7 +88,7 @@ namespace OpenWrap.Resharper
         void ActivateSolutionAnalysis()
         {
             var sas = resharper::JetBrains.ReSharper.Daemon.Impl.SolutionAnalysisService.GetInstance(_solution);
-            sas.AnalysisEnabledOption = true;
+            //sas.AnalysisEnabledOption = true;
         }
     }
 #endif
