@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DEAAA6AD-2F8E-4D8D-B28E-5C06176B41DF}</ProjectGuid>
+    <ProjectGuid>{EBE206C5-50F6-492A-AC62-A1E587448802}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OpenWrap.Resharper._610</RootNamespace>

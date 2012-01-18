@@ -115,6 +115,11 @@
       <Name>OpenWrap.Resharper.600</Name>
       <Aliases>resharper600</Aliases>
     </ProjectReference>
+    <ProjectReference Include="..\OpenWrap.Resharper.610\OpenWrap.Resharper.610.csproj">
+      <Project>{EBE206C5-50F6-492A-AC62-A1E587448802}</Project>
+      <Name>OpenWrap.Resharper.610</Name>
+      <Aliases>resharper610</Aliases>
+    </ProjectReference>
     <ProjectReference Include="..\OpenWrap.Tests\Tests.csproj">
       <Project>{CAB95DB5-E5D9-49A3-8AAF-D0DEF479B129}</Project>
       <Name>Tests</Name>
