@@ -90,6 +90,16 @@
       <Aliases>resharper</Aliases>
       <Private>False</Private>
     </Reference>
+    <Reference Include="JetBrains.ReSharper.Feature.Services">
+      <HintPath>..\..\lib\resharper-6.1.0\JetBrains.ReSharper.Feature.Services.dll</HintPath>
+      <Aliases>resharper</Aliases>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="JetBrains.ReSharper.Resources">
+      <HintPath>..\..\lib\resharper-6.1.0\JetBrains.ReSharper.Resources.dll</HintPath>
+      <Aliases>resharper</Aliases>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="JetBrains.ReSharper.SolutionAnalysis">
       <HintPath>..\..\lib\resharper-6.1.0\JetBrains.ReSharper.SolutionAnalysis.dll</HintPath>
       <Aliases>resharper</Aliases>
