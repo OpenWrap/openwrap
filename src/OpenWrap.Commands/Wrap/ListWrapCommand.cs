@@ -350,17 +350,17 @@ namespace OpenWrap.Commands.Wrap
             if (allNodes.Count == 0) return;
             var oldPrefix = Prefix.Peek();
 
-            _currentPrefix = oldPrefix + "├─";
+            _currentPrefix = oldPrefix + "  ";
 
-            Prefix.Push(oldPrefix + (allNodes.Count > 1 ? "│ " : "  "));
+            Prefix.Push(oldPrefix + "  ");
             foreach (var node in allNodes.Take(allNodes.Count - 1))
             {
-                _currentPrefix = oldPrefix + "├─";
+                _currentPrefix = oldPrefix + "  ";
                 action(node);
             }
             Prefix.Pop();
             Prefix.Push(oldPrefix + "  ");
-            _currentPrefix = oldPrefix + "└─";
+            _currentPrefix = oldPrefix + "  ";
 
             
             action(allNodes.Last());
