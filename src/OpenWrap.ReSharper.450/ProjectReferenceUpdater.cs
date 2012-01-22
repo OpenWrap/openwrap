@@ -9,7 +9,7 @@ using System.Xml;
 using EnvDTE;
 using JetBrainsKey = resharper::JetBrains.Util.Key;
 
-#if v600
+#if v600 || v610
 using ResharperPluginManager = resharper::JetBrains.Application.PluginSupport.PluginManager;
 using ResharperPlugin = resharper::JetBrains.Application.PluginSupport.Plugin;
 using ResharperPluginTitleAttribute = resharper::JetBrains.Application.PluginSupport.PluginTitleAttribute;
@@ -33,7 +33,7 @@ namespace OpenWrap.Resharper
         public static void RemoveAssemblyReference(this  resharper::JetBrains.ProjectModel.IProject project, ResharperAssemblyReference assembly)
         {
             
-#if v600
+#if v600 || v610
             var projectImpl = project as resharper::JetBrains.ProjectModel.Impl.ProjectImpl;
             if (projectImpl == null) return;
             projectImpl.DoRemoveReference(assembly);
@@ -41,7 +41,7 @@ namespace OpenWrap.Resharper
             project.RemoveModuleReference(assembly);
 #endif
         }
-#if v600
+#if v600 || v610
         public static ResharperAssemblyReference AddAssemblyReference(this resharper::JetBrains.ProjectModel.IProject project, string path)
         {
             var projectImpl = project as resharper::JetBrains.ProjectModel.Impl.ProjectImpl;
@@ -53,14 +53,14 @@ namespace OpenWrap.Resharper
 #endif
         public static string HintLocation(this ResharperAssemblyReference assemblyRef)
         {
-#if v600
+#if v600 || v610
             return assemblyRef.ReferenceTarget.HintLocation.FullPath;
 #else
             return assemblyRef.HintLocation.FullPath;
 #endif
         }
     }
-#if v600
+#if v600 || v610
     [ResharperSolutionComponent]
 #endif
     public class ProjectReferenceUpdater : IDisposable

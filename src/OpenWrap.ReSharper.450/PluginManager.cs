@@ -6,7 +6,7 @@ using EnvDTE;
 using EnvDTE80;
 using OpenWrap.VisualStudio;
 
-#if v600
+#if v600 || v610
 using ResharperPluginManager = resharper::JetBrains.Application.PluginSupport.PluginManager;
 using ResharperPlugin = resharper::JetBrains.Application.PluginSupport.Plugin;
 using ResharperPluginTitleAttribute = resharper::JetBrains.Application.PluginSupport.PluginTitleAttribute;
@@ -41,15 +41,15 @@ namespace OpenWrap.Resharper
         public const string OUTPUT_RESHARPER_TESTS = "OpenWrap-Tests";
         readonly DTE2 _dte;
         List<Assembly> _loadedAssemblies = new List<Assembly>();
-        //bool _resharperLoaded;
+        bool _resharperLoaded;
 
         static ResharperPlugin _selfPlugin;
-        //System.Threading.Thread _debugThread;
-        //bool runTestRunner = true;
+        System.Threading.Thread _debugThread;
+        bool runTestRunner = true;
         OpenWrapOutput _output;
         ResharperThreading _threading;
 
-#if v600
+#if v600 || v610
         resharper::JetBrains.VsIntegration.Application.JetVisualStudioHost _host;
         resharper::JetBrains.Application.PluginSupport.PluginsDirectory _pluginsDirectory;
         resharper::JetBrains.DataFlow.LifetimeDefinition _lifetimeDefinition;
@@ -63,7 +63,7 @@ namespace OpenWrap.Resharper
             _output = new OpenWrapOutput("Resharper Plugin Manager");
             _output.Write("Loaded ({0}).", GetType().Assembly.GetName().Version);
 
-#if !v600
+#if !v600 && !v610
             _threading = new LegacyShellThreading();
 #else       
             _host = resharper::JetBrains.VsIntegration.Application.JetVisualStudioHost.GetOrCreateHost((Microsoft.VisualStudio.OLE.Interop.IServiceProvider)_dte);
@@ -84,7 +84,7 @@ namespace OpenWrap.Resharper
         {
             _output.Write("Unloading.");
             //runTestRunner = false;
-#if !v600
+#if !v600 && !v610
             _selfPlugin.Enabled = false;
             ResharperPluginManager.Instance.Plugins.Remove(_selfPlugin);
 #else
@@ -106,8 +106,8 @@ namespace OpenWrap.Resharper
             {
                 var asm = GetType().Assembly;
                 var id = "ReSharper OpenWrap Integration";
-#if v600
-                _lifetimeDefinition = resharper::JetBrains.DataFlow.Lifetimes.Define(resharper::JetBrains.DataFlow.EternalLifetime.Instance, id);
+#if v600 || v610
+                _lifetimeDefinition = resharper::JetBrains.DataFlow.Lifetimes.Define(resharper::JetBrains.DataFlow.EternalLifetime.Instance, "OpenWrap Solution");
                 _pluginsDirectory =
                     (resharper::JetBrains.Application.PluginSupport.PluginsDirectory)_host.Environment.Container.ResolveDynamic(typeof(resharper::JetBrains.Application.PluginSupport.PluginsDirectory)).Instance;
 
