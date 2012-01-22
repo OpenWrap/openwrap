@@ -469,4 +469,7 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="list-wrap-project" xml:space="preserve">
     <value>Specifies that project dependencies are output.</value>
   </data>
+  <data name="update-wrap-scope" xml:space="preserve">
+    <value>Specifies the scope for which to issue an update.</value>
+  </data>
 </root>

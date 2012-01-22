@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using OpenWrap;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageModel;
@@ -13,8 +12,12 @@ namespace OpenWrap.Commands.Wrap
     public class UpdateWrapCommand : WrapCommand
     {
         bool? _project;
-        bool? _system;
         IEnumerable<IPackageRepository> _remoteRepositories;
+        bool? _system;
+        FileBased<IPackageDescriptor> _targetDescriptor;
+
+        [CommandInput]
+        public string From { get; set; }
 
         [CommandInput(Position = 0)]
         public string Name { get; set; }
@@ -29,23 +32,27 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool System
         {
-            get { return _system != null ? (bool)_system : false; }
+            get { return _system != null && (bool)_system; }
             set { _system = value; }
         }
+
+        [CommandInput]
+        public string Scope { get; set; }
+        protected override IEnumerable<ICommandOutput> ExecuteCore()
+        {
+            var update = Enumerable.Empty<ICommandOutput>();
+            if (Project)
+                update = update.Concat(UpdateProjectPackages());
+            if (System)
+                update = update.Concat(UpdateSystemPackages());
+            return update;
+        }
+
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield return ProjectExistsWhenProjectFlagSpecified;
             yield return SetRemoteRepositories;
             yield return AddUserSpecifiedRepository;
-        }
-
-        IEnumerable<ICommandOutput> SetRemoteRepositories()
-        {
-            _remoteRepositories = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }
-                .Concat(Remotes.FetchRepositories());
-            if (HostEnvironment.ProjectRepository != null)
-                _remoteRepositories = _remoteRepositories.Concat(new[] { HostEnvironment.ProjectRepository });
-            yield break;
         }
 
         IEnumerable<ICommandOutput> AddUserSpecifiedRepository()
@@ -63,17 +70,20 @@ namespace OpenWrap.Commands.Wrap
                 }
             }
         }
-        [CommandInput]
-        public string From { get; set; }
 
-        protected override IEnumerable<ICommandOutput> ExecuteCore()
+        IEnumerable<ICommandOutput> ProjectExistsWhenProjectFlagSpecified()
         {
-            var update = Enumerable.Empty<ICommandOutput>();
-            if (Project)
-                update = update.Concat(UpdateProjectPackages());
-            if (System)
-                update = update.Concat(UpdateSystemPackages());
-            return update;
+            if (Project && HostEnvironment.ProjectRepository == null)
+                yield return new NotInProject();
+        }
+
+        IEnumerable<ICommandOutput> SetRemoteRepositories()
+        {
+            _remoteRepositories = new[] { HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }
+                .Concat(Remotes.FetchRepositories());
+            if (HostEnvironment.ProjectRepository != null)
+                _remoteRepositories = _remoteRepositories.Concat(new[] { HostEnvironment.ProjectRepository });
+            yield break;
         }
 
         IEnumerable<ICommandOutput> UpdateProjectPackages()
@@ -82,13 +92,14 @@ namespace OpenWrap.Commands.Wrap
 
             var sourceRepos = _remoteRepositories;
             var errors = new List<PackageOperationResult>();
-                    bool updated = false;
-            
-            var packageDescriptor = HostEnvironment.Descriptor.Lock(HostEnvironment.ProjectRepository);
+            bool updated = false;
+
+            _targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope ?? string.Empty);
+            var packageDescriptor = _targetDescriptor.Value.Lock(HostEnvironment.ProjectRepository);
 
             foreach (var x in (string.IsNullOrEmpty(Name)
-                                       ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, packageDescriptor)
-                                       : PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, packageDescriptor, Name)))
+                                   ? PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, packageDescriptor)
+                                   : PackageManager.UpdateProjectPackages(sourceRepos, HostEnvironment.ProjectRepository, packageDescriptor, Name)))
                 if (x is PackageMissingResult || x is PackageConflictResult)
                 {
                     errors.Add(x);
@@ -99,11 +110,10 @@ namespace OpenWrap.Commands.Wrap
                     yield return x.ToOutput();
                 }
             if (updated)
-                HostEnvironment.DescriptorFile.Touch();
+                _targetDescriptor.File.Touch();
 
             foreach (var failed in errors.GetFailures())
             {
-
                 var errorMessage = "{0} could not be updated\r\n{1}";
 
                 var details = failed.SelectMany(_ => new[] { " - " + _.First() }.Concat(_.Skip(1).Select(x => "   " + x)));
@@ -117,24 +127,24 @@ namespace OpenWrap.Commands.Wrap
         {
             var isByName = !string.IsNullOrEmpty(Name);
             yield return new Info(!isByName
-                                            ? "Updating system packages..."
-                                            : string.Format("Updating system package '{0}'", Name));
-
+                                      ? "Updating system packages..."
+                                      : string.Format("Updating system package '{0}'", Name));
 
 
             var sourceRepos = _remoteRepositories;
 
             var errors = new List<PackageOperationResult>();
 
-            foreach (var x in (isByName ? PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository, Name)
-                                        : PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository)))
+            foreach (var x in (isByName
+                                   ? PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository, Name)
+                                   : PackageManager.UpdateSystemPackages(sourceRepos, HostEnvironment.SystemRepository)))
                 if (x is PackageMissingResult || x is PackageConflictResult) errors.Add(x);
                 else yield return x.ToOutput();
             var stacks = errors.GetFailures();
             foreach (var failed in stacks)
             {
                 var key = failed.Key;
-                var errorTraces = failed.SelectMany(_=>new[] { " - " + _.First() }.Concat(_.Skip(1).Select(x => "   " + x))).JoinString("\r\n");
+                var errorTraces = failed.SelectMany(_ => new[] { " - " + _.First() }.Concat(_.Skip(1).Select(x => "   " + x))).JoinString("\r\n");
                 var errorMessage = "{0} could not be updated:\r\n{1}";
 
                 if (isByName)
@@ -142,12 +152,6 @@ namespace OpenWrap.Commands.Wrap
                 else
                     yield return new Warning(errorMessage, failed.Key, errorTraces);
             }
-        }
-
-        IEnumerable<ICommandOutput> ProjectExistsWhenProjectFlagSpecified()
-        {
-            if (Project && HostEnvironment.ProjectRepository == null)
-                yield return new NotInProject();
         }
     }
 }

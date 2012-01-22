@@ -21,12 +21,6 @@ using ResharperThreading = OpenWrap.Resharper.IThreading;
 using ResharperUpdatableAction = resharper::JetBrains.ActionManagement.IUpdatableAction;
 #endif
 
-#if v610
-using resharper::JetBrains.Application;
-using resharper::JetBrains.Application.Settings;
-using resharper::JetBrains.ProjectModel.DataContext;
-using resharper::JetBrains.ReSharper.Daemon;
-#endif
 namespace OpenWrap.Resharper
 {
 #if DEBUG
@@ -97,8 +91,17 @@ namespace OpenWrap.Resharper
 #elif v610
 			resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Execute("SWEA", () =>
 			{
-				Shell.Instance.GetComponent<resharper::JetBrains.Application.Settings.Store.Implementation.SettingsStore>().SetValue(_solution.ToDataContext(), HighlightingSettingsAccessor.AnalysisEnabled, AnalysisScope.SOLUTION);
+			    var solutionDataContext = resharper::JetBrains.ProjectModel.DataContext.DataContextsEx.ToDataContext(_solution);
+			    var settingsStore = resharper::JetBrains.Application.Shell.Instance.GetComponent<resharper::JetBrains.Application.Settings.Store.Implementation.SettingsStore>();
+#pragma warning disable 612,618
+                resharper::JetBrains.Application.Settings.SettingsStoreEx.SetValue(
+                    settingsStore,
+                    solutionDataContext, 
+                    resharper::JetBrains.ReSharper.Daemon.HighlightingSettingsAccessor.AnalysisEnabled,
+                    resharper::JetBrains.ReSharper.Daemon.AnalysisScope.SOLUTION);
 			});
+#pragma warning restore 612,618
+
 #endif
         }
     }

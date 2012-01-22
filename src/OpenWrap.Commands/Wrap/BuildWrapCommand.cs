@@ -312,7 +312,7 @@ namespace OpenWrap.Commands.Wrap
                 overrides.Add("Configuration", Configuration);
             if (Incremental)
                 overrides.Add("Incremental", "True");
-            overrides.Add("BuildVersion", _generatedVersion.ToString());
+            overrides.Add("OpenWrap-CurrentBuildVersion", _generatedVersion.ToString());
             if (_sharedAssemblyInfoFile != null)
                 overrides.Add("OpenWrap-SharedAssemblyInfoFile", _sharedAssemblyInfoFile.Path.FullPath);
 

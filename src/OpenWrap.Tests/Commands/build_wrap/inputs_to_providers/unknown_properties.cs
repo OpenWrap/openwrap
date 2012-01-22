@@ -27,8 +27,8 @@ namespace Tests.Commands.build_wrap.inputs_to_providers
         public void unknown_values_are_set()
         {
             PackageBuilderWithConfig.PropertiesValue
-                .Check(val=>val.ElementAt(0).Check(_=>_.Key.ShouldBe("unknown")).ShouldBe("value", "value2"))
-                .Check(val=>val.ElementAt(1).Check<IGrouping<string, string>>(_=>_.Key.ShouldBe("unknown2")).ShouldBe("value"));
+                .Check(val=>val["unknown"].ShouldBe("value", "value2"))
+                .Check(val=>val["unknown2"].ShouldBe("value"));
         }
     }
 }

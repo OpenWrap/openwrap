@@ -46,7 +46,7 @@ namespace contexts
         protected void when_resolving()
         {
             ResolvedVersion = _repo
-                    .Find(_packageDependency)
+                    .PackagesByName.FindAll(_packageDependency).First()
                     .Version.ToString();
         }
     }
