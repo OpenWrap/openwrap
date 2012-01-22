@@ -7,7 +7,7 @@ using EnvDTE;
 using EnvDTE80;
 using OpenWrap.VisualStudio;
 
-#if v600
+#if v600 || v610
 using ResharperPluginManager = resharper::JetBrains.Application.PluginSupport.PluginManager;
 using ResharperPlugin = resharper::JetBrains.Application.PluginSupport.Plugin;
 using ResharperPluginTitleAttribute = resharper::JetBrains.Application.PluginSupport.PluginTitleAttribute;
@@ -26,8 +26,8 @@ using ResharperAssemblyReference = resharper::JetBrains.ProjectModel.IAssemblyRe
 namespace OpenWrap.Resharper
 {
 #if DEBUG
-#if v600
-    [ResharperSolutionComponent]
+#if v600 || v610
+	[ResharperSolutionComponent]
 #endif
     public class TestRunner : IDisposable
     {

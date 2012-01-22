@@ -3,9 +3,7 @@ using System;
 using System.Diagnostics;
 using EnvDTE;
 
-#if v600
-using resharper::JetBrains.ActionManagement;
-using resharper::JetBrains.ReSharper.Daemon.Impl;
+#if v600 || v610
 using ResharperPluginManager = resharper::JetBrains.Application.PluginSupport.PluginManager;
 using ResharperPlugin = resharper::JetBrains.Application.PluginSupport.Plugin;
 using ResharperPluginTitleAttribute = resharper::JetBrains.Application.PluginSupport.PluginTitleAttribute;
@@ -23,6 +21,12 @@ using ResharperThreading = OpenWrap.Resharper.IThreading;
 using ResharperUpdatableAction = resharper::JetBrains.ActionManagement.IUpdatableAction;
 #endif
 
+#if v610
+using resharper::JetBrains.Application;
+using resharper::JetBrains.Application.Settings;
+using resharper::JetBrains.ProjectModel.DataContext;
+using resharper::JetBrains.ReSharper.Daemon;
+#endif
 namespace OpenWrap.Resharper
 {
 #if DEBUG
@@ -60,7 +64,7 @@ namespace OpenWrap.Resharper
                           {
 #if v450
                               var action = _actionManager.GetAction(PluginManager.ACTION_REANALYZE);
-#elif !v600
+#elif !v600 && !v610
                               var action = _actionManager.GetUpdatableAction(PluginManager.ACTION_REANALYZE);
 #else
                               var action = _actionManager.TryGetAction(PluginManager.ACTION_REANALYZE);
@@ -87,8 +91,15 @@ namespace OpenWrap.Resharper
 
         void ActivateSolutionAnalysis()
         {
+#if v450 || v500 || v510 || v600
             var sas = resharper::JetBrains.ReSharper.Daemon.Impl.SolutionAnalysisService.GetInstance(_solution);
             sas.AnalysisEnabledOption = true;
+#elif v610
+			resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Execute("SWEA", () =>
+			{
+				Shell.Instance.GetComponent<resharper::JetBrains.Application.Settings.Store.Implementation.SettingsStore>().SetValue(_solution.ToDataContext(), HighlightingSettingsAccessor.AnalysisEnabled, AnalysisScope.SOLUTION);
+			});
+#endif
         }
     }
 #endif

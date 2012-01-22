@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 
-#if v600
+#if v600 || v610
 using ResharperPluginManager = resharper::JetBrains.Application.PluginSupport.PluginManager;
 using ResharperPlugin = resharper::JetBrains.Application.PluginSupport.Plugin;
 using ResharperPluginTitleAttribute = resharper::JetBrains.Application.PluginSupport.PluginTitleAttribute;

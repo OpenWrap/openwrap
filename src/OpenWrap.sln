@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.600", "O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Hooks", "OpenWrap.Hooks\OpenWrap.Hooks.csproj", "{CF3ABCDD-0188-42A7-A8AF-178D9A452893}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.610", "OpenWrap.Resharper.610\OpenWrap.Resharper.610.csproj", "{EBE206C5-50F6-492A-AC62-A1E587448802}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +125,10 @@ Global
 		{CF3ABCDD-0188-42A7-A8AF-178D9A452893}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF3ABCDD-0188-42A7-A8AF-178D9A452893}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF3ABCDD-0188-42A7-A8AF-178D9A452893}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBE206C5-50F6-492A-AC62-A1E587448802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBE206C5-50F6-492A-AC62-A1E587448802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBE206C5-50F6-492A-AC62-A1E587448802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBE206C5-50F6-492A-AC62-A1E587448802}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
