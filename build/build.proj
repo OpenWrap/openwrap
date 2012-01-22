@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5" InitialTargets="_Initialize">
+  <PropertyGroup>
+    <OpenWrap-BuildTasksDirectory>$(MSBuildProjectDirectory)\..\wraps\openwrap\build</OpenWrap-BuildTasksDirectory>
+  </PropertyGroup>
+
+  <Target Name="_Initialize">
+
+    <!-- Initializes the environment and remote repositories -->
+    
+    <InitializeOpenWrap CurrentDirectory="$(MSBuildProjectDirectory)\..\" CurrentProjectFile="$(MSBuildProjectFullPath)">
+      <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
+    </InitializeOpenWrap>
+
+
+  </Target>
+  <Target Name="Build" DependsOnTargets="_Initialize">
+
+
+    <!-- Builds the package -->
+
+    <RunCommand
+      Verb="build"
+      Noun="wrap" />
+    
+    
+  </Target>
+
+  <Target Name="Publish" DependsOnTargets="Build">
+
+    <!-- Deploys the package -->
+
+
+    <PropertyGroup>
+      <PublishArguments>
+        <Name>$(OpenWrap-PackageName)</Name>
+        <Remote>file://galaxy.caffeine-it.net/packages</Remote>
+      </PublishArguments>
+    </PropertyGroup>
+
+
+    <RunCommand
+      Verb="publish"
+      Noun="wrap"
+      Args="$(PublishArguments)" />
+  </Target>
+  <Import Project="..\wraps\openwrap\build\OpenWrap.tasks"/>
+</Project>
