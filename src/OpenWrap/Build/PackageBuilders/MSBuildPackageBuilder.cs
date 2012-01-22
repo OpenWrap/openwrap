@@ -54,7 +54,7 @@ namespace OpenWrap.Build.PackageBuilders
                 {
                     var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(proj).FullPath;
                     IEnumerable<IFile> specFiles;
-                    // Horribe construction, the Files extension method seems to be buggy as fuck.
+                    // TODO: Fix OFS. Horribe construction, the Files extension method seems to be buggy as fuck.
                     try
                     {
                         specFiles = _fileSystem.Files(pathSpec);
