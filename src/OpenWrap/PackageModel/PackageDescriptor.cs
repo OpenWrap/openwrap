@@ -28,7 +28,16 @@ namespace OpenWrap.PackageModel
         SingleStringValue _namespace;
         SingleBoolValue _storePackages;
         MultiLine<string> _author;
+        SingleStringValue _buildConfiguration;
+        SingleStringValue _trademark;
+        MultiLine<string> _maintainer;
 
+        public ICollection<string> Maintainer { get { return _maintainer; } }
+        public string Trademark
+        {
+            get { return _trademark.Value; }
+            set { _trademark.Value = value; }
+        }
         public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> entries)
         {
             foreach (var line in entries)
@@ -147,6 +156,13 @@ namespace OpenWrap.PackageModel
         {
             get { return _copyright.Value; }
         }
+
+        public string BuildConfiguration
+        {
+            get { return _buildConfiguration.Value; }
+            set { _buildConfiguration.Value = value; }
+        }
+
         public PackageDescriptorEntryCollection Entries
         {
             get { return _entries; }
@@ -182,7 +198,10 @@ namespace OpenWrap.PackageModel
             _storePackages = new SingleBoolValue(Entries, "store-packages", true);
             _assemblyInfo = new MultiLine<string>(Entries, "assembly-info", _ => _, _ => _);
             _author = new MultiLine<string>(Entries, "author", _ => _, _ => _);
+            _maintainer = new MultiLine<string>(Entries, "maintainer", _ => _, _ => _);
             _copyright = new SingleStringValue(Entries, "copyright");
+            _buildConfiguration = new SingleStringValue(Entries, "build-configuration");
+            _trademark = new SingleStringValue(Entries, "trademark");
         }
         public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)
         {

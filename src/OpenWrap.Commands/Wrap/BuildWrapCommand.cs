@@ -126,25 +126,19 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> VerifyVersion()
         {
             var versionFile = _environment.CurrentDirectory.GetFile("version");
-            if (Version == null && versionFile.Exists == false && _environment.Descriptor.SemanticVersion == null)
-                yield return new PackageVersionMissing();
-            else
+            if (Version == null && !versionFile.Exists  && _environment.Descriptor.SemanticVersion == null)
             {
-                if (Version == null)
-                {
-                    _generatedVersion = BuildManagement.GenerateVersion(
-                        _environment.Descriptor,
-                        _environment.CurrentDirectory.GetFile("version"));
-                }
-                else
-                {
-                    var generator = new SemanticVersionGenerator(
-                        Version, 
-                        versionFile.ReadString,
-                        versionFile.WriteString);
-                    _generatedVersion = generator.Version();
-                }
+                yield return new PackageVersionMissing();
+                yield break;
             }
+            if (Version == null)
+            {
+                _generatedVersion = BuildManagement.GenerateVersion(
+                    _environment.Descriptor,
+                    versionFile);
+            }
+            else
+                _generatedVersion = Version.ToSemVer();
         }
 
         static PackageContent GenerateDescriptorFile(PackageDescriptor descriptor)

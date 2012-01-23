@@ -25,6 +25,9 @@ namespace OpenWrap.PackageModel
         IEnumerable<string> AssemblyInfo { get; }
         IEnumerable<string> Authors { get; }
         string Copyright { get; }
+        string BuildConfiguration { get; }
+        string Trademark { get; }
+        ICollection<string> Maintainer { get; }
         IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read);
         IEnumerable<IPackageDescriptorEntry> GetPersistableEntries();
     }

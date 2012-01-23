@@ -32,6 +32,9 @@ namespace OpenWrap.Build
             TryAppend<AssemblyCompanyAttribute>(sb, "author", _descriptor.Authors.JoinString(", "));
             TryAppend<AssemblyProductAttribute>(sb, "title", _descriptor.Title);
             TryAppend<AssemblyCopyrightAttribute>(sb, "copyright", _descriptor.Copyright);
+            TryAppend<AssemblyConfigurationAttribute>(sb, "build", _descriptor.BuildConfiguration);
+            TryAppend<AssemblyDescriptionAttribute>(sb, "description", _descriptor.Description);
+            TryAppend<AssemblyTrademarkAttribute>(sb, "trademark", _descriptor.Trademark);
             if (Version != null)
             {
                 int revision;
@@ -56,7 +59,7 @@ namespace OpenWrap.Build
 
         void TryAppend<T>(StringBuilder sb, string flagName, string attribValue)
         {
-            if (_descriptor.AssemblyInfo.ContainsNoCase(flagName))
+            if (_descriptor.AssemblyInfo.Contains("*") || _descriptor.AssemblyInfo.ContainsNoCase(flagName))
                 sb.AppendLine(string.Format(ATTRIBUTE_TEXT, typeof(T).FullName, attribValue));
         }
     }

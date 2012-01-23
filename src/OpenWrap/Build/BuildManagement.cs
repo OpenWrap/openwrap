@@ -30,7 +30,9 @@ namespace OpenWrap.Build
                           ? versionFile.ReadLines().First()
                           : descriptor.SemanticVersion.ToString();
 
-            var lastBuildFile = versionFile.Parent.GetDirectory("_cache").GetFile("_lastBuild");
+            var lastBuildFile = versionFile.Parent.GetDirectory("wraps")
+                                                  .GetDirectory("_cache")
+                                                  .GetFile("_lastBuild");
 
             var builder = new SemanticVersionGenerator(
                 ver,

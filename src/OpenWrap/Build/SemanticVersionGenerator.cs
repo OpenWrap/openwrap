@@ -37,10 +37,7 @@ namespace OpenWrap.Build
             {
                 if (patch == "*") patchNum = timeBased;
                 else if (patch == "#")
-                {
-                    incremental = patchNum = int.Parse(_incrementalReader())+1;
-                    
-                }
+                    incremental = patchNum = int.Parse(_incrementalReader()) + 1;
                 else
                     throw new InvalidOperationException(string.Format("Unknown patch identifier '{0}'.", patch));
             }

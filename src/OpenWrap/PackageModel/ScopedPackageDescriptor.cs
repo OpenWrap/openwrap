@@ -35,7 +35,8 @@ namespace OpenWrap.PackageModel
                     _entries.Append(line);
                 InitializeHeaders();
             }
-
+            public ICollection<string> Maintainer { get { return _parent.Maintainer; } }
+            public string Trademark { get { return _parent.Trademark; } }
             public ScopedPackageDescriptor(PackageDescriptor parent)
             {
                 _parent = parent;
@@ -146,6 +147,11 @@ namespace OpenWrap.PackageModel
             public string Copyright
             {
                 get { return _parent.Copyright; }
+            }
+
+            public string BuildConfiguration
+            {
+                get { return _parent.BuildConfiguration; }
             }
 
             public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read)
