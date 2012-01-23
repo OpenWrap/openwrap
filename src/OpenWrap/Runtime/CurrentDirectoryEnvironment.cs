@@ -106,12 +106,12 @@ namespace OpenWrap.Runtime
 
 
                 var repositoryOptions = FolderRepositoryOptions.AnchoringEnabled | 
-                    FolderRepositoryOptions.SupportLocks |
-                    FolderRepositoryOptions.PersistPackageSources;
+                    FolderRepositoryOptions.SupportLocks;
+                //| FolderRepositoryOptions.PersistPackageSources;
                 if (Descriptor.UseSymLinks)
                     repositoryOptions |= FolderRepositoryOptions.UseSymLinks;
-                if (Descriptor.StorePackages)
-                    repositoryOptions |= FolderRepositoryOptions.PersistPackages;
+                //if (Descriptor.StorePackages)
+                //    repositoryOptions |= FolderRepositoryOptions.PersistPackages;
                 BeforeProjectRepositoryInitialized(projectRepositoryDirectory, repositoryOptions);
                 _projectRepository = new FolderRepository(projectRepositoryDirectory, repositoryOptions)
                 {
