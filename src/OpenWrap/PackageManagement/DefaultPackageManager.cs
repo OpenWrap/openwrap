@@ -29,7 +29,7 @@ namespace OpenWrap.PackageManagement
 
         public IEnumerable<IGrouping<string, TItem>> GetSystemExports<TItem>(IPackageRepository systemRepository, ExecutionEnvironment environment) where TItem : IExportItem
         {
-            var packages = systemRepository.PackagesByName.Select(x => x.OrderByDescending(_ => _.Version).First());
+            var packages = systemRepository.PackagesByName.Select(x => x.OrderByDescending(_ => _.SemanticVersion).First());
             return packages.SelectMany(x => _exporter.Exports<TItem>(x.Load(), environment));
         }
         public IEnumerable<IGrouping<string, TItem>> GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository, ExecutionEnvironment environment) where TItem : IExportItem
@@ -231,8 +231,8 @@ namespace OpenWrap.PackageManagement
                            where packageNameSelection(systemPackageName)
                            let maxPackageVersion = (
                                                            from versionedPackage in systemPackage
-                                                           orderby versionedPackage.Version descending
-                                                           select versionedPackage.Version
+                                                           orderby versionedPackage.SemanticVersion descending
+                                                           select versionedPackage.SemanticVersion
                                                    ).First()
                            select new PackageDescriptor
                            {
@@ -260,8 +260,8 @@ namespace OpenWrap.PackageManagement
         {
             return destinationRepository.PackagesByName.Contains(foundPackage.Identifier.Name)
                            ? destinationRepository.PackagesByName[foundPackage.Identifier.Name]
-                                     .Where(x => foundPackage.Identifier.Version != null && versionSelector(x.Version))
-                                     .OrderByDescending(x => x.Version)
+                                     .Where(x => foundPackage.Identifier.Version != null && versionSelector(x.SemanticVersion))
+                                     .OrderByDescending(x => x.SemanticVersion)
                                      .FirstOrDefault()
                            : null;
         }
@@ -296,13 +296,13 @@ namespace OpenWrap.PackageManagement
         static IEnumerable<PackageOperationResult> RemovePackageFromRepository(PackageRequest packageToRemove, IPackageRepository repository)
         {
             var versionToRemove = packageToRemove.LastVersion
-                                          ? repository.PackagesByName[packageToRemove.Name].Select(x => x.Version)
+                                          ? repository.PackagesByName[packageToRemove.Name].Select(x => x.SemanticVersion)
                                                     .OrderByDescending(_ => _)
                                                     .FirstOrDefault()
                                           : packageToRemove.ExactVersion;
             var packagesToKeep = from package in repository.PackagesByName.SelectMany(_ => _)
                                  let matchesName = package.Name.EqualsNoCase(packageToRemove.Name)
-                                 let matchesVersion = versionToRemove == null ? true : package.Version == versionToRemove
+                                 let matchesVersion = versionToRemove == null ? true : package.SemanticVersion == versionToRemove
                                  where !(matchesName && matchesVersion)
                                  select package;
             return ((ISupportCleaning)repository).Clean(packagesToKeep).Cast<PackageOperationResult>();
@@ -403,7 +403,7 @@ namespace OpenWrap.PackageManagement
         {
             var selectedPackages = from packageByName in systemRepository.PackagesByName
                                where packageNameSelector(packageByName.Key)
-                               select packageByName.OrderByDescending(x => x.Version).First();
+                               select packageByName.OrderByDescending(x => x.SemanticVersion).First();
 
             var untouchedVersions = systemRepository.PackagesByName.Where(x => !packageNameSelector(x.Key)).SelectMany(x => x);
 

@@ -14,7 +14,7 @@ namespace Tests.Commands.build_wrap.from_path
         public path_has_descriptor()
         {
             given_remote_project();
-            given_descriptor(path_to_project, new PackageDescriptor { Name = "test", Version = "1.0.0.0".ToSemVer(), Build = {"none"} });
+            given_descriptor(path_to_project, new PackageDescriptor { Name = "test", SemanticVersion = "1.0.0.0".ToSemVer(), Build = {"none"} });
             when_executing_command(string.Format("-from \"{0}\"", path_to_project.Path.FullPath));
         }
 

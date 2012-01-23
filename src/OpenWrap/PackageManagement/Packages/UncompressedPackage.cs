@@ -47,10 +47,15 @@ namespace OpenWrap.PackageManagement.Packages
             _descriptor = new PackageDescriptorReaderWriter().Read(wrapDescriptor);
             PackageInfo = new DefaultPackageInfo(versionFile.Exists ? versionFile.ReadString().ToSemVer() : null,
                                                 _descriptor);
-            Identifier = new PackageIdentifier(Name, Version);
+            Identifier = new PackageIdentifier(Name, SemanticVersion);
             IsValid = true;
         }
 
+        [Obsolete("Plase use SemanticVersion")]
+        public Version Version
+        {
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }
+        }
         public bool Anchored
         {
             get { return PackageInfo.Anchored; }
@@ -82,7 +87,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public string FullName
         {
-            get { return Name + "-" + Version; }
+            get { return Name + "-" + SemanticVersion; }
         }
 
         public PackageIdentifier Identifier { get; private set; }
@@ -101,9 +106,9 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageRepository Source { get; private set; }
 
-        public SemanticVersion Version
+        public SemanticVersion SemanticVersion
         {
-            get { return PackageInfo.Version; }
+            get { return PackageInfo.SemanticVersion; }
         }
 
         protected IDirectory BaseDirectory { get; set; }

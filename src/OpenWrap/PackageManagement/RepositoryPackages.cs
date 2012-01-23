@@ -34,7 +34,7 @@ namespace OpenWrap.PackageManagement
         string GenerateVersions(PackageFoundResult package)
         {
             Func<IPackageInfo, SemanticVersion> versionSelector = x => 
-                Detailed ? x.Version : x.Version.Numeric();
+                Detailed ? x.SemanticVersion : x.SemanticVersion.Numeric();
             return package.Packages.Select(versionSelector)
                                    .Distinct()
                                    .OrderByDescending(_=>_)

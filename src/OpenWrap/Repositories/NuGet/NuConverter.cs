@@ -107,7 +107,7 @@ namespace OpenWrap.Repositories.NuGet
             var descriptor = new PackageDescriptor
             {
                     Name = nuspec.Element(XPaths.PackageName, ns),
-                    Version = nuspec.Element(XPaths.PackageVersion, ns).ToSemVer(),
+                    SemanticVersion = nuspec.Element(XPaths.PackageVersion, ns).ToSemVer(),
                     Description = StripLines(nuspec.Element(XPaths.PackageDescription, ns))
             };
             descriptor.Dependencies.AddRange(

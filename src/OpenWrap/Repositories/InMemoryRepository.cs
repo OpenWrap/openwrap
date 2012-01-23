@@ -118,7 +118,7 @@ namespace OpenWrap.Repositories
             {
                 return (from kv in LockedPackages
                         from package in kv.Value
-                        select new { kv.Key, package }).ToLookup(x=>x.Key, x=>x.package);
+                        select new { kv.Key, package }).ToLookup(x=>x.Key, x=>x.package, StringComparer.OrdinalIgnoreCase);
             }
         }
 

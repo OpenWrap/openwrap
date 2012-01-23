@@ -29,7 +29,7 @@ namespace Tests.Repositories
         public void returned_packageinfo_is_marked_as_nuked()
         {
             Repository.PackagesByName["pharrell"]
-                .Where(p => p.Version.ToString().Equals("1.0.0+0"))
+                .Where(p => p.SemanticVersion.ToString().Equals("1.0.0+0"))
                 .FirstOrDefault()
                 .ShouldNotBeNull()
                 .Nuked

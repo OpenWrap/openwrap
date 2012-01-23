@@ -114,7 +114,7 @@ namespace OpenWrap.Commands.Wrap
                 // TODO: This looks iffy at best
                 var package = new ZipFilePackage(packageFile);
                 _packageName = package.Name;
-                _packageVersion = package.Version;
+                _packageVersion = package.SemanticVersion;
             }
             else if (Name != null)
             {
@@ -124,11 +124,11 @@ namespace OpenWrap.Commands.Wrap
                     yield return new Error("No package named '{0}' was found.", Name);
                     yield break;
                 }
-                var packageToCopy = HostEnvironment.CurrentDirectoryRepository.PackagesByName[Name].OrderByDescending(x => x.Version).First();
+                var packageToCopy = HostEnvironment.CurrentDirectoryRepository.PackagesByName[Name].OrderByDescending(x => x.SemanticVersion).First();
                 _packageStream = () => packageToCopy.Load().OpenStream();
                 _packageFileName = packageToCopy.FullName + ".wrap";
                 _packageName = packageToCopy.Name;
-                _packageVersion = packageToCopy.Version;
+                _packageVersion = packageToCopy.SemanticVersion;
             }
             else
             {

@@ -59,7 +59,7 @@ namespace Tests.Repositories.context
         {
             Repository.Nuke(
                 Repository.PackagesByName[name]
-                    .Where(x => x.Version == version.ToSemVer())
+                    .Where(x => x.SemanticVersion == version.ToSemVer())
                     .First());
             Repository.RefreshPackages();
         }

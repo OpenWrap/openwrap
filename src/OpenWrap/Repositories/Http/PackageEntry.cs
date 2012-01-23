@@ -38,10 +38,15 @@ namespace OpenWrap.Repositories.Http
             Dependencies = entry.Dependencies.Select(DependsParser.ParseDependsValue).ToList();
         }
 
+        [Obsolete("Plase use SemanticVersion")]
+        public Version Version
+        {
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }
+        }
         public PackageIdentifier Identifier { get; private set; }
         public ICollection<PackageDependency> Dependencies { get; private set; }
         public string Name { get { return _entry.Name; } }
-        public SemanticVersion Version { get { return _entry.Version; } }
+        public SemanticVersion SemanticVersion { get { return _entry.Version; } }
         public IPackage Load()
         {
             return _load();

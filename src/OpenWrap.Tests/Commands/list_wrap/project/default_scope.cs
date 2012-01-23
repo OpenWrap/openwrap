@@ -23,7 +23,7 @@ namespace Tests.Commands.list_wrap.project
             Results.ShouldHaveOne<DescriptorPackages>()
                 .Check(_ => _.DescriptorName.ShouldBe("default scope"))
                 .Check(_=>_.Packages.Single().Spec.ShouldBe("sauron"))
-                .Check(_=>_.Packages.Single().PackageInfo.Version.ShouldBe("1.0.1".ToSemVer()));
+                .Check(_=>_.Packages.Single().PackageInfo.SemanticVersion.ShouldBe("1.0.1".ToSemVer()));
         }
     }
     //public class default_scope_string : command<ListWrapCommand>

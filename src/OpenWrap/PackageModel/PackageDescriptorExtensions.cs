@@ -59,7 +59,7 @@ namespace OpenWrap.PackageModel
                 {
                     builder = new PackageDependencyBuilder(lockedPackage.Name);
                 }
-                lockedDescriptor.Dependencies.Add(builder.SetVersionVertices(new[] { new AbsolutelyEqualVersionVertex(lockedPackage.Version) }));
+                lockedDescriptor.Dependencies.Add(builder.SetVersionVertices(new[] { new AbsolutelyEqualVersionVertex(lockedPackage.SemanticVersion) }));
             }
             return lockedDescriptor;
         }

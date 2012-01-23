@@ -27,7 +27,7 @@ namespace OpenWrap.Repositories.Http
             _fileSystem = fileSystem;
             _httpNavigator = httpNavigator;
             _package = package;
-            _identifier = Lazy.Is(() => new PackageIdentifier(Name, Version));
+            _identifier = Lazy.Is(() => new PackageIdentifier(Name, SemanticVersion));
             Source = source;
         }
 
@@ -55,7 +55,7 @@ namespace OpenWrap.Repositories.Http
 
         public string FullName
         {
-            get { return Name + "-" + Version; }
+            get { return Name + "-" + SemanticVersion; }
         }
 
         public PackageIdentifier Identifier
@@ -80,9 +80,14 @@ namespace OpenWrap.Repositories.Http
 
         public IPackageRepository Source { get; private set; }
 
-        public SemanticVersion Version
+        public SemanticVersion SemanticVersion
         {
             get { return _package.Version; }
+        }
+        [Obsolete("Plase use SemanticVersion")]
+        public Version Version
+        {
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }
         }
 
         public Stream OpenStream()

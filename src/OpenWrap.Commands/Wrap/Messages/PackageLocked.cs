@@ -6,7 +6,7 @@ namespace OpenWrap.Commands.Wrap
     {
         public IPackageInfo Package { get; set; }
 
-        public PackageLocked(IPackageInfo package) : base("Package '{0}' locked at version '{1}'.", package.Name, package.Version)
+        public PackageLocked(IPackageInfo package) : base("Package '{0}' locked at version '{1}'.", package.Name, package.SemanticVersion)
         {
             Package = package;
         }

@@ -9,15 +9,15 @@ namespace OpenWrap.PackageModel
     {
         readonly IPackageDescriptor _descriptor;
         //readonly string _packageName;
-        readonly SemanticVersion _packageVersion;
+        readonly SemanticVersion _packageSemanticVersion;
 
         public DefaultPackageInfo(SemanticVersion versionFileContent, IPackageDescriptor descriptor)
         {
             _descriptor = descriptor;
-            _packageVersion = versionFileContent
-                              ?? descriptor.Version;
+            _packageSemanticVersion = versionFileContent
+                              ?? descriptor.SemanticVersion;
             //_packageName = PackageNameUtility.GetName(packageFileName);
-            Identifier = new PackageIdentifier(Name, Version);
+            Identifier = new PackageIdentifier(Name, SemanticVersion);
         }
 
         public bool Anchored
@@ -36,6 +36,11 @@ namespace OpenWrap.PackageModel
             get { return _descriptor.Dependencies; }
         }
 
+        [Obsolete("Plase use SemanticVersion")]
+        public Version Version
+        {
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }
+        }
         public string Description
         {
             get { return _descriptor.Description; }
@@ -74,9 +79,9 @@ namespace OpenWrap.PackageModel
             get { return null; }
         }
 
-        public SemanticVersion Version
+        public SemanticVersion SemanticVersion
         {
-            get { return _packageVersion; }
+            get { return _packageSemanticVersion; }
         }
 
 

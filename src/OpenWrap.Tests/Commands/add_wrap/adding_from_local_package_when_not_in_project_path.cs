@@ -21,7 +21,7 @@ namespace Tests.Commands.add_wrap
         {
             Environment.SystemRepository.PackagesByName["sauron"]
                     .ShouldHaveCountOf(1)
-                    .First().Version.ShouldBe("1.0.0");
+                    .First().SemanticVersion.ShouldBe("1.0.0");
         }
         [Test]
         public void command_is_successful()

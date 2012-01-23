@@ -23,7 +23,7 @@ namespace OpenWrap.PackageManagement.Packages
         public ZipFilePackage(IFile packageFile)
         {
             PackageFile = packageFile;
-            _identifier = new LazyValue<PackageIdentifier>(() => new PackageIdentifier(Name, Version));
+            _identifier = new LazyValue<PackageIdentifier>(() => new PackageIdentifier(Name, SemanticVersion));
             Source = new InMemoryRepository("Null repository.") { Packages = { this } };
         }
 
@@ -37,6 +37,11 @@ namespace OpenWrap.PackageManagement.Packages
             get { return PackageFile.LastModifiedTimeUtc != null ? PackageFile.LastModifiedTimeUtc.Value : DateTimeOffset.UtcNow; }
         }
 
+        [Obsolete("Plase use SemanticVersion")]
+        public Version Version
+        {
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }
+        }
         public ICollection<PackageDependency> Dependencies
         {
             get { return Descriptor.Dependencies; }
@@ -60,7 +65,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public string FullName
         {
-            get { return Name + "-" + Version; }
+            get { return Name + "-" + SemanticVersion; }
         }
 
         public PackageIdentifier Identifier
@@ -106,9 +111,9 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageRepository Source { get; protected set; }
 
-        public SemanticVersion Version
+        public SemanticVersion SemanticVersion
         {
-            get { return Descriptor.Version; }
+            get { return Descriptor.SemanticVersion; }
         }
 
         public virtual IPackage Load()
@@ -134,7 +139,7 @@ namespace OpenWrap.PackageManagement.Packages
 
                 _descriptor = new DefaultPackageInfo(versionFromVersionFile, descriptor);
 
-                if (Descriptor.Version == null)
+                if (Descriptor.SemanticVersion == null)
                     throw new InvalidOperationException(string.Format("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.", descriptor.Name));
             }
         }

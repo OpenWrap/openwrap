@@ -23,7 +23,7 @@ namespace Tests.Repositories.folder
         [Test]
         public void version_is_correct()
         {
-            Descriptor.Version.ShouldBe("1.0.0");
+            Descriptor.SemanticVersion.ShouldBe("1.0.0");
         }
         [Test]
         public void dependencies_are_correct()

@@ -271,7 +271,7 @@ namespace Tests
                 .Lock(string.Empty,
                       Environment.ProjectRepository
                           .PackagesByName[name]
-                          .Where(x => x.Version == version.ToSemVer()));
+                          .Where(x => x.SemanticVersion == version.ToSemVer()));
 
         }
     }
@@ -306,7 +306,7 @@ namespace Tests
         protected void package_is_not_in_repository(IPackageRepository repository, string packageName, SemanticVersion packageVersion)
         {
             (repository.PackagesByName.Contains(packageName)
-                              ? repository.PackagesByName[packageName].FirstOrDefault(x => x.Version.Equals(packageVersion))
+                              ? repository.PackagesByName[packageName].FirstOrDefault(x => x.SemanticVersion.Equals(packageVersion))
                               : null).ShouldBeNull();
 
 
@@ -315,7 +315,7 @@ namespace Tests
         {
             repository.PackagesByName[packageName]
                 .ShouldHaveCountOf(1)
-                .First().Version.ShouldBe(packageVersion);
+                .First().SemanticVersion.ShouldBe(packageVersion);
         }
 
         public IPackageDescriptor WrittenDescriptor(string scope = null)

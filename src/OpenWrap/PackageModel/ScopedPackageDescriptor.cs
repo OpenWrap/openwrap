@@ -78,12 +78,12 @@ namespace OpenWrap.PackageModel
 
             public string FullName
             {
-                get { return Name + "-" + Version; }
+                get { return Name + "-" + SemanticVersion; }
             }
 
             public PackageIdentifier Identifier
             {
-                get { return new PackageIdentifier(Name, Version); }
+                get { return new PackageIdentifier(Name, SemanticVersion); }
             }
 
             public string Name
@@ -109,7 +109,9 @@ namespace OpenWrap.PackageModel
                 set { _useSymLinks.Value = value; }
             }
 
-            public SemanticVersion Version
+            [Obsolete("Please use the SemanticVersion property instead.")]
+            public Version Version { get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; } }
+            public SemanticVersion SemanticVersion
             {
                 get { return _version.Value; }
                 set { _version.Value = value; }

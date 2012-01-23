@@ -19,7 +19,7 @@ namespace OpenWrap.Build
         public AssemblyInfoGenerator(IPackageDescriptor descriptor)
         {
             _descriptor = descriptor;
-            Version = descriptor.Version;
+            Version = descriptor.SemanticVersion;
         }
         public void Write(IFile destination)
         {

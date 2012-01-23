@@ -28,7 +28,7 @@ namespace OpenWrap.Testing
         public IEnumerable<KeyValuePair<string, bool?>> ExecuteAllTests(ExecutionEnvironment environment, IPackage package)
         {
             var descriptor = new PackageDescriptor();
-            descriptor.Dependencies.Add(new PackageDependencyBuilder(Guid.NewGuid().ToString()).Name(package.Name).VersionVertex(new EqualVersionVertex(package.Version)));
+            descriptor.Dependencies.Add(new PackageDependencyBuilder(Guid.NewGuid().ToString()).Name(package.Name).VersionVertex(new EqualVersionVertex(package.SemanticVersion)));
 
             var allAssemblyReferences = _manager.GetProjectAssemblyReferences(descriptor, package.Source, environment, false);
 

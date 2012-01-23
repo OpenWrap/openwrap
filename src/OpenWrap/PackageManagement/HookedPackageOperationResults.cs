@@ -49,8 +49,8 @@ namespace OpenWrap.PackageManagement
             return from oldPackage in before
                    where afterByName.ContainsKey(oldPackage.Name)
                    let newPackage = afterByName[oldPackage.Name]
-                   where newPackage.Version != oldPackage.Version
-                   from output in hooks.Updated(_repository, newPackage.Name, oldPackage.Version, newPackage.Version, after)
+                   where newPackage.SemanticVersion != oldPackage.SemanticVersion
+                   from output in hooks.Updated(_repository, newPackage.Name, oldPackage.SemanticVersion, newPackage.SemanticVersion, after)
                    select output;
         }
 
@@ -59,7 +59,7 @@ namespace OpenWrap.PackageManagement
             var beforeByName = before.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
             return from newPackage in after
                    where beforeByName.ContainsKey(newPackage.Name) == false
-                   from output in hooks.Installed(_repository, newPackage.Name, newPackage.Version, after)
+                   from output in hooks.Installed(_repository, newPackage.Name, newPackage.SemanticVersion, after)
                    select output;
         }
         IEnumerable<object> GetRemoved(IEnumerable<IPackageInfo> before, IEnumerable<IPackageInfo> after, HooksStore hooks)
@@ -67,7 +67,7 @@ namespace OpenWrap.PackageManagement
             var afterByName = after.ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
             return from oldPackage in before
                    where afterByName.ContainsKey(oldPackage.Name) == false
-                   from output in hooks.Removed(_repository, oldPackage.Name, oldPackage.Version, before)
+                   from output in hooks.Removed(_repository, oldPackage.Name, oldPackage.SemanticVersion, before)
                    select output;
         }
 

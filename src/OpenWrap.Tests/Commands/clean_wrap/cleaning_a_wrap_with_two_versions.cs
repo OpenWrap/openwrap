@@ -24,7 +24,7 @@ namespace Tests.Commands.clean_wrap
             Environment.ProjectRepository
                     .PackagesByName["lionel"]
                     .ShouldHaveCountOf(1)
-                    .ShouldHaveAll(v => v.Version.ToString().Equals("1.0.0+123"));
+                    .ShouldHaveAll(v => v.SemanticVersion.ToString().Equals("1.0.0+123"));
         }
         [Test]
         public void reported_no_errors()

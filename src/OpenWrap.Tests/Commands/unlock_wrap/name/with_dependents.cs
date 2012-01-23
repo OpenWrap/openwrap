@@ -57,8 +57,8 @@ namespace Tests.Commands.unlock_wrap.name
         public void unlock_message_is_output()
         {
             Results.OfType<PackageUnlocked>().ShouldHaveCountOf(2)
-                .ShouldHaveOne(_ => _.Package.Name == "sauron" && _.Package.Version == "1.0.0.0".ToSemVer())
-                .ShouldHaveOne(_ => _.Package.Name == "one-ring" && _.Package.Version == "2.0.1.3".ToSemVer());
+                .ShouldHaveOne(_ => _.Package.Name == "sauron" && _.Package.SemanticVersion == "1.0.0.0".ToSemVer())
+                .ShouldHaveOne(_ => _.Package.Name == "one-ring" && _.Package.SemanticVersion == "2.0.1.3".ToSemVer());
         }
     }
 }

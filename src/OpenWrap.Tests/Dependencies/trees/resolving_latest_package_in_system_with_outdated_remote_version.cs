@@ -30,7 +30,7 @@ namespace Tests.Dependencies.trees
             Resolve.SuccessfulPackages.ShouldHaveCountOf(1)
                 .First()
                 .Check(x => x.Packages.First().Source.ShouldBe(SystemRepository))
-                .Check(x => x.Packages.First().Version.ShouldBe("1.0.0.1"));
+                .Check(x => x.Packages.First().SemanticVersion.ShouldBe("1.0.0.1"));
         }
     }
 }

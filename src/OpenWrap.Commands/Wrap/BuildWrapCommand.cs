@@ -126,7 +126,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> VerifyVersion()
         {
             var versionFile = _environment.CurrentDirectory.GetFile("version");
-            if (Version == null && versionFile.Exists == false && _environment.Descriptor.Version == null)
+            if (Version == null && versionFile.Exists == false && _environment.Descriptor.SemanticVersion == null)
                 yield return new PackageVersionMissing();
             else
             {
@@ -225,7 +225,7 @@ namespace OpenWrap.Commands.Wrap
 
             var packageDescriptorForEmbedding = new PackageDescriptor(GetCurrentPackageDescriptor());
 
-            packageDescriptorForEmbedding.Version = _generatedVersion;
+            packageDescriptorForEmbedding.SemanticVersion = _generatedVersion;
             packageDescriptorForEmbedding.Name = packageName;
 
             var packageFilePath = _destinationPath.GetFile(

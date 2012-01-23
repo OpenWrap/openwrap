@@ -16,7 +16,7 @@ namespace OpenWrap.PackageManagement
 
         public override ICommandOutput ToOutput()
         {
-            return new Info("{0}: {1} updated [{2} -> {3}].", Repository.Name, PreviousPackage.Name, PreviousPackage.Version, Package.Version);
+            return new Info("{0}: {1} updated [{2} -> {3}].", Repository.Name, PreviousPackage.Name, PreviousPackage.SemanticVersion, Package.SemanticVersion);
         }
     }
 }

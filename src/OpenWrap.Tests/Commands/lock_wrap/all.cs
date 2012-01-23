@@ -32,7 +32,7 @@ namespace Tests.Commands.lock_wrap
         [Test]
         public void package_lock_is_output()
         {
-            Results.ShouldHaveOne<PackageLocked>().Package.Version.ShouldBe("2.0.1.3".ToSemVer());
+            Results.ShouldHaveOne<PackageLocked>().Package.SemanticVersion.ShouldBe("2.0.1.3".ToSemVer());
 
         }
     }

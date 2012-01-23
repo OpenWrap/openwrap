@@ -24,7 +24,7 @@ namespace Tests.Repositories.indexed_http
         }
         [Test]public void has_the_correct_version()
         {
-            castle_proxy.Version.ShouldBe("2.1.0");
+            castle_proxy.SemanticVersion.ShouldBe("2.1.0");
         }
         [Test]
         public void has_the_correct_dependencies()

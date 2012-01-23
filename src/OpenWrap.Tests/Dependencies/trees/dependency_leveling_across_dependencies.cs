@@ -24,7 +24,7 @@ namespace Tests.Dependencies.trees
         {
             Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "rings-of-power")
                 .ShouldHaveCountOf(1)
-                .First().Packages.First().Version.ShouldBe("1.0.0");
+                .First().Packages.First().SemanticVersion.ShouldBe("1.0.0");
         }
 
         [Test]

@@ -23,7 +23,7 @@ namespace Tests.contexts
             DependencyDescriptor = new PackageDescriptor
             {
                     Name = "test",
-                    Version = "1.0".ToSemVer()
+                    SemanticVersion = "1.0".ToSemVer()
             };
             ProjectRepository = new InMemoryRepository("Local repository");
             SystemRepository = new InMemoryRepository("System repository");
@@ -79,7 +79,7 @@ namespace Tests.contexts
             var package = new InMemoryPackage
             {
                     Name = PackageNameUtility.GetName(name),
-                    Version = PackageNameUtility.GetVersion(name),
+                    SemanticVersion = PackageNameUtility.GetVersion(name),
                     Source = repository,
                     Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
                             .ToList()

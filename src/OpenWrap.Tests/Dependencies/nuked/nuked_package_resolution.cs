@@ -24,7 +24,7 @@ namespace Tests.Dependencies.contexts
             _repo.Packages.Add(new InMemoryPackage
             {
                 Name = PACKAGE_NAME,
-                Version = SemanticVersion.TryParseExact(version)
+                SemanticVersion = SemanticVersion.TryParseExact(version)
             });
         }
 
@@ -33,7 +33,7 @@ namespace Tests.Dependencies.contexts
             _repo.Packages.Add(new InMemoryPackage
             {
                 Name = PACKAGE_NAME,
-                Version = SemanticVersion.TryParseExact(version),
+                SemanticVersion = SemanticVersion.TryParseExact(version),
                 Nuked = true
             });
         }
@@ -47,7 +47,7 @@ namespace Tests.Dependencies.contexts
         {
             ResolvedVersion = _repo
                 .PackagesByName.FindAll(_packageDependency).First()
-                .Version.ToString();
+                .SemanticVersion.ToString();
         }
     }
 }

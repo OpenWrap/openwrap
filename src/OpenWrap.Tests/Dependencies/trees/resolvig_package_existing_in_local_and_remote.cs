@@ -26,7 +26,7 @@ namespace Tests.Dependencies.trees
             dependency.Packages.ShouldNotBeEmpty().First()
                 .Source.ShouldBe(RemoteRepository);
             dependency.Packages.ShouldNotBeEmpty()
-                .First().Version.ShouldBe("1.1.0");
+                .First().SemanticVersion.ShouldBe("1.1.0");
         }
     }
 }

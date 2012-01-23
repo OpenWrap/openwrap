@@ -28,7 +28,7 @@ namespace OpenWrap.Build
         {
             var ver = versionFile.Exists
                           ? versionFile.ReadLines().First()
-                          : descriptor.Version.ToString();
+                          : descriptor.SemanticVersion.ToString();
 
             var lastBuildFile = versionFile.Parent.GetDirectory("_cache").GetFile("_lastBuild");
 

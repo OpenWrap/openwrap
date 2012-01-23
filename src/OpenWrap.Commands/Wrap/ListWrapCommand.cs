@@ -279,7 +279,7 @@ namespace OpenWrap.Commands.Wrap
 
         void PrintPackage(TreeRenderer tree, Package package)
         {
-            var packageName = package.PackageInfo.Name + " " + package.PackageInfo.Version;
+            var packageName = package.PackageInfo.Name + " " + package.PackageInfo.SemanticVersion;
             if (package.PackageInfo.Title != null)
                 packageName += " (" + package.PackageInfo.Title + ")";
             if (package.Locked)

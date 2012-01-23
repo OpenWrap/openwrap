@@ -17,7 +17,8 @@ namespace OpenWrap.PackageModel
         ICollection<PackageNameOverride> Overrides { get; }
         bool UseProjectRepository { get; }
         bool UseSymLinks { get; }
-        SemanticVersion Version { get; set; }
+        Version Version { get; }
+        SemanticVersion SemanticVersion { get; }
         string ReferencedAssemblies { get; }
         ICollection<string> DirectoryStructure { get; }
         bool StorePackages { get; }

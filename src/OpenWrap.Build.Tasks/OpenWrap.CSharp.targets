@@ -173,7 +173,7 @@
         IncludePdbFiles="$(OpenWrap-IncludePdbFiles)"
         IncludeCodeDocFiles="$(OpenWrap-IncludeCodeDocFiles)"
         IncludeSourceFiles="$(OpenWRap-IncludeSourceFiles)"
-        IncludeContentFiles="$(OpenWrap-includeContentFiles)"
+        IncludeContentFiles="$(OpenWrap-IncludeContentFiles)"
       
         RootPath="$(RootSolutionDirectory)"
         ExportName="$(OpenWrap-ExportName)"

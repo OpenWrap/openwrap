@@ -67,7 +67,7 @@ namespace OpenWrap.Repositories.FileSystem
             IndexDocument.Document.Root.Add(
                     new XElement("wrap",
                                  new XAttribute("name", zipPackage.Name),
-                                 new XAttribute("version", zipPackage.Version),
+                                 new XAttribute("version", zipPackage.SemanticVersion),
                                  new XElement("link",
                                               new XAttribute("rel", "package"),
                                               new XAttribute("href", packageFile.Name)),
@@ -88,14 +88,14 @@ namespace OpenWrap.Repositories.FileSystem
                                       let versionAttribute = node.Attribute("version")
                                       let nameAttribute = node.Attribute("name")
                                       where nameAttribute != null && nameAttribute.Value.EqualsNoCase(packageInfo.Name) &&
-                                            versionAttribute != null && versionAttribute.Value.Equals(packageInfo.Version.ToString())
+                                            versionAttribute != null && versionAttribute.Value.Equals(packageInfo.SemanticVersion.ToString())
                                       select node).FirstOrDefault();
 
             if (packageVersionNode == null)
                 throw new InvalidOperationException(
                         String.Format("The package {0} {1} does not exist in the index.",
                                       packageInfo.Name,
-                                      packageInfo.Version));
+                                      packageInfo.SemanticVersion));
 
             packageVersionNode.Add(new XAttribute("nuked", true));
 

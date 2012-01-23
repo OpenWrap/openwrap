@@ -19,7 +19,7 @@ namespace Tests.Commands.build_wrap
                              new PackageDescriptor
                              {
                                  Name = "test",
-                                 Version = "1.0.0.0".ToSemVer(),
+                                 SemanticVersion = "1.0.0.0".ToSemVer(),
                                  Build = { "custom;typename=" + typeof(FailingBuild).AssemblyQualifiedName }
                              });
             when_executing_command();

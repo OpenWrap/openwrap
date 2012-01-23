@@ -43,7 +43,7 @@ namespace OpenWrap.Windows.AllPackages
                         Description = latestVersion.Description,
                         Source = repository.Name,
                         Created = latestVersion.Created,
-                        LatestVersion = latestVersion.Version,
+                        LatestVersion = latestVersion.SemanticVersion,
                         VersionCount = packageGroup.Count()
                 };  
               
@@ -58,7 +58,7 @@ namespace OpenWrap.Windows.AllPackages
 
             foreach (IPackageInfo item in packageGroup)
             {
-                if (result == null || item.Version > result.Version)
+                if (result == null || item.SemanticVersion > result.SemanticVersion)
                 {
                     result = item;
                 }

@@ -24,7 +24,7 @@ namespace Tests.Commands.update_wrap.project
         public void the_package_is_installed_in_project_repo()
         {
             Environment.ProjectRepository.PackagesByName["goldberry"].Last()
-                .Version.ShouldBe("2.1.0");
+                .SemanticVersion.ShouldBe("2.1.0");
         }
     }
 }

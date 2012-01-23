@@ -97,7 +97,7 @@ namespace OpenWrap.Repositories
                 .Lock;
             var lockedPackages = lockedPackageInfo.Select(
                 locked => _packageLoader.Packages.Single(package => locked.Name.EqualsNoCase(package.Package.Name) &&
-                                                     locked.Version == package.Package.Version).Package);
+                                                     locked.Version == package.Package.SemanticVersion).Package);
 
             LockedPackages = lockedPackages.ToLookup(x => string.Empty);
         }
@@ -336,7 +336,7 @@ namespace OpenWrap.Repositories
             bool PackageMatch(PackageLocation location, PackageReference packageRef)
             {
                 return location.Package.Name.EqualsNoCase(packageRef.Name) &&
-                       location.Package.Version.Equals(packageRef.Version);
+                       location.Package.SemanticVersion.Equals(packageRef.Version);
             }
             public override PackageLocation Publish(IPackageRepository source, string packageFileName, Stream packageStream)
             {
@@ -344,7 +344,7 @@ namespace OpenWrap.Repositories
                 var packageRef = new PackageReference()
                 {
                     Name = location.Package.Name,
-                    Version = location.Package.Version
+                    Version = location.Package.SemanticVersion
                 };
                 if (source != null)
                     packageRef.Source = source.Token;
@@ -418,7 +418,7 @@ namespace OpenWrap.Repositories
             if (scope != string.Empty) throw new NotImplementedException("Can only lock in default scope.");
             var packageNames = packages.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             var locked = LockedPackages[scope].Where(_=>packageNames.ContainsNoCase(_.Name) == false).Concat(packages)
-                .Select(x=>new LockedPackage(x.Name, x.Version)).ToList();
+                .Select(x=>new LockedPackage(x.Name, x.SemanticVersion)).ToList();
             
             new DefaultConfigurationManager(BasePath).Save(new LockedPackages { Lock = locked }, _lockFileUri);
             RefreshLockFiles();
@@ -432,7 +432,7 @@ namespace OpenWrap.Repositories
 
             var packageNames = packages.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
             var locked = LockedPackages[scope].Where(_ => packageNames.ContainsNoCase(_.Name) == false)
-                .Select(x => new LockedPackage(x.Name, x.Version)).ToList();
+                .Select(x => new LockedPackage(x.Name, x.SemanticVersion)).ToList();
 
             new DefaultConfigurationManager(BasePath).Save(new LockedPackages { Lock = locked }, _lockFileUri);
             RefreshLockFiles();
