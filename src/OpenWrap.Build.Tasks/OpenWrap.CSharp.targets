@@ -153,7 +153,7 @@
         <_OpenWrap-SourceOutput Include="@(Compile)" />
 
         <_OpenWrap-FilteredContent Include="@(Content)" Condition="'%(Content.FromOpenWrap)' != 'True'">
-          <TargetPath>%(Link)</TargetPath>
+          <TargetPath>%(Content.Link)</TargetPath>
         </_OpenWrap-FilteredContent>
       </ItemGroup>
       
