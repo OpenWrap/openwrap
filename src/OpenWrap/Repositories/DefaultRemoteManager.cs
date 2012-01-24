@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using OpenWrap.Collections;
 using OpenWrap.Configuration;
 using OpenWrap.Configuration.Remotes;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories
 {
@@ -17,14 +19,14 @@ namespace OpenWrap.Repositories
             _configurationManager = configurationManager;
             _factories = factories;
         }
-
+        // TODO: Write tests around name configuration of repositories
         public IEnumerable<IPackageRepository> FetchRepositories(string input = null)
         {
             var remotes = LoadRemotes();
             var configured = from config in GetRepositoriesOrdered(input, remotes)
                              let remote = FromToken(config.FetchRepository.Token)
                              where remote != null
-                             select InjectAuthentication(remote, config.FetchRepository);
+                             select InjectConfigName(config,InjectAuthentication(remote, config.FetchRepository));
 
             return GetAmbient(input, remotes).Concat(configured).ToList();
         }
@@ -37,7 +39,7 @@ namespace OpenWrap.Repositories
                                     select from publish in config.PublishRepositories
                                            let remote = FromToken(publish.Token)
                                            where remote != null
-                                           select InjectAuthentication(remote, publish);
+                                           select InjectConfigName(config,InjectAuthentication(remote, publish));
             var ambient = GetAmbient(input, remotes).FirstOrDefault();
             return ambient != null
                        ? new[] { new[] { ambient } }.Concat(configuredPublish).ToList()
@@ -54,7 +56,10 @@ namespace OpenWrap.Repositories
             }
             return entries;
         }
-
+        static IPackageRepository InjectConfigName(RemoteRepository config, IPackageRepository endpoint)
+        {
+            return new NameTaggedRepository(endpoint, name => string.Format("{0} - {1}", config.Name, name));
+        }
         static IPackageRepository InjectAuthentication(IPackageRepository remote, RemoteRepositoryEndpoint config)
         {
             if (config.Username == null) return remote;
@@ -112,4 +117,47 @@ namespace OpenWrap.Repositories
             return remotes;
         }
     }
+
+    public class NameTaggedRepository : IPackageRepository
+    {
+        readonly IPackageRepository _actualRepo;
+        readonly Func<string, string> _nameTag;
+
+        public ILookup<string, IPackageInfo> PackagesByName
+        {
+            get { return _actualRepo.PackagesByName; }
+        }
+
+        public void RefreshPackages()
+        {
+            _actualRepo.RefreshPackages();
+        }
+
+        public string Name
+        {
+            get { return _nameTag(_actualRepo.Name); }
+        }
+
+        public string Token
+        {
+            get { return _actualRepo.Token; }
+        }
+
+        public string Type
+        {
+            get { return _actualRepo.Type; }
+        }
+
+        public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
+        {
+            return _actualRepo.Feature<TFeature>();
+        }
+
+        public NameTaggedRepository(IPackageRepository actualRepo, Func<string,string> nameTag)
+        {
+            _actualRepo = actualRepo;
+            _nameTag = nameTag;
+        }
+    }
+
 }
