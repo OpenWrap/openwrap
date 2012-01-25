@@ -81,7 +81,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ReferenceCopyLocalPaths Include="@(_OpenWrapReferenceCopyLocalPaths)"/>
+      <ReferenceCopyLocalPaths Include="%(_OpenWrapReferenceCopyLocalPaths.Identity)" Condition="Exists('%(_OpenWrapReferenceCopyLocalPaths.Identity)')"/>
     </ItemGroup>
   </Target>
 
