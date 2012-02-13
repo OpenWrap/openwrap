@@ -111,11 +111,10 @@ namespace OpenWrap.PackageModel
             }
 
             [Obsolete("Please use the SemanticVersion property instead.")]
-            public Version Version { get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; } }
+            public Version Version { get { return _parent.Version; } }
             public SemanticVersion SemanticVersion
             {
-                get { return _version.Value; }
-                set { _version.Value = value; }
+                get { return _parent.SemanticVersion; }
             }
 
             public string ReferencedAssemblies
@@ -197,7 +196,7 @@ namespace OpenWrap.PackageModel
                 _description = CreateDelegated<string>("description", SingleStringValue.New);
 
                 _name = CreateDelegated<string>("name", SingleStringValue.New);
-                _version = CreateDelegated<SemanticVersion>("version", SingleVersionValue.New);
+                _version = CreateDelegated<SemanticVersion>("version", SingleSemanticVersionValue.New);
                 _useProjectRepository = CreateDelegated("use-project-repository", SingleBoolValue.New, true);
                 _useSymLinks = CreateDelegated("use-symlinks", SingleBoolValue.New, false);
                 _referencedAssemblies = CreateDelegated("referenced-assemblies", SingleStringValue.New, "*");

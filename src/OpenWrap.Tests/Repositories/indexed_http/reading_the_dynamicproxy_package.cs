@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
+using OpenWrap;
 using OpenWrap.PackageModel;
 using OpenWrap.Testing;
 
@@ -14,7 +15,6 @@ namespace Tests.Repositories.indexed_http
         {
             given_repository();
             castle_proxy = Repository.PackagesByName["castle-dynamicproxy"].First();
-
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace Tests.Repositories.indexed_http
         }
         [Test]public void has_the_correct_version()
         {
-            castle_proxy.SemanticVersion.ShouldBe("2.1.0");
+            castle_proxy.Version.ShouldBe("2.1.0".ToVersion());
         }
         [Test]
         public void has_the_correct_dependencies()

@@ -49,23 +49,24 @@ namespace OpenWrap.Repositories
         {
             _remote = remote;
             _auth = auth;
-            Credentials = _initialCredentials = initialCredentials;
+            CurrentCredentials = _initialCredentials = initialCredentials;
             _credentialCookie = auth.WithCredentials(initialCredentials);
         }
 
-        public NetworkCredential Credentials { get; private set; }
+        public NetworkCredential CurrentCredentials { get; private set; }
 
         public IDisposable WithCredentials(NetworkCredential credentials)
         {
             // dispose the previous auth context. When coming back, reset to original credentials
             _credentialCookie.Dispose();
-            Credentials = credentials;
+
+            CurrentCredentials = credentials;
             _credentialCookie = _auth.WithCredentials(credentials);
             return new ActionOnDispose(() =>
             {
                 _credentialCookie.Dispose();
+                CurrentCredentials = _initialCredentials;
                 _credentialCookie = _auth.WithCredentials(_initialCredentials);
-                Credentials = _initialCredentials;
             });
         }
     }

@@ -24,5 +24,12 @@ namespace OpenWrap
                 dictionary.Add(key, outValue = new TValue());
             return outValue;
         }
+        public static TValue GetOrCreate<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TValue> value)
+        {
+            TValue outValue;
+            if (!dictionary.TryGetValue(key, out outValue))
+                dictionary.Add(key, outValue = value());
+            return outValue;
+        }
     }
 }

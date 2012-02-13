@@ -51,7 +51,13 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Build\assembly_info\assembly_file_version.cs" />
+    <Compile Include="Build\assembly_info\assembly_version.cs" />
+    <Compile Include="Build\assembly_info\author.cs" />
+    <Compile Include="Build\assembly_info\context_assembly_info.cs" />
+    <Compile Include="Build\assembly_info\copyright.cs" />
     <Compile Include="Build\assembly_info\none.cs" />
+    <Compile Include="Build\assembly_info\title.cs" />
     <Compile Include="Build\builders.msbuild\explicit_projects_without_source_folder.cs" />
     <Compile Include="Build\builders.msbuild\project_doesnt_exist.cs" />
     <Compile Include="Build\builders.msbuild\project_use_filename_wildcard.cs" />

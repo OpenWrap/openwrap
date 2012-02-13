@@ -5,27 +5,23 @@ using System.Text;
 using OpenFileSystem.IO;
 using OpenWrap.IO;
 using OpenWrap.PackageModel;
-using OpenWrap.ProjectModel;
 
 namespace OpenWrap.Build
 {
     public class AssemblyInfoGenerator
     {
         const string ATTRIBUTE_TEXT = "[assembly: {0}(\"{1}\")]";
-        
+
         readonly IPackageDescriptor _descriptor;
-        public SemanticVersion Version { get; set; }
 
         public AssemblyInfoGenerator(IPackageDescriptor descriptor)
         {
             _descriptor = descriptor;
             Version = descriptor.SemanticVersion;
         }
-        public void Write(IFile destination)
-        {
-            if (_descriptor.AssemblyInfo.Any())
-                destination.WriteString(ToString());
-        }
+
+        public SemanticVersion Version { get; set; }
+
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -40,21 +36,27 @@ namespace OpenWrap.Build
                 int revision;
                 if (!int.TryParse(Version.Build, out revision)) revision = -1;
                 var clrVersion = new Version(
-                    Version.Major % ushort.MaxValue,
-                    Version.Minor % ushort.MaxValue,
-                    Version.Patch == -1 ? 0 : Version.Patch % ushort.MaxValue,
-                    revision == -1 ? 0 : revision % ushort.MaxValue
-                    );
-                TryAppend<AssemblyVersionAttribute>(sb,
-                                                    "assembly-version",
+                    Version.Major % ushort.MaxValue, 
+                    Version.Minor % ushort.MaxValue, 
+                    Version.Patch == -1 ? 0 : Version.Patch % ushort.MaxValue, 
+                    revision == -1 ? 0 : revision % ushort.MaxValue);
+
+                TryAppend<AssemblyVersionAttribute>(sb, 
+                                                    "assembly-version", 
                                                     clrVersion.ToString());
                 TryAppend<AssemblyInformationalVersionAttribute>(sb, "assembly-info-version", Version.ToString());
 
-                TryAppend<AssemblyFileVersionAttribute>(sb,
-                                                        "file-version",
+                TryAppend<AssemblyFileVersionAttribute>(sb, 
+                                                        "file-version", 
                                                         Version.ToVersion().ToString());
             }
             return sb.ToString();
+        }
+
+        public void Write(IFile destination)
+        {
+            if (_descriptor.AssemblyInfo.Any())
+                destination.WriteString(ToString());
         }
 
         void TryAppend<T>(StringBuilder sb, string flagName, string attribValue)

@@ -67,7 +67,8 @@ namespace OpenWrap.Repositories.FileSystem
             IndexDocument.Document.Root.Add(
                     new XElement("wrap",
                                  new XAttribute("name", zipPackage.Name),
-                                 new XAttribute("version", zipPackage.SemanticVersion),
+                                 new XAttribute("version", zipPackage.Version),
+                                 new XAttribute("semantic-version", zipPackage.Version),
                                  new XElement("link",
                                               new XAttribute("rel", "package"),
                                               new XAttribute("href", packageFile.Name)),
@@ -86,9 +87,11 @@ namespace OpenWrap.Repositories.FileSystem
 
             var packageVersionNode = (from node in IndexDocument.Descendants("wrap")
                                       let versionAttribute = node.Attribute("version")
+                                      let semverAttribute = node.Attribute("semantic-version")
                                       let nameAttribute = node.Attribute("name")
                                       where nameAttribute != null && nameAttribute.Value.EqualsNoCase(packageInfo.Name) &&
-                                            versionAttribute != null && versionAttribute.Value.Equals(packageInfo.SemanticVersion.ToString())
+                                            ((versionAttribute != null && versionAttribute.Value.Equals(packageInfo.Version.ToString())) ||
+                                             (semverAttribute != null && semverAttribute.Value.Equals(packageInfo.SemanticVersion.ToString())))
                                       select node).FirstOrDefault();
 
             if (packageVersionNode == null)

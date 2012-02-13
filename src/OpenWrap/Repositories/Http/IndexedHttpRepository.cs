@@ -67,10 +67,14 @@ namespace OpenWrap.Repositories.Http
         IDisposable ISupportAuthentication.WithCredentials(NetworkCredential credentials)
         {
             var auth = _navigator as ISupportAuthentication;
+            var initial = CurrentCredentials;
+            CurrentCredentials = credentials;
             return auth == null
-                       ? new ActionOnDispose(() => { })
+                       ? new ActionOnDispose(() => { CurrentCredentials = initial; })
                        : auth.WithCredentials(credentials);
         }
+
+        public NetworkCredential CurrentCredentials { get; private set; }
 
         public IPackagePublisher Publisher()
         {

@@ -46,6 +46,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DocumentationFile>..\..\scratch\bin\OpenWrap-Debug-AnyCPU\OpenWrap.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -112,6 +113,7 @@
     <Compile Include="Configuration\Remotes\Legacy\RemoteRepository.cs" />
     <Compile Include="Configuration\Remotes\RemoteRepositoryEndpoint.cs" />
     <Compile Include="Configuration\StringBuilderExtensions.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\DependencyVisitor2.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />
@@ -150,6 +152,7 @@
     <Compile Include="Repositories\IRemoteManager.cs" />
     <Compile Include="Repositories\IRepositoryFeature.cs" />
     <Compile Include="Repositories\ISupportLocking.cs" />
+    <Compile Include="Repositories\ISupportCurrentCredentials.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedReader.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepository.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepositoryFactory.cs" />
@@ -255,7 +258,6 @@
     <Compile Include="Configuration\Remotes\RemoteRepository.cs" />
     <Compile Include="Commands\Cli\ShellRunner.cs" />
     <Compile Include="PackageModel\AbsolutelyEqualVersionVertex.cs" />
-    <Compile Include="PackageModel\DefaultPackageInfo.cs" />
     <Compile Include="PackageModel\PackageDescriptorEntryCollection.cs" />
     <Compile Include="PackageModel\GenericDescriptorEntry.cs" />
     <Compile Include="PackageModel\GreaterThanVersionVertex.cs" />
@@ -269,7 +271,7 @@
     <Compile Include="PackageModel\Parsers\SingleDateTimeOffsetValue.cs" />
     <Compile Include="PackageModel\Parsers\SingleStringValue.cs" />
     <Compile Include="PackageModel\Parsers\SingleValue.cs" />
-    <Compile Include="PackageModel\Parsers\SingleVersionValue.cs" />
+    <Compile Include="PackageModel\Parsers\SingleSemanticVersionValue.cs" />
     <Compile Include="PackageModel\Serialization\StringExtensions.cs" />
     <Compile Include="Commands\EnvironmentExtensions.cs" />
     <Compile Include="IO\IOExtensions.cs" />

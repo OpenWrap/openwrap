@@ -108,7 +108,7 @@ namespace OpenWrap.Commands.Wrap
             yield return VerifyProjectRepository();
 
             yield return SetupEnvironmentForAdd();
-            var sourceRepositories = GetSourceRepositories();
+            var sourceRepositories = GetSourceRepositories().ToList();
 
             var descriptor = new PackageDescriptor(_targetDescriptor.Value);
             if (Project && System)

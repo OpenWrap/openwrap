@@ -16,8 +16,8 @@ namespace OpenWrap.PackageManagement.Packages
     public class ZipFilePackage : IPackageInfo
     {
         readonly LazyValue<PackageIdentifier> _identifier;
-        IPackageInfo _descriptor;
-        bool? _isValid;
+        IPackageDescriptor _descriptor;
+        SemanticVersion _version;
 
 
         public ZipFilePackage(IFile packageFile)
@@ -34,7 +34,12 @@ namespace OpenWrap.PackageManagement.Packages
 
         public DateTimeOffset Created
         {
-            get { return PackageFile.LastModifiedTimeUtc != null ? PackageFile.LastModifiedTimeUtc.Value : DateTimeOffset.UtcNow; }
+            get
+            { 
+                return Descriptor.Created != default(DateTimeOffset)
+                ? Descriptor.Created
+                : PackageFile.LastModifiedTimeUtc != null ? PackageFile.LastModifiedTimeUtc.Value : default(DateTimeOffset);
+            }
         }
 
         [Obsolete("Plase use SemanticVersion")]
@@ -53,7 +58,7 @@ namespace OpenWrap.PackageManagement.Packages
             get { return Descriptor.Description; }
         }
 
-        public IPackageInfo Descriptor
+        public IPackageDescriptor Descriptor
         {
             get
             {
@@ -80,32 +85,14 @@ namespace OpenWrap.PackageManagement.Packages
 
         public bool Nuked
         {
-            get { return Descriptor.Nuked; }
+            get { return false; }
         }
 
         public bool IsValid
         {
-            get
-            {
-                if (_isValid == null)
-                {
-                    using(var stream = PackageFile.OpenRead())
-                    using (var zip = new ZipFile(stream))
-                    {
-                        try
-                        {
-                            var entries = zip.Cast<ZipEntry>().ToList();
-                            _isValid =  entries.Count > 1 && entries.Any(x => x.Name.EndsWithNoCase(".wrapdesc"));
-
-                        }catch
-                        {
-                            _isValid = false;
-                        }
-                    }
-                }
-                return (bool)_isValid;
-            }
+            get { return Descriptor != null && SemanticVersion != null; }
         }
+
 
         public IFile PackageFile { get; set; }
 
@@ -113,7 +100,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public SemanticVersion SemanticVersion
         {
-            get { return Descriptor.SemanticVersion; }
+            get { return _version; }
         }
 
         public virtual IPackage Load()
@@ -131,16 +118,12 @@ namespace OpenWrap.PackageManagement.Packages
                 var entries = zip.Cast<ZipEntry>();
                 ZipEntry descriptorFile = entries.FirstOrDefault(x => x.Name.EndsWithNoCase(".wrapdesc"));
                 if (descriptorFile == null)
-                    throw new InvalidOperationException(String.Format("The package '{0}' doesn't contain a valid .wrapdesc file.", PackageFile.Name));
+                    return;
 
                 ZipEntry versionFile = entries.SingleOrDefault(x => x.Name.EqualsNoCase("version"));
                 SemanticVersion versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().ToSemVer()) : null;
-                var descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReader().Read(x));
-
-                _descriptor = new DefaultPackageInfo(versionFromVersionFile, descriptor);
-
-                if (Descriptor.SemanticVersion == null)
-                    throw new InvalidOperationException(string.Format("The package '{0}' doesn't have a valid version, looked in the 'wrapdesc' file, in 'version' and in the package file-name.", descriptor.Name));
+                _descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReader().Read(x));
+                _version = _descriptor.SemanticVersion ?? versionFromVersionFile ?? _descriptor.Version.ToSemVer();
             }
         }
 

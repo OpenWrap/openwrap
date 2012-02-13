@@ -33,6 +33,7 @@ namespace Tests.Repositories
             package.ShouldNotBeNull();
             package.Attribute("name").ShouldNotBeNull().Value.ShouldBe("isengard");
             package.Attribute("version").ShouldNotBeNull().Value.ShouldBe("2.1");
+            package.Attribute("semantic-version").ShouldNotBeNull().Value.ShouldBe("2.1");
             var link = package.Descendants("link").FirstOrDefault().ShouldNotBeNull();
             link.Attribute("href").ShouldNotBeNull().Value.ShouldNotBeNull().ShouldContain("isengard-2.1.wrap");
         }

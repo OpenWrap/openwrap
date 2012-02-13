@@ -31,6 +31,7 @@ namespace OpenWrap.Repositories.Http
                 PublishHref = GetPublishHref(xmlDocument),
                 Packages = from wrapList in xmlDocument.Descendants("wrap")
                            let name = wrapList.Attribute("name")
+                           let semver = wrapList.Attribute("semantic-version")
                            let version = wrapList.Attribute("version")
                            let nuked = wrapList.Attribute("nuked")
                            let lastModifiedTimeUtc = GetModifiedTimeUtc(wrapList.Attribute("last-modified-time-utc"))
@@ -41,16 +42,16 @@ namespace OpenWrap.Repositories.Http
                                        select hrefAttribute).FirstOrDefault()
                            let baseUri = !string.IsNullOrEmpty(xmlDocument.BaseUri) ? new Uri(xmlDocument.BaseUri, UriKind.Absolute) : null
                            let absoluteLink = baseUri == null ? new Uri(link.Value, UriKind.RelativeOrAbsolute) : new Uri(baseUri, new Uri(link.Value, UriKind.RelativeOrAbsolute))
-                           where name != null && version != null && link != null
+                           where name != null && (semver != null || version != null) && link != null
                            let depends = wrapList.Elements("depends").Select(x => x.Value)
                            select new PackageEntry
                            {
                                Name = name.Value,
-                               Version = SemanticVersion.TryParseExact(version.Value),
+                               Version = semver != null ? SemanticVersion.TryParseExact(semver.Value) : (version == null ? null : version.Value.ToSemVer()),
                                PackageHref = absoluteLink,
                                Dependencies = depends,
                                CreationTime = lastModifiedTimeUtc,
-                               Nuked = nuked == null ? false : GetNuked(nuked.Value)
+                               Nuked = nuked != null && GetNuked(nuked.Value)
                            }
             };
             feed.CanPublish = feed.PublishHref != null;

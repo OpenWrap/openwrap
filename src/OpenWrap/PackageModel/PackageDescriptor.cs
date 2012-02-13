@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using OpenWrap.PackageModel.Parsers;
-using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageModel
 {
@@ -18,7 +16,7 @@ namespace OpenWrap.PackageModel
         PackageNameOverrideCollection _overrides;
         SingleBoolValue _useProjectRepository;
         SingleBoolValue _useSymLinks;
-        SingleVersionValue _version;
+        SingleSemanticVersionValue _semanticVersion;
         SingleStringValue _referencedAssemblies;
         MultiLine<string> _buildCommands;
         MultiLine<string> _directoryStructure;
@@ -31,16 +29,22 @@ namespace OpenWrap.PackageModel
         SingleStringValue _buildConfiguration;
         SingleStringValue _trademark;
         MultiLine<string> _maintainer;
+        SingleVersionValue _version;
 
-        public ICollection<string> Maintainer { get { return _maintainer; } }
+        public ICollection<string> Maintainer
+        {
+            get { return _maintainer; }
+        }
+
         public string Trademark
         {
             get { return _trademark.Value; }
             set { _trademark.Value = value; }
         }
+
         public PackageDescriptor(IEnumerable<IPackageDescriptorEntry> entries)
         {
-            foreach (var line in entries)
+            foreach (IPackageDescriptorEntry line in entries)
                 Entries.Append(line);
             InitializeHeaders();
         }
@@ -62,7 +66,12 @@ namespace OpenWrap.PackageModel
             get { return _created.Value; }
             private set { _created.Value = value; }
         }
-        public ICollection<string> Build { get { return _buildCommands; } }
+
+        public ICollection<string> Build
+        {
+            get { return _buildCommands; }
+        }
+
         public ICollection<PackageDependency> Dependencies
         {
             get { return _dependencies; }
@@ -118,13 +127,21 @@ namespace OpenWrap.PackageModel
             get { return _useSymLinks.Value; }
             set { _useSymLinks.Value = value; }
         }
+
         [Obsolete("Please use the SemanticVersion property instead.")]
-        public Version Version { get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; } }
-        public SemanticVersion SemanticVersion
+        public Version Version
         {
             get { return _version.Value; }
             set { _version.Value = value; }
         }
+
+#pragma warning disable 612,618
+        public SemanticVersion SemanticVersion
+        {
+            get { return _semanticVersion.Value ?? Version.ToSemVer(); }
+            set { _semanticVersion.Value = value; }
+        }
+#pragma warning restore 612,618
 
         public string ReferencedAssemblies
         {
@@ -152,6 +169,7 @@ namespace OpenWrap.PackageModel
         {
             get { return _author; }
         }
+
         public string Copyright
         {
             get { return _copyright.Value; }
@@ -175,7 +193,7 @@ namespace OpenWrap.PackageModel
 
         IEnumerator<IPackageDescriptorEntry> IEnumerable<IPackageDescriptorEntry>.GetEnumerator()
         {
-            foreach (var line in Entries)
+            foreach (IPackageDescriptorEntry line in Entries)
                 yield return line;
         }
 
@@ -188,6 +206,7 @@ namespace OpenWrap.PackageModel
             _created = new SingleDateTimeOffsetValue(Entries, "created");
             _description = new SingleStringValue(Entries, "description");
             _name = new SingleStringValue(Entries, "name");
+            _semanticVersion = new SingleSemanticVersionValue(Entries, "semantic-version");
             _version = new SingleVersionValue(Entries, "version");
             _useProjectRepository = new SingleBoolValue(Entries, "use-project-repository", true);
             _useSymLinks = new SingleBoolValue(Entries, "use-symlinks", false);
@@ -203,6 +222,7 @@ namespace OpenWrap.PackageModel
             _buildConfiguration = new SingleStringValue(Entries, "build-configuration");
             _trademark = new SingleStringValue(Entries, "trademark");
         }
+
         public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)
         {
             return new ScopedPackageDescriptor(this, scopedEntries);

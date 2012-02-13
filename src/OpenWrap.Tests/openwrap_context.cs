@@ -141,7 +141,7 @@ namespace Tests
         static void AddPackage(IPackageRepository repository, string name, string version, string[] dependencies)
         {
             var packageFileName = name + "-" + version + ".wrap";
-            var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
+            var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version, dependencies).OpenRead();
             using (var readStream = packageStream)
             using (var publisher = repository.Feature<ISupportPublishing>().Publisher())
                 publisher.Publish(packageFileName, readStream);
@@ -211,17 +211,17 @@ namespace Tests
             }
         }
 
-        protected void given_remote_repository(string remoteName, int? priority = null, Action<InMemoryRepository> factory = null)
+        protected void given_remote_repository(string configName, int? priority = null, Action<InMemoryRepository> factory = null)
         {
-            var repo = new InMemoryRepository(remoteName);
+            var repo = new InMemoryRepository(configName);
             if (factory != null) factory(repo);
             RemoteRepositories.Add(repo);
-            ConfiguredRemotes[remoteName] = new RemoteRepository
+            ConfiguredRemotes[configName] = new RemoteRepository
             {
                 Priority = priority ?? ConfiguredRemotes.Count + 1,
                 FetchRepository = new RemoteRepositoryEndpoint{Token=repo.Token},
                 PublishRepositories = { new RemoteRepositoryEndpoint{Token=repo.Token } },
-                Name = remoteName
+                Name = configName
             };
             ServiceLocator.GetService<IConfigurationManager>().Save(ConfiguredRemotes);
         }

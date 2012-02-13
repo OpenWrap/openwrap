@@ -7,6 +7,10 @@ namespace OpenWrap.Collections
 {
     public static class EnumerableExtensions
     {
+        public static List<T> CopyOrNew<T>(this IEnumerable<T> collection)
+        {
+            return collection == null ? new List<T>() : new List<T>(collection);
+        }
         public static IEnumerable<T> Select<T>(this IEnumerable input, Func<object, T> functoid)
         {
             foreach(var obj in input)

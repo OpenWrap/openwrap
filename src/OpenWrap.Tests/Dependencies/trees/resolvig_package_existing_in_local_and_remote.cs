@@ -24,7 +24,7 @@ namespace Tests.Dependencies.trees
             var dependency = Resolve.SuccessfulPackages.First();
 
             dependency.Packages.ShouldNotBeEmpty().First()
-                .Source.ShouldBe(RemoteRepository);
+                .Source.Token.ShouldBe(RemoteRepository.Token);
             dependency.Packages.ShouldNotBeEmpty()
                 .First().SemanticVersion.ShouldBe("1.1.0");
         }

@@ -212,14 +212,16 @@ namespace OpenWrap.PackageManagement
 
         static IEnumerable<PackageAnchoredResult> AnchorPackages(DependencyResolutionResult resolvedPackages, IEnumerable<IPackageRepository> destinationRepositories)
         {
-            return from repo in destinationRepositories.OfType<ISupportAnchoring>()
+            return from repo in destinationRepositories
+                   let anchorage = repo.Feature<ISupportAnchoring>()
+                   where anchorage != null
                    from successfulPackage in resolvedPackages.SuccessfulPackages
                    where successfulPackage.IsAnchored
-                   let packageInstances = from packageInstance in successfulPackage.Packages
-                                          where packageInstance != null &&
-                                                packageInstance.Source == repo
-                                          select packageInstance
-                   from anchorResult in repo.AnchorPackages(packageInstances)
+                   let packageInstances = (from packageInstance in successfulPackage.Packages
+                                           where packageInstance != null &&
+                                                 packageInstance.Source.Token == repo.Token
+                                           select packageInstance)
+                   from anchorResult in anchorage.AnchorPackages(packageInstances)
                    select anchorResult;
         }
 
@@ -249,11 +251,11 @@ namespace OpenWrap.PackageManagement
         {
             return (
                            from repo in sourceRepositories
-                           let compatiblePackage = packages.FirstOrDefault(x => x.Source == repo)
+                           let compatiblePackage = packages.FirstOrDefault(x => x.Source.Token == repo.Token)
                            where compatiblePackage != null
                            select compatiblePackage
                    )
-                    .First();
+                   .First();
         }
 
         static IPackageInfo GetExistingPackage(IPackageRepository destinationRepository, ResolvedPackage foundPackage, Func<SemanticVersion, bool> versionSelector)

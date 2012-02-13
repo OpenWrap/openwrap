@@ -39,7 +39,7 @@
     <OpenWrap-IncludeContentFiles Condition="'$(OpenWrap-IncludeContentFiles)' == ''">false</OpenWrap-IncludeContentFiles>
     
     <_OpenWrap-GenerateSharedAssemblyInfo>False</_OpenWrap-GenerateSharedAssemblyInfo>
-    <_OpenWrap-GenerateSharedAssemblyInfo Condition="Exists('$(OpenWrap-SharedAssemblyInfoFile)') == True">True</_OpenWrap-GenerateSharedAssemblyInfo>
+    <_OpenWrap-GenerateSharedAssemblyInfo Condition="Exists('$(OpenWrap-SharedAssemblyInfoFile)')">False</_OpenWrap-GenerateSharedAssemblyInfo>
   </PropertyGroup>
 
   <Target Name="OpenWrap-Initialize">
@@ -70,7 +70,7 @@
 
   <Target Name="OpenWrap-ResolveReferences" DependsOnTargets="OpenWrap-Initialize">
 
-    <ItemGroup Condition="'$(OpenWrap-SharedAssemblyInfoFile)' != ''">
+    <ItemGroup Condition="Exists('$(OpenWrap-SharedAssemblyInfoFile)')">
       <Compile Include="$(OpenWrap-SharedAssemblyInfoFile)" />
     </ItemGroup>
     <ResolveWrapReferences

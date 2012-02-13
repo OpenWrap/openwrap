@@ -20,7 +20,7 @@ namespace Tests.Dependencies.trees
         {
             Resolve.IsSuccess.ShouldBeTrue();
             Resolve.SuccessfulPackages.First().Packages.ShouldNotBeEmpty()
-                .First().Source.ShouldBe(SystemRepository);
+                .First().Source.Token.ShouldBe(SystemRepository.Token);
         }
     }
 }

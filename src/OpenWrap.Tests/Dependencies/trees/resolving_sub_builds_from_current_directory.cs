@@ -21,7 +21,7 @@ namespace Tests.Dependencies.trees
         {
             Resolve.SuccessfulPackages.Where(x => x.Identifier.Name == "rings-of-power")
                 .ShouldHaveCountOf(1)
-                .First().Packages.First().Source.ShouldBe(CurrentDirectoryRepository);
+                .First().Packages.First().Source.Token.ShouldBe(CurrentDirectoryRepository.Token);
         }
 
     }

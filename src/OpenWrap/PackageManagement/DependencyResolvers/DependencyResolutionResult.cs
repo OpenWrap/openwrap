@@ -10,13 +10,16 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
     {
         public IPackageDescriptor Descriptor { get; private set; }
 
-        public DependencyResolutionResult(IPackageDescriptor descriptor, IEnumerable<ResolvedPackage> successfulPackages, IEnumerable<ResolvedPackage> conflictingPackages, IEnumerable<ResolvedPackage> missingPackages)
+        public DependencyResolutionResult(
+            IPackageDescriptor descriptor, 
+            IEnumerable<ResolvedPackage> successfulPackages, 
+            IEnumerable<ResolvedPackage> conflictingPackages, 
+            IEnumerable<ResolvedPackage> missingPackages)
         {
             Descriptor = descriptor;
             SuccessfulPackages = successfulPackages.ToList().AsReadOnly();
             DiscardedPackages = conflictingPackages.ToList().AsReadOnly();
             MissingPackages = missingPackages.ToList().AsReadOnly();
-            //IsSuccess = !(MissingPackages.Any() || DiscardedPackages.Any());
             IsSuccess = !(MissingPackages.Any(x => SuccessfulPackages.None(s => s.Identifier.Name.EqualsNoCase(x.Identifier.Name)))
                           || DiscardedPackages.Any(x => SuccessfulPackages.None(s => s.Identifier.Name.EqualsNoCase(x.Identifier.Name))));
         }

@@ -48,7 +48,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         public void PackageConflicts(PackageIdentifier identifier, CallStack failingCallStack)
         {
-            var existingCompatible = CompatiblePackageVersions[identifier];
+            PackageResolutionStacks existingCompatible = CompatiblePackageVersions[identifier];
 
             _compatiblePackageVersions.Pop();
             CompatiblePackageVersions.Remove(identifier);
@@ -62,7 +62,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             _compatiblePackageVersions.Pop();
             CompatiblePackageVersions.Remove(identifier);
 
-            var newIgnores = _incompatiblePackages.Pop();
+            PackageResolveResults newIgnores = _incompatiblePackages.Pop();
             _incompatiblePackages.Pop();
             _incompatiblePackages.Push(newIgnores);
         }
@@ -70,12 +70,12 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         public void PackageSucceeds(PackageIdentifier packageNode, CallStack succeedingCallstack)
         {
             // commit the new ignore list
-            var ignoredPackagesInBranch = _incompatiblePackages.Pop();
+            PackageResolveResults ignoredPackagesInBranch = _incompatiblePackages.Pop();
             _incompatiblePackages.Pop();
             _incompatiblePackages.Push(ignoredPackagesInBranch);
 
             // add successful package
-            var foundPackages = _compatiblePackageVersions.Pop();
+            PackageResolveResults foundPackages = _compatiblePackageVersions.Pop();
             foundPackages.Add(packageNode, successful: new[] { succeedingCallstack });
             _compatiblePackageVersions.Pop();
             _compatiblePackageVersions.Push(foundPackages);

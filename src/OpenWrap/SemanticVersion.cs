@@ -131,7 +131,6 @@ namespace OpenWrap
         {
             return match.Groups[name].Success ? int.Parse(match.Groups[name].Value) : -1;
         }
-
         public int CompareTo(SemanticVersion other)
         {
             if (other == null) return -1;

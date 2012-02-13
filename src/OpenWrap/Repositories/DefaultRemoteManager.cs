@@ -58,7 +58,8 @@ namespace OpenWrap.Repositories
         }
         static IPackageRepository InjectConfigName(RemoteRepository config, IPackageRepository endpoint)
         {
-            return new NameTaggedRepository(endpoint, name => string.Format("{0} - {1}", config.Name, name));
+            return new NameTaggedRepository(endpoint, name => 
+                config.Name.EqualsNoCase(name) ? name : string.Format("{0} - {1}", config.Name, name));
         }
         static IPackageRepository InjectAuthentication(IPackageRepository remote, RemoteRepositoryEndpoint config)
         {

@@ -26,6 +26,7 @@ namespace OpenWrap.PackageManagement.Packages
             Source = packageToCopy.Source;
             Title = packageToCopy.Title;
             SemanticVersion = packageToCopy.SemanticVersion;
+
         }
 
         public InMemoryPackage()

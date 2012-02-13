@@ -42,8 +42,10 @@ namespace OpenWrap.IO.Packaging
             var lines = descriptorLines.ToList();
             if (lines.None(_ => _.StartsWithNoCase("name:")))
                 lines.Add("name: " + name);
+            if (lines.None(_=>_.StartsWithNoCase("semantic-version:")))
+                lines.Add("semantic-version: " + version);
             if (lines.None(_ => _.StartsWithNoCase("version:")))
-                lines.Add("version: " + name);
+                lines.Add("version: " + version.ToSemVer().ToVersion());
 
             var descriptorContent = lines.JoinString("\r\n").ToUTF8Stream();
             var versionContent = version.ToUTF8Stream();
