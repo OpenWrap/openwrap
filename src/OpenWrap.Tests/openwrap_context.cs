@@ -55,7 +55,7 @@ namespace Tests
             //Environment.DescriptorFile.MustExist();
             ServiceLocator.RegisterService<IFileSystem>(FileSystem);
             ServiceLocator.RegisterService<IEnvironment>(Environment);
-            ServiceLocator.RegisterService<IPackageResolver>(new ExhaustiveResolver());
+            ServiceLocator.RegisterService<IPackageResolver>(new StrategyResolver());
             ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new IExportProvider[]{
                     new DefaultAssemblyExporter(),

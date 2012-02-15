@@ -7,57 +7,6 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement.DependencyResolvers
 {
-    public class StrategyResolver : IPackageResolver
-    {
-        const int MAX_RETRIES = 5000;
-        public void Initialize()
-        {
-        }
-
-        public DependencyResolutionResult TryResolveDependencies(IPackageDescriptor packageDescriptor, IEnumerable<IPackageRepository> repositoriesToQuery)
-        {
-            Debug.WriteLine("Resolving descriptor " + packageDescriptor.Dependencies.Select(x => x.ToString()).JoinString(", "));
-
-            List<IPackageInfo> excluded = new List<IPackageInfo>();
-
-            var allPackages = repositoriesToQuery.Packages().SelectMany(_=>_);
-
-            var declaredDependencies = packageDescriptor.Dependencies.Select(PackageMatchesDependency).ToList();
-            for (int i = 0; i < MAX_RETRIES; i++)
-            {
-                var visitor = new LoggingPackageResolver(allPackages, fail: excluded);
-
-                if (visitor.Visit(declaredDependencies))
-                {
-                    return new DependencyResolutionResult(packageDescriptor, 
-                        ToResolveResult(visitor.Success),
-                        ToResolveResult(visitor.Fail),
-                        ToResolveResult(visitor.NotFound));
-                }
-                var newExclusions = visitor.IncompatiblePackages.Except(excluded).ToList();
-                if (newExclusions.Any() == false) break;
-
-                excluded.AddRange(visitor.IncompatiblePackages);
-            }
-            throw new InvalidOperationException(string.Format("OpenWrap tried {0} times to resolve the tree of dependencies and gave up.", MAX_RETRIES));
-        }
-
-        IEnumerable<ResolvedPackage> ToResolveResult(List<CallStack> success)
-        {
-            return Enumerable.Empty<ResolvedPackage>();
-        }
-
-        Func<IPackageInfo, bool> GetDependency(Dictionary<PackageDependency, Func<IPackageInfo, bool>> dependencyMap, PackageDependency packageDependency)
-        {
-            return dependencyMap.GetOrCreate(packageDependency, () => PackageMatchesDependency(packageDependency));
-        }
-
-
-        Func<IPackageInfo, bool> PackageMatchesDependency(PackageDependency packageDependency)
-        {
-            return package => packageDependency.IsFulfilledBy(package.SemanticVersion ?? package.Version.ToSemVer());
-        }
-    }
     public class ExhaustiveResolver : IPackageResolver
     {
         const int MAX_RETRIES = 5000;

@@ -29,13 +29,8 @@ namespace OpenWrap.PackageModel
 
         public override string ToString()
         {
-            var versions = VersionVertices.Select(x => x.ToString()).JoinString(" and ");
-            var returnValue = versions.Length == 0
-                                      ? Name
-                                      : Name + " " + versions;
-            if (Tags.Count() > 0)
-                returnValue += " " + Tags.JoinString(" ");
-            return returnValue;
+            return Name.AppendSpace(VersionVertices.Select(x => x.ToString()).JoinString(" and "))
+                .AppendSpace(Tags.JoinString(" "));
         }
 
         public bool IsFulfilledBy(SemanticVersion version)

@@ -63,7 +63,7 @@ namespace OpenWrap.Services
                 SystemRepositoryDirectory = Get<IFileSystem>().GetDirectory(_systemRepositoryPath)
             });
 
-            Register<IPackageResolver>(() => new ExhaustiveResolver());
+            Register<IPackageResolver>(() => new StrategyResolver());
             Register<IPackageExporter>(() => new DefaultPackageExporter(new List<IExportProvider>
             {
                 new DefaultAssemblyExporter(),

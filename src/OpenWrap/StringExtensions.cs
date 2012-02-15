@@ -61,7 +61,10 @@ namespace OpenWrap
         {
             return string.Join(separator, strings.ToArray());
         }
-
+        public static string AppendSpace(this string @value, string appendedValue)
+        {
+            return string.IsNullOrEmpty(appendedValue) ? @value : @value + " " + appendedValue;
+        }
         public static string JoinString<T>(this IEnumerable<T> strings, string separator)
         {
             return string.Join(separator, strings.Select(_=>_.ToString()).ToArray());

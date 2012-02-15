@@ -63,7 +63,7 @@ namespace Tests.contexts
 
         protected void when_resolving_packages()
         {
-            Resolve = new ExhaustiveResolver()
+            Resolve = new StrategyResolver()
                     .TryResolveDependencies(DependencyDescriptor,
                                             new[]
                                             {

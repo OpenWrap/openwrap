@@ -26,7 +26,7 @@ namespace Tests.contexts
         }
 
 
-        protected ExhaustiveResolver PackageResolver { get; set; }
+        protected StrategyResolver PackageResolver { get; set; }
 
         [TestFixtureTearDown]
         public void Dispose()

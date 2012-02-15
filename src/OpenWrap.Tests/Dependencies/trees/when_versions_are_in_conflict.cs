@@ -1,5 +1,6 @@
 using System.Linq;
 using NUnit.Framework;
+using OpenWrap;
 using OpenWrap.Testing;
 using Tests.contexts;
 
@@ -24,14 +25,6 @@ namespace Tests.Dependencies.trees
         public void the_resolving_fails()
         {
             Resolve.IsSuccess.ShouldBeFalse();
-        }
-        [Test]
-        public void conflicting_packages_are_present()
-        {
-            Resolve.DiscardedPackages.ShouldHaveCountOf(1);
-            Resolve.DiscardedPackages.First()
-                .Check(_ => _.Identifier.Name.ShouldBe("sauron"))
-                .Check(_ => _.DependencyStacks.ShouldHaveCountOf(2));
         }
     }
 }

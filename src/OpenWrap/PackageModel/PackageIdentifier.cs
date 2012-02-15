@@ -18,6 +18,16 @@ namespace OpenWrap.PackageModel
         public string Name { get; private set; }
         public SemanticVersion Version { get; private set; }
 
+        public static bool operator ==(PackageIdentifier left, PackageIdentifier right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(PackageIdentifier left, PackageIdentifier right)
+        {
+            return !Equals(left, right);
+        }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;

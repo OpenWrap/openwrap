@@ -357,7 +357,6 @@ namespace OpenWrap.PackageManagement
                 yield return new PackageDependencyAlreadyExists(packageToAdd.Name);
                 yield break;
             }
-
             
             var dependency = ToDependency(packageToAdd, options);
             projectDescriptor.Dependencies.Add(dependency);

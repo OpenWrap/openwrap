@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using OpenWrap;
 using OpenWrap.PackageModel;
+using OpenWrap.Testing;
 
 namespace Tests.Dependencies.nuked
 {
@@ -17,7 +18,7 @@ namespace Tests.Dependencies.nuked
         [Test]
         public void the_non_nuked_revision_is_returned()
         {
-            ResolvedVersion.Equals("2.1.0.0");
+            ResolvedVersion.ShouldBe("2.1.0+0");
         }
     }
 }

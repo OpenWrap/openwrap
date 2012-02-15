@@ -113,7 +113,10 @@
     <Compile Include="Configuration\Remotes\Legacy\RemoteRepository.cs" />
     <Compile Include="Configuration\Remotes\RemoteRepositoryEndpoint.cs" />
     <Compile Include="Configuration\StringBuilderExtensions.cs" />
-    <Compile Include="PackageManagement\DependencyResolvers\DependencyVisitor2.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\LoggingPackageResolver.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\PackageResolverVisitor.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\PackageStrategy.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\StrategyResolver.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />
