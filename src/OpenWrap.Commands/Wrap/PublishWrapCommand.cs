@@ -11,7 +11,7 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Noun = "wrap", Verb = "publish", Description = "Publishes a package to a remote reposiory.")]
+    [Command(Noun = "wrap", Verb = "publish", Description = "Publishes a package to a remote repository.")]
     public class PublishWrapCommand : WrapCommand
     {
         ISupportAuthentication _authenticationSupport;
