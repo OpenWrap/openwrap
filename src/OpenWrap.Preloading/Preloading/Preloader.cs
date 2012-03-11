@@ -20,8 +20,6 @@ namespace OpenWrap.Preloading
         public static Action<Stream, string> Extractor { get; set; }
         public static IEnumerable<string> GetPackageFolders(RemoteInstall remote, string projectPath, string systemRepositoryPath, params string[] packageNamesToLoad)
         {
-            var regex = new Regex(string.Format(@"^(?<name>{0})-(?<version>\d+(\.\d+(\.\d+(\.\d+)?)?)?)$", string.Join("|", packageNamesToLoad.ToArray())), RegexOptions.IgnoreCase);
-
             IEnumerable<string> bootstrapPackagePaths = Enumerable.Empty<string>();
             if (projectPath != null)
             {
@@ -61,7 +59,11 @@ namespace OpenWrap.Preloading
 
         static IEnumerable<string> GetFxVersions()
         {
-            if (Environment.Version.Major >= 4) yield return "bin-net40";
+            if (Environment.Version.Major >= 4)
+            {
+                yield return "bin-net45";
+                yield return "bin-net40";
+            }
             yield return "bin-net35";
             yield return "bin-net30";
             yield return "bin-net20";
@@ -389,4 +391,7 @@ namespace OpenWrap.Preloading
             }
         }
     }
+}
+namespace OpenWrap.PackageManagement.Resolvers
+{
 }
