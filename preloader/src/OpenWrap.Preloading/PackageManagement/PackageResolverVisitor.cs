@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace OpenWrap.PackageManagement.DependencyResolvers
+namespace OpenWrap.PackageManagement
 {
     public class PackageResolverVisitor<T> where T : class
     {
@@ -102,9 +102,9 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             return matchingPackages.Any(VisitPackage);
         }
 
-        static List<T> CopyOrNew<T>(IEnumerable<T> collection)
+        static List<TList> CopyOrNew<TList>(IEnumerable<TList> collection)
         {
-            return collection == null ? new List<T>() : new List<T>(collection);
+            return collection == null ? new List<TList>() : new List<TList>(collection);
         }
     }
 }
