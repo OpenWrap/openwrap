@@ -40,7 +40,18 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PackageManagement\PackageMissingException.cs" />
     <Compile Include="PackageManagement\PackageResolverVisitor.cs" />
+    <Compile Include="PackageModel\AbsolutelyEqualVersionVertex.cs" />
+    <Compile Include="PackageModel\AnyVersionVertex.cs" />
+    <Compile Include="PackageModel\EqualVersionVertex.cs" />
+    <Compile Include="PackageModel\GreaterThanOrEqualVersionVertex.cs" />
+    <Compile Include="PackageModel\GreaterThanVersionVertex.cs" />
+    <Compile Include="PackageModel\LessThanOrEqualVersionVertex.cs" />
+    <Compile Include="PackageModel\LessThanVersionVertex.cs" />
+    <Compile Include="PackageModel\Parsers\DependsVersionParser.cs" />
+    <Compile Include="PackageModel\PessimisticGreaterVersionVertex.cs" />
+    <Compile Include="PackageModel\VersionVertex.cs" />
     <Compile Include="Preloading\INotifyDownload.cs" />
     <Compile Include="Preloading\NotifyProgressWebClient.cs" />
     <Compile Include="Preloading\Preloader.cs" />
