@@ -20,8 +20,6 @@ namespace Tests.Commands.set_wrap
             when_executing_command("sauron -version 2.0");
         }
 
-        VersionVertex[] verticies;
-
         [Test]
         public void dependency_has_exact_version()
         {

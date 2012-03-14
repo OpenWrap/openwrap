@@ -50,8 +50,8 @@ namespace Tests.Dependencies
         }
         string ShouldParse(string name)
         {
-            return DependsParser.ParseDependsInstruction("depends: " + name)
-                    .Dependencies.First().ToString().ShouldBe(name);
+            return DependsParser.ParseDependsLine("depends: " + name)
+                    .ToString().ShouldBe(name);
         }
     }
 }

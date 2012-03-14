@@ -13,7 +13,6 @@ namespace OpenWrap.PackageModel.Parsers
         {
             DateTimeOffset parseResult;
             return DateTimeOffset.TryParse(arg, out parseResult) ? parseResult : default(DateTimeOffset);
-            return parseResult;
         }
 
         static string ConvertToString(DateTimeOffset arg)

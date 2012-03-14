@@ -97,7 +97,7 @@ namespace Tests
 
         protected void given_dependency(string scope, string dependency)
         {
-            new DependsParser().Parse(dependency, Environment.GetOrCreateScopedDescriptor(scope).Value);
+            Environment.GetOrCreateScopedDescriptor(scope).Value.Dependencies.Add(DependsParser.ParseDependsLine(dependency));
         }
 
         protected void given_dependency(string dependency)

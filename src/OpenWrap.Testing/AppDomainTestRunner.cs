@@ -41,8 +41,6 @@ namespace OpenWrap.Testing
             }
             finally
             {
-                string errorMessage = null;
-                
                 try
                 {
                     AppDomain.Unload(appDomain);

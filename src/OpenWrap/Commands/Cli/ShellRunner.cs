@@ -26,7 +26,7 @@ namespace OpenWrap.Commands.Cli
         public static int Main(IDictionary<string, object> env)
         {
             bool requireFirstRunOnProjectUpgrade = false;
-            bool inSystem = true;
+            //bool inSystem = true;
             var serviceRegistry = new ServiceRegistry();
             serviceRegistry = serviceRegistry.Override<IEnvironment>(() =>
             {
@@ -35,7 +35,7 @@ namespace OpenWrap.Commands.Cli
                     BeforeProjectRepositoryInitialized = (dir, options) =>
                     {
                         requireFirstRunOnProjectUpgrade = dir.GetFile("packages").Exists == false;
-                        inSystem = false;
+                        //inSystem = false;
                     }
                 };
                 if (env.SysPath() != null)

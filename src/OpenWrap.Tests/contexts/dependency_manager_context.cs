@@ -38,7 +38,7 @@ namespace Tests.contexts
 
         protected void given_dependency(string dependency)
         {
-            new DependsParser().Parse(dependency, DependencyDescriptor);
+            ((IPackageDescriptor)DependencyDescriptor).Dependencies.Add(DependsParser.ParseDependsLine(dependency));
         }
 
         protected void given_dependency_override(string from, string to)
@@ -81,8 +81,7 @@ namespace Tests.contexts
                     Name = PackageNameUtility.GetName(name),
                     SemanticVersion = PackageNameUtility.GetVersion(name),
                     Source = repository,
-                    Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
-                            .ToList()
+                    Dependencies = dependencies.Select(DependsParser.ParseDependsLine).ToList()
             };
             repository.Packages.Add(package);
         }

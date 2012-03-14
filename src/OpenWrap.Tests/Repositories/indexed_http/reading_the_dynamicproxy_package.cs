@@ -22,9 +22,10 @@ namespace Tests.Repositories.indexed_http
         {
             castle_proxy.Name.ShouldBe("castle-dynamicproxy");
         }
-        [Test]public void has_the_correct_version()
+        [Test]
+        public void has_the_correct_version()
         {
-            castle_proxy.Version.ShouldBe("2.1.0".ToVersion());
+            castle_proxy.SemanticVersion.ShouldBe("2.1.0");
         }
         [Test]
         public void has_the_correct_dependencies()

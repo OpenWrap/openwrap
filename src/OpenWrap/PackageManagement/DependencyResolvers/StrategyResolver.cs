@@ -23,12 +23,12 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
             for (int i = 0; i < MAX_RETRIES; i++)
             {
-                var visitor = new LoggingPackageResolver(
+                var visitor = new LoggingPackageVisitor(
                     allPackages,
                     packages => Nuke(PackageStrategy.Latest(packages)),
                     fail: excluded);
 
-                visitor.ReadDependency = Override(packageDescriptor.Overrides, visitor.ReadDependency);
+                visitor.ReadDependency = LocalHints(packageDescriptor.Dependencies, Override(packageDescriptor.Overrides, visitor.ReadDependency));
 
                 if (visitor.Visit(packageDescriptor.Dependencies))
                 {
@@ -46,6 +46,19 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             }
 
             throw new InvalidOperationException(string.Format("OpenWrap tried {0} times to resolve the tree of dependencies and gave up.", MAX_RETRIES));
+        }
+
+        Func<PackageDependency, Func<IPackageInfo, bool?>> LocalHints(ICollection<PackageDependency> localDependencies, Func<PackageDependency, Func<IPackageInfo, bool?>> reader)
+        {
+            localDependencies = localDependencies.ToList();
+            return dep =>
+            {
+                var local = localDependencies.FirstOrDefault(_ => _.Name.EqualsNoCase(dep.Name));
+                if (local == null) return reader(dep);
+                var vertices = new DependencyCombinator(dep.VersionVertices).Combine(local.VersionVertices).ToList();
+                if (vertices.Count == 0) vertices = local.VersionVertices.ToList();
+                return reader(new PackageDependencyBuilder(dep).SetVersionVertices(vertices));
+            };
         }
 
         Func<PackageDependency, Func<IPackageInfo, bool?>> Override(ICollection<PackageNameOverride> overrides, Func<PackageDependency, Func<IPackageInfo, bool?>> readDependency)
@@ -67,7 +80,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             return packages.Where(_ => _.Nuked == false).Concat(packages.Where(_ => _.Nuked));
         }
 
-        DependencyResolutionResult BuildResult(IPackageDescriptor packageDescriptor, LoggingPackageResolver visitor, List<IPackageInfo> allPackages)
+        DependencyResolutionResult BuildResult(IPackageDescriptor packageDescriptor, LoggingPackageVisitor visitor, List<IPackageInfo> allPackages)
         {
             return new DependencyResolutionResult(packageDescriptor,
                                                   FromPacks(allPackages, visitor.Success).ToList(),
@@ -75,7 +88,7 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                                                   FromNotFound(visitor.NotFound).ToList());
         }
 
-        static IEnumerable<PackageDependency> ReadNotFoundDependencies(LoggingPackageResolver visitor)
+        static IEnumerable<PackageDependency> ReadNotFoundDependencies(LoggingPackageVisitor visitor)
         {
             return visitor.NotFound.Select(_ => ((DependencyNode)_.Last()).Dependency);
         }
@@ -153,7 +166,9 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         public Version Version
         {
+#pragma warning disable 612,618
             get { return _packageInfo.Version; }
+#pragma warning restore 612,618
         }
 
         public IPackageRepository Source

@@ -63,7 +63,7 @@ namespace OpenWrap.Resharper
 #else
                               var action = _actionManager.TryGetAction(PluginManager.ACTION_REANALYZE);
 #endif
-                              
+
                               hasErrors = _actionManager.UpdateAction((ResharperUpdatableAction)action);
                               if (hasErrors)
                               {
@@ -72,8 +72,9 @@ namespace OpenWrap.Resharper
                           });
                 if (hasErrors)
                     resharper::JetBrains.Threading.JetDispatcher.Run(() => !_solutionManager.AnalysisComplete, TimeSpan.MaxValue, true);
-                
-            } while (hasErrors && CanContinueWaiting(sw, TimeSpan.FromSeconds(60)));
+            }
+            while (hasErrors && CanContinueWaiting(sw, TimeSpan.FromSeconds(60)));
+
             return !hasErrors;
         }
 
@@ -89,17 +90,17 @@ namespace OpenWrap.Resharper
             var sas = resharper::JetBrains.ReSharper.Daemon.Impl.SolutionAnalysisService.GetInstance(_solution);
             sas.AnalysisEnabledOption = true;
 #elif v610
-			resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Execute("SWEA", () =>
-			{
-			    var solutionDataContext = resharper::JetBrains.ProjectModel.DataContext.DataContextsEx.ToDataContext(_solution);
-			    var settingsStore = resharper::JetBrains.Application.Shell.Instance.GetComponent<resharper::JetBrains.Application.Settings.Store.Implementation.SettingsStore>();
 #pragma warning disable 612,618
+            resharper::JetBrains.Application.Shell.Instance.Invocator.ReentrancyGuard.Execute("SWEA", () =>
+            {
+                var solutionDataContext = resharper::JetBrains.ProjectModel.DataContext.DataContextsEx.ToDataContext(_solution);
+                var settingsStore = resharper::JetBrains.Application.Shell.Instance.GetComponent<resharper::JetBrains.Application.Settings.Store.Implementation.SettingsStore>();
                 resharper::JetBrains.Application.Settings.SettingsStoreEx.SetValue(
                     settingsStore,
-                    solutionDataContext, 
+                    solutionDataContext,
                     resharper::JetBrains.ReSharper.Daemon.HighlightingSettingsAccessor.AnalysisEnabled,
                     resharper::JetBrains.ReSharper.Daemon.AnalysisScope.SOLUTION);
-			});
+            });
 #pragma warning restore 612,618
 
 #endif

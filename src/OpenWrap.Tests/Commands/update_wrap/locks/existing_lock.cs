@@ -30,7 +30,6 @@ namespace Tests.Commands.update_wrap.locks
         public void locked_package_is_not_updated()
         {
             Environment.ProjectRepository.ShouldNotHavePackage("narnya", "1.0.0.1");
-            
         }
     }
 }

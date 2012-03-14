@@ -49,7 +49,7 @@ namespace Tests.Repositories
             protected void when_finding_packages(string dependency)
             {
                 var dep = new PackageDescriptor();
-                new DependsParser().Parse(dependency, dep);
+                ((IPackageDescriptor)dep).Dependencies.Add(DependsParser.ParseDependsLine(dependency));
 
                 FoundPackage = Repository.PackagesByName.FindAll(dep.Dependencies.First()).FirstOrDefault();
             }

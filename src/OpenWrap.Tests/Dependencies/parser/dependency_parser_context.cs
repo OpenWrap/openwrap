@@ -12,7 +12,7 @@ namespace Tests.Dependencies.parser
         public void given_dependency(string dependencyLine)
         {
             var target = new PackageDescriptor();
-            new DependsParser().Parse(dependencyLine, target);
+            ((IPackageDescriptor)target).Dependencies.Add(DependsParser.ParseDependsLine(dependencyLine));
             Declaration = target.Dependencies.First();
         }
     }

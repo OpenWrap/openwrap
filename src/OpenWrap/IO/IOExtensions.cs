@@ -84,23 +84,11 @@ namespace OpenWrap.IO
             }
         }
 
-        /// <summary>
-        ///   Writes the provided string to a file, using the provided encoding. If the file already exists, it will be overwritten.
-        /// </summary>
-        /// <param name = "file"></param>
-        /// <param name = "encoding"></param>
-        /// <returns></returns>
         public static void WriteString(this IFile file, string text)
         {
             WriteString(file, text, Encoding.UTF8);
         }
 
-        /// <summary>
-        ///   Writes the provided string to a file, using the provided encoding. If the file already exists, it will be overwritten.
-        /// </summary>
-        /// <param name = "file"></param>
-        /// <param name = "encoding"></param>
-        /// <returns></returns>
         public static void WriteString(this IFile file, string text, Encoding encoding)
         {
             using (var stream = file.OpenWrite())

@@ -6,15 +6,15 @@ using OpenWrap.PackageModel;
 
 namespace OpenWrap.PackageManagement.DependencyResolvers
 {
-    public class LoggingPackageResolver : PackageResolverVisitor<IPackageInfo>
+    public class LoggingPackageVisitor : PackageResolverVisitor<IPackageInfo>
     {
         Stack<Node> _currentNode = new Stack<Node>();
         Dictionary<PackageDependency, Func<IPackageInfo, bool?>> _depToFunc;
         Dictionary<Func<IPackageInfo, bool?>, PackageDependency> _funcToDep;
 
-        public LoggingPackageResolver(
+        public LoggingPackageVisitor(
             IEnumerable<IPackageInfo> allPackages, 
-            Func<IEnumerable<IPackageInfo>,IEnumerable<IPackageInfo>> strategy,
+            Func<IEnumerable<IPackageInfo>, IEnumerable<IPackageInfo>> strategy, 
             IEnumerable<IPackageInfo> success = null, 
             IEnumerable<IPackageInfo> fail = null)
             : base(allPackages, null, strategy, success, fail)
@@ -30,7 +30,19 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         public List<CallStack> Fail { get; set; }
         public List<CallStack> NotFound { get; private set; }
+        public Func<PackageDependency, Func<IPackageInfo, bool?>> ReadDependency { get; set; }
         public List<CallStack> Success { get; private set; }
+
+        public Func<IPackageInfo, bool?> ReadDependencyCore(PackageDependency packageDependency)
+        {
+            if (_depToFunc.ContainsKey(packageDependency))
+                return _depToFunc[packageDependency];
+
+            var matcher = ToFunc(packageDependency);
+            _funcToDep[matcher] = packageDependency;
+            _depToFunc[packageDependency] = matcher;
+            return matcher;
+        }
 
         public virtual bool Visit(IEnumerable<PackageDependency> dependencies)
         {
@@ -40,6 +52,37 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         public override bool Visit(IEnumerable<Func<IPackageInfo, bool?>> dependencies)
         {
             return VisitCore(dependencies);
+        }
+
+        protected override PackageResolverVisitor<IPackageInfo> CreateNestedResolver(IEnumerable<IPackageInfo> allPackages, 
+                                                                                     Func<IPackageInfo, IEnumerable<Func<IPackageInfo, bool?>>> dependencyReader, 
+                                                                                     Func<IEnumerable<IPackageInfo>, IEnumerable<IPackageInfo>> strategy, 
+                                                                                     ICollection<IPackageInfo> successfulPackages, 
+                                                                                     ICollection<IPackageInfo> incompatiblePackages)
+        {
+            return new LoggingPackageVisitor(allPackages, Strategy, successfulPackages, incompatiblePackages)
+            {
+                _currentNode = new Stack<Node>(_currentNode.Reverse()), 
+                _depToFunc = _depToFunc, 
+                _funcToDep = _funcToDep, 
+                DependencyReader = DependencyReader
+            };
+        }
+
+        protected override void NestedPackageFail(PackageResolverVisitor<IPackageInfo> newResolver)
+        {
+            base.NestedPackageFail(newResolver);
+            Fail.AddRange(((LoggingPackageVisitor)newResolver).Fail);
+            NotFound.AddRange(((LoggingPackageVisitor)newResolver).NotFound);
+        }
+
+        protected override void NestedPackageSucceeds(PackageResolverVisitor<IPackageInfo> newResolver)
+        {
+            base.NestedPackageSucceeds(newResolver);
+
+            Success.AddRange(((LoggingPackageVisitor)newResolver).Success);
+            Fail.AddRange(((LoggingPackageVisitor)newResolver).Fail);
+            NotFound.AddRange(((LoggingPackageVisitor)newResolver).NotFound);
         }
 
         protected override bool VisitDependency(IPackageInfo package, Func<IPackageInfo, bool?> dependency)
@@ -81,8 +124,8 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
         static Func<IPackageInfo, bool?> ToFunc(PackageDependency packageDependency)
         {
             return package => package.Name.EqualsNoCase(packageDependency.Name)
-                ? packageDependency.IsFulfilledBy(package.SemanticVersion)
-                : (bool?)null;
+                                  ? packageDependency.IsFulfilledBy(package.SemanticVersion)
+                                  : (bool?)null;
         }
 
         void Clear()
@@ -118,18 +161,6 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
             return arg.Dependencies.Select(ReadDependency).ToList();
         }
 
-        public Func<PackageDependency, Func<IPackageInfo, bool?>> ReadDependency { get; set; }
-        public Func<IPackageInfo, bool?> ReadDependencyCore(PackageDependency packageDependency)
-        {
-            if (_depToFunc.ContainsKey(packageDependency))
-                return _depToFunc[packageDependency];
-
-            var matcher = ToFunc(packageDependency);
-            _funcToDep[matcher] = packageDependency;
-            _depToFunc[packageDependency] = matcher;
-            return matcher;
-        }
-
         bool VisitCore(IEnumerable<Func<IPackageInfo, bool?>> dependencies)
         {
             return base.Visit(dependencies);
@@ -137,38 +168,13 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         void WriteDebug(string text)
         {
-            string packages = //string.Empty;
-            string.Format(
-            " Yes: {0} No:{1}",
-            base.SuccessfulPackages.Select(x => x.Identifier).Distinct().JoinString(","),
-            base.IncompatiblePackages.Select(x => x.Identifier).Distinct().JoinString(","));
+            string packages = // string.Empty;
+                string.Format(
+                    " Yes: {0} No:{1}", 
+                    base.SuccessfulPackages.Select(x => x.Identifier).Distinct().JoinString(","), 
+                    base.IncompatiblePackages.Select(x => x.Identifier).Distinct().JoinString(","));
 
             Debug.WriteLine(new string(' ', _currentNode.Count) + text + packages);
-        }
-
-        protected override PackageResolverVisitor<IPackageInfo> CreateNestedResolver(IEnumerable<IPackageInfo> allPackages, Func<IPackageInfo, IEnumerable<Func<IPackageInfo, bool?>>> dependencyReader, Func<IEnumerable<IPackageInfo>, IEnumerable<IPackageInfo>> strategy, ICollection<IPackageInfo> successfulPackages, ICollection<IPackageInfo> incompatiblePackages)
-        {
-            return new LoggingPackageResolver(allPackages,Strategy, successfulPackages, incompatiblePackages)
-            {
-                _currentNode = new Stack<Node>(_currentNode.Reverse()),
-                _depToFunc = _depToFunc,
-                _funcToDep = _funcToDep,
-                DependencyReader = DependencyReader
-            };
-        }
-        protected override void NestedPackageFail(PackageResolverVisitor<IPackageInfo> newResolver)
-        {
-            base.NestedPackageFail(newResolver);
-            Fail.AddRange(((LoggingPackageResolver)newResolver).Fail);
-            NotFound.AddRange(((LoggingPackageResolver)newResolver).NotFound);
-        }
-        protected override void NestedPackageSucceeds(PackageResolverVisitor<IPackageInfo> newResolver)
-        {
-            base.NestedPackageSucceeds(newResolver);
-
-            Success.AddRange(((LoggingPackageResolver)newResolver).Success);
-            Fail.AddRange(((LoggingPackageResolver)newResolver).Fail);
-            NotFound.AddRange(((LoggingPackageResolver)newResolver).NotFound);
         }
     }
 }
