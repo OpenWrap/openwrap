@@ -53,6 +53,13 @@ namespace Tests.version
         {
             v("1.0.0-10").ShouldBeBefore(v("1.0.0-alpha"));
         }
+
+        [Test]
+        public void pre_preserves_version_ordering()
+        {
+            v("1.0.0").ShouldBeBefore(v("1.0.1-beta"));
+
+        }
         [Test]
         public void build_has_precedence_over_normal()
         {
