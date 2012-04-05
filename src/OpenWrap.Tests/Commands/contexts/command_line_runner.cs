@@ -16,6 +16,7 @@ namespace Tests.Commands.contexts
         readonly Dictionary<string, List<string>> _properties;
         MemoryCommandDescriptor Command;
         List<string> _optionalInputs;
+        protected MemoryCommand CommandInstance;
 
         public command_line_runner()
         {
@@ -31,14 +32,19 @@ namespace Tests.Commands.contexts
 
         protected void given_command(string verb, string noun, params Expression<Func<InputBuilder, InputBuilder>>[] properties)
         {
+            given_command<MemoryCommand>(verb, noun, properties);
+        }
+        protected void given_command<T>(string verb, string noun, params Expression<Func<InputBuilder, InputBuilder>>[] properties) where T:MemoryCommand,new()
+        {
             Command = new MemoryCommandDescriptor(
                     properties.Select(property => property.Compile()(
-                            new InputBuilder(property.Parameters[0].Name).Setter((cmd, val) => SaveProperty(property.Parameters[0].Name, val)))
-                                                          .Descriptor))
+                            new InputBuilder(property.Parameters[0].Name)
+                                .Setter((cmd, val) => SaveProperty(property.Parameters[0].Name, val)))
+                                .Descriptor))
             {
                     Verb = verb,
                     Noun = noun,
-                    Create = () => new MemoryCommand
+                    Create = () => CommandInstance = new T
                     {
                             Execute = () =>
                             {
@@ -89,15 +95,6 @@ namespace Tests.Commands.contexts
                 get { return _descriptor; }
             }
 
-            public InputBuilder OptionalValue
-            {
-                get
-                {
-                    _descriptor.IsValueRequired = false;
-                    return this;
-                }
-            }
-
             public InputBuilder Required
             {
                 get
@@ -116,6 +113,12 @@ namespace Tests.Commands.contexts
             public InputBuilder Setter(Func<ICommand, IEnumerable<string>, bool> setter)
             {
                 _descriptor.TrySetValue = setter;
+                return this;
+            }
+
+            public InputBuilder Type<T>()
+            {
+                _descriptor.Type = typeof(T).Name;
                 return this;
             }
         }

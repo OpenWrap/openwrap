@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace OpenWrap.Commands
 {
@@ -13,5 +15,9 @@ namespace OpenWrap.Commands
         bool IsDefault { get; set; }
 
         ICommand Create();
+    }
+    public interface ICommandWithWildcards
+    {
+        void Wildcards(ILookup<string, string> values);
     }
 }
