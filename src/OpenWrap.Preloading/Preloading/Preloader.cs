@@ -22,18 +22,19 @@ namespace OpenWrap.Preloading
 
         public static Action<Stream, string> Extractor { get; set; }
 
-        public static IEnumerable<string> GetPackageFolders(RemoteInstall remote, string projectPath, string systemRepositoryPath, params string[] packageNamesToLoad)
+        public static IEnumerable<string> GetPackageFolders(RemoteInstall remote, string projectPath, string systemPath, params string[] packageNamesToLoad)
         {
+            DirectoryInfo systemDirectory = systemPath == null ? null : new DirectoryInfo(systemPath);
+
             var bootstrapPackagePaths = Enumerable.Empty<string>();
             var fileNotFound = new List<PackageMissingException>();
 
 
             if (projectPath != null)
             {
-
                 try
                 {
-                    bootstrapPackagePaths = GetLatestPackagesForProjectRepository(packageNamesToLoad, projectPath);
+                    bootstrapPackagePaths = GetLatestPackagesForProjectDirectory(packageNamesToLoad, projectPath);
                     if (bootstrapPackagePaths.Count() >= packageNamesToLoad.Length) return bootstrapPackagePaths;
                 }
                 catch (PackageMissingException e)
@@ -42,11 +43,12 @@ namespace OpenWrap.Preloading
                 }
             }
 
-            if (systemRepositoryPath != null)
+            if (systemDirectory != null)
             {
+                
                 try
                 {
-                    bootstrapPackagePaths = GetLatestPackagesForSystemRepository(systemRepositoryPath, packageNamesToLoad);
+                    bootstrapPackagePaths = GetLatestPackagesForSystemRepository(systemDirectory, packageNamesToLoad);
                 }
                 catch (PackageMissingException e)
                 {
@@ -54,12 +56,26 @@ namespace OpenWrap.Preloading
                 }
             }
 
-            if ((fileNotFound != null || bootstrapPackagePaths.Count() < packageNamesToLoad.Length) && remote.Enabled)
-                return TryDownloadPackages(systemRepositoryPath, packageNamesToLoad, remote);
+            if ((fileNotFound.Any() || bootstrapPackagePaths.Count() < packageNamesToLoad.Length) && systemDirectory != null && remote.Enabled)
+                return TryDownloadPackagesToRepository(GetRepositoryDirectoryFromProjectDirectory(systemDirectory), packageNamesToLoad, remote);
+
             if (bootstrapPackagePaths.Count() >= packageNamesToLoad.Length)
                 return bootstrapPackagePaths;
 
             throw new PackageMissingException(fileNotFound.SelectMany(_ => _.Paths).ToList());
+        }
+
+        public static IEnumerable<KeyValuePair<Assembly, string>> LoadAssemblies(IEnumerable<string> packageFolders)
+        {
+            return (
+                           from asm in packageFolders
+                           from assemblyPath in CombinePaths(asm, GetFxVersions().ToArray())
+                           where Directory.Exists(assemblyPath)
+                           from file in Directory.GetFiles(assemblyPath, "*.dll").Concat(Directory.GetFiles(assemblyPath, "*.exe"))
+                           let assembly = TryLoadAssembly(file)
+                           where assembly != null
+                           select new KeyValuePair<Assembly, string>(assembly, file)
+                   ).ToList();
         }
 
         public static IEnumerable<KeyValuePair<AssemblyName, string>> LocateAssemblies(IEnumerable<string> packageFolders)
@@ -69,20 +85,8 @@ namespace OpenWrap.Preloading
                     where Directory.Exists(assemblyPath)
                     from file in Directory.GetFiles(assemblyPath, "*.dll").Concat(Directory.GetFiles(assemblyPath, "*.exe"))
                     let assemblyName = AssemblyName.GetAssemblyName(file)
-                    select new KeyValuePair<System.Reflection.AssemblyName, string>(assemblyName, file))
-                   .ToList();
-        }
-        public static IEnumerable<KeyValuePair<System.Reflection.Assembly, string>> LoadAssemblies(IEnumerable<string> packageFolders)
-        {
-            return (
-                       from asm in packageFolders
-                       from assemblyPath in CombinePaths(asm, GetFxVersions().ToArray())
-                       where Directory.Exists(assemblyPath)
-                       from file in Directory.GetFiles(assemblyPath, "*.dll").Concat(Directory.GetFiles(assemblyPath, "*.exe"))
-                       let assembly = TryLoadAssembly(file)
-                       where assembly != null
-                       select new KeyValuePair<System.Reflection.Assembly, string>(assembly, file)
-                   ).ToList();
+                    select new KeyValuePair<AssemblyName, string>(assemblyName, file))
+                    .ToList();
         }
 
         static void AddPackageAndDependents(XDocument document, string currentPackage, List<string> packageNames)
@@ -103,11 +107,10 @@ namespace OpenWrap.Preloading
             return subFolders.Select(x => Path.Combine(packageFolder, x));
         }
 
-        static void EnsurePackagesUnzippedInRepository(string repositoryPath)
+        static void EnsurePackagesUnzippedInRepository(DirectoryInfo repositoryPath)
         {
-            var wrapDirectory = new DirectoryInfo(Path.Combine(repositoryPath, "wraps"));
-            var cacheDirectory = EnsureSubFolderExists(wrapDirectory, "_cache");
-            foreach (var extraction in from wrapFile in wrapDirectory.GetFiles("*.wrap")
+            var cacheDirectory = GetCacheDirectoryFromRepositoryDirectory(repositoryPath);
+            foreach (var extraction in from wrapFile in repositoryPath.GetFiles("*.wrap")
                                        let wrapFileName = Path.GetFileNameWithoutExtension(wrapFile.Name)
                                        where !string.IsNullOrEmpty(wrapFileName)
                                        let cacheFolderForWrap = new DirectoryInfo(Path.Combine(cacheDirectory.FullName, wrapFileName))
@@ -119,6 +122,7 @@ namespace OpenWrap.Preloading
                 using (var stream = extraction.wrapFile.OpenRead())
                     Extractor(stream, extraction.cacheFolderForWrap.FullName);
             }
+            repositoryPath.Refresh();
         }
 
         static DirectoryInfo EnsureSubFolderExists(DirectoryInfo wrapDirectoryInfo, string subfolder)
@@ -130,18 +134,11 @@ namespace OpenWrap.Preloading
             return di;
         }
 
-        static DirectoryInfo GetCacheDirectoryFromProjectDirectory(DirectoryInfo directory)
+        static string EnsureTrailingDirSeparator(string fullName)
         {
-            try
-            {
-                if (directory == null) return null;
-                var projectWraps = EnsureSubFolderExists(directory, "wraps");
-                return GetCacheDirectoryFromRepositoryDirectory(projectWraps);
-            }
-            catch (IOException)
-            {
-                return null;
-            }
+            return fullName[fullName.Length - 1] == Path.DirectorySeparatorChar || fullName[fullName.Length - 1] == Path.AltDirectorySeparatorChar
+                           ? fullName
+                           : fullName + Path.DirectorySeparatorChar;
         }
 
         static DirectoryInfo GetCacheDirectoryFromRepositoryDirectory(DirectoryInfo directory)
@@ -150,7 +147,7 @@ namespace OpenWrap.Preloading
             {
                 if (directory == null) return null;
                 var cacheDirectoryFromRepositoryDirectory =
-                    EnsureSubFolderExists(directory, "_cache");
+                        EnsureSubFolderExists(directory, "_cache");
                 return cacheDirectoryFromRepositoryDirectory;
             }
             catch (IOException)
@@ -183,28 +180,39 @@ namespace OpenWrap.Preloading
             yield return "bin-net20";
         }
 
-        static IEnumerable<string> GetLatestPackagesForProjectRepository(IEnumerable<string> packageNames, string currentDirectory)
+        static IEnumerable<string> GetLatestPackagesForProjectDirectory(IEnumerable<string> packageNames, string currentDirectory)
         {
-            DirectoryInfo rootProjectDirectory = GetProjectRootDirectory(currentDirectory);
+            var rootProjectDirectory = GetProjectRootDirectory(currentDirectory);
             if (rootProjectDirectory == null || rootProjectDirectory.Exists == false)
                 return Enumerable.Empty<string>();
-
-            var cacheDirectory = GetCacheDirectoryFromProjectDirectory(rootProjectDirectory);
-
-            EnsurePackagesUnzippedInRepository(rootProjectDirectory.FullName);
+            var repoDirectory = GetRepositoryDirectoryFromProjectDirectory(rootProjectDirectory);
+            var cacheDirectory = GetCacheDirectoryFromRepositoryDirectory(repoDirectory);
+            EnsurePackagesUnzippedInRepository(repoDirectory);
 
             return ResolvePackages(cacheDirectory, packageNames);
         }
 
-        static IEnumerable<string> GetLatestPackagesForSystemRepository(string systemRepositoryPath, IEnumerable<string> packageNames)
+        static IEnumerable<string> GetLatestPackagesForSystemRepository(DirectoryInfo systemRepository, IEnumerable<string> packageNames)
         {
-            EnsurePackagesUnzippedInRepository(systemRepositoryPath);
-            return ResolvePackages(GetCacheDirectoryFromRepositoryDirectory(new DirectoryInfo(systemRepositoryPath)), packageNames);
+            systemRepository = GetRepositoryDirectoryFromProjectDirectory(systemRepository);
+
+            EnsurePackagesUnzippedInRepository(systemRepository);
+            return ResolvePackages(GetCacheDirectoryFromRepositoryDirectory(systemRepository), packageNames);
+        }
+
+        static string GetPath(DirectoryInfo packageDirectory)
+        {
+            return EnsureTrailingDirSeparator(packageDirectory.FullName);
         }
 
         static DirectoryInfo GetProjectRootDirectory(string currentDirectory)
         {
             return GetSelfAndParents(currentDirectory).Where(x => x.Exists).FirstOrDefault(x => x.GetFiles("*.wrapdesc").Any());
+        }
+
+        static DirectoryInfo GetRepositoryDirectoryFromProjectDirectory(DirectoryInfo directory)
+        {
+            return EnsureSubFolderExists(directory, "wraps");
         }
 
         static IEnumerable<DirectoryInfo> GetSelfAndParents(string directoryPath)
@@ -214,8 +222,28 @@ namespace OpenWrap.Preloading
             {
                 yield return directory;
                 directory = directory.Parent;
-            }
-            while (directory != null);
+            } while (directory != null);
+        }
+
+        static Func<PreloaderPackage, bool?> ParseDepends(string line)
+        {
+            var lineBits = line.Split(new[] { " ", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var name = lineBits.First();
+            var versions = DependsVersionParser.ParseVersions(lineBits.Skip(1).ToArray())
+                    .DefaultIfEmpty(new AnyVersionVertex());
+            return package => package.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
+                                      ? versions.All(_ => _.IsCompatibleWith(package.Version))
+                                      : (bool?)null;
+        }
+
+        static IEnumerable<Func<PreloaderPackage, bool?>> PreloaderDependencyReader(PreloaderPackage arg)
+        {
+            return arg.Dependencies.Select(ParseDepends).ToList();
+        }
+
+        static IEnumerable<PreloaderPackage> PreloaderLatestVersionStrategy(IEnumerable<PreloaderPackage> arg)
+        {
+            return arg.OrderByDescending(_ => _.Version);
         }
 
         static IEnumerable<PreloaderPackage> ReadPackages(DirectoryInfo cacheDirectory)
@@ -231,29 +259,20 @@ namespace OpenWrap.Preloading
                    let versionMatch = Regex.Match(content, @"version\s*:\s*(?<version>[\d\.]+)", RegexOptions.Multiline | RegexOptions.IgnoreCase)
                    where nameMatch.Success
                    let version = semanticVersionMatch.Success
-                        ? SemanticVersion.TryParseExact(semanticVersionMatch.Groups["version"].Value)
-                        : (versionMatch.Success
-                            ? SemanticVersion.TryParseExact(versionMatch.Groups["version"].Value)
-                            : null)
+                                         ? SemanticVersion.TryParseExact(semanticVersionMatch.Groups["version"].Value)
+                                         : (versionMatch.Success
+                                                    ? SemanticVersion.TryParseExact(versionMatch.Groups["version"].Value)
+                                                    : null)
                    where version != null
                    select new PreloaderPackage
                    {
-                       Name = nameMatch.Groups["name"].Value,
-                       Version = version,
-                       Path = GetPath(packageDirectory),
-                       Dependencies = (from match in Regex.Matches(content, @"depends\s*:\s*(?<dependency>.+)$", RegexOptions.Multiline).OfType<Match>()
-                                       where match.Success
-                                       select match.Groups["dependency"].Value).ToList()
+                           Name = nameMatch.Groups["name"].Value,
+                           Version = version,
+                           Path = GetPath(packageDirectory),
+                           Dependencies = (from match in Regex.Matches(content, @"depends\s*:\s*(?<dependency>.+)$", RegexOptions.Multiline).OfType<Match>()
+                                           where match.Success
+                                           select match.Groups["dependency"].Value).ToList()
                    };
-        }
-
-        static string GetPath(DirectoryInfo packageDirectory)
-        {
-            var fullName = packageDirectory.FullName;
-
-            return fullName[fullName.Length - 1] == Path.DirectorySeparatorChar || fullName[fullName.Length - 1] == Path.AltDirectorySeparatorChar
-                ? fullName
-                : fullName + Path.DirectorySeparatorChar;
         }
 
         static List<string> ResolvePackageNames(XDocument document, IEnumerable<string> packageNames)
@@ -267,22 +286,23 @@ namespace OpenWrap.Preloading
         {
             var foundPackages = ReadPackages(cacheDirectory).ToList();
             var resolver = new PackageResolverVisitor<PreloaderPackage>(
-                foundPackages,
-                PreloaderDependencyReader,
-                PreloaderLatestVersionStrategy);
+                    foundPackages,
+                    PreloaderDependencyReader,
+                    PreloaderLatestVersionStrategy);
             if (!resolver.Visit(packageNames
-                .Select<string, Func<PreloaderPackage, bool?>>(
-                    name => package => package.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
-                        ? true : (bool?)null)
-                                    .ToList()))
+                                        .Select<string, Func<PreloaderPackage, bool?>>(
+                                                name => package => package.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
+                                                                           ? true
+                                                                           : (bool?)null)
+                                        .ToList()))
                 throw new PackageMissingException(new[] { GetPath(cacheDirectory) });
 
             return resolver.SuccessfulPackages.Select(_ => _.Path).ToList();
         }
 
-        static IEnumerable<string> TryDownloadPackages(string systemRepositoryPath, IEnumerable<string> packageNames, RemoteInstall remote)
+        static IEnumerable<string> TryDownloadPackagesToRepository(DirectoryInfo systemRepository, IEnumerable<string> packageNames, RemoteInstall remote)
         {
-            var systemRepositoryCacheDirectory = GetCacheDirectoryFromRepositoryDirectory(new DirectoryInfo(systemRepositoryPath));
+            var systemRepositoryCacheDirectory = GetCacheDirectoryFromRepositoryDirectory(systemRepository);
 
             XDocument document;
             try
@@ -309,8 +329,8 @@ namespace OpenWrap.Preloading
                                                (nukedAttribute == null || !nukedAttribute.Value.Equals("true", StringComparison.OrdinalIgnoreCase)) &&
                                                packageNamesToDownload.Contains(nameAttribute.Value, StringComparer.OrdinalIgnoreCase)
                                          group new { Name = nameAttribute.Value, Version = semanticVersionAttribute.Value, Href = packageSource } by nameAttribute.Value.ToLowerInvariant()
-                                             into byNameGroup
-                                             select byNameGroup.OrderByDescending(x => x.Version)
+                                         into byNameGroup
+                                         select byNameGroup.OrderByDescending(x => x.Version)
                                                  .Select(x => new { x.Name, Href = new Uri(x.Href, UriKind.RelativeOrAbsolute) })
                                                  .FirstOrDefault();
 
@@ -321,7 +341,8 @@ namespace OpenWrap.Preloading
                         fullPackageUri = new Uri(new Uri(remote.ServerUri, UriKind.Absolute), fullPackageUri);
 
                     var fileName = fullPackageUri.Segments.Last();
-                    string wrapFilePath = Path.Combine(systemRepositoryPath, fileName);
+                    
+                    string wrapFilePath = Path.Combine(systemRepository.FullName, fileName);
 
 
                     if (File.Exists(wrapFilePath))
@@ -339,8 +360,8 @@ namespace OpenWrap.Preloading
                     using (var wrapFileStream = File.OpenRead(wrapFilePath))
                         Extractor(wrapFileStream, extractFolder);
                 }
-
-                return GetLatestPackagesForSystemRepository(systemRepositoryPath, packageNames);
+                systemRepository.Refresh();
+                return GetLatestPackagesForSystemRepository(systemRepository, packageNames);
             }
             catch
             {
@@ -353,11 +374,11 @@ namespace OpenWrap.Preloading
             return SemanticVersion.TryParseExact(value);
         }
 
-        static System.Reflection.Assembly TryLoadAssembly(string asm)
+        static Assembly TryLoadAssembly(string asm)
         {
             try
             {
-                return System.Reflection.Assembly.LoadFrom(asm);
+                return Assembly.LoadFrom(asm);
             }
             catch
             {
@@ -395,28 +416,6 @@ namespace OpenWrap.Preloading
             public string Name;
             public string Path;
             public SemanticVersion Version;
-        }
-
-        static IEnumerable<PreloaderPackage> PreloaderLatestVersionStrategy(IEnumerable<PreloaderPackage> arg)
-        {
-            return arg.OrderByDescending(_ => _.Version);
-        }
-
-        static IEnumerable<Func<PreloaderPackage, bool?>> PreloaderDependencyReader(PreloaderPackage arg)
-        {
-            return arg.Dependencies.Select(ParseDepends).ToList();
-        }
-
-        static Func<PreloaderPackage, bool?> ParseDepends(string line)
-        {
-            var lineBits = line.Split(new[] { " ", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-            var name = lineBits.First();
-            var versions = DependsVersionParser.ParseVersions(lineBits.Skip(1).ToArray())
-                .DefaultIfEmpty(new AnyVersionVertex());
-            return package => package.Name.Equals(name, StringComparison.OrdinalIgnoreCase)
-                                  ? versions.All(_ => _.IsCompatibleWith(package.Version))
-                                  : (bool?)null;
-
         }
     }
 }
