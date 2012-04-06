@@ -51,7 +51,8 @@ namespace OpenWrap.PackageManagement.Packages
                 _semver = versionFile.Exists ? versionFile.ReadString().ToSemVer() : null;
 
             IsValid = string.IsNullOrEmpty(Name) == false && _semver != null;
-            Identifier = new PackageIdentifier(Name, _semver);
+            if (IsValid)
+                Identifier = new PackageIdentifier(Name, _semver);
         }
 
         [Obsolete("Plase use SemanticVersion")]

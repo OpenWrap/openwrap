@@ -132,7 +132,6 @@ namespace OpenWrap.PackageModel
         public Version Version
         {
             get { return _version.Value; }
-            set { _version.Value = value; }
         }
 
 #pragma warning disable 612,618
