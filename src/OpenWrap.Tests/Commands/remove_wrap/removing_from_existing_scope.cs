@@ -9,7 +9,7 @@ namespace Tests.Commands.remove_wrap
         {
             given_project_package("one-ring", "1.0.0");
                 
-            given_dependency("tests", "one-ring");
+            given_dependency("tests", "depends: one-ring");
             when_executing_command("one-ring -scope tests");
         }
 

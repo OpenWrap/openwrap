@@ -21,7 +21,7 @@ namespace Tests.Repositories
             (from XElement node in IndexDocument.Descendants("wrap")
              where node.Attribute("name").Value.Equals("pharrell") &&
                    node.Attribute("version").Value.Equals("1.0.0.0") &&
-                   node.Attribute("semantic-version").Value.Equals("1.0.0.0") &&
+                   node.Attribute("semantic-version").Value.Equals("1.0.0+0") &&
                    node.Attribute("nuked").Value.Equals("true")
              select node)
                 .ShouldHaveCountOf(1);
