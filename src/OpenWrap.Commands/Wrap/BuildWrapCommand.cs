@@ -156,7 +156,7 @@ namespace OpenWrap.Commands.Wrap
         static PackageContent GenerateDescriptorFile(PackageDescriptor descriptor)
         {
             var descriptorStream = new MemoryStream();
-            new PackageDescriptorReaderWriter().Write(descriptor.GetPersistableEntries(), descriptorStream);
+            new PackageDescriptorWriter().Write(descriptor.GetPersistableEntries(), descriptorStream);
             return new PackageContent
             {
                 FileName = descriptor.Name + ".wrapdesc",
@@ -409,7 +409,10 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> VerifyVersion()
         {
             var versionFile = _environment.CurrentDirectory.GetFile("version");
-            if (Version == null && !versionFile.Exists && _environment.Descriptor.SemanticVersion == null)
+            if (Version == null &&
+                !versionFile.Exists && 
+                _environment.Descriptor.SemanticVersion == null &&
+                _environment.Descriptor.Version == null)
             {
                 yield return new PackageVersionMissing();
                 yield break;

@@ -23,7 +23,7 @@ namespace Tests.contexts
         protected static string WriteDescriptor(IPackageDescriptor descriptor)
         {
             var memString = new MemoryStream();
-            new PackageDescriptorReaderWriter().Write(descriptor.GetPersistableEntries(), memString);
+            new PackageDescriptorWriter().Write(descriptor.GetPersistableEntries(), memString);
             memString.Position = 0;
             return memString.ReadString();
         }
@@ -37,10 +37,10 @@ namespace Tests.contexts
         }
         protected void given_descriptor(params string[] lines)
         {
-            Descriptor = ReadDescriptor<PackageDescriptor>(lines);
+            Descriptor = ReadDescriptor(lines, _=>new PackageDescriptor(_));
         }
 
-        protected T ReadDescriptor<T>(string[] lines, Func<IEnumerable<IPackageDescriptorEntry>, T> ctor = null)
+        protected T ReadDescriptor<T>(string[] lines, Func<IEnumerable<IPackageDescriptorEntry>, T> ctor)
             where T : class, IPackageDescriptor
         {
             var lineChars = string.Join("\r\n", lines);

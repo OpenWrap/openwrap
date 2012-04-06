@@ -132,7 +132,7 @@ namespace OpenWrap.Repositories.NuGet
 
             PackageDescriptor descriptor = NuConverter.ConvertSpecificationToDescriptor(nuspec);
             var memoryStream = new MemoryStream();
-            new PackageDescriptorReaderWriter().Write(descriptor, memoryStream);
+            new PackageDescriptorWriter().Write(descriptor, memoryStream);
             memoryStream.Position = 0;
 
             return new PackageContent

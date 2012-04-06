@@ -15,8 +15,7 @@ namespace Tests.Build.assembly_info
         [Test]
         public void contains_attribute()
         {
-            should_have<AssemblyFileVersionAttribute>(
-                "1.0.0.65535");
+            should_have<AssemblyFileVersionAttribute>("1.0.0.65535");
         }
     }
 }

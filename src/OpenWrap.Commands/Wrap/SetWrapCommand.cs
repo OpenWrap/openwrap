@@ -150,7 +150,7 @@ namespace OpenWrap.Commands.Wrap
         {
             using (var destinationStream = HostEnvironment.DescriptorFile.OpenWrite())
             {
-                new PackageDescriptorReaderWriter().Write(descriptor, destinationStream);
+                new PackageDescriptorWriter().Write(descriptor, destinationStream);
             }
         }
     }

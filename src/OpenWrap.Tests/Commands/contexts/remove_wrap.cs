@@ -1,4 +1,5 @@
-﻿using OpenWrap.Commands.Wrap;
+﻿using OpenFileSystem.IO;
+using OpenWrap.Commands.Wrap;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 
@@ -11,7 +12,7 @@ namespace Tests.Commands.contexts
         protected override void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
-            PostCommandDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);
+            PostCommandDescriptor = new PackageDescriptorReader().Read(Environment.DescriptorFile);
         }
     }
 }

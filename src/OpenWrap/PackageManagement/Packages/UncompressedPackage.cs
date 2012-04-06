@@ -45,7 +45,7 @@ namespace OpenWrap.PackageManagement.Packages
             }
              
             var versionFile = wrapCacheDirectory.GetFile("version");
-            _descriptor = new PackageDescriptorReaderWriter().Read(wrapDescriptor);
+            _descriptor = new PackageDescriptorReader().Read(wrapDescriptor);
             _semver = _descriptor.SemanticVersion ?? _descriptor.Version.ToSemVer();
             if (_semver == null)
                 _semver = versionFile.Exists ? versionFile.ReadString().ToSemVer() : null;

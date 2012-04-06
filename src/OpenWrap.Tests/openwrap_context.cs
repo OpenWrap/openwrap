@@ -321,7 +321,7 @@ namespace Tests
         public IPackageDescriptor WrittenDescriptor(string scope = null)
         {
             scope = scope ?? string.Empty;
-            return new PackageDescriptorReaderWriter().Read(Environment.ScopedDescriptors[scope].File);
+            return new PackageDescriptorReader().Read(Environment.ScopedDescriptors[scope].File);
         }
 
         protected void given_descriptor(params string[] lines)

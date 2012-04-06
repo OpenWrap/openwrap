@@ -23,12 +23,15 @@ namespace OpenWrap.Build
             generator.Write(projectAsmFile);
             return projectAsmFile;
         }
-
+        // TODO: Issue with not using the correct IFile when building -from
         public static SemanticVersion GenerateVersion(IPackageDescriptor descriptor, IFile versionFile)
         {
+            
             var ver = versionFile.Exists
                           ? versionFile.ReadLines().First()
-                          : descriptor.SemanticVersion.ToString();
+                          : (descriptor.SemanticVersion != null 
+                             ? descriptor.SemanticVersion.ToString()
+                             : descriptor.Version.ToString());
 
             var lastBuildFile = versionFile.Parent.GetDirectory("wraps")
                                                   .GetDirectory("_cache")

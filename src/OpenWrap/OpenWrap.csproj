@@ -440,7 +440,7 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandOutput.cs" />
     <Compile Include="PackageModel\PackageDescriptor.cs" />
-    <Compile Include="PackageModel\Serialization\PackageDescriptorReaderWriter.cs" />
+    <Compile Include="PackageModel\Serialization\PackageDescriptorWriter.cs" />
     <Compile Include="Runtime\ExecutionEnvironment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PackageManagement\Exporters\FileExportItem.cs" />
@@ -520,7 +520,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

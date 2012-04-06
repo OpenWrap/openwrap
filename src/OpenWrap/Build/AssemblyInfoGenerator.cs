@@ -17,7 +17,7 @@ namespace OpenWrap.Build
         public AssemblyInfoGenerator(IPackageDescriptor descriptor)
         {
             _descriptor = descriptor;
-            Version = descriptor.SemanticVersion;
+            Version = descriptor.SemanticVersion ?? descriptor.Version.ToSemVer();
         }
 
         public SemanticVersion Version { get; set; }
