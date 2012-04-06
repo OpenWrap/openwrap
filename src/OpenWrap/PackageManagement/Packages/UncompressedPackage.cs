@@ -50,14 +50,14 @@ namespace OpenWrap.PackageManagement.Packages
             if (_semver == null)
                 _semver = versionFile.Exists ? versionFile.ReadString().ToSemVer() : null;
 
-            IsValid = _semver != null;
+            IsValid = string.IsNullOrEmpty(Name) == false && _semver != null;
             Identifier = new PackageIdentifier(Name, _semver);
         }
 
         [Obsolete("Plase use SemanticVersion")]
         public Version Version
         {
-            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : _descriptor.Version; }
         }
         public bool Anchored
         {
@@ -111,7 +111,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public SemanticVersion SemanticVersion
         {
-            get { return _descriptor.SemanticVersion; }
+            get { return _semver; }
         }
 
         protected IDirectory BaseDirectory { get; set; }

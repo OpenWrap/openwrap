@@ -193,6 +193,11 @@
     <Compile Include="Dependencies\versions\less_than.cs" />
     <Compile Include="Dependencies\versions\less_than_or_equal.cs" />
     <Compile Include="Dependencies\versions\version_vertice_context.cs" />
+    <Compile Include="Packages\contexts\NullRepository.cs" />
+    <Compile Include="Packages\contexts\uncompressed_package.cs" />
+    <Compile Include="Packages\Uncompressed\semver_in_descriptor.cs" />
+    <Compile Include="Packages\Uncompressed\semver_in_file.cs" />
+    <Compile Include="Packages\Uncompressed\version_in_descriptor.cs" />
     <Compile Include="preloading\locating\project\missing_package.cs" />
     <Compile Include="preloading\locating\project\missing_wrap_directory.cs" />
     <Compile Include="preloading\contexts\preloader.cs" />

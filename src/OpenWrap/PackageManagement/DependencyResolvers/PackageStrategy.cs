@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using OpenWrap.PackageModel;
@@ -16,6 +17,12 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                         .OrderByDescending(_ => _.Version)
                 );
 #pragma warning restore 612,618
+        }
+
+        static void Main(string[] args)
+        {
+            var semver = new[] { new SemanticVersion(1, 0, 2, build: "3"), new SemanticVersion(1, 0, 2, build:"4") };
+            Console.WriteLine(semver.OrderByDescending(_=>_).First().ToString());
         }
     }
 }

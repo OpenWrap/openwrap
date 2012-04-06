@@ -17,7 +17,7 @@ namespace OpenWrap.PackageManagement.Packages
     {
         readonly LazyValue<PackageIdentifier> _identifier;
         IPackageDescriptor _descriptor;
-        SemanticVersion _version;
+        SemanticVersion _semver;
 
 
         public ZipFilePackage(IFile packageFile)
@@ -62,10 +62,15 @@ namespace OpenWrap.PackageManagement.Packages
         {
             get
             {
-                if (_descriptor == null)
-                    LoadDescriptor();
+                EnsureDescriptorLoaded();
                 return _descriptor;
             }
+        }
+
+        void EnsureDescriptorLoaded()
+        {
+            if (_descriptor == null)
+                LoadDescriptor();
         }
 
         public string FullName
@@ -90,7 +95,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public bool IsValid
         {
-            get { return Descriptor != null && SemanticVersion != null; }
+            get { return Descriptor != null && Name != null && _semver != null; }
         }
 
 
@@ -100,7 +105,11 @@ namespace OpenWrap.PackageManagement.Packages
 
         public SemanticVersion SemanticVersion
         {
-            get { return _version; }
+            get
+            {
+                EnsureDescriptorLoaded();
+                return _semver; 
+            }
         }
 
         public virtual IPackage Load()
@@ -121,9 +130,10 @@ namespace OpenWrap.PackageManagement.Packages
                     return;
 
                 ZipEntry versionFile = entries.SingleOrDefault(x => x.Name.EqualsNoCase("version"));
-                SemanticVersion versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().ToSemVer()) : null;
+                SemanticVersion versionFromVersionFile = versionFile != null ? zip.Read(versionFile, x => x.ReadString().Replace("\r","").Replace("\n", "").ToSemVer()) : null;
                 _descriptor = zip.Read(descriptorFile, x => new PackageDescriptorReader().Read(x));
-                _version = _descriptor.SemanticVersion ?? versionFromVersionFile ?? _descriptor.Version.ToSemVer();
+                _semver = _descriptor.SemanticVersion ?? versionFromVersionFile ?? _descriptor.Version.ToSemVer();
+
             }
         }
 

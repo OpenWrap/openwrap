@@ -26,4 +26,5 @@ namespace OpenWrap.PackageModel
         bool IsValid { get; }
         IPackage Load();
     }
+    
 }

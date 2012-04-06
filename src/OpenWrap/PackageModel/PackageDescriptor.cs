@@ -138,7 +138,7 @@ namespace OpenWrap.PackageModel
 #pragma warning disable 612,618
         public SemanticVersion SemanticVersion
         {
-            get { return _semanticVersion.Value ?? Version.ToSemVer(); }
+            get { return _semanticVersion.Value; }
             set { _semanticVersion.Value = value; }
         }
 #pragma warning restore 612,618

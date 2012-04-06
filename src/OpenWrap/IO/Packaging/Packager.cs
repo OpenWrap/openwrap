@@ -80,9 +80,9 @@ namespace OpenWrap.IO.Packaging
 
         static ZipEntry GetZipEntry(PackageContent contentFile)
         {
-            if (contentFile.RelativePath == ".")
+            var target = string.IsNullOrEmpty(contentFile.RelativePath) ? "." : contentFile.RelativePath;
+            if (target == ".")
                 return new ZipEntry(Path.GetFileName(contentFile.FileName));
-            var target = contentFile.RelativePath;
             if (target.Last() != '/')
                 target += '/';
             var fileEntry = new ZipEntry(Path.Combine(target, contentFile.FileName));
