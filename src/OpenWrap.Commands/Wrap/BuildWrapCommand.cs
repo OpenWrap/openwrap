@@ -20,7 +20,7 @@ using OpenWrap.Services;
 namespace OpenWrap.Commands.Wrap
 {
     [Command(Noun = "wrap", Verb = "build")]
-    public class BuildWrapCommand : AbstractCommand
+    public class BuildWrapCommand : AbstractCommand, ICommandWithWildcards
     {
         readonly IDirectory _currentDirectory;
         readonly IFileSystem _fileSystem;
@@ -30,6 +30,7 @@ namespace OpenWrap.Commands.Wrap
         IEnvironment _environment;
         SemanticVersion _generatedVersion;
         IFile _sharedAssemblyInfoFile;
+        ILookup<string, string> _wildcards;
 
         public BuildWrapCommand()
             : this(ServiceLocator.GetService<IFileSystem>(), ServiceLocator.GetService<IEnvironment>())
@@ -41,6 +42,7 @@ namespace OpenWrap.Commands.Wrap
             _fileSystem = fileSystem;
             _environment = environment;
             _currentDirectory = environment.CurrentDirectory;
+            _wildcards = new string[0].ToLookup(_ => _, _ => default(string));
         }
 
         [CommandInput]
@@ -206,7 +208,7 @@ namespace OpenWrap.Commands.Wrap
             var propertiesPi = builderType.GetProperty("Properties", BindingFlags.Instance | BindingFlags.Public);
             if (propertiesPi != null && typeof(IEnumerable<IGrouping<string, string>>).IsAssignableFrom(propertiesPi.PropertyType))
             {
-                var unknownLookup = unknown.ToLookup(x => x.Key, x => x.Value);
+                var unknownLookup = unknown.ToLookup(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
                 propertiesPi.SetValue(builder, unknownLookup, null);
             }
             return builder;
@@ -240,17 +242,22 @@ namespace OpenWrap.Commands.Wrap
         IPackageBuilder ChooseBuilderInstance(string commandLine)
         {
             commandLine = commandLine.Trim();
-            if (commandLine.StartsWithNoCase("msbuild"))
+            var isMsBuild = commandLine.StartsWithNoCase("msbuild");
+            var isDefault = commandLine.StartsWithNoCase("default");
+            var isxbuild =  commandLine.StartsWithNoCase("xbuild");
+            if (isMsBuild || isDefault || isxbuild)
             {
+                var configValue = isDefault ? "default" : (isMsBuild ? "msbuild" : "xbuild");
                 var builder = new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser())
                 {
-                    Incremental = Incremental
+                    Incremental = Incremental,
+                    BuildEngine = configValue
                 };
                 return builder;
             }
             if (commandLine.StartsWithNoCase("files"))
                 return new FilePackageBuilder();
-            if (commandLine.StartsWithNoCase("command"))
+            if (commandLine.StartsWithNoCase("command") || commandLine.StartsWithNoCase("process"))
                 return new CommandLinePackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
             if (commandLine.StartsWithNoCase("custom"))
                 return CreateCustomBuilder(commandLine);
@@ -273,7 +280,7 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<ICommandOutput> CreateBuilder()
         {
             _builders = (
-                            from commandLine in _environment.Descriptor.Build.DefaultIfEmpty("msbuild")
+                            from commandLine in _environment.Descriptor.Build.DefaultIfEmpty("default")
                             let builder = ChooseBuilderInstance(commandLine)
                             let parameters = ParseBuilderProperties(commandLine)
                             select AssignProperties(builder, OverrideWithInputs(parameters))
@@ -303,7 +310,7 @@ namespace OpenWrap.Commands.Wrap
             if (_sharedAssemblyInfoFile != null)
                 overrides.Add("OpenWrap-SharedAssemblyInfoFile", _sharedAssemblyInfoFile.Path.FullPath);
 
-            return overrides.GroupBy(x => x.Key, x => x.Value).Concat(parameters.Where(param => !overrides.ContainsKey(param.Key)));
+            return overrides.GroupBy(x => x.Key, x => x.Value).Concat(_wildcards.Concat(parameters).Where(param => !overrides.ContainsKey(param.Key)));
 
         }
 
@@ -418,5 +425,9 @@ namespace OpenWrap.Commands.Wrap
             _buildResults = _buildResults.Distinct().ToList();
         }
 
+        public void Wildcards(ILookup<string, string> values)
+        {
+            _wildcards = values;
+        }
     }
 }
