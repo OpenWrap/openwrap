@@ -1,9 +1,9 @@
 ﻿// ReSharper disable UnusedMember.Global
 using System;
 using System.Collections.Generic;
-using System.IO;
+using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.IO;
-using OpenWrap.PackageManagement.AssemblyResolvers;
 using OpenWrap.PackageModel;
 using OpenWrap.Runtime;
 using OpenWrap.Services;
@@ -14,13 +14,14 @@ namespace OpenWrap.Build
     {
         public static IDictionary<string, string> Initialize(string projectFile, string currentDirectory)
         {
+            var cd = LocalFileSystem.Instance.GetDirectory(currentDirectory);
             new ServiceRegistry()
-                .Override<IEnvironment>(() => new MSBuildEnvironment(Path.GetDirectoryName(projectFile), currentDirectory))
+                .Override<IEnvironment>(() => new CurrentDirectoryEnvironment(cd))
                 .Initialize();
 
             var env = ServiceLocator.GetService<IEnvironment>();
 
-            var scope = PathFinder.GetCurrentScope(env.Descriptor.DirectoryStructure, new OpenFileSystem.IO.Path(projectFile));
+            var scope = PathFinder.GetCurrentScope(env.Descriptor.DirectoryStructure, new Path(projectFile));
 
             var currentDescriptor = env.GetOrCreateScopedDescriptor(scope);
             return new Dictionary<string, string>
