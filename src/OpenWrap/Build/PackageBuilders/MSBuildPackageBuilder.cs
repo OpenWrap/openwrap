@@ -142,10 +142,10 @@ namespace OpenWrap.Build.PackageBuilders
             var build = Properties.Contains("BuildEngine") && Properties["BuildEngine"].Any() ? Properties["BuildEngine"].First() : BuildEngine;
 
             string path = null;
-            if (build == "default" || build == "msbuild")
+            if (build == "default" || (build == "msbuild" && !IsUnix))
                 path = GetMSBuildExecutionPath();
-            if (build == "xbuild" || (build == "default" && path == null))
-                path = IsUnix ? "xbuild.exe" : GetWinXbuildPath();
+            if (build == "xbuild" || (build == "msbuild" && IsUnix) || (build == "default" && path == null))
+                path = IsUnix ? "xbuild" : GetWinXbuildPath();
             return path;
         }
 
@@ -176,7 +176,9 @@ namespace OpenWrap.Build.PackageBuilders
 
         static string GetMSBuildExecutionPath()
         {
-            return (from versionFolder in Directory.GetDirectories(Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\"), "v*")
+            var dotNetPath = Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\");
+            if (!Directory.Exists(dotNetPath)) return null;
+            return (from versionFolder in Directory.GetDirectories(dotNetPath, "v*")
                     let version = new Version(Path.GetFileName(versionFolder).Substring(1))
                     orderby version descending
                     let file = Path.Combine(versionFolder, "msbuild.exe")
