@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.Win32;
 using OpenFileSystem.IO;
 using OpenWrap.Collections;
+using OpenWrap.Commands;
 using OpenWrap.IO;
 using OpenWrap.Runtime;
 using Path = System.IO.Path;
@@ -55,7 +56,13 @@ namespace OpenWrap.Build.PackageBuilders
             {
                 foreach (var proj in Project)
                 {
-                    var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(proj).FullPath;
+                    // hacky to account for win32 / unix fs differences
+                    var projectSpec = proj;
+                    if (System.IO.Path.DirectorySeparatorChar != '\\' && projectSpec.Contains('\\'))
+                    {
+                        projectSpec = projectSpec.Replace("\\", Path.DirectorySeparatorChar + "");
+                    }
+                    var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(projectSpec).FullPath;
                     IEnumerable<IFile> specFiles;
                     // TODO: Fix OFS. Horribe construction, the Files extension method seems to be buggy as fuck.
                     try
