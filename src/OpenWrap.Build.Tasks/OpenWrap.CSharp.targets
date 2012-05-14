@@ -37,7 +37,7 @@
     <OpenWrap-IncludeBinFiles Condition="'$(OpenWrap-IncludeBinFiles)' == ''">true</OpenWrap-IncludeBinFiles>
     <OpenWrap-IncludeSourceFiles Condition="'$(OpenWrap-IncludeSourceFiles)' == ''">false</OpenWrap-IncludeSourceFiles>
     <OpenWrap-IncludeContentFiles Condition="'$(OpenWrap-IncludeContentFiles)' == ''">false</OpenWrap-IncludeContentFiles>
-    
+
     <_OpenWrap-GenerateSharedAssemblyInfo>False</_OpenWrap-GenerateSharedAssemblyInfo>
     <_OpenWrap-GenerateSharedAssemblyInfo Condition="Exists('$(OpenWrap-SharedAssemblyInfoFile)')">False</_OpenWrap-GenerateSharedAssemblyInfo>
   </PropertyGroup>
@@ -97,91 +97,96 @@
   </Target>
 
 
-    <ItemDefinitionGroup>
-      <_OpenWrap-CurrentBuildOutput>
+  <Target Name="OpenWrap-AfterBuild"
+          Condition="'$(OpenWrap-EmitOutputInstructions)' != 'false'">
+
+    <!-- Build results for the current project and associated project references-->
+    <ItemGroup>
+      <!-- Binary result (.exe or .dll) -->
+      <_OpenWrap-CurrentBuildOutput Include="@(IntermediateAssembly)">
         <TargetPath>.</TargetPath>
       </_OpenWrap-CurrentBuildOutput>
-    </ItemDefinitionGroup>
 
-    <Target Name="OpenWrap-AfterBuild"
-            Condition="'$(OpenWrap-EmitOutputInstructions)' != 'false'">
+      <!-- Additional .netmodule files (?) -->
+      <_OpenWrap-CurrentBuildOutput Include="@(AddModule)">
+        <TargetPath>.</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
 
-      <!-- Build results for the current project and associated project references-->
-      <ItemGroup>
-        <!-- Binary result (.exe or .dll) -->
-        <_OpenWrap-CurrentBuildOutput Include="@(IntermediateAssembly)" />
+      <!-- Serialization assemblies -->
+      <_OpenWrap-CurrentBuildOutput Include="$(IntermediateOutputPath)$(_SGenDllName)" Condition="'$(_SGenDllCreated)' == 'true'">
+        <TargetPath>.</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
 
-        <!-- Additional .netmodule files (?) -->
-        <_OpenWrap-CurrentBuildOutput Include="@(AddModule)" />
+      <!-- PDB files-->
+      <_OpenWrap-CurrentBuildOutput Include="@(_DebugSymbolsIntermediatePath)">
+        <TargetPath>.</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
 
-        <!-- Serialization assemblies -->
-        <_OpenWrap-CurrentBuildOutput Include="$(IntermediateOutputPath)$(_SGenDllName)" Condition="'$(_SGenDllCreated)' == 'true'" />
+      <!-- XML doc file -->
+      <_OpenWrap-CurrentBuildOutput Include="@(FinalDocFile)">
+        <TargetPath>.</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
 
-        <!-- PDB files-->
-        <_OpenWrap-CurrentBuildOutput Include="@(_DebugSymbolsIntermediatePath)" />
+      <!-- Satellite assemblies  -->
+      <_OpenWrap-CurrentBuildOutput Include="@(IntermediateSatelliteAssembliesWithTargetPath)">
+        <TargetPath>%(IntermediateSatelliteAssembliesWithTargetPath.TargetPath)</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
 
-        <!-- XML doc file -->
-        <_OpenWrap-CurrentBuildOutput Include="@(FinalDocFile)" />
+      <!-- COM References -->
+      <_OpenWrap-CurrentBuildOutput Include="@(ReferenceComWrappersToCopyLocal); @(ResolvedIsolatedComModules); @(_DeploymentLooseManifestFile); @(NativeReferenceFile)">
+        <TargetPath>.</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
+      <!-- All project references and associated files (contracts, symbols, xml, etc) -->
+      <_OpenWrap-CurrentBuildOutput Include="@(ReferenceCopyLocalPaths)">
+        <TargetPath>%(ReferenceCopyLocalPaths.DestinationSubDirectory)</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
 
-        <!-- Satellite assemblies  -->
-        <_OpenWrap-CurrentBuildOutput Include="@(IntermediateSatelliteAssembliesWithTargetPath)">
-          <TargetPath>%(IntermediateSatelliteAssembliesWithTargetPath.TargetPath)</TargetPath>
-        </_OpenWrap-CurrentBuildOutput>
+      <!-- All things with CopyToOutputDirectory in project -->
+      <_OpenWrap-CurrentBuildOutput Include="@(AllItemsFullPathWithTargetPath)">
+        <TargetPath>%(AllItemsFullPathWithTargetPath.TargetPath)</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
 
-        <!-- COM References -->
-        <_OpenWrap-CurrentBuildOutput Include="@(ReferenceComWrappersToCopyLocal); @(ResolvedIsolatedComModules); @(_DeploymentLooseManifestFile); @(NativeReferenceFile)" />
+      <!-- Application config files -->
+      <_OpenWrap-CurrentBuildOutput Include="@(AppConfigWithTargetPath)">
+        <TargetPath>%(AppConfigWithTargetPath.TargetPath)</TargetPath>
+      </_OpenWrap-CurrentBuildOutput>
 
-        <!-- All project references and associated files (contracts, symbols, xml, etc) -->
-        <_OpenWrap-CurrentBuildOutput Include="@(ReferenceCopyLocalPaths)">
-          <TargetPath>%(ReferenceCopyLocalPaths.DestinationSubDirectory)</TargetPath>
-        </_OpenWrap-CurrentBuildOutput>
+      <!-- All of those files that were not included by OpenWrap itself -->
+      <_OpenWrap-FilteredBuildOutput Include="@(_OpenWrap-CurrentBuildOutput)" Condition="'%(_OpenWrap-CurrentBuildOutput.FromOpenWrap)' != 'True'" />
 
-        <!-- All things with CopyToOutputDirectory in project -->
-        <_OpenWrap-CurrentBuildOutput Include="@(AllItemsFullPathWithTargetPath)">
-          <TargetPath>%(AllItemsFullPathWithTargetPath.TargetPath)</TargetPath>
-        </_OpenWrap-CurrentBuildOutput>
 
-        <!-- Application config files -->
-        <_OpenWrap-CurrentBuildOutput Include="@(AppConfigWithTargetPath)">
-          <TargetPath>%(AppConfigWithTargetPath.TargetPath)</TargetPath>
-        </_OpenWrap-CurrentBuildOutput>
+      <_OpenWrap-SourceOutput Include="@(Compile)" />
 
-        <!-- All of those files that were not included by OpenWrap itself -->
-        <_OpenWrap-FilteredBuildOutput Include="@(_OpenWrap-CurrentBuildOutput)" Condition="'%(_OpenWrap-CurrentBuildOutput.FromOpenWrap)' != 'True'" />
+      <_OpenWrap-FilteredContent Include="@(Content)" Condition="'%(Content.FromOpenWrap)' != 'True'">
+        <TargetPath>%(Content.Link)</TargetPath>
+      </_OpenWrap-FilteredContent>
+    </ItemGroup>
 
-        
-        <_OpenWrap-SourceOutput Include="@(Compile)" />
 
-        <_OpenWrap-FilteredContent Include="@(Content)" Condition="'%(Content.FromOpenWrap)' != 'True'">
-          <TargetPath>%(Content.Link)</TargetPath>
-        </_OpenWrap-FilteredContent>
-      </ItemGroup>
+
+
+    <!--<Message Text="Build result: @(_OpenWrap-CurrentBuildOutput->'%(FullPath) in %(TargetPath)') " Importance="high" Condition="'%(_OpenWrap-CurrentBuildOutput.FromOpenWrap)' != 'True'"/>-->
+    <Message Text="@(Content->'%(Link) -> %(FullPath)')" Importance="high" />
+    <PropertyGroup>
+      <_OpenWrap-IsEntryPointProject Condition="'$(OpenWrap-CurrentProjectFile)' == '' or '$(OpenWrap-CurrentProjectFile)' == '$(MSBuildProjectDirectory)\$(MSBuildProjectFile)'">true</_OpenWrap-IsEntryPointProject>
+    </PropertyGroup>
+    <Message Text="%(_OpenWrap-AllAssemblyReferenceFiles.RelativeDir)" Importance="high" />
+    <PublishPackageContent
+      Condition="'$(_OpenWrap-IsEntryPointProject)' == 'true'"
       
+      IncludeBinFiles="$(OpenWrap-IncludeBinFiles)"
+      IncludePdbFiles="$(OpenWrap-IncludePdbFiles)"
+      IncludeCodeDocFiles="$(OpenWrap-IncludeCodeDocFiles)"
+      IncludeSourceFiles="$(OpenWRap-IncludeSourceFiles)"
+      IncludeContentFiles="$(OpenWrap-IncludeContentFiles)"
       
-      
-      
-      <!--<Message Text="Build result: @(_OpenWrap-CurrentBuildOutput->'%(FullPath) in %(TargetPath)') " Importance="high" Condition="'%(_OpenWrap-CurrentBuildOutput.FromOpenWrap)' != 'True'"/>-->
-      <Message Text="@(Content->'%(Link) -> %(FullPath)')" Importance="high" />
-      <PropertyGroup>
-        <_OpenWrap-IsEntryPointProject Condition="'$(OpenWrap-CurrentProjectFile)' == '' or '$(OpenWrap-CurrentProjectFile)' == '$(MSBuildProjectDirectory)\$(MSBuildProjectFile)'">true</_OpenWrap-IsEntryPointProject>
-      </PropertyGroup>
-      <Message Text="%(_OpenWrap-AllAssemblyReferenceFiles.RelativeDir)" Importance="high" />
-      <PublishPackageContent
-        Condition="'$(_OpenWrap-IsEntryPointProject)' == 'true'"
-      
-        IncludeBinFiles="$(OpenWrap-IncludeBinFiles)"
-        IncludePdbFiles="$(OpenWrap-IncludePdbFiles)"
-        IncludeCodeDocFiles="$(OpenWrap-IncludeCodeDocFiles)"
-        IncludeSourceFiles="$(OpenWRap-IncludeSourceFiles)"
-        IncludeContentFiles="$(OpenWrap-IncludeContentFiles)"
-      
-        RootPath="$(RootSolutionDirectory)"
-        ExportName="$(OpenWrap-ExportName)"
-        AllowBinDuplicates="$(OpenWrap-AllowBinDuplicates)"
+      RootPath="$(RootSolutionDirectory)"
+      ExportName="$(OpenWrap-ExportName)"
+      AllowBinDuplicates="$(OpenWrap-AllowBinDuplicates)"
 
-        ContentFiles="@(_OpenWrap-FilteredContent)"
-        BuildOutputFiles="@(_OpenWrap-FilteredBuildOutput)"
-        SourceFiles="@(_OpenWrap-SourceFiles)"
+      ContentFiles="@(_OpenWrap-FilteredContent)"
+      BuildOutputFiles="@(_OpenWrap-FilteredBuildOutput)"
+      SourceFiles="@(_OpenWrap-SourceFiles)"
       />
     <Delete Files="@(_OpenWrap-GeneratedSharedAssembly)" Condition="'$(_OpenWrap-GenerateSharedAssemblyInfo)' == 'True'" TreatErrorsAsWarnings="true" />
   </Target>
