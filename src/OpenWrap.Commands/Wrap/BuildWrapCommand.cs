@@ -393,7 +393,7 @@ namespace OpenWrap.Commands.Wrap
         {
             _destinationPath = Path != null
                                    ? _fileSystem.GetDirectory(Path).MustExist()
-                                   : _fileSystem.GetCurrentDirectory();
+                                   : _environment.CurrentDirectory;
             yield break;
         }
 

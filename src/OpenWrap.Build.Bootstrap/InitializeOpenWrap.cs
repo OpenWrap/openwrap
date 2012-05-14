@@ -22,6 +22,7 @@ namespace OpenWrap.Build
         [Output]
         public string DescriptorPath { get; set; }
 
+        [Required]
         public string CurrentProjectFile { get; set; }
 
         public bool StartDebug { get; set; }
@@ -38,7 +39,7 @@ namespace OpenWrap.Build
             var openWrapAssembly = asm.Select(x=>x.Key).First(x => x.GetName().Name.Equals("openwrap", StringComparison.OrdinalIgnoreCase));
             var initializer = openWrapAssembly.GetType("OpenWrap.Build.BuildInitializer");
             var method = initializer.GetMethod("Initialize", BindingFlags.Static | BindingFlags.Public);
-            var values = method.Invoke(null, new object[] { CurrentProjectFile, CurrentDirectory }) as IDictionary<string,string>;
+            var values = method.Invoke(null, new object[] { CurrentProjectFile, CurrentDirectory ?? Environment.CurrentDirectory }) as IDictionary<string,string>;
             Name = values[BuildConstants.PACKAGE_NAME];
             Scope = values[BuildConstants.PROJECT_SCOPE];
             DescriptorPath = values[BuildConstants.DESCRIPTOR_PATH];

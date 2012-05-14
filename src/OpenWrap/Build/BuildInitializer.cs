@@ -14,6 +14,7 @@ namespace OpenWrap.Build
     {
         public static IDictionary<string, string> Initialize(string projectFile, string currentDirectory)
         {
+
             var cd = LocalFileSystem.Instance.GetDirectory(currentDirectory);
             new ServiceRegistry()
                 .Override<IEnvironment>(() => new CurrentDirectoryEnvironment(cd))

@@ -30,7 +30,7 @@ namespace OpenWrap.Build.PackageBuilders
             Properties = new string[0].ToLookup(_ => _);
         }
 
-        static string[] ReservedProperties = new[] { "BuildEngine" };
+        public static readonly string[] ReservedProperties = new[] { "BuildEngine" };
         public ILookup<string, string> Properties { get; set; }
 
         public IEnumerable<string> Platform { get; set; }
