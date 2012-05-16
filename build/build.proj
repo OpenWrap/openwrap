@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5" InitialTargets="_Initialize">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="3.5">
   <PropertyGroup>
     <OpenWrap-BuildTasksDirectory>$(MSBuildProjectDirectory)\..\wraps\openwrap\build</OpenWrap-BuildTasksDirectory>
   </PropertyGroup>
@@ -12,8 +12,15 @@
       <Output TaskParameter="Name" PropertyName="OpenWrap-PackageName" />
     </InitializeOpenWrap>
 
-
   </Target>
+  
+  
+  <PropertyGroup>
+    <BuildArgs Condition="'$(BUILD_NUMBER)' != ''">
+      <BuildCounter>%BUILD_NUMBER%</BuildCounter>
+    </BuildArgs>
+  </PropertyGroup>
+  
   <Target Name="Build" DependsOnTargets="_Initialize">
 
 
@@ -21,10 +28,14 @@
 
     <RunCommand
       Verb="build"
-      Noun="wrap">
+      Noun="wrap"
+      Args="$(BuildArgs)"
+      Capture="PackageBuilt.Version">
+      <Output TaskParameter="Captures" ItemName="Captured" />
     </RunCommand>
     
     
+    <Message Importance="High" Text="##teamcity[buildNumber '@(Captured)']" Condition="'$(BUILD_NUMBER)' != '' and '%(Property)' == 'PackageBuilt.Version'" />
   </Target>
 
   <Target Name="Publish" DependsOnTargets="Build">
@@ -35,7 +46,7 @@
     <PropertyGroup>
       <PublishArguments>
         <Name>$(OpenWrap-PackageName)</Name>
-        <Remote>file://galaxy.caffeine-it.net/packages</Remote>
+        <RemoteRepository>file://galaxy.caffeine-it.net/packages</RemoteRepository>
       </PublishArguments>
     </PropertyGroup>
 
