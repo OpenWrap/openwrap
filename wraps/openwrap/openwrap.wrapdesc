@@ -23,10 +23,6 @@ assembly-info: assembly-info
 assembly-info: build
 assembly-info: description
 assembly-info: trademark
-<<<<<<< HEAD
-semantic-version: 2.0.3+5
-=======
 include-legacy-version: true
-semantic-version: 2.0.3+24
-version: 2.0.3.24
->>>>>>> 2d7fc0c... Adds support for optionally including version header for 1.0 compat
+semantic-version: 2.0.3+26
+version: 2.0.3.26
