@@ -48,7 +48,7 @@ namespace OpenWrap.Preloading
                 
                 try
                 {
-                    bootstrapPackagePaths = GetLatestPackagesForSystemRepository(systemDirectory, packageNamesToLoad);
+                    bootstrapPackagePaths = GetLatestPackagesForSystemRepository(GetRepositoryDirectoryFromProjectDirectory(systemDirectory), packageNamesToLoad);
                 }
                 catch (PackageMissingException e)
                 {
@@ -194,7 +194,7 @@ namespace OpenWrap.Preloading
 
         static IEnumerable<string> GetLatestPackagesForSystemRepository(DirectoryInfo systemRepository, IEnumerable<string> packageNames)
         {
-            systemRepository = GetRepositoryDirectoryFromProjectDirectory(systemRepository);
+            //systemRepository = GetRepositoryDirectoryFromProjectDirectory(systemRepository);
 
             EnsurePackagesUnzippedInRepository(systemRepository);
             return ResolvePackages(GetCacheDirectoryFromRepositoryDirectory(systemRepository), packageNames);
