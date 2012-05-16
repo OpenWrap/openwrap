@@ -28,6 +28,7 @@ namespace OpenWrap.PackageModel
         string BuildConfiguration { get; }
         string Trademark { get; }
         ICollection<string> Maintainer { get; }
+        bool IncludeLegacyVersion { get; }
         IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read);
         IEnumerable<IPackageDescriptorEntry> GetPersistableEntries();
     }
