@@ -16,7 +16,10 @@ namespace OpenWrap.PackageModel
             VersionVertices = versions != null ? new List<VersionVertex>(versions).AsReadOnly() : Enumerable.Empty<VersionVertex>();
             ContentOnly = Tags.ContainsNoCase("content");
             Anchored = Tags.ContainsNoCase("anchored");
+            Edge = Tags.ContainsNoCase("edge");
         }
+
+        public bool Edge { get; private set; }
 
         public bool Anchored { get; private set; }
 
@@ -36,7 +39,8 @@ namespace OpenWrap.PackageModel
 
         public bool IsFulfilledBy(SemanticVersion version)
         {
-            return VersionVertices.All(x => x.IsCompatibleWith(version));
+            return VersionVertices.All(x => x.IsCompatibleWith(version))
+                && (Edge || (!Edge && version.PreRelease == null));
         }
 
         public bool Equals(PackageDependency other)

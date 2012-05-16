@@ -49,6 +49,11 @@ namespace OpenWrap.PackageModel
             return this;
         }
 
+        public PackageDependencyBuilder Edge(bool isEdge = true)
+        {
+            SetTagValue("edge", isEdge);
+            return this;
+        }
         public PackageDependencyBuilder Name(string name)
         {
             _name = name;

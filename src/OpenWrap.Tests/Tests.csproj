@@ -71,6 +71,7 @@
     <Compile Include="Commands\add_wrap\adding_major_version.cs" />
     <Compile Include="Commands\add_wrap\from_remote\remote_is_used.cs" />
     <Compile Include="Commands\add_wrap\locks\lock_is_respected.cs" />
+    <Compile Include="Commands\add_wrap\edge\without_flag.cs" />
     <Compile Include="Commands\build_wrap\assembly_info\specified.cs" />
     <Compile Include="Commands\build_wrap\failed_build.cs" />
     <Compile Include="Commands\build_wrap\FailingBuild.cs" />
@@ -732,7 +733,6 @@
     <Folder Include="Commands\remove_wrap\hooks\" />
     <Folder Include="Commands\repository\" />
     <Folder Include="Commands\solutionplugin.start\" />
-    <Folder Include="Commands\Wrap\buildwrap\" />
     <Folder Include="descriptors\" />
     <Folder Include="Exporters\content\" />
     <Folder Include="solution_plugins\" />

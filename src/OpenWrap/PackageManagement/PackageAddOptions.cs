@@ -11,6 +11,7 @@ namespace OpenWrap.PackageManagement
         Force = 8,
         Test = 16,
         Hooks = 32,
+        Edge = 64,
         Default = Test | UpdateDescriptor | Hooks
     }
 }

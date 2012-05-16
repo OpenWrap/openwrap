@@ -15,7 +15,7 @@ namespace Tests.Commands.add_wrap
             given_project_repository(new InMemoryRepository("Project repository"));
             given_project_package("sauron", "1.0.0.0");
             given_system_package("sauron", "1.0.0.2");
-            given_remote_package("sauron", "1.0.0.1".ToVersion());
+            given_remote_package("sauron", "1.0.0.1");
 
             when_executing_command("sauron");
         }

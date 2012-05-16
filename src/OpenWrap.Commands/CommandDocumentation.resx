@@ -472,4 +472,13 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="update-wrap-scope" xml:space="preserve">
     <value>Specifies the scope for which to issue an update.</value>
   </data>
+  <data name="add-wrap-edge" xml:space="preserve">
+    <value>Include pre-release packages.</value>
+  </data>
+  <data name="build-wrap-buildcounter" xml:space="preserve">
+    <value>Sets the build counter used for incremental version numbers. Can be 'file' or a number, and can include environment variables (for example %BUILD_NUMBER% for TeamCity.</value>
+  </data>
+  <data name="set-wrap-edge" xml:space="preserve">
+    <value>Include pre-release packages for the specified dependency.</value>
+  </data>
 </root>

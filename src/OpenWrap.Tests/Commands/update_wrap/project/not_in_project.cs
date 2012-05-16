@@ -11,7 +11,7 @@ namespace Tests.Commands.update_wrap.project
         public not_in_project()
         {
             given_system_package("goldberry", "2.0.0");
-            given_remote_package("goldberry", "2.1.0".ToVersion());
+            given_remote_package("goldberry", "2.1.0");
 
             when_executing_command();
         }

@@ -9,8 +9,8 @@ namespace Tests.Commands.add_wrap
         {
             given_file_based_project_repository();
 
-            given_remote_package("sauron", "1.0.0".ToVersion());
-            given_remote_package("sauron", "2.0.0".ToVersion());
+            given_remote_package("sauron", "1.0.0");
+            given_remote_package("sauron", "2.0.0");
             when_executing_command("sauron -version 1");
         }
 

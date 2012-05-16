@@ -9,7 +9,7 @@ namespace Tests.Commands.update_wrap.system
         public from_remote_when_already_at_latest()
         {
             given_system_package("goldberry", "2.2.0");
-            given_remote_package("goldberry", "2.2.0".ToVersion());
+            given_remote_package("goldberry", "2.2.0");
             when_executing_command("-system");
         }
 

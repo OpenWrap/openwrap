@@ -13,8 +13,8 @@ namespace Tests.Commands.list_wrap
         {
             given_remote_repository("first");
             given_remote_repository("second");
-            given_remote_package("first", "one-ring", "1.0.0".ToVersion());
-            given_remote_package("second", "ring-of-power", "1.0.0".ToVersion());
+            given_named_remote_package("first", "one-ring", "1.0.0");
+            given_named_remote_package("second", "ring-of-power", "1.0.0");
 
             when_executing_command("ring -remote");
         }

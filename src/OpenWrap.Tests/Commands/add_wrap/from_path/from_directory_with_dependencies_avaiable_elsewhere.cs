@@ -10,7 +10,7 @@ namespace Tests.Commands.add_wrap.from_path
         {
             given_current_directory(@"c:\\rohan");
             given_project_repository();
-            given_remote_package("one-ring", "2.0.0".ToVersion());
+            given_remote_package("one-ring", "2.0.0");
             given_file_package(@"c:\mordor", "sauron", "1.0.0", "depends: one-ring");
 
             when_executing_command(@"sauron -from c:\mordor");

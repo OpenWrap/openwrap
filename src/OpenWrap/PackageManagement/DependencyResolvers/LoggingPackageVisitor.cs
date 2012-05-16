@@ -46,9 +46,20 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         public virtual bool Visit(IEnumerable<PackageDependency> dependencies)
         {
-            return VisitCore(dependencies.Select(ReadDependency).ToList());
+            return VisitCore(ReadDependencies(dependencies));
         }
 
+        IEnumerable<Func<IPackageInfo, bool?>> ReadDependencies(IEnumerable<PackageDependency> dependencies)
+        {
+            foreach(var dependency in dependencies)
+            {
+                _includePrePackages = dependency.Edge;
+                yield return ReadDependency(dependency);
+                _includePrePackages = false;
+            }
+        }
+
+        bool _includePrePackages = false;
         public override bool Visit(IEnumerable<Func<IPackageInfo, bool?>> dependencies)
         {
             return VisitCore(dependencies);
@@ -65,7 +76,8 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
                 _currentNode = new Stack<Node>(_currentNode.Reverse()), 
                 _depToFunc = _depToFunc, 
                 _funcToDep = _funcToDep, 
-                DependencyReader = DependencyReader
+                DependencyReader = DependencyReader,
+                _includePrePackages = _includePrePackages
             };
         }
 
@@ -116,6 +128,9 @@ namespace OpenWrap.PackageManagement.DependencyResolvers
 
         protected override bool VisitPackages(IEnumerable<IPackageInfo> matchingPackages)
         {
+            if (_includePrePackages == false)
+                matchingPackages = matchingPackages.Where(_ => _.SemanticVersion.PreRelease == null &&
+                                                               _.Dependencies.Any(dep=>dep.Edge) == false);
             if (!matchingPackages.Any())
                 NotFound.Add(new CallStack(_currentNode));
             return base.VisitPackages(matchingPackages);

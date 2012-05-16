@@ -14,8 +14,8 @@ namespace Tests.Commands.update_wrap.locks
             given_project_package("vilya", "1.0.0.0", "depends: narnya");
             given_locked_package("narnya", "1.0.0.0");
 
-            given_remote_package("narnya", "1.0.0.1".ToVersion());
-            given_remote_package("vilya", "1.0.0.1".ToVersion());
+            given_remote_package("narnya", "1.0.0.1");
+            given_remote_package("vilya", "1.0.0.1");
 
             when_executing_command();
         }

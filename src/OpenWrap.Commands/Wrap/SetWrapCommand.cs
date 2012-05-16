@@ -43,6 +43,9 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool AnyVersion { get; set; }
 
+        [CommandInput]
+        public bool Edge { get; set; }
+
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield return ValidateInputs;
@@ -134,6 +137,10 @@ namespace OpenWrap.Commands.Wrap
             if (MaxVersion != null)
             {
                 builder = builder.VersionVertex(new LessThanVersionVertex(MaxVersion.ToSemVer()));
+            }
+            if (Edge)
+            {
+                builder = builder.Edge();
             }
             return builder;
         }

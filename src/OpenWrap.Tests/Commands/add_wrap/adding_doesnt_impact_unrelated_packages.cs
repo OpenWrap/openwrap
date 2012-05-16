@@ -15,8 +15,8 @@ namespace Tests.Commands.add_wrap
             given_project_package("one-ring", "1.0.0");
             given_dependency("depends: one-ring = 1.0");
 
-            given_remote_package("sauron", "1.0.0".ToVersion());
-            given_remote_package("one-ring", "1.0.1".ToVersion());
+            given_remote_package("sauron", "1.0.0");
+            given_remote_package("one-ring", "1.0.1");
             when_executing_command("sauron");
         }
 

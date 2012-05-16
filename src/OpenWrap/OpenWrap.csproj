@@ -204,6 +204,7 @@
     <Compile Include="PackageModel\PackageDependency.cs" />
     <Compile Include="PackageModel\PackageGraphExtensions.cs" />
     <Compile Include="PackageModel\Parsers\DependsParser.cs" />
+    <Compile Include="PackageModel\Parsers\SingleVersionValue.cs" />
     <Compile Include="ProjectModel\MSBuildProject.cs" />
     <Compile Include="ProjectModel\Drivers.File\ProjectConstants.cs" />
     <Compile Include="ProjectModel\Drivers.File\SolutionConstants.cs" />
@@ -520,7 +521,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" />
+      <UserProperties ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

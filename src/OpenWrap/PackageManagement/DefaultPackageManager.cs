@@ -315,7 +315,8 @@ namespace OpenWrap.PackageManagement
             return new PackageDependencyBuilder(packageToAdd.Name)
                     .SetVersionVertices(ToVersionVertices(packageToAdd))
                     .Anchored((options & PackageAddOptions.Anchor) == PackageAddOptions.Anchor)
-                    .Content((options & PackageAddOptions.Content) == PackageAddOptions.Content);
+                    .Content((options & PackageAddOptions.Content) == PackageAddOptions.Content)
+                    .Edge((options & PackageAddOptions.Edge) == PackageAddOptions.Edge);
         }
 
         static IPackageDescriptor ToDescriptor(PackageRequest package, PackageAddOptions options)

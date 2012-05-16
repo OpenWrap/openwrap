@@ -11,8 +11,8 @@ namespace Tests.Commands.add_wrap.locks
             given_project_package("sauron", "1.0.0");
             given_locked_package("sauron", "1.0.0");
 
-            given_remote_package("one-ring", "1.0.0".ToVersion(), "depends: sauron");
-            given_remote_package("sauron", "2.0.0".ToVersion());
+            given_remote_package("one-ring", "1.0.0", "depends: sauron");
+            given_remote_package("sauron", "2.0.0");
 
             given_dependency("depends: sauron");
 

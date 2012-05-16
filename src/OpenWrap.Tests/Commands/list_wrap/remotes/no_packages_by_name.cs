@@ -11,7 +11,7 @@ namespace Tests.Commands.list_wrap.remotes
         public no_packages_by_name()
         {
             given_remote_repository("the-shire");
-            given_remote_package("the-shire", "frodo", "1.0".ToVersion());
+            given_named_remote_package("the-shire", "frodo", "1.0");
             when_executing_command("sauron -remote the-shire");
         }
         [Test]

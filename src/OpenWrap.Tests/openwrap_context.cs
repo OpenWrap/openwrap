@@ -122,15 +122,15 @@ namespace Tests
             Environment.CurrentDirectoryRepository = repository;
         }
 
-        protected void given_remote_package(string name, Version version, params string[] dependencies)
+        protected void given_remote_package(string name, string version, params string[] dependencies)
         {
             // note Version is a version type because of overload resolution...
-            AddPackage(RemoteRepositories.First(), name, version.ToString(), dependencies);
+            AddPackage(RemoteRepositories.First(), name, version, dependencies);
         }
 
-        protected void given_remote_package(string repositoryName, string name, Version version, params string[] dependencies)
+        protected void given_named_remote_package(string repositoryName, string name, string version, params string[] dependencies)
         {
-            AddPackage(RemoteRepositories.First(x => x.Name == repositoryName), name, version.ToString(), dependencies);
+            AddPackage(RemoteRepositories.First(x => x.Name == repositoryName), name, version, dependencies);
         }
 
         protected void given_system_package(string name, string version, params string[] dependencies)
