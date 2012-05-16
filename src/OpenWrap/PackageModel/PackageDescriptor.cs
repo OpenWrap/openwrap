@@ -30,10 +30,16 @@ namespace OpenWrap.PackageModel
         SingleStringValue _trademark;
         MultiLine<string> _maintainer;
         SingleVersionValue _version;
+        SingleBoolValue _includeLegacyVersion;
 
         public ICollection<string> Maintainer
         {
             get { return _maintainer; }
+        }
+
+        public bool IncludeLegacyVersion
+        {
+            get { return _includeLegacyVersion.Value; }
         }
 
         public string Trademark
@@ -132,6 +138,7 @@ namespace OpenWrap.PackageModel
         public Version Version
         {
             get { return _version.Value; }
+            set { _version.Value = value; }
         }
 
 #pragma warning disable 612,618
@@ -220,6 +227,7 @@ namespace OpenWrap.PackageModel
             _copyright = new SingleStringValue(Entries, "copyright");
             _buildConfiguration = new SingleStringValue(Entries, "build-configuration");
             _trademark = new SingleStringValue(Entries, "trademark");
+            _includeLegacyVersion = new SingleBoolValue(Entries, "include-legacy-version", false);
         }
 
         public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> scopedEntries)

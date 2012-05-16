@@ -311,10 +311,16 @@ namespace OpenWrap.Commands.Wrap
         {
             var packageName = Name ?? _environment.Descriptor.Name;
 
-            var packageDescriptorForEmbedding = new PackageDescriptor(GetCurrentPackageDescriptor());
+            var currentPackageDescriptor = GetCurrentPackageDescriptor();
+            var packageDescriptorForEmbedding = new PackageDescriptor(currentPackageDescriptor);
 
             packageDescriptorForEmbedding.SemanticVersion = _generatedVersion;
             packageDescriptorForEmbedding.Name = packageName;
+
+#pragma warning disable 612,618
+            if (currentPackageDescriptor.IncludeLegacyVersion)
+                packageDescriptorForEmbedding.Version = _generatedVersion.ToVersion();
+#pragma warning restore 612,618
 
             var packageFilePath = _destinationPath.GetFile(
                 PackageNameUtility.PackageFileName(packageName, _generatedVersion.ToString()));

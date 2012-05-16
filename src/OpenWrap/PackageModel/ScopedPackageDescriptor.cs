@@ -36,6 +36,12 @@ namespace OpenWrap.PackageModel
                 InitializeHeaders();
             }
             public ICollection<string> Maintainer { get { return _parent.Maintainer; } }
+
+            public bool IncludeLegacyVersion
+            {
+                get { return _parent.IncludeLegacyVersion; }
+            }
+
             public string Trademark { get { return _parent.Trademark; } }
             public ScopedPackageDescriptor(PackageDescriptor parent)
             {
