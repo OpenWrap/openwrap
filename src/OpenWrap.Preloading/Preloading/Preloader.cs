@@ -65,7 +65,7 @@ namespace OpenWrap.Preloading
             throw new PackageMissingException(fileNotFound.SelectMany(_ => _.Paths).ToList());
         }
 
-        public static IEnumerable<KeyValuePair<Assembly, string>> LoadAssemblies(IEnumerable<string> packageFolders)
+        public static IEnumerable<KeyValuePair<System.Reflection.Assembly, string>> LoadAssemblies(IEnumerable<string> packageFolders)
         {
             return (
                            from asm in packageFolders
@@ -74,7 +74,7 @@ namespace OpenWrap.Preloading
                            from file in Directory.GetFiles(assemblyPath, "*.dll").Concat(Directory.GetFiles(assemblyPath, "*.exe"))
                            let assembly = TryLoadAssembly(file)
                            where assembly != null
-                           select new KeyValuePair<Assembly, string>(assembly, file)
+                           select new KeyValuePair<System.Reflection.Assembly, string>(assembly, file)
                    ).ToList();
         }
 
@@ -374,11 +374,11 @@ namespace OpenWrap.Preloading
             return SemanticVersion.TryParseExact(value);
         }
 
-        static Assembly TryLoadAssembly(string asm)
+        static System.Reflection.Assembly TryLoadAssembly(string asm)
         {
             try
             {
-                return Assembly.LoadFrom(asm);
+                return System.Reflection.Assembly.LoadFrom(asm);
             }
             catch
             {
