@@ -31,7 +31,7 @@ namespace Tests.Commands.build_wrap
         [Test]
         public void package_information_is_output()
         {
-            Results.OfType<PackageBuilt>().Single().ShouldNotBeNull().PackageFile.Exists.ShouldBeTrue();
+            Results.OfType<PackageBuilt>().Single().ShouldNotBeNull().File.Exists.ShouldBeTrue();
         }
     }
 }

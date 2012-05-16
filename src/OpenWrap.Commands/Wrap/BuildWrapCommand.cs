@@ -43,6 +43,7 @@ namespace OpenWrap.Commands.Wrap
             _environment = environment;
             _currentDirectory = environment.CurrentDirectory;
             _wildcards = new string[0].ToLookup(_ => _, _ => default(string));
+            BuildCounter = "file";
         }
 
         [CommandInput]
@@ -81,7 +82,12 @@ namespace OpenWrap.Commands.Wrap
         }
 
         [CommandInput]
+        public string BuildCounter { get; set; }
+
+        [CommandInput]
         public string Version { get; set; }
+
+
 
         public void Wildcards(ILookup<string, string> values)
         {
@@ -105,10 +111,10 @@ namespace OpenWrap.Commands.Wrap
 
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
+            yield return SetOutputPath;
             yield return SetEnvironmentToFromInput;
             yield return VerifyDescriptorPresent;
             yield return VerifyVersion;
-            yield return SetOutputPath;
             yield return CreateBuilder;
         }
 
@@ -334,7 +340,7 @@ namespace OpenWrap.Commands.Wrap
                 yield return new Info(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
 
             Packager.NewFromFiles(packageFilePath, packageContent);
-            yield return new PackageBuilt(packageFilePath);
+            yield return new PackageBuilt(packageFilePath, _generatedVersion);
         }
 
         IEnumerable<IGrouping<string, string>> ParseBuilderProperties(string commandLine)
@@ -423,14 +429,20 @@ namespace OpenWrap.Commands.Wrap
                 yield return new PackageVersionMissing();
                 yield break;
             }
-            if (Version == null)
+
+            Action<string> writer = null;
+            Func<string> reader = null;
+            int build;
+            if (BuildCounter != "file" && int.TryParse(Environment.ExpandEnvironmentVariables(BuildCounter),out build))
             {
-                _generatedVersion = BuildManagement.GenerateVersion(
-                    _environment.Descriptor,
-                    versionFile);
+
+                reader = () => (build - 1).ToString();
+                writer = counter => { };
             }
-            else
-                _generatedVersion = Version.ToSemVer();
+            _generatedVersion = Version.ToSemVer() ??
+                                BuildManagement.GenerateVersion(
+                                    _environment.Descriptor,
+                                    versionFile, reader, writer);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Tests.Commands.build_wrap.from_path
         public void package_details_are_output()
         {
             Results.OfType<PackageBuilt>().SingleOrDefault().ShouldNotBeNull()
-                .PackageFile.ShouldBe(FileSystem.GetCurrentDirectory().GetFile("test-1.0.0+0.wrap"));
+                .File.ShouldBe(FileSystem.GetCurrentDirectory().GetFile("test-1.0.0+0.wrap"));
         }
 
     }

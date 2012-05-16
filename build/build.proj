@@ -21,7 +21,8 @@
 
     <RunCommand
       Verb="build"
-      Noun="wrap" />
+      Noun="wrap">
+    </RunCommand>
     
     
   </Target>

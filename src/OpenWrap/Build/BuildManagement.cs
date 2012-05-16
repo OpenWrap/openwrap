@@ -24,7 +24,7 @@ namespace OpenWrap.Build
             return projectAsmFile;
         }
         // TODO: Issue with not using the correct IFile when building -from
-        public static SemanticVersion GenerateVersion(IPackageDescriptor descriptor, IFile versionFile)
+        public static SemanticVersion GenerateVersion(IPackageDescriptor descriptor, IFile versionFile, Func<string> incrementalReader = null, Action<string> incrementalWriter = null)
         {
             
             var ver = versionFile.Exists
@@ -37,10 +37,12 @@ namespace OpenWrap.Build
                                                   .GetDirectory("_cache")
                                                   .GetFile("_lastBuild");
 
+            
             var builder = new SemanticVersionGenerator(
                 ver,
-                () => lastBuildFile.Exists ? lastBuildFile.ReadString() : "-1",
-                lastBuildFile.WriteString);
+                incrementalReader ?? (() => lastBuildFile.Exists ? lastBuildFile.ReadString() : "-1"),
+                incrementalWriter ?? lastBuildFile.WriteString);
+
             return builder.Version();
         }
     }

@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
+	ProjectSection(SolutionItems) = preProject
+		..\openwrap.tests.wrapdesc = ..\openwrap.tests.wrapdesc
+		..\openwrap.wrapdesc = ..\openwrap.wrapdesc
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FF7BA218-B2A1-462A-8F51-153337027853}"
 	ProjectSection(SolutionItems) = preProject
