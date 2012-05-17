@@ -256,7 +256,7 @@ namespace OpenWrap.Commands.Wrap
         {
             using (Stream descriptorStream = descriptor.OpenWrite())
             {
-                new PackageDescriptorReaderWriter().Write(packageDescriptor, descriptorStream);
+                new PackageDescriptorWriter().Write(packageDescriptor, descriptorStream);
             }
         }
 

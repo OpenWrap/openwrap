@@ -41,7 +41,7 @@ namespace OpenWrap.Commands.Wrap
         public bool System { get; set; }
 
         [CommandInput]
-        public Version Version { get; set; }
+        public SemanticVersion Version { get; set; }
 
 
         protected PackageRemoveOptions Options
@@ -130,15 +130,6 @@ namespace OpenWrap.Commands.Wrap
                 _targetDescriptor = HostEnvironment.GetOrCreateScopedDescriptor(Scope);
             else
                 yield return new Error("Not in a package directory.");
-        }
-    }
-    public class PackageLockedNotRemoved : Error
-    {
-        public string PackageName { get; set; }
-
-        public PackageLockedNotRemoved(string packageName) : base("Cannont remove package '{0}' as it is currently locked. Unlock the package with 'unlock-wrap {0}' first, then remove.", packageName)
-        {
-            PackageName = packageName;
         }
     }
 }

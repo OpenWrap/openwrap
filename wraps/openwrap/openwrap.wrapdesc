@@ -1,12 +1,28 @@
 ﻿depends: sharpziplib = 0.86
-depends: openwrap content = 2.0
+depends: openwrap content >= 2.0 and < 3.0
+depends: Mono.Cecil = 0.9.4
+depends: tdnet-framework
+depends: openfilesystem = 1.0.1
 anchored: true
 build: msbuild; profile=net35; project=src\OpenWrap\OpenWrap.csproj; project=src\OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj; project=src\OpenWrap.Build.Tasks\OpenWrap.Build.Tasks.csproj; project=src\OpenWrap.Commands\OpenWrap.Commands.csproj; project=src\OpenWrap.VisualStudio.SolutionPlugins\OpenWrap.SolutionPlugins.VisualStudio.csproj
+# CreateHardLinksForAdditionalFilesIfPossible=true;CreateHardLinksForCopyAdditionalFilesIfPossible=true;CreateHardLinksForCopyFilesToOutputDirectoryIfPossible=true;CreateHardLinksForCopyLocalIfPossible=true;CreateHardLinksForPublishFilesIfPossible=true;BuildInParallel=true;
 name: openwrap
-depends: tdnet-framework
+title: OpenWrap Package Manager
 use-symlinks: true
-depends: Mono.Cecil = 0.9.4
 directory-structure: src\*{scope: Tests=tests}*\**
 directory-structure: src\{scope: Tests.VisualStudio=tests}\**
-depends: openfilesystem = 1.0.1
-version: 2.0.2.87978029
+trademark: OpenWrap is a trademark of naughtyProd Limited 2010-2012
+author: Sebastien Lambla <seb@serialseb.com>
+copyright: © 2010-2012 naughtyProd Limited & Sebastien Lambla
+description: OpenWrap is an Open-Source dependency manager for .net platforms.
+assembly-info: author
+assembly-info: copyright
+assembly-info: assembly-version
+assembly-info: file-version
+assembly-info: assembly-info
+assembly-info: build
+assembly-info: description
+assembly-info: trademark
+include-legacy-version: true
+semantic-version: 2.0.3+26
+version: 2.0.3.26

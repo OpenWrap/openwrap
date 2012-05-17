@@ -8,7 +8,7 @@ namespace Tests.Commands.clean_wrap
 {
     public class cleaning_package_from_both_repositories : command<CleanWrapCommand>
     {
-        static readonly string LionelVersion = "1.0.0.123";
+        static readonly string LionelVersion = "1.0.0+123";
 
         public cleaning_package_from_both_repositories()
         {
@@ -30,7 +30,7 @@ namespace Tests.Commands.clean_wrap
             Environment.SystemRepository
                     .PackagesByName["lionel"]
                     .ShouldHaveCountOf(1)
-                    .ShouldHaveAll(v => v.Version.ToString().Equals(LionelVersion));
+                    .ShouldHaveAll(v => v.SemanticVersion.ToString().Equals(LionelVersion));
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace Tests.Commands.clean_wrap
             Environment.ProjectRepository
                     .PackagesByName["lionel"]
                     .ShouldHaveCountOf(1)
-                    .ShouldHaveAll(v => v.Version.ToString().Equals(LionelVersion));
+                    .ShouldHaveAll(v => v.SemanticVersion.ToString().Equals(LionelVersion));
         }
 
         [Test]

@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using NUnit.Framework;
+using OpenFileSystem.IO;
 using OpenWrap;
+using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
@@ -31,8 +33,7 @@ namespace Tests.Commands.init_wrap
         [Test]
         public void descriptor_should_have_openwrap_as_content_dependency()
         {
-            new PackageDescriptorReaderWriter()
-                    .Read(Environment.CurrentDirectory.GetFile("newpackage.wrapdesc"))
+            new PackageDescriptorReader().Read(Environment.CurrentDirectory.GetFile("newpackage.wrapdesc"))
                     .Dependencies
                     .FirstOrDefault(x=>x.Name.EqualsNoCase("openwrap"))
                     .ShouldNotBeNull()

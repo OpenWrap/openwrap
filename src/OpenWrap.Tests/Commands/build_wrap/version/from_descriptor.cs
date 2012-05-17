@@ -13,7 +13,7 @@ namespace Tests.Commands.build_wrap.version
         {
             given_descriptor(FileSystem.GetCurrentDirectory(), new PackageDescriptor()
             {
-                Name = "test", Version="1.0.0.0".ToVersion(), Build = {"none"}
+                Name = "test", SemanticVersion="1.0.0.0".ToSemVer(), Build = {"none"}
             });
             
             given_current_directory_repository(new CurrentDirectoryRepository());
@@ -30,7 +30,7 @@ namespace Tests.Commands.build_wrap.version
         {
             Environment.CurrentDirectoryRepository
                 .PackagesByName["test"]
-                .ShouldHaveCountOf(1).First().Version.ShouldBe("1.0.0.0".ToVersion());
+                .ShouldHaveCountOf(1).First().SemanticVersion.ShouldBe("1.0.0.0".ToSemVer());
         }
     }
 }

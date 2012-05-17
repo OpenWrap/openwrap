@@ -40,11 +40,6 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\lib\vs2008\envdte80.dll</HintPath>
     </Reference>
-    <Reference Include="Extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\lib\vs2008\Extensibility.dll</HintPath>
-    </Reference>
     <Reference Include="JetBrains.Platform.ReSharper.ActionManagement">
       <HintPath>..\..\lib\resharper-6.0.0\JetBrains.Platform.ReSharper.ActionManagement.dll</HintPath>
       <Aliases>resharper</Aliases>

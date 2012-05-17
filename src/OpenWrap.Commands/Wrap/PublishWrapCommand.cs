@@ -19,7 +19,7 @@ namespace OpenWrap.Commands.Wrap
         string _packageFileName;
         string _packageName;
         Func<Stream> _packageStream;
-        Version _packageVersion;
+        SemanticVersion _packageVersion;
         IPackageRepository _remoteRepository;
         NetworkCredential _credentials;
 
@@ -112,9 +112,9 @@ namespace OpenWrap.Commands.Wrap
                 _packageStream = packageFile.OpenRead;
                 _packageFileName = packageFile.Name;
                 // TODO: This looks iffy at best
-                var package = new ZipPackage(packageFile);
+                var package = new ZipFilePackage(packageFile);
                 _packageName = package.Name;
-                _packageVersion = package.Version;
+                _packageVersion = package.SemanticVersion;
             }
             else if (Name != null)
             {
@@ -124,11 +124,11 @@ namespace OpenWrap.Commands.Wrap
                     yield return new Error("No package named '{0}' was found.", Name);
                     yield break;
                 }
-                var packageToCopy = HostEnvironment.CurrentDirectoryRepository.PackagesByName[Name].OrderByDescending(x => x.Version).First();
+                var packageToCopy = HostEnvironment.CurrentDirectoryRepository.PackagesByName[Name].OrderByDescending(x => x.SemanticVersion).First();
                 _packageStream = () => packageToCopy.Load().OpenStream();
                 _packageFileName = packageToCopy.FullName + ".wrap";
                 _packageName = packageToCopy.Name;
-                _packageVersion = packageToCopy.Version;
+                _packageVersion = packageToCopy.SemanticVersion;
             }
             else
             {
@@ -140,17 +140,6 @@ namespace OpenWrap.Commands.Wrap
         {
             if (_remoteRepository.HasPackage(_packageName, _packageVersion.ToString()))
                 yield return new Error("The package '{0}' already exists. Please create a new version before uploading.", _packageFileName);
-        }
-    }
-
-    public class RemoteAuthenticatioNotSupported : Error
-    {
-        public IPackageRepository Repository { get; set; }
-
-        public RemoteAuthenticatioNotSupported(IPackageRepository repository)
-            : base("Remote repository '{0}' does not support authentication.", repository.Name)
-        {
-            Repository = repository;
         }
     }
 }

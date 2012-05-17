@@ -1,4 +1,5 @@
 using System.IO;
+using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories.Http
 {

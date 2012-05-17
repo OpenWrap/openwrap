@@ -10,7 +10,7 @@ namespace Tests.Commands.contexts
         protected void given_descriptor(IDirectory projectDirectory, PackageDescriptor packageDescriptor)
         {
             using(var descriptor = projectDirectory.GetFile(packageDescriptor.Name + ".wrapdesc").OpenWrite())
-                new PackageDescriptorReaderWriter().Write(packageDescriptor, descriptor);
+                new PackageDescriptorWriter().Write(packageDescriptor, descriptor);
             Environment.Descriptor = packageDescriptor;
         }
     }

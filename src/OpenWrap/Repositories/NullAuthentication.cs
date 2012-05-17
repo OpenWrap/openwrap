@@ -10,6 +10,11 @@ namespace OpenWrap.Repositories
             return this;
         }
 
+        public NetworkCredential CurrentCredentials
+        {
+            get { return null; }
+        }
+
         public void Dispose()
         {
             

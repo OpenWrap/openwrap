@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace OpenWrap.PackageModel.Parsers
 {
-    public class DependsParser : AbstractDescriptorParser
+    public class DependsParser : DependsVersionParser
     {
-        public DependsParser() : base("depends")
-        {
-        }
+            static Regex _regex = new Regex(@"^\s*depends\s*:\s*(?<content>.*)$", RegexOptions.IgnoreCase);
 
-        public static PackageDescriptor ParseDependsInstruction(string line)
+        public static PackageDependency ParseDependsLine(string line)
         {
-            var descriptor = new PackageDescriptor();
-            new DependsParser().Parse(line, descriptor);
-            return descriptor;
+            var match = _regex.Match(line);
+            if (!match.Success)
+                return null;
+            return ParseDependsValue(match.Groups["content"].Value);
         }
 
         public static PackageDependency ParseDependsValue(string line)
@@ -31,69 +31,11 @@ namespace OpenWrap.PackageModel.Parsers
 
             tags = tags.Skip(1);
 
-            return new PackageDependency
-                    (
-                    bits[0],
-                    versions.Count > 0 ? versions : new List<VersionVertex> { new AnyVersionVertex() },
-                    tags.ToList()
-                    );
-        }
-
-        public static IEnumerable<VersionVertex> ParseVersions(string[] args)
-        {
-            // Versions are always in the format
-            // comparator version ('and' comparator version)*
-            if (args.Length >= 2)
-            {
-                var version = GetVersionVertice(args, 0);
-                if (version == null)
-                    yield break;
-                yield return version;
-                for (int i = 0; i < (args.Length - 2) / 3; i++)
-                    if (args[2 + (i * 3)].EqualsNoCase("and"))
-                        if ((version = GetVersionVertice(args, 3 + (i * 3))) != null)
-                            yield return version;
-                        else
-                            yield break;
-            }
-        }
-
-        protected override void ParseContent(string content, IPackageDescriptor descriptor)
-        {
-            var dependency = ParseDependsValue(content);
-            if (dependency != null)
-                descriptor.Dependencies.Add(dependency);
-        }
-
-        protected override IEnumerable<string> WriteContent(PackageDescriptor descriptor)
-        {
-            foreach (var dependency in descriptor.Dependencies)
-                yield return dependency.ToString();
-        }
-
-        static VersionVertex GetVersionVertice(string[] strings, int offset)
-        {
-            var comparator = strings[offset];
-            var version = strings[offset + 1].ToVersion();
-            if (version == null)
-                return null;
-            switch (comparator)
-            {
-                case ">":
-                    return new GreaterThanVersionVertex(version);
-                case ">=":
-                    return new GreaterThanOrEqualVersionVertex(version);
-                case "=":
-                    return new EqualVersionVertex(version);
-                case "<":
-                    return new LessThanVersionVertex(version);
-                case "<=":
-                    return new LessThanOrEqualVersionVertex(version);
-                case "≡":
-                    return new AbsolutelyEqualVersionVertex(version);
-                default:
-                    return null;
-            }
+            return new PackageDependency(bits[0],
+                                         versions.Count > 0 
+                                            ? versions
+                                            : new List<VersionVertex> { new AnyVersionVertex() },
+                                         tags.ToList());
         }
     }
 }

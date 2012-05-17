@@ -19,8 +19,8 @@ using OpenWrap.Services;
 
 namespace OpenWrap.Commands.Wrap
 {
-    [Command(Noun = "wrap", Verb = "build", Description = "Builds all projects and creates a wrap package.")]
-    public class BuildWrapCommand : AbstractCommand
+    [Command(Noun = "wrap", Verb = "build")]
+    public class BuildWrapCommand : AbstractCommand, ICommandWithWildcards
     {
         readonly IDirectory _currentDirectory;
         readonly IFileSystem _fileSystem;
@@ -28,8 +28,9 @@ namespace OpenWrap.Commands.Wrap
         IEnumerable<IPackageBuilder> _builders;
         IDirectory _destinationPath;
         IEnvironment _environment;
-        Version _generatedVersion;
+        SemanticVersion _generatedVersion;
         IFile _sharedAssemblyInfoFile;
+        ILookup<string, string> _wildcards;
 
         public BuildWrapCommand()
             : this(ServiceLocator.GetService<IFileSystem>(), ServiceLocator.GetService<IEnvironment>())
@@ -41,6 +42,8 @@ namespace OpenWrap.Commands.Wrap
             _fileSystem = fileSystem;
             _environment = environment;
             _currentDirectory = environment.CurrentDirectory;
+            _wildcards = new string[0].ToLookup(_ => _, _ => default(string));
+            BuildCounter = "file";
         }
 
         [CommandInput]
@@ -72,18 +75,28 @@ namespace OpenWrap.Commands.Wrap
         public bool Quiet { get; set; }
 
         [CommandInput]
-        public string Version { get; set; }
-
-        [CommandInput]
         public bool Release
         {
             get { return Configuration.EqualsNoCase("Release"); }
             set { Configuration = "Release"; }
         }
 
+        [CommandInput]
+        public string BuildCounter { get; set; }
+
+        [CommandInput]
+        public string Version { get; set; }
+
+
+
+        public void Wildcards(ILookup<string, string> values)
+        {
+            _wildcards = values;
+        }
+
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
-            using(CreateSharedAssemblyInfo())
+            using (CreateSharedAssemblyInfo())
             {
                 foreach (var m in CreateBuilder()) yield return m;
                 foreach (var m in Build())
@@ -96,83 +109,18 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        IDisposable CreateSharedAssemblyInfo()
-        {
-            if (_generatedVersion != null && _environment.Descriptor.AssemblyInfo.Any())
-            {
-                var descriptor = new PackageDescriptor(_environment.Descriptor);
-                descriptor.Version = _generatedVersion;
-                _sharedAssemblyInfoFile = _environment.DescriptorFile.Parent.GetUniqueFile("SharedAssemblyInfo.cs");
-                var generator = new AssemblyInfoGenerator(descriptor);
-                generator.Write(_sharedAssemblyInfoFile);
-                return new ActionOnDispose(_sharedAssemblyInfoFile.Delete);
-
-            }
-            return new ActionOnDispose(()=>{});
-        }
-
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
+            yield return SetOutputPath;
             yield return SetEnvironmentToFromInput;
             yield return VerifyDescriptorPresent;
             yield return VerifyVersion;
-            yield return SetOutputPath;
             yield return CreateBuilder;
-        }
-
-        IEnumerable<ICommandOutput> SetOutputPath()
-        {
-            _destinationPath = Path != null
-                ? _fileSystem.GetDirectory(Path).MustExist()
-                : _fileSystem.GetCurrentDirectory();
-            yield break;
-        }
-
-        IEnumerable<ICommandOutput> VerifyVersion()
-        {
-            var versionFile = _environment.CurrentDirectory.GetFile("version");
-            if (Version == null && versionFile.Exists == false && _environment.Descriptor.Version == null)
-                yield return new PackageVersionMissing();
-            else
-            {
-                var versionFileContent = versionFile.Exists ? versionFile.ReadString() : null;
-                _generatedVersion = (Version ?? versionFileContent ?? _environment.Descriptor.Version.ToString()).GenerateVersionNumber(_environment.DescriptorFile.Parent.GetDirectory("wraps")).ToVersion();
-            }
-        }
-
-        static PackageContent GenerateDescriptorFile(PackageDescriptor descriptor)
-        {
-            var descriptorStream = new MemoryStream();
-            new PackageDescriptorReaderWriter().Write(descriptor.GetPersistableEntries(), descriptorStream);
-            return new PackageContent
-            {
-                FileName = descriptor.Name + ".wrapdesc",
-                RelativePath = ".",
-                Stream = descriptorStream.ResetOnRead(),
-                Size = descriptorStream.Length
-            };
-        }
-
-        static PackageContent GenerateVersionFile(Version generatedVersion)
-        {
-            var versionStream = generatedVersion.ToString().ToUTF8Stream();
-            return new PackageContent
-            {
-                FileName = "version",
-                RelativePath = ".",
-                Stream = versionStream.ResetOnRead(),
-                Size = versionStream.Length
-            };
-        }
-
-        static bool IsVersion(FileBuildResult build)
-        {
-            return build.ExportName == "." && build.FileName.EqualsNoCase("version");
         }
 
         static IPackageBuilder AssignProperties(IPackageBuilder builder, IEnumerable<IGrouping<string, string>> properties)
         {
-            List<KeyValuePair<string, string>> unknown = new List<KeyValuePair<string, string>>();
+            var unknown = new List<KeyValuePair<string, string>>();
 
 
             var builderType = builder.GetType();
@@ -205,69 +153,82 @@ namespace OpenWrap.Commands.Wrap
             var propertiesPi = builderType.GetProperty("Properties", BindingFlags.Instance | BindingFlags.Public);
             if (propertiesPi != null && typeof(IEnumerable<IGrouping<string, string>>).IsAssignableFrom(propertiesPi.PropertyType))
             {
-                var unknownLookup = unknown.ToLookup(x => x.Key, x => x.Value);
+                var unknownLookup = unknown.ToLookup(x => x.Key, x => x.Value, StringComparer.OrdinalIgnoreCase);
                 propertiesPi.SetValue(builder, unknownLookup, null);
             }
             return builder;
         }
 
-        IEnumerable<ICommandOutput> Package()
+        static PackageContent GenerateDescriptorFile(PackageDescriptor descriptor)
         {
-
-            var packageName = Name ?? _environment.Descriptor.Name;
-
-            var packageDescriptorForEmbedding = new PackageDescriptor(GetCurrentPackageDescriptor());
-            var generatedVersion = GetPackageVersion(_buildResults, packageDescriptorForEmbedding);
-
-
-
-            if (generatedVersion == null)
+            var descriptorStream = new MemoryStream();
+            new PackageDescriptorWriter().Write(descriptor.GetPersistableEntries(), descriptorStream);
+            return new PackageContent
             {
-
-                yield return new Error("Could not build package, no version found.");
-
-                yield break;
-
-            }
-
-            packageDescriptorForEmbedding.Version = generatedVersion;
-
-            packageDescriptorForEmbedding.Version = _generatedVersion;
-            packageDescriptorForEmbedding.Name = packageName;
-
-            var packageFilePath = _destinationPath.GetFile(
-                PackageNameUtility.PackageFileName(packageName, _generatedVersion.ToString()));
-
-            var packageContent = GeneratePackageContent(_buildResults)
-                .Concat(
-                    GenerateVersionFile(_generatedVersion),
-                    GenerateDescriptorFile(packageDescriptorForEmbedding)
-                ).ToList();
-            foreach (var item in packageContent)
-                yield return new Info(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
-
-            Packager.NewFromFiles(packageFilePath, packageContent);
-            yield return new PackageBuilt(packageFilePath);
+                FileName = descriptor.Name + ".wrapdesc",
+                RelativePath = ".",
+                Stream = descriptorStream.ResetOnRead(),
+                Size = descriptorStream.Length
+            };
         }
+
+        static PackageContent GenerateVersionFile(SemanticVersion generatedVersion)
+        {
+            var versionStream = generatedVersion.ToString().ToUTF8Stream();
+            return new PackageContent
+            {
+                FileName = "version",
+                RelativePath = ".",
+                Stream = versionStream.ResetOnRead(),
+                Size = versionStream.Length
+            };
+        }
+
+        IEnumerable<ICommandOutput> Build()
+        {
+            _buildResults.Clear();
+            var buildTime = new Stopwatch();
+            buildTime.Start();
+            foreach (var m in ProcessBuildResults(_builders, _buildResults.Add)) yield return m;
+            yield return new Info("Build completed in {0}.", buildTime.Elapsed);
+            _buildResults = _buildResults.Distinct().ToList();
+        }
+
 
         IPackageBuilder ChooseBuilderInstance(string commandLine)
         {
             commandLine = commandLine.Trim();
-            if (commandLine.StartsWithNoCase("msbuild"))
+            var isMsBuild = commandLine.StartsWithNoCase("msbuild");
+            var isDefault = commandLine.StartsWithNoCase("default");
+            var isxbuild = commandLine.StartsWithNoCase("xbuild");
+            if (isMsBuild || isDefault || isxbuild)
             {
+                var configValue = isDefault ? "default" : (isMsBuild ? "msbuild" : "xbuild");
                 var builder = new MSBuildPackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser())
                 {
-                    Incremental = Incremental
+                    Incremental = Incremental,
+                    BuildEngine = configValue
                 };
                 return builder;
             }
             if (commandLine.StartsWithNoCase("files"))
                 return new FilePackageBuilder();
-            if (commandLine.StartsWithNoCase("command"))
+            if (commandLine.StartsWithNoCase("command") || commandLine.StartsWithNoCase("process"))
                 return new CommandLinePackageBuilder(_fileSystem, _environment, new DefaultFileBuildResultParser());
             if (commandLine.StartsWithNoCase("custom"))
                 return CreateCustomBuilder(commandLine);
             return new NullPackageBuilder(_environment);
+        }
+
+        IEnumerable<ICommandOutput> CreateBuilder()
+        {
+            _builders = (
+                            from commandLine in _environment.Descriptor.Build.DefaultIfEmpty("default")
+                            let builder = ChooseBuilderInstance(commandLine)
+                            let parameters = ParseBuilderProperties(commandLine)
+                            select AssignProperties(builder, OverrideWithInputs(parameters))
+                        ).ToList();
+            yield break;
         }
 
         IPackageBuilder CreateCustomBuilder(string commandLine)
@@ -283,41 +244,14 @@ namespace OpenWrap.Commands.Wrap
             return (IPackageBuilder)Activator.CreateInstance(type);
         }
 
-        IEnumerable<ICommandOutput> CreateBuilder()
+        IDisposable CreateSharedAssemblyInfo()
         {
-            _builders = (
-                            from commandLine in _environment.Descriptor.Build.DefaultIfEmpty("msbuild")
-                            let builder = ChooseBuilderInstance(commandLine)
-                            let parameters = ParseBuilderProperties(commandLine)
-                            select AssignProperties(builder, OverrideWithInputs(parameters))
-                        ).ToList();
-            yield break;
-        }
-
-        IEnumerable<IGrouping<string, string>> ParseBuilderProperties(string commandLine)
-        {
-            return from segment in commandLine.Split(';').Skip(1)
-                   let keyValues = segment.Split('=')
-                   where keyValues.Length >= 2
-                   let key = keyValues[0]
-                   let value = segment.Substring(key.Length + 1).Trim()
-                   group value by key.Trim();
-        }
-
-        IEnumerable<IGrouping<string, string>> OverrideWithInputs(IEnumerable<IGrouping<string, string>> parameters)
-        {
-            var overrides = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-            if (Configuration != null)
-                overrides.Add("Configuration", Configuration);
-            if (Incremental)
-                overrides.Add("Incremental", "True");
-            overrides.Add("OpenWrap-CurrentBuildVersion", _generatedVersion.ToString());
-            if (_sharedAssemblyInfoFile != null)
-                overrides.Add("OpenWrap-SharedAssemblyInfoFile", _sharedAssemblyInfoFile.Path.FullPath);
-
-            return overrides.GroupBy(x => x.Key, x => x.Value).Concat(parameters.Where(param => !overrides.ContainsKey(param.Key)));
-
+            if (_generatedVersion != null && _environment.Descriptor.AssemblyInfo.Any())
+            {
+                _sharedAssemblyInfoFile = BuildManagement.TryGenerateAssemblyInfo(_environment.DescriptorFile, _generatedVersion);
+                return new ActionOnDispose(_sharedAssemblyInfoFile.Delete);
+            }
+            return new ActionOnDispose(() => { });
         }
 
         string FormatBytes(long? size)
@@ -325,38 +259,6 @@ namespace OpenWrap.Commands.Wrap
             if (size == null) return string.Empty;
             return string.Format(" ({0} bytes)", ((long)size).ToString("N0"));
         }
-
-        IEnumerable<ICommandOutput> SetEnvironmentToFromInput()
-        {
-            if (From != null)
-            {
-                var directory = _fileSystem.GetDirectory(From);
-                if (directory.Exists == false)
-                {
-                    yield return new DirectoryNotFound(directory);
-                    yield break;
-                }
-                var newEnv = new CurrentDirectoryEnvironment(directory);
-                newEnv.Initialize();
-
-
-                _environment = newEnv;
-            }
-        }
-        Version GetPackageVersion(IList<FileBuildResult> buildFiles, PackageDescriptor packageDescriptorForEmbedding)
-        {
-            // gets the package version from (in this order):
-            // 0. -version input
-            // 1. 'version' file generated by the build
-            // 2. 'version' file living alongside the .wrapdesc file
-            // 3. 'version:' header in wrap descriptor
-            
-            return Version != null
-                ? Version.GenerateVersionNumber(_environment.DescriptorFile.Parent.GetDirectory("wraps")).ToVersion()
-                : new DefaultPackageInfo(GetVersionFromVersionFiles(buildFiles), packageDescriptorForEmbedding).Version;
-        }
-
-
 
         IEnumerable<PackageContent> GeneratePackageContent(IEnumerable<FileBuildResult> buildFiles)
         {
@@ -396,44 +298,61 @@ namespace OpenWrap.Commands.Wrap
             return _environment.Descriptor;
         }
 
-        Version GetVersionFromVersionFiles(IList<FileBuildResult> buildFiles)
+        IEnumerable<IGrouping<string, string>> OverrideWithInputs(IEnumerable<IGrouping<string, string>> parameters)
         {
-            var generatedVersion = (from buildContent in buildFiles
-                                    where IsVersion(buildContent)
-                                    let file = _fileSystem.GetFile(buildContent.Path.FullPath)
-                                    where file.Exists
-                                    from line in file.ReadLines()
-                                    let version = line.GenerateVersionNumber().ToVersion()
-                                    where version != null
-                                    select new
-                                    {
-                                        version,
-                                        buildContent
-                                    }).FirstOrDefault();
-            if (generatedVersion != null)
-            {
-                buildFiles.Remove(generatedVersion.buildContent);
-                return generatedVersion.version;
-            }
-            var versionFile = _environment.DescriptorFile != null && _environment.DescriptorFile.Exists
-                                  ? _environment.DescriptorFile.Parent.GetFile("version")
-                                  : null;
-            return versionFile == null || versionFile.Exists == false
-                       ? null
-                       : (from line in versionFile.ReadLines()
-                          let version = line.GenerateVersionNumber().ToVersion()
-                          where version != null
-                          select version).FirstOrDefault();
+            var overrides = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            if (Configuration != null)
+                overrides.Add("Configuration", Configuration);
+            if (Incremental)
+                overrides.Add("Incremental", "True");
+            overrides.Add("OpenWrap-CurrentBuildVersion", _generatedVersion.ToString());
+            if (_sharedAssemblyInfoFile != null)
+                overrides.Add("OpenWrap-SharedAssemblyInfoFile", _sharedAssemblyInfoFile.Path.FullPath);
+
+            return overrides.GroupBy(x => x.Key, x => x.Value).Concat(_wildcards.Concat(parameters).Where(param => !overrides.ContainsKey(param.Key)));
         }
 
-        IEnumerable<ICommandOutput> VerifyDescriptorPresent()
+        IEnumerable<ICommandOutput> Package()
         {
-            if (_environment.ScopedDescriptors.Any() == false)
-            {
-                yield return new PackageDescriptorNotFound(_environment.CurrentDirectory);
-                yield break;
-            }
+            var packageName = Name ?? _environment.Descriptor.Name;
+
+            var currentPackageDescriptor = GetCurrentPackageDescriptor();
+            var packageDescriptorForEmbedding = new PackageDescriptor(currentPackageDescriptor);
+
+            packageDescriptorForEmbedding.SemanticVersion = _generatedVersion;
+            packageDescriptorForEmbedding.Name = packageName;
+
+#pragma warning disable 612,618
+            if (currentPackageDescriptor.IncludeLegacyVersion)
+                packageDescriptorForEmbedding.Version = _generatedVersion.ToVersion();
+#pragma warning restore 612,618
+
+            var packageFilePath = _destinationPath.GetFile(
+                PackageNameUtility.PackageFileName(packageName, _generatedVersion.ToString()));
+
+            var packageContent = GeneratePackageContent(_buildResults)
+                .Concat(
+                    GenerateVersionFile(_generatedVersion),
+                    GenerateDescriptorFile(packageDescriptorForEmbedding)
+                ).ToList();
+            foreach (var item in packageContent)
+                yield return new Info(string.Format("Copying: {0}/{1}{2}", item.RelativePath, item.FileName, FormatBytes(item.Size)));
+
+            Packager.NewFromFiles(packageFilePath, packageContent);
+            yield return new PackageBuilt(packageFilePath, _generatedVersion);
         }
+
+        IEnumerable<IGrouping<string, string>> ParseBuilderProperties(string commandLine)
+        {
+            return from segment in commandLine.Split(';').Skip(1)
+                   let keyValues = segment.Split('=')
+                   where keyValues.Length >= 2
+                   let key = keyValues[0]
+                   let value = segment.Substring(key.Length + 1).Trim()
+                   group value by key.Trim();
+        }
+
 
         IEnumerable<ICommandOutput> ProcessBuildResults(IEnumerable<IPackageBuilder> packageBuilders, Action<FileBuildResult> onFound)
         {
@@ -464,15 +383,66 @@ namespace OpenWrap.Commands.Wrap
                        : new[] { _fileSystem.GetFile(fileDescriptor.Path.FullPath) };
         }
 
-        IEnumerable<ICommandOutput> Build()
+        IEnumerable<ICommandOutput> SetEnvironmentToFromInput()
         {
-            _buildResults.Clear();
-            var buildTime = new Stopwatch();
-            buildTime.Start();
-            foreach (var m in ProcessBuildResults(_builders, _buildResults.Add)) yield return m;
-            yield return new Info("Build completed in {0}.", buildTime.Elapsed);
-            _buildResults = _buildResults.Distinct().ToList();
+            if (From != null)
+            {
+                var directory = _fileSystem.GetDirectory(From);
+                if (directory.Exists == false)
+                {
+                    yield return new DirectoryNotFound(directory);
+                    yield break;
+                }
+                var newEnv = new CurrentDirectoryEnvironment(directory);
+                newEnv.Initialize();
+
+
+                _environment = newEnv;
+            }
         }
 
+        IEnumerable<ICommandOutput> SetOutputPath()
+        {
+            _destinationPath = Path != null
+                                   ? _fileSystem.GetDirectory(Path).MustExist()
+                                   : _environment.CurrentDirectory;
+            yield break;
+        }
+
+        IEnumerable<ICommandOutput> VerifyDescriptorPresent()
+        {
+            if (_environment.ScopedDescriptors.Any() == false)
+            {
+                yield return new PackageDescriptorNotFound(_environment.CurrentDirectory);
+                yield break;
+            }
+        }
+
+        IEnumerable<ICommandOutput> VerifyVersion()
+        {
+            var versionFile = _environment.CurrentDirectory.GetFile("version");
+            if (Version == null &&
+                !versionFile.Exists && 
+                _environment.Descriptor.SemanticVersion == null &&
+                _environment.Descriptor.Version == null)
+            {
+                yield return new PackageVersionMissing();
+                yield break;
+            }
+
+            Action<string> writer = null;
+            Func<string> reader = null;
+            int build;
+            if (BuildCounter != "file" && int.TryParse(Environment.ExpandEnvironmentVariables(BuildCounter),out build))
+            {
+
+                reader = () => (build - 1).ToString();
+                writer = counter => { };
+            }
+            _generatedVersion = Version.ToSemVer() ??
+                                BuildManagement.GenerateVersion(
+                                    _environment.Descriptor,
+                                    versionFile, reader, writer);
+        }
     }
 }

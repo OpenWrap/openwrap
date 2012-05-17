@@ -46,6 +46,7 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DocumentationFile>..\..\scratch\bin\OpenWrap-Debug-AnyCPU\OpenWrap.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -71,10 +72,72 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageManagement\PackageMissingException.cs">
+      <Link>PackageManagement\PackageMissingException.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageManagement\PackageResolverVisitor.cs">
+      <Link>PackageManagement\PackageResolverVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\AbsolutelyEqualVersionVertex.cs">
+      <Link>PackageModel\AbsolutelyEqualVersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\AnyVersionVertex.cs">
+      <Link>PackageModel\AnyVersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\EqualVersionVertex.cs">
+      <Link>PackageModel\EqualVersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\GreaterThanOrEqualVersionVertex.cs">
+      <Link>PackageModel\GreaterThanOrEqualVersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\GreaterThanVersionVertex.cs">
+      <Link>PackageModel\GreaterThanVersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\LessThanOrEqualVersionVertex.cs">
+      <Link>PackageModel\LessThanOrEqualVersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\LessThanVersionVertex.cs">
+      <Link>PackageModel\LessThanVersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\Parsers\DependsVersionParser.cs">
+      <Link>PackageModel\Parsers\DependsVersionParser.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\PessimisticGreaterVersionVertex.cs">
+      <Link>PackageModel\PessimisticGreaterVersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\PackageModel\VersionVertex.cs">
+      <Link>PackageModel\VersionVertex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\Preloading\INotifyDownload.cs">
+      <Link>Preloading\INotifyDownload.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\Preloading\NotifyProgressWebClient.cs">
+      <Link>Preloading\NotifyProgressWebClient.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\Preloading\Preloader.cs">
+      <Link>Preloading\Preloader.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\Preloading\TinySharpZip\ZipArchive.cs">
+      <Link>Preloading\TinySharpZip\ZipArchive.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\Preloading\TinySharpZip\ZipDirectoryEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipDirectoryEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\Preloading\TinySharpZip\ZipEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\Preloading\TinySharpZip\ZipFileEntry.cs">
+      <Link>Preloading\TinySharpZip\ZipFileEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\..\preloader\src\OpenWrap.Preloading\SemanticVersion.cs">
+      <Link>SemanticVersion.cs</Link>
+    </Compile>
     <Compile Include="Build\AssemblyInfoGenerator.cs" />
+    <Compile Include="Build\BuildManagement.cs" />
     <Compile Include="Build\PackageBuilders\IProcess.cs" />
     <Compile Include="Build\PackageBuilders\ProcessWrapper.cs" />
     <Compile Include="Build\PackageBuilders\UnknownProjectFileResult.cs" />
+    <Compile Include="Build\SemanticVersionGenerator.cs" />
     <Compile Include="Collections\IndexedDictionary.cs" />
     <Compile Include="Commands\Cli\CecilStaticAssemblyResolver.cs" />
     <Compile Include="Commands\Cli\ColoredText.cs" />
@@ -110,6 +173,10 @@
     <Compile Include="Configuration\Remotes\Legacy\RemoteRepository.cs" />
     <Compile Include="Configuration\Remotes\RemoteRepositoryEndpoint.cs" />
     <Compile Include="Configuration\StringBuilderExtensions.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\DependencyCombinator.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\LoggingPackageVisitor.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\PackageStrategy.cs" />
+    <Compile Include="PackageManagement\DependencyResolvers\StrategyResolver.cs" />
     <Compile Include="PackageManagement\Exporters\Assemblies\AbstractAssemblyExporter.cs" />
     <Compile Include="PackageManagement\Assembly.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\ResolutionResultExtensions.cs" />
@@ -134,7 +201,10 @@
     <Compile Include="PackageManagement\PackageManagerExtensions.cs" />
     <Compile Include="PackageManagement\PackageOnlyInCurrentRepository.cs" />
     <Compile Include="PackageManagement\PackageUpdated.cs" />
+    <Compile Include="PackageModel\PackageDependency.cs" />
     <Compile Include="PackageModel\PackageGraphExtensions.cs" />
+    <Compile Include="PackageModel\Parsers\DependsParser.cs" />
+    <Compile Include="PackageModel\Parsers\SingleVersionValue.cs" />
     <Compile Include="ProjectModel\MSBuildProject.cs" />
     <Compile Include="ProjectModel\Drivers.File\ProjectConstants.cs" />
     <Compile Include="ProjectModel\Drivers.File\SolutionConstants.cs" />
@@ -148,6 +218,9 @@
     <Compile Include="Repositories\IRemoteManager.cs" />
     <Compile Include="Repositories\IRepositoryFeature.cs" />
     <Compile Include="Repositories\ISupportLocking.cs" />
+    <Compile Include="Repositories\ISupportCurrentCredentials.cs" />
+    <Compile Include="Repositories\LockedPackage.cs" />
+    <Compile Include="Repositories\LockedPackages.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedReader.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepository.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepositoryFactory.cs" />
@@ -211,7 +284,6 @@
     <Compile Include="PackageManagement\PackageUpdateResultIterator.cs" />
     <Compile Include="PackageModel\InvalidPackageException.cs" />
     <Compile Include="PackageModel\IPackageDescriptor.cs" />
-    <Compile Include="PackageModel\LessThanOrEqualVersionVertex.cs" />
     <Compile Include="PackageModel\PackageDescriptorExtensions.cs" />
     <Compile Include="PackageModel\Parsers\DelegatedMultiLine.cs" />
     <Compile Include="PackageModel\Parsers\DelegatedValue.cs" />
@@ -251,11 +323,8 @@
     <Compile Include="Configuration\Remotes\RemoteRepositories.cs" />
     <Compile Include="Configuration\Remotes\RemoteRepository.cs" />
     <Compile Include="Commands\Cli\ShellRunner.cs" />
-    <Compile Include="PackageModel\AbsolutelyEqualVersionVertex.cs" />
-    <Compile Include="PackageModel\DefaultPackageInfo.cs" />
     <Compile Include="PackageModel\PackageDescriptorEntryCollection.cs" />
     <Compile Include="PackageModel\GenericDescriptorEntry.cs" />
-    <Compile Include="PackageModel\GreaterThanVersionVertex.cs" />
     <Compile Include="PackageModel\IPackageDescriptorEntry.cs" />
     <Compile Include="IO\Packaging\PackageContent.cs" />
     <Compile Include="PackageModel\PackageDependencyBuilder.cs" />
@@ -266,12 +335,11 @@
     <Compile Include="PackageModel\Parsers\SingleDateTimeOffsetValue.cs" />
     <Compile Include="PackageModel\Parsers\SingleStringValue.cs" />
     <Compile Include="PackageModel\Parsers\SingleValue.cs" />
-    <Compile Include="PackageModel\Parsers\SingleVersionValue.cs" />
+    <Compile Include="PackageModel\Parsers\SingleSemanticVersionValue.cs" />
     <Compile Include="PackageModel\Serialization\StringExtensions.cs" />
     <Compile Include="Commands\EnvironmentExtensions.cs" />
     <Compile Include="IO\IOExtensions.cs" />
     <Compile Include="IO\Packaging\Packager.cs" />
-    <Compile Include="PackageModel\Parsers\AbstractDescriptorParser.cs" />
     <Compile Include="PackageModel\PackageNameUtility.cs" />
     <Compile Include="PackageModel\PackageNameOverride.cs" />
     <Compile Include="Collections\EnumerableExtensions.cs" />
@@ -303,13 +371,6 @@
     <Compile Include="PackageManagement\PackageResolveError.cs" />
     <Compile Include="PackageManagement\PackageUpdatedResult.cs" />
     <Compile Include="PackageManagement\PackageUpToDateResult.cs" />
-    <Compile Include="Preloading\INotifyDownload.cs" />
-    <Compile Include="Preloading\NotifyProgressWebClient.cs" />
-    <Compile Include="Preloading\Preloader.cs" />
-    <Compile Include="Preloading\TinySharpZip\ZipArchive.cs" />
-    <Compile Include="Preloading\TinySharpZip\ZipDirectoryEntry.cs" />
-    <Compile Include="Preloading\TinySharpZip\ZipEntry.cs" />
-    <Compile Include="Preloading\TinySharpZip\ZipFileEntry.cs" />
     <Compile Include="Repositories\RemoteRepositoryLocator.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\CallStack.cs" />
     <Compile Include="Repositories\CurrentDirectoryRepository.cs" />
@@ -349,7 +410,7 @@
     <Compile Include="PackageManagement\DependencyResolvers\PackageResolveResults.cs" />
     <Compile Include="Repositories\PackageRepositoryExtensions.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageSelectionContext.cs" />
-    <Compile Include="PackageManagement\Packages\ZipPackage.cs" />
+    <Compile Include="PackageManagement\Packages\ZipFilePackage.cs" />
     <Compile Include="PackageManagement\AssemblyResolvers\RuntimeAssemblyResolver.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Commands\Cli\UnknownCommandInput.cs" />
@@ -379,15 +440,8 @@
     <Compile Include="Services\ServiceLocator.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandOutput.cs" />
-    <Compile Include="PackageModel\AnyVersionVertex.cs" />
-    <Compile Include="PackageModel\GreaterThanOrEqualVersionVertex.cs" />
-    <Compile Include="PackageModel\EqualVersionVertex.cs" />
-    <Compile Include="PackageModel\LessThanVersionVertex.cs" />
-    <Compile Include="PackageModel\VersionVertex.cs" />
-    <Compile Include="PackageModel\PackageDependency.cs" />
-    <Compile Include="PackageModel\Parsers\DependsParser.cs" />
     <Compile Include="PackageModel\PackageDescriptor.cs" />
-    <Compile Include="PackageModel\Serialization\PackageDescriptorReaderWriter.cs" />
+    <Compile Include="PackageModel\Serialization\PackageDescriptorWriter.cs" />
     <Compile Include="Runtime\ExecutionEnvironment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PackageManagement\Exporters\FileExportItem.cs" />
@@ -465,4 +519,9 @@
   </Target>
   <PropertyGroup>
   </PropertyGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

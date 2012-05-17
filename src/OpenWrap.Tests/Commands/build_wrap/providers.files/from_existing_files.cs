@@ -18,13 +18,10 @@ namespace Tests.Commands.build_wrap.providers.files
         {
             _filePath = filePath;
             given_current_directory_repository(new CurrentDirectoryRepository());
-            Environment.Descriptor.Name = "package";
-            Environment.Descriptor.Version = "1.0.0".ToVersion();
-            Environment.Descriptor.Build.Add(instruction);
-
+            given_descriptor("name: package", "version: 1.0.0", "build: " + instruction);
             given_file(filePath, new MemoryStream(new byte[]{0x0}));
 
-            when_executing_command("");
+            when_executing_command();
         }
 
         [Test]

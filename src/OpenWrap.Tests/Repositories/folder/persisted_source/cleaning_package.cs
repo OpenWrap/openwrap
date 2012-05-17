@@ -3,7 +3,7 @@ using OpenWrap.IO;
 using OpenWrap.Repositories;
 using OpenWrap.Testing;
 
-namespace Tests.Repositories.folder_repo.persisted_source
+namespace Tests.Repositories.folder.persisted_source
 {
     public class cleaning_package : contexts.folder
     {

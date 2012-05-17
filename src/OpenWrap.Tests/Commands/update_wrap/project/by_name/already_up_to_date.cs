@@ -14,7 +14,7 @@ namespace Tests.Commands.update_wrap.project.by_name
         public already_up_to_date()
         {
             given_project_package("sauron", "1.0.0");
-            given_remote_package("sauron", "1.0.0".ToVersion());
+            given_remote_package("sauron", "1.0.0");
             given_dependency("depends: sauron");
             when_executing_command("sauron");
         }

@@ -14,7 +14,8 @@ namespace OpenWrap.PackageManagement.Exporters
         {
                 {typeof(string), ConvertString},
                 {typeof(IEnumerable<string>), ConvertListOfString},
-                {typeof(Version), ConvertVersion}
+                {typeof(Version), ConvertVersion},
+                {typeof(SemanticVersion), ConvertSemanticVersion},
         };
 
         static bool ConvertVersion(IEnumerable<string> values, out object result)
@@ -31,6 +32,22 @@ namespace OpenWrap.PackageManagement.Exporters
                 return false;
             }
             return true;
+        }
+
+        static bool ConvertSemanticVersion(IEnumerable<string> values, out object result)
+        {
+            result = null;
+            if (values.Count() != 1) return false;
+
+            try
+            {
+                result = SemanticVersion.TryParseExact(values.Single());
+            }
+            catch
+            {
+                return false;
+            }
+            return result != null;
         }
 
         static bool ConvertListOfString(IEnumerable<string> values, out object result)

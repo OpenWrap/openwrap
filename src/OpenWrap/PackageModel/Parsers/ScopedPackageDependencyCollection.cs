@@ -47,7 +47,9 @@ namespace OpenWrap.PackageModel.Parsers
 
         public void CopyTo(PackageDependency[] array, int arrayIndex)
         {
-            throw new NotSupportedException();
+            int index = 0;
+            foreach (var value in this)
+                array[index++] = value;
         }
 
         public bool Remove(PackageDependency item)

@@ -19,7 +19,7 @@ namespace Tests.Commands.update_wrap.project
             given_project_package("goldberry", "2.0.0");
 
             given_system_package("goldberry", "2.1.0");
-            given_remote_package("goldberry", "2.2.0".ToVersion());
+            given_remote_package("goldberry", "2.2.0");
 
             descriptor_modified_time = Environment.DescriptorFile.LastModifiedTimeUtc;
             when_executing_command();
@@ -28,13 +28,13 @@ namespace Tests.Commands.update_wrap.project
         [Test]
         public void package_is_not_installed_in_system_repo()
         {
-            Environment.SystemRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 1, 0));
+            Environment.SystemRepository.PackagesByName["goldberry"].Last().SemanticVersion.ShouldBe("2.1.0");
         }
 
         [Test]
         public void package_is_installed_in_project_repo()
         {
-            Environment.ProjectRepository.PackagesByName["goldberry"].Last().Version.ShouldBe(new Version(2, 2, 0));
+            Environment.ProjectRepository.PackagesByName["goldberry"].Last().SemanticVersion.ShouldBe("2.2.0");
         }
 
         [Test]

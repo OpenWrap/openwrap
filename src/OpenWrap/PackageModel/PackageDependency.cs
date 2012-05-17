@@ -16,7 +16,10 @@ namespace OpenWrap.PackageModel
             VersionVertices = versions != null ? new List<VersionVertex>(versions).AsReadOnly() : Enumerable.Empty<VersionVertex>();
             ContentOnly = Tags.ContainsNoCase("content");
             Anchored = Tags.ContainsNoCase("anchored");
+            Edge = Tags.ContainsNoCase("edge");
         }
+
+        public bool Edge { get; private set; }
 
         public bool Anchored { get; private set; }
 
@@ -24,22 +27,20 @@ namespace OpenWrap.PackageModel
         public string Name { get; private set; }
 
         public IEnumerable<string> Tags { get; set; }
+
+        // TODO: Remove this implementation detail.
         public IEnumerable<VersionVertex> VersionVertices { get; private set; }
 
         public override string ToString()
         {
-            var versions = VersionVertices.Select(x => x.ToString()).JoinString(" and ");
-            var returnValue = versions.Length == 0
-                                      ? Name
-                                      : Name + " " + versions;
-            if (Tags.Count() > 0)
-                returnValue += " " + Tags.JoinString(" ");
-            return returnValue;
+            return Name.AppendSpace(VersionVertices.Select(x => x.ToString()).JoinString(" and "))
+                .AppendSpace(Tags.JoinString(" "));
         }
 
-        public bool IsFulfilledBy(Version version)
+        public bool IsFulfilledBy(SemanticVersion version)
         {
-            return VersionVertices.All(x => x.IsCompatibleWith(version));
+            return VersionVertices.All(x => x.IsCompatibleWith(version))
+                && (Edge || (!Edge && version.PreRelease == null));
         }
 
         public bool Equals(PackageDependency other)

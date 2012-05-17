@@ -44,7 +44,7 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
             var packageToNuke = packagesOfName
-                    .Where(x => x.Version.ToString().Equals(Version))
+                    .Where(x => x.SemanticVersion.ToString().Equals(Version))
                     .FirstOrDefault();
 
             if (packageToNuke == null)

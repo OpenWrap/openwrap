@@ -61,7 +61,7 @@ namespace OpenWrap.Build.Tasks
                                                 string.Format("[built({0}, '{1}', {2})]", kv.Key, kv.Value, AllowBinDuplicates.ToString().ToLowerInvariant()),
                                                 null,
                                                 "OpenWrap",
-                                                MessageImportance.Normal));
+                                                MessageImportance.High));
             return true;
         }
 

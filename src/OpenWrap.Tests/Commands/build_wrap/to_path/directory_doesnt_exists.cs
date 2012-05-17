@@ -19,7 +19,7 @@ namespace Tests.Commands.build_wrap.to_path
                              new PackageDescriptor
                              {
                                  Name = "test",
-                                 Version = "1.0.0.0".ToVersion(),
+                                 SemanticVersion = "1.0.0.0".ToSemVer(),
                                  Build = { "custom;typename=" + typeof(NullPackageBuilder).AssemblyQualifiedName }
                              });
             when_executing_command("-path " + path.Path);
@@ -34,7 +34,7 @@ namespace Tests.Commands.build_wrap.to_path
         [Test]
         public void package_is_created_in_path()
         {
-            path.GetFile("test-1.0.0.0.wrap").Exists.ShouldBeTrue();
+            path.GetFile("test-1.0.0+0.wrap").Exists.ShouldBeTrue();
         }
     }
 }

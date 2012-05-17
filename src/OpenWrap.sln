@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{20503E9F-CA3D-496B-8842-B1FE7D39B1E7}"
+	ProjectSection(SolutionItems) = preProject
+		..\openwrap.tests.wrapdesc = ..\openwrap.tests.wrapdesc
+		..\openwrap.wrapdesc = ..\openwrap.wrapdesc
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FF7BA218-B2A1-462A-8F51-153337027853}"
 	ProjectSection(SolutionItems) = preProject
@@ -39,13 +43,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.VisualStudio.Solut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.VisualStudio.Shared", "OpenWrap.VisualStudio.Shared\OpenWrap.VisualStudio.Shared.csproj", "{955C1309-6376-4BFE-A36B-144EFE172D8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.VisualStudio", "Tests.VisualStudio\Tests.VisualStudio.csproj", "{E24298AF-B37B-4DCB-9F7E-1C4A85DBC821}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.600", "OpenWrap.Resharper.600\OpenWrap.Resharper.600.csproj", "{9673FD11-2970-4902-B018-0B799F893535}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Hooks", "OpenWrap.Hooks\OpenWrap.Hooks.csproj", "{CF3ABCDD-0188-42A7-A8AF-178D9A452893}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Resharper.610", "OpenWrap.Resharper.610\OpenWrap.Resharper.610.csproj", "{EBE206C5-50F6-492A-AC62-A1E587448802}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenWrap.Preloading", "..\preloader\src\OpenWrap.Preloading\OpenWrap.Preloading.csproj", "{4E23A829-B9EF-4BDE-941A-D15B334C09AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -109,10 +113,6 @@ Global
 		{955C1309-6376-4BFE-A36B-144EFE172D8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{955C1309-6376-4BFE-A36B-144EFE172D8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{955C1309-6376-4BFE-A36B-144EFE172D8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E24298AF-B37B-4DCB-9F7E-1C4A85DBC821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E24298AF-B37B-4DCB-9F7E-1C4A85DBC821}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E24298AF-B37B-4DCB-9F7E-1C4A85DBC821}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E24298AF-B37B-4DCB-9F7E-1C4A85DBC821}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9673FD11-2970-4902-B018-0B799F893535}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9673FD11-2970-4902-B018-0B799F893535}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9673FD11-2970-4902-B018-0B799F893535}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -125,12 +125,17 @@ Global
 		{EBE206C5-50F6-492A-AC62-A1E587448802}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBE206C5-50F6-492A-AC62-A1E587448802}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBE206C5-50F6-492A-AC62-A1E587448802}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4E23A829-B9EF-4BDE-941A-D15B334C09AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E23A829-B9EF-4BDE-941A-D15B334C09AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E23A829-B9EF-4BDE-941A-D15B334C09AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E23A829-B9EF-4BDE-941A-D15B334C09AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{42F90C40-827D-4CF6-B206-EB2315AACDDB} = {41450CC7-8984-4460-B15A-EB4274347FB5}
+		{4E23A829-B9EF-4BDE-941A-D15B334C09AD} = {41450CC7-8984-4460-B15A-EB4274347FB5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityAddIns) = postSolution
 		OpenWrap.VisualStudioIntegration2010 = 1;Ensures OpenWrap initialization when a solution is opened.;OpenWrap Visual Studio Solution Add-in

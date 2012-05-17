@@ -13,8 +13,8 @@ namespace OpenWrap.Repositories
                 return Enumerable.Empty<IPackageInfo>();
 
             return (from package in packages[dependency.Name]
-                    where package.Version != null && dependency.IsFulfilledBy(package.Version)
-                    orderby package.Version descending
+                    where package.SemanticVersion != null && dependency.IsFulfilledBy(package.SemanticVersion)
+                    orderby package.SemanticVersion descending
                     select package).ToList();
         }
     }

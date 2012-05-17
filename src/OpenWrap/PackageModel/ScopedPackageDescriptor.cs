@@ -18,7 +18,7 @@ namespace OpenWrap.PackageModel
             DelegatedValue<string> _name;
             DelegatedValue<bool> _useProjectRepository;
             DelegatedValue<bool> _useSymLinks;
-            DelegatedValue<Version> _version;
+            DelegatedValue<SemanticVersion> _version;
             DelegatedValue<string> _referencedAssemblies;
 
             ScopedPackageNameOverrideCollection _overrides;
@@ -35,7 +35,14 @@ namespace OpenWrap.PackageModel
                     _entries.Append(line);
                 InitializeHeaders();
             }
+            public ICollection<string> Maintainer { get { return _parent.Maintainer; } }
 
+            public bool IncludeLegacyVersion
+            {
+                get { return _parent.IncludeLegacyVersion; }
+            }
+
+            public string Trademark { get { return _parent.Trademark; } }
             public ScopedPackageDescriptor(PackageDescriptor parent)
             {
                 _parent = parent;
@@ -78,12 +85,12 @@ namespace OpenWrap.PackageModel
 
             public string FullName
             {
-                get { return Name + "-" + Version; }
+                get { return Name + "-" + SemanticVersion; }
             }
 
             public PackageIdentifier Identifier
             {
-                get { return new PackageIdentifier(Name, Version); }
+                get { return new PackageIdentifier(Name, SemanticVersion); }
             }
 
             public string Name
@@ -109,10 +116,11 @@ namespace OpenWrap.PackageModel
                 set { _useSymLinks.Value = value; }
             }
 
-            public Version Version
+            [Obsolete("Please use the SemanticVersion property instead.")]
+            public Version Version { get { return _parent.Version; } }
+            public SemanticVersion SemanticVersion
             {
-                get { return _version.Value; }
-                set { _version.Value = value; }
+                get { return _parent.SemanticVersion; }
             }
 
             public string ReferencedAssemblies
@@ -144,6 +152,11 @@ namespace OpenWrap.PackageModel
             public string Copyright
             {
                 get { return _parent.Copyright; }
+            }
+
+            public string BuildConfiguration
+            {
+                get { return _parent.BuildConfiguration; }
             }
 
             public IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read)
@@ -189,7 +202,7 @@ namespace OpenWrap.PackageModel
                 _description = CreateDelegated<string>("description", SingleStringValue.New);
 
                 _name = CreateDelegated<string>("name", SingleStringValue.New);
-                _version = CreateDelegated<Version>("version", SingleVersionValue.New);
+                _version = CreateDelegated<SemanticVersion>("version", SingleSemanticVersionValue.New);
                 _useProjectRepository = CreateDelegated("use-project-repository", SingleBoolValue.New, true);
                 _useSymLinks = CreateDelegated("use-symlinks", SingleBoolValue.New, false);
                 _referencedAssemblies = CreateDelegated("referenced-assemblies", SingleStringValue.New, "*");

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Xml.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -43,6 +44,12 @@ namespace OpenWrap.Build.Tasks
         [Required]
         public string Verb { get; set; }
 
+        public string Capture { get; set; }
+
+        [Output]
+        public ITaskItem[] Captures { get; set; }
+
+
         public override bool Execute()
         {
             if (Debug) Debugger.Launch();
@@ -57,10 +64,47 @@ namespace OpenWrap.Build.Tasks
                 Log.LogError("Command named '{0}-{1}' is not a recognized command.", Verb, Noun);
                 return false;
             }
+            var captures = (Capture ?? string.Empty).Split(';') ;
+            var captureResult = new List<ITaskItem>();
             foreach (var value in runner.Run(command, GetArguments()))
+            {
                 ProcessOutput(value);
-
+                CaptureOutput(value, captures, captureResult);
+            }
+            Captures = captureResult.ToArray();
             return _success;
+        }
+
+        void CaptureOutput(ICommandOutput value, string[] captures, List<ITaskItem> captureResult)
+        {
+            var outputType = value.GetType();
+            var matchingCaptures = GetCaptureProperties(captures, outputType.Name).Concat(GetCaptureProperties(captures, outputType.FullName));
+
+            foreach(var propertiesPath in matchingCaptures)
+            {
+                object currentValue = value;
+                foreach(var segment in propertiesPath.Value)
+                {
+                    try
+                    {
+                        currentValue = currentValue.GetType().GetProperty(segment).GetValue(currentValue, BindingFlags.Instance | BindingFlags.Public, null, null, null);
+                    }
+                    catch
+                    {
+                        currentValue = null;
+                        break;
+                    }
+                }
+                if (currentValue != null)
+                    captureResult.Add(new TaskItem(currentValue.ToString(), new Dictionary<string, string> { { "Property", propertiesPath.Key } }));
+            }
+        }
+
+        IEnumerable<KeyValuePair<string, string[]>> GetCaptureProperties(string[] captures, string name)
+        {
+            return captures
+                .Where(_ => _.StartsWithNoCase(name))
+                .Select(_ => new KeyValuePair<string,string[]>(_,_.Substring(name.Length + 1).Split('.')));
         }
 
         static string EncodeQuotes(string value)
@@ -81,6 +125,12 @@ namespace OpenWrap.Build.Tasks
 
         void ProcessOutput(ICommandOutput cmd)
         {
+            if (string.IsNullOrEmpty(Capture) == false)
+            {
+                var type = cmd.GetType();
+                var captures = Capture.Split(';');
+    
+            }
             switch (cmd.Type)
             {
                 case CommandResultType.Error:

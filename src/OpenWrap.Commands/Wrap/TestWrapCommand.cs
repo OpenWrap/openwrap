@@ -42,7 +42,7 @@ namespace OpenWrap.Commands.Wrap
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var package = _environment.CurrentDirectoryRepository.PackagesByName[Name]
-                .OrderByDescending(x=>x.Version)
+                .OrderByDescending(x=>x.SemanticVersion)
                 .FirstOrDefault();
 
             if (package == null)

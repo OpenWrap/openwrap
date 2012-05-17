@@ -12,8 +12,8 @@ namespace Tests.Commands.add_wrap.hooks
             given_project_package("one-ring", "1.0.0");
             given_dependency("depends: one-ring");
 
-            given_remote_package("sauron", "1.0.0".ToVersion(), "depends: one-ring = 1.1.0");
-            given_remote_package("one-ring", "1.1.0".ToVersion());
+            given_remote_package("sauron", "1.0.0", "depends: one-ring = 1.1.0");
+            given_remote_package("one-ring", "1.1.0");
 
             when_executing_command("sauron -project");
         }
@@ -21,7 +21,7 @@ namespace Tests.Commands.add_wrap.hooks
         [Test]
         public void add_hook_is_called_for_new_dependency()
         {
-            add_hook_should_be_called("project", "sauron", string.Empty, "1.0.0".ToVersion());
+            add_hook_should_be_called("project", "sauron", string.Empty, "1.0.0".ToSemVer());
         }
 
         [Test]

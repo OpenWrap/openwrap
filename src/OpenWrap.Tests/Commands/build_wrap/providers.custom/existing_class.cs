@@ -15,7 +15,7 @@ namespace Tests.Commands.build_wrap.providers.custom
                              new PackageDescriptor
                              {
                                  Name = "test",
-                                 Version = "1.0.0.0".ToVersion(),
+                                 SemanticVersion = "1.0.0.0".ToSemVer(),
                                  Build = { "custom;typename=" + typeof(NullPackageBuilder).AssemblyQualifiedName }
                              });
             when_executing_command();

@@ -18,7 +18,7 @@ namespace Tests.Repositories.manager
         [Test]
         public void repository_has_no_authentication()
         {
-            FetchRepositories.Single().ShouldBeOfType<InMemoryRepository>();
+            FetchRepositories.Single().Feature<ISupportAuthentication>().ShouldBeNull();
         }
     }
 }

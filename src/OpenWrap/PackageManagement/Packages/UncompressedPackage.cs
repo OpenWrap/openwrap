@@ -19,6 +19,7 @@ namespace OpenWrap.PackageManagement.Packages
         static readonly TraceSource _log = new TraceSource("openwrap", SourceLevels.All);
         readonly IFile _originalPackageFile;
         IPackageDescriptor _descriptor;
+        SemanticVersion _semver;
 
         public UncompressedPackage(IPackageRepository source,
                                    IFile originalPackageFile,
@@ -44,16 +45,24 @@ namespace OpenWrap.PackageManagement.Packages
             }
              
             var versionFile = wrapCacheDirectory.GetFile("version");
-            _descriptor = new PackageDescriptorReaderWriter().Read(wrapDescriptor);
-            PackageInfo = new DefaultPackageInfo(versionFile.Exists ? versionFile.ReadString().ToVersion() : null,
-                                                _descriptor);
-            Identifier = new PackageIdentifier(Name, Version);
-            IsValid = true;
+            _descriptor = new PackageDescriptorReader().Read(wrapDescriptor);
+            _semver = _descriptor.SemanticVersion ?? _descriptor.Version.ToSemVer();
+            if (_semver == null)
+                _semver = versionFile.Exists ? versionFile.ReadString().ToSemVer() : null;
+
+            IsValid = string.IsNullOrEmpty(Name) == false && _semver != null;
+            if (IsValid)
+                Identifier = new PackageIdentifier(Name, _semver);
         }
 
+        [Obsolete("Plase use SemanticVersion")]
+        public Version Version
+        {
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : _descriptor.Version; }
+        }
         public bool Anchored
         {
-            get { return PackageInfo.Anchored; }
+            get { return _descriptor.Anchored; }
         }
 
         public string Title
@@ -72,24 +81,24 @@ namespace OpenWrap.PackageManagement.Packages
 
         public ICollection<PackageDependency> Dependencies
         {
-            get { return PackageInfo.Dependencies; }
+            get { return _descriptor.Dependencies; }
         }
 
         public string Description
         {
-            get { return PackageInfo.Description; }
+            get { return _descriptor.Description; }
         }
 
         public string FullName
         {
-            get { return Name + "-" + Version; }
+            get { return Name + "-" + SemanticVersion; }
         }
 
         public PackageIdentifier Identifier { get; private set; }
 
         public string Name
         {
-            get { return PackageInfo.Name; }
+            get { return _descriptor.Name; }
         }
 
         public bool Nuked
@@ -101,14 +110,12 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageRepository Source { get; private set; }
 
-        public Version Version
+        public SemanticVersion SemanticVersion
         {
-            get { return PackageInfo.Version; }
+            get { return _semver; }
         }
 
         protected IDirectory BaseDirectory { get; set; }
-
-        protected DefaultPackageInfo PackageInfo { get; set; }
 
         public IEnumerable<IGrouping<string, Exports.IFile>> Content
         {
@@ -118,7 +125,7 @@ namespace OpenWrap.PackageManagement.Packages
                         from file in directory.Files("**\\*")
                         let relativePath = file.Parent.Path.MakeRelative(BaseDirectory.Path)
                         select new FileExportItem(new Path(relativePath), file, this))
-                        .ToLookup(x => x.Path, x=>(Exports.IFile)x);
+                    .ToLookup(x => x.Path, x => (Exports.IFile)x);
             }
         }
 

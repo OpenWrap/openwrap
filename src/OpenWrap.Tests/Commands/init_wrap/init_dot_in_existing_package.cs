@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using OpenFileSystem.IO;
 using OpenWrap;
+using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Serialization;
 using OpenWrap.Testing;
 
@@ -21,15 +22,14 @@ namespace Tests.Commands.init_wrap
         [Test]
         public void dependency_is_not_updated()
         {
-            new PackageDescriptorReaderWriter()
-                    .Read(Environment.CurrentDirectory.GetFile("newpackage.wrapdesc"))
+            new PackageDescriptorReader().Read(Environment.CurrentDirectory.GetFile("newpackage.wrapdesc"))
                     .Dependencies.SingleOrDefault(x => x.Name.EqualsNoCase("openwrap"))
                     .ContentOnly.ShouldBeFalse();
         }
 
         void given_dependency_file(string name)
         {
-            new PackageDescriptorReaderWriter()
+            new PackageDescriptorWriter()
                     .Write(
                             Environment.Descriptor,
                             Environment.CurrentDirectory.GetFile(name).OpenWrite());

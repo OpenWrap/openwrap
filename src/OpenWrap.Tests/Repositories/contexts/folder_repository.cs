@@ -14,9 +14,8 @@ using Tests.contexts;
 
 namespace Tests.Repositories.contexts
 {
-    public class folder_repository : context
+    public class folder_repository : OpenWrap.Testing.context
     {
-        FolderRepositoryOptions _options;
         protected InMemoryFileSystem file_system;
         protected ITemporaryDirectory repository_directory;
         protected FolderRepository repository;

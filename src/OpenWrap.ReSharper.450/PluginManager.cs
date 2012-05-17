@@ -41,11 +41,11 @@ namespace OpenWrap.Resharper
         public const string OUTPUT_RESHARPER_TESTS = "OpenWrap-Tests";
         readonly DTE2 _dte;
         List<Assembly> _loadedAssemblies = new List<Assembly>();
-        bool _resharperLoaded;
+        //bool _resharperLoaded;
 
         static ResharperPlugin _selfPlugin;
-        System.Threading.Thread _debugThread;
-        bool runTestRunner = true;
+        //System.Threading.Thread _debugThread;
+        //bool runTestRunner = true;
         OpenWrapOutput _output;
         ResharperThreading _threading;
 
@@ -105,7 +105,6 @@ namespace OpenWrap.Resharper
             try
             {
                 var asm = GetType().Assembly;
-                var id = "ReSharper OpenWrap Integration";
 #if v600 || v610
                 _lifetimeDefinition = resharper::JetBrains.DataFlow.Lifetimes.Define(resharper::JetBrains.DataFlow.EternalLifetime.Instance, "OpenWrap Solution");
                 _pluginsDirectory =
@@ -115,6 +114,7 @@ namespace OpenWrap.Resharper
                 
                 _pluginsDirectory.Plugins.Add(_selfPlugin);
 #else
+            var id = "ReSharper OpenWrap Integration";
             _selfPlugin = new ResharperPlugin(id, new[] { asm });
 
             ResharperPluginManager.Instance.Plugins.Add(_selfPlugin);

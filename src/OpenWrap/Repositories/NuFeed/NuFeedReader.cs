@@ -95,7 +95,7 @@ namespace OpenWrap.Repositories.NuFeed
             return new PackageEntry
             {
                     Name = properties.ODataValue("Id"),
-                    Version = properties.ODataValue("Version").ToVersion(),
+                    Version = SemanticVersion.TryParseExact(properties.ODataValue("Version")),
                     Description = properties.ODataValue("Summary"),
                     Dependencies = ParseNugetDependencies(properties.ODataValue("Dependencies")),
                     PackageHref = (from content in element.Descendants(XName.Get("content", NS_ATOM))

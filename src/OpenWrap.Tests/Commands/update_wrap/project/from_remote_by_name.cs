@@ -14,8 +14,8 @@ namespace Tests.Commands.update_wrap.project
             given_dependency("depends: one-ring = 1");
             given_project_package("goldberry", "2.0");
             given_project_package("one-ring", "1.0");
-            given_remote_package("one-ring", "1.1".ToVersion());
-            given_remote_package("goldberry", "2.1".ToVersion());
+            given_remote_package("one-ring", "1.1");
+            given_remote_package("goldberry", "2.1");
 
             when_executing_command("one-ring -project");
         }

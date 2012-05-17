@@ -16,14 +16,17 @@ namespace OpenWrap.Commands.Wrap
         bool? _project;
 
         bool? _system;
-        FolderRepository _userSpecifiedRepository;
         FileBased<IPackageDescriptor> _targetDescriptor;
+        FolderRepository _userSpecifiedRepository;
 
         [CommandInput]
         public bool Anchored { get; set; }
 
         [CommandInput]
         public bool Content { get; set; }
+
+        [CommandInput]
+        public bool Edge { get; set; }
 
         [CommandInput]
         public string From { get; set; }
@@ -76,7 +79,9 @@ namespace OpenWrap.Commands.Wrap
                     addOptions |= PackageAddOptions.UpdateDescriptor;
                 if (!NoHooks)
                     addOptions |= PackageAddOptions.Hooks;
-                return addOptions;
+                if (Edge)
+                    addOptions |= PackageAddOptions.Edge;
+                    return addOptions;
             }
         }
 
@@ -84,8 +89,8 @@ namespace OpenWrap.Commands.Wrap
         {
             get
             {
-                if (Version != null) return PackageRequest.Exact(Name, Version.ToVersion());
-                if (MinVersion != null || MaxVersion != null) return PackageRequest.Between(Name, MinVersion.ToVersion(), MaxVersion.ToVersion());
+                if (Version != null) return PackageRequest.Exact(Name, Version.ToSemVer());
+                if (MinVersion != null || MaxVersion != null) return PackageRequest.Between(Name, MinVersion.ToSemVer(), MaxVersion.ToSemVer());
                 return PackageRequest.Any(Name);
             }
         }
@@ -108,7 +113,7 @@ namespace OpenWrap.Commands.Wrap
             yield return VerifyProjectRepository();
 
             yield return SetupEnvironmentForAdd();
-            var sourceRepositories = GetSourceRepositories();
+            var sourceRepositories = GetSourceRepositories().ToList();
 
             var descriptor = new PackageDescriptor(_targetDescriptor.Value);
             if (Project && System)
@@ -159,15 +164,6 @@ namespace OpenWrap.Commands.Wrap
             }
         }
 
-        IEnumerable<PackageOperationResult> AddProjectPackage(IPackageDescriptor targetDescriptor, IEnumerable<IPackageRepository> sourceRepositories)
-        {
-            var packageDescriptor = targetDescriptor.Lock(HostEnvironment.ProjectRepository);
-            
-            foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, packageDescriptor, HostEnvironment.ProjectRepository, AddOptions))
-                yield return m;
-
-        }
-
         protected override ICommandOutput ToOutput(PackageOperationResult packageOperationResult)
         {
             If<PackageMissingResult>(packageOperationResult, _ => _packageNotFound = true);
@@ -185,8 +181,8 @@ namespace OpenWrap.Commands.Wrap
         static void ParseSuccess(PackageOperationResult m, Action<PackageIdentifier> onSuccess, Action onFailure = null)
         {
             var id = m is PackageUpdatedResult
-                             ? ((PackageUpdatedResult)m).Package.Identifier
-                             : (m is PackageAddedResult ? ((PackageAddedResult)m).Package.Identifier : null);
+                         ? ((PackageUpdatedResult)m).Package.Identifier
+                         : (m is PackageAddedResult ? ((PackageAddedResult)m).Package.Identifier : null);
             if (m.Success && id != null)
                 onSuccess(id);
             else if (m.Success)
@@ -195,13 +191,21 @@ namespace OpenWrap.Commands.Wrap
                 onFailure();
         }
 
+        IEnumerable<PackageOperationResult> AddProjectPackage(IPackageDescriptor targetDescriptor, IEnumerable<IPackageRepository> sourceRepositories)
+        {
+            var packageDescriptor = targetDescriptor.Lock(HostEnvironment.ProjectRepository);
+
+            foreach (var m in PackageManager.AddProjectPackage(PackageRequest, sourceRepositories, packageDescriptor, HostEnvironment.ProjectRepository, AddOptions))
+                yield return m;
+        }
+
 
         IEnumerable<IPackageRepository> GetSourceRepositories()
         {
             return new[] { _userSpecifiedRepository, HostEnvironment.CurrentDirectoryRepository, HostEnvironment.SystemRepository }
-                    .Concat(Remotes.FetchRepositories())
-                    .Concat(HostEnvironment.ProjectRepository)
-                    .NotNull();
+                .Concat(Remotes.FetchRepositories())
+                .Concat(HostEnvironment.ProjectRepository)
+                .NotNull();
         }
 
         ICommandOutput SetupEnvironmentForAdd()
@@ -249,19 +253,19 @@ namespace OpenWrap.Commands.Wrap
                 yield break;
             }
 
-            if (gotVersion && Version.ToVersion() == null)
+            if (gotVersion && Version.ToSemVer() == null)
             {
                 yield return new Error("Could not parse version: " + Version);
                 yield break;
             }
 
-            if (gotMinVersion && MinVersion.ToVersion() == null)
+            if (gotMinVersion && MinVersion.ToSemVer() == null)
             {
                 yield return new Error("Could not parse minversion: " + MinVersion);
                 yield break;
             }
 
-            if (gotMaxVersion && MaxVersion.ToVersion() == null)
+            if (gotMaxVersion && MaxVersion.ToSemVer() == null)
             {
                 yield return new Error("Could not parse maxversion: " + MaxVersion);
                 yield break;
@@ -286,15 +290,15 @@ namespace OpenWrap.Commands.Wrap
             if (NoDescriptorUpdate)
                 return new Info("Descriptor file will not be updated.");
             return descriptor.File.Exists
-                           ? new Info(@"Using descriptor {0}.", descriptor.File.Name)
-                           : new Info("Creating descriptor {0}.", descriptor.File.Name);
+                       ? new Info(@"Using descriptor {0}.", descriptor.File.Name)
+                       : new Info("Creating descriptor {0}.", descriptor.File.Name);
         }
 
         ICommandOutput VerifyProjectRepository()
         {
             return HostEnvironment.ProjectRepository != null
-                           ? new Info("Project repository present.")
-                           : new Info("Project repository absent.");
+                       ? new Info("Project repository present.")
+                       : new Info("Project repository absent.");
         }
     }
 }

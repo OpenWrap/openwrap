@@ -8,6 +8,7 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement.DependencyResolvers
 {
+    
     public class DependencyVisitor
     {
         readonly Stack<Node> _currentNode = new Stack<Node>();

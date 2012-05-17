@@ -20,7 +20,7 @@ namespace OpenWrap.Repositories.NuFeed
         readonly Uri _target;
         readonly Uri _packagesUri;
         LazyValue<IEnumerable<IPackageInfo>> _packages;
-        NetworkCredential _credentials;
+        public NetworkCredential CurrentCredentials { get; private set; }
 
         public NuFeedRepository(IFileSystem fileSystem, IHttpClient client, Uri target, Uri packagesUri)
         {
@@ -98,9 +98,9 @@ namespace OpenWrap.Repositories.NuFeed
 
         public IDisposable WithCredentials(NetworkCredential credentials)
         {
-            var oldCredentials = _credentials;
-            _credentials = credentials;
-            return new ActionOnDispose(() => _credentials = oldCredentials);
+            var oldCredentials = CurrentCredentials;
+            CurrentCredentials = credentials;
+            return new ActionOnDispose(() => CurrentCredentials = oldCredentials);
         }
     }
 }

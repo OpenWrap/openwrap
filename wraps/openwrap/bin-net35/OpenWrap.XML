@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>OpenWrap</name>
+    </assembly>
+    <members>
+        <member name="T:OpenWrap.Resources.Keys">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:OpenWrap.Resources.Keys.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:OpenWrap.Resources.Keys.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="T:OpenWrap.PackageManagement.AbstractPackageOperationResultIterator">
+            <summary>
+            Provides a wrapper for iterating over results. Doesn't do much right now, will have more in the future when MemoizeAll has been added.
+            </summary>
+        </member>
+        <member name="M:OpenWrap.Collections.SequenceBuilder.#ctor(System.Collections.Generic.IEnumerable{OpenWrap.Commands.ICommandOutput},System.Boolean)">
+            <summary>
+            breakOnAny = true: Usual behaviour
+            breakOnAny = false: Only error output will trigger a stop of the enumeration
+            </summary>
+        </member>
+        <member name="T:OpenWrap.Commands.Cli.ShellRunner">
+            <summary>
+              The entrypoint used by the shell to execute code.
+            </summary>
+        </member>
+        <member name="M:OpenWrap.PackageModel.PackageNameOverride.Apply(OpenWrap.PackageModel.PackageDependency)">
+            <summary>
+              Applies the override, if it's relevant to the dependency, to produce a modified dependency.
+            </summary>
+        </member>
+        <member name="M:OpenWrap.FuncExtensions.AsEnumerable``1(System.Func{``0})">
+            <summary>
+              Provides a delayed execution enumerable over a lambda.
+            </summary>
+            <typeparam name = "T"></typeparam>
+            <param name = "value"></param>
+            <returns></returns>
+        </member>
+        <member name="P:OpenWrap.Runtime.TargetFramework.Profile">
+            <summary>
+            TargetFrameworkProfile
+            </summary>
+        </member>
+        <member name="P:OpenWrap.Runtime.TargetFramework.Version">
+            <summary>
+            TargetFrameworkVersion
+            </summary>
+        </member>
+        <member name="P:OpenWrap.Runtime.TargetFramework.Identifier">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:OpenWrap.PackageModel.IPackage">
+            <summary>
+              Represents a wrap package.
+            </summary>
+        </member>
+        <member name="M:OpenWrap.Repositories.ISupportCleaning.Clean(System.Collections.Generic.IEnumerable{OpenWrap.PackageModel.IPackageInfo})">
+            <summary>
+            </summary>
+            <param name = "packagesToKeep"></param>
+            <returns>The packages that were removed from the repository</returns>
+        </member>
+        <member name="T:OpenWrap.Repositories.FolderRepository">
+            <summary>
+              Provides a repository that can read packages from a directory using the default structure.
+            </summary>
+        </member>
+        <member name="M:OpenWrap.Reflection.SharedReflectionExtensions.CreateInstanceFrom(System.Type,System.String)">
+            <summary>
+              Creates a type using the provided string to initialize its values.
+            </summary>
+            <param name = "type">The type of object to create.</param>
+            <param name = "propertyValue">The value to assign to the created object.</param>
+            <returns>The created object.</returns>
+        </member>
+        <member name="T:OpenWrap.Strings">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:OpenWrap.Strings.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:OpenWrap.Strings.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:OpenWrap.Strings.CMD_COMMAND_LIST">
+             <summary>
+               Looks up a localized string similar to List of available commands:
+            {0}.
+             </summary>
+        </member>
+        <member name="P:OpenWrap.Strings.CMD_NOT_ENOUGH_ARGS">
+            <summary>
+              Looks up a localized string similar to Command was not understood. Type &apos;get-help&apos; to get a list of supported commands..
+            </summary>
+        </member>
+        <member name="P:OpenWrap.Strings.CMD_UNKNOWN">
+            <summary>
+              Looks up a localized string similar to Command named &apos;{0}&apos; was not found. Type &apos;get-help&apos; to get a list of supported commands..
+            </summary>
+        </member>
+    </members>
+</doc>

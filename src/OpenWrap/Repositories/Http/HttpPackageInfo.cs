@@ -38,6 +38,11 @@ namespace OpenWrap.Repositories.Http
                            )
                     .ToList();
         }
+        [Obsolete("Plase use SemanticVersion")]
+        public Version Version
+        {
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }
+        }
         public string Title { get { return _package.Title; } }
         public bool Anchored
         {
@@ -58,12 +63,12 @@ namespace OpenWrap.Repositories.Http
 
         public string FullName
         {
-            get { return Name + "-" + Version; }
+            get { return Name + "-" + SemanticVersion; }
         }
 
         public PackageIdentifier Identifier
         {
-            get { return new PackageIdentifier(Name, Version); }
+            get { return new PackageIdentifier(Name, SemanticVersion); }
         }
 
         public string Name
@@ -83,7 +88,7 @@ namespace OpenWrap.Repositories.Http
 
         public IPackageRepository Source { get; private set; }
 
-        public Version Version
+        public SemanticVersion SemanticVersion
         {
             get { return _package.Version; }
         }

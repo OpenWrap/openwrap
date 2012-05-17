@@ -20,7 +20,7 @@ namespace Tests.Repositories
         [Test]
         public void version_is_correct()
         {
-            Package.Version.ShouldBe("1.0.0.1234".ToVersion());
+            Package.SemanticVersion.ShouldBe("1.0.0.1234".ToSemVer());
         }
         [Test]
         public void exact_version_dependency_is_per_latest()

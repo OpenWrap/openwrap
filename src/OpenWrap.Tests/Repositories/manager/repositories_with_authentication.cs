@@ -20,8 +20,8 @@ namespace Tests.Repositories.manager
         [Test]
         public void repository_has_authentication()
         {
-            FetchRepositories.Single().ShouldBeOfType<PreAuthenticatedRepository>()
-                .Credentials
+            FetchRepositories.Single().Feature<ISupportAuthentication>()
+                .CurrentCredentials
                 .Check(_ => _.UserName.ShouldBe("sauron"))
                 .Check(_ => _.Password.ShouldBe("itsmyprecious"));
         }
@@ -29,15 +29,14 @@ namespace Tests.Repositories.manager
         [Test]
         public void repository_supports_credentials_override()
         {
-            var repo = FetchRepositories.OfType<PreAuthenticatedRepository>().Single();
-            var auth = repo.Feature<ISupportAuthentication>()
-                .WithCredentials(new NetworkCredential("saruman", "impersonator"));
-            repo.Credentials
+            var repo = FetchRepositories.Single().Feature<ISupportAuthentication>();
+            var auth = repo.WithCredentials(new NetworkCredential("saruman", "impersonator"));
+            repo.CurrentCredentials
                 .Check(_ => _.UserName.ShouldBe("saruman"))
                 .Check(_ => _.Password.ShouldBe("impersonator"));
 
             auth.Dispose();
-            repo.Credentials
+            repo.CurrentCredentials
                 .Check(_ => _.UserName.ShouldBe("sauron"))
                 .Check(_ => _.Password.ShouldBe("itsmyprecious"));
         }

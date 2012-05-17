@@ -7,7 +7,7 @@ namespace OpenWrap.Commands
         protected AbstractOutput(string message, params object[] args)
         {
             if (message != null)
-                Message = string.Format(message, args);
+                Message = args.Length > 0 ? string.Format(message, args) : message;
         }
 
         public CommandResultType Type { get; set; }

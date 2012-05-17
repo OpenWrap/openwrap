@@ -62,7 +62,7 @@ namespace OpenWrap.IO
             int count = -1;
             IFile file;
             while ((file = directory.GetFile(string.Format(
-                "{1}{0}.{2}", 
+                "{1}{0}{2}", 
                 count++ <= 0 ? string.Empty : count.ToString(),                                                      System.IO.Path.GetFileNameWithoutExtension(fileName), 
                 System.IO.Path.GetExtension(fileName)))).Exists)
             {
@@ -84,23 +84,11 @@ namespace OpenWrap.IO
             }
         }
 
-        /// <summary>
-        ///   Writes the provided string to a file, using the provided encoding. If the file already exists, it will be overwritten.
-        /// </summary>
-        /// <param name = "file"></param>
-        /// <param name = "encoding"></param>
-        /// <returns></returns>
         public static void WriteString(this IFile file, string text)
         {
             WriteString(file, text, Encoding.UTF8);
         }
 
-        /// <summary>
-        ///   Writes the provided string to a file, using the provided encoding. If the file already exists, it will be overwritten.
-        /// </summary>
-        /// <param name = "file"></param>
-        /// <param name = "encoding"></param>
-        /// <returns></returns>
         public static void WriteString(this IFile file, string text, Encoding encoding)
         {
             using (var stream = file.OpenWrite())

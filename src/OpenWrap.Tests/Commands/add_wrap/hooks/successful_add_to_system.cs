@@ -9,7 +9,7 @@ namespace Tests.Commands.add_wrap.hooks
     {
         public successful_add_to_system()
         {
-            given_remote_package("sauron", "1.0.0".ToVersion());
+            given_remote_package("sauron", "1.0.0");
 
             when_executing_command("sauron -system");
         }
@@ -17,7 +17,7 @@ namespace Tests.Commands.add_wrap.hooks
         [Test]
         public void add_hook_is_called()
         {
-            add_hook_should_be_called("system", "sauron", string.Empty, "1.0.0".ToVersion());
+            add_hook_should_be_called("system", "sauron", string.Empty, "1.0.0".ToSemVer());
         }
         [Test]
         public void add_hook_called_once()

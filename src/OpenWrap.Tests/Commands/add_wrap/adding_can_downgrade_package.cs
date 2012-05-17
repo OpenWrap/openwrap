@@ -14,8 +14,8 @@ namespace Tests.Commands.add_wrap
 
             given_dependency("depends: sauron");
 
-            given_remote_package("frodo", "1.0.0".ToVersion(), "depends: one-ring = 1.0");
-            given_remote_package("one-ring", "1.0.1".ToVersion());
+            given_remote_package("frodo", "1.0.0", "depends: one-ring = 1.0");
+            given_remote_package("one-ring", "1.0.1");
             when_executing_command("frodo");
         }
 

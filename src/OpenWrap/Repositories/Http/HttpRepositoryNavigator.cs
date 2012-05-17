@@ -93,5 +93,10 @@ namespace OpenWrap.Repositories.Http
             _availableCredentials = credentials;
             return new ActionOnDispose(() => _availableCredentials = null);
         }
+
+        public NetworkCredential CurrentCredentials
+        {
+            get { return _availableCredentials; }
+        }
     }
 }

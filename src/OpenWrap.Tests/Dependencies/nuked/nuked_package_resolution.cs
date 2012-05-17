@@ -2,29 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using OpenWrap;
+using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
 
-namespace contexts
+namespace Tests.Dependencies.contexts
 {
     public class nuked_package_resolution : OpenWrap.Testing.context
     {
         protected string ResolvedVersion;
         private PackageDependencyBuilder _packageDependency
-                = new PackageDependencyBuilder(PACKAGE_NAME);
+            = new PackageDependencyBuilder(PACKAGE_NAME);
         private readonly List<IPackageInfo> _versions = new List<IPackageInfo>();
         InMemoryRepository _repo = new InMemoryRepository("in-mem");
+        StrategyResolver _resolver;
 
         const string PACKAGE_NAME="test";
 
+        public nuked_package_resolution()
+        {
+            _resolver = new StrategyResolver();
+        }
         protected void given_package_version(string version)
         {
             _repo.Packages.Add(new InMemoryPackage
             {
-                    Name = PACKAGE_NAME,
-                    Version = new Version(version)
+                Name = PACKAGE_NAME,
+                SemanticVersion = SemanticVersion.TryParseExact(version)
             });
         }
 
@@ -32,9 +38,9 @@ namespace contexts
         {
             _repo.Packages.Add(new InMemoryPackage
             {
-                    Name = PACKAGE_NAME,
-                    Version = new Version(version),
-                    Nuked = true
+                Name = PACKAGE_NAME,
+                SemanticVersion = SemanticVersion.TryParseExact(version),
+                Nuked = true
             });
         }
 
@@ -45,63 +51,11 @@ namespace contexts
 
         protected void when_resolving()
         {
-            ResolvedVersion = _repo
-                    .PackagesByName.FindAll(_packageDependency).First()
-                    .Version.ToString();
-        }
-    }
-}
-
-namespace OpenWrap.Tests.Dependencies
-{
-    public class when_resolving_build_dependency_against_nuked_revision : global::contexts.nuked_package_resolution
-    {
-        public when_resolving_build_dependency_against_nuked_revision()
-        {
-            given_package_version("1.0.0.0");
-            given_nuked_package_version("1.0.0.1");
-            given_dependency(new EqualVersionVertex(new Version("1.0.0")));
-            when_resolving();
-        }
-
-        [Test]
-        public void the_non_nuked_revision_is_returned()
-        {
-            ResolvedVersion.Equals("1.0.0.0");
-        }
-    }
-
-    public class when_resolving_minor_dependency_against_nuked_build : global::contexts.nuked_package_resolution
-    {
-        public when_resolving_minor_dependency_against_nuked_build()
-        {
-            given_package_version("2.1.0.0");
-            given_nuked_package_version("2.1.1.0");
-            given_dependency(new EqualVersionVertex(new Version("2.1")));
-            when_resolving();
-        }
-
-        [Test]
-        public void the_non_nuked_revision_is_returned()
-        {
-            ResolvedVersion.Equals("2.1.0.0");
-        }
-    }
-
-    public class when_resolving_build_dependency_against_nuked_build : global::contexts.nuked_package_resolution
-    {
-        public when_resolving_build_dependency_against_nuked_build()
-        {
-            given_package_version("2.1.0");
-            given_nuked_package_version("2.1.1");
-            given_dependency(new EqualVersionVertex(new Version("2.1.1")));
-            when_resolving();
-        }
-
-        [Test]
-        public void the_nuked_revision_is_returned()
-        {
-            ResolvedVersion.Equals("2.1.1");
+            
+            ResolvedVersion = _resolver.TryResolveDependencies(
+                new PackageDescriptor() { Dependencies = {_packageDependency}},
+                new[]{_repo}
+            ).SuccessfulPackages.First().Identifier.Version.ToString();
         }
     }
 }

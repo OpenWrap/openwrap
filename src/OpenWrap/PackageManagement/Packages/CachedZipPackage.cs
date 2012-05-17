@@ -8,7 +8,7 @@ using OpenWrap.Repositories;
 
 namespace OpenWrap.PackageManagement.Packages
 {
-    public class CachedZipPackage : ZipPackage
+    public class CachedZipPackage : ZipFilePackage
     {
         readonly IDirectory _cacheDirectoryPathPath;
 

@@ -43,6 +43,9 @@ namespace OpenWrap.Commands.Wrap
         [CommandInput]
         public bool AnyVersion { get; set; }
 
+        [CommandInput]
+        public bool Edge { get; set; }
+
         protected override IEnumerable<Func<IEnumerable<ICommandOutput>>> Validators()
         {
             yield return ValidateInputs;
@@ -125,15 +128,19 @@ namespace OpenWrap.Commands.Wrap
             }
             if (Version != null)
             {
-                builder = builder.VersionVertex(new EqualVersionVertex(Version.ToVersion()));
+                builder = builder.VersionVertex(new EqualVersionVertex(Version.ToSemVer()));
             }
             if (MinVersion != null)
             {
-                builder = builder.VersionVertex(new GreaterThanOrEqualVersionVertex(MinVersion.ToVersion()));
+                builder = builder.VersionVertex(new GreaterThanOrEqualVersionVertex(MinVersion.ToSemVer()));
             }
             if (MaxVersion != null)
             {
-                builder = builder.VersionVertex(new LessThanVersionVertex(MaxVersion.ToVersion()));
+                builder = builder.VersionVertex(new LessThanVersionVertex(MaxVersion.ToSemVer()));
+            }
+            if (Edge)
+            {
+                builder = builder.Edge();
             }
             return builder;
         }
@@ -150,7 +157,7 @@ namespace OpenWrap.Commands.Wrap
         {
             using (var destinationStream = HostEnvironment.DescriptorFile.OpenWrite())
             {
-                new PackageDescriptorReaderWriter().Write(descriptor, destinationStream);
+                new PackageDescriptorWriter().Write(descriptor, destinationStream);
             }
         }
     }

@@ -9,12 +9,11 @@ namespace Tests.Commands.clean_wrap
 {
     public class cleaning_a_wrap_with_two_versions : command<CleanWrapCommand>
     {
-        static readonly string LionelVersion = "1.0.0.123";
         public cleaning_a_wrap_with_two_versions()
         {
             given_project_repository(new InMemoryRepository("Project repository"));
             given_project_package("lionel", "1.0.0.0");
-            given_project_package("lionel", LionelVersion);
+            given_project_package("lionel", "1.0.0.123");
             given_dependency("depends: lionel");
             when_executing_command("lionel -Project");
         }
@@ -25,7 +24,7 @@ namespace Tests.Commands.clean_wrap
             Environment.ProjectRepository
                     .PackagesByName["lionel"]
                     .ShouldHaveCountOf(1)
-                    .ShouldHaveAll(v => v.Version.ToString().Equals(LionelVersion));
+                    .ShouldHaveAll(v => v.SemanticVersion.ToString().Equals("1.0.0+123"));
         }
         [Test]
         public void reported_no_errors()

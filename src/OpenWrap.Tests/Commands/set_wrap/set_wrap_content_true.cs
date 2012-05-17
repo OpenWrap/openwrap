@@ -28,4 +28,20 @@ namespace Tests.Commands.set_wrap
             Environment.Descriptor.Dependencies.First().Anchored.ShouldBeFalse();
         }
     }
+    class set_wrap_edge_true : command<SetWrapCommand>
+    {
+        public set_wrap_edge_true()
+        {
+            given_dependency("depends: sauron");
+            given_project_package("sauron", "1.0.0.0");
+
+            when_executing_command("sauron -edge");
+        }
+
+        [Test]
+        public void edge_is_true()
+        {
+            Environment.Descriptor.Dependencies.First().Edge.ShouldBeTrue();
+        }
+    }
 }

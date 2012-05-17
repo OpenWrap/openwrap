@@ -10,7 +10,6 @@ namespace OpenWrap.PackageModel
         ICollection<string> Build { get; }
         ICollection<PackageDependency> Dependencies { get; }
         string Title { get; set; }
-        string Namespace { get; }
         string Description { get; }
         string FullName { get; }
         PackageIdentifier Identifier { get; }
@@ -18,13 +17,18 @@ namespace OpenWrap.PackageModel
         ICollection<PackageNameOverride> Overrides { get; }
         bool UseProjectRepository { get; }
         bool UseSymLinks { get; }
-        Version Version { get; set; }
+        Version Version { get; }
+        SemanticVersion SemanticVersion { get; }
         string ReferencedAssemblies { get; }
         ICollection<string> DirectoryStructure { get; }
         bool StorePackages { get; }
         IEnumerable<string> AssemblyInfo { get; }
         IEnumerable<string> Authors { get; }
         string Copyright { get; }
+        string BuildConfiguration { get; }
+        string Trademark { get; }
+        ICollection<string> Maintainer { get; }
+        bool IncludeLegacyVersion { get; }
         IPackageDescriptor CreateScoped(IEnumerable<IPackageDescriptorEntry> read);
         IEnumerable<IPackageDescriptorEntry> GetPersistableEntries();
     }

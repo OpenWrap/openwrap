@@ -37,7 +37,7 @@ namespace Tests.Repositories.manager
         public void publish_repo_built()
         {
             PublishRepositories.ShouldHaveAtLeastOne().First()
-                .Check(_ => _.Name.ShouldBe("somewhere"))
+                .Check(_ => _.Name.ShouldBe("iron-hills - somewhere"))
                 .Check(_ => _.Token.ShouldBe("[memory]somewhere"))
                 .Feature<ISupportPublishing>().ShouldNotBeNull();
         }

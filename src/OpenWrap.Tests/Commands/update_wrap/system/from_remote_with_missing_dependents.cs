@@ -12,7 +12,7 @@ namespace Tests.Commands.update_wrap.system
         {
             given_system_package("nurn", "2.1.0.0");
 
-            given_remote_package("nurn", "2.1.1.0".ToVersion(), "depends: mordor");
+            given_remote_package("nurn", "2.1.1.0", "depends: mordor");
 
             when_executing_command("nurn -system");
         }

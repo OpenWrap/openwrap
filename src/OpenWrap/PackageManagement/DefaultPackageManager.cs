@@ -29,7 +29,7 @@ namespace OpenWrap.PackageManagement
 
         public IEnumerable<IGrouping<string, TItem>> GetSystemExports<TItem>(IPackageRepository systemRepository, ExecutionEnvironment environment) where TItem : IExportItem
         {
-            var packages = systemRepository.PackagesByName.Select(x => x.OrderByDescending(_ => _.Version).First());
+            var packages = systemRepository.PackagesByName.Select(x => x.OrderByDescending(_ => _.SemanticVersion).First());
             return packages.SelectMany(x => _exporter.Exports<TItem>(x.Load(), environment));
         }
         public IEnumerable<IGrouping<string, TItem>> GetProjectExports<TItem>(IPackageDescriptor descriptor, IPackageRepository projectRepository, ExecutionEnvironment environment) where TItem : IExportItem
@@ -212,14 +212,16 @@ namespace OpenWrap.PackageManagement
 
         static IEnumerable<PackageAnchoredResult> AnchorPackages(DependencyResolutionResult resolvedPackages, IEnumerable<IPackageRepository> destinationRepositories)
         {
-            return from repo in destinationRepositories.OfType<ISupportAnchoring>()
+            return from repo in destinationRepositories
+                   let anchorage = repo.Feature<ISupportAnchoring>()
+                   where anchorage != null
                    from successfulPackage in resolvedPackages.SuccessfulPackages
                    where successfulPackage.IsAnchored
-                   let packageInstances = from packageInstance in successfulPackage.Packages
-                                          where packageInstance != null &&
-                                                packageInstance.Source == repo
-                                          select packageInstance
-                   from anchorResult in repo.AnchorPackages(packageInstances)
+                   let packageInstances = (from packageInstance in successfulPackage.Packages
+                                           where packageInstance != null &&
+                                                 packageInstance.Source.Token == repo.Token
+                                           select packageInstance)
+                   from anchorResult in anchorage.AnchorPackages(packageInstances)
                    select anchorResult;
         }
 
@@ -231,8 +233,8 @@ namespace OpenWrap.PackageManagement
                            where packageNameSelection(systemPackageName)
                            let maxPackageVersion = (
                                                            from versionedPackage in systemPackage
-                                                           orderby versionedPackage.Version descending
-                                                           select versionedPackage.Version
+                                                           orderby versionedPackage.SemanticVersion descending
+                                                           select versionedPackage.SemanticVersion
                                                    ).First()
                            select new PackageDescriptor
                            {
@@ -249,19 +251,19 @@ namespace OpenWrap.PackageManagement
         {
             return (
                            from repo in sourceRepositories
-                           let compatiblePackage = packages.FirstOrDefault(x => x.Source == repo)
+                           let compatiblePackage = packages.FirstOrDefault(x => x.Source.Token == repo.Token)
                            where compatiblePackage != null
                            select compatiblePackage
                    )
-                    .First();
+                   .First();
         }
 
-        static IPackageInfo GetExistingPackage(IPackageRepository destinationRepository, ResolvedPackage foundPackage, Func<Version, bool> versionSelector)
+        static IPackageInfo GetExistingPackage(IPackageRepository destinationRepository, ResolvedPackage foundPackage, Func<SemanticVersion, bool> versionSelector)
         {
             return destinationRepository.PackagesByName.Contains(foundPackage.Identifier.Name)
                            ? destinationRepository.PackagesByName[foundPackage.Identifier.Name]
-                                     .Where(x => foundPackage.Identifier.Version != null && versionSelector(x.Version))
-                                     .OrderByDescending(x => x.Version)
+                                     .Where(x => foundPackage.Identifier.Version != null && versionSelector(x.SemanticVersion))
+                                     .OrderByDescending(x => x.SemanticVersion)
                                      .FirstOrDefault()
                            : null;
         }
@@ -296,13 +298,13 @@ namespace OpenWrap.PackageManagement
         static IEnumerable<PackageOperationResult> RemovePackageFromRepository(PackageRequest packageToRemove, IPackageRepository repository)
         {
             var versionToRemove = packageToRemove.LastVersion
-                                          ? repository.PackagesByName[packageToRemove.Name].Select(x => x.Version)
+                                          ? repository.PackagesByName[packageToRemove.Name].Select(x => x.SemanticVersion)
                                                     .OrderByDescending(_ => _)
                                                     .FirstOrDefault()
                                           : packageToRemove.ExactVersion;
             var packagesToKeep = from package in repository.PackagesByName.SelectMany(_ => _)
                                  let matchesName = package.Name.EqualsNoCase(packageToRemove.Name)
-                                 let matchesVersion = versionToRemove == null ? true : package.Version == versionToRemove
+                                 let matchesVersion = versionToRemove == null ? true : package.SemanticVersion == versionToRemove
                                  where !(matchesName && matchesVersion)
                                  select package;
             return ((ISupportCleaning)repository).Clean(packagesToKeep).Cast<PackageOperationResult>();
@@ -313,7 +315,8 @@ namespace OpenWrap.PackageManagement
             return new PackageDependencyBuilder(packageToAdd.Name)
                     .SetVersionVertices(ToVersionVertices(packageToAdd))
                     .Anchored((options & PackageAddOptions.Anchor) == PackageAddOptions.Anchor)
-                    .Content((options & PackageAddOptions.Content) == PackageAddOptions.Content);
+                    .Content((options & PackageAddOptions.Content) == PackageAddOptions.Content)
+                    .Edge((options & PackageAddOptions.Edge) == PackageAddOptions.Edge);
         }
 
         static IPackageDescriptor ToDescriptor(PackageRequest package, PackageAddOptions options)
@@ -355,7 +358,6 @@ namespace OpenWrap.PackageManagement
                 yield return new PackageDependencyAlreadyExists(packageToAdd.Name);
                 yield break;
             }
-
             
             var dependency = ToDependency(packageToAdd, options);
             projectDescriptor.Dependencies.Add(dependency);
@@ -403,7 +405,7 @@ namespace OpenWrap.PackageManagement
         {
             var selectedPackages = from packageByName in systemRepository.PackagesByName
                                where packageNameSelector(packageByName.Key)
-                               select packageByName.OrderByDescending(x => x.Version).First();
+                               select packageByName.OrderByDescending(x => x.SemanticVersion).First();
 
             var untouchedVersions = systemRepository.PackagesByName.Where(x => !packageNameSelector(x.Key)).SelectMany(x => x);
 
@@ -569,26 +571,14 @@ namespace OpenWrap.PackageManagement
 
         class UpdatePackageVertex : VersionVertex
         {
-            public UpdatePackageVertex(Version existingVersion)
+            public UpdatePackageVertex(SemanticVersion existingVersion)
                 : base(existingVersion)
             {
             }
 
-            public override bool IsCompatibleWith(Version version)
+            public override bool IsCompatibleWith(SemanticVersion version)
             {
-                return (Version.Major == version.Major
-                        && Version.Minor == version.Minor
-                        && Version.Build == version.Build
-                        && Version.Revision <= version.Revision)
-                       ||
-                       (Version.Major == version.Major
-                        && Version.Minor == version.Minor
-                        && Version.Build <= version.Build)
-                       ||
-                       (Version.Major == version.Major
-                        && Version.Minor <= version.Minor)
-                       ||
-                       (Version.Major <= version.Major);
+                return Version <= version;
             }
             public override string ToString()
             {

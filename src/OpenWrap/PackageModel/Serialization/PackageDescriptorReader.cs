@@ -13,6 +13,30 @@ namespace OpenWrap.PackageModel.Serialization
         static readonly Regex _lineParser = new Regex(@"^\s*(?<fieldname>[0-9a-zA-Z\-\.]*?)\s*:\s*(?<fieldvalue>.*?)\s*$", RegexOptions.Compiled);
 
 
+        public IPackageDescriptor Read(Stream content)
+        {
+            return Read(content, entries => new PackageDescriptor(entries));
+        }
+
+        public IPackageDescriptor Read(IFile filePath)
+        {
+            if (!filePath.Exists)
+                throw new FileNotFoundException("The file does not exist.", filePath.Path);
+            return filePath.ReadRetry(Read);
+        }
+
+        public T Read<T>(Stream content, Func<IEnumerable<IPackageDescriptorEntry>, T> ctor)
+            where T : class, IPackageDescriptor
+        {
+            var stringReader = new StreamReader(content, true);
+            var lines = stringReader.ReadToEnd().GetUnfoldedLines();
+            if (lines.Any(l => l.Contains('\n')))
+                throw new InvalidPackageException(
+                    "Package descriptor contains invalid line endings (<LF> instead of <CR><LF>). Either the descriptor is in the wrong format or a source control system that plays around with line endings (like git) has been misconfigured (core.autocrlf may help).");
+
+            return ctor(lines.Select(ParseLine));
+        }
+
         public IDictionary<string, FileBased<IPackageDescriptor>> ReadAll(IDirectory directoryToReadFrom)
         {
             var descriptorFiles = (from dir in directoryToReadFrom.AncestorsAndSelf()
@@ -33,27 +57,10 @@ namespace OpenWrap.PackageModel.Serialization
                 if (scopeMatch.Success == false)
                     continue;
                 var scopedDescriptor = rootDescriptor
-                        .CreateScoped(descriptor.Read(Read));
+                    .CreateScoped(descriptor.Read(Read));
                 all[scopeMatch.Groups["scope"].Value] = FileBased.New(descriptor, scopedDescriptor);
             }
             return all;
-        }
-
-        public IPackageDescriptor Read(Stream content)
-        {
-            return Read<PackageDescriptor>(content);
-        }
-        public T Read<T>(Stream content, Func<IEnumerable<IPackageDescriptorEntry>, T> ctor = null)
-            where T : class, IPackageDescriptor
-        {
-            var stringReader = new StreamReader(content, true);
-            var lines = stringReader.ReadToEnd().GetUnfoldedLines();
-            if (lines.Any(l => l.Contains('\n')))
-                throw new InvalidPackageException("Package descriptor contains invalid line endings (<LF> instead of <CR><LF>). Either the descriptor is in the wrong format or a source control system that plays around with line endings (like git) has been misconfigured (core.autocrlf may help).");
-
-            return ctor != null
-                ? ctor(lines.Select(ParseLine))
-                : new PackageDescriptor(lines.Select(ParseLine)) as T;
         }
 
         static IPackageDescriptorEntry ParseLine(string line)
@@ -64,12 +71,10 @@ namespace OpenWrap.PackageModel.Serialization
 
             var match = _lineParser.Match(line);
             return !match.Success
-                           ? null
-                           : new GenericDescriptorEntry(
-                                     match.Groups["fieldname"].Value,
-                                     match.Groups["fieldvalue"].Value);
+                       ? null
+                       : new GenericDescriptorEntry(
+                             match.Groups["fieldname"].Value,
+                             match.Groups["fieldvalue"].Value);
         }
-
     }
-
 }

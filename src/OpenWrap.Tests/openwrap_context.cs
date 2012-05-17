@@ -55,7 +55,7 @@ namespace Tests
             //Environment.DescriptorFile.MustExist();
             ServiceLocator.RegisterService<IFileSystem>(FileSystem);
             ServiceLocator.RegisterService<IEnvironment>(Environment);
-            ServiceLocator.RegisterService<IPackageResolver>(new ExhaustiveResolver());
+            ServiceLocator.RegisterService<IPackageResolver>(new StrategyResolver());
             ServiceLocator.TryRegisterService<IPackageDeployer>(() => new DefaultPackageDeployer());
             ServiceLocator.TryRegisterService<IPackageExporter>(() => new DefaultPackageExporter(new IExportProvider[]{
                     new DefaultAssemblyExporter(),
@@ -97,7 +97,7 @@ namespace Tests
 
         protected void given_dependency(string scope, string dependency)
         {
-            new DependsParser().Parse(dependency, Environment.GetOrCreateScopedDescriptor(scope).Value);
+            Environment.GetOrCreateScopedDescriptor(scope).Value.Dependencies.Add(DependsParser.ParseDependsLine(dependency));
         }
 
         protected void given_dependency(string dependency)
@@ -122,15 +122,15 @@ namespace Tests
             Environment.CurrentDirectoryRepository = repository;
         }
 
-        protected void given_remote_package(string name, Version version, params string[] dependencies)
+        protected void given_remote_package(string name, string version, params string[] dependencies)
         {
             // note Version is a version type because of overload resolution...
-            AddPackage(RemoteRepositories.First(), name, version.ToString(), dependencies);
+            AddPackage(RemoteRepositories.First(), name, version, dependencies);
         }
 
-        protected void given_remote_package(string repositoryName, string name, Version version, params string[] dependencies)
+        protected void given_named_remote_package(string repositoryName, string name, string version, params string[] dependencies)
         {
-            AddPackage(RemoteRepositories.First(x => x.Name == repositoryName), name, version.ToString(), dependencies);
+            AddPackage(RemoteRepositories.First(x => x.Name == repositoryName), name, version, dependencies);
         }
 
         protected void given_system_package(string name, string version, params string[] dependencies)
@@ -141,7 +141,7 @@ namespace Tests
         static void AddPackage(IPackageRepository repository, string name, string version, string[] dependencies)
         {
             var packageFileName = name + "-" + version + ".wrap";
-            var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version.ToString(), dependencies).OpenRead();
+            var packageStream = Packager.NewWithDescriptor(new InMemoryFile(packageFileName), name, version, dependencies).OpenRead();
             using (var readStream = packageStream)
             using (var publisher = repository.Feature<ISupportPublishing>().Publisher())
                 publisher.Publish(packageFileName, readStream);
@@ -150,10 +150,10 @@ namespace Tests
 
         protected void given_currentdirectory_package(string packageName, string version, params string[] dependencies)
         {
-            given_currentdirectory_package(packageName, new Version(version), dependencies);
+            given_currentdirectory_package(packageName, version.ToSemVer(), dependencies);
         }
 
-        protected void given_currentdirectory_package(string packageName, Version version, params string[] dependencies)
+        protected void given_currentdirectory_package(string packageName, SemanticVersion version, params string[] dependencies)
         {
             if (Environment.CurrentDirectoryRepository is InMemoryRepository)
                 AddPackage(Environment.CurrentDirectoryRepository, packageName, version.ToString(), dependencies);
@@ -211,17 +211,17 @@ namespace Tests
             }
         }
 
-        protected void given_remote_repository(string remoteName, int? priority = null, Action<InMemoryRepository> factory = null)
+        protected void given_remote_repository(string configName, int? priority = null, Action<InMemoryRepository> factory = null)
         {
-            var repo = new InMemoryRepository(remoteName);
+            var repo = new InMemoryRepository(configName);
             if (factory != null) factory(repo);
             RemoteRepositories.Add(repo);
-            ConfiguredRemotes[remoteName] = new RemoteRepository
+            ConfiguredRemotes[configName] = new RemoteRepository
             {
                 Priority = priority ?? ConfiguredRemotes.Count + 1,
                 FetchRepository = new RemoteRepositoryEndpoint{Token=repo.Token},
                 PublishRepositories = { new RemoteRepositoryEndpoint{Token=repo.Token } },
-                Name = remoteName
+                Name = configName
             };
             ServiceLocator.GetService<IConfigurationManager>().Save(ConfiguredRemotes);
         }
@@ -271,7 +271,7 @@ namespace Tests
                 .Lock(string.Empty,
                       Environment.ProjectRepository
                           .PackagesByName[name]
-                          .Where(x => x.Version == version.ToVersion()));
+                          .Where(x => x.SemanticVersion == version.ToSemVer()));
 
         }
     }
@@ -303,25 +303,25 @@ namespace Tests
             ReloadRepositories();
         }
 
-        protected void package_is_not_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
+        protected void package_is_not_in_repository(IPackageRepository repository, string packageName, SemanticVersion packageVersion)
         {
             (repository.PackagesByName.Contains(packageName)
-                              ? repository.PackagesByName[packageName].FirstOrDefault(x => x.Version.Equals(packageVersion))
+                              ? repository.PackagesByName[packageName].FirstOrDefault(x => x.SemanticVersion.Equals(packageVersion))
                               : null).ShouldBeNull();
 
 
         }
-        protected void package_is_in_repository(IPackageRepository repository, string packageName, Version packageVersion)
+        protected void package_is_in_repository(IPackageRepository repository, string packageName, SemanticVersion packageVersion)
         {
             repository.PackagesByName[packageName]
                 .ShouldHaveCountOf(1)
-                .First().Version.ShouldBe(packageVersion);
+                .First().SemanticVersion.ShouldBe(packageVersion);
         }
 
         public IPackageDescriptor WrittenDescriptor(string scope = null)
         {
             scope = scope ?? string.Empty;
-            return new PackageDescriptorReaderWriter().Read(Environment.ScopedDescriptors[scope].File);
+            return new PackageDescriptorReader().Read(Environment.ScopedDescriptors[scope].File);
         }
 
         protected void given_descriptor(params string[] lines)

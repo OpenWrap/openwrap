@@ -7,12 +7,16 @@ namespace OpenWrap.Collections
 {
     public static class EnumerableExtensions
     {
+        public static List<T> CopyOrNew<T>(this IEnumerable<T> collection)
+        {
+            return collection == null ? new List<T>() : new List<T>(collection);
+        }
         public static IEnumerable<T> Select<T>(this IEnumerable input, Func<object, T> functoid)
         {
             foreach(var obj in input)
                 yield return functoid(obj);
         }
-        public static T OneOrDefault<T>(this IEnumerable<T> input)
+        public static T OneOrDefault<T>(this IEnumerable<T> input, T @default = default(T))
         {
             var enumerator = input.GetEnumerator();
             if (enumerator.MoveNext())
@@ -20,7 +24,7 @@ namespace OpenWrap.Collections
                 var current = enumerator.Current;
                 if (!enumerator.MoveNext()) return current;
             }
-            return input.Where(_ => false).FirstOrDefault();
+            return @default;
         }
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> input, params T[] values)
         {

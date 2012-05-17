@@ -10,7 +10,6 @@ using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories.FileSystem;
-using StreamExtensions = OpenWrap.IO.StreamExtensions;
 
 
 namespace OpenWrap.Repositories
@@ -21,14 +20,13 @@ namespace OpenWrap.Repositories
     public class FolderRepository : ISupportCleaning, ISupportPublishing, ISupportAnchoring, IPackageRepository, ISupportLocking
     {
         readonly bool _anchoringEnabled;
+        readonly bool _canLock;
         readonly PackageStorage _packageLoader;
         readonly bool _persistSource;
         readonly IDirectory _rootCacheDirectory;
         readonly bool _useSymLinks;
-        bool _canLock;
         IFile _lockFile;
         Uri _lockFileUri;
-
 
         public FolderRepository(IDirectory packageBasePath, FolderRepositoryOptions options = FolderRepositoryOptions.Default)
         {
@@ -43,7 +41,6 @@ namespace OpenWrap.Repositories
 
             BasePath = packageBasePath;
 
-
             _rootCacheDirectory = BasePath.GetOrCreateDirectory("_cache");
 
             _packageLoader = !_persistSource
@@ -55,10 +52,9 @@ namespace OpenWrap.Repositories
         }
 
         public IDirectory BasePath { get; set; }
+        public ILookup<string, IPackageInfo> LockedPackages { get; private set; }
 
         public string Name { get; set; }
-
-        public string Type { get { return "Folder"; } }
 
         public ILookup<string, IPackageInfo> PackagesByName
         {
@@ -70,11 +66,22 @@ namespace OpenWrap.Repositories
             get { return "[folder]" + BasePath.Path.ToUri(); }
         }
 
+        public string Type
+        {
+            get { return "Folder"; }
+        }
+
+        public void Publish(IPackageRepository repository, string packageFileName, Stream packageStream)
+        {
+            packageFileName = PackageNameUtility.NormalizeFileName(packageFileName);
+            _packageLoader.Publish(repository, packageFileName, packageStream);
+        }
+
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
             if (typeof(TFeature) == typeof(ISupportAnchoring) && !_anchoringEnabled) return null;
             if (typeof(TFeature) == typeof(ISupportLocking) && !_canLock) return null;
-            
+
             return this as TFeature;
         }
 
@@ -82,24 +89,6 @@ namespace OpenWrap.Repositories
         {
             _packageLoader.Refresh();
             RefreshLockFiles();
-        
-        }
-
-        void RefreshLockFiles()
-        {
-            if (!_canLock) return;
-            _lockFile = BasePath.Files("*.lock").Where(x => x.Name.StartsWith("packages.")).OrderBy(x => x.Name.Length).FirstOrDefault()
-                        ?? BasePath.GetFile("packages.lock");
-            _lockFileUri = new Uri(ConstantUris.URI_BASE, UriKind.Absolute).Combine(new Uri(_lockFile.Name, UriKind.Relative));
-            if (_lockFile.Exists == false) return;
-
-            var lockedPackageInfo = new DefaultConfigurationManager(BasePath).Load<LockedPackages>(_lockFileUri)
-                .Lock;
-            var lockedPackages = lockedPackageInfo.Select(
-                locked => _packageLoader.Packages.Single(package => locked.Name.EqualsNoCase(package.Package.Name) &&
-                                                     locked.Version == package.Package.Version).Package);
-
-            LockedPackages = lockedPackages.ToLookup(x => string.Empty);
         }
 
         public IEnumerable<PackageAnchoredResult> AnchorPackages(IEnumerable<IPackageInfo> packagesToAnchor)
@@ -122,6 +111,45 @@ namespace OpenWrap.Repositories
             }
         }
 
+        public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
+        {
+            packagesToKeep = packagesToKeep.ToList();
+            var packagesToRemove = _packageLoader.Packages.Where(x => !packagesToKeep.Contains(x.Package)).ToList();
+            foreach (var packageInfo in packagesToRemove)
+            {
+                yield return new PackageCleanResult(packageInfo.Package, _packageLoader.RemovePackage(packageInfo));
+            }
+
+            ChangeCompleted();
+        }
+
+        public void Lock(string scope, IEnumerable<IPackageInfo> packages)
+        {
+            if (scope != string.Empty) throw new NotImplementedException("Can only lock in default scope.");
+            var packageNames = packages.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            var locked = LockedPackages[scope].Where(_ => packageNames.ContainsNoCase(_.Name) == false).Concat(packages)
+                .Select(x => new LockedPackage(x.Name, x.SemanticVersion)).ToList();
+
+            new DefaultConfigurationManager(BasePath).Save(new LockedPackages { Lock = locked }, _lockFileUri);
+            RefreshLockFiles();
+        }
+
+        public void Unlock(string scope, IEnumerable<IPackageInfo> packages)
+        {
+            if (scope != string.Empty) throw new NotImplementedException("Can only lock in default scope.");
+
+            var packageNames = packages.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            var locked = LockedPackages[scope].Where(_ => packageNames.ContainsNoCase(_.Name) == false)
+                .Select(x => new LockedPackage(x.Name, x.SemanticVersion)).ToList();
+
+            new DefaultConfigurationManager(BasePath).Save(new LockedPackages { Lock = locked }, _lockFileUri);
+            RefreshLockFiles();
+        }
+
+        public IPackagePublisher Publisher()
+        {
+            return new FolderPublisher(Publish, ChangeCompleted);
+        }
 
         void ChangeCompleted()
         {
@@ -129,9 +157,93 @@ namespace OpenWrap.Repositories
             RefreshPackages();
         }
 
+        void RefreshLockFiles()
+        {
+            if (!_canLock) return;
+            _lockFile = BasePath.Files("*.lock").Where(x => x.Name.StartsWith("packages.")).OrderBy(x => x.Name.Length).FirstOrDefault()
+                        ?? BasePath.GetFile("packages.lock");
+            _lockFileUri = new Uri(ConstantUris.URI_BASE, UriKind.Absolute).Combine(new Uri(_lockFile.Name, UriKind.Relative));
+            if (_lockFile.Exists == false) return;
+
+            var lockedPackageInfo = new DefaultConfigurationManager(BasePath).Load<LockedPackages>(_lockFileUri)
+                .Lock;
+            var lockedPackages = lockedPackageInfo.Select(
+                locked => _packageLoader.Packages.Single(package => locked.Name.EqualsNoCase(package.Package.Name) &&
+                                                                    locked.Version == package.Package.SemanticVersion).Package);
+
+            LockedPackages = lockedPackages.ToLookup(x => string.Empty);
+        }
+
         public abstract class AnchorageStrategy
         {
             public abstract bool? Anchor(IDirectory packagesDirectory, IDirectory packageDirectory, string anchorName);
+        }
+
+        public class FolderPublisher : IPackagePublisherWithSource
+        {
+            readonly Action<IPackageRepository, string, Stream> _publish;
+            readonly Action _publishCompleted;
+
+            public FolderPublisher(Action<IPackageRepository, string, Stream> publish, Action publishCompleted)
+            {
+                _publish = publish;
+                _publishCompleted = publishCompleted;
+            }
+
+            public void Dispose()
+            {
+                _publishCompleted();
+            }
+
+            public void Publish(string packageFileName, Stream packageStream)
+            {
+                Publish(null, packageFileName, packageStream);
+            }
+
+            public void Publish(IPackageRepository source, string packageFileName, Stream packageStream)
+            {
+                _publish(source, packageFileName, packageStream);
+            }
+        }
+
+        public class PackageReference
+        {
+            public string Name { get; set; }
+            public string Source { get; set; }
+            public SemanticVersion Version { get; set; }
+        }
+
+        [Path("packages")]
+        public class PackageReferences
+        {
+            public static readonly PackageReferences Default = new PackageReferences();
+
+            public PackageReferences()
+            {
+                Packages = new List<PackageReference>();
+            }
+
+            [Key("package")]
+            public ICollection<PackageReference> Packages { get; set; }
+        }
+
+        public class SymLinkAnchorageStrategy : AnchorageStrategy
+        {
+            public override bool? Anchor(IDirectory packagesDirectory, IDirectory packageDirectory, string anchorName)
+            {
+                var anchoredDirectory = packagesDirectory.GetDirectory(anchorName);
+
+
+                if (anchoredDirectory.Exists)
+                {
+                    if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(packageDirectory))
+                        return null;
+                    if (!anchoredDirectory.SafeDelete()) return false;
+                }
+
+                packageDirectory.LinkTo(anchoredDirectory.Path.FullPath);
+                return true;
+            }
         }
 
         protected class PackageLocation
@@ -146,6 +258,7 @@ namespace OpenWrap.Repositories
             public IPackageInfo Package { get; set; }
             public string Token { get; set; }
         }
+
         class DirectoryCopyAnchorageStrategy : AnchorageStrategy
         {
             const string ANCHOR_MARKER_FILENAME = "_anchored";
@@ -166,6 +279,7 @@ namespace OpenWrap.Repositories
 
                     if (!anchoredDirectory.SafeDelete()) return false;
                 }
+
                 packageDirectory.CopyTo(anchoredDirectory);
                 anchoredDirectory.GetFile(ANCHOR_MARKER_FILENAME).WriteString(packageDirectory.Name);
                 return true;
@@ -182,54 +296,9 @@ namespace OpenWrap.Repositories
                 }
             }
         }
-        public class SymLinkAnchorageStrategy : AnchorageStrategy
-        {
-            public override bool? Anchor(IDirectory packagesDirectory, IDirectory packageDirectory, string anchorName)
-            {
-                var anchoredDirectory = packagesDirectory.GetDirectory(anchorName);
-             
-                
-                if (anchoredDirectory.Exists)
-                {
-                    if (anchoredDirectory.IsHardLink && anchoredDirectory.Target.Equals(packageDirectory))
-                        return null;
-                    if (!anchoredDirectory.SafeDelete()) return false;
-                }
-                packageDirectory.LinkTo(anchoredDirectory.Path.FullPath);
-                return true;
-            }
-        }       
-
-        public class FolderPublisher : IPackagePublisherWithSource
-        {
-            readonly Func<IPackageRepository, string, Stream, IPackageInfo> _publish;
-            readonly Action _publishCompleted;
-
-            public FolderPublisher(Func<IPackageRepository, string, Stream, IPackageInfo> publish, Action publishCompleted)
-            {
-                _publish = publish;
-                _publishCompleted = publishCompleted;
-            }
-
-            public void Dispose()
-            {
-                _publishCompleted();
-            }
-
-            public IPackageInfo Publish(string packageFileName, Stream packageStream)
-            {
-                return Publish(null, packageFileName, packageStream);
-            }
-
-            public IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream)
-            {
-                return _publish(source, packageFileName, packageStream);
-            }
-        }
 
         class PackageStorage
         {
-            protected IDirectory PackagesDirectory { get; private set; }
             readonly FolderRepository _parent;
             readonly IDirectory _rootCacheDirectory;
             IList<PackageLocation> _locationsReadonly;
@@ -252,6 +321,20 @@ namespace OpenWrap.Repositories
             }
 
             protected List<PackageLocation> PackageLocations { get; set; }
+            protected IDirectory PackagesDirectory { get; private set; }
+
+            public virtual IEnumerable<PackageLocation> LoadPackages()
+            {
+                return from wrapFile in PackagesDirectory.Files("*.wrap")
+                       let packageFullName = wrapFile.NameWithoutExtension
+                       let packageCacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
+                       let package = CreatePackageInstance(packageCacheDirectory, wrapFile)
+                       where package.IsValid
+                       select new PackageLocation(
+                           packageCacheDirectory, 
+                           package
+                           );
+            }
 
             public virtual void PersistPackages()
             {
@@ -280,18 +363,6 @@ namespace OpenWrap.Repositories
                 PackageLocations = LoadPackages().ToList();
                 _locationsReadonly = PackageLocations.AsReadOnly();
             }
-            public virtual IEnumerable<PackageLocation> LoadPackages()
-            {
-                return from wrapFile in PackagesDirectory.Files("*.wrap")
-                       let packageFullName = wrapFile.NameWithoutExtension
-                       let packageCacheDirectory = _rootCacheDirectory.GetDirectory(packageFullName)
-                       let package = CreatePackageInstance(packageCacheDirectory, wrapFile)
-                       where package.IsValid
-                       select new PackageLocation(
-                           packageCacheDirectory,
-                           package
-                           );
-            }
 
 
             public virtual bool RemovePackage(PackageLocation packageInfo)
@@ -302,6 +373,7 @@ namespace OpenWrap.Repositories
                     PackagesDirectory.GetFile(packageInfo.Package.FullName + ".wrap").Delete();
                     return true;
                 }
+
                 return false;
             }
 
@@ -319,12 +391,12 @@ namespace OpenWrap.Repositories
 
             public PackageStorageWithSource(FolderRepository parent, IDirectory packagesDirectory, IDirectory rootCacheDirectory) : base(parent, packagesDirectory, rootCacheDirectory)
             {
-
             }
+
             public override IEnumerable<PackageLocation> LoadPackages()
             {
                 _loadedPackages = new DefaultConfigurationManager(PackagesDirectory).Load<PackageReferences>();
-                
+
                 var onDiskPackages = base.LoadPackages();
                 return from packageRef in _loadedPackages.Packages
                        let package = onDiskPackages.FirstOrDefault(_ => PackageMatch(_, packageRef))
@@ -333,24 +405,26 @@ namespace OpenWrap.Repositories
                        select package;
             }
 
-            bool PackageMatch(PackageLocation location, PackageReference packageRef)
+            public override void PersistPackages()
             {
-                return location.Package.Name.EqualsNoCase(packageRef.Name) &&
-                       location.Package.Version.Equals(packageRef.Version);
+                base.PersistPackages();
+                new DefaultConfigurationManager(PackagesDirectory).Save(_loadedPackages);
             }
+
             public override PackageLocation Publish(IPackageRepository source, string packageFileName, Stream packageStream)
             {
                 var location = base.Publish(source, packageFileName, packageStream);
-                var packageRef = new PackageReference()
+                var packageRef = new PackageReference
                 {
-                    Name = location.Package.Name,
-                    Version = location.Package.Version
+                    Name = location.Package.Name, 
+                    Version = location.Package.SemanticVersion
                 };
                 if (source != null)
                     packageRef.Source = source.Token;
                 _loadedPackages.Packages.Add(packageRef);
                 return location;
             }
+
             public override bool RemovePackage(PackageLocation packageInfo)
             {
                 var packageRef = _loadedPackages.Packages.FirstOrDefault(_ => PackageMatch(packageInfo, _));
@@ -360,110 +434,18 @@ namespace OpenWrap.Repositories
                 // ignore failure to remove packages as we now have a list
                 return true;
             }
-            public override void PersistPackages()
+
+            bool PackageMatch(PackageLocation location, PackageReference packageRef)
             {
-                base.PersistPackages();
-                new DefaultConfigurationManager(PackagesDirectory).Save(_loadedPackages);
+                return location.Package.Name.EqualsNoCase(packageRef.Name) &&
+                       location.Package.SemanticVersion.Equals(packageRef.Version);
             }
+
             PackageLocation ReloadPackage(PackageReference packageRef)
             {
                 // TODO: Implement auto-reload of package
                 throw new InvalidOperationException();
             }
         }
-        [Path("packages")]
-        public class PackageReferences
-        {
-            public PackageReferences()
-            {
-                Packages = new List<PackageReference>();
-            }
-            [Key("package")]
-            public ICollection<PackageReference> Packages { get; set; }
-            public static readonly PackageReferences Default = new PackageReferences();
-        }
-        public class PackageReference
-        {
-            public string Name { get; set; }
-            public string Source { get; set; }
-            public Version Version { get; set; }
-        }
-    
-        public IEnumerable<PackageCleanResult> Clean(IEnumerable<IPackageInfo> packagesToKeep)
-        {
-            packagesToKeep = packagesToKeep.ToList();
-            var packagesToRemove = _packageLoader.Packages.Where(x => !packagesToKeep.Contains(x.Package)).ToList();
-            foreach (var packageInfo in packagesToRemove)
-            {
-                yield return new PackageCleanResult(packageInfo.Package, _packageLoader.RemovePackage(packageInfo));
-            }
-            ChangeCompleted();
-        }
-
-        public IPackageInfo Publish(IPackageRepository repository, string packageFileName, Stream packageStream)
-        {
-            packageFileName = PackageNameUtility.NormalizeFileName(packageFileName);
-            var newPackage = _packageLoader.Publish(repository, packageFileName, packageStream);
-
-            return newPackage.Package;
-        }
-
-
-        public IPackagePublisher Publisher()
-        {
-            return new FolderPublisher(Publish, ChangeCompleted);
-        }
-
-
-        public void Lock(string scope, IEnumerable<IPackageInfo> packages)
-        {
-            if (scope != string.Empty) throw new NotImplementedException("Can only lock in default scope.");
-            var packageNames = packages.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-            var locked = LockedPackages[scope].Where(_=>packageNames.ContainsNoCase(_.Name) == false).Concat(packages)
-                .Select(x=>new LockedPackage(x.Name, x.Version)).ToList();
-            
-            new DefaultConfigurationManager(BasePath).Save(new LockedPackages { Lock = locked }, _lockFileUri);
-            RefreshLockFiles();
-        }
-
-        public ILookup<string, IPackageInfo> LockedPackages { get; private set; }
-
-        public void Unlock(string scope, IEnumerable<IPackageInfo> packages)
-        {
-            if (scope != string.Empty) throw new NotImplementedException("Can only lock in default scope.");
-
-            var packageNames = packages.Select(x => x.Name).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-            var locked = LockedPackages[scope].Where(_ => packageNames.ContainsNoCase(_.Name) == false)
-                .Select(x => new LockedPackage(x.Name, x.Version)).ToList();
-
-            new DefaultConfigurationManager(BasePath).Save(new LockedPackages { Lock = locked }, _lockFileUri);
-            RefreshLockFiles();
-        }
     }
-
-    public class LockedPackages
-    {
-        public LockedPackages()
-        {
-            Lock = new List<LockedPackage>();
-
-        }
-        public IList<LockedPackage> Lock { get; set; }
-    }
-
-    public class LockedPackage
-    {
-        public LockedPackage()
-        {
-        }
-        public LockedPackage(string name, Version version)
-        {
-            Name = name;
-            Version = version;
-        }
-
-        public string Name { get; set; }
-        public Version Version { get; set; }
-   
-}
 }

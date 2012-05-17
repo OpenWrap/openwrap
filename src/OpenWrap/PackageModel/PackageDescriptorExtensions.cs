@@ -25,7 +25,7 @@ namespace OpenWrap.PackageModel
         public static void Save(this FileBased<IPackageDescriptor> descriptor)
         {
             using (var writeStream = descriptor.File.OpenWrite())
-                new PackageDescriptorReaderWriter().Write(descriptor.Value.GetPersistableEntries(), writeStream);
+                new PackageDescriptorWriter().Write(descriptor.Value.GetPersistableEntries(), writeStream);
         }
 
         public static void Touch(this IFile file)
@@ -59,7 +59,7 @@ namespace OpenWrap.PackageModel
                 {
                     builder = new PackageDependencyBuilder(lockedPackage.Name);
                 }
-                lockedDescriptor.Dependencies.Add(builder.SetVersionVertices(new[] { new AbsolutelyEqualVersionVertex(lockedPackage.Version) }));
+                lockedDescriptor.Dependencies.Add(builder.SetVersionVertices(new[] { new AbsolutelyEqualVersionVertex(lockedPackage.SemanticVersion) }));
             }
             return lockedDescriptor;
         }

@@ -11,7 +11,7 @@ namespace Tests.Commands.update_wrap.system
         {
             given_project_package("goldberry", "2.0.0");
             given_system_package("goldberry", "2.1.0.0");
-            given_remote_package("goldberry", "2.1.0.1".ToVersion());
+            given_remote_package("goldberry", "2.1.0.1");
             
             when_executing_command("-system");
         }

@@ -42,8 +42,10 @@ namespace OpenWrap.IO.Packaging
             var lines = descriptorLines.ToList();
             if (lines.None(_ => _.StartsWithNoCase("name:")))
                 lines.Add("name: " + name);
+            if (lines.None(_=>_.StartsWithNoCase("semantic-version:")))
+                lines.Add("semantic-version: " + version);
             if (lines.None(_ => _.StartsWithNoCase("version:")))
-                lines.Add("version: " + name);
+                lines.Add("version: " + version.ToSemVer().ToVersion());
 
             var descriptorContent = lines.JoinString("\r\n").ToUTF8Stream();
             var versionContent = version.ToUTF8Stream();
@@ -78,9 +80,9 @@ namespace OpenWrap.IO.Packaging
 
         static ZipEntry GetZipEntry(PackageContent contentFile)
         {
-            if (contentFile.RelativePath == ".")
+            var target = string.IsNullOrEmpty(contentFile.RelativePath) ? "." : contentFile.RelativePath;
+            if (target == ".")
                 return new ZipEntry(Path.GetFileName(contentFile.FileName));
-            var target = contentFile.RelativePath;
             if (target.Last() != '/')
                 target += '/';
             var fileEntry = new ZipEntry(Path.Combine(target, contentFile.FileName));

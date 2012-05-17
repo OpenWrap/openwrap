@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 
 [assembly: AssemblyTitle("OpenWrap.Windows")]
-[assembly: AssemblyDescription("OpenWrap Graphical User interface")]
 [assembly: ComVisible(false)]
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located

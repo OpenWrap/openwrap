@@ -6,10 +6,10 @@ namespace OpenWrap.Repositories
 {
     public class PackagePublisher : IPackagePublisher, IPackagePublisherWithSource
     {
-        readonly Func<IPackageRepository, string, Stream, IPackageInfo> _publish;
+        readonly Action<IPackageRepository, string, Stream> _publish;
         readonly Action _end;
 
-        public PackagePublisher(Func<IPackageRepository, string, Stream, IPackageInfo> publish, Action end = null)
+        public PackagePublisher(Action<IPackageRepository, string, Stream> publish, Action end = null)
         {
             _publish = publish;
             _end = end;
@@ -21,14 +21,14 @@ namespace OpenWrap.Repositories
                 _end();
         }
 
-        public IPackageInfo Publish(string packageFileName, Stream packageStream)
+        public void Publish(string packageFileName, Stream packageStream)
         {
-            return _publish(null,packageFileName, packageStream);
+            _publish(null,packageFileName, packageStream);
         }
 
-        public IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream)
+        public void Publish(IPackageRepository source, string packageFileName, Stream packageStream)
         {
-            return _publish(source, packageFileName, packageStream);
+            _publish(source, packageFileName, packageStream);
         }
     }
 }

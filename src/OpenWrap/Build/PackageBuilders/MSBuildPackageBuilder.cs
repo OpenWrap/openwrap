@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Microsoft.Win32;
 using OpenFileSystem.IO;
 using OpenWrap.Collections;
+using OpenWrap.Commands;
 using OpenWrap.IO;
 using OpenWrap.Runtime;
 using Path = System.IO.Path;
@@ -25,9 +27,11 @@ namespace OpenWrap.Build.PackageBuilders
             Project = new List<string>();
             Configuration = new List<string>();
             ProjectFiles = new List<IFile>();
+
             Properties = new string[0].ToLookup(_ => _);
         }
 
+        public static readonly string[] ReservedProperties = new[] { "BuildEngine" };
         public ILookup<string, string> Properties { get; set; }
 
         public IEnumerable<string> Platform { get; set; }
@@ -36,10 +40,10 @@ namespace OpenWrap.Build.PackageBuilders
         public IEnumerable<string> Configuration { get; set; }
         public ICollection<IFile> ProjectFiles { get; set; }
 
-
+        public string BuildEngine { get; set; }
         protected override string ExecutablePath
         {
-            get { return GetMSBuildExecutablePath(); }
+            get { return GetExecutablePath(); }
         }
 
         public bool Incremental { get; set; }
@@ -52,7 +56,13 @@ namespace OpenWrap.Build.PackageBuilders
             {
                 foreach (var proj in Project)
                 {
-                    var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(proj).FullPath;
+                    // hacky to account for win32 / unix fs differences
+                    var projectSpec = proj;
+                    if (System.IO.Path.DirectorySeparatorChar != '\\' && projectSpec.Contains('\\'))
+                    {
+                        projectSpec = projectSpec.Replace("\\", Path.DirectorySeparatorChar + "");
+                    }
+                    var pathSpec = _environment.DescriptorFile.Parent.Path.Combine(projectSpec).FullPath;
                     IEnumerable<IFile> specFiles;
                     // TODO: Fix OFS. Horribe construction, the Files extension method seems to be buggy as fuck.
                     try
@@ -127,15 +137,53 @@ namespace OpenWrap.Build.PackageBuilders
             catch { }
             return specFiles ?? Enumerable.Empty<IFile>();
         }
-
-        static string GetMSBuildExecutablePath()
+        string GetExecutablePath()
         {
-            var versionedFolders = from version in Directory.GetDirectories(Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\"), "v*")
-                                   orderby version descending
-                                   let msbuildPath = Path.Combine(version, "msbuild.exe")
-                                   where File.Exists(msbuildPath)
-                                   select msbuildPath;
-            return versionedFolders.FirstOrDefault();
+            var build = Properties.Contains("BuildEngine") && Properties["BuildEngine"].Any() ? Properties["BuildEngine"].First() : BuildEngine;
+
+            string path = null;
+            if (build == "default" || (build == "msbuild" && !IsUnix))
+                path = GetMSBuildExecutionPath();
+            if (build == "xbuild" || (build == "msbuild" && IsUnix) || (build == "default" && path == null))
+                path = IsUnix ? "xbuild" : GetWinXbuildPath();
+            return path;
+        }
+
+        static bool IsUnix
+        {
+            get 
+            {
+                int p = (int)Environment.OSVersion.Platform;
+                return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        static string GetWinXbuildPath()
+        {
+            const string monoRegKey = @"SOFTWARE\Novell\Mono";
+            const string monoRegKeyx64 = @"SOFTWARE\Wow6432Node\Novell\Mono";
+            var installKey = Registry.LocalMachine.OpenSubKey(monoRegKey) ??
+                             Registry.LocalMachine.OpenSubKey(monoRegKeyx64);
+            if (installKey == null) return null;
+            var defaultValue = installKey.GetValue("DefaultCLR");
+
+            var versionedKey = installKey.OpenSubKey(defaultValue.ToString());
+            if (versionedKey == null) return null;
+
+            var libPath = versionedKey.GetValue("FrameworkAssemblyDirectory").ToString();
+            return Path.Combine(libPath, "mono\\4.0\\xbuild.exe");
+        }
+
+        static string GetMSBuildExecutionPath()
+        {
+            var dotNetPath = Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\");
+            if (!Directory.Exists(dotNetPath)) return null;
+            return (from versionFolder in Directory.GetDirectories(dotNetPath, "v*")
+                    let version = new Version(Path.GetFileName(versionFolder).Substring(1))
+                    orderby version descending
+                    let file = Path.Combine(versionFolder, "msbuild.exe")
+                    where File.Exists(file)
+                    select file).FirstOrDefault();
         }
 
         IProcess CreateMSBuildProcess(IFile responseFile, IFile project, string platform, string profile, string msbuildTargets)
@@ -172,7 +220,7 @@ namespace OpenWrap.Build.PackageBuilders
                 writer.WriteLine("/p:OpenWrap-EmitOutputInstructions=true");
                 writer.WriteLine("/p:OpenWrap-CurrentProjectFile=\"" + project.Path.FullPath + "\"");
 
-                foreach (var kv in Properties)
+                foreach (var kv in Properties.Where(_=>ReservedProperties.Contains(_.Key) == false))
                 {
                     var value = kv.LastOrDefault();
                     if (value != null)

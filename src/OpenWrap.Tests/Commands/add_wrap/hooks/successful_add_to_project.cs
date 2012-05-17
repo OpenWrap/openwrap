@@ -11,7 +11,7 @@ namespace Tests.Commands.add_wrap.hooks
         public successful_add_to_project()
         {
             given_project_repository();
-            given_remote_package("sauron", "1.0.0".ToVersion());
+            given_remote_package("sauron", "1.0.0");
 
             when_executing_command("sauron -project");
         }
@@ -19,7 +19,7 @@ namespace Tests.Commands.add_wrap.hooks
         [Test]
         public void add_hook_is_called()
         {
-            add_hook_should_be_called("project", "sauron", string.Empty, "1.0.0".ToVersion());
+            add_hook_should_be_called("project", "sauron", string.Empty, "1.0.0".ToSemVer());
         }
 
         [Test]

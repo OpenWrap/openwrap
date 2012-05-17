@@ -76,29 +76,32 @@ namespace OpenWrap.Repositories
             return new PackagePublisher(Publish);
         }
 
-        IPackageInfo Publish(IPackageRepository source, string packageFileName, Stream packageStream)
+        void Publish(IPackageRepository source, string packageFileName, Stream packageStream)
         {
-            var fileWithoutExtension = packageFileName.Trim().ToLowerInvariant().EndsWith(".wrap")
-                                           ? System.IO.Path.GetFileNameWithoutExtension(packageFileName)
-                                           : packageFileName;
-            if (Packages.Any(x => x.FullName.EqualsNoCase(fileWithoutExtension)))
+            var name = PackageNameUtility.GetName(packageFileName);
+            var version = PackageNameUtility.GetVersion(packageFileName);
+
+            if (Packages.Any(x => x.Name.EqualsNoCase(name) && x.SemanticVersion == version))
                 throw new InvalidOperationException("Package already exists in repository.");
 
             var inMemoryFile = new InMemoryFile("c:\\" + Guid.NewGuid());
             using (var stream = inMemoryFile.OpenWrite())
                 IO.StreamExtensions.CopyTo(packageStream, stream);
 
-            var tempFolder = new ZipPackage(inMemoryFile);
+            var tempFolder = new ZipFilePackage(inMemoryFile);
 
             var package = new InMemoryPackage(tempFolder) { Source = this };
             Packages.Add(package);
-            return package;
         }
 
         public IDisposable WithCredentials(NetworkCredential credentials)
         {
-            return ActionOnDispose.None;
+            var creds = CurrentCredentials;
+            CurrentCredentials = credentials;
+            return new ActionOnDispose(()=> CurrentCredentials = creds);
         }
+
+        public NetworkCredential CurrentCredentials { get; private set; }
 
         IDictionary<string, IEnumerable<IPackageInfo>> LockedPackages = new Dictionary<string,IEnumerable< IPackageInfo>>();
 
@@ -119,7 +122,7 @@ namespace OpenWrap.Repositories
             {
                 return (from kv in LockedPackages
                         from package in kv.Value
-                        select new { kv.Key, package }).ToLookup(x=>x.Key, x=>x.package);
+                        select new { kv.Key, package }).ToLookup(x=>x.Key, x=>x.package, StringComparer.OrdinalIgnoreCase);
             }
         }
 

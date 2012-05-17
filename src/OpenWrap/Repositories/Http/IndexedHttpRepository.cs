@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using OpenFileSystem.IO;
+using OpenFileSystem.IO.FileSystems.InMemory;
+using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
 
 namespace OpenWrap.Repositories.Http
@@ -65,10 +67,14 @@ namespace OpenWrap.Repositories.Http
         IDisposable ISupportAuthentication.WithCredentials(NetworkCredential credentials)
         {
             var auth = _navigator as ISupportAuthentication;
+            var initial = CurrentCredentials;
+            CurrentCredentials = credentials;
             return auth == null
-                       ? new ActionOnDispose(() => { })
+                       ? new ActionOnDispose(() => { CurrentCredentials = initial; })
                        : auth.WithCredentials(credentials);
         }
+
+        public NetworkCredential CurrentCredentials { get; private set; }
 
         public IPackagePublisher Publisher()
         {
@@ -105,15 +111,15 @@ namespace OpenWrap.Repositories.Http
                 yield return new HttpPackageInfo(fileSystem, this, navigator, package);
         }
 
-        IPackageInfo Publish(IPackageRepository packageRepository, string packageFileName, Stream packageStream)
+        void Publish(IPackageRepository packageRepository, string packageFileName, Stream packageStream)
         {
             if (!Navigator.CanPublish)
                 throw new InvalidOperationException(string.Format("The repository {0} is read-only.", Navigator));
 
             Navigator.PushPackage(packageFileName, packageStream);
             _packagesByName = null;
+
             EnsureDataLoaded();
-            return PackagesByName[PackageNameUtility.GetName(packageFileName)].FirstOrDefault(x => x.Version == PackageNameUtility.GetVersion(packageFileName));
         }
     }
 }

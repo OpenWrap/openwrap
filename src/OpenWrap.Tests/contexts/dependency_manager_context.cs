@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using OpenWrap;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
@@ -22,7 +23,7 @@ namespace Tests.contexts
             DependencyDescriptor = new PackageDescriptor
             {
                     Name = "test",
-                    Version = new Version("1.0")
+                    SemanticVersion = "1.0".ToSemVer()
             };
             ProjectRepository = new InMemoryRepository("Local repository");
             SystemRepository = new InMemoryRepository("System repository");
@@ -37,7 +38,7 @@ namespace Tests.contexts
 
         protected void given_dependency(string dependency)
         {
-            new DependsParser().Parse(dependency, DependencyDescriptor);
+            ((IPackageDescriptor)DependencyDescriptor).Dependencies.Add(DependsParser.ParseDependsLine(dependency));
         }
 
         protected void given_dependency_override(string from, string to)
@@ -62,7 +63,7 @@ namespace Tests.contexts
 
         protected void when_resolving_packages()
         {
-            Resolve = new ExhaustiveResolver()
+            Resolve = new StrategyResolver()
                     .TryResolveDependencies(DependencyDescriptor,
                                             new[]
                                             {
@@ -75,18 +76,15 @@ namespace Tests.contexts
 
         void Add(InMemoryRepository repository, string name, string[] dependencies)
         {
-            var packageNamespace = name.Contains("/") ? name.Substring(0,name.IndexOf("/")) : "global";
-            name = name.Contains("/") ? name.Substring(name.IndexOf("/") + 1) : name;
             var package = new InMemoryPackage
             {
                     Name = PackageNameUtility.GetName(name),
-                    Version = PackageNameUtility.GetVersion(name),
-                    Namespace = packageNamespace,
+                    SemanticVersion = PackageNameUtility.GetVersion(name),
                     Source = repository,
-                    Dependencies = dependencies.SelectMany(x => DependsParser.ParseDependsInstruction(x).Dependencies)
-                            .ToList()
+                    Dependencies = dependencies.Select(DependsParser.ParseDependsLine).ToList()
             };
             repository.Packages.Add(package);
         }
+
     }
 }

@@ -16,7 +16,6 @@ namespace OpenWrap.PackageManagement
         public bool Detailed { get; set; }
 
         public RepositoryPackages(IPackageRepository repository, IEnumerable<PackageFoundResult> packages)
-//                : base(" - {0} (available: {1})", result.Name, result.Packages.Select(x => x.Version + (x.Nuked ? " [nuked]" : string.Empty)).JoinString(", "))
         {
             Repository = repository;
             Packages = packages;
@@ -25,15 +24,29 @@ namespace OpenWrap.PackageManagement
         {
             var sb = new StringBuilder();
             sb.AppendLine(Repository.Name);
-            foreach(var package in Packages)
-                sb.AppendFormat("└─{0} ({1})\r\n", package.Name, GenerateVersions(package));
+            
+            if (Packages.Any() == false) return sb.ToString();
+
+            var currentPackage = Packages.First();
+            foreach(var package in Packages.Skip(1))
+            {
+                sb.AppendFormat("├─{0}{1} [{2}]\r\n", currentPackage.Name, GenerateTitle(currentPackage), GenerateVersions(currentPackage));
+                currentPackage = package;
+            }
+            sb.AppendFormat("└─{0}{1} [{2}]\r\n", currentPackage.Name, GenerateTitle(currentPackage), GenerateVersions(currentPackage));
             return sb.ToString();
+        }
+
+        object GenerateTitle(PackageFoundResult currentPackage)
+        {
+            var title = currentPackage.Packages.First().Title;
+            return title != null ? string.Format(" ({0})") : string.Empty;
         }
 
         string GenerateVersions(PackageFoundResult package)
         {
-            Func<IPackageInfo, Version> versionSelector = x => 
-                Detailed ? x.Version : x.Version.IgnoreRevision();
+            Func<IPackageInfo, SemanticVersion> versionSelector = x => 
+                Detailed ? x.SemanticVersion : x.SemanticVersion.Numeric();
             return package.Packages.Select(versionSelector)
                                    .Distinct()
                                    .OrderByDescending(_=>_)

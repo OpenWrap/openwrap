@@ -25,7 +25,8 @@ namespace OpenWrap.PackageManagement.Packages
             Nuked = packageToCopy.Nuked;
             Source = packageToCopy.Source;
             Title = packageToCopy.Title;
-            Version = packageToCopy.Version;
+            SemanticVersion = packageToCopy.SemanticVersion;
+
         }
 
         public InMemoryPackage()
@@ -35,6 +36,11 @@ namespace OpenWrap.PackageManagement.Packages
             Descriptor = new PackageDescriptor();
         }
 
+        [Obsolete("Plase use SemanticVersion")]
+        public Version Version
+        {
+            get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }
+        }
         public bool Anchored { get; set; }
 
         public IEnumerable<IGrouping<string, Exports.IFile>> Content
@@ -50,12 +56,12 @@ namespace OpenWrap.PackageManagement.Packages
 
         public string FullName
         {
-            get { return Name + "-" + Version; }
+            get { return Name + "-" + SemanticVersion; }
         }
 
         public PackageIdentifier Identifier
         {
-            get { return new PackageIdentifier(Name, Version); }
+            get { return new PackageIdentifier(Name, SemanticVersion); }
         }
 
         public bool IsValid
@@ -69,7 +75,7 @@ namespace OpenWrap.PackageManagement.Packages
 
         public IPackageRepository Source { get; set; }
         public string Title { get; set; }
-        public Version Version { get; set; }
+        public SemanticVersion SemanticVersion { get; set; }
 
         public ICollection<Exports.IFile> this[string exportName]
         {
@@ -85,7 +91,7 @@ namespace OpenWrap.PackageManagement.Packages
         public Stream OpenStream()
         {
             var package = new InMemoryFile(@"c:\test.wrap");
-            Packager.NewWithDescriptor(package, Name, Version.ToString(), Dependencies.Select(x => "depends: " + x).ToArray());
+            Packager.NewWithDescriptor(package, Name, SemanticVersion.ToString(), Dependencies.Select(x => "depends: " + x).ToArray());
             return package.OpenRead();
         }
 

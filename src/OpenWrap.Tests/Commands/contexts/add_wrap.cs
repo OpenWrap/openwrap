@@ -19,8 +19,8 @@ namespace Tests.Commands.contexts
         protected override void when_executing_command(string parameters)
         {
             base.when_executing_command(parameters);
-            
-            PostExecutionDescriptor = new PackageDescriptorReaderWriter().Read(Environment.DescriptorFile);
+
+            PostExecutionDescriptor = new PackageDescriptorReader().Read(Environment.DescriptorFile);
         }
 
         protected void given_file_based_project_repository()

@@ -13,8 +13,8 @@ namespace Tests.Commands.update_wrap.system
             given_system_package("narnya", "1.0.0");
             given_system_package("vilya", "1.0.0");
 
-            given_remote_package("narnya", "2.0.0".ToVersion());
-            given_remote_package("vilya", "2.0.0".ToVersion());
+            given_remote_package("narnya", "2.0.0");
+            given_remote_package("vilya", "2.0.0");
 
             when_executing_command("narnya -sys");
         }

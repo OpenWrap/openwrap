@@ -28,7 +28,7 @@ namespace Tests.Commands.build_wrap.version
         {
             Environment.CurrentDirectoryRepository
                 .PackagesByName["test"]
-                .ShouldHaveOne().Version.ShouldBe("1.0.0.0".ToVersion());
+                .ShouldHaveOne().SemanticVersion.ShouldBe("1.0.0.0".ToSemVer());
         }
     }
 }
