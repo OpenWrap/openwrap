@@ -305,9 +305,7 @@ namespace OpenWrap.Configuration
 
         static T ReadFile<T>(IFile file) where T : new()
         {
-            string data;
-            using (var fileStream = file.OpenRead())
-                data = Encoding.UTF8.GetString(fileStream.ReadToEnd());
+            string data = file.ReadRetry(stream => stream.ReadString());
 
             var parsedConfig = new ConfigurationParser().Parse(data);
             var configData = new T();
@@ -386,7 +384,7 @@ namespace OpenWrap.Configuration
 
         IFile GetConfigurationFile(Uri uri)
         {
-            return ConfigurationDirectory.GetFile(ConstantUris.Base.MakeRelativeUri(uri).ToString());
+            return ConfigurationDirectory.GetFile(uri.IsAbsoluteUri ? ConstantUris.Base.MakeRelativeUri(uri).ToString() : uri.ToString());
         }
     }
 }

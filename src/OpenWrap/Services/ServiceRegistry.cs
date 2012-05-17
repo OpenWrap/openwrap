@@ -51,6 +51,7 @@ namespace OpenWrap.Services
                 new IndexedFolderRepositoryFactory(Get<IFileSystem>()),
                 new NuFeedRepositoryFactory(
                     Get<IFileSystem>(),
+                    Get<IFileSystem>().GetDirectory(DefaultInstallationPaths.CacheDirectory),
                     Get<IHttpClient>()),
                 new IndexedHttpRepositoryFactory(Get<IHttpClient>())
             });

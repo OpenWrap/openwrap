@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Xml;
@@ -15,35 +14,71 @@ namespace OpenWrap.Repositories.NuFeed
 {
     public class NuFeedRepository : IPackageRepository, ISupportAuthentication
     {
-        readonly IFileSystem _fileSystem;
         readonly IHttpClient _client;
-        readonly Uri _target;
+        readonly IFileSystem _fileSystem;
         readonly Uri _packagesUri;
-        LazyValue<IEnumerable<IPackageInfo>> _packages;
-        public NetworkCredential CurrentCredentials { get; private set; }
+        readonly Uri _target;
+        LazyValue<ILookup<string,IPackageInfo>> _packages;
+        PackageCacheManager _cacheManager;
 
-        public NuFeedRepository(IFileSystem fileSystem, IHttpClient client, Uri target, Uri packagesUri)
+        public NuFeedRepository(IFileSystem fileSystem, PackageCacheManager cacheManager, IHttpClient client, Uri target, Uri packagesUri)
         {
             _fileSystem = fileSystem;
             _client = client;
             _target = target;
             _packagesUri = packagesUri;
-            _packages = Lazy.Is(LoadPackages);
+            _cacheManager = cacheManager;
+            RefreshPackages();
         }
-        public string Type { get { return "nufeed"; } }
-        IEnumerable<IPackageInfo> LoadPackages()
-        {
-            var feed = NuFeedReader.Read(GetXml(_packagesUri));
 
-            List<PackageEntry> allPackages = feed.Packages.ToList();
-            AtomLink nextAtomLink;
-            while((nextAtomLink = feed.Links["next"].FirstOrDefault()) != null)
+        public NetworkCredential CurrentCredentials { get; private set; }
+
+        public string Name
+        {
+            get { return "NuGet OData feed"; }
+        }
+
+        public ILookup<string, IPackageInfo> PackagesByName
+        {
+            get { return _packages.Value; }
+        }
+
+        public string Token
+        {
+            get { return string.Format("[nuget][{0}]{1}", _target, _packagesUri); }
+        }
+
+        public string Type
+        {
+            get { return "nufeed"; }
+        }
+
+        public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
+        {
+            return this as TFeature;
+        }
+
+        public void RefreshPackages()
+        {
+            _packages = Lazy.Is(() =>
             {
-                var finalUri = feed.BaseUri.Combine(nextAtomLink);
-                feed = NuFeedReader.Read(GetXml(finalUri));
-                allPackages.AddRange(feed.Packages);
-            }
-            return allPackages.Select(x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x))).ToList();
+                var existingToken = _cacheManager.GetLastToken(Token);
+                if (existingToken == null)
+                {
+                    DateTimeOffset? lastUpdate;
+                    var packages = LoadPackages(out lastUpdate);
+                    var updateToken = new NuFeedToken(lastUpdate);
+                    _cacheManager.AppendPackages(Token, updateToken, packages);
+                }
+                return _cacheManager.LoadPackages(Token, x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x)));
+            });
+        }
+
+        public IDisposable WithCredentials(NetworkCredential credentials)
+        {
+            var oldCredentials = CurrentCredentials;
+            CurrentCredentials = credentials;
+            return new ActionOnDispose(() => CurrentCredentials = oldCredentials);
         }
 
         XmlReader GetXml(Uri uri)
@@ -57,50 +92,40 @@ namespace OpenWrap.Repositories.NuFeed
 
         Func<IPackage> LoadPackage(PackageEntry packageEntry)
         {
-            return ()=>
+            return () =>
             {
                 var response = _client.CreateRequest(packageEntry.PackageHref).Get().Send();
                 if (response.Entity == null)
                     return null;
                 var tempFile = _fileSystem.CreateTempFile();
                 var tempDirectory = _fileSystem.CreateTempDirectory();
-                using(var tempStream = tempFile.OpenWrite())
-                NuGetConverter.Convert(response.Entity.Stream, tempStream);
-                
+                using (var tempStream = tempFile.OpenWrite())
+                    NuGetConverter.Convert(response.Entity.Stream, tempStream);
+
                 return new CachedZipPackage(this, tempFile, tempDirectory).Load();
             };
         }
 
-        public ILookup<string, IPackageInfo> PackagesByName
+        List<PackageEntry> LoadPackages(out DateTimeOffset? lastUpdate)
         {
-            get { return _packages.Value.ToLookup(x => x.Name, StringComparer.OrdinalIgnoreCase); }
+            var feed = NuFeedReader.Read(GetXml(_packagesUri));
+            lastUpdate = feed.LastUpdate;
+            var allPackages = feed.Packages.ToList();
+            AtomLink nextAtomLink;
+            while ((nextAtomLink = feed.Links["next"].FirstOrDefault()) != null)
+            {
+                var finalUri = feed.BaseUri.Combine(nextAtomLink);
+                feed = NuFeedReader.Read(GetXml(finalUri));
+                allPackages.AddRange(feed.Packages);
+            }
+            return allPackages;
         }
+    }
 
-        public void RefreshPackages()
+    public class NuFeedToken : UpdateToken
+    {
+        public NuFeedToken(DateTimeOffset? lastUpdate) : base(lastUpdate.ToString())
         {
-            _packages = Lazy.Is(LoadPackages);
-        }
-
-        public string Name
-        {
-            get { return "NuGet OData feed"; }
-        }
-
-        public string Token
-        {
-            get { return string.Format("[nuget][{0}]{1}", _target, _packagesUri); }
-        }
-
-        public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
-        {
-            return this as TFeature;
-        }
-
-        public IDisposable WithCredentials(NetworkCredential credentials)
-        {
-            var oldCredentials = CurrentCredentials;
-            CurrentCredentials = credentials;
-            return new ActionOnDispose(() => CurrentCredentials = oldCredentials);
         }
     }
 }

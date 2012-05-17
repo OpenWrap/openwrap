@@ -217,6 +217,7 @@
     <Compile Include="Repositories\FileSystem\IOExtensions.cs" />
     <Compile Include="Repositories\IRemoteManager.cs" />
     <Compile Include="Repositories\IRepositoryFeature.cs" />
+    <Compile Include="Repositories\ISupportCaching.cs" />
     <Compile Include="Repositories\ISupportLocking.cs" />
     <Compile Include="Repositories\ISupportCurrentCredentials.cs" />
     <Compile Include="Repositories\LockedPackage.cs" />
@@ -507,6 +508,7 @@
   <ItemGroup>
     <Folder Include="Extensibility\" />
     <Folder Include="PackageManagement\Hooks\" />
+    <Folder Include="Repositories\Caching\" />
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />
@@ -521,7 +523,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
+      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

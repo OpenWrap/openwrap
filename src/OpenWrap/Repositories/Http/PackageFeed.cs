@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace OpenWrap.Repositories.Http
 {
@@ -27,5 +28,7 @@ namespace OpenWrap.Repositories.Http
         public Uri BaseUri { get; set; }
         public Uri PublishHref { get; set; }
         public ILookup<string, AtomLink> Links { get; set; }
+
+        public DateTimeOffset? LastUpdate { get; set; }
     }
 }

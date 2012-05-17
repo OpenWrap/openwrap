@@ -41,7 +41,10 @@ namespace OpenWrap.Reflection
                         return true;
                 }
             }
-
+            if (type == typeof(DateTimeOffset))
+            {
+                return DateTimeOffset.Parse(propertyValue);
+            }
             if (type.IsPrimitive)
             {
                 try

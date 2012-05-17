@@ -571,7 +571,6 @@
     <Compile Include="Repositories\manager\repositories_by_user_input.cs" />
     <Compile Include="Repositories\manager\repositories_with_authentication.cs" />
     <Compile Include="Repositories\manager\repositories_with_authentication_without_auth_support.cs" />
-    <Compile Include="Repositories\nufeed\reading_official_nuget_feed2.cs" />
     <Compile Include="Repositories\nufeed\reading_package_feeds.cs" />
     <Compile Include="Repositories\contexts\nufeed_parser.cs" />
     <Compile Include="Repositories\nufeed\parser\reading_base_uri.cs" />

@@ -21,21 +21,29 @@ namespace OpenWrap.Repositories.NuFeed
             var feed = XDocument.Load(reader).Feed();
             return new PackageFeed
             {
-                    BaseUri = feed.AttrValue("base", NS_XML).ToUri(),
-                    CanPublish = false,
-                    Packages = from entryElement in feed.Entries()
-                               select entryElement.ToPackageEntry(),
-                    Links = (
-                                    from link in feed.AtomElements("link")
-                                    select new AtomLink
-                                    {
-                                            Rel = link.AttrValue("rel"),
-                                            Href = link.AttrValue("href")
-                                    }
-                            ).ToLookup(x => x.Rel)
+                BaseUri = feed.AttrValue("base", NS_XML).ToUri(),
+                CanPublish = false,
+                Packages = from entryElement in feed.Entries()
+                           select entryElement.ToPackageEntry(),
+                LastUpdate = TryParseDate(feed.AtomElement("updated").Value()),
+                Links = (
+                                from link in feed.AtomElements("link")
+                                select new AtomLink
+                                {
+                                    Rel = link.AttrValue("rel"),
+                                    Href = link.AttrValue("href")
+                                }
+                        ).ToLookup(x => x.Rel)
             };
         }
 
+        static DateTimeOffset? TryParseDate(string value)
+        {
+            if (value == null) return null;
+            DateTimeOffset returnValue;
+            return DateTimeOffset.TryParse(value, out returnValue) ? returnValue : (DateTimeOffset?)null;
+
+        }
     }
     public static class XDocumentExtensions
     {
@@ -92,17 +100,28 @@ namespace OpenWrap.Repositories.NuFeed
         public static PackageEntry ToPackageEntry(this XElement element)
         {
             var properties = element.ODataProperties();
+            var creationTime = TryParseDate(properties.ODataValue("Created")) ?? DateTimeOffset.MinValue;
             return new PackageEntry
             {
-                    Name = properties.ODataValue("Id"),
-                    Version = SemanticVersion.TryParseExact(properties.ODataValue("Version")),
-                    Description = properties.ODataValue("Summary"),
-                    Dependencies = ParseNugetDependencies(properties.ODataValue("Dependencies")),
-                    PackageHref = (from content in element.Descendants(XName.Get("content", NS_ATOM))
-                                   let type = content.Attribute("type")
-                                   where type != null && type.Value == "application/zip"
-                                   select content.AttributeAsUri("src")).FirstOrDefault()
+                Name = properties.ODataValue("Id"),
+                Version = SemanticVersion.TryParseExact(properties.ODataValue("Version")),
+                CreationTime = creationTime,
+                UpdateTime = TryParseDate(properties.ODataValue("LastUpdated")) ?? creationTime,
+                Description = properties.ODataValue("Summary"),
+                Dependencies = ParseNugetDependencies(properties.ODataValue("Dependencies")),
+                PackageHref = (from content in element.Descendants(XName.Get("content", NS_ATOM))
+                               let type = content.Attribute("type")
+                               where type != null && type.Value == "application/zip"
+                               select content.AttributeAsUri("src")).FirstOrDefault()
             };
+        }
+
+        static DateTimeOffset? TryParseDate(string value)
+        {
+            if (value == null) return null;
+            DateTimeOffset returnValue;
+            return DateTimeOffset.TryParse(value, out returnValue) ? returnValue : (DateTimeOffset?)null;
+
         }
         public static Uri AsUri(this XElement element)
         {
@@ -116,7 +135,7 @@ namespace OpenWrap.Repositories.NuFeed
             if (baseUris.Count() == 0) return element.Value.ToUri();
             if (baseUris.Count() == 1) return baseUris.First().Combine(element.Value);
             return baseUris.Skip(1).Aggregate(baseUris.First(), UriExtensions.Combine).Combine(element.Value);
-            }
+        }
         public static Uri AttributeAsUri(this XElement element, string attributeName)
         {
             var attribute = element.Attribute(attributeName);

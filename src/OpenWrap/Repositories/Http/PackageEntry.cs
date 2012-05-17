@@ -23,6 +23,8 @@ namespace OpenWrap.Repositories.Http
         public bool Nuked { get; set; }
         public Uri PackageHref { get; set; }
         public SemanticVersion Version { get; set; }
+
+        public DateTimeOffset UpdateTime { get; set; }
     }
     public class PackageEntryWrapper : IPackageInfo
     {
@@ -38,7 +40,7 @@ namespace OpenWrap.Repositories.Http
             Dependencies = entry.Dependencies.Select(DependsParser.ParseDependsValue).ToList();
         }
 
-        [Obsolete("Plase use SemanticVersion")]
+        [Obsolete("Please use SemanticVersion")]
         public Version Version
         {
             get { return SemanticVersion != null ? SemanticVersion.ToVersion() : null; }

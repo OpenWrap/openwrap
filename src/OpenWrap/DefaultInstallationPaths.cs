@@ -5,6 +5,11 @@ namespace OpenWrap
 {
     public static class DefaultInstallationPaths
     {
+        public static string CacheDirectory
+        {
+            get { return Path.Combine(SystemDirectory, "cache"); }
+        }
+
         public static string ConfigurationDirectory
         {
             get { return Path.Combine(SystemDirectory, "config"); }

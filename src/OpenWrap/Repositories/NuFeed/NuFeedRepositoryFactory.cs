@@ -17,11 +17,13 @@ namespace OpenWrap.Repositories.NuFeed
         const string NS_ATOMPUB = "http://www.w3.org/2007/app";
         const string NS_XML = "http://www.w3.org/XML/1998/namespace";
         readonly IFileSystem _fileSystem;
+        readonly IDirectory _repoCache;
         readonly IHttpClient _client;
-
-        public NuFeedRepositoryFactory(IFileSystem fileSystem, IHttpClient client)
+            
+        public NuFeedRepositoryFactory(IFileSystem fileSystem, IDirectory repoCache, IHttpClient client)
         {
             _fileSystem = fileSystem;
+            _repoCache = repoCache;
             _client = client;
         }
 
@@ -29,7 +31,7 @@ namespace OpenWrap.Repositories.NuFeed
         {
             if (token.StartsWith("[nuget]") == false) return null;
             var destinationUri = Regex.Match(token, @"^\[nuget\]\[(?<target>.*)\](?<uri>.*)");
-            return new NuFeedRepository(_fileSystem, _client, destinationUri.Groups["target"].Value.ToUri(), destinationUri.Groups["uri"].Value.ToUri());
+            return new NuFeedRepository(_fileSystem, new PackageCacheManager(_repoCache), _client, destinationUri.Groups["target"].Value.ToUri(), destinationUri.Groups["uri"].Value.ToUri());
         }
 
         public IPackageRepository FromUserInput(string userInput, NetworkCredential credentails = null)
@@ -68,7 +70,7 @@ namespace OpenWrap.Repositories.NuFeed
                               select baseElement.Combine(collectionHref.Value.ToUri())).FirstOrDefault();
 
             if (packagesUri == null) return null;
-            return new NuFeedRepository(_fileSystem, _client, target, packagesUri);
+            return new NuFeedRepository(_fileSystem,new PackageCacheManager(_repoCache), _client, target, packagesUri);
         }
     }
 }
