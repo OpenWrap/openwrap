@@ -23,7 +23,8 @@ namespace OpenWrap
                 SEMVER_REGEX +
                 @"$");
 
-        const string NETVER_REGEX = @"(?<major>\d+)(\.(?<minor>\d+)(\.(?<patch>\d+)(\.(?<build>\d+))?)?)?";
+        const string NETVER_REGEX = @"(?<major>\d+)(\.(?<minor>\d+)(\.(?<patch>\d+)" +
+            @"(\.(?<build>\d+))?)?)?" + @"(\-(?<pre>[0-9A-Za-z-\.]+))?";
 
         const string SEMVER_REGEX = @"(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)" +
                 @"(\-(?<pre>[0-9A-Za-z-\.]+))?" +

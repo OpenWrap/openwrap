@@ -174,6 +174,7 @@ namespace OpenWrap.Configuration
         static object AssignPropertyFromLine(Type targetType, string value, bool encrypted)
         {
             object propertyValue;
+            value = value.DecodeBreaks();
 
             var keyValues = ParseKeyValuePairs(value);
 
@@ -362,12 +363,12 @@ namespace OpenWrap.Configuration
         {
             var builder = new StringBuilder();
             if (value.ToString() != value.GetType().ToString())
-                builder.AppendQuoted(value.ToString());
+                builder.AppendQuoted(value.ToString().EncodeBreaks());
             WriteProperties(value,
                             (key, val) => builder.Append(builder.Length > 0 ? "; " : String.Empty)
                                               .AppendQuoted(key)
                                               .Append("=")
-                                              .Append(val));
+                                              .Append(val.EncodeBreaks()));
 
             return encryptAttrib != null
                        ? new StringBuilder().AppendQuoted(

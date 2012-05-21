@@ -24,7 +24,10 @@ namespace OpenWrap.Repositories.NuFeed
                 BaseUri = feed.AttrValue("base", NS_XML).ToUri(),
                 CanPublish = false,
                 Packages = from entryElement in feed.Entries()
-                           select entryElement.ToPackageEntry(),
+                           where entryElement.Name != null
+                           let entry = entryElement.ToPackageEntry()
+                           where entry.Name != null && entry.Version != null
+                           select entry,
                 LastUpdate = TryParseDate(feed.AtomElement("updated").Value()),
                 Links = (
                                 from link in feed.AtomElements("link")

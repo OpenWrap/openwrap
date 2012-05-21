@@ -9,10 +9,10 @@ using OpenWrap.Repositories.Http;
 
 namespace OpenWrap.Repositories
 {
-    public interface ISupportCaching
+    public interface ISupportCaching : IRepositoryFeature
     {
         CacheState GetState();
-        UpdateToken Update(UpdateToken lastToken);
+        void Update();
         void Clear();
     }
     public class UpdateToken
@@ -54,9 +54,9 @@ namespace OpenWrap.Repositories
             _index = _configManager.Load<CacheEntries>() ?? new CacheEntries();
         }
 
-        public UpdateToken GetLastToken(string repositoryToken)
+        public CacheState GetState(string repositoryToken)
         {
-            return GetCacheLocation(repositoryToken).UpdateToken;
+            return GetCacheLocation(repositoryToken);
         }
         public ILookup<string, IPackageInfo> LoadPackages(string repositoryToken, Func<PackageEntry,IPackageInfo> packageBuilder)
         {

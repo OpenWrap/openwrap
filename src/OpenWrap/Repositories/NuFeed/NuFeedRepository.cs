@@ -12,7 +12,7 @@ using OpenWrap.Repositories.NuGet;
 
 namespace OpenWrap.Repositories.NuFeed
 {
-    public class NuFeedRepository : IPackageRepository, ISupportAuthentication
+    public class NuFeedRepository : IPackageRepository, ISupportAuthentication, ISupportCaching
     {
         readonly IHttpClient _client;
         readonly IFileSystem _fileSystem;
@@ -62,16 +62,21 @@ namespace OpenWrap.Repositories.NuFeed
         {
             _packages = Lazy.Is(() =>
             {
-                var existingToken = _cacheManager.GetLastToken(Token);
+                var existingToken = _cacheManager.GetState(Token);
                 if (existingToken == null)
                 {
-                    DateTimeOffset? lastUpdate;
-                    var packages = LoadPackages(out lastUpdate);
-                    var updateToken = new NuFeedToken(lastUpdate);
-                    _cacheManager.AppendPackages(Token, updateToken, packages);
+                    AppendPackages(_packagesUri);
                 }
                 return _cacheManager.LoadPackages(Token, x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x)));
             });
+        }
+
+        void AppendPackages(Uri packagesUri)
+        {
+            DateTimeOffset? lastUpdate;
+            var packages = LoadPackages(packagesUri, out lastUpdate);
+            var updateToken = new NuFeedToken(lastUpdate);
+            _cacheManager.AppendPackages(Token, updateToken, packages);
         }
 
         public IDisposable WithCredentials(NetworkCredential credentials)
@@ -84,7 +89,7 @@ namespace OpenWrap.Repositories.NuFeed
         XmlReader GetXml(Uri uri)
         {
             var response = _client.Get(uri).Send();
-            if (response.Status.Code < 200 || response.Status.Code >= 300)
+            if (response.Status.Code / 100 != 2)
                 throw new InvalidOperationException(string.Format("The feed at '{0}' responded with status code '{1}', preventing the retrieval of package lists.", uri, response.Status.Code));
 
             return XmlReader.Create(response.Entity.Stream);
@@ -106,9 +111,9 @@ namespace OpenWrap.Repositories.NuFeed
             };
         }
 
-        List<PackageEntry> LoadPackages(out DateTimeOffset? lastUpdate)
+        List<PackageEntry> LoadPackages(Uri packagesUri, out DateTimeOffset? lastUpdate)
         {
-            var feed = NuFeedReader.Read(GetXml(_packagesUri));
+            var feed = NuFeedReader.Read(GetXml(packagesUri));
             lastUpdate = feed.LastUpdate;
             var allPackages = feed.Packages.ToList();
             AtomLink nextAtomLink;
@@ -119,6 +124,34 @@ namespace OpenWrap.Repositories.NuFeed
                 allPackages.AddRange(feed.Packages);
             }
             return allPackages;
+        }
+
+        public CacheState GetState()
+        {
+            return _cacheManager.GetState(Token);
+        }
+
+        public void Update()
+        {
+
+            var existingToken = _cacheManager.GetState(Token);
+            
+            if (existingToken.UpdateToken == null)
+            {
+                AppendPackages(_packagesUri);
+            }
+            else
+            {
+                var token = existingToken.UpdateToken;
+                var updateUri = new UriBuilder(_packagesUri);
+                updateUri.Query = string.Format("LastUpdated gt datetime'{0}'", token.Value);
+                AppendPackages(updateUri.Uri);
+            }
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
         }
     }
 

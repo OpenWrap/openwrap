@@ -114,7 +114,14 @@ namespace OpenWrap.Commands.Wrap
 
             yield return SetupEnvironmentForAdd();
             var sourceRepositories = GetSourceRepositories().ToList();
-
+            foreach(var repository in from r in sourceRepositories
+                                      let cache = r.Feature<ISupportCaching>()
+                                      where cache != null
+                                      select new { repository = r, cache })
+            {
+                yield return new Info("Updating repository {0}.", repository.repository.Name);
+                repository.cache.Update();
+            }
             var descriptor = new PackageDescriptor(_targetDescriptor.Value);
             if (Project && System)
             {
