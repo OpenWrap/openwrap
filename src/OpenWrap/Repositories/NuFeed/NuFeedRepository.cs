@@ -14,12 +14,16 @@ namespace OpenWrap.Repositories.NuFeed
 {
     public class NuFeedRepository : IPackageRepository, ISupportAuthentication, ISupportCaching
     {
+        readonly PackageCacheManager _cacheManager;
         readonly IHttpClient _client;
         readonly IFileSystem _fileSystem;
         readonly Uri _packagesUri;
         readonly Uri _target;
-        LazyValue<ILookup<string,IPackageInfo>> _packages;
-        PackageCacheManager _cacheManager;
+        LazyValue<ILookup<string, IPackageInfo>> _packages;
+
+        public NuFeedRepository(IFileSystem fileSystem, IHttpClient client, Uri target, Uri packagesUri) : this(fileSystem, null, client, target, packagesUri)
+        {
+        }
 
         public NuFeedRepository(IFileSystem fileSystem, PackageCacheManager cacheManager, IHttpClient client, Uri target, Uri packagesUri)
         {
@@ -28,8 +32,12 @@ namespace OpenWrap.Repositories.NuFeed
             _target = target;
             _packagesUri = packagesUri;
             _cacheManager = cacheManager;
+            CachingEnabled = _cacheManager != null;
+
             RefreshPackages();
         }
+
+        public bool CachingEnabled { get; private set; }
 
         public NetworkCredential CurrentCredentials { get; private set; }
 
@@ -55,28 +63,17 @@ namespace OpenWrap.Repositories.NuFeed
 
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
+            if (typeof(TFeature) == typeof(ISupportCaching) && !CachingEnabled) return null;
             return this as TFeature;
         }
 
         public void RefreshPackages()
         {
-            _packages = Lazy.Is(() =>
-            {
-                var existingToken = _cacheManager.GetState(Token);
-                if (existingToken == null)
-                {
-                    AppendPackages(_packagesUri);
-                }
-                return _cacheManager.LoadPackages(Token, x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x)));
-            });
-        }
-
-        void AppendPackages(Uri packagesUri)
-        {
-            DateTimeOffset? lastUpdate;
-            var packages = LoadPackages(packagesUri, out lastUpdate);
-            var updateToken = new NuFeedToken(lastUpdate);
-            _cacheManager.AppendPackages(Token, updateToken, packages);
+            DateTimeOffset? lastUpdated = null;
+            _packages = Lazy.Is(() => CachingEnabled
+                                          ? LoadPackagesThroughCache()
+                                          : LoadPackagesFromFeedPages(_packagesUri, out lastUpdated)
+                                                .ToLookup(_ => _.Name, x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x))));
         }
 
         public IDisposable WithCredentials(NetworkCredential credentials)
@@ -84,6 +81,42 @@ namespace OpenWrap.Repositories.NuFeed
             var oldCredentials = CurrentCredentials;
             CurrentCredentials = credentials;
             return new ActionOnDispose(() => CurrentCredentials = oldCredentials);
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public CacheState GetState()
+        {
+            return _cacheManager.GetState(Token);
+        }
+
+        public void Update()
+        {
+            var existingToken = _cacheManager.GetState(Token);
+
+            if (existingToken.UpdateToken == null)
+            {
+                AppendPackagesToCache(_packagesUri);
+            }
+            else
+            {
+                var token = existingToken.UpdateToken;
+                var updateUri = new UriBuilder(_packagesUri);
+                updateUri.Query = string.Format("LastUpdated gt datetime'{0}'", token.Value);
+                AppendPackagesToCache(updateUri.Uri);
+            }
+            RefreshPackages();
+        }
+
+        void AppendPackagesToCache(Uri packagesUri)
+        {
+            DateTimeOffset? lastUpdate;
+            var packages = LoadPackagesFromFeedPages(packagesUri, out lastUpdate);
+            var updateToken = new NuFeedToken(lastUpdate);
+            _cacheManager.AppendPackages(Token, updateToken, packages);
         }
 
         XmlReader GetXml(Uri uri)
@@ -111,7 +144,7 @@ namespace OpenWrap.Repositories.NuFeed
             };
         }
 
-        List<PackageEntry> LoadPackages(Uri packagesUri, out DateTimeOffset? lastUpdate)
+        List<PackageEntry> LoadPackagesFromFeedPages(Uri packagesUri, out DateTimeOffset? lastUpdate)
         {
             var feed = NuFeedReader.Read(GetXml(packagesUri));
             lastUpdate = feed.LastUpdate;
@@ -123,35 +156,16 @@ namespace OpenWrap.Repositories.NuFeed
                 feed = NuFeedReader.Read(GetXml(finalUri));
                 allPackages.AddRange(feed.Packages);
             }
+
             return allPackages;
         }
 
-        public CacheState GetState()
+        ILookup<string, IPackageInfo> LoadPackagesThroughCache()
         {
-            return _cacheManager.GetState(Token);
-        }
-
-        public void Update()
-        {
-
             var existingToken = _cacheManager.GetState(Token);
-            
             if (existingToken.UpdateToken == null)
-            {
-                AppendPackages(_packagesUri);
-            }
-            else
-            {
-                var token = existingToken.UpdateToken;
-                var updateUri = new UriBuilder(_packagesUri);
-                updateUri.Query = string.Format("LastUpdated gt datetime'{0}'", token.Value);
-                AppendPackages(updateUri.Uri);
-            }
-        }
-
-        public void Clear()
-        {
-            throw new NotImplementedException();
+                AppendPackagesToCache(_packagesUri);
+            return _cacheManager.LoadPackages(Token, x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x)));
         }
     }
 

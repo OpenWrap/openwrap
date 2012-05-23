@@ -24,7 +24,10 @@ namespace OpenWrap.Repositories
             _value = value;
         }
 
-        public string Value { get; private set; }
+        public string Value
+        {
+            get { return _value; }
+        }
     }
     public class CacheState
     {

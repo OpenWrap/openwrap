@@ -9,11 +9,11 @@ using Tests.Repositories.factories.nuget;
 
 namespace Tests.Repositories.nufeed
 {
-    public class reading_package_feeds : contexts.nufeed
+    public class multiple_pages : contexts.nufeed
     {
         DateTimeOffset Now = DateTimeOffset.UtcNow;
 
-        public reading_package_feeds()
+        public multiple_pages()
         {
             given_remote_resource("http://localhost/packages/1",
                                   "application/atom+xml",
@@ -25,7 +25,7 @@ namespace Tests.Repositories.nufeed
                                   AtomContent.Feed(Now, "http://localhost/packages/".ToUri())
                                           .Entry(AtomContent.NuGetEntry("openfilesystem", "1.0", "summary"))
                                           .ToString());
-
+            given_repository("http://localhost/packages/1");
             when_reading_packages();
         }
 
@@ -36,8 +36,4 @@ namespace Tests.Repositories.nufeed
             Packages["openwrap"].ShouldHaveCountOf(1);
         }
     }
-}
-
-namespace Tests.Repositories.contexts
-{
 }

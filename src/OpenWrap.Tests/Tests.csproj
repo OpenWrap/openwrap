@@ -246,6 +246,7 @@
     <Compile Include="Repositories\indexed_http\reading_the_dynamicproxy_package.cs" />
     <Compile Include="Repositories\indexed_http\wrap_list.cs" />
     <Compile Include="Repositories\maven_style_version_definition.cs" />
+    <Compile Include="Repositories\nufeed\cached\initial_retrieval.cs" />
     <Compile Include="Repositories\nuspec.cs" />
     <Compile Include="Repositories\when_nuking_a_package.cs" />
     <Compile Include="RepositoryAssertions.cs" />
@@ -571,7 +572,7 @@
     <Compile Include="Repositories\manager\repositories_by_user_input.cs" />
     <Compile Include="Repositories\manager\repositories_with_authentication.cs" />
     <Compile Include="Repositories\manager\repositories_with_authentication_without_auth_support.cs" />
-    <Compile Include="Repositories\nufeed\reading_package_feeds.cs" />
+    <Compile Include="Repositories\nufeed\multiple_pages.cs" />
     <Compile Include="Repositories\contexts\nufeed_parser.cs" />
     <Compile Include="Repositories\nufeed\parser\reading_base_uri.cs" />
     <Compile Include="Repositories\nufeed\parser\reading_empty_dependencies.cs" />
@@ -593,6 +594,7 @@
     <Compile Include="resolving_dependency_trees\resolving_namespaced_dependency.cs" />
     <Compile Include="string_conversions.cs" />
     <Compile Include="Testing\finding_runner\runner_in_referenced_package_is_found.cs" />
+    <Compile Include="TimeExtensions.cs" />
     <Compile Include="version\generation\flat_version.cs" />
     <Compile Include="version\generation\incremental_version.cs" />
     <Compile Include="version\generation\timestamp_version.cs" />

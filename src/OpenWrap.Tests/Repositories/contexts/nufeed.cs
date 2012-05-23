@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
@@ -14,20 +15,35 @@ namespace Tests.Repositories.contexts
         protected ILookup<string, IPackageInfo> Packages;
         protected InMemoryFileSystem FileSystem = new InMemoryFileSystem();
         ITemporaryDirectory CacheDirectory;
+        NuFeedRepository repository;
+
 
         public nufeed()
         {
             CacheDirectory = FileSystem.CreateTempDirectory();
-
         }
-
-        protected void when_reading_packages()
+        protected void given_repository(string nugetFeedUri, bool cachingEnabled = false)
         {
-            Packages = new NuFeedRepository(FileSystem, 
-                new PackageCacheManager(CacheDirectory),
-                base.Client, "http://localhost/packages/1".ToUri(), "http://localhost/packages/1".ToUri())
-                .PackagesByName;
+            repository = new NuFeedRepository(FileSystem,
+                cachingEnabled?new PackageCacheManager(CacheDirectory) : null, 
+                                                        Client, nugetFeedUri.ToUri(), nugetFeedUri.ToUri());
+            
         }
-        
+        protected virtual void when_reading_packages()
+        {   
+            Packages = repository.PackagesByName;
+        }
+
+        protected void given_packages_read_once()
+        {
+            Packages = repository.PackagesByName;
+
+        }
+
+        protected void when_updating_cache()
+        {
+            repository.Update();
+            Packages = repository.PackagesByName;
+        }
     }
 }
