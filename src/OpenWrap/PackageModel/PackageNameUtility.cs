@@ -24,6 +24,11 @@ namespace OpenWrap.PackageModel
             ")?)?)" +
             "(\\.wrap)?$"
             );
+
+        public static bool IsNameValid(string name)
+        {
+            return Regex.IsMatch(name, "^" + NAME_CHARS + "+$");
+        }
         // TODO: Remove remove remove, file name matching is evil
         public static string GetName(string name)
         {
