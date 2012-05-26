@@ -174,8 +174,47 @@ namespace OpenWrap.Build.PackageBuilders
             return Path.Combine(libPath, "mono\\4.0\\xbuild.exe");
         }
 
+        private static IDictionary<string, string> GetMSBuildExecutionPathsUsingRegistry()
+        {
+            const string msbuildBaseRegKey = @"SOFTWARE\Microsoft\MSBuild\ToolsVersions";
+            const string msbuildToolsPathRegKey = @"MSBuildToolsPath";
+
+            IDictionary<string, string> msbuildVersions = new Dictionary<string, string>();
+
+            var baseKey = Registry.LocalMachine.OpenSubKey(msbuildBaseRegKey);
+            if (baseKey == null) return msbuildVersions;
+
+            foreach (string version in baseKey.GetSubKeyNames())
+            {
+                var key = baseKey.OpenSubKey(version);
+                if (key != null)
+                {
+                    var value = key.GetValue(msbuildToolsPathRegKey);
+                    if (value != null)
+                    {
+                        var fullPath = Path.Combine(value.ToString(), @"msbuild.exe");
+
+                        if (File.Exists(fullPath)) msbuildVersions[version] = fullPath;
+                    }
+                }
+            }
+
+            return msbuildVersions;
+        }
+
         static string GetMSBuildExecutionPath()
         {
+            string[] supportedMSBuildVersions = { "4.0", "3.5", "2.0" };
+
+            // find most recent registered version
+            var msbuildVersions = GetMSBuildExecutionPathsUsingRegistry();
+            var foundVersions = msbuildVersions.Keys;
+            var preferredVersion = supportedMSBuildVersions
+                .FirstOrDefault(v => foundVersions.Contains(v));
+
+            if (preferredVersion != null) return msbuildVersions[preferredVersion];
+
+            // fallback to default folders
             var dotNetPath = Environment.ExpandEnvironmentVariables(@"%windir%\Microsoft.NET\Framework\");
             if (!Directory.Exists(dotNetPath)) return null;
             return (from versionFolder in Directory.GetDirectories(dotNetPath, "v*")
