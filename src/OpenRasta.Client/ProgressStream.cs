@@ -8,9 +8,9 @@ namespace OpenRasta.Client
     {
         readonly long _size;
         long _total = 0;
-        readonly Action<int> _progressNotifier;
+        readonly Action<TransferProgress> _progressNotifier;
 
-        public ProgressStream(long size,Action<int> progressNotifier, Stream underlyingStream)
+        public ProgressStream(long size,Action<TransferProgress> progressNotifier, Stream underlyingStream)
                 : base(underlyingStream)
         {
             _size = size;
@@ -20,7 +20,12 @@ namespace OpenRasta.Client
         public override int Read(byte[] buffer, int offset, int count)
         {
             int read = base.Read(buffer, offset, count);
+            
             NotifyProgress(read);
+
+            if (read == 0)
+                _progressNotifier(new TransferProgress(_total, _total, true));
+
             return read;
         }
 
@@ -28,7 +33,7 @@ namespace OpenRasta.Client
         {
             _total += amount;
 
-            _progressNotifier((int)(((double)_total / _size) * 100));
+            _progressNotifier(new TransferProgress(_total, _size));
         }
 
         public override void Write(byte[] buffer, int offset, int count)

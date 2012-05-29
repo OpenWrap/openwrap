@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tests</RootNamespace>
-    <AssemblyName>OpenWrap.Tests</AssemblyName>
+    <AssemblyName>Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -599,6 +599,7 @@
     <Compile Include="string_conversions.cs" />
     <Compile Include="Testing\finding_runner\runner_in_referenced_package_is_found.cs" />
     <Compile Include="TimeExtensions.cs" />
+    <Compile Include="UriExtensions.cs" />
     <Compile Include="version\generation\flat_version.cs" />
     <Compile Include="version\generation\incremental_version.cs" />
     <Compile Include="version\generation\timestamp_version.cs" />

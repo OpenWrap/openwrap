@@ -16,15 +16,16 @@ namespace OpenRasta.Client.IO
 {
     public static class StreamExtensions
     {
-        public static long CopyTo(this Stream stream, Stream destinationStream)
+        public static long CopyTo(this Stream stream, Stream destinationStream, int chunkSize = 4096, Action<int> onCopied = null)
         {
-            var buffer = new byte[4096];
+            var buffer = new byte[chunkSize];
             int readCount = 0;
             long totalWritten = 0;
             while ((readCount = stream.Read(buffer, 0, buffer.Length)) > 0)
             {
                 totalWritten += readCount;
                 destinationStream.Write(buffer, 0, readCount);
+                onCopied(readCount);
             }
 
             return totalWritten;

@@ -140,11 +140,16 @@
     <Compile Include="Build\SemanticVersionGenerator.cs" />
     <Compile Include="Collections\IndexedDictionary.cs" />
     <Compile Include="Commands\Cli\CecilStaticAssemblyResolver.cs" />
-    <Compile Include="Commands\Cli\ColoredText.cs" />
+    <Compile Include="Commands\Cli\ConsoleEx.cs" />
     <Compile Include="Commands\Cli\CommandInputTooManyTimes.cs" />
     <Compile Include="Commands\Cli\CommandLineRunner.cs" />
     <Compile Include="Commands\Cli\ConsoleCommandExecutor.cs" />
+    <Compile Include="Commands\Cli\ConsoleCommandOutputFormatter.cs" />
+    <Compile Include="Commands\Cli\ConsoleProgressOverlay.cs" />
     <Compile Include="Commands\Cli\DictionaryExtensions.cs" />
+    <Compile Include="Commands\Cli\EventHub.cs" />
+    <Compile Include="Commands\Cli\ICommandOutputFormatter.cs" />
+    <Compile Include="Commands\Cli\IEventHub.cs" />
     <Compile Include="Commands\Cli\Locators\CommandDescriptorComparer.cs" />
     <Compile Include="Commands\Cli\Locators\DefaultVerbCommandLocator.cs" />
     <Compile Include="Commands\Cli\Parser\Input.cs" />
@@ -156,6 +161,7 @@
     <Compile Include="Commands\Cli\Parser\SingleValueInput.cs" />
     <Compile Include="Commands\Cli\Locators\VerbNounCommandLocator.cs" />
     <Compile Include="Commands\Cli\InputParsingError.cs" />
+    <Compile Include="Commands\Cli\StringExtensions.cs" />
     <Compile Include="Commands\IUICommand.cs" />
     <Compile Include="Commands\IUICommandDescriptor.cs" />
     <Compile Include="Commands\IUICommandRepository.cs" />
@@ -173,6 +179,8 @@
     <Compile Include="Configuration\Remotes\Legacy\RemoteRepository.cs" />
     <Compile Include="Configuration\Remotes\RemoteRepositoryEndpoint.cs" />
     <Compile Include="Configuration\StringBuilderExtensions.cs" />
+    <Compile Include="EnvironmentDetection.cs" />
+    <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\DependencyCombinator.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\LoggingPackageVisitor.cs" />
     <Compile Include="PackageManagement\DependencyResolvers\PackageStrategy.cs" />
@@ -523,7 +531,7 @@
   </PropertyGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" />
+      <UserProperties ProjectLinkReference="4e23a829-b9ef-4bde-941a-d15b334c09ad" ProjectLinkerExcludeFilter="\\?desktop(\\.*)?$;\\?silverlight(\\.*)?$;\.desktop;\.silverlight;\.xaml;^service references(\\.*)?$;\.clientconfig;^web references(\\.*)?$" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

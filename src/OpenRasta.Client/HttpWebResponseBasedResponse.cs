@@ -11,7 +11,7 @@ namespace OpenRasta.Client
         HttpEntity _entity;
         IResponseHeaders _headers = new ResponseHeaders();
 
-        public HttpWebResponseBasedResponse(HttpWebRequestBasedRequest request, HttpWebRequest nativeRequest)
+        public HttpWebResponseBasedResponse(HttpWebRequestBasedRequest request, HttpWebRequest nativeRequest, Action<TransferProgress> notifyProgress)
         {
             _request = request;
             try
@@ -26,9 +26,11 @@ namespace OpenRasta.Client
             {
                 Status = new HttpStatus((int)_response.StatusCode, _response.StatusDescription);
                 RaiseStatusChanged("Connected.");
-                if (_response.ContentLength > 0)
+                if (_response.ContentLength == -1 || _response.ContentLength > 0)
                 {
-                    _entity = new HttpEntity(new ProgressStream(_response.ContentLength, RaiseProgress, _response.GetResponseStream()));
+                    _entity = new HttpEntity(new ProgressStream(_response.ContentLength, 
+                        notifyProgress,
+                        _response.GetResponseStream()));
                 }
             }
             else
@@ -66,10 +68,6 @@ namespace OpenRasta.Client
         {
             StatusChanged.Raise(this, new StatusChangedEventArgs(string.Format(status, args)));
 
-        }
-        protected void RaiseProgress(int progress)
-        {
-            Progress.Raise(this, new ProgressEventArgs(progress));
         }
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
         public event EventHandler<ProgressEventArgs> Progress;

@@ -11,8 +11,11 @@ namespace OpenRasta.Client.Memory
         public MemoryHttpClient()
         {
             Resources = new Dictionary<Uri, MemoryResource>();
-
+            Notifier = HttpNotifier.Default;
         }
+
+        public HttpNotifier Notifier { get; set; }
+
         public IClientRequest CreateRequest(Uri uri)
         {
             return new MemoryRequest(this, uri);

@@ -7,7 +7,7 @@ using OpenRasta.Client.IO;
 
 namespace OpenRasta.Client
 {
-    public class HttpWebRequestBasedRequest : IClientRequest
+    public class HttpWebRequestBasedRequest : IClientRequest, IRequestProgress
     {
         readonly MemoryStream _emptyStream;
         readonly HttpEntity _entity;
@@ -26,8 +26,11 @@ namespace OpenRasta.Client
             if (proxy != null) _request.Proxy = proxy;
         }
 
+        public event Action<TransferProgress> Download;
+
         public event EventHandler<ProgressEventArgs> Progress;
         public event EventHandler<StatusChangedEventArgs> StatusChanged;
+        public event Action<TransferProgress> Upload;
 
         public NetworkCredential Credentials
         {
@@ -51,6 +54,8 @@ namespace OpenRasta.Client
             set { _request.Method = value; }
         }
 
+        public HttpNotifier Notifier { get; set; }
+
         public Uri RequestUri
         {
             get { return _request.RequestUri; }
@@ -65,12 +70,10 @@ namespace OpenRasta.Client
         {
             _request.ContentType = _entity.ContentType.ToString();
             RaiseStatusChanged("Connecting to {0}", RequestUri.ToString());
-            if (_entity.Stream != null &&
-                ((_entity.Stream.CanSeek && _entity.Stream.Length > 0) ||
-                 _entity.Stream != _emptyStream))
-                SendRequestStream();
+            
+            SendRequestStream();
 
-            var response = new HttpWebResponseBasedResponse(this, _request);
+            var response = new HttpWebResponseBasedResponse(this, _request, RaiseDownload);
             var exceptions = new List<Exception>();
 
             foreach (var handler in _handlers.Where(x => x.Key(response)).Select(x => x.Value))
@@ -84,13 +87,9 @@ namespace OpenRasta.Client
                     exceptions.Add(e);
                 }
             }
+
             response.HandlerErrors = exceptions;
             return response;
-        }
-
-        protected void RaiseProgress(int progress)
-        {
-            Progress.Raise(this, new ProgressEventArgs(progress));
         }
 
         protected void RaiseStatusChanged(string status, params object[] args)
@@ -98,17 +97,39 @@ namespace OpenRasta.Client
             StatusChanged.Raise(this, new StatusChangedEventArgs(string.Format(status, args)));
         }
 
+        void RaiseDownload(TransferProgress progress)
+        {
+            var downloadHandler = Download;
+            if (downloadHandler != null)
+                downloadHandler(progress);
+        }
+
+        void RaiseUpload(long length, long size, bool finished = false)
+        {
+            var handler = Upload;
+            if (handler != null) handler(new TransferProgress(size, length, finished));
+        }
+
+        Action<int> RaiseUploadFactory(long length)
+        {
+            return size => RaiseUpload(length, size, false);
+        }
+
         void SendRequestStream()
         {
+            if (_entity.Stream == null || ((!_entity.Stream.CanSeek || _entity.Stream.Length <= 0) && _entity.Stream == _emptyStream))
+            {
+                RaiseUpload(0, 0, true);
+                return;
+            }
+            long length = -1;
             if (_entity.Stream.CanSeek)
-                _request.ContentLength = _entity.Stream.Length;
+                length = _request.ContentLength = _entity.Stream.Length;
 
             var streamToWriteTo = _request.GetRequestStream();
 
-            if (_entity.Stream.CanSeek)
-                streamToWriteTo = new ProgressStream(_entity.Stream.Length, RaiseProgress, streamToWriteTo);
-
-            _entity.Stream.CopyTo(streamToWriteTo);
+            var completed = _entity.Stream.CopyTo(streamToWriteTo, onCopied: RaiseUploadFactory(length));
+            RaiseUpload(completed, completed, true);
         }
     }
 }

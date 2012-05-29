@@ -80,7 +80,7 @@ namespace OpenWrap.Repositories
         CacheState GetCacheLocation(string repositoryToken)
         {
             CacheState state;
-            if (!_index.CacheLocations.TryGetValue(repositoryToken, out state))
+            if (!_index.TryGetValue(repositoryToken, out state))
             {
                 state = CreateRepositoryCache(repositoryToken);
             }
@@ -91,7 +91,7 @@ namespace OpenWrap.Repositories
         {
             var file = _repoCache.GetUniqueFile("cache");
             var cacheState = new CacheState { FileName = file.Name };
-            _index.CacheLocations.Add(repositoryToken, cacheState);
+            _index.Add(repositoryToken, cacheState);
             _configManager.Save(_index);
             return cacheState;
         }
@@ -110,12 +110,7 @@ namespace OpenWrap.Repositories
         }
     }
     [Path("cache-index")]
-    public class CacheEntries
+    public class CacheEntries : Dictionary<string, CacheState>
     {
-        public CacheEntries()
-        {
-            CacheLocations = new Dictionary<string, CacheState>();
-        }
-        public IDictionary<string, CacheState> CacheLocations { get; set; }
     }
 }

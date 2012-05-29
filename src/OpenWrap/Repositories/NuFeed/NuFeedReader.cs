@@ -28,7 +28,7 @@ namespace OpenWrap.Repositories.NuFeed
                            where entry.Name != null && 
                                  entry.Version != null &&
                                  PackageNameUtility.IsNameValid(entry.Name) &&
-                                 entry.Dependencies.Any(_=>
+                                 entry.Dependencies.Any(_ =>
                                      !PackageNameUtility.IsNameValid(_.Split(' ')[0])) == false
                            select entry, 
                 LastUpdate = TryParseDate(feed.AtomElement("updated").Value()), 

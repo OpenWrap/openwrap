@@ -8,6 +8,5 @@ namespace OpenRasta.Client
         IClientResponse Send();
         NetworkCredential Credentials { get; set; }
         void RegisterHandler(Func<IClientResponse, bool> predicate, Action<IClientResponse> handler);
-        
     }
 }

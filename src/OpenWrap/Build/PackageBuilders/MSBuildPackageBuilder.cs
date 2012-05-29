@@ -142,20 +142,11 @@ namespace OpenWrap.Build.PackageBuilders
             var build = Properties.Contains("BuildEngine") && Properties["BuildEngine"].Any() ? Properties["BuildEngine"].First() : BuildEngine;
 
             string path = null;
-            if (build == "default" || (build == "msbuild" && !IsUnix))
+            if (build == "default" || (build == "msbuild" && !EnvironmentDetection.IsUnix))
                 path = GetMSBuildExecutionPath();
-            if (build == "xbuild" || (build == "msbuild" && IsUnix) || (build == "default" && path == null))
-                path = IsUnix ? "xbuild" : GetWinXbuildPath();
+            if (build == "xbuild" || (build == "msbuild" && EnvironmentDetection.IsUnix) || (build == "default" && path == null))
+                path = EnvironmentDetection.IsUnix ? "xbuild" : GetWinXbuildPath();
             return path;
-        }
-
-        static bool IsUnix
-        {
-            get 
-            {
-                int p = (int)Environment.OSVersion.Platform;
-                return (p == 4) || (p == 6) || (p == 128);
-            }
         }
 
         static string GetWinXbuildPath()
