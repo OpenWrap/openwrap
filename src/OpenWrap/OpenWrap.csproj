@@ -220,6 +220,11 @@
     <Compile Include="ProjectModel\IProject.cs" />
     <Compile Include="ProjectModel\ISolution.cs" />
     <Compile Include="Reflection\AssemblyFiddler.cs" />
+    <Compile Include="Repositories\Caching\CacheEntries.cs" />
+    <Compile Include="Repositories\Caching\CacheState.cs" />
+    <Compile Include="Repositories\Caching\PackageCacheManager.cs" />
+    <Compile Include="Repositories\Caching\PackageEntryContainer.cs" />
+    <Compile Include="Repositories\Caching\UpdateToken.cs" />
     <Compile Include="Repositories\DefaultRemoteManager.cs" />
     <Compile Include="Repositories\FileSystem\IndexedFolderRepositoryFactory.cs" />
     <Compile Include="Repositories\FileSystem\IOExtensions.cs" />
@@ -516,7 +521,6 @@
   <ItemGroup>
     <Folder Include="Extensibility\" />
     <Folder Include="PackageManagement\Hooks\" />
-    <Folder Include="Repositories\Caching\" />
   </ItemGroup>
   <Import Project="..\..\build\common.project.properties" />
   <Import Project="..\..\wraps\openwrap\build\OpenWrap.CSharp.targets" />

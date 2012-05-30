@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using OpenRasta.Client;
+using OpenWrap.Repositories.FileSystem;
 using OpenWrap.Tasks;
 
 namespace OpenWrap.Repositories.Http

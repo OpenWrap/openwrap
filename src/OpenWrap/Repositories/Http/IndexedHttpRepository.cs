@@ -7,6 +7,7 @@ using OpenFileSystem.IO;
 using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
+using OpenWrap.Repositories.FileSystem;
 
 namespace OpenWrap.Repositories.Http
 {

@@ -74,7 +74,8 @@ namespace OpenWrap.Configuration
                         commitKey();
                         yield return commitVal();
                     }
-                    else if (state == VALUE) yield return commitVal();
+                    else if (state == VALUE || state == BEFORE_VAL)
+                        yield return commitVal();
                 }
                 else if (curChar == '\\')
                 {

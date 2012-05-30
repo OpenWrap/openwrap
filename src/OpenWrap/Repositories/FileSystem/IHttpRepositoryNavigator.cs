@@ -1,7 +1,7 @@
 using System.IO;
-using OpenWrap.PackageModel;
+using OpenWrap.Repositories.Http;
 
-namespace OpenWrap.Repositories.Http
+namespace OpenWrap.Repositories.FileSystem
 {
     public interface IHttpRepositoryNavigator
     {

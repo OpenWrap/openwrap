@@ -2,16 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Xml;
 using OpenFileSystem.IO;
 using OpenRasta.Client;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
+using OpenWrap.Repositories.Caching;
 using OpenWrap.Repositories.Http;
 using OpenWrap.Repositories.NuGet;
 
 namespace OpenWrap.Repositories.NuFeed
 {
+    public enum NuFeedDownloadMode
+    {
+        PartialParallel,
+        Partial,
+        Sequential
+    }
     public class NuFeedRepository : IPackageRepository, ISupportAuthentication, ISupportCaching
     {
         readonly PackageCacheManager _cacheManager;
@@ -33,9 +41,16 @@ namespace OpenWrap.Repositories.NuFeed
             _packagesUri = packagesUri;
             _cacheManager = cacheManager;
             CachingEnabled = _cacheManager != null;
+            Mode = CachingEnabled
+                ? NuFeedDownloadMode.PartialParallel 
+                : NuFeedDownloadMode.Sequential;
 
             RefreshPackages();
         }
+
+        protected NuFeedDownloadMode Mode { get; set; }
+
+        protected bool ParallelDownloadEnabled { get; set; }
 
         public bool CachingEnabled { get; private set; }
 
@@ -72,7 +87,7 @@ namespace OpenWrap.Repositories.NuFeed
             DateTimeOffset? lastUpdated = null;
             _packages = Lazy.Is(() => CachingEnabled
                                           ? LoadPackagesThroughCache()
-                                          : LoadPackagesFromFeedPages(_packagesUri, out lastUpdated)
+                                          : LoadPackagesFromChainedFeedPages(_packagesUri, out lastUpdated)
                                                 .ToLookup(_ => _.Name, x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x))));
         }
 
@@ -105,18 +120,109 @@ namespace OpenWrap.Repositories.NuFeed
             {
                 var token = existingToken.UpdateToken;
                 var updateUri = new UriBuilder(_packagesUri);
-                updateUri.Query = string.Format("LastUpdated gt datetime'{0}'", token.Value);
+                updateUri.Query = string.Format("LastUpdated gt datetime'{0}'", token);
                 AppendPackagesToCache(updateUri.Uri);
             }
             RefreshPackages();
         }
-
+        
         void AppendPackagesToCache(Uri packagesUri)
         {
-            DateTimeOffset? lastUpdate;
-            var packages = LoadPackagesFromFeedPages(packagesUri, out lastUpdate);
-            var updateToken = new NuFeedToken(lastUpdate);
-            _cacheManager.AppendPackages(Token, updateToken, packages);
+            DateTimeOffset? lastUpdate = null;
+            var finalList = Mode == NuFeedDownloadMode.PartialParallel
+                                ? LoadPackagesFromParallelFeeds(packagesUri, out lastUpdate)
+                                : LoadPackagesFromChainedFeedPages(packagesUri, out lastUpdate);
+
+            _cacheManager.AppendPackages(Token, new NuFeedToken(lastUpdate), finalList);
+        }
+
+        IEnumerable<PackageEntry> LoadPackagesFromParallelFeeds(Uri packagesUri, out DateTimeOffset? lastUpdate)
+        {
+            lastUpdate = null;
+            var queue =
+                new Queue<Uri>(Enumerable.Range('a', 26)
+                                   .Concat(Enumerable.Range('0', 10))
+                                   .Select(_ => (char)_)
+                                   .Concat(new[] { '-', '.', '+' })
+                                   .Select(prefix =>
+                                   {
+                                       var builder = new UriBuilder(packagesUri);
+                                       if (builder.Query.Length > 0)
+                                           builder.Query += "&";
+                                       builder.Query += string.Format("$filter=startswith(Id,'{0}')", prefix);
+                                       return builder.Uri;
+                                   })
+                                   .ToList());
+
+            const int MAX_QUEUE_SIZE = 6;
+            IEnumerable<PackageEntry> finalList = new List<PackageEntry>();
+            int current_queue_size = 0;
+            DateTimeOffset? earliestUpdate = null;
+            AutoResetEvent threadComplete = new AutoResetEvent(false);
+            Action triggerDownload = null;
+            triggerDownload = () =>
+            {
+                lock (queue)
+                {
+                    if (current_queue_size >= MAX_QUEUE_SIZE)
+                        return;
+                    
+                    current_queue_size++;
+                }
+                ThreadPool.QueueUserWorkItem(state =>
+                {
+                    Uri entry;
+                    lock (queue)
+                    {
+                        if (queue.Count == 0)
+                        {
+                            current_queue_size--;
+                            return;
+                        }
+                        entry = queue.Dequeue();
+                    }
+                    DateTimeOffset? feedUpdateTime = null;
+                    
+                    var newPackages = LoadPackagesFromChainedFeedPages(entry, out feedUpdateTime);
+                    if (earliestUpdate == null ||
+                        earliestUpdate > feedUpdateTime)
+                        earliestUpdate = feedUpdateTime;
+                    
+                    lock (finalList)
+                    {
+                        finalList = finalList.Concat(newPackages);
+                    }
+                    lock (queue)
+                    {
+                        current_queue_size--;
+                        
+// ReSharper disable AccessToModifiedClosure
+                        
+                        triggerDownload();
+                        threadComplete.Set();
+// ReSharper restore AccessToModifiedClosure
+                    }
+                });
+            };
+            // first, try an initial download to check for errors
+            try
+            {
+                finalList = LoadPackagesFromChainedFeedPages(queue.Dequeue(), out earliestUpdate);
+            }
+            catch
+            {
+                Mode = NuFeedDownloadMode.Partial;
+                return LoadPackagesFromChainedFeedPages(packagesUri, out lastUpdate);
+            }
+            for (int i = 0; i < MAX_QUEUE_SIZE; i++)
+                triggerDownload();
+            do
+            {
+                threadComplete.WaitOne();
+            } while (current_queue_size > 0);
+
+            lastUpdate = earliestUpdate;
+            return finalList;
         }
 
         XmlReader GetXml(Uri uri)
@@ -144,7 +250,7 @@ namespace OpenWrap.Repositories.NuFeed
             };
         }
 
-        List<PackageEntry> LoadPackagesFromFeedPages(Uri packagesUri, out DateTimeOffset? lastUpdate)
+        List<PackageEntry> LoadPackagesFromChainedFeedPages(Uri packagesUri, out DateTimeOffset? lastUpdate)
         {
             var feed = NuFeedReader.Read(GetXml(packagesUri));
             lastUpdate = feed.LastUpdate;
@@ -154,18 +260,21 @@ namespace OpenWrap.Repositories.NuFeed
             {
                 var finalUri = feed.BaseUri.Combine(nextAtomLink);
                 feed = NuFeedReader.Read(GetXml(finalUri));
+
                 allPackages.AddRange(feed.Packages);
             }
 
             return allPackages;
         }
 
+
         ILookup<string, IPackageInfo> LoadPackagesThroughCache()
         {
             var existingToken = _cacheManager.GetState(Token);
             if (existingToken.UpdateToken == null)
                 AppendPackagesToCache(_packagesUri);
-            return _cacheManager.LoadPackages(Token, x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x)));
+            return _cacheManager.LoadPackages(Token, 
+                x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x)));
         }
     }
 

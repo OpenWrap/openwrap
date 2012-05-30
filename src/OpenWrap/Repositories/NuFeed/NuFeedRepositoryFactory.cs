@@ -5,6 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using OpenFileSystem.IO;
 using OpenRasta.Client;
+using OpenWrap.Repositories.Caching;
 
 namespace OpenWrap.Repositories.NuFeed
 {

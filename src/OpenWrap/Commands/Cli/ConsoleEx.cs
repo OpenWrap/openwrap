@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace OpenWrap.Commands.Cli
 {
 
@@ -10,6 +11,7 @@ namespace OpenWrap.Commands.Cli
         public static ConsoleColor ProgressBarForeground = ConsoleColor.Blue;
         public static ConsoleColor ProgressBarBackground = ConsoleColor.Black;
         static Action<string, string, int> ProgressHandler;
+        static readonly object _syncLock = new object();
         static ConsoleEx()
         {
             if (EnvironmentDetection.IsCursorMoveAvailable && EnvironmentDetection.IsConsoleMoveBufferAvailable && EnvironmentDetection.IsConsoleResizeBufferAvailable)
@@ -22,8 +24,10 @@ namespace OpenWrap.Commands.Cli
 
         public static void WriteProgress(string id, string text, int progress)
         {
-            ProgressHandler(id, text, progress);
-
+            lock(_syncLock)
+            {
+                ProgressHandler(id, text, progress);
+            }
         }
 
         public static IDisposable Color(

@@ -30,11 +30,17 @@ namespace Tests.Configuration.key_values
         [TestCase("Name=\"Froddo; Baggins = cool\"", "Name", "Froddo; Baggins = cool")]
         [TestCase(long_parse, "token", "tok=en")]
         [TestCase(long_parse, "username", "username")]
+        
         public void parse_properties(string input, string key, string value)
         {
             parsed(input)[key].ShouldBe(value);
         }
-
+        [Test]
+        public void parse_key_without_value()
+        {
+            parsed("Name=;Description=hello")["Name"].ShouldBe(null);
+            
+        }
         [TestCase("Froddo", null)]
         [TestCase("\"Froddo\"", "Froddo")]
         [TestCase("Froddo Baggins", null)]

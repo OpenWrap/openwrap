@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml.Linq;
 using OpenFileSystem.IO.FileSystems.Local;
 using OpenWrap.Repositories;
+using OpenWrap.Repositories.FileSystem;
 using OpenWrap.Repositories.Http;
 
 namespace Tests.Repositories.indexed_http.context

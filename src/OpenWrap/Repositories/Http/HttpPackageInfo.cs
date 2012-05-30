@@ -4,6 +4,7 @@ using System.Linq;
 using OpenFileSystem.IO;
 using OpenWrap.PackageModel;
 using OpenWrap.PackageModel.Parsers;
+using OpenWrap.Repositories.FileSystem;
 
 namespace OpenWrap.Repositories.Http
 {

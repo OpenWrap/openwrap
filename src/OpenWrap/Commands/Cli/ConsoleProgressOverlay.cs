@@ -33,6 +33,7 @@ namespace OpenWrap.Commands.Cli
             if (_progressPositions.TryGetValue(id, out overlay) == false) return;
 
             var overlays = _progressPositions.Values
+                .OrderBy(_=>_)
                 .SkipWhile(_ => _ != overlay)
                 .ToList();
             if (overlays.Count == 1)
@@ -43,7 +44,7 @@ namespace OpenWrap.Commands.Cli
             overlay.Dispose();
         }
 
-        class Overlay
+        class Overlay : IComparable<Overlay>
         {
             int _overlayLineTopInBuffer;
             int _cachedLineTopInBuffer;
@@ -113,6 +114,13 @@ namespace OpenWrap.Commands.Cli
             public void Remove()
             {
                 RestoreText();
+                Console.BufferHeight--;
+            }
+
+            public int CompareTo(Overlay other)
+            {
+                if (other == null) return 1;          
+                return this._overlayLineTopInBuffer.CompareTo(other._overlayLineTopInBuffer);
             }
         }
     }

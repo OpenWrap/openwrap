@@ -5,6 +5,7 @@ using OpenFileSystem.IO.FileSystems.InMemory;
 using OpenRasta.Client;
 using OpenWrap.PackageModel;
 using OpenWrap.Repositories;
+using OpenWrap.Repositories.Caching;
 using OpenWrap.Repositories.NuFeed;
 using Tests.contexts;
 

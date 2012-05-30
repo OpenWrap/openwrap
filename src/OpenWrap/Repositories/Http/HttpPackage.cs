@@ -6,6 +6,7 @@ using OpenFileSystem.IO;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.Packages;
 using OpenWrap.PackageModel;
+using OpenWrap.Repositories.FileSystem;
 using OpenWrap.Runtime;
 
 
