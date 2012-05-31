@@ -100,6 +100,7 @@
     <Compile Include="Commands\build_wrap\version\from_version_file.cs" />
     <Compile Include="Commands\build_wrap\version\none.cs" />
     <Compile Include="Commands\clean_wrap\locks\existing_lock.cs" />
+    <Compile Include="Commands\command_line_runner\system_wide_optional_inputs_and_empty_positioned.cs" />
     <Compile Include="Commands\contexts\build_wrap.cs" />
     <Compile Include="Commands\build_wrap\no_descriptor.cs" />
     <Compile Include="Commands\build_wrap\from_path\path_does_not_exist.cs" />

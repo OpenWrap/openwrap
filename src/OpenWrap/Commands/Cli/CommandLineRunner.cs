@@ -73,25 +73,28 @@ namespace OpenWrap.Commands.Cli
                     }
                 }
             }
-            if (unassignedInputs.Count > 0)
+            var unnamedUnassignedInputs = unassignedInputs.Where(_ => _.Name == string.Empty).ToList();
+
+            if (unnamedUnassignedInputs.Count > 0)
             {
                 foreach (var positioned in command.Inputs
                     .Where(x => x.Value.Position != null && !assignedInputs.Contains(x.Key))
                     .Select(x => x.Value)
                     .OrderBy(x => x.Position))
                 {
-                    if (unassignedInputs.Count == 0) break;
+                    if (unnamedUnassignedInputs.Count == 0) break;
 
-                    if (!AssignValue(unassignedInputs[0], commandInstance, positioned))
+                    var firstUnnamedInput = unnamedUnassignedInputs[0];
+                    if (!AssignValue(firstUnnamedInput, commandInstance, positioned))
                     {
                         yield return new InputParsingError(positioned.Name, GetLinearValue(unassignedInputs[0]));
-                        yield
-                            break;
+                        yield break;
                     }
 
                     assignedInputs.Add(positioned.Name);
 
-                    unassignedInputs.RemoveAt(0);
+                    unnamedUnassignedInputs.RemoveAt(0);
+                    unassignedInputs.Remove(firstUnnamedInput);
                 }
             }
             var missingInputs = command.Inputs.Where(x => x.Value.IsRequired && !assignedInputs.Contains(x.Key)).Select(x => x.Value);
