@@ -25,9 +25,12 @@ namespace Tests.Repositories.contexts
         }
         protected void given_repository(string nugetFeedUri, bool cachingEnabled = false)
         {
-            repository = new NuFeedRepository(FileSystem,
-                cachingEnabled?new PackageCacheManager(CacheDirectory) : null, 
-                                                        Client, nugetFeedUri.ToUri(), nugetFeedUri.ToUri());
+            repository = new NuFeedRepository(
+                FileSystem,
+                cachingEnabled ? new PackageCacheManager(CacheDirectory) : null,
+                Client,
+                nugetFeedUri.ToUri(),
+                nugetFeedUri.ToUri());
             
         }
         protected virtual void when_reading_packages()

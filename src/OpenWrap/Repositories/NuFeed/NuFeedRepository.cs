@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Xml;
 using OpenFileSystem.IO;
 using OpenRasta.Client;
@@ -11,15 +10,10 @@ using OpenWrap.PackageModel;
 using OpenWrap.Repositories.Caching;
 using OpenWrap.Repositories.Http;
 using OpenWrap.Repositories.NuGet;
+using OpenWrap.Threading;
 
 namespace OpenWrap.Repositories.NuFeed
 {
-    public enum NuFeedDownloadMode
-    {
-        PartialParallel,
-        Partial,
-        Sequential
-    }
     public class NuFeedRepository : IPackageRepository, ISupportAuthentication, ISupportCaching
     {
         readonly PackageCacheManager _cacheManager;
@@ -29,7 +23,8 @@ namespace OpenWrap.Repositories.NuFeed
         readonly Uri _target;
         LazyValue<ILookup<string, IPackageInfo>> _packages;
 
-        public NuFeedRepository(IFileSystem fileSystem, IHttpClient client, Uri target, Uri packagesUri) : this(fileSystem, null, client, target, packagesUri)
+        public NuFeedRepository(IFileSystem fileSystem, IHttpClient client, Uri target, Uri packagesUri)
+            : this(fileSystem, null, client, target, packagesUri)
         {
         }
 
@@ -42,15 +37,11 @@ namespace OpenWrap.Repositories.NuFeed
             _cacheManager = cacheManager;
             CachingEnabled = _cacheManager != null;
             Mode = CachingEnabled
-                ? NuFeedDownloadMode.PartialParallel 
-                : NuFeedDownloadMode.Sequential;
+                       ? NuFeedDownloadMode.PartialParallel
+                       : NuFeedDownloadMode.Sequential;
 
             RefreshPackages();
         }
-
-        protected NuFeedDownloadMode Mode { get; set; }
-
-        protected bool ParallelDownloadEnabled { get; set; }
 
         public bool CachingEnabled { get; private set; }
 
@@ -75,6 +66,10 @@ namespace OpenWrap.Repositories.NuFeed
         {
             get { return "nufeed"; }
         }
+
+        protected NuFeedDownloadMode Mode { get; set; }
+
+        protected bool ParallelDownloadEnabled { get; set; }
 
         public TFeature Feature<TFeature>() where TFeature : class, IRepositoryFeature
         {
@@ -123,12 +118,30 @@ namespace OpenWrap.Repositories.NuFeed
                 updateUri.Query = string.Format("LastUpdated gt datetime'{0}'", token);
                 AppendPackagesToCache(updateUri.Uri);
             }
+
             RefreshPackages();
         }
-        
+
+        static List<Uri> GetParallelUrisForFeed(Uri packagesUri)
+        {
+            return Enumerable.Range('a', 26)
+                .Concat(Enumerable.Range('0', 10))
+                .Select(_ => (char)_)
+                .Concat(new[] { '-', '.', '+' })
+                .Select(prefix =>
+                {
+                    var builder = new UriBuilder(packagesUri);
+                    if (builder.Query.Length > 0)
+                        builder.Query += "&";
+                    builder.Query += string.Format("$filter=startswith(Id,'{0}')", prefix);
+                    return builder.Uri;
+                })
+                .ToList();
+        }
+
         void AppendPackagesToCache(Uri packagesUri)
         {
-            DateTimeOffset? lastUpdate = null;
+            DateTimeOffset? lastUpdate;
             var finalList = Mode == NuFeedDownloadMode.PartialParallel
                                 ? LoadPackagesFromParallelFeeds(packagesUri, out lastUpdate)
                                 : LoadPackagesFromChainedFeedPages(packagesUri, out lastUpdate);
@@ -136,93 +149,20 @@ namespace OpenWrap.Repositories.NuFeed
             _cacheManager.AppendPackages(Token, new NuFeedToken(lastUpdate), finalList);
         }
 
-        IEnumerable<PackageEntry> LoadPackagesFromParallelFeeds(Uri packagesUri, out DateTimeOffset? lastUpdate)
+        Action FeedDownload(
+            Uri uri, 
+            Action<PackageFeed> onDownloaded, 
+            Action<Action> queueNext)
         {
-            lastUpdate = null;
-            var queue =
-                new Queue<Uri>(Enumerable.Range('a', 26)
-                                   .Concat(Enumerable.Range('0', 10))
-                                   .Select(_ => (char)_)
-                                   .Concat(new[] { '-', '.', '+' })
-                                   .Select(prefix =>
-                                   {
-                                       var builder = new UriBuilder(packagesUri);
-                                       if (builder.Query.Length > 0)
-                                           builder.Query += "&";
-                                       builder.Query += string.Format("$filter=startswith(Id,'{0}')", prefix);
-                                       return builder.Uri;
-                                   })
-                                   .ToList());
-
-            const int MAX_QUEUE_SIZE = 6;
-            IEnumerable<PackageEntry> finalList = new List<PackageEntry>();
-            int current_queue_size = 0;
-            DateTimeOffset? earliestUpdate = null;
-            AutoResetEvent threadComplete = new AutoResetEvent(false);
-            Action triggerDownload = null;
-            triggerDownload = () =>
+            return () =>
             {
-                lock (queue)
-                {
-                    if (current_queue_size >= MAX_QUEUE_SIZE)
-                        return;
-                    
-                    current_queue_size++;
-                }
-                ThreadPool.QueueUserWorkItem(state =>
-                {
-                    Uri entry;
-                    lock (queue)
-                    {
-                        if (queue.Count == 0)
-                        {
-                            current_queue_size--;
-                            return;
-                        }
-                        entry = queue.Dequeue();
-                    }
-                    DateTimeOffset? feedUpdateTime = null;
-                    
-                    var newPackages = LoadPackagesFromChainedFeedPages(entry, out feedUpdateTime);
-                    if (earliestUpdate == null ||
-                        earliestUpdate > feedUpdateTime)
-                        earliestUpdate = feedUpdateTime;
-                    
-                    lock (finalList)
-                    {
-                        finalList = finalList.Concat(newPackages);
-                    }
-                    lock (queue)
-                    {
-                        current_queue_size--;
-                        
-// ReSharper disable AccessToModifiedClosure
-                        
-                        triggerDownload();
-                        threadComplete.Set();
-// ReSharper restore AccessToModifiedClosure
-                    }
-                });
+                var feed = NuFeedReader.Read(GetXml(uri));
+                onDownloaded(feed);
+
+                var nextFeed = feed.Links["next"].FirstOrDefault();
+                if (nextFeed != null)
+                    queueNext(FeedDownload(nextFeed.Href.ToUri(), onDownloaded, queueNext));
             };
-            // first, try an initial download to check for errors
-            try
-            {
-                finalList = LoadPackagesFromChainedFeedPages(queue.Dequeue(), out earliestUpdate);
-            }
-            catch
-            {
-                Mode = NuFeedDownloadMode.Partial;
-                return LoadPackagesFromChainedFeedPages(packagesUri, out lastUpdate);
-            }
-            for (int i = 0; i < MAX_QUEUE_SIZE; i++)
-                triggerDownload();
-            do
-            {
-                threadComplete.WaitOne();
-            } while (current_queue_size > 0);
-
-            lastUpdate = earliestUpdate;
-            return finalList;
         }
 
         XmlReader GetXml(Uri uri)
@@ -250,7 +190,9 @@ namespace OpenWrap.Repositories.NuFeed
             };
         }
 
-        List<PackageEntry> LoadPackagesFromChainedFeedPages(Uri packagesUri, out DateTimeOffset? lastUpdate)
+        IEnumerable<PackageEntry> LoadPackagesFromChainedFeedPages(
+            Uri packagesUri, 
+            out DateTimeOffset? lastUpdate)
         {
             var feed = NuFeedReader.Read(GetXml(packagesUri));
             lastUpdate = feed.LastUpdate;
@@ -267,6 +209,50 @@ namespace OpenWrap.Repositories.NuFeed
             return allPackages;
         }
 
+        IEnumerable<PackageEntry> LoadPackagesFromParallelFeeds(Uri packagesUri, out DateTimeOffset? lastUpdate)
+        {
+            lastUpdate = null;
+            var urisToDownload = GetParallelUrisForFeed(packagesUri);
+            const int maxQueueSize = 6;
+            ServicePointManager.DefaultConnectionLimit = maxQueueSize;
+            var finalList = Enumerable.Empty<PackageEntry>();
+            DateTimeOffset? earliestUpdate = null;
+
+            var queue2 = new ThrottledQueue(maxQueueSize);
+            var actions = urisToDownload.Select(
+                uri => FeedDownload(
+                    uri, 
+                    feed =>
+                    {
+                        lock (finalList)
+                        {
+                            finalList = finalList.Concat(feed.Packages);
+                            // ReSharper disable AccessToModifiedClosure
+                            if (earliestUpdate == null || earliestUpdate > feed.LastUpdate)
+                                earliestUpdate = feed.LastUpdate;
+                            // ReSharper restore AccessToModifiedClosure
+                        }
+                    }, 
+                    queue2.Enqueue)).ToList();
+
+            try
+            {
+                actions.First()();
+            }
+            catch
+            {
+                Mode = NuFeedDownloadMode.Partial;
+                return LoadPackagesFromChainedFeedPages(packagesUri, out lastUpdate);
+            }
+
+            queue2.Enqueue(actions.Skip(1));
+
+            queue2.Start();
+            queue2.WaitForCompletion();
+            lastUpdate = earliestUpdate;
+            return finalList;
+        }
+
 
         ILookup<string, IPackageInfo> LoadPackagesThroughCache()
         {
@@ -274,14 +260,7 @@ namespace OpenWrap.Repositories.NuFeed
             if (existingToken.UpdateToken == null)
                 AppendPackagesToCache(_packagesUri);
             return _cacheManager.LoadPackages(Token, 
-                x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x)));
-        }
-    }
-
-    public class NuFeedToken : UpdateToken
-    {
-        public NuFeedToken(DateTimeOffset? lastUpdate) : base(lastUpdate.ToString())
-        {
+                                              x => (IPackageInfo)new PackageEntryWrapper(this, x, LoadPackage(x)));
         }
     }
 }

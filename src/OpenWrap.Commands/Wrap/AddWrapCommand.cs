@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OpenWrap.Collections;
 using OpenWrap.PackageManagement;
@@ -119,8 +120,14 @@ namespace OpenWrap.Commands.Wrap
                                       where cache != null
                                       select new { repository = r, cache })
             {
+                var updateTime = new Stopwatch();
+                updateTime.Start();
                 yield return new Info("Updating repository {0}.", repository.repository.Name);
                 repository.cache.Update();
+                yield return new Info("Updated repository {0} in {1}.",
+                    repository.repository.Name,
+                    updateTime.Elapsed);
+
             }
             var descriptor = new PackageDescriptor(_targetDescriptor.Value);
             if (Project && System)

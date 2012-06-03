@@ -235,16 +235,20 @@
     <Compile Include="Repositories\ISupportCurrentCredentials.cs" />
     <Compile Include="Repositories\LockedPackage.cs" />
     <Compile Include="Repositories\LockedPackages.cs" />
+    <Compile Include="Repositories\NuFeed\NuFeedDownloadMode.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedReader.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepository.cs" />
     <Compile Include="Repositories\NuFeed\NuFeedRepositoryFactory.cs" />
     <Compile Include="Repositories\Http\IndexedHttpRepositoryFactory.cs" />
+    <Compile Include="Repositories\NuFeed\NuFeedToken.cs" />
+    <Compile Include="Repositories\NuFeed\XDocumentExtensions.cs" />
     <Compile Include="Repositories\PreAuthenticatedRepository.cs" />
     <Compile Include="Resources\Keys.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Keys.resx</DependentUpon>
     </Compile>
+    <Compile Include="Threading\ThrottledQueue.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="VersionExtensions.cs" />
   </ItemGroup>

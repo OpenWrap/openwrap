@@ -248,6 +248,7 @@
     <Compile Include="Repositories\indexed_http\wrap_list.cs" />
     <Compile Include="Repositories\maven_style_version_definition.cs" />
     <Compile Include="Repositories\nufeed\cached\initial_retrieval.cs" />
+    <Compile Include="Repositories\nufeed\cached\parallel\initial_retrieval.cs" />
     <Compile Include="Repositories\nufeed\cached\updates_available.cs" />
     <Compile Include="Repositories\nufeed\parser\invalid_dependency.cs" />
     <Compile Include="Repositories\nufeed\parser\invalid_package_name.cs" />

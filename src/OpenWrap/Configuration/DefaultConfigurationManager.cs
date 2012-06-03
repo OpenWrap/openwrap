@@ -103,6 +103,7 @@ namespace OpenWrap.Configuration
                     append();
                 }
             }
+
             if (sb.Length > 0 && key == null)
                 key = sb.ToString();
             else if (sb.Length > 0)
@@ -143,10 +144,10 @@ namespace OpenWrap.Configuration
         static object AssignPropertiesFromLines(object instance, IEnumerable<ConfigurationLine> lines)
         {
             var type = instance.GetType();
-            var propertiesWithKeys = (type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            var propertiesWithKeys = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Select(prop => new { prop, attr = prop.Attribute<KeyAttribute>() })
                 .Where(@t => t.attr != null)
-                .ToLookup(x => x.attr.Name, x => x.prop, StringComparer.OrdinalIgnoreCase));
+                .ToLookup(x => x.attr.Name, x => x.prop, StringComparer.OrdinalIgnoreCase);
 
             foreach (var linesByName in lines.GroupBy(x => x.Name, StringComparer.OrdinalIgnoreCase))
             {
@@ -167,8 +168,10 @@ namespace OpenWrap.Configuration
                 {
                     propertyValue = AssignPropertyFromLine(property.PropertyType, linesByName.Last().Value, property.Attribute<EncryptAttribute>() != null);
                 }
+
                 property.SetValue(instance, propertyValue, null);
             }
+
             return instance;
         }
 
@@ -206,10 +209,16 @@ namespace OpenWrap.Configuration
             {
                 propertyValue = Activator.CreateInstance(targetType);
             }
+
             if (targetType.IsPrimitive == false && properties.Any())
-                propertyValue = AssignPropertiesFromLines(propertyValue,
-                                                          properties.Select(x =>
-                                                                            new ConfigurationLine { Name = x.Key, Value = new StringBuilder().AppendQuoted(x.Value).ToString() }));
+                propertyValue = AssignPropertiesFromLines(propertyValue, 
+                                                          properties
+                                                              .Where(_ => _.Value != null)
+                                                              .Select(x => new ConfigurationLine
+                                                              {
+                                                                  Name = x.Key, 
+                                                                  Value = new StringBuilder().AppendQuoted(x.Value).ToString()
+                                                              }));
             return propertyValue;
         }
 
@@ -254,7 +263,6 @@ namespace OpenWrap.Configuration
                     // ReSharper disable AssignNullToNotNullAttribute
                     return (T)fi.GetValue(null);
             // ReSharper restore AssignNullToNotNullAttribute
-
             return (T)pi.GetValue(null, null);
         }
 
@@ -285,10 +293,10 @@ namespace OpenWrap.Configuration
                 {
                     if (e.InnerException is ArgumentException)
                         throw new InvalidConfigurationException(
-                            String.Format("Duplicate configuration section of type '{0}' with name '{1} in the file '{2}' found. Correct the issue and retry.",
-                                          section.Type,
-                                          section.Name,
-                                          file.Path.FullPath),
+                            string.Format("Duplicate configuration section of type '{0}' with name '{1} in the file '{2}' found. Correct the issue and retry.", 
+                                          section.Type, 
+                                          section.Name, 
+                                          file.Path.FullPath), 
                             e.InnerException);
                     throw e.InnerException;
                 }
@@ -317,6 +325,7 @@ namespace OpenWrap.Configuration
             {
                 PopulateDictionaryEntries(file, dictionaryInterface, parsedConfig, configData);
             }
+
             AssignPropertiesFromLines(configData, parsedConfig.OfType<ConfigurationLine>());
             return configData;
         }
@@ -365,8 +374,8 @@ namespace OpenWrap.Configuration
             var builder = new StringBuilder();
             if (value.ToString() != value.GetType().ToString())
                 builder.AppendQuoted(value.ToString().EncodeBreaks());
-            WriteProperties(value,
-                            (key, val) => builder.Append(builder.Length > 0 ? "; " : String.Empty)
+            WriteProperties(value, 
+                            (key, val) => builder.Append(builder.Length > 0 ? "; " : string.Empty)
                                               .AppendQuoted(key)
                                               .Append("=")
                                               .Append(val.EncodeBreaks()));

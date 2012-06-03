@@ -17,7 +17,7 @@ namespace Tests.Repositories.nufeed.cached
                                   AtomContent.Feed(Now, "http://localhost/packages/page/1".ToUri())
                                              .Entry(AtomContent.NuGetEntry("sauron", "1.0", "Sauron package")));
 
-            given_repository("http://localhost/packages/page/1");
+            given_repository("http://localhost/packages/page/1", cachingEnabled: true);
             when_reading_packages();
         }
         [Test]
