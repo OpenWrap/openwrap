@@ -131,9 +131,16 @@ namespace OpenWrap.Repositories.NuFeed
                 .Select(prefix =>
                 {
                     var builder = new UriBuilder(packagesUri);
-                    if (builder.Query.Length > 0)
-                        builder.Query += "&";
-                    builder.Query += string.Format("$filter=startswith(Id,'{0}')", prefix);
+                    var query = builder.Query;
+                    if (query.Length > 0)
+                        query += "&";
+                    query += string.Format("$filter=startswith(Id,'{0}')", prefix);
+
+                    // you must be kidding me. Retrieving Query starts with ? but setting adds a ?. Fools.
+                    while (query.StartsWith("?"))
+                        query = query.Substring(1);
+
+                    builder.Query = query;
                     return builder.Uri;
                 })
                 .ToList();
@@ -146,7 +153,8 @@ namespace OpenWrap.Repositories.NuFeed
                                 ? LoadPackagesFromParallelFeeds(packagesUri, out lastUpdate)
                                 : LoadPackagesFromChainedFeedPages(packagesUri, out lastUpdate);
 
-            _cacheManager.AppendPackages(Token, new NuFeedToken(lastUpdate), finalList);
+            lastUpdate = lastUpdate ?? DateTimeOffset.Now;
+            _cacheManager.AppendPackages(Token, new NuFeedToken(lastUpdate.Value), finalList);
         }
 
         Action FeedDownload(
@@ -171,7 +179,7 @@ namespace OpenWrap.Repositories.NuFeed
             if (response.Status.Code / 100 != 2)
                 throw new InvalidOperationException(string.Format("The feed at '{0}' responded with status code '{1}', preventing the retrieval of package lists.", uri, response.Status.Code));
 
-            return XmlReader.Create(response.Entity.Stream);
+            return XmlReader.Create(response.Entity.Stream,new XmlReaderSettings(), uri.ToString());
         }
 
         Func<IPackage> LoadPackage(PackageEntry packageEntry)

@@ -10,6 +10,7 @@ namespace OpenWrap.Commands.Cli
         const string SHELL_ARGS = "openwrap.shell.args";
         const string SHELL_COMMAND_LINE = "openwrap.shell.commandline";
         const string SYSPATH = "openwrap.syspath";
+        const string SYSROOT = "openwrap.sysroot";
         const string SHELL_FORMATTER = "openwrap.shell.formatter";
 
         public static string CommandLine(this IDictionary<string, object> env)
@@ -27,9 +28,13 @@ namespace OpenWrap.Commands.Cli
             return env.ContainsKey(SHELL_ARGS) ? env[SHELL_ARGS] as IEnumerable<string> : Enumerable.Empty<string>();
         }
 
-        public static string SysPath(this IDictionary<string, object> env)
+        public static string SystemRepositoryPath(this IDictionary<string, object> env)
         {
             return env.ContainsKey(SYSPATH) ? env[SYSPATH] as string : null;
+        }
+        public static string SystemRootPath(this IDictionary<string, object> env)
+        {
+            return env.ContainsKey(SYSROOT) ? env[SYSROOT] as string : null;
         }
         public static string Formatter(this IDictionary<string, object> env)
         {

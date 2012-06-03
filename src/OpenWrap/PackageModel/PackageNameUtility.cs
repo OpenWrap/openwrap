@@ -5,7 +5,7 @@ namespace OpenWrap.PackageModel
 {
     public static class PackageNameUtility
     {
-        public const string NAME_CHARS = "[a-zA-Z0-9-\\.\\+]";
+        public const string NAME_CHARS = "[a-zA-Z0-9-\\.\\+_]";
 
         public const string VERSION_SEGMENTS_CHARS = "[a-zA-Z0-9-\\.]";
         const string COMPONENT_NAME = @"(?<name>" + NAME_CHARS + @"+)";

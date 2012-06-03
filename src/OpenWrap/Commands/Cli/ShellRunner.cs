@@ -38,8 +38,12 @@ namespace OpenWrap.Commands.Cli
                         requireFirstRunOnProjectUpgrade = dir.GetFile("packages").Exists == false;
                     }
                 };
-                if (env.SysPath() != null)
-                    cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(new Path(env.SysPath()));
+                var systemRepositoryPath = env.SystemRepositoryPath();
+                var systemRootPath = env.SystemRootPath();
+                if (systemRootPath != null)
+                    cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(new Path(systemRepositoryPath).Combine("wraps"));
+                if (systemRepositoryPath != null)
+                    cdenv.SystemRepositoryDirectory = LocalFileSystem.Instance.GetDirectory(new Path(systemRepositoryPath));
 
                 return cdenv;
             });

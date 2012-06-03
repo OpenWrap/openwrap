@@ -45,9 +45,12 @@ namespace Tests.contexts
             };
         }
 
-        protected void given_default_response(XDocument feed)
+        protected void given_not_found_response(Func<IClientRequest, bool> predicate, XDocument feed)
         {
-            Client.NotFoundResponse = request => new MemoryResponse(200)
+            var existingResponse = Client.NotFoundResponse;
+            Client.NotFoundResponse = request => !predicate(request)
+                ? existingResponse(request) 
+                : new MemoryResponse(200)
             {
                 Entity = new MemoryEntity(new MediaType("application/atom+xml"), 
                     new MemoryStream(Encoding.UTF8.GetBytes(feed.ToString())))

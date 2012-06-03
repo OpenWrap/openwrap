@@ -11,7 +11,7 @@ namespace Tests.Repositories.nufeed.cached.parallel
         DateTimeOffset Now = DateTimeOffset.UtcNow;
         public initial_retrieval()
         {
-            given_default_response(AtomContent.Feed(Now));
+            given_not_found_response(_=>true, AtomContent.Feed(Now));
             given_remote_resource(
                 "http://localhost/packages?$filter=startswith(Id,'a')",
                 "application/atom+xml",

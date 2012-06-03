@@ -41,6 +41,8 @@ namespace Tests.Repositories.contexts
 
         protected void given_packages_read_once()
         {
+            if (repository.CachingEnabled)
+                repository.Update();
             Packages = repository.PackagesByName;
 
         }
