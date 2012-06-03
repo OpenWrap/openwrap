@@ -71,17 +71,19 @@ namespace OpenRasta.Client.Memory
         }
 
         public Dictionary<Uri, MemoryResource> Resources { get; private set; }
+        Func<IClientRequest, IClientResponse> _notFoundResponse;
+        public Func<IClientRequest, IClientResponse> NotFoundResponse
+        {
+            get { return _notFoundResponse ?? DefaultNotFoundResponse; }
+            set { _notFoundResponse = value; }
+        }
 
         IClientResponse Execute(IClientRequest request)
         {
             MemoryResource resource;
             if (!Resources.TryGetValue(request.RequestUri, out resource))
             {
-                return new MemoryResponse
-                {
-                        Status = new HttpStatus(404, "Nout found"),
-                        Headers = { { "Content-Length", "0" } }
-                };
+                return NotFoundResponse(request);
             }
             Func<IClientRequest, IClientResponse> methodHandler;
             if (!resource.Operations.TryGetValue(request.Method,out methodHandler))
@@ -107,6 +109,15 @@ namespace OpenRasta.Client.Memory
             }
             return methodHandler(request);
 
+        }
+
+        static IClientResponse DefaultNotFoundResponse(IClientRequest request)
+        {
+            return new MemoryResponse
+            {
+                Status = new HttpStatus(404, "Not found"),
+                Headers = { { "Content-Length", "0" } }
+            };
         }
     }
 

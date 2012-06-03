@@ -22,9 +22,10 @@ namespace Tests.Repositories
 </service>
 ";
 
+        const string XML_BASE = " xml:base=\"{0}\"";
         const string FEED_DOC =
                 @"
-<feed xml:base=""{2}"" 
+<feed{2} 
         xmlns=""http://www.w3.org/2005/Atom"">
   <title type=""text"">Packages</title>
   <id>{0}</id>
@@ -67,11 +68,15 @@ namespace Tests.Repositories
             return string.Format(SVC_DOC, baseUri, packageUri);
         }
 
-        public static XDocument Feed(DateTimeOffset updated, Uri baseUri, Uri nextUri = null)
+        public static XDocument Feed(DateTimeOffset updated, Uri baseUri = null, Uri nextUri = null)
         {
             var nextUriContent = nextUri == null ? string.Empty : string.Format("<link rel=\"next\" href=\"{0}\" />", nextUri);
-            var doc = XDocument.Parse(string.Format(FEED_DOC, /*id*/ "", /*updated*/ updated, baseUri, nextUriContent));
-            return doc;
+            
+            return XDocument.Parse(string.Format(FEED_DOC, 
+                /*id*/ "",
+                /*updated*/ updated, 
+                baseUri!=null ? string.Format(XML_BASE, baseUri) : string.Empty,
+                nextUriContent));
         }
         public static XDocument Entry(this XDocument document, XElement element)
         {

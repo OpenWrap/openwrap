@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Linq;
 using NUnit.Framework;
 using OpenRasta.Client;
 using OpenWrap.Testing;
@@ -10,6 +11,7 @@ namespace Tests.Repositories.nufeed.cached.parallel
         DateTimeOffset Now = DateTimeOffset.UtcNow;
         public initial_retrieval()
         {
+            given_default_response(AtomContent.Feed(Now));
             given_remote_resource(
                 "http://localhost/packages?$filter=startswith(Id,'a')",
                 "application/atom+xml",
@@ -35,6 +37,7 @@ namespace Tests.Repositories.nufeed.cached.parallel
             given_repository("http://localhost/packages", cachingEnabled: true);
             when_reading_packages();
         }
+
         [Test]
         public void first_letter_is_read()
         {

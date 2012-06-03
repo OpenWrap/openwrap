@@ -216,6 +216,7 @@ namespace OpenWrap.Repositories.NuFeed
             const int maxQueueSize = 6;
             ServicePointManager.DefaultConnectionLimit = maxQueueSize;
             var finalList = Enumerable.Empty<PackageEntry>();
+            var listLock = new object();
             DateTimeOffset? earliestUpdate = null;
 
             var queue2 = new ThrottledQueue(maxQueueSize);
@@ -224,7 +225,7 @@ namespace OpenWrap.Repositories.NuFeed
                     uri, 
                     feed =>
                     {
-                        lock (finalList)
+                        lock (listLock)
                         {
                             finalList = finalList.Concat(feed.Packages);
                             // ReSharper disable AccessToModifiedClosure
