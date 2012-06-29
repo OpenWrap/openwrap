@@ -113,6 +113,8 @@ namespace OpenWrap.Resharper
                 _selfPlugin = new ResharperPlugin(_lifetimeDefinition.Lifetime, new[] { new resharper::JetBrains.Util.FileSystemPath(asm.Location) }, null, null, null);
                 
                 _pluginsDirectory.Plugins.Add(_selfPlugin);
+
+                _selfPlugin.IsEnabled.SetValue(true);
 #else
             var id = "ReSharper OpenWrap Integration";
             _selfPlugin = new ResharperPlugin(id, new[] { asm });
