@@ -146,7 +146,7 @@
     </CreateItem>
 
     <!-- Code Contracts reference assemblies  -->
-    <CreateItem Include="@(ContractReferenceAssemblies)" AdditionalMetadata="TargetPath=%(ContractReferenceAssemblies.TargetPath)">
+    <CreateItem Include="@(ContractReferenceAssemblies)" AdditionalMetadata="CodeContracts\%(ContractReferenceAssemblies.FileName)%(ContractReferenceAssemblies.Extension)">
       <Output TaskParameter="Include" ItemName="_OpenWrap-CurrentBuildOutput"/>
     </CreateItem>
 
