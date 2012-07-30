@@ -144,7 +144,12 @@
     <CreateItem Include="@(IntermediateSatelliteAssembliesWithTargetPath)" AdditionalMetadata="TargetPath=%(IntermediateSatelliteAssembliesWithTargetPath.TargetPath)">
       <Output TaskParameter="Include" ItemName="_OpenWrap-CurrentBuildOutput"/>
     </CreateItem>
-    
+
+    <!-- Code Contracts reference assemblies  -->
+    <CreateItem Include="@(ContractReferenceAssemblies)" AdditionalMetadata="TargetPath=CodeContracts\%(ContractReferenceAssemblies.FileName)%(ContractReferenceAssemblies.Extension)">
+      <Output TaskParameter="Include" ItemName="_OpenWrap-CurrentBuildOutput"/>
+    </CreateItem>
+
     <!-- COM References -->
     <CreateItem Include="@(ReferenceComWrappersToCopyLocal); @(ResolvedIsolatedComModules); @(_DeploymentLooseManifestFile); @(NativeReferenceFile)"
                 AdditionalMetadata="TargetPath=.">
