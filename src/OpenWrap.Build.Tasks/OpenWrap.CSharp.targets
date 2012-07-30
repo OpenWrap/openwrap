@@ -112,8 +112,7 @@
   <Target Name="OpenWrap-AfterBuild"
           Condition="'$(OpenWrap-EmitOutputInstructions)' != 'false'">
 
-    <!-- Build results for the current project and associated project references-->
-
+    <!-- Build results for the current project and associated project references -->
 
     <!-- Binary result (.exe or .dll) -->
     <CreateItem Include="@(IntermediateAssembly)" AdditionalMetadata="TargetPath=.">
@@ -171,8 +170,7 @@
     
     <!-- All of those files that were not included by OpenWrap itself -->
     <CreateItem Include="@(_OpenWrap-CurrentBuildOutput)"
-                Condition="'%(_OpenWrap-CurrentBuildOutput.FromOpenWrap)' != 'True'"
-                    AdditionalMetadata="TargetPath=.">
+                Condition="'%(_OpenWrap-CurrentBuildOutput.FromOpenWrap)' != 'True'">
       <Output TaskParameter="Include" ItemName="_OpenWrap-FilteredBuildOutput"/>
     </CreateItem>
 
