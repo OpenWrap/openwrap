@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Security;
+using OpenRasta.Client;
 using OpenWrap.Collections;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageModel;
@@ -30,6 +33,9 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public string From { get; set; }
+
+        [CommandInput]
+        public bool IgnoreInvalidSSLCert { get; set; }
 
         [CommandInput]
         public string MaxVersion { get; set; }
@@ -113,6 +119,11 @@ namespace OpenWrap.Commands.Wrap
             yield return VerifyProjectRepository();
 
             yield return SetupEnvironmentForAdd();
+            if (IgnoreInvalidSSLCert)
+            {
+                ServicePointManager.ServerCertificateValidationCallback
+                    += new RemoteCertificateValidationCallback(SslCertificateValidators.ValidateAnyRemoteCertificate);
+            }
             var sourceRepositories = GetSourceRepositories().ToList();
 
             var descriptor = new PackageDescriptor(_targetDescriptor.Value);

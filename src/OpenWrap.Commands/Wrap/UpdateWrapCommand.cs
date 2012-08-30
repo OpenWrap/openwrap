@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Security;
+using OpenRasta.Client;
 using OpenWrap.PackageManagement;
 using OpenWrap.PackageManagement.DependencyResolvers;
 using OpenWrap.PackageModel;
@@ -18,6 +21,9 @@ namespace OpenWrap.Commands.Wrap
 
         [CommandInput]
         public string From { get; set; }
+
+        [CommandInput]
+        public bool IgnoreInvalidSSLCert { get; set; }
 
         [CommandInput(Position = 0)]
         public string Name { get; set; }
@@ -40,6 +46,12 @@ namespace OpenWrap.Commands.Wrap
         public string Scope { get; set; }
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
+            if (IgnoreInvalidSSLCert)
+            {
+                ServicePointManager.ServerCertificateValidationCallback
+                    += new RemoteCertificateValidationCallback(SslCertificateValidators.ValidateAnyRemoteCertificate);
+            }
+
             var update = Enumerable.Empty<ICommandOutput>();
             if (Project)
                 update = update.Concat(UpdateProjectPackages());
