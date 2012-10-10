@@ -26,7 +26,8 @@ namespace OpenRasta.Client
             {
                 Status = new HttpStatus((int)_response.StatusCode, _response.StatusDescription);
                 RaiseStatusChanged("Connected.");
-                if (_response.ContentLength > 0)
+                if (_response.ContentLength > 0
+                    || (_response.Headers.Get("Transfer-Encoding") != null && _response.Headers.Get("Transfer-Encoding").Equals("chunked")))
                 {
                     _entity = new HttpEntity(new ProgressStream(_response.ContentLength, RaiseProgress, _response.GetResponseStream()));
                 }

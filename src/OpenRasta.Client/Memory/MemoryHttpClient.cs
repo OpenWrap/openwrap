@@ -42,7 +42,8 @@ namespace OpenRasta.Client.Memory
             {
                 var response = RedirectIfNeeded(_client.Execute(this), this);
 
-                foreach (var handler in Handlers.Where(x => x.Key(response)).Select(x => x.Value)) handler(response);
+                foreach (var handler in Handlers.Where(x => x.Key(response)).Select(x => x.Value))
+                    handler(response);
                 return response;
             }
 
@@ -76,7 +77,7 @@ namespace OpenRasta.Client.Memory
             {
                 return new MemoryResponse
                 {
-                        Status = new HttpStatus(404, "Nout found"),
+                        Status = new HttpStatus(404, "Not found"),
                         Headers = { { "Content-Length", "0" } }
                 };
             }
