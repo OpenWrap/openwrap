@@ -481,4 +481,22 @@ Note that the NuPack support is only provided for backward compatibility with le
   <data name="set-wrap-edge" xml:space="preserve">
     <value>Include pre-release packages for the specified dependency.</value>
   </data>
+  <data name="add-remote-ignoreinvalidsslcert" xml:space="preserve">
+    <value>Ignores invalid SSL certificates and keeps going despite them.</value>
+  </data>
+  <data name="add-wrap-ignoreinvalidsslcert" xml:space="preserve">
+    <value>Ignores invalid SSL certificates and keeps going despite them.</value>
+  </data>
+  <data name="nuke-wrap-ignoreinvalidsslcert" xml:space="preserve">
+    <value>Ignores invalid SSL certificates and keeps going despite them.</value>
+  </data>
+  <data name="publish-wrap-ignoreinvalidsslcert" xml:space="preserve">
+    <value>Ignores invalid SSL certificates and keeps going despite them.</value>
+  </data>
+  <data name="set-remote-ignoreinvalidsslcert" xml:space="preserve">
+    <value>Ignores invalid SSL certificates and keeps going despite them.</value>
+  </data>
+  <data name="update-wrap-ignoreinvalidsslcert" xml:space="preserve">
+    <value>Ignores invalid SSL certificates and keeps going despite them.</value>
+  </data>
 </root>

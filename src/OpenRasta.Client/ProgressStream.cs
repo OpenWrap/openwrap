@@ -26,9 +26,20 @@ namespace OpenRasta.Client
 
         void NotifyProgress(int amount)
         {
-            _total += amount;
+            if (_size > 0)
+            {
+                _total += amount;
 
-            _progressNotifier((int)(((double)_total / _size) * 100));
+                _progressNotifier((int)(((double)_total / _size) * 100));
+            }
+            else if (amount > 0)
+            {
+                _progressNotifier(50);
+            }
+            else
+            {
+                _progressNotifier(100);
+            }
         }
 
         public override void Write(byte[] buffer, int offset, int count)

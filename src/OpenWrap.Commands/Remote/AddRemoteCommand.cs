@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Text.RegularExpressions;
+using OpenRasta.Client;
 using OpenWrap.Collections;
 using OpenWrap.Commands.Messages;
 using OpenWrap.Commands.Remote.Messages;
@@ -19,6 +21,9 @@ namespace OpenWrap.Commands.Remote
 
         [CommandInput(Position = 1)]
         public string Href { get; set; }
+
+        [CommandInput]
+        public bool IgnoreInvalidSSLCert { get; set; }
 
         [CommandInput(Position = 0, IsRequired = true)]
         public string Name { get; set; }
@@ -38,6 +43,11 @@ namespace OpenWrap.Commands.Remote
         protected override IEnumerable<ICommandOutput> ExecuteCore()
         {
             var repositories = ConfigurationManager.Load<RemoteRepositories>();
+            if (IgnoreInvalidSSLCert)
+            {
+                ServicePointManager.ServerCertificateValidationCallback
+                    += new RemoteCertificateValidationCallback(SslCertificateValidators.ValidateAnyRemoteCertificate);
+            }
 
             return repositories.ContainsKey(Name)
                        ? Append(repositories)

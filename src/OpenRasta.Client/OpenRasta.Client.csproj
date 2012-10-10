@@ -63,6 +63,7 @@
     <Compile Include="EventHandlerExtensions.cs" />
     <Compile Include="HttpEntity.cs" />
     <Compile Include="HttpStatus.cs" />
+    <Compile Include="SslCertificateValidators.cs" />
     <Compile Include="WebRequestHttpClient.cs" />
     <Compile Include="HttpWebRequestBasedRequest.cs" />
     <Compile Include="HttpWebResponseBasedResponse.cs" />
